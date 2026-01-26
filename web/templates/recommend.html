@@ -98,7 +98,7 @@
                         {% endif %}
                         <div class="data-cell {% if rec.closing_estimate >= 3000 %}profit-high{% elif rec.closing_estimate >= 1000 %}profit-mid{% elif rec.closing_estimate > 0 %}profit-low{% else %}profit-minus{% endif %}">
                             <span class="data-label">見込</span>
-                            <span class="data-value">{{ '%+,d'|format(rec.closing_estimate) }}枚</span>
+                            <span class="data-value">{{ signed_number(rec.closing_estimate) }}枚</span>
                         </div>
                         {% else %}
                         <div class="no-data-inline">
@@ -139,8 +139,8 @@
                             <div class="detail-section">
                                 <div class="detail-title">本日詳細</div>
                                 {% if rec.total_games > 0 %}
-                                <div class="detail-item">現在差枚: <strong class="{% if rec.current_estimate > 0 %}plus{% else %}minus{% endif %}">{{ '%+,d'|format(rec.current_estimate) }}枚</strong></div>
-                                <div class="detail-item">閉店見込: <strong class="{% if rec.closing_estimate > 0 %}plus{% else %}minus{% endif %}">{{ '%+,d'|format(rec.closing_estimate) }}枚</strong></div>
+                                <div class="detail-item">現在差枚: <strong class="{% if rec.current_estimate > 0 %}plus{% else %}minus{% endif %}">{{ signed_number(rec.current_estimate) }}枚</strong></div>
+                                <div class="detail-item">閉店見込: <strong class="{% if rec.closing_estimate > 0 %}plus{% else %}minus{% endif %}">{{ signed_number(rec.closing_estimate) }}枚</strong></div>
                                 {% if rec.first_hit_time %}
                                 <div class="detail-item">稼働時間: {{ rec.first_hit_time }} 〜 {{ rec.last_hit_time or '-' }}</div>
                                 {% endif %}
@@ -150,7 +150,7 @@
                             </div>
                             <div class="detail-section">
                                 <div class="detail-title">過去7日間</div>
-                                <div class="detail-item">昨日差枚: <strong class="{% if rec.yesterday_diff > 0 %}plus{% else %}minus{% endif %}">{{ '%+,d'|format(rec.yesterday_diff) }}枚</strong></div>
+                                <div class="detail-item">昨日差枚: <strong class="{% if rec.yesterday_diff > 0 %}plus{% else %}minus{% endif %}">{{ signed_number(rec.yesterday_diff) }}枚</strong></div>
                                 <div class="detail-item">平均ART: {{ rec.avg_art_7days|round(1) }}回/日</div>
                                 {% if rec.consecutive_plus > 0 %}
                                 <div class="detail-item plus">{{ rec.consecutive_plus }}日連続プラス</div>
@@ -197,11 +197,11 @@
                         {% if rec.art_prob > 0 %}
                         <span class="compact-prob {% if rec.art_prob <= 100 %}excellent{% elif rec.art_prob <= 130 %}good{% elif rec.art_prob >= 200 %}bad{% endif %}">1/{{ rec.art_prob|int }}</span>
                         {% endif %}
-                        <span class="compact-profit {% if rec.closing_estimate >= 1000 %}profit-high{% elif rec.closing_estimate > 0 %}profit-mid{% else %}profit-minus{% endif %}">{{ '%+,d'|format(rec.closing_estimate) }}</span>
+                        <span class="compact-profit {% if rec.closing_estimate >= 1000 %}profit-high{% elif rec.closing_estimate > 0 %}profit-mid{% else %}profit-minus{% endif %}">{{ signed_number(rec.closing_estimate) }}</span>
                         {% elif rec.avg_art_7days > 0 %}
                         <span class="compact-data past-data">7日平均{{ rec.avg_art_7days|round(0)|int }}AT</span>
                         {% if rec.yesterday_diff != 0 %}
-                        <span class="compact-data past-data">昨日{{ '%+,d'|format(rec.yesterday_diff) }}枚</span>
+                        <span class="compact-data past-data">昨日{{ signed_number(rec.yesterday_diff) }}枚</span>
                         {% endif %}
                         {% else %}
                         <span class="compact-data no-data">本日未稼働</span>
@@ -212,12 +212,12 @@
                     <div class="unit-details hidden">
                         <div class="compact-details">
                             {% if rec.total_games > 0 %}
-                            <div>本日: {{ '{:,}'.format(rec.total_games) }}G / ART{{ rec.art_count }}回 / 見込{{ '%+,d'|format(rec.closing_estimate) }}枚</div>
+                            <div>本日: {{ '{:,}'.format(rec.total_games) }}G / ART{{ rec.art_count }}回 / 見込{{ signed_number(rec.closing_estimate) }}枚</div>
                             {% if rec.estimated_setting %}
                             <div>推定: {{ rec.estimated_setting }} ({{ rec.payout_estimate }}%)</div>
                             {% endif %}
                             {% endif %}
-                            <div>過去7日: 平均{{ rec.avg_art_7days|round(1) }}ART / 昨日{{ '%+,d'|format(rec.yesterday_diff) }}枚</div>
+                            <div>過去7日: 平均{{ rec.avg_art_7days|round(1) }}ART / 昨日{{ signed_number(rec.yesterday_diff) }}枚</div>
                             {% if rec.reasons %}
                             <div class="compact-reason">{{ rec.reasons[0] }}</div>
                             {% endif %}
