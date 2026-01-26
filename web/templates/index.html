@@ -33,12 +33,11 @@
             {% if top3 %}
             <section class="recommendations top">
                 <h2>いま狙い目 TOP5</h2>
-                <div class="top5-note">※空き台優先、稼働中も高評価台は表示</div>
+                <div class="top5-note">※当日データから評価、空き台優先</div>
                 {% for rec in top3 %}
                 <a href="{{ url_for('recommend', store_key=rec.store_key) }}" class="unit-card rank-{{ rec.final_rank|lower }}" style="text-decoration: none;">
                     <div class="unit-header">
                         <span class="ranking-num">#{{ loop.index }}</span>
-                        <!-- 機種名 → 店舗名 → 番台の順 -->
                         <span class="machine-icon">{{ rec.machine_icon }}</span>
                         <span class="machine-name-top">{{ rec.machine_name }}</span>
                         <span class="rank-badge" style="background-color: {{ rank_color(rec.final_rank) }}">
@@ -46,27 +45,42 @@
                         </span>
                     </div>
                     <div class="unit-store">
-                        {{ rec.store_name }} / <strong>{{ rec.unit_id }}番</strong>
+                        {{ rec.store_name }} / <span class="unit-id-sub">{{ rec.unit_id }}番</span>
                         {% if rec.availability == '空き' %}
                         <span class="top3-avail empty">空き</span>
                         {% elif rec.availability == '遊技中' %}
                         <span class="top3-avail playing">稼働中</span>
                         {% endif %}
                     </div>
-                    <!-- データサマリ -->
-                    <div class="top3-stats">
-                        {% if rec.total_games > 0 %}
-                        <span><span class="num">{{ '{:,}'.format(rec.total_games) }}</span><span class="label">G</span></span>
-                        <span><span class="num">{{ rec.art_count }}</span><span class="label">ART</span></span>
+                    <!-- データサマリ: ART数メイン、最大枚数、回転数はサブ -->
+                    <div class="top3-stats-main">
+                        {% if rec.art_count > 0 %}
+                        <span class="art-main">
+                            <span class="art-num-big">{{ rec.art_count }}</span><span class="art-label">ART</span>
+                        </span>
                         {% if rec.art_prob > 0 %}
-                        <span class="{% if rec.art_prob <= 100 %}excellent{% elif rec.art_prob <= 130 %}good{% elif rec.art_prob >= 200 %}bad{% endif %}">1/{{ rec.art_prob|int }}</span>
+                        <span class="art-prob {% if rec.art_prob <= 100 %}excellent{% elif rec.art_prob <= 130 %}good{% elif rec.art_prob >= 200 %}bad{% endif %}">
+                            1/{{ rec.art_prob|int }}
+                        </span>
                         {% endif %}
                         {% else %}
-                        <span class="past-data">7日平均<span class="num">{{ rec.avg_art_7days|round(0)|int }}</span>ART</span>
+                        <span class="art-main past">
+                            <span class="art-num-big">{{ rec.avg_art_7days|round(0)|int }}</span><span class="art-label">ART(7日平均)</span>
+                        </span>
                         {% endif %}
-                        <!-- 最大枚数を表示 -->
+                    </div>
+                    <div class="top3-stats-sub">
+                        <!-- 現在ハマり(final_start)があれば表示 -->
+                        {% if rec.closing_estimate and rec.closing_estimate > 0 %}
+                        <span class="current-hama">現在<span class="num">{{ rec.closing_estimate }}</span>G</span>
+                        {% endif %}
+                        <!-- 最大枚数 -->
                         {% if rec.max_medals and rec.max_medals > 0 %}
-                        <span class="max-medals-top">最大<span class="num">{{ '{:,}'.format(rec.max_medals) }}</span><span class="label">枚</span></span>
+                        <span class="max-medals-top">最大<span class="num">{{ '{:,}'.format(rec.max_medals) }}</span>枚</span>
+                        {% endif %}
+                        <!-- 総回転 -->
+                        {% if rec.total_games > 0 %}
+                        <span class="total-games">累計<span class="num">{{ '{:,}'.format(rec.total_games) }}</span>G</span>
                         {% endif %}
                     </div>
                     {% if rec.reasons %}
@@ -75,41 +89,6 @@
                         <span class="reason-text">{{ rec.reasons[0][:40] }}{% if rec.reasons[0]|length > 40 %}...{% endif %}</span>
                     </div>
                     {% endif %}
-                </a>
-                {% endfor %}
-            </section>
-            {% endif %}
-
-            <!-- 前日トップ10 -->
-            {% if yesterday_top10 %}
-            <section class="yesterday-section">
-                <h2>前日の爆発台 TOP10</h2>
-                <div class="yesterday-note">最大枚数が多かった台（据え置き狙い）</div>
-                {% for rec in yesterday_top10 %}
-                <a href="{{ url_for('recommend', store_key=rec.store_key) }}" class="yesterday-card">
-                    <div class="yesterday-header">
-                        <span class="ranking-num-sm">#{{ loop.index }}</span>
-                        <span class="machine-icon-sm">{{ rec.machine_icon }}</span>
-                        <span class="unit-id-sm">{{ rec.unit_id }}</span>
-                        <span class="store-name-sm">{{ rec.store_name }}</span>
-                        {% if rec.availability == '空き' %}
-                        <span class="avail-sm empty">空</span>
-                        {% elif rec.availability == '遊技中' %}
-                        <span class="avail-sm playing">稼</span>
-                        {% endif %}
-                    </div>
-                    <div class="yesterday-stats">
-                        {% if rec.max_medals > 0 %}
-                        <span class="max-medals">最大<span class="num">{{ '{:,}'.format(rec.max_medals) }}</span>枚</span>
-                        {% endif %}
-                        {% if rec.yesterday_art > 0 %}
-                        <span>ART<span class="art-num">{{ rec.yesterday_art }}</span></span>
-                        {% endif %}
-                        {% if rec.yesterday_rb and rec.yesterday_rb > 0 %}
-                        <span>RB<span class="rb-num">{{ rec.yesterday_rb }}</span></span>
-                        {% endif %}
-                        <span class="yesterday-diff-sm {% if rec.yesterday_diff > 0 %}plus{% else %}minus{% endif %}">{{ signed_number(rec.yesterday_diff) }}</span>
-                    </div>
                 </a>
                 {% endfor %}
             </section>
@@ -148,6 +127,37 @@
                 </a>
                 {% endfor %}
             </section>
+
+            <!-- 前日トップ10 (最後に配置) -->
+            {% if yesterday_top10 %}
+            <section class="yesterday-section">
+                <h2>前日の爆発台 TOP10</h2>
+                <div class="yesterday-note">最大枚数が多かった台（据え置き狙い参考）</div>
+                {% for rec in yesterday_top10 %}
+                <a href="{{ url_for('recommend', store_key=rec.store_key) }}" class="yesterday-card">
+                    <div class="yesterday-header">
+                        <span class="ranking-num-sm">#{{ loop.index }}</span>
+                        <span class="machine-icon-sm">{{ rec.machine_icon }}</span>
+                        <span class="store-name-sm">{{ rec.store_name }}</span>
+                        <span class="unit-id-sm">{{ rec.unit_id }}番</span>
+                        {% if rec.availability == '空き' %}
+                        <span class="avail-sm empty">空</span>
+                        {% elif rec.availability == '遊技中' %}
+                        <span class="avail-sm playing">稼</span>
+                        {% endif %}
+                    </div>
+                    <div class="yesterday-stats">
+                        {% if rec.max_medals > 0 %}
+                        <span class="max-medals">最大<span class="num">{{ '{:,}'.format(rec.max_medals) }}</span>枚</span>
+                        {% endif %}
+                        {% if rec.yesterday_art > 0 %}
+                        <span class="art-badge">ART <span class="art-num">{{ rec.yesterday_art }}</span></span>
+                        {% endif %}
+                    </div>
+                </a>
+                {% endfor %}
+            </section>
+            {% endif %}
         </main>
 
         <footer>

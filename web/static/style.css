@@ -1889,3 +1889,150 @@ strong.minus {
     color: #888;
     margin-left: auto;
 }
+
+/* ===== トップページ: ART数メイン表示 ===== */
+.top3-stats-main {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin: 8px 0 4px 0;
+}
+
+.art-main {
+    display: flex;
+    align-items: baseline;
+    gap: 2px;
+}
+
+.art-main.past {
+    opacity: 0.7;
+}
+
+.art-num-big {
+    font-size: 2em;
+    font-weight: 900;
+    color: #ff6b6b;
+}
+
+.art-label {
+    font-size: 0.85em;
+    color: #ff6b6b;
+    font-weight: 600;
+}
+
+.art-prob {
+    font-size: 1.1em;
+    font-weight: 700;
+    color: #aaa;
+}
+
+.art-prob.excellent {
+    color: #2ed573;
+}
+
+.art-prob.good {
+    color: #70a1ff;
+}
+
+.art-prob.bad {
+    color: #ff6b6b;
+}
+
+/* サブ情報行 */
+.top3-stats-sub {
+    display: flex;
+    gap: 12px;
+    font-size: 0.8em;
+    color: #888;
+    margin-top: 4px;
+    flex-wrap: wrap;
+}
+
+.top3-stats-sub .num {
+    font-weight: 700;
+    color: #aaa;
+}
+
+.current-hama {
+    color: #ffa502;
+}
+
+.current-hama .num {
+    color: #ffa502;
+    font-size: 1.1em;
+}
+
+.total-games {
+    color: #666;
+}
+
+/* 台番号をサブ情報に */
+.unit-id-sub {
+    font-weight: 400;
+    color: #888;
+    font-size: 0.95em;
+}
+
+/* ARTバッジ */
+.art-badge {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 3px;
+    color: #ff6b6b;
+    font-weight: 600;
+}
+
+.art-badge .art-num {
+    font-size: 1.3em;
+    font-weight: 800;
+}
+
+/* コンパクトカード: ART強調 */
+.compact-art {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 2px;
+}
+
+.compact-art .art-num {
+    font-size: 1.4em;
+    font-weight: 900;
+    color: #ff6b6b;
+}
+
+.compact-art .art-lbl {
+    font-size: 0.7em;
+    color: #ff6b6b;
+}
+
+.compact-art.past .art-num {
+    color: #70a1ff;
+}
+
+.compact-art.past .art-lbl {
+    color: #70a1ff;
+}
+
+/* 最大枚数（コンパクト） */
+.compact-max {
+    color: #ffd700;
+    font-size: 0.8em;
+    font-weight: 600;
+}
+
+.compact-max .num {
+    font-size: 1.1em;
+}
+
+/* 回転数（小さく） */
+.compact-games {
+    color: #666;
+    font-size: 0.75em;
+}
+
+/* 推奨カード: ART大きく */
+.art-num-lg {
+    font-size: 1.6em;
+    font-weight: 900;
+    color: #ff6b6b;
+}

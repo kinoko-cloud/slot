@@ -345,23 +345,46 @@ python scripts/daily_collect.py --merge
 
 ---
 
-## 空き状況チェック機能（2026/1/26開発中）
+## リアルタイムデータ取得機能（2026/1/26完成）
 
 ### 概要
-営業中にリアルタイムで空席を確認する機能。
+営業中にリアルタイムでART回数・空席を確認する機能。
+
+### アーキテクチャ
+```
+[GitHub Actions] → [data/availability.json] → [PythonAnywhere App]
+      ↓                       ↓
+  Playwright          GitHub raw URL
+  (10分ごと)           (無料プラン対応)
+```
+
+### PythonAnywhere無料プランの制限と対策
+**問題**: 無料プランではホワイトリスト外のサイト（daidata.goraggio.com）に直接アクセス不可（403 Forbidden）
+
+**解決策**: GitHub Actions経由でデータ取得
+1. GitHub Actions (ubuntu-latest) でPlaywrightを実行
+2. `data/availability.json`にコミット
+3. PythonAnywhereはGitHub raw URLからJSONを読み込み
 
 ### データソース別の方式
 | データソース | 方式 | ファイル |
 |-------------|------|----------|
 | papimo.jp (アイランド秋葉原) | GAS経由 | `scrapers/availability_checker.py` |
-| daidata (エスパス系) | GitHub JSON経由 | `scripts/fetch_daidata_availability.py` |
+| daidata (エスパス系) | GitHub Actions → JSON | `scripts/fetch_daidata_availability.py` |
 
-### 台データオンライン空き状況判定ロジック
-**画像解析は不要！** HTMLのtdタグで判定可能:
-- **遊技中**: `<td><em class="slot icon-user"></em></td>`
-- **空き**: `<td></td>` (空)
+### GitHub Actions設定
+- ワークフロー: `.github/workflows/fetch-availability.yml`
+- 実行頻度: 10分ごと（10:00-23:00 JST）
+- 手動実行: `gh workflow run "Fetch Availability"` または GitHub UI
 
-テストHTML: `data/raw/test_both.html`
+### 取得データ
+| フィールド | 説明 |
+|-----------|------|
+| `art` | ART回数 |
+| `bb` | BB回数 |
+| `rb` | RB回数 |
+| `total_start` | 累計スタート |
+| `availability` | 空き/遊技中 |
 
 ### 対象店舗・台番号（daidata）
 | 店舗 | hall_id | 台番号 |
@@ -370,6 +393,15 @@ python scripts/daily_collect.py --merge
 | 新宿エスパス歌舞伎町 | 100949 | 682, 683, 684, 685 |
 | 秋葉原エスパス駅前 | 100928 | 2158, 2159, 2160, 2161 |
 | 西武新宿駅前エスパス | 100950 | 3185, 3186, 3187, 4109, 4118, 4125, 4168 |
+
+### ローカルでのテスト
+```bash
+# データ取得（Playwright必要）
+python scripts/fetch_daidata_availability.py
+
+# 確認
+cat data/availability.json | python -m json.tool
+```
 
 ### WSLクラッシュ対策（2026/1/26実施）
 
@@ -394,13 +426,14 @@ sparseVhd=true
 `scripts/fetch_daidata_availability.py` に以下を追加:
 - `--disable-gpu`, `--disable-dev-shm-usage` 等のブラウザオプション
 - 画像・フォント・広告のリソースブロック
-- タイムアウト短縮（30秒→20秒、待機3秒→2秒）
 
 #### WSL再起動コマンド
 ```powershell
 wsl --shutdown
 ```
 
-### 未完了タスク
-- [ ] GitHub Actions定期実行設定
-- [ ] Webアプリへの空き状況表示統合
+### 完了済み（2026/1/26）
+- [x] GitHub Actions定期実行設定
+- [x] Webアプリへの空き状況表示統合
+- [x] リアルタイムART回数の取得・表示
+- [x] PythonAnywhere無料プラン対応
