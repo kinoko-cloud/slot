@@ -19,6 +19,9 @@
                 {% if cache_info %}
                 <span class="cache-badge">リアルタイム</span>
                 {% endif %}
+                {% if availability_info %}
+                <span class="cache-badge" style="background: #2ed573;">空き{{ availability_info.empty_count }}台</span>
+                {% endif %}
             </div>
             <div class="action-buttons">
                 <button onclick="location.reload()" class="refresh-btn">更新</button>
@@ -56,7 +59,7 @@
                         <span class="expand-icon">▼</span>
                     </div>
                     <div class="unit-status">
-                        <span class="status {{ 'running' if rec.is_running else 'available' if '空き' in rec.status else 'idle' }}">
+                        <span class="status {{ 'playing' if rec.availability == '遊技中' else 'available' if rec.availability == '空き' else 'running' if rec.is_running else '' }}">
                             {{ rec.status }}
                         </span>
                         {% if rec.last_hit_time %}
@@ -101,7 +104,9 @@
                         </div>
                         {% endif %}
                         {% else %}
-                        <div class="no-data">本日未稼働 → 狙い目候補</div>
+                        <div class="no-data">
+                            {% if rec.availability == '空き' %}空き台 → 狙い目{% elif rec.availability == '遊技中' %}遊技中{% else %}データなし{% endif %}
+                        </div>
                         {% endif %}
                     </div>
 
@@ -167,13 +172,13 @@
             <section class="recommendations other">
                 <h2>その他の台</h2>
                 {% for rec in other_recs %}
-                <div class="unit-card compact rank-{{ rec.final_rank|lower }} {{ 'running' if rec.is_running else 'available' if '空き' in rec.status else '' }}" onclick="toggleDetails(this)">
+                <div class="unit-card compact rank-{{ rec.final_rank|lower }} {{ 'playing' if rec.availability == '遊技中' else 'available' if rec.availability == '空き' else '' }}" onclick="toggleDetails(this)">
                     <div class="compact-header">
                         <span class="unit-id">{{ rec.unit_id }}</span>
                         <span class="rank-badge small" style="background-color: {{ rank_color(rec.final_rank) }}">
                             {{ rec.final_rank }}
                         </span>
-                        <span class="status {{ 'available' if '空き' in rec.status else '' }}">{{ rec.status }}</span>
+                        <span class="status {{ 'playing' if rec.availability == '遊技中' else 'available' if rec.availability == '空き' else '' }}">{{ rec.status }}</span>
                         {% if rec.total_games > 0 %}
                         <span class="games-info">{{ '{:,}'.format(rec.total_games) }}G</span>
                         <span class="art-info">ART{{ rec.art_count }}</span>
