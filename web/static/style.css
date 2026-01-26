@@ -1038,3 +1038,24 @@ strong.plus {
 strong.minus {
     color: #ff6b6b;
 }
+
+/* ===== コンパクトセクション ===== */
+
+.today-section.compact,
+.history-section.compact {
+    margin: 6px 0;
+    padding: 8px;
+}
+
+.today-stats-grid.compact {
+    gap: 6px;
+}
+
+.today-stats-grid.compact .stat-box {
+    padding: 4px 10px;
+    min-width: 50px;
+}
+
+.today-stats-grid.compact .stat-box .stat-value {
+    font-size: 1em;
+}
