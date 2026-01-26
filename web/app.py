@@ -406,6 +406,35 @@ def run_scraping(store_key: str):
         SCRAPING_STATUS[store_key] = {'status': 'error', 'error': str(e)}
 
 
+@app.route('/api/debug/<store_key>')
+def api_debug(store_key: str):
+    """API: デバッグ情報を表示"""
+    store = STORES.get(store_key)
+    if not store:
+        return jsonify({'error': 'Store not found'}), 404
+
+    # キャッシュ情報
+    cache = REALTIME_CACHE.get(store_key)
+    cache_info = None
+    if cache:
+        cache_data = cache.get('data', {})
+        cache_info = {
+            'fetched_at': cache.get('fetched_at').isoformat() if cache.get('fetched_at') else None,
+            'store_name': cache_data.get('store_name'),
+            'units_count': len(cache_data.get('units', [])),
+            'units_preview': [{'unit_id': u.get('unit_id'), 'art': u.get('art'), 'total_start': u.get('total_start')} for u in cache_data.get('units', [])[:3]],
+        }
+
+    # スクレイピング状態
+    status = SCRAPING_STATUS.get(store_key)
+
+    return jsonify({
+        'store': store['name'],
+        'cache': cache_info,
+        'scraping_status': status,
+    })
+
+
 @app.route('/api/scrape/<store_key>')
 def api_scrape(store_key: str):
     """API: リアルタイムスクレイピングを開始"""
