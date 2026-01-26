@@ -442,6 +442,7 @@ def analyze_today_data(unit_data: dict, current_hour: int = None, machine_key: s
         'expected_games': 0,  # この時間帯での期待G数
         'today_reasons': [],
         'data_date': '',  # データの日付
+        'is_today_data': False,  # 本日のデータかどうか
     }
 
     if not unit_data:
@@ -450,6 +451,9 @@ def analyze_today_data(unit_data: dict, current_hour: int = None, machine_key: s
     # リアルタイムデータ形式（daysキーなし）の場合
     if 'days' not in unit_data:
         today_data = unit_data
+        result['status'] = 'リアルタイム'
+        result['data_date'] = datetime.now().strftime('%Y-%m-%d')
+        result['is_today_data'] = True
     else:
         # 日別データ形式の場合
         days = unit_data.get('days', [])
@@ -482,6 +486,8 @@ def analyze_today_data(unit_data: dict, current_hour: int = None, machine_key: s
                 return result
         else:
             result['data_date'] = today
+            result['status'] = '本日データ'
+            result['is_today_data'] = True
 
     result['art_count'] = today_data.get('art', 0)
     result['bb_count'] = today_data.get('bb', 0)

@@ -166,18 +166,20 @@ def index():
                     if not rec['is_running'] and rec['final_rank'] in ('S', 'A'):
                         top3_all.append(rec)
 
-                    # 前日トップ10用のデータを収集（昨日の差枚が大きい台）
-                    if rec.get('yesterday_diff', 0) > 500:
+                    # 前日トップ10用のデータを収集（最大枚数が多い台）
+                    max_medals = rec.get('max_medals', 0)
+                    if max_medals > 3000 or rec.get('yesterday_diff', 0) > 500:
                         yesterday_top10.append({
                             'unit_id': rec['unit_id'],
                             'store_name': store.get('short_name', store['name']),
                             'store_key': store_key,
                             'machine_icon': machine['icon'],
                             'machine_name': machine.get('display_name', machine['short_name']),
-                            'yesterday_diff': rec['yesterday_diff'],
+                            'yesterday_diff': rec.get('yesterday_diff', 0),
                             'avg_art_7days': rec.get('avg_art_7days', 0),
                             'yesterday_art': rec.get('yesterday_art', 0),
-                            'max_medals': rec.get('max_medals', 0),
+                            'yesterday_rb': rec.get('rb_count', 0),
+                            'max_medals': max_medals,
                             'availability': availability.get(rec['unit_id'], ''),
                         })
             except:
@@ -193,8 +195,8 @@ def index():
     top3_all.sort(key=top3_sort_key)
     top3 = top3_all[:5]
 
-    # 前日トップ10（差枚順）
-    yesterday_top10.sort(key=lambda x: -x['yesterday_diff'])
+    # 前日トップ10（最大枚数順）
+    yesterday_top10.sort(key=lambda x: -x['max_medals'])
     yesterday_top10 = yesterday_top10[:10]
 
     # 今日おすすめの店舗
