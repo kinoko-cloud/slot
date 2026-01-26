@@ -19,10 +19,16 @@
                 {% if cache_info %}
                 <span class="cache-badge">リアルタイム</span>
                 {% endif %}
-                {% if availability_info %}
-                <span class="cache-badge" style="background: #2ed573;">空き{{ availability_info.empty_count }}台</span>
-                {% endif %}
             </div>
+
+            <!-- 空き状況サマリ -->
+            {% if availability_info %}
+            <div class="availability-summary">
+                <span class="avail-empty">空き {{ availability_info.empty_count }}台</span>
+                <span class="avail-playing">遊技中 {{ availability_info.playing_count }}台</span>
+            </div>
+            {% endif %}
+
             <div class="action-buttons">
                 <button onclick="location.reload()" class="refresh-btn">更新</button>
                 <button onclick="startScraping()" class="scrape-btn" id="scrape-btn">最新取得</button>
@@ -49,68 +55,100 @@
             <section class="recommendations top">
                 <h2>推奨台</h2>
                 {% for rec in top_recs %}
-                <div class="unit-card rank-{{ rec.final_rank|lower }}" onclick="toggleDetails(this)">
+                <div class="unit-card rank-{{ rec.final_rank|lower }} {{ 'avail-card-empty' if rec.availability == '空き' else 'avail-card-playing' if rec.availability == '遊技中' else '' }}" onclick="toggleDetails(this)">
                     <div class="unit-header">
                         <span class="unit-id">{{ rec.unit_id }}番台</span>
+
+                        <!-- 空き状況バッジ（目立つ位置に） -->
+                        {% if rec.availability == '空き' %}
+                        <span class="avail-badge empty">空き</span>
+                        {% elif rec.availability == '遊技中' %}
+                        <span class="avail-badge playing">遊技中</span>
+                        {% endif %}
+
                         <span class="rank-badge" style="background-color: {{ rank_color(rec.final_rank) }}">
                             {{ rec.final_rank }}
                         </span>
                         <span class="score">{{ rec.final_score|int }}pt</span>
                         <span class="expand-icon">▼</span>
                     </div>
-                    <div class="unit-status">
-                        <span class="status {{ 'playing' if rec.availability == '遊技中' else 'available' if rec.availability == '空き' else 'running' if rec.is_running else '' }}">
-                            {{ rec.status }}
-                        </span>
-                        {% if rec.last_hit_time %}
-                        <span class="last-hit">最終当たり {{ rec.last_hit_time }}</span>
-                        {% endif %}
-                    </div>
 
-                    <!-- 当日データサマリー -->
-                    <div class="today-summary">
+                    <!-- 本日の状況（常に表示） -->
+                    <div class="today-section">
+                        <div class="section-header">
+                            <span class="section-icon">📊</span>
+                            <span class="section-label">本日の状況</span>
+                        </div>
                         {% if rec.total_games > 0 %}
-                        <div class="today-stats">
-                            <span class="stat-item">
-                                <span class="label">総G数</span>
-                                <span class="value">{{ '{:,}'.format(rec.total_games) }}</span>
-                            </span>
-                            <span class="stat-item">
-                                <span class="label">ART</span>
-                                <span class="value">{{ rec.art_count }}回</span>
-                            </span>
+                        <div class="today-stats-grid">
+                            <div class="stat-box">
+                                <span class="stat-label">総G数</span>
+                                <span class="stat-value">{{ '{:,}'.format(rec.total_games) }}</span>
+                            </div>
+                            <div class="stat-box highlight">
+                                <span class="stat-label">ART</span>
+                                <span class="stat-value">{{ rec.art_count }}回</span>
+                            </div>
+                            {% if rec.art_prob > 0 %}
+                            <div class="stat-box {% if rec.art_prob <= 100 %}excellent{% elif rec.art_prob <= 130 %}good{% elif rec.art_prob >= 200 %}bad{% endif %}">
+                                <span class="stat-label">確率</span>
+                                <span class="stat-value">1/{{ rec.art_prob|int }}</span>
+                            </div>
+                            {% endif %}
                             {% if rec.bb_count is defined and rec.bb_count > 0 %}
-                            <span class="stat-item">
-                                <span class="label">BB</span>
-                                <span class="value">{{ rec.bb_count }}</span>
-                            </span>
+                            <div class="stat-box">
+                                <span class="stat-label">BB</span>
+                                <span class="stat-value">{{ rec.bb_count }}</span>
+                            </div>
                             {% endif %}
                             {% if rec.rb_count is defined and rec.rb_count > 0 %}
-                            <span class="stat-item">
-                                <span class="label">RB</span>
-                                <span class="value">{{ rec.rb_count }}</span>
-                            </span>
-                            {% endif %}
-                            {% if rec.art_prob > 0 %}
-                            <span class="stat-item highlight">
-                                <span class="label">ART確率</span>
-                                <span class="value">1/{{ rec.art_prob|int }}</span>
-                            </span>
+                            <div class="stat-box">
+                                <span class="stat-label">RB</span>
+                                <span class="stat-value">{{ rec.rb_count }}</span>
+                            </div>
                             {% endif %}
                         </div>
                         {% if rec.first_hit_time %}
-                        <div class="time-info">
-                            初当たり {{ rec.first_hit_time }} → 最終 {{ rec.last_hit_time or '-' }}
+                        <div class="time-range">
+                            {{ rec.first_hit_time }} 〜 {{ rec.last_hit_time or '-' }}
                         </div>
                         {% endif %}
                         {% else %}
-                        <div class="no-data">
-                            {% if rec.availability == '空き' %}空き台 → 狙い目{% elif rec.availability == '遊技中' %}遊技中{% else %}データなし{% endif %}
+                        <div class="no-data-today">
+                            {% if rec.availability == '空き' %}
+                            <span class="target-badge">狙い目</span> 未稼働・空き台
+                            {% elif rec.availability == '遊技中' %}
+                            本日データなし（遊技中）
+                            {% else %}
+                            本日データなし
+                            {% endif %}
                         </div>
                         {% endif %}
                     </div>
 
-                    <!-- 推奨理由（常に表示） -->
+                    <!-- 過去7日間の評価（常に表示） -->
+                    <div class="history-section">
+                        <div class="section-header">
+                            <span class="section-icon">📈</span>
+                            <span class="section-label">過去7日間</span>
+                            <span class="base-rank" style="background-color: {{ rank_color(rec.base_rank) }}">{{ rec.base_rank }}</span>
+                        </div>
+                        <div class="history-stats">
+                            <span class="hist-item">
+                                平均ART <strong>{{ rec.avg_art_7days|round(1) }}</strong>回/日
+                            </span>
+                            <span class="hist-item {% if rec.yesterday_diff > 0 %}plus{% elif rec.yesterday_diff < 0 %}minus{% endif %}">
+                                昨日 <strong>{{ '%+d'|format(rec.yesterday_diff) }}</strong>枚
+                            </span>
+                            {% if rec.consecutive_plus > 0 %}
+                            <span class="hist-item plus">{{ rec.consecutive_plus }}日連続+</span>
+                            {% elif rec.consecutive_minus > 0 %}
+                            <span class="hist-item minus">{{ rec.consecutive_minus }}日連続-</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- 推奨理由プレビュー -->
                     {% if rec.reasons %}
                     <div class="reasons-preview">
                         <span class="reason-icon">💡</span>
@@ -118,7 +156,7 @@
                     </div>
                     {% endif %}
 
-                    <!-- 根拠詳細（クリックで展開） -->
+                    <!-- 詳細（クリックで展開） -->
                     <div class="unit-details hidden">
                         {% if rec.reasons|length > 1 %}
                         <div class="reasons-section">
@@ -128,36 +166,6 @@
                             {% endfor %}
                         </div>
                         {% endif %}
-
-                        <div class="stats-section">
-                            <div class="section-title">過去データ</div>
-                            <div class="stat-row">
-                                <span class="stat-label">昨日の推定差枚</span>
-                                <span class="stat-value {% if rec.yesterday_diff > 0 %}plus{% elif rec.yesterday_diff < 0 %}minus{% endif %}">
-                                    {{ '%+d'|format(rec.yesterday_diff) }}枚
-                                </span>
-                            </div>
-                            <div class="stat-row">
-                                <span class="stat-label">7日間 平均ART</span>
-                                <span class="stat-value">{{ rec.avg_art_7days|round(1) }}回/日</span>
-                            </div>
-                            {% if rec.consecutive_plus > 0 %}
-                            <div class="stat-row">
-                                <span class="stat-label">連続プラス日数</span>
-                                <span class="stat-value plus">{{ rec.consecutive_plus }}日連続</span>
-                            </div>
-                            {% endif %}
-                            {% if rec.consecutive_minus > 0 %}
-                            <div class="stat-row">
-                                <span class="stat-label">連続マイナス日数</span>
-                                <span class="stat-value minus">{{ rec.consecutive_minus }}日連続</span>
-                            </div>
-                            {% endif %}
-                            <div class="stat-row">
-                                <span class="stat-label">基本評価</span>
-                                <span class="stat-value">{{ rec.base_rank }}ランク ({{ rec.base_score|int }}pt)</span>
-                            </div>
-                        </div>
                     </div>
                 </div>
                 {% endfor %}
@@ -172,48 +180,72 @@
             <section class="recommendations other">
                 <h2>その他の台</h2>
                 {% for rec in other_recs %}
-                <div class="unit-card compact rank-{{ rec.final_rank|lower }} {{ 'playing' if rec.availability == '遊技中' else 'available' if rec.availability == '空き' else '' }}" onclick="toggleDetails(this)">
+                <div class="unit-card compact rank-{{ rec.final_rank|lower }} {{ 'avail-card-empty' if rec.availability == '空き' else 'avail-card-playing' if rec.availability == '遊技中' else '' }}" onclick="toggleDetails(this)">
                     <div class="compact-header">
                         <span class="unit-id">{{ rec.unit_id }}</span>
+
+                        <!-- 空き状況バッジ -->
+                        {% if rec.availability == '空き' %}
+                        <span class="avail-badge-sm empty">空</span>
+                        {% elif rec.availability == '遊技中' %}
+                        <span class="avail-badge-sm playing">稼</span>
+                        {% endif %}
+
                         <span class="rank-badge small" style="background-color: {{ rank_color(rec.final_rank) }}">
                             {{ rec.final_rank }}
                         </span>
-                        <span class="status {{ 'playing' if rec.availability == '遊技中' else 'available' if rec.availability == '空き' else '' }}">{{ rec.status }}</span>
+
+                        <!-- 当日サマリ（コンパクト） -->
                         {% if rec.total_games > 0 %}
-                        <span class="games-info">{{ '{:,}'.format(rec.total_games) }}G</span>
-                        <span class="art-info">ART{{ rec.art_count }}</span>
-                        {% if rec.art_prob > 0 %}
-                        <span class="prob-info">1/{{ rec.art_prob|int }}</span>
+                        <span class="compact-today">
+                            <span class="games-info">{{ '{:,}'.format(rec.total_games) }}G</span>
+                            <span class="art-info">AT{{ rec.art_count }}</span>
+                            {% if rec.art_prob > 0 %}
+                            <span class="prob-info {% if rec.art_prob <= 100 %}excellent{% elif rec.art_prob <= 130 %}good{% elif rec.art_prob >= 200 %}bad{% endif %}">1/{{ rec.art_prob|int }}</span>
+                            {% endif %}
+                        </span>
+                        {% else %}
+                        <span class="compact-today no-data">-</span>
                         {% endif %}
-                        {% endif %}
+
                         <span class="expand-icon small">▼</span>
                     </div>
 
-                    <!-- 根拠詳細（クリックで展開） -->
+                    <!-- 詳細（クリックで展開） -->
                     <div class="unit-details hidden">
+                        <!-- 本日データ -->
                         {% if rec.total_games > 0 %}
-                        <div class="compact-stats">
-                            <span>総G数: {{ '{:,}'.format(rec.total_games) }}</span>
-                            <span>ART: {{ rec.art_count }}回</span>
-                            {% if rec.art_prob > 0 %}<span>確率: 1/{{ rec.art_prob|int }}</span>{% endif %}
-                            {% if rec.bb_count is defined and rec.bb_count > 0 %}<span>BB: {{ rec.bb_count }}</span>{% endif %}
-                            {% if rec.rb_count is defined and rec.rb_count > 0 %}<span>RB: {{ rec.rb_count }}</span>{% endif %}
+                        <div class="compact-detail-section">
+                            <div class="detail-label">本日</div>
+                            <div class="compact-stats">
+                                <span>総G数: {{ '{:,}'.format(rec.total_games) }}</span>
+                                <span>ART: {{ rec.art_count }}回</span>
+                                {% if rec.art_prob > 0 %}<span>確率: 1/{{ rec.art_prob|int }}</span>{% endif %}
+                                {% if rec.bb_count is defined and rec.bb_count > 0 %}<span>BB: {{ rec.bb_count }}</span>{% endif %}
+                                {% if rec.rb_count is defined and rec.rb_count > 0 %}<span>RB: {{ rec.rb_count }}</span>{% endif %}
+                            </div>
+                            {% if rec.first_hit_time %}
+                            <div class="time-info small">{{ rec.first_hit_time }} 〜 {{ rec.last_hit_time or '-' }}</div>
+                            {% endif %}
                         </div>
-                        {% if rec.first_hit_time %}
-                        <div class="time-info small">初当たり {{ rec.first_hit_time }} → 最終 {{ rec.last_hit_time or '-' }}</div>
                         {% endif %}
-                        {% endif %}
+
+                        <!-- 過去データ -->
+                        <div class="compact-detail-section">
+                            <div class="detail-label">過去7日</div>
+                            <div class="stats-row">
+                                <span>昨日: <strong class="{% if rec.yesterday_diff > 0 %}plus{% elif rec.yesterday_diff < 0 %}minus{% endif %}">{{ '%+d'|format(rec.yesterday_diff) }}枚</strong></span>
+                                <span>平均: <strong>{{ rec.avg_art_7days|round(1) }}</strong>ART</span>
+                            </div>
+                        </div>
+
                         {% if rec.reasons %}
-                        <div class="reasons-section">
-                            {% for reason in rec.reasons[:3] %}
+                        <div class="reasons-section compact">
+                            {% for reason in rec.reasons[:2] %}
                             <div class="reason-item small">{{ reason }}</div>
                             {% endfor %}
                         </div>
                         {% endif %}
-                        <div class="stats-row">
-                            <span>昨日: {{ '%+d'|format(rec.yesterday_diff) }}枚</span>
-                            <span>7日平均: {{ rec.avg_art_7days|round(1) }}ART</span>
-                        </div>
                     </div>
                 </div>
                 {% endfor %}

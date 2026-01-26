@@ -742,3 +742,299 @@ footer {
     color: #888;
     margin-top: 5px;
 }
+
+/* ===== 空き状況表示 ===== */
+
+/* ヘッダーの空き状況サマリ */
+.availability-summary {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 8px;
+    font-size: 0.9em;
+}
+
+.avail-empty {
+    color: #2ed573;
+    font-weight: 600;
+}
+
+.avail-playing {
+    color: #ff6b6b;
+    font-weight: 600;
+}
+
+/* 空き状況バッジ */
+.avail-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-size: 0.85em;
+    font-weight: 700;
+}
+
+.avail-badge.empty {
+    background: #2ed573;
+    color: #000;
+}
+
+.avail-badge.playing {
+    background: #ff6b6b;
+    color: #fff;
+}
+
+/* コンパクト用バッジ */
+.avail-badge-sm {
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 0.75em;
+    font-weight: 700;
+}
+
+.avail-badge-sm.empty {
+    background: #2ed573;
+    color: #000;
+}
+
+.avail-badge-sm.playing {
+    background: #ff6b6b;
+    color: #fff;
+}
+
+/* カードの空き状況スタイル */
+.avail-card-empty {
+    background: rgba(46, 213, 115, 0.15);
+    border-left-color: #2ed573 !important;
+}
+
+.avail-card-playing {
+    background: rgba(255, 107, 107, 0.1);
+    opacity: 0.75;
+}
+
+/* ===== 本日の状況セクション ===== */
+
+.today-section {
+    margin: 10px 0;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.25);
+    border-radius: 8px;
+    border-left: 3px solid #70a1ff;
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+.section-icon {
+    font-size: 0.9em;
+}
+
+.section-label {
+    font-size: 0.85em;
+    color: #aaa;
+    font-weight: 600;
+}
+
+/* 本日の統計グリッド */
+.today-stats-grid {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.stat-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 6px 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+    min-width: 60px;
+}
+
+.stat-box .stat-label {
+    font-size: 0.7em;
+    color: #888;
+    margin-bottom: 2px;
+}
+
+.stat-box .stat-value {
+    font-size: 1.1em;
+    font-weight: 700;
+    color: #fff;
+}
+
+.stat-box.highlight {
+    background: rgba(255, 165, 2, 0.2);
+}
+
+.stat-box.highlight .stat-value {
+    color: #ffa502;
+}
+
+.stat-box.excellent {
+    background: rgba(46, 213, 115, 0.2);
+}
+
+.stat-box.excellent .stat-value {
+    color: #2ed573;
+}
+
+.stat-box.good {
+    background: rgba(112, 161, 255, 0.2);
+}
+
+.stat-box.good .stat-value {
+    color: #70a1ff;
+}
+
+.stat-box.bad {
+    background: rgba(255, 107, 107, 0.2);
+}
+
+.stat-box.bad .stat-value {
+    color: #ff6b6b;
+}
+
+/* 時間レンジ */
+.time-range {
+    font-size: 0.8em;
+    color: #70a1ff;
+    margin-top: 8px;
+}
+
+/* データなし（本日） */
+.no-data-today {
+    font-size: 0.9em;
+    color: #888;
+    padding: 8px 0;
+}
+
+.target-badge {
+    display: inline-block;
+    background: #2ed573;
+    color: #000;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    font-weight: 700;
+    margin-right: 6px;
+}
+
+/* ===== 過去7日間セクション ===== */
+
+.history-section {
+    margin: 10px 0;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    border-left: 3px solid #ffa502;
+}
+
+.base-rank {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.75em;
+    font-weight: 700;
+    color: #fff;
+    margin-left: auto;
+}
+
+.history-stats {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    font-size: 0.85em;
+}
+
+.hist-item {
+    color: #aaa;
+}
+
+.hist-item strong {
+    color: #fff;
+    font-weight: 700;
+}
+
+.hist-item.plus {
+    color: #2ed573;
+}
+
+.hist-item.plus strong {
+    color: #2ed573;
+}
+
+.hist-item.minus {
+    color: #ff6b6b;
+}
+
+.hist-item.minus strong {
+    color: #ff6b6b;
+}
+
+/* ===== コンパクトカード改善 ===== */
+
+.compact-today {
+    display: flex;
+    gap: 8px;
+    flex: 1;
+    justify-content: flex-end;
+    font-size: 0.8em;
+}
+
+.compact-today.no-data {
+    color: #666;
+}
+
+/* 確率の色分け（コンパクト用） */
+.prob-info.excellent {
+    color: #2ed573;
+}
+
+.prob-info.good {
+    color: #70a1ff;
+}
+
+.prob-info.bad {
+    color: #ff6b6b;
+}
+
+/* 詳細セクション（コンパクト） */
+.compact-detail-section {
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #333;
+}
+
+.compact-detail-section:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.detail-label {
+    font-size: 0.75em;
+    color: #ffa502;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+/* 理由セクション（コンパクト） */
+.reasons-section.compact {
+    margin-top: 8px;
+}
+
+/* プラス/マイナス色 */
+strong.plus {
+    color: #2ed573;
+}
+
+strong.minus {
+    color: #ff6b6b;
+}
