@@ -54,6 +54,7 @@ Disallow: /
 def deploy():
     """git pull を実行してアプリを更新"""
     import subprocess
+    import os
 
     secret = request.form.get('secret') or request.args.get('secret')
     if secret != DEPLOY_SECRET:
@@ -68,11 +69,25 @@ def deploy():
             text=True,
             timeout=30
         )
+
+        # PythonAnywhere: WSGIファイルをtouchしてリロード
+        wsgi_paths = [
+            '/var/www/autogmail_pythonanywhere_com_wsgi.py',
+            '/home/autogmail/autogmail.pythonanywhere.com/wsgi.py',
+        ]
+        touched = False
+        for wsgi_path in wsgi_paths:
+            if os.path.exists(wsgi_path):
+                os.utime(wsgi_path, None)
+                touched = True
+                break
+
         return jsonify({
             'status': 'success',
             'output': result.stdout,
             'error': result.stderr,
-            'returncode': result.returncode
+            'returncode': result.returncode,
+            'wsgi_touched': touched,
         })
     except Exception as e:
         return jsonify({'status': 'error', 'message': str(e)}), 500
