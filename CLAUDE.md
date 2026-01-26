@@ -338,3 +338,65 @@ python scripts/daily_collect.py --merge
 - 台データオンラインはJS動的でPlaywright必要
 - papimo.jpは日付セレクターをPlaywrightで操作
 - Playwright依存: libnspr4, libnss3, etc.
+
+---
+
+## 空き状況チェック機能（2026/1/26開発中）
+
+### 概要
+営業中にリアルタイムで空席を確認する機能。
+
+### データソース別の方式
+| データソース | 方式 | ファイル |
+|-------------|------|----------|
+| papimo.jp (アイランド秋葉原) | GAS経由 | `scrapers/availability_checker.py` |
+| daidata (エスパス系) | GitHub JSON経由 | `scripts/fetch_daidata_availability.py` |
+
+### 台データオンライン空き状況判定ロジック
+**画像解析は不要！** HTMLのtdタグで判定可能:
+- **遊技中**: `<td><em class="slot icon-user"></em></td>`
+- **空き**: `<td></td>` (空)
+
+テストHTML: `data/raw/test_both.html`
+
+### 対象店舗・台番号（daidata）
+| 店舗 | hall_id | 台番号 |
+|------|---------|--------|
+| 渋谷エスパス新館 | 100860 | 3011, 3012, 3013 |
+| 新宿エスパス歌舞伎町 | 100949 | 682, 683, 684, 685 |
+| 秋葉原エスパス駅前 | 100928 | 2158, 2159, 2160, 2161 |
+| 西武新宿駅前エスパス | 100950 | 3185, 3186, 3187, 4109, 4118, 4125, 4168 |
+
+### WSLクラッシュ対策（2026/1/26実施）
+
+#### 問題
+`Wsl/Service/E_UNEXPECTED` エラーで頻繁にクラッシュ
+
+#### 対策1: WSL設定ファイル作成
+場所: `/mnt/c/Users/rs/.wslconfig`
+```ini
+[wsl2]
+memory=6GB
+processors=2
+swap=4GB
+localhostForwarding=true
+
+[experimental]
+autoMemoryReclaim=gradual
+sparseVhd=true
+```
+
+#### 対策2: Playwrightの軽量化
+`scripts/fetch_daidata_availability.py` に以下を追加:
+- `--disable-gpu`, `--disable-dev-shm-usage` 等のブラウザオプション
+- 画像・フォント・広告のリソースブロック
+- タイムアウト短縮（30秒→20秒、待機3秒→2秒）
+
+#### WSL再起動コマンド
+```powershell
+wsl --shutdown
+```
+
+### 未完了タスク
+- [ ] GitHub Actions定期実行設定
+- [ ] Webアプリへの空き状況表示統合

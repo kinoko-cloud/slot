@@ -136,7 +136,14 @@ def ranking(machine_key: str):
     all_recommendations = []
 
     for store_key, store in stores.items():
-        recommendations = recommend_units(store_key)
+        # 空き状況を取得
+        availability = {}
+        try:
+            availability = get_availability(store_key)
+        except Exception as e:
+            print(f"Availability check failed for {store_key}: {e}")
+
+        recommendations = recommend_units(store_key, availability=availability)
         for rec in recommendations:
             rec['store_name'] = store['name']
             rec['store_key'] = store_key
