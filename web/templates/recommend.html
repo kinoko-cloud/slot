@@ -49,7 +49,7 @@
         <div id="loading-overlay" class="loading-overlay hidden">
             <div class="loading-content">
                 <div class="loading-spinner"></div>
-                <div class="loading-text">データ取得中...</div>
+                <div class="loading-text">データ取得中</div>
                 <div class="loading-progress">
                     <div class="progress-bar">
                         <div class="progress-fill" id="progress-fill"></div>
@@ -373,6 +373,14 @@
         setTimeout(function() {
             location.reload();
         }, 5 * 60 * 1000);
+
+        // ページ読み込み時に自動でリアルタイムデータ取得
+        {% if not cache_info %}
+        // リアルタイムデータがない場合、自動取得開始
+        document.addEventListener('DOMContentLoaded', function() {
+            startScraping();
+        });
+        {% endif %}
     </script>
 </body>
 </html>

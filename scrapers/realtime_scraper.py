@@ -2,12 +2,28 @@
 """
 リアルタイムスクレイパー
 当日データのみを高速で取得
+
+daidata: requestsベース（PythonAnywhereでも動作）
+papimo: Playwrightベース（ローカル専用）
 """
 
-from playwright.sync_api import sync_playwright
 import json
+import re
+import requests
 from datetime import datetime
 from pathlib import Path
+
+try:
+    from bs4 import BeautifulSoup
+    HAS_BS4 = True
+except ImportError:
+    HAS_BS4 = False
+
+try:
+    from playwright.sync_api import sync_playwright
+    HAS_PLAYWRIGHT = True
+except ImportError:
+    HAS_PLAYWRIGHT = False
 
 # 店舗設定（キーはconfig/rankings.pyと統一）
 STORES = {
@@ -116,59 +132,92 @@ def scrape_papimo_current(page, hall_id: str, units: list) -> list:
     return results
 
 
-def scrape_daidata_current(page, hall_id: str, units: list) -> list:
-    """台データオンラインから当日データを取得"""
+def create_daidata_session(hall_id: str) -> requests.Session:
+    """daidata用セッションを作成し、規約同意を行う"""
+    session = requests.Session()
+    session.headers.update({
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+    })
+
+    # 規約同意ページにアクセス
+    accept_url = f"https://daidata.goraggio.com/{hall_id}/accept"
+    resp = session.get(accept_url, timeout=15)
+
+    # CSRFトークンを取得してPOST
+    if HAS_BS4:
+        soup = BeautifulSoup(resp.text, 'html.parser')
+        token_input = soup.find('input', {'name': '_token'})
+        if token_input:
+            token = token_input.get('value')
+            session.post(accept_url, data={'_token': token}, timeout=15)
+    else:
+        # bs4がない場合は正規表現で
+        match = re.search(r'name="_token"\s+value="([^"]+)"', resp.text)
+        if match:
+            session.post(accept_url, data={'_token': match.group(1)}, timeout=15)
+
+    return session
+
+
+def scrape_daidata_current(session_or_page, hall_id: str, units: list) -> list:
+    """台データオンラインから当日データを取得（requestsベース）"""
     results = []
 
-    # 規約同意
-    page.goto(f"https://daidata.goraggio.com/{hall_id}/all_list?ps=S", wait_until='load', timeout=30000)
-    page.wait_for_timeout(2000)
-    page.evaluate('() => { const form = document.querySelector("form"); if (form) form.submit(); }')
-    page.wait_for_timeout(2000)
+    # セッション作成（規約同意）
+    if isinstance(session_or_page, requests.Session):
+        session = session_or_page
+    else:
+        session = create_daidata_session(hall_id)
 
     for unit_id in units:
         url = f"https://daidata.goraggio.com/{hall_id}/detail?unit={unit_id}"
 
         try:
-            page.goto(url, wait_until='load', timeout=20000)
-            page.wait_for_timeout(1500)
+            resp = session.get(url, timeout=15)
+            text = resp.text
 
-            # 広告除去
-            page.evaluate('''() => {
-                document.querySelectorAll('#gn_interstitial_outer_area, .yads_ad_item, [id*="google_ads"]').forEach(el => el.remove());
-            }''')
-
-            text = page.inner_text('body')
-
-            import re
             data = {'unit_id': unit_id}
 
-            # サマリー
-            summary = re.search(r'BB\s+RB\s+ART\s+スタート回数\s*(\d+)\s+(\d+)\s+(\d+)\s+(\d+)', text)
-            if summary:
-                data['bb'] = int(summary.group(1))
-                data['rb'] = int(summary.group(2))
-                data['art'] = int(summary.group(3))
-                data['final_start'] = int(summary.group(4))
+            # サマリーデータを取得（HTMLテーブルから）
+            summary_match = re.search(
+                r'BB\s+RB\s+ART\s+スタート回数\s*</th>\s*</tr>\s*<tr[^>]*>\s*'
+                r'<td[^>]*>(\d+)</td>\s*<td[^>]*>(\d+)</td>\s*<td[^>]*>(\d+)</td>\s*<td[^>]*>(\d+)</td>',
+                text, re.DOTALL
+            )
 
-            total = re.search(r'累計スタート\s*(\d+)', text)
-            if total:
-                data['total_start'] = int(total.group(1))
+            if summary_match:
+                data['bb'] = int(summary_match.group(1))
+                data['rb'] = int(summary_match.group(2))
+                data['art'] = int(summary_match.group(3))
+                data['final_start'] = int(summary_match.group(4))
+            else:
+                # フォールバック: テキストからパース
+                if HAS_BS4:
+                    text_content = BeautifulSoup(text, 'html.parser').get_text()
+                else:
+                    text_content = re.sub(r'<[^>]+>', ' ', text)
+                alt_match = re.search(r'BB\s+RB\s+ART\s+スタート回数\s*(\d+)\s+(\d+)\s+(\d+)\s+(\d+)', text_content)
+                if alt_match:
+                    data['bb'] = int(alt_match.group(1))
+                    data['rb'] = int(alt_match.group(2))
+                    data['art'] = int(alt_match.group(3))
+                    data['final_start'] = int(alt_match.group(4))
 
-            # 履歴
-            history = []
-            hist_section = re.search(r'本日の大当たり履歴詳細.*?大当たり\s+スタート\s+出玉\s+種別\s+時間(.+?)(?:過去|ページ|$)', text, re.DOTALL)
-            if hist_section:
-                matches = re.findall(r'(\d+)\s+(\d+)\s+(\d+)\s+(ART|BB|RB|AT)\s+(\d{1,2}:\d{2})', hist_section.group(1))
-                for m in matches:
-                    history.append({
-                        'hit_num': int(m[0]),
-                        'start': int(m[1]),
-                        'medals': int(m[2]),
-                        'type': m[3],
-                        'time': m[4],
-                    })
-            data['history'] = history
+            # 累計スタート
+            total_match = re.search(r'累計スタート\s*</th>\s*<td[^>]*>(\d+)</td>', text)
+            if total_match:
+                data['total_start'] = int(total_match.group(1))
+            else:
+                if HAS_BS4:
+                    text_content = BeautifulSoup(text, 'html.parser').get_text()
+                else:
+                    text_content = re.sub(r'<[^>]+>', ' ', text)
+                alt_match = re.search(r'累計スタート\s*(\d+)', text_content)
+                if alt_match:
+                    data['total_start'] = int(alt_match.group(1))
+
+            # 履歴は省略（重要なのはART回数とスタート数）
+            data['history'] = []
 
             results.append(data)
             print(f"  台{unit_id}: ART={data.get('art', 0)}, G数={data.get('total_start', 0)}")
@@ -187,21 +236,41 @@ def scrape_realtime(store_key: str = None) -> dict:
 
     stores_to_scrape = [store_key] if store_key else STORES.keys()
 
-    with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
-        page = browser.new_page()
+    # daidata用セッション（複数店舗で使いまわし可能）
+    daidata_sessions = {}
 
-        for key in stores_to_scrape:
-            if key not in STORES:
-                continue
+    # Playwright用（papimoのみ）
+    playwright_ctx = None
+    browser = None
+    page = None
 
-            store = STORES[key]
-            print(f"\n【{store['name']}】")
+    for key in stores_to_scrape:
+        if key not in STORES:
+            continue
 
-            if store['source'] == 'papimo':
-                data = scrape_papimo_current(page, store['hall_id'], store['units'])
-            elif store['source'] == 'daidata':
-                data = scrape_daidata_current(page, store['hall_id'], store['units'])
+        store = STORES[key]
+        print(f"\n【{store['name']}】")
+
+        try:
+            if store['source'] == 'daidata':
+                # requestsベースで取得（PythonAnywhereでも動作）
+                hall_id = store['hall_id']
+                if hall_id not in daidata_sessions:
+                    daidata_sessions[hall_id] = create_daidata_session(hall_id)
+                session = daidata_sessions[hall_id]
+                data = scrape_daidata_current(session, hall_id, store['units'])
+
+            elif store['source'] == 'papimo':
+                # Playwrightベース（ローカル専用）
+                if not HAS_PLAYWRIGHT:
+                    print("  Playwrightがインストールされていません")
+                    data = [{'unit_id': u, 'error': 'Playwright not available'} for u in store['units']]
+                else:
+                    if playwright_ctx is None:
+                        playwright_ctx = sync_playwright().start()
+                        browser = playwright_ctx.chromium.launch(headless=True)
+                        page = browser.new_page()
+                    data = scrape_papimo_current(page, store['hall_id'], store['units'])
             else:
                 continue
 
@@ -210,8 +279,19 @@ def scrape_realtime(store_key: str = None) -> dict:
                 'fetched_at': now.isoformat(),
                 'units': data,
             }
+        except Exception as e:
+            print(f"  エラー: {e}")
+            results[key] = {
+                'store_name': store['name'],
+                'fetched_at': now.isoformat(),
+                'units': [{'unit_id': u, 'error': str(e)} for u in store['units']],
+            }
 
+    # Playwright後処理
+    if browser:
         browser.close()
+    if playwright_ctx:
+        playwright_ctx.stop()
 
     return results
 
