@@ -62,6 +62,26 @@ header h1 {
     background: #444;
 }
 
+/* モードバッジ（営業中/閉店後） */
+.mode-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.75em;
+    font-weight: 600;
+    margin-top: 5px;
+}
+
+.mode-badge.result {
+    background: #4a3f70;
+    color: #c9b8ff;
+}
+
+.mode-badge.realtime {
+    background: #1e5128;
+    color: #a8e6a3;
+}
+
 /* 機種リスト */
 .machine-list h2,
 .store-list h2 {

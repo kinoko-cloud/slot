@@ -11,8 +11,13 @@
 <body>
     <div class="container">
         <header>
+            {% if display_mode == 'result' %}
+            <h1>{{ result_date_str }}の結果</h1>
+            <div class="mode-badge result">閉店後モード</div>
+            {% else %}
             <h1>本日のおすすめ台</h1>
             <div class="today-info">{{ today_date }}({{ today_weekday }})</div>
+            {% endif %}
         </header>
 
         <main>
@@ -29,11 +34,16 @@
             </section>
             {% endif %}
 
-            <!-- いま狙い目 TOP5 -->
+            <!-- 狙い目 / 結果 TOP5 -->
             {% if top3 %}
             <section class="recommendations top">
+                {% if display_mode == 'result' %}
+                <h2>本日の好調台 TOP5</h2>
+                <div class="top5-note">※{{ result_date_str }}のデータ</div>
+                {% else %}
                 <h2>いま狙い目 TOP5</h2>
                 <div class="top5-note">※当日データから評価、空き台優先</div>
+                {% endif %}
                 {% for rec in top3 %}
                 <a href="{{ url_for('recommend', store_key=rec.store_key) }}" class="unit-card rank-{{ rec.final_rank|lower }}" style="text-decoration: none;">
                     <div class="unit-header">
@@ -46,10 +56,12 @@
                     </div>
                     <div class="unit-store">
                         {{ rec.store_name }} / <span class="unit-id-sub">{{ rec.unit_id }}番</span>
-                        {% if rec.availability == '空き' %}
-                        <span class="top3-avail empty">空き</span>
-                        {% elif rec.availability == '遊技中' %}
-                        <span class="top3-avail playing">稼働中</span>
+                        {% if display_mode != 'result' %}
+                            {% if rec.availability == '空き' %}
+                            <span class="top3-avail empty">空き</span>
+                            {% elif rec.availability == '遊技中' %}
+                            <span class="top3-avail playing">稼働中</span>
+                            {% endif %}
                         {% endif %}
                     </div>
                     <!-- データサマリ: ART数メイン、最大枚数、回転数はサブ -->

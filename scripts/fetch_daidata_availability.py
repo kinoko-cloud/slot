@@ -165,7 +165,12 @@ def fetch_unit_detail(page, hall_id: str, unit_id: str) -> dict:
         if diff_match:
             data['diff_medals'] = int(diff_match.group(1))
 
-        print(f"    {unit_id}: ART={data.get('art', '?')}, G数={data.get('total_start', '?')}")
+        # 最大メダル（最大持ちコイン/最大持ち玉）
+        max_match = re.search(r'(?:最大メダル|最大持ちコイン|最大枚数|最大持ち玉)\s*\n?\s*([\d,]+)', text)
+        if max_match:
+            data['max_medals'] = int(max_match.group(1).replace(',', ''))
+
+        print(f"    {unit_id}: ART={data.get('art', '?')}, G数={data.get('total_start', '?')}, 最大={data.get('max_medals', '?')}")
         return data
 
     except Exception as e:
