@@ -1059,3 +1059,401 @@ strong.minus {
 .today-stats-grid.compact .stat-box .stat-value {
     font-size: 1em;
 }
+
+/* ===== 新UI: 推奨ページ改善 ===== */
+
+/* ランク説明 */
+.rank-legend {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px 15px;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    margin-bottom: 15px;
+    font-size: 0.75em;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: #aaa;
+}
+
+.rank-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+/* メインヘッダー */
+.unit-main-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.unit-id-large {
+    font-size: 1.5em;
+    font-weight: 800;
+    color: #fff;
+    min-width: 70px;
+}
+
+.avail-badge-lg {
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 0.9em;
+    font-weight: 700;
+}
+
+.avail-badge-lg.empty {
+    background: #2ed573;
+    color: #000;
+}
+
+.avail-badge-lg.playing {
+    background: #ff6b6b;
+    color: #fff;
+}
+
+.rank-badge-lg {
+    padding: 4px 14px;
+    border-radius: 6px;
+    font-size: 1.1em;
+    font-weight: 800;
+    color: #fff;
+    margin-left: auto;
+}
+
+/* 本日データ横並び */
+.today-data-row {
+    display: flex;
+    gap: 8px;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    margin-bottom: 8px;
+}
+
+.data-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 6px 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+    min-width: 55px;
+}
+
+.data-cell .data-label {
+    font-size: 0.65em;
+    color: #888;
+    margin-bottom: 2px;
+}
+
+.data-cell .data-value {
+    font-size: 1em;
+    font-weight: 700;
+    color: #fff;
+}
+
+.data-cell.highlight {
+    background: rgba(255, 165, 2, 0.2);
+}
+
+.data-cell.highlight .data-value {
+    color: #ffa502;
+}
+
+.data-cell.excellent {
+    background: rgba(46, 213, 115, 0.2);
+}
+
+.data-cell.excellent .data-value {
+    color: #2ed573;
+}
+
+.data-cell.good {
+    background: rgba(112, 161, 255, 0.2);
+}
+
+.data-cell.good .data-value {
+    color: #70a1ff;
+}
+
+.data-cell.bad {
+    background: rgba(255, 107, 107, 0.2);
+}
+
+.data-cell.bad .data-value {
+    color: #ff6b6b;
+}
+
+/* 差枚見込み */
+.data-cell.profit-high {
+    background: rgba(46, 213, 115, 0.3);
+}
+
+.data-cell.profit-high .data-value {
+    color: #2ed573;
+    font-size: 1.1em;
+}
+
+.data-cell.profit-mid {
+    background: rgba(112, 161, 255, 0.2);
+}
+
+.data-cell.profit-mid .data-value {
+    color: #70a1ff;
+}
+
+.data-cell.profit-low {
+    background: rgba(255, 165, 2, 0.15);
+}
+
+.data-cell.profit-low .data-value {
+    color: #ffa502;
+}
+
+.data-cell.profit-minus {
+    background: rgba(255, 107, 107, 0.15);
+}
+
+.data-cell.profit-minus .data-value {
+    color: #ff6b6b;
+}
+
+.no-data-inline {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #888;
+    font-size: 0.9em;
+}
+
+/* 設定推定行 */
+.estimation-row {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 8px;
+    font-size: 0.85em;
+}
+
+.setting-estimate {
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+.setting-estimate.high {
+    background: rgba(46, 213, 115, 0.2);
+    color: #2ed573;
+}
+
+.setting-estimate.mid {
+    background: rgba(255, 165, 2, 0.2);
+    color: #ffa502;
+}
+
+.setting-estimate.low {
+    background: rgba(116, 125, 140, 0.2);
+    color: #aaa;
+}
+
+.past-eval {
+    color: #888;
+}
+
+.past-eval strong {
+    font-size: 1.1em;
+}
+
+/* 推奨理由 */
+.reason-main {
+    padding: 8px;
+    background: rgba(255, 165, 2, 0.1);
+    border-left: 3px solid #ffa502;
+    border-radius: 0 6px 6px 0;
+    margin-bottom: 5px;
+}
+
+.reason-line {
+    font-size: 0.85em;
+    color: #ffa502;
+    padding: 2px 0;
+}
+
+/* 詳細グリッド */
+.detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.detail-section {
+    padding: 8px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+}
+
+.detail-title {
+    font-size: 0.75em;
+    color: #ffa502;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.detail-item {
+    font-size: 0.8em;
+    color: #ccc;
+    padding: 2px 0;
+}
+
+.detail-item.plus {
+    color: #2ed573;
+}
+
+.detail-item.minus {
+    color: #ff6b6b;
+}
+
+.all-reasons {
+    padding: 8px;
+    background: rgba(255, 165, 2, 0.05);
+    border-radius: 6px;
+}
+
+/* コンパクトカード */
+.unit-card-compact {
+    background: #252541;
+    border-radius: 6px;
+    padding: 10px;
+    margin-bottom: 6px;
+}
+
+.compact-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.unit-id-sm {
+    font-size: 1.1em;
+    font-weight: 700;
+    min-width: 50px;
+    color: #fff;
+}
+
+.avail-sm {
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 0.7em;
+    font-weight: 700;
+}
+
+.avail-sm.empty {
+    background: #2ed573;
+    color: #000;
+}
+
+.avail-sm.playing {
+    background: #ff6b6b;
+    color: #fff;
+}
+
+.rank-sm {
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    font-weight: 700;
+    color: #fff;
+}
+
+.compact-data {
+    font-size: 0.8em;
+    color: #aaa;
+}
+
+.compact-data.no-data {
+    color: #666;
+}
+
+.compact-prob {
+    font-size: 0.75em;
+    font-weight: 600;
+}
+
+.compact-prob.excellent {
+    color: #2ed573;
+}
+
+.compact-prob.good {
+    color: #70a1ff;
+}
+
+.compact-prob.bad {
+    color: #ff6b6b;
+}
+
+.compact-profit {
+    font-size: 0.8em;
+    font-weight: 600;
+    margin-left: auto;
+}
+
+.compact-profit.profit-high {
+    color: #2ed573;
+}
+
+.compact-profit.profit-mid {
+    color: #70a1ff;
+}
+
+.compact-profit.profit-minus {
+    color: #ff6b6b;
+}
+
+.compact-details {
+    font-size: 0.8em;
+    color: #aaa;
+    padding: 8px;
+    border-top: 1px solid #333;
+    margin-top: 8px;
+}
+
+.compact-details div {
+    padding: 2px 0;
+}
+
+.compact-reason {
+    color: #ffa502;
+    margin-top: 4px;
+}
+
+/* フィルタ */
+.availability-summary span {
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+.availability-summary span:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.availability-summary span.active {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.avail-all {
+    color: #888;
+    font-size: 0.85em;
+}
