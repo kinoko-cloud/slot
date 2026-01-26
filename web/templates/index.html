@@ -12,7 +12,7 @@
     <div class="container">
         <header>
             <h1>本日のおすすめ台</h1>
-            <div class="today-info">{{ today_weekday }}曜日</div>
+            <div class="today-info">{{ today_date }}({{ today_weekday }})</div>
         </header>
 
         <main>
@@ -29,15 +29,20 @@
             </section>
             {% endif %}
 
-            <!-- いま狙い目 TOP3 -->
+            <!-- いま狙い目 TOP5 -->
             {% if top3 %}
             <section class="recommendations top">
-                <h2>いま狙い目 TOP3</h2>
+                <h2>いま狙い目 TOP5</h2>
                 {% for rec in top3 %}
                 <a href="{{ url_for('recommend', store_key=rec.store_key) }}" class="unit-card rank-{{ rec.final_rank|lower }}" style="text-decoration: none;">
                     <div class="unit-header">
                         <span class="ranking-num">#{{ loop.index }}</span>
                         <span class="unit-id">{{ rec.unit_id }}番台</span>
+                        {% if rec.availability == '空き' %}
+                        <span class="top3-avail empty">空き</span>
+                        {% elif rec.availability == '遊技中' %}
+                        <span class="top3-avail playing">稼働中</span>
+                        {% endif %}
                         <span class="rank-badge" style="background-color: {{ rank_color(rec.final_rank) }}">
                             {{ rec.final_rank }}
                         </span>
@@ -49,13 +54,21 @@
                     <!-- 本日データサマリ -->
                     {% if rec.total_games > 0 %}
                     <div class="top3-stats">
-                        <span>{{ '{:,}'.format(rec.total_games) }}G</span>
-                        <span>ART{{ rec.art_count }}回</span>
+                        <span><span class="num">{{ '{:,}'.format(rec.total_games) }}</span><span class="label">G</span></span>
+                        <span><span class="num">{{ rec.art_count }}</span><span class="label">ART</span></span>
                         {% if rec.art_prob > 0 %}
                         <span class="{% if rec.art_prob <= 100 %}excellent{% elif rec.art_prob <= 130 %}good{% elif rec.art_prob >= 200 %}bad{% endif %}">1/{{ rec.art_prob|int }}</span>
                         {% endif %}
                         {% if rec.closing_estimate %}
-                        <span class="profit {% if rec.closing_estimate >= 3000 %}high{% elif rec.closing_estimate >= 1000 %}mid{% else %}low{% endif %}">見込{% if rec.closing_estimate >= 0 %}+{% endif %}{{ '{:,}'.format(rec.closing_estimate) }}枚</span>
+                        <span class="profit {% if rec.closing_estimate >= 3000 %}high{% elif rec.closing_estimate >= 1000 %}mid{% else %}low{% endif %}">閉店見込{% if rec.closing_estimate >= 0 %}+{% endif %}{{ '{:,}'.format(rec.closing_estimate) }}枚</span>
+                        {% endif %}
+                    </div>
+                    {% else %}
+                    <!-- 本日データなしでも過去データ表示 -->
+                    <div class="top3-stats">
+                        <span class="past-data">7日平均<span class="num">{{ rec.avg_art_7days|round(0)|int }}</span>ART</span>
+                        {% if rec.yesterday_diff != 0 %}
+                        <span class="{% if rec.yesterday_diff > 0 %}good{% else %}bad{% endif %}">昨日{{ signed_number(rec.yesterday_diff) }}枚</span>
                         {% endif %}
                     </div>
                     {% endif %}
@@ -70,21 +83,30 @@
             </section>
             {% endif %}
 
-            <!-- 前日トップ3 -->
-            {% if yesterday_top3 %}
+            <!-- 前日トップ10 -->
+            {% if yesterday_top10 %}
             <section class="yesterday-section">
-                <h2>前日の好調台</h2>
+                <h2>前日の好調台 TOP10</h2>
                 <div class="yesterday-note">昨日プラスだった台（据え置き狙い）</div>
-                {% for rec in yesterday_top3 %}
+                {% for rec in yesterday_top10 %}
                 <a href="{{ url_for('recommend', store_key=rec.store_key) }}" class="yesterday-card">
                     <div class="yesterday-header">
+                        <span class="ranking-num-sm">#{{ loop.index }}</span>
                         <span class="machine-icon-sm">{{ rec.machine_icon }}</span>
                         <span class="unit-id-sm">{{ rec.unit_id }}</span>
                         <span class="store-name-sm">{{ rec.store_name }}</span>
+                        {% if rec.availability == '空き' %}
+                        <span class="avail-sm empty">空</span>
+                        {% elif rec.availability == '遊技中' %}
+                        <span class="avail-sm playing">稼</span>
+                        {% endif %}
                     </div>
                     <div class="yesterday-stats">
-                        <span class="yesterday-diff plus">昨日 {{ signed_number(rec.yesterday_diff) }}枚</span>
-                        <span class="avg-art">平均{{ rec.avg_art_7days|round(1) }}ART</span>
+                        <span class="yesterday-diff plus">昨日<span class="num">{{ signed_number(rec.yesterday_diff) }}</span>枚</span>
+                        {% if rec.yesterday_art > 0 %}
+                        <span class="avg-art">ART{{ rec.yesterday_art }}回</span>
+                        {% endif %}
+                        <span class="machine-name-sm">{{ rec.machine_name }}</span>
                     </div>
                 </a>
                 {% endfor %}
@@ -95,15 +117,18 @@
             <section class="store-schedule">
                 <h2>店舗別おすすめ曜日</h2>
                 {% for store_key, info in store_recommendations.items() %}
-                <div class="schedule-card">
-                    <span class="schedule-store">{{ info.name }}</span>
+                <a href="{{ url_for('recommend', store_key=store_key) }}" class="schedule-card" style="text-decoration: none;">
+                    <span class="schedule-store">{{ info.short_name }}</span>
+                    <span class="star-rating">
+                        {% for i in range(5) %}{% if i < info.rating %}★{% else %}<span class="empty">☆</span>{% endif %}{% endfor %}
+                    </span>
                     <span class="schedule-days">
                         {% for day in info.best_days %}
                         <span class="day-badge {% if day == today_weekday %}today{% endif %}">{{ day }}</span>
                         {% endfor %}
                     </span>
                     <span class="schedule-note">{{ info.note }}</span>
-                </div>
+                </a>
                 {% endfor %}
             </section>
 

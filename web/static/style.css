@@ -858,14 +858,14 @@ footer {
 }
 
 .stat-box .stat-label {
-    font-size: 0.7em;
-    color: #888;
-    margin-bottom: 2px;
+    font-size: 0.6em;
+    color: #666;
+    margin-bottom: 1px;
 }
 
 .stat-box .stat-value {
-    font-size: 1.1em;
-    font-weight: 700;
+    font-size: 1.3em;
+    font-weight: 800;
     color: #fff;
 }
 
@@ -1150,14 +1150,15 @@ strong.minus {
 }
 
 .data-cell .data-label {
-    font-size: 0.65em;
-    color: #888;
-    margin-bottom: 2px;
+    font-size: 0.55em;
+    color: #666;
+    margin-bottom: 1px;
+    text-transform: uppercase;
 }
 
 .data-cell .data-value {
-    font-size: 1em;
-    font-weight: 700;
+    font-size: 1.2em;
+    font-weight: 800;
     color: #fff;
 }
 
@@ -1377,8 +1378,19 @@ strong.minus {
 }
 
 .compact-data {
-    font-size: 0.8em;
+    font-size: 0.85em;
     color: #aaa;
+}
+
+.compact-data .num {
+    font-size: 1.1em;
+    font-weight: 700;
+    color: #fff;
+}
+
+.compact-data .lbl {
+    font-size: 0.7em;
+    color: #666;
 }
 
 .compact-data.no-data {
@@ -1500,11 +1512,23 @@ strong.minus {
 
 .top3-stats {
     display: flex;
-    gap: 12px;
-    font-size: 0.8em;
+    gap: 10px;
+    font-size: 0.85em;
     color: #aaa;
-    margin-top: 5px;
+    margin-top: 8px;
     flex-wrap: wrap;
+    align-items: baseline;
+}
+
+.top3-stats .num {
+    font-size: 1.3em;
+    font-weight: 800;
+    color: #fff;
+}
+
+.top3-stats .label {
+    font-size: 0.7em;
+    color: #666;
 }
 
 .top3-stats .excellent {
@@ -1666,8 +1690,50 @@ strong.minus {
 /* ===== トップページ: 曜日表示 ===== */
 
 .today-info {
-    font-size: 1.2em;
+    font-size: 1.1em;
     color: #ffa502;
     font-weight: 600;
     margin-top: 5px;
+}
+
+/* ===== 星評価 ===== */
+.star-rating {
+    display: inline-block;
+    color: #ffd700;
+    letter-spacing: 1px;
+    font-size: 0.9em;
+}
+
+.star-rating .empty {
+    color: #444;
+}
+
+/* ===== 店舗リンク ===== */
+.store-link {
+    color: #70a1ff;
+    text-decoration: none;
+}
+
+.store-link:hover {
+    text-decoration: underline;
+}
+
+/* ===== 空き状況バッジ（トップ用） ===== */
+.top3-avail {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.75em;
+    font-weight: 700;
+    margin-left: 5px;
+}
+
+.top3-avail.empty {
+    background: #2ed573;
+    color: #000;
+}
+
+.top3-avail.playing {
+    background: #ff6b6b;
+    color: #fff;
 }

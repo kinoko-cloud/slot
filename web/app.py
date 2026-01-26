@@ -80,33 +80,55 @@ def deploy():
 
 @app.route('/')
 def index():
-    """メインページ - 機種選択 + トップ3 + 店舗おすすめ曜日 + 前日トップ3"""
+    """メインページ - 機種選択 + トップ3 + 店舗おすすめ曜日 + 前日トップ10"""
     machines = []
     top3_all = []
-    yesterday_top3 = []
+    yesterday_top10 = []
 
-    # 店舗別おすすめ曜日（過去データからの傾向）
+    # 店舗別おすすめ曜日（過去データからの傾向）+ 星評価
     store_recommendations = {
         'island_akihabara_sbj': {
-            'name': 'アイランド秋葉原店',
+            'name': 'アイランド秋葉原',
+            'short_name': 'アイランド秋葉原',
             'best_days': ['土', '日'],
             'note': '週末に高設定投入傾向',
+            'rating': 4,  # 5段階
         },
         'shibuya_espass_sbj': {
             'name': 'エスパス日拓渋谷新館',
+            'short_name': 'エスパス渋谷新館',
             'best_days': ['金', '土'],
             'note': '金曜夜から狙い目',
+            'rating': 3,
         },
         'shinjuku_espass_sbj': {
             'name': 'エスパス日拓新宿歌舞伎町店',
+            'short_name': 'エスパス歌舞伎町',
             'best_days': ['土'],
             'note': '土曜日がアツい',
+            'rating': 3,
+        },
+        'akihabara_espass_sbj': {
+            'name': 'エスパス日拓秋葉原駅前店',
+            'short_name': 'エスパス秋葉原',
+            'best_days': ['土', '日'],
+            'note': '週末狙い目',
+            'rating': 3,
+        },
+        'seibu_shinjuku_espass_sbj': {
+            'name': 'エスパス日拓西武新宿駅前店',
+            'short_name': 'エスパス西武新宿',
+            'best_days': ['金', '土'],
+            'note': '週末前後が狙い目',
+            'rating': 2,
         },
     }
 
-    # 今日の曜日
+    # 今日の日付と曜日
+    now = datetime.now(JST)
     weekday_names = ['月', '火', '水', '木', '金', '土', '日']
-    today_weekday = weekday_names[datetime.now(JST).weekday()]
+    today_weekday = weekday_names[now.weekday()]
+    today_date = now.strftime('%Y/%m/%d')
 
     for key, machine in MACHINES.items():
         stores = get_stores_by_machine(key)
@@ -123,48 +145,71 @@ def index():
         # 各機種のトップ台を集める
         for store_key, store in stores.items():
             try:
-                recs = recommend_units(store_key)
-                for rec in recs[:2]:  # 各店舗上位2台
+                # 空き状況も取得
+                availability = {}
+                try:
+                    availability = get_availability(store_key)
+                except:
+                    pass
+
+                recs = recommend_units(store_key, availability=availability)
+                for rec in recs[:3]:  # 各店舗上位3台
+                    rec['store_name'] = store.get('short_name', store['name'])
+                    rec['store_key'] = store_key
+                    rec['machine_key'] = key
+                    rec['machine_icon'] = machine['icon']
+                    rec['machine_name'] = machine.get('display_name', machine['short_name'])
+                    # 空き状況
+                    rec['availability'] = availability.get(rec['unit_id'], '')
+
+                    # S/A評価かつ空き台を優先
                     if not rec['is_running'] and rec['final_rank'] in ('S', 'A'):
-                        rec['store_name'] = store['name']
-                        rec['store_key'] = store_key
-                        rec['machine_key'] = key
-                        rec['machine_icon'] = machine['icon']
-                        rec['machine_name'] = machine['short_name']
                         top3_all.append(rec)
 
-                    # 前日トップ3用のデータを収集（昨日の差枚が大きい台）
-                    if rec.get('yesterday_diff', 0) > 1000:
-                        yesterday_top3.append({
+                    # 前日トップ10用のデータを収集（昨日の差枚が大きい台）
+                    if rec.get('yesterday_diff', 0) > 500:
+                        yesterday_top10.append({
                             'unit_id': rec['unit_id'],
-                            'store_name': store['name'],
+                            'store_name': store.get('short_name', store['name']),
                             'store_key': store_key,
                             'machine_icon': machine['icon'],
+                            'machine_name': machine.get('display_name', machine['short_name']),
                             'yesterday_diff': rec['yesterday_diff'],
                             'avg_art_7days': rec.get('avg_art_7days', 0),
+                            'yesterday_art': rec.get('yesterday_art', 0),
+                            'max_medals': rec.get('max_medals', 0),
+                            'availability': availability.get(rec['unit_id'], ''),
                         })
             except:
                 pass
 
-    # スコア順でソートして上位3つ
-    top3_all.sort(key=lambda x: -x['final_score'])
-    top3 = top3_all[:3]
+    # スコア順でソートして上位5つ（空き台を優先）
+    def top3_sort_key(r):
+        score = r['final_score']
+        if r.get('availability') == '空き':
+            score += 10  # 空き台優先
+        return -score
 
-    # 前日トップ3（差枚順）
-    yesterday_top3.sort(key=lambda x: -x['yesterday_diff'])
-    yesterday_top3 = yesterday_top3[:3]
+    top3_all.sort(key=top3_sort_key)
+    top3 = top3_all[:5]
+
+    # 前日トップ10（差枚順）
+    yesterday_top10.sort(key=lambda x: -x['yesterday_diff'])
+    yesterday_top10 = yesterday_top10[:10]
 
     # 今日おすすめの店舗
     today_recommended_stores = []
     for store_key, info in store_recommendations.items():
         if today_weekday in info['best_days']:
+            info['store_key'] = store_key
             today_recommended_stores.append(info)
 
     return render_template('index.html',
                            machines=machines,
                            top3=top3,
-                           yesterday_top3=yesterday_top3,
+                           yesterday_top10=yesterday_top10,
                            today_weekday=today_weekday,
+                           today_date=today_date,
                            store_recommendations=store_recommendations,
                            today_recommended_stores=today_recommended_stores)
 

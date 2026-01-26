@@ -97,17 +97,38 @@
                         </div>
                         {% endif %}
                         <div class="data-cell {% if rec.closing_estimate >= 3000 %}profit-high{% elif rec.closing_estimate >= 1000 %}profit-mid{% elif rec.closing_estimate > 0 %}profit-low{% else %}profit-minus{% endif %}">
-                            <span class="data-label">見込</span>
+                            <span class="data-label">閉店見込</span>
                             <span class="data-value">{{ signed_number(rec.closing_estimate) }}枚</span>
+                        </div>
+                        {% else %}
+                        <!-- 本日データなしの場合は過去データを表示 -->
+                        {% if rec.avg_art_7days > 0 %}
+                        <div class="data-cell">
+                            <span class="data-label">7日平均</span>
+                            <span class="data-value">{{ rec.avg_art_7days|round(0)|int }}ART</span>
+                        </div>
+                        {% if rec.yesterday_diff != 0 %}
+                        <div class="data-cell {% if rec.yesterday_diff > 0 %}profit-mid{% else %}profit-minus{% endif %}">
+                            <span class="data-label">昨日</span>
+                            <span class="data-value">{{ signed_number(rec.yesterday_diff) }}枚</span>
+                        </div>
+                        {% endif %}
+                        <div class="no-data-inline">
+                            {% if rec.availability == '空き' %}
+                            <span class="target-badge">狙い目</span>
+                            {% else %}
+                            本日データ待ち
+                            {% endif %}
                         </div>
                         {% else %}
                         <div class="no-data-inline">
                             {% if rec.availability == '空き' %}
-                            <span class="target-badge">狙い目</span> 未稼働の空き台
+                            <span class="target-badge">狙い目</span> 空き台
                             {% else %}
-                            本日データなし
+                            データなし
                             {% endif %}
                         </div>
+                        {% endif %}
                         {% endif %}
                     </div>
 
@@ -192,19 +213,19 @@
                         <span class="rank-sm" style="background-color: {{ rank_color(rec.final_rank) }}">{{ rec.final_rank }}</span>
 
                         {% if rec.total_games > 0 %}
-                        <span class="compact-data">{{ '{:,}'.format(rec.total_games) }}G</span>
-                        <span class="compact-data">AT{{ rec.art_count }}</span>
+                        <span class="compact-data"><span class="num">{{ '{:,}'.format(rec.total_games) }}</span><span class="lbl">G</span></span>
+                        <span class="compact-data"><span class="num">{{ rec.art_count }}</span><span class="lbl">ART</span></span>
                         {% if rec.art_prob > 0 %}
                         <span class="compact-prob {% if rec.art_prob <= 100 %}excellent{% elif rec.art_prob <= 130 %}good{% elif rec.art_prob >= 200 %}bad{% endif %}">1/{{ rec.art_prob|int }}</span>
                         {% endif %}
                         <span class="compact-profit {% if rec.closing_estimate >= 1000 %}profit-high{% elif rec.closing_estimate > 0 %}profit-mid{% else %}profit-minus{% endif %}">{{ signed_number(rec.closing_estimate) }}</span>
                         {% elif rec.avg_art_7days > 0 %}
-                        <span class="compact-data past-data">7日平均{{ rec.avg_art_7days|round(0)|int }}AT</span>
+                        <span class="compact-data past-data"><span class="num">{{ rec.avg_art_7days|round(0)|int }}</span><span class="lbl">ART/日</span></span>
                         {% if rec.yesterday_diff != 0 %}
-                        <span class="compact-data past-data">昨日{{ signed_number(rec.yesterday_diff) }}枚</span>
+                        <span class="compact-data past-data">昨{{ signed_number(rec.yesterday_diff) }}</span>
                         {% endif %}
                         {% else %}
-                        <span class="compact-data no-data">本日未稼働</span>
+                        <span class="compact-data no-data">データなし</span>
                         {% endif %}
                         <span class="expand-icon small">▼</span>
                     </div>
