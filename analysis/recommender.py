@@ -368,6 +368,7 @@ def analyze_trend(days: List[dict]) -> dict:
     if daily_results:
         yesterday_date, yesterday_diff, yesterday_art, yesterday_games = daily_results[0]
         result['yesterday_diff'] = int(yesterday_diff)
+        result['yesterday_art'] = yesterday_art  # 昨日のART数を追加
         if yesterday_diff > 500:
             result['yesterday_result'] = 'big_plus'
         elif yesterday_diff > 0:
@@ -440,6 +441,7 @@ def analyze_today_data(unit_data: dict, current_hour: int = None, machine_key: s
         'hourly_rate': 0,  # 1時間あたりのART数
         'expected_games': 0,  # この時間帯での期待G数
         'today_reasons': [],
+        'data_date': '',  # データの日付
     }
 
     if not unit_data:
@@ -471,12 +473,15 @@ def analyze_today_data(unit_data: dict, current_hour: int = None, machine_key: s
             if yesterday_data:
                 today_data = yesterday_data
                 result['status'] = '昨日データ'
+                result['data_date'] = yesterday
                 result['today_reasons'].append('本日データなし（昨日のデータを表示）')
             else:
                 result['status'] = 'データなし'
                 result['today_score_bonus'] = 5  # 未稼働台は狙い目の可能性
                 result['today_reasons'].append('本日のデータなし（狙い目の可能性）')
                 return result
+        else:
+            result['data_date'] = today
 
     result['art_count'] = today_data.get('art', 0)
     result['bb_count'] = today_data.get('bb', 0)
@@ -1196,6 +1201,10 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
         art_count = today_analysis.get('art_count', 0)
         profit_info = calculate_expected_profit(total_games, art_count, machine_key)
 
+        # データ日付を取得（今日 or 昨日）
+        data_date = today_analysis.get('data_date', '')
+        is_today_data = data_date == datetime.now().strftime('%Y-%m-%d') if data_date else False
+
         rec = {
             'unit_id': unit_id,
             'base_rank': base_rank,
@@ -1213,12 +1222,17 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
             'last_hit_time': today_analysis.get('last_hit_time'),
             'first_hit_time': today_analysis.get('first_hit_time'),
             'note': note,
+            # データ日付情報
+            'data_date': data_date,
+            'is_today_data': is_today_data,
             # 詳細分析データ
             'trend': trend_data,
             'comparison': comparison,
             'reasons': reasons,
             # サマリー
             'yesterday_diff': trend_data.get('yesterday_diff', 0),
+            'yesterday_art': trend_data.get('yesterday_art', 0),
+            'max_medals': trend_data.get('max_medals', 0),
             'consecutive_plus': trend_data.get('consecutive_plus', 0),
             'consecutive_minus': trend_data.get('consecutive_minus', 0),
             'avg_art_7days': trend_data.get('avg_art_7days', 0),

@@ -79,9 +79,13 @@
                         <span class="expand-icon">▼</span>
                     </div>
 
-                    <!-- 本日データ横並び -->
+                    <!-- データ（本日 or 昨日） -->
                     <div class="today-data-row">
                         {% if rec.total_games > 0 %}
+                        <!-- データ日付を表示 -->
+                        {% if rec.data_date and not rec.is_today_data %}
+                        <div class="data-date-badge">{{ rec.data_date[-5:] }}のデータ</div>
+                        {% endif %}
                         <div class="data-cell">
                             <span class="data-label">G数</span>
                             <span class="data-value">{{ '{:,}'.format(rec.total_games) }}</span>
@@ -96,12 +100,14 @@
                             <span class="data-value">1/{{ rec.art_prob|int }}</span>
                         </div>
                         {% endif %}
+                        {% if rec.is_today_data %}
                         <div class="data-cell {% if rec.closing_estimate >= 3000 %}profit-high{% elif rec.closing_estimate >= 1000 %}profit-mid{% elif rec.closing_estimate > 0 %}profit-low{% else %}profit-minus{% endif %}">
                             <span class="data-label">閉店見込</span>
                             <span class="data-value">{{ signed_number(rec.closing_estimate) }}枚</span>
                         </div>
+                        {% endif %}
                         {% else %}
-                        <!-- 本日データなしの場合は過去データを表示 -->
+                        <!-- 本日も昨日もデータなしの場合は過去データを表示 -->
                         {% if rec.avg_art_7days > 0 %}
                         <div class="data-cell">
                             <span class="data-label">7日平均</span>
@@ -109,21 +115,23 @@
                         </div>
                         {% if rec.yesterday_diff != 0 %}
                         <div class="data-cell {% if rec.yesterday_diff > 0 %}profit-mid{% else %}profit-minus{% endif %}">
-                            <span class="data-label">昨日</span>
+                            <span class="data-label">昨日差枚</span>
                             <span class="data-value">{{ signed_number(rec.yesterday_diff) }}枚</span>
                         </div>
                         {% endif %}
                         <div class="no-data-inline">
                             {% if rec.availability == '空き' %}
-                            <span class="target-badge">狙い目</span>
-                            {% else %}
-                            本日データ待ち
+                            <span class="target-badge">空き</span>
+                            {% elif rec.availability == '遊技中' %}
+                            <span class="playing-badge">遊技中</span>
                             {% endif %}
                         </div>
                         {% else %}
                         <div class="no-data-inline">
                             {% if rec.availability == '空き' %}
-                            <span class="target-badge">狙い目</span> 空き台
+                            <span class="target-badge">空き</span>
+                            {% elif rec.availability == '遊技中' %}
+                            <span class="playing-badge">遊技中</span>
                             {% else %}
                             データなし
                             {% endif %}
