@@ -42,7 +42,7 @@ REALTIME_CACHE = {}
 SCRAPING_STATUS = {}
 
 # バージョン確認用
-APP_VERSION = '2026-01-26-v9-timemode'
+APP_VERSION = '2026-01-26-v10-dayratings'
 
 # 営業時間設定
 OPEN_HOUR = 10   # 開店時刻
