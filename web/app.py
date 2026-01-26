@@ -41,6 +41,13 @@ DEPLOY_SECRET = 'slot_deploy_2026'
 REALTIME_CACHE = {}
 SCRAPING_STATUS = {}
 
+# バージョン確認用
+APP_VERSION = '2026-01-26-v3'
+
+@app.route('/version')
+def version():
+    return APP_VERSION
+
 # 検索エンジンブロック用
 @app.route('/robots.txt')
 def robots():
