@@ -23,6 +23,9 @@ from scrapers.availability_checker import get_availability
 
 app = Flask(__name__)
 
+# デプロイ用シークレット
+DEPLOY_SECRET = 'slot_deploy_2026'
+
 # リアルタイムデータキャッシュ
 REALTIME_CACHE = {}
 SCRAPING_STATUS = {}
@@ -33,6 +36,35 @@ def robots():
     return """User-agent: *
 Disallow: /
 """, 200, {'Content-Type': 'text/plain'}
+
+
+# デプロイ用エンドポイント
+@app.route('/deploy', methods=['POST'])
+def deploy():
+    """git pull を実行してアプリを更新"""
+    import subprocess
+
+    secret = request.form.get('secret') or request.args.get('secret')
+    if secret != DEPLOY_SECRET:
+        return jsonify({'error': 'Unauthorized'}), 401
+
+    try:
+        # git pull を実行
+        result = subprocess.run(
+            ['git', 'pull', 'origin', 'main'],
+            cwd=PROJECT_ROOT,
+            capture_output=True,
+            text=True,
+            timeout=30
+        )
+        return jsonify({
+            'status': 'success',
+            'output': result.stdout,
+            'error': result.stderr,
+            'returncode': result.returncode
+        })
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
 
 
 @app.route('/')
