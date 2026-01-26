@@ -620,64 +620,105 @@ def compare_with_others(store_key: str, unit_id: str, all_units_today: dict) -> 
 def analyze_graph_pattern(days: List[dict]) -> dict:
     """グラフパターン分析（ミミズ/モミモミ/右肩上がり等）
 
+    ミミズ: ハマらないが飲まれる、REGの繰り返しで大ハネしない横ばい状態
+    モミモミ: 小刻みに上下するが大きな変動なし、このあと跳ねることが多い
+
     Returns:
         {
-            'pattern': str,  # 'mimizu'(横ばい), 'momimomi'(小刻み), 'rising'(右肩上がり), 'falling'(右肩下がり)
-            'volatility': float,  # 変動幅
-            'description': str,  # パターンの説明
+            'pattern': str,
+            'volatility': float,
+            'description': str,
+            'likely_to_rise': bool,  # このあと伸びそうか
         }
     """
     if not days or len(days) < 3:
-        return {'pattern': 'unknown', 'volatility': 0, 'description': ''}
+        return {'pattern': 'unknown', 'volatility': 0, 'description': '', 'likely_to_rise': False}
 
-    # 直近7日のART数から変動パターンを分析
-    arts = [d.get('art', 0) for d in days[:7] if d.get('art', 0) > 0]
+    # 直近7日のART数と最大連チャン数を分析
+    arts = []
+    max_rensas = []  # 最大連チャン数
+    for d in days[:7]:
+        art = d.get('art', 0)
+        if art > 0:
+            arts.append(art)
+            # 履歴から最大連チャンを計算
+            history = d.get('history', [])
+            if history:
+                max_rensa = max((h.get('rensa', 1) for h in history), default=1)
+                max_rensas.append(max_rensa)
+
     if len(arts) < 3:
-        return {'pattern': 'unknown', 'volatility': 0, 'description': ''}
+        return {'pattern': 'unknown', 'volatility': 0, 'description': '', 'likely_to_rise': False}
 
     avg = sum(arts) / len(arts)
     if avg == 0:
-        return {'pattern': 'unknown', 'volatility': 0, 'description': ''}
+        return {'pattern': 'unknown', 'volatility': 0, 'description': '', 'likely_to_rise': False}
 
-    # 変動幅（標準偏差の代わりに簡易計算）
+    # 変動幅
     deviations = [abs(a - avg) for a in arts]
-    volatility = sum(deviations) / len(deviations) / avg * 100  # パーセンテージ
+    volatility = sum(deviations) / len(deviations) / avg * 100
 
-    # トレンド（直近3日 vs 過去）
+    # トレンド
     recent_avg = sum(arts[:3]) / 3
     older_avg = sum(arts[3:]) / len(arts[3:]) if len(arts) > 3 else avg
 
+    # 最大連チャン傾向（10連以上があるか）
+    has_big_rensa = any(r >= 10 for r in max_rensas) if max_rensas else False
+    avg_max_rensa = sum(max_rensas) / len(max_rensas) if max_rensas else 0
+
     # パターン判定
+    likely_to_rise = False
+
     if volatility < 15:
-        # 変動が少ない = ミミズ（横ばい安定）
+        # 変動が少ない = ミミズ（横ばい）
         pattern = 'mimizu'
-        if avg >= 30:
-            description = f'安定して高ART（平均{avg:.0f}回）→ 高設定据え置き濃厚'
+        if avg >= 35 and has_big_rensa:
+            description = f'安定高挙動（平均{avg:.0f}ART、10連+あり）→ 高設定濃厚'
+        elif avg >= 30:
+            description = f'安定推移（平均{avg:.0f}ART）'
+            if not has_big_rensa:
+                description += ' → 爆発待ちの可能性'
+                likely_to_rise = True
         else:
-            description = f'横ばい安定（平均{avg:.0f}回）'
+            description = f'ミミズ（低空飛行で横ばい）'
+            if avg >= 20:
+                description += ' → このあと跳ねる可能性'
+                likely_to_rise = True
     elif volatility < 30:
-        # 中程度の変動 = モミモミ
+        # モミモミ（小刻み変動、大ハネしない）
         pattern = 'momimomi'
-        if recent_avg > older_avg * 1.1:
-            description = f'モミモミから上昇傾向 → そろそろ伸びる可能性'
+        if not has_big_rensa and avg >= 20:
+            description = f'モミモミ（10連なし、平均{avg:.0f}ART）→ 爆発待ち状態'
+            likely_to_rise = True
+        elif recent_avg > older_avg * 1.1:
+            description = f'モミモミから上昇兆候 → そろそろ跳ねる'
+            likely_to_rise = True
         else:
-            description = f'モミモミ中（変動{volatility:.0f}%）'
+            description = f'モミモミ中（平均{avg:.0f}ART）'
+            if not has_big_rensa:
+                likely_to_rise = True
     else:
         # 変動が大きい
         if recent_avg > older_avg * 1.2:
             pattern = 'rising'
-            description = f'右肩上がり傾向 → 設定上げの可能性'
+            description = f'右肩上がり → 高設定に変更された可能性'
         elif recent_avg < older_avg * 0.8:
             pattern = 'falling'
-            description = f'右肩下がり傾向 → 設定下げ注意'
+            description = f'右肩下がり → 設定下げ警戒'
         else:
             pattern = 'volatile'
-            description = f'変動大（荒い台）'
+            if has_big_rensa:
+                description = f'荒い台（10連+実績あり）→ 一発狙い向き'
+            else:
+                description = f'変動大だが爆発なし → 様子見推奨'
 
     return {
         'pattern': pattern,
         'volatility': volatility,
         'description': description,
+        'likely_to_rise': likely_to_rise,
+        'has_big_rensa': has_big_rensa,
+        'avg_max_rensa': avg_max_rensa,
     }
 
 
@@ -747,56 +788,93 @@ def analyze_rotation_pattern(days: List[dict]) -> dict:
 
 
 def analyze_today_graph(history: List[dict]) -> dict:
-    """本日のグラフ分析（ハマりなし/連チャン中等）
+    """本日のグラフ分析（ハマりなし/連チャン中/爆発判定等）
 
     Returns:
         {
             'no_deep_valley': bool,  # 深いハマりなし
             'max_valley': int,  # 最大ハマり
             'is_on_fire': bool,  # 連チャン中
+            'has_explosion': bool,  # 10連以上の爆発あり
+            'max_rensa': int,  # 最大連チャン数
             'recent_trend': str,  # 直近の傾向
             'description': str,
+            'explosion_potential': str,  # 爆発ポテンシャル
         }
     """
-    if not history:
-        return {
-            'no_deep_valley': True,
-            'max_valley': 0,
-            'is_on_fire': False,
-            'recent_trend': 'unknown',
-            'description': ''
-        }
+    default_result = {
+        'no_deep_valley': True,
+        'max_valley': 0,
+        'is_on_fire': False,
+        'has_explosion': False,
+        'max_rensa': 0,
+        'recent_trend': 'unknown',
+        'description': '',
+        'explosion_potential': 'unknown',
+    }
 
-    # 各当たり間のG数を計算
+    if not history:
+        return default_result
+
+    # 各当たり間のG数と連チャン数を計算
     valleys = []
+    rensas = []
     for h in history:
         start = h.get('start', 0) or h.get('games_between', 0)
         if start > 0:
             valleys.append(start)
+        rensa = h.get('rensa', 1)
+        if rensa > 0:
+            rensas.append(rensa)
 
     if not valleys:
-        return {
-            'no_deep_valley': True,
-            'max_valley': 0,
-            'is_on_fire': False,
-            'recent_trend': 'unknown',
-            'description': ''
-        }
+        return default_result
 
     max_valley = max(valleys)
     avg_valley = sum(valleys) / len(valleys)
     recent_valleys = valleys[-5:] if len(valleys) >= 5 else valleys
 
-    # 深いハマりなし判定（500G以上のハマりがない）
+    # 連チャン分析
+    max_rensa = max(rensas) if rensas else 0
+    has_explosion = max_rensa >= 10  # 10連以上を爆発とみなす
+
+    # 深いハマりなし判定
     no_deep_valley = max_valley < 500
 
-    # 連チャン中判定（直近5回が全て100G以内）
+    # 連チャン中判定
     is_on_fire = len(recent_valleys) >= 3 and all(v <= 100 for v in recent_valleys)
 
-    # 直近の傾向
+    # 爆発ポテンシャル判定
+    total_hits = len(history)
+    if has_explosion:
+        explosion_potential = 'exploded'
+    elif total_hits >= 30 and not has_explosion:
+        # 30回以上当たって10連なし = 爆発しにくい展開
+        explosion_potential = 'low'
+    elif total_hits >= 15 and no_deep_valley and not has_explosion:
+        # ハマらず淡々と当たるが爆発なし = モミモミ、このあと来る可能性
+        explosion_potential = 'building'
+    elif total_hits < 15:
+        explosion_potential = 'unknown'
+    else:
+        explosion_potential = 'normal'
+
+    # 直近の傾向と説明
     if is_on_fire:
         recent_trend = 'hot'
-        description = f'連チャン中（直近{len(recent_valleys)}回全て100G以内）'
+        if has_explosion:
+            description = f'本日{max_rensa}連達成済み、連チャン継続中'
+        else:
+            description = f'連チャン中（直近{len(recent_valleys)}回全て100G以内）'
+    elif has_explosion:
+        recent_trend = 'exploded'
+        description = f'本日{max_rensa}連の爆発あり'
+    elif explosion_potential == 'low':
+        recent_trend = 'flat'
+        description = f'ART{total_hits}回で10連なし → 大爆発しにくい展開'
+    elif explosion_potential == 'building':
+        recent_trend = 'building'
+        description = f'ハマりなしで{total_hits}回当選、爆発待ち → そろそろ来る可能性'
     elif no_deep_valley and avg_valley < 100:
         recent_trend = 'very_hot'
         description = f'絶好調（平均{avg_valley:.0f}G、最大{max_valley}G）'
@@ -805,7 +883,7 @@ def analyze_today_graph(history: List[dict]) -> dict:
         description = f'ハマりなし安定（最大{max_valley}G）'
     elif max_valley >= 800:
         recent_trend = 'recovering'
-        description = f'{max_valley}Gハマりあり → 天井後は狙い目'
+        description = f'{max_valley}Gハマりあり → 天井後は様子見'
     else:
         recent_trend = 'normal'
         description = ''
@@ -814,8 +892,11 @@ def analyze_today_graph(history: List[dict]) -> dict:
         'no_deep_valley': no_deep_valley,
         'max_valley': max_valley,
         'is_on_fire': is_on_fire,
+        'has_explosion': has_explosion,
+        'max_rensa': max_rensa,
         'recent_trend': recent_trend,
         'description': description,
+        'explosion_potential': explosion_potential,
     }
 
 
@@ -839,12 +920,22 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
         graph = analyze_graph_pattern(days)
         if graph['description']:
             reasons.append(graph['description'])
+        # 過去に10連実績がない + モミモミ = 爆発待ち
+        if graph.get('likely_to_rise') and not graph.get('has_big_rensa'):
+            if graph['pattern'] in ('mimizu', 'momimomi'):
+                reasons.append(f"過去7日で10連なし → 爆発待ち状態、打ち始めから狙い目")
 
     # 3. 本日のグラフ分析
     if today_history:
         today_graph = analyze_today_graph(today_history)
         if today_graph['description']:
             reasons.append(today_graph['description'])
+        # 爆発ポテンシャルに基づく判断
+        if today_graph.get('explosion_potential') == 'low':
+            pass  # descriptionで既に言及
+        elif today_graph.get('explosion_potential') == 'building':
+            if not today_graph.get('has_explosion'):
+                reasons.append("モミモミ展開から爆発の兆候 → 継続推奨")
 
     # 4. 連続プラス/マイナスからの推論
     consecutive_plus = trend.get('consecutive_plus', 0)
