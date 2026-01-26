@@ -22,7 +22,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 from config.rankings import STORES, RANKINGS, MACHINES, get_stores_by_machine, get_machine_info
 from analysis.recommender import recommend_units, load_daily_data
-from scrapers.availability_checker import get_availability
+from scrapers.availability_checker import get_availability, get_realtime_data
 
 app = Flask(__name__)
 
@@ -42,7 +42,7 @@ REALTIME_CACHE = {}
 SCRAPING_STATUS = {}
 
 # バージョン確認用
-APP_VERSION = '2026-01-26-v5-debug'
+APP_VERSION = '2026-01-26-v6-github'
 
 @app.route('/version')
 def version():
@@ -322,6 +322,24 @@ def recommend(store_key: str):
             cache_info = {
                 'fetched_at': cache['fetched_at'].strftime('%H:%M'),
                 'age_seconds': int(cache_age),
+                'source': cache.get('source', 'unknown'),
+            }
+
+    # キャッシュがない場合はGitHubからリアルタイムデータを試す
+    if not realtime_data:
+        github_data = get_realtime_data(store_key)
+        if github_data and github_data.get('units'):
+            realtime_data = github_data
+            # キャッシュに保存
+            REALTIME_CACHE[store_key] = {
+                'data': github_data,
+                'fetched_at': datetime.now(),
+                'source': 'github',
+            }
+            cache_info = {
+                'fetched_at': datetime.now(JST).strftime('%H:%M'),
+                'age_seconds': 0,
+                'source': 'github',
             }
 
     # リアルタイム空き状況を取得
@@ -412,9 +430,23 @@ def api_refresh(store_key: str):
 
 
 def run_scraping(store_key: str):
-    """バックグラウンドでスクレイピングを実行"""
+    """バックグラウンドでデータを取得（GitHub JSON優先）"""
     SCRAPING_STATUS[store_key] = {'status': 'running', 'started_at': datetime.now()}
     try:
+        # まずGitHubからリアルタイムデータを試す
+        realtime_data = get_realtime_data(store_key)
+
+        if realtime_data and realtime_data.get('units'):
+            REALTIME_CACHE[store_key] = {
+                'data': realtime_data,
+                'fetched_at': datetime.now(),
+                'source': 'github',
+            }
+            SCRAPING_STATUS[store_key] = {'status': 'completed', 'completed_at': datetime.now(), 'source': 'github'}
+            return
+
+        # GitHubにデータがない場合は直接スクレイピングを試みる
+        # (PythonAnywhereの無料プランでは403になる可能性あり)
         from scrapers.realtime_scraper import scrape_realtime
         results = scrape_realtime(store_key)
 
@@ -422,8 +454,9 @@ def run_scraping(store_key: str):
             REALTIME_CACHE[store_key] = {
                 'data': results[store_key],
                 'fetched_at': datetime.now(),
+                'source': 'direct',
             }
-            SCRAPING_STATUS[store_key] = {'status': 'completed', 'completed_at': datetime.now()}
+            SCRAPING_STATUS[store_key] = {'status': 'completed', 'completed_at': datetime.now(), 'source': 'direct'}
         else:
             SCRAPING_STATUS[store_key] = {'status': 'error', 'error': 'No data returned'}
     except Exception as e:

@@ -180,6 +180,65 @@ def get_all_availability() -> Dict[str, Dict[str, str]]:
     return result
 
 
+def get_realtime_data(store_key: str) -> Dict:
+    """
+    GitHub JSONからリアルタイムデータ(ART, スタート数等)を取得
+
+    Returns:
+        {
+            'store_name': str,
+            'fetched_at': str,
+            'units': [
+                {'unit_id': str, 'art': int, 'bb': int, 'rb': int, 'total_start': int, ...},
+                ...
+            ]
+        }
+    """
+    if store_key not in GITHUB_STORES:
+        return {}
+
+    try:
+        data = get_daidata_availability()
+        store_data = data.get('stores', {}).get(store_key, {})
+
+        if not store_data:
+            return {}
+
+        return {
+            'store_name': store_data.get('name', ''),
+            'fetched_at': data.get('fetched_at', ''),
+            'units': store_data.get('units', []),
+        }
+    except Exception as e:
+        print(f"Error getting realtime data: {e}")
+        return {}
+
+
+def get_all_realtime_data() -> Dict[str, Dict]:
+    """
+    全daidata店舗のリアルタイムデータを取得
+    """
+    result = {}
+
+    try:
+        data = get_daidata_availability()
+        stores_data = data.get('stores', {})
+        fetched_at = data.get('fetched_at', '')
+
+        for store_key in GITHUB_STORES:
+            if store_key in stores_data:
+                store_data = stores_data[store_key]
+                result[store_key] = {
+                    'store_name': store_data.get('name', ''),
+                    'fetched_at': fetched_at,
+                    'units': store_data.get('units', []),
+                }
+    except Exception as e:
+        print(f"Error getting all realtime data: {e}")
+
+    return result
+
+
 if __name__ == "__main__":
     print("=== 空き状況チェック ===\n")
 

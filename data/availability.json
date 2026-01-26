@@ -1,16 +1,49 @@
 {
   "stores": {
     "shibuya_espass_sbj": {
-      "playing": [],
-      "empty": [
-        "3011",
+      "name": "渋谷エスパス新館",
+      "hall_id": "100860",
+      "playing": [
         "3012",
         "3013"
       ],
+      "empty": [
+        "3011"
+      ],
       "total": 3,
-      "name": "渋谷エスパス新館"
+      "units": [
+        {
+          "unit_id": "3011",
+          "bb": 0,
+          "rb": 0,
+          "art": 2,
+          "final_start": 156,
+          "total_start": 415,
+          "availability": "空き"
+        },
+        {
+          "unit_id": "3012",
+          "bb": 0,
+          "rb": 3,
+          "art": 71,
+          "final_start": 98,
+          "total_start": 1577,
+          "availability": "遊技中"
+        },
+        {
+          "unit_id": "3013",
+          "bb": 0,
+          "rb": 3,
+          "art": 8,
+          "final_start": 171,
+          "total_start": 1528,
+          "availability": "遊技中"
+        }
+      ]
     },
     "shinjuku_espass_sbj": {
+      "name": "新宿エスパス歌舞伎町",
+      "hall_id": "100949",
       "playing": [
         "682",
         "683",
@@ -19,34 +52,167 @@
       ],
       "empty": [],
       "total": 4,
-      "name": "新宿エスパス歌舞伎町"
+      "units": [
+        {
+          "unit_id": "682",
+          "bb": 0,
+          "rb": 10,
+          "art": 37,
+          "final_start": 0,
+          "total_start": 3470,
+          "availability": "遊技中"
+        },
+        {
+          "unit_id": "683",
+          "bb": 0,
+          "rb": 2,
+          "art": 7,
+          "final_start": 77,
+          "total_start": 2320,
+          "availability": "遊技中"
+        },
+        {
+          "unit_id": "684",
+          "bb": 0,
+          "rb": 5,
+          "art": 16,
+          "final_start": 573,
+          "total_start": 4077,
+          "availability": "遊技中"
+        },
+        {
+          "unit_id": "685",
+          "bb": 0,
+          "rb": 13,
+          "art": 27,
+          "final_start": 0,
+          "total_start": 5182,
+          "availability": "遊技中"
+        }
+      ]
     },
     "akihabara_espass_sbj": {
+      "name": "秋葉原エスパス駅前",
+      "hall_id": "100928",
       "playing": [
-        "2158",
         "2159",
         "2160",
         "2161"
       ],
-      "empty": [],
+      "empty": [
+        "2158"
+      ],
       "total": 4,
-      "name": "秋葉原エスパス駅前"
+      "units": [
+        {
+          "unit_id": "2158",
+          "bb": 0,
+          "rb": 5,
+          "art": 27,
+          "final_start": 318,
+          "total_start": 2891,
+          "availability": "空き"
+        },
+        {
+          "unit_id": "2159",
+          "bb": 0,
+          "rb": 5,
+          "art": 57,
+          "final_start": 39,
+          "total_start": 4408,
+          "availability": "遊技中"
+        },
+        {
+          "unit_id": "2160",
+          "bb": 0,
+          "rb": 0,
+          "art": 6,
+          "final_start": 155,
+          "total_start": 1642,
+          "availability": "遊技中"
+        },
+        {
+          "unit_id": "2161",
+          "bb": 0,
+          "rb": 9,
+          "art": 15,
+          "final_start": 181,
+          "total_start": 4204,
+          "availability": "遊技中"
+        }
+      ]
     },
     "seibu_shinjuku_espass_sbj": {
+      "name": "西武新宿駅前エスパス",
+      "hall_id": "100950",
       "playing": [
+        "3185",
         "3186",
         "3187"
       ],
       "empty": [
-        "3185",
         "4109",
         "4118",
         "4125",
         "4168"
       ],
       "total": 7,
-      "name": "西武新宿駅前エスパス"
+      "units": [
+        {
+          "unit_id": "3185",
+          "bb": 0,
+          "rb": 2,
+          "art": 13,
+          "final_start": 210,
+          "total_start": 1660,
+          "availability": "遊技中"
+        },
+        {
+          "unit_id": "3186",
+          "bb": 0,
+          "rb": 6,
+          "art": 65,
+          "final_start": 214,
+          "total_start": 3957,
+          "availability": "遊技中"
+        },
+        {
+          "unit_id": "3187",
+          "bb": 0,
+          "rb": 1,
+          "art": 3,
+          "final_start": 115,
+          "total_start": 813,
+          "availability": "遊技中"
+        },
+        {
+          "unit_id": "4109",
+          "bb": 0,
+          "rb": 3,
+          "art": 11,
+          "final_start": 40,
+          "total_start": 1031,
+          "availability": "空き"
+        },
+        {
+          "unit_id": "4118",
+          "availability": "空き"
+        },
+        {
+          "unit_id": "4125",
+          "availability": "空き"
+        },
+        {
+          "unit_id": "4168",
+          "bb": 0,
+          "rb": 7,
+          "art": 31,
+          "final_start": 115,
+          "total_start": 4545,
+          "availability": "空き"
+        }
+      ]
     }
   },
-  "fetched_at": "2026-01-26T18:04:34.539294+09:00"
+  "fetched_at": "2026-01-26T21:17:16.142583+09:00"
 }
