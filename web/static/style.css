@@ -1457,3 +1457,212 @@ strong.minus {
     color: #888;
     font-size: 0.85em;
 }
+
+/* ===== トップページ: 本日おすすめ店舗 ===== */
+
+.today-stores {
+    margin-bottom: 20px;
+}
+
+.today-stores h2 {
+    font-size: 1em;
+    color: #2ed573;
+    margin-bottom: 10px;
+}
+
+.store-recommend-card {
+    background: rgba(46, 213, 115, 0.15);
+    border-left: 4px solid #2ed573;
+    border-radius: 0 8px 8px 0;
+    padding: 12px 15px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.store-recommend-card .store-name {
+    font-weight: 700;
+    color: #fff;
+}
+
+.store-recommend-card .store-note {
+    font-size: 0.85em;
+    color: #2ed573;
+}
+
+/* ===== トップページ: トップ3 統計表示 ===== */
+
+.top3-stats {
+    display: flex;
+    gap: 12px;
+    font-size: 0.8em;
+    color: #aaa;
+    margin-top: 5px;
+    flex-wrap: wrap;
+}
+
+.top3-stats .excellent {
+    color: #2ed573;
+    font-weight: 600;
+}
+
+.top3-stats .good {
+    color: #70a1ff;
+    font-weight: 600;
+}
+
+.top3-stats .bad {
+    color: #ff6b6b;
+}
+
+.top3-stats .profit {
+    font-weight: 600;
+}
+
+.top3-stats .profit.high {
+    color: #2ed573;
+}
+
+.top3-stats .profit.mid {
+    color: #70a1ff;
+}
+
+.top3-stats .profit.low {
+    color: #ffa502;
+}
+
+/* ===== トップページ: 前日トップ3 ===== */
+
+.yesterday-section {
+    margin-bottom: 20px;
+}
+
+.yesterday-section h2 {
+    font-size: 1em;
+    color: #70a1ff;
+    margin-bottom: 5px;
+}
+
+.yesterday-note {
+    font-size: 0.8em;
+    color: #888;
+    margin-bottom: 10px;
+}
+
+.yesterday-card {
+    background: #252541;
+    border-radius: 8px;
+    padding: 12px 15px;
+    margin-bottom: 8px;
+    text-decoration: none;
+    display: block;
+}
+
+.yesterday-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.machine-icon-sm {
+    font-size: 1em;
+}
+
+.unit-id-sm {
+    font-weight: 700;
+    color: #fff;
+    min-width: 50px;
+}
+
+.store-name-sm {
+    font-size: 0.85em;
+    color: #888;
+}
+
+.yesterday-stats {
+    display: flex;
+    gap: 15px;
+    font-size: 0.85em;
+}
+
+.yesterday-diff {
+    font-weight: 700;
+}
+
+.yesterday-diff.plus {
+    color: #2ed573;
+}
+
+.yesterday-diff.minus {
+    color: #ff6b6b;
+}
+
+.avg-art {
+    color: #aaa;
+}
+
+/* ===== トップページ: 店舗別おすすめ曜日 ===== */
+
+.store-schedule {
+    margin-bottom: 20px;
+}
+
+.store-schedule h2 {
+    font-size: 1em;
+    color: #888;
+    margin-bottom: 10px;
+}
+
+.schedule-card {
+    background: #252541;
+    border-radius: 8px;
+    padding: 12px 15px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.schedule-store {
+    font-weight: 600;
+    color: #fff;
+    min-width: 140px;
+}
+
+.schedule-days {
+    display: flex;
+    gap: 5px;
+}
+
+.day-badge {
+    display: inline-block;
+    padding: 3px 8px;
+    background: #333;
+    border-radius: 4px;
+    font-size: 0.8em;
+    color: #aaa;
+}
+
+.day-badge.today {
+    background: #ffa502;
+    color: #000;
+    font-weight: 700;
+}
+
+.schedule-note {
+    font-size: 0.8em;
+    color: #888;
+    margin-left: auto;
+}
+
+/* ===== トップページ: 曜日表示 ===== */
+
+.today-info {
+    font-size: 1.2em;
+    color: #ffa502;
+    font-weight: 600;
+    margin-top: 5px;
+}

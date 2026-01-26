@@ -72,9 +72,33 @@ def deploy():
 
 @app.route('/')
 def index():
-    """メインページ - 機種選択 + トップ3"""
+    """メインページ - 機種選択 + トップ3 + 店舗おすすめ曜日 + 前日トップ3"""
     machines = []
     top3_all = []
+    yesterday_top3 = []
+
+    # 店舗別おすすめ曜日（過去データからの傾向）
+    store_recommendations = {
+        'island_akihabara_sbj': {
+            'name': 'アイランド秋葉原',
+            'best_days': ['土', '日'],
+            'note': '週末に高設定投入傾向',
+        },
+        'shibuya_espass_sbj': {
+            'name': '渋谷エスパス新館',
+            'best_days': ['金', '土'],
+            'note': '金曜夜から狙い目',
+        },
+        'shinjuku_espass_sbj': {
+            'name': '新宿エスパス歌舞伎町',
+            'best_days': ['土'],
+            'note': '土曜日がアツい',
+        },
+    }
+
+    # 今日の曜日
+    weekday_names = ['月', '火', '水', '木', '金', '土', '日']
+    today_weekday = weekday_names[datetime.now(JST).weekday()]
 
     for key, machine in MACHINES.items():
         stores = get_stores_by_machine(key)
@@ -100,6 +124,17 @@ def index():
                         rec['machine_icon'] = machine['icon']
                         rec['machine_name'] = machine['short_name']
                         top3_all.append(rec)
+
+                    # 前日トップ3用のデータを収集（昨日の差枚が大きい台）
+                    if rec.get('yesterday_diff', 0) > 1000:
+                        yesterday_top3.append({
+                            'unit_id': rec['unit_id'],
+                            'store_name': store['name'],
+                            'store_key': store_key,
+                            'machine_icon': machine['icon'],
+                            'yesterday_diff': rec['yesterday_diff'],
+                            'avg_art_7days': rec.get('avg_art_7days', 0),
+                        })
             except:
                 pass
 
@@ -107,7 +142,23 @@ def index():
     top3_all.sort(key=lambda x: -x['final_score'])
     top3 = top3_all[:3]
 
-    return render_template('index.html', machines=machines, top3=top3)
+    # 前日トップ3（差枚順）
+    yesterday_top3.sort(key=lambda x: -x['yesterday_diff'])
+    yesterday_top3 = yesterday_top3[:3]
+
+    # 今日おすすめの店舗
+    today_recommended_stores = []
+    for store_key, info in store_recommendations.items():
+        if today_weekday in info['best_days']:
+            today_recommended_stores.append(info)
+
+    return render_template('index.html',
+                           machines=machines,
+                           top3=top3,
+                           yesterday_top3=yesterday_top3,
+                           today_weekday=today_weekday,
+                           store_recommendations=store_recommendations,
+                           today_recommended_stores=today_recommended_stores)
 
 
 @app.route('/machine/<machine_key>')

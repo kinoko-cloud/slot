@@ -12,9 +12,24 @@
     <div class="container">
         <header>
             <h1>本日のおすすめ台</h1>
+            <div class="today-info">{{ today_weekday }}曜日</div>
         </header>
 
         <main>
+            <!-- 本日おすすめ店舗 -->
+            {% if today_recommended_stores %}
+            <section class="today-stores">
+                <h2>{{ today_weekday }}曜日のおすすめ店舗</h2>
+                {% for store in today_recommended_stores %}
+                <div class="store-recommend-card">
+                    <span class="store-name">{{ store.name }}</span>
+                    <span class="store-note">{{ store.note }}</span>
+                </div>
+                {% endfor %}
+            </section>
+            {% endif %}
+
+            <!-- いま狙い目 TOP3 -->
             {% if top3 %}
             <section class="recommendations top">
                 <h2>いま狙い目 TOP3</h2>
@@ -31,10 +46,23 @@
                         <span class="machine-icon">{{ rec.machine_icon }}</span>
                         {{ rec.store_name }} / {{ rec.machine_name }}
                     </div>
+                    <!-- 本日データサマリ -->
+                    {% if rec.total_games > 0 %}
+                    <div class="top3-stats">
+                        <span>{{ '{:,}'.format(rec.total_games) }}G</span>
+                        <span>ART{{ rec.art_count }}回</span>
+                        {% if rec.art_prob > 0 %}
+                        <span class="{% if rec.art_prob <= 100 %}excellent{% elif rec.art_prob <= 130 %}good{% elif rec.art_prob >= 200 %}bad{% endif %}">1/{{ rec.art_prob|int }}</span>
+                        {% endif %}
+                        {% if rec.closing_estimate %}
+                        <span class="profit {% if rec.closing_estimate >= 3000 %}high{% elif rec.closing_estimate >= 1000 %}mid{% else %}low{% endif %}">見込{{ '%+,d'|format(rec.closing_estimate) }}枚</span>
+                        {% endif %}
+                    </div>
+                    {% endif %}
                     {% if rec.reasons %}
                     <div class="reasons-preview">
                         <span class="reason-icon">💡</span>
-                        <span class="reason-text">{{ rec.reasons[0][:30] }}{% if rec.reasons[0]|length > 30 %}...{% endif %}</span>
+                        <span class="reason-text">{{ rec.reasons[0][:40] }}{% if rec.reasons[0]|length > 40 %}...{% endif %}</span>
                     </div>
                     {% endif %}
                 </a>
@@ -42,6 +70,44 @@
             </section>
             {% endif %}
 
+            <!-- 前日トップ3 -->
+            {% if yesterday_top3 %}
+            <section class="yesterday-section">
+                <h2>前日の好調台</h2>
+                <div class="yesterday-note">昨日プラスだった台（据え置き狙い）</div>
+                {% for rec in yesterday_top3 %}
+                <a href="{{ url_for('recommend', store_key=rec.store_key) }}" class="yesterday-card">
+                    <div class="yesterday-header">
+                        <span class="machine-icon-sm">{{ rec.machine_icon }}</span>
+                        <span class="unit-id-sm">{{ rec.unit_id }}</span>
+                        <span class="store-name-sm">{{ rec.store_name }}</span>
+                    </div>
+                    <div class="yesterday-stats">
+                        <span class="yesterday-diff plus">昨日 {{ '%+,d'|format(rec.yesterday_diff) }}枚</span>
+                        <span class="avg-art">平均{{ rec.avg_art_7days|round(1) }}ART</span>
+                    </div>
+                </a>
+                {% endfor %}
+            </section>
+            {% endif %}
+
+            <!-- 店舗別おすすめ曜日 -->
+            <section class="store-schedule">
+                <h2>店舗別おすすめ曜日</h2>
+                {% for store_key, info in store_recommendations.items() %}
+                <div class="schedule-card">
+                    <span class="schedule-store">{{ info.name }}</span>
+                    <span class="schedule-days">
+                        {% for day in info.best_days %}
+                        <span class="day-badge {% if day == today_weekday %}today{% endif %}">{{ day }}</span>
+                        {% endfor %}
+                    </span>
+                    <span class="schedule-note">{{ info.note }}</span>
+                </div>
+                {% endfor %}
+            </section>
+
+            <!-- 機種から探す -->
             <section class="machine-list">
                 <h2>機種から探す</h2>
                 {% for machine in machines %}
