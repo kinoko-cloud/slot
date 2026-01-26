@@ -1213,6 +1213,17 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
         data_date = today_analysis.get('data_date', '')
         is_today_data = data_date == datetime.now().strftime('%Y-%m-%d') if data_date else False
 
+        # max_medals, final_start（現在ハマり）をリアルタイムデータから取得
+        max_medals = 0
+        final_start = 0  # 現在ハマり（最終ART後のG数）
+        if realtime_data:
+            units_list = realtime_data.get('units', [])
+            for unit in units_list:
+                if unit.get('unit_id') == unit_id:
+                    max_medals = unit.get('max_medals', 0)
+                    final_start = unit.get('final_start', 0)
+                    break
+
         rec = {
             'unit_id': unit_id,
             'base_rank': base_rank,
@@ -1240,13 +1251,13 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
             # サマリー
             'yesterday_diff': trend_data.get('yesterday_diff', 0),
             'yesterday_art': trend_data.get('yesterday_art', 0),
-            'max_medals': trend_data.get('max_medals', 0),
+            'max_medals': max_medals,
             'consecutive_plus': trend_data.get('consecutive_plus', 0),
             'consecutive_minus': trend_data.get('consecutive_minus', 0),
             'avg_art_7days': trend_data.get('avg_art_7days', 0),
             # 差枚見込み
             'current_estimate': profit_info['current_estimate'],
-            'closing_estimate': profit_info['closing_estimate'],
+            'closing_estimate': final_start if final_start > 0 else profit_info['closing_estimate'],
             'profit_category': profit_info['profit_category'],
             'estimated_setting': profit_info['setting_info']['estimated_setting'],
             'setting_num': profit_info['setting_info'].get('setting_num', 0),
