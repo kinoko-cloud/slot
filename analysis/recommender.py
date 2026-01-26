@@ -21,25 +21,175 @@ import sys
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from config.rankings import STORES, RANKINGS, get_rank, get_unit_ranking, MACHINES
 
-# 機種別のART確率閾値
-# SBJ: 設定1=1/241.7, 設定6=1/181.3
-# 北斗転生2: 設定1=1/366.0, 設定6=1/273.1
-MACHINE_THRESHOLDS = {
+# 機種別の設定情報
+# SBJ: 設定1=1/241.7(97.8%), 設定6=1/181.3(112.7%)
+# 北斗転生2: 設定1=1/366.0(97.6%), 設定6=1/273.1(114.9%)
+MACHINE_SPECS = {
     'sbj': {
-        'setting6_at_prob': 80,   # 設定6域（非常に良い）
-        'high_at_prob': 100,      # 高設定域
-        'mid_at_prob': 130,       # 中間設定域
-        'low_at_prob': 180,       # 低設定域の境界
-        'very_low_at_prob': 250,  # 非常に悪い
+        'setting6_at_prob': 181.3,
+        'setting1_at_prob': 241.7,
+        'setting6_payout': 112.7,
+        'setting1_payout': 97.8,
+        # 閾値（表示用）
+        'excellent_prob': 80,   # 設定6超え
+        'high_prob': 100,       # 高設定域
+        'mid_prob': 130,        # 中間設定域
+        'low_prob': 180,        # 低設定域境界
+        'very_low_prob': 250,   # 低設定域
     },
     'hokuto_tensei2': {
-        'setting6_at_prob': 273,  # 設定6域（非常に良い）
-        'high_at_prob': 300,      # 高設定域
-        'mid_at_prob': 340,       # 中間設定域
-        'low_at_prob': 366,       # 低設定域の境界
-        'very_low_at_prob': 450,  # 非常に悪い
+        'setting6_at_prob': 273.1,
+        'setting1_at_prob': 366.0,
+        'setting6_payout': 114.9,
+        'setting1_payout': 97.6,
+        'excellent_prob': 250,
+        'high_prob': 290,
+        'mid_prob': 330,
+        'low_prob': 366,
+        'very_low_prob': 450,
     },
 }
+
+# 後方互換性のため
+MACHINE_THRESHOLDS = {
+    'sbj': {
+        'setting6_at_prob': 80,
+        'high_at_prob': 100,
+        'mid_at_prob': 130,
+        'low_at_prob': 180,
+        'very_low_at_prob': 250,
+    },
+    'hokuto_tensei2': {
+        'setting6_at_prob': 273,
+        'high_at_prob': 300,
+        'mid_at_prob': 340,
+        'low_at_prob': 366,
+        'very_low_at_prob': 450,
+    },
+}
+
+
+def estimate_setting_from_prob(art_prob: float, machine_key: str = 'sbj') -> dict:
+    """ART確率から設定を推定し、期待差枚を計算
+
+    Returns:
+        {
+            'estimated_setting': str,  # '高設定濃厚', '高設定域', '中間', '低設定域'
+            'payout_estimate': float,  # 推定機械割
+            'hourly_expected': int,    # 1時間あたり期待差枚
+            'confidence': str,         # 'high', 'medium', 'low'
+        }
+    """
+    specs = MACHINE_SPECS.get(machine_key, MACHINE_SPECS['sbj'])
+
+    if art_prob <= 0:
+        return {
+            'estimated_setting': '不明',
+            'payout_estimate': 100.0,
+            'hourly_expected': 0,
+            'confidence': 'none',
+        }
+
+    # 設定6と設定1のART確率から機械割を線形補間
+    s6_prob = specs['setting6_at_prob']
+    s1_prob = specs['setting1_at_prob']
+    s6_payout = specs['setting6_payout']
+    s1_payout = specs['setting1_payout']
+
+    # ART確率が設定6より良い場合
+    if art_prob <= s6_prob:
+        payout = s6_payout + (s6_prob - art_prob) * 0.1  # さらに上乗せ
+        setting = '設定6超'
+        confidence = 'high'
+    # 設定6〜設定1の間
+    elif art_prob <= s1_prob:
+        ratio = (s1_prob - art_prob) / (s1_prob - s6_prob)
+        payout = s1_payout + (s6_payout - s1_payout) * ratio
+        if ratio >= 0.8:
+            setting = '高設定濃厚'
+            confidence = 'high'
+        elif ratio >= 0.5:
+            setting = '高設定域'
+            confidence = 'medium'
+        elif ratio >= 0.3:
+            setting = '中間'
+            confidence = 'medium'
+        else:
+            setting = '低設定域'
+            confidence = 'low'
+    # 設定1より悪い場合
+    else:
+        payout = s1_payout - (art_prob - s1_prob) * 0.05
+        setting = '低設定'
+        confidence = 'low'
+
+    # 1時間あたりの期待差枚（700G/時間 × 3枚/G × (機械割-100%)/100）
+    hourly_games = 700
+    hourly_expected = int(hourly_games * 3 * (payout - 100) / 100)
+
+    return {
+        'estimated_setting': setting,
+        'payout_estimate': round(payout, 1),
+        'hourly_expected': hourly_expected,
+        'confidence': confidence,
+    }
+
+
+def calculate_expected_profit(total_games: int, art_count: int, machine_key: str = 'sbj') -> dict:
+    """現在のデータから期待差枚を計算
+
+    Returns:
+        {
+            'current_estimate': int,      # 現在の推定差枚
+            'closing_estimate': int,      # 閉店時の推定差枚
+            'remaining_hours': float,     # 残り時間
+            'profit_category': str,       # '5000枚+', '3000枚+', '2000枚+', '1000枚+', 'プラス', 'マイナス'
+        }
+    """
+    now = datetime.now()
+    closing_hour = 23  # 閉店時刻
+
+    # 残り時間
+    if now.hour >= closing_hour:
+        remaining_hours = 0
+    else:
+        remaining_hours = closing_hour - now.hour - (now.minute / 60)
+
+    # ART確率から設定推定
+    art_prob = total_games / art_count if art_count > 0 else 0
+    setting_info = estimate_setting_from_prob(art_prob, machine_key)
+
+    # 現在の推定差枚（投入枚数 × (機械割-100%)/100）
+    invested = total_games * 3  # 3枚/G
+    current_estimate = int(invested * (setting_info['payout_estimate'] - 100) / 100)
+
+    # 閉店までの追加差枚
+    additional = int(remaining_hours * setting_info['hourly_expected'])
+    closing_estimate = current_estimate + additional
+
+    # カテゴリ分類
+    if closing_estimate >= 5000:
+        category = '5000枚+'
+    elif closing_estimate >= 3000:
+        category = '3000枚+'
+    elif closing_estimate >= 2000:
+        category = '2000枚+'
+    elif closing_estimate >= 1000:
+        category = '1000枚+'
+    elif closing_estimate > 0:
+        category = 'プラス'
+    elif closing_estimate > -1000:
+        category = '微マイナス'
+    else:
+        category = 'マイナス'
+
+    return {
+        'current_estimate': current_estimate,
+        'closing_estimate': closing_estimate,
+        'remaining_hours': round(remaining_hours, 1),
+        'profit_category': category,
+        'setting_info': setting_info,
+    }
 
 # 店舗キーのマッピング（config -> JSON data）
 STORE_KEY_MAPPING = {
@@ -467,61 +617,306 @@ def compare_with_others(store_key: str, unit_id: str, all_units_today: dict) -> 
     return result
 
 
+def analyze_graph_pattern(days: List[dict]) -> dict:
+    """グラフパターン分析（ミミズ/モミモミ/右肩上がり等）
+
+    Returns:
+        {
+            'pattern': str,  # 'mimizu'(横ばい), 'momimomi'(小刻み), 'rising'(右肩上がり), 'falling'(右肩下がり)
+            'volatility': float,  # 変動幅
+            'description': str,  # パターンの説明
+        }
+    """
+    if not days or len(days) < 3:
+        return {'pattern': 'unknown', 'volatility': 0, 'description': ''}
+
+    # 直近7日のART数から変動パターンを分析
+    arts = [d.get('art', 0) for d in days[:7] if d.get('art', 0) > 0]
+    if len(arts) < 3:
+        return {'pattern': 'unknown', 'volatility': 0, 'description': ''}
+
+    avg = sum(arts) / len(arts)
+    if avg == 0:
+        return {'pattern': 'unknown', 'volatility': 0, 'description': ''}
+
+    # 変動幅（標準偏差の代わりに簡易計算）
+    deviations = [abs(a - avg) for a in arts]
+    volatility = sum(deviations) / len(deviations) / avg * 100  # パーセンテージ
+
+    # トレンド（直近3日 vs 過去）
+    recent_avg = sum(arts[:3]) / 3
+    older_avg = sum(arts[3:]) / len(arts[3:]) if len(arts) > 3 else avg
+
+    # パターン判定
+    if volatility < 15:
+        # 変動が少ない = ミミズ（横ばい安定）
+        pattern = 'mimizu'
+        if avg >= 30:
+            description = f'安定して高ART（平均{avg:.0f}回）→ 高設定据え置き濃厚'
+        else:
+            description = f'横ばい安定（平均{avg:.0f}回）'
+    elif volatility < 30:
+        # 中程度の変動 = モミモミ
+        pattern = 'momimomi'
+        if recent_avg > older_avg * 1.1:
+            description = f'モミモミから上昇傾向 → そろそろ伸びる可能性'
+        else:
+            description = f'モミモミ中（変動{volatility:.0f}%）'
+    else:
+        # 変動が大きい
+        if recent_avg > older_avg * 1.2:
+            pattern = 'rising'
+            description = f'右肩上がり傾向 → 設定上げの可能性'
+        elif recent_avg < older_avg * 0.8:
+            pattern = 'falling'
+            description = f'右肩下がり傾向 → 設定下げ注意'
+        else:
+            pattern = 'volatile'
+            description = f'変動大（荒い台）'
+
+    return {
+        'pattern': pattern,
+        'volatility': volatility,
+        'description': description,
+    }
+
+
+def analyze_rotation_pattern(days: List[dict]) -> dict:
+    """ローテーションパターン分析
+
+    Returns:
+        {
+            'has_pattern': bool,
+            'cycle_days': int,  # ローテ周期
+            'next_high_chance': bool,  # 次に上がりそうか
+            'description': str,
+        }
+    """
+    if not days or len(days) < 5:
+        return {'has_pattern': False, 'cycle_days': 0, 'next_high_chance': False, 'description': ''}
+
+    # 直近7日の結果（プラス/マイナス）をパターン化
+    results = []
+    for day in days[:7]:
+        art = day.get('art', 0)
+        games = day.get('total_start', 0)
+        if games > 0 and art > 0:
+            prob = games / art
+            if prob <= 130:  # 高設定域
+                results.append('+')
+            elif prob >= 200:  # 低設定域
+                results.append('-')
+            else:
+                results.append('=')
+
+    if len(results) < 5:
+        return {'has_pattern': False, 'cycle_days': 0, 'next_high_chance': False, 'description': ''}
+
+    # 連続マイナス後のプラスパターンを検出
+    pattern_str = ''.join(results)
+
+    # 2日下げて上げるパターン
+    if '--+' in pattern_str[:4]:
+        return {
+            'has_pattern': True,
+            'cycle_days': 3,
+            'next_high_chance': results[0] == '-' and results[1] == '-',
+            'description': '2日下げ→上げのローテ傾向あり'
+        }
+
+    # 3日下げて上げるパターン
+    if '---+' in pattern_str[:5]:
+        return {
+            'has_pattern': True,
+            'cycle_days': 4,
+            'next_high_chance': results[0] == '-' and results[1] == '-' and results[2] == '-',
+            'description': '3日下げ→上げのローテ傾向あり'
+        }
+
+    # 交互パターン（+-+-）
+    alternating = sum(1 for i in range(len(results)-1) if results[i] != results[i+1])
+    if alternating >= 4:
+        return {
+            'has_pattern': True,
+            'cycle_days': 2,
+            'next_high_chance': results[0] == '-',
+            'description': '日替わりローテ傾向（交互に変動）'
+        }
+
+    return {'has_pattern': False, 'cycle_days': 0, 'next_high_chance': False, 'description': ''}
+
+
+def analyze_today_graph(history: List[dict]) -> dict:
+    """本日のグラフ分析（ハマりなし/連チャン中等）
+
+    Returns:
+        {
+            'no_deep_valley': bool,  # 深いハマりなし
+            'max_valley': int,  # 最大ハマり
+            'is_on_fire': bool,  # 連チャン中
+            'recent_trend': str,  # 直近の傾向
+            'description': str,
+        }
+    """
+    if not history:
+        return {
+            'no_deep_valley': True,
+            'max_valley': 0,
+            'is_on_fire': False,
+            'recent_trend': 'unknown',
+            'description': ''
+        }
+
+    # 各当たり間のG数を計算
+    valleys = []
+    for h in history:
+        start = h.get('start', 0) or h.get('games_between', 0)
+        if start > 0:
+            valleys.append(start)
+
+    if not valleys:
+        return {
+            'no_deep_valley': True,
+            'max_valley': 0,
+            'is_on_fire': False,
+            'recent_trend': 'unknown',
+            'description': ''
+        }
+
+    max_valley = max(valleys)
+    avg_valley = sum(valleys) / len(valleys)
+    recent_valleys = valleys[-5:] if len(valleys) >= 5 else valleys
+
+    # 深いハマりなし判定（500G以上のハマりがない）
+    no_deep_valley = max_valley < 500
+
+    # 連チャン中判定（直近5回が全て100G以内）
+    is_on_fire = len(recent_valleys) >= 3 and all(v <= 100 for v in recent_valleys)
+
+    # 直近の傾向
+    if is_on_fire:
+        recent_trend = 'hot'
+        description = f'連チャン中（直近{len(recent_valleys)}回全て100G以内）'
+    elif no_deep_valley and avg_valley < 100:
+        recent_trend = 'very_hot'
+        description = f'絶好調（平均{avg_valley:.0f}G、最大{max_valley}G）'
+    elif no_deep_valley:
+        recent_trend = 'stable'
+        description = f'ハマりなし安定（最大{max_valley}G）'
+    elif max_valley >= 800:
+        recent_trend = 'recovering'
+        description = f'{max_valley}Gハマりあり → 天井後は狙い目'
+    else:
+        recent_trend = 'normal'
+        description = ''
+
+    return {
+        'no_deep_valley': no_deep_valley,
+        'max_valley': max_valley,
+        'is_on_fire': is_on_fire,
+        'recent_trend': recent_trend,
+        'description': description,
+    }
+
+
 def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
-                     base_rank: str, final_rank: str) -> List[str]:
-    """推奨理由を生成"""
+                     base_rank: str, final_rank: str, days: List[dict] = None,
+                     today_history: List[dict] = None) -> List[str]:
+    """推奨理由を生成（より具体的な分析付き）"""
     reasons = []
 
-    # 1. 過去トレンドからの理由
-    if trend.get('consecutive_plus', 0) >= 3:
-        reasons.append(f"過去{trend['consecutive_plus']}日連続でプラス推定 → 高設定据え置き濃厚")
-    elif trend.get('consecutive_plus', 0) >= 2:
-        reasons.append(f"直近{trend['consecutive_plus']}日連続プラス")
+    # 1. ローテーションパターン分析
+    if days:
+        rotation = analyze_rotation_pattern(days)
+        if rotation['has_pattern']:
+            if rotation['next_high_chance']:
+                reasons.append(f"{rotation['description']} → 本日上げ期待大")
+            else:
+                reasons.append(rotation['description'])
 
-    if trend.get('consecutive_minus', 0) >= 3:
-        reasons.append(f"過去{trend['consecutive_minus']}日連続マイナス → そろそろ上げる可能性")
-    elif trend.get('consecutive_minus', 0) >= 2:
-        reasons.append(f"直近{trend['consecutive_minus']}日連続マイナス")
+    # 2. グラフパターン分析（ミミズ/モミモミ等）
+    if days:
+        graph = analyze_graph_pattern(days)
+        if graph['description']:
+            reasons.append(graph['description'])
 
-    # 2. 昨日の結果
+    # 3. 本日のグラフ分析
+    if today_history:
+        today_graph = analyze_today_graph(today_history)
+        if today_graph['description']:
+            reasons.append(today_graph['description'])
+
+    # 4. 連続プラス/マイナスからの推論
+    consecutive_plus = trend.get('consecutive_plus', 0)
+    consecutive_minus = trend.get('consecutive_minus', 0)
+
+    if consecutive_plus >= 4:
+        reasons.append(f"{consecutive_plus}日連続プラス → 高設定据え置き継続中、明日まで狙える")
+    elif consecutive_plus >= 3:
+        reasons.append(f"{consecutive_plus}日連続プラス → 据え置き濃厚だが下げ警戒も")
+    elif consecutive_plus >= 2:
+        pass  # 弱いので表示しない
+
+    if consecutive_minus >= 4:
+        reasons.append(f"{consecutive_minus}日連続マイナス → 店の設定投入サイクル的に上げ濃厚")
+    elif consecutive_minus >= 3:
+        reasons.append(f"{consecutive_minus}日マイナス継続 → そろそろ上げる可能性高")
+    elif consecutive_minus == 2:
+        reasons.append(f"2日連続マイナス → 3日目の上げに期待")
+
+    # 5. 昨日の結果（具体的に）
     yesterday = trend.get('yesterday_result', 'unknown')
     yesterday_diff = trend.get('yesterday_diff', 0)
-    if yesterday == 'big_minus':
-        reasons.append(f"昨日大幅マイナス（推定{yesterday_diff:+,}枚）→ 今日は上げ狙い目")
-    elif yesterday == 'minus':
-        reasons.append(f"昨日マイナス（推定{yesterday_diff:+,}枚）")
-    elif yesterday == 'big_plus':
-        reasons.append(f"昨日大幅プラス（推定{yesterday_diff:+,}枚）→ 据え置きor下げ注意")
-    elif yesterday == 'plus':
-        reasons.append(f"昨日プラス（推定{yesterday_diff:+,}枚）")
+    avg_games = trend.get('avg_games_7days', 0)
 
-    # 3. ART確率トレンド
-    if trend.get('art_trend') == 'improving':
-        reasons.append("直近のART確率が改善傾向")
-    elif trend.get('art_trend') == 'declining':
-        reasons.append("直近のART確率が悪化傾向")
+    if yesterday == 'big_minus' and yesterday_diff < -2000:
+        reasons.append(f"昨日-{abs(yesterday_diff):,}枚の大凹み → リセット狙い目")
+    elif yesterday == 'big_minus':
+        reasons.append(f"昨日マイナス → 設定変更で天井短縮の可能性")
+    elif yesterday == 'big_plus' and yesterday_diff > 3000:
+        reasons.append(f"昨日+{yesterday_diff:,}枚の大勝ち → 据え置きなら狙い目、下げなら回避")
 
-    # 4. 7日間平均
-    avg_art = trend.get('avg_art_7days', 0)
-    if avg_art >= 40:
-        reasons.append(f"7日平均ART{avg_art:.0f}回（高稼働・高設定傾向）")
-    elif avg_art >= 25:
-        reasons.append(f"7日平均ART{avg_art:.0f}回")
+    # 6. 当日の状況からの推論
+    art_prob = today.get('art_prob', 0)
+    total_games = today.get('total_games', 0)
 
-    # 5. 当日の状況
-    reasons.extend(today.get('today_reasons', []))
+    if total_games > 0:
+        if art_prob > 0 and art_prob <= 80:
+            reasons.append(f"本日ART確率1/{art_prob:.0f} → 設定6以上の挙動")
+        elif art_prob > 0 and art_prob <= 100:
+            reasons.append(f"本日ART確率1/{art_prob:.0f} → 高設定濃厚")
 
-    # 6. 他台との比較
+        # 稼働量と出玉の関係
+        if total_games >= 5000 and art_prob <= 130:
+            reasons.append(f"5,000G以上消化で好調維持 → 信頼度高")
+        elif total_games >= 3000 and art_prob <= 100:
+            reasons.append(f"3,000G消化で高設定挙動継続中")
+    else:
+        # 未稼働台の分析
+        if consecutive_minus >= 2:
+            reasons.append("未稼働 + 連日マイナス → リセット台として狙い目")
+        elif avg_games > 0 and avg_games < 3000:
+            reasons.append("低稼働傾向の台 → 隠れ高設定の可能性")
+
+    # 7. 他台との比較
     if comparison.get('is_top_performer'):
-        reasons.append("本日この店舗でトップの出玉")
-    elif comparison.get('rank_in_store', 99) <= 3 and comparison.get('total_units', 0) > 3:
-        reasons.append(f"本日{comparison['rank_in_store']}位/{comparison['total_units']}台")
+        reasons.append("本日この店舗でトップの出玉 → 高設定濃厚")
+    elif comparison.get('rank_in_store', 99) <= 2 and comparison.get('total_units', 0) > 3:
+        reasons.append(f"本日{comparison['rank_in_store']}位/{comparison['total_units']}台中 → 上位台")
 
-    # 7. ランク変動
+    # 8. ランク変動
     if final_rank < base_rank:  # ランクが上がった（A < B）
         reasons.append(f"本日データで評価上昇（{base_rank}→{final_rank}）")
 
-    return reasons
+    # 重複を除去して上位5つに絞る
+    seen = set()
+    unique_reasons = []
+    for r in reasons:
+        if r not in seen:
+            seen.add(r)
+            unique_reasons.append(r)
+
+    return unique_reasons[:5]
 
 
 def recommend_units(store_key: str, realtime_data: dict = None, availability: dict = None) -> list:
@@ -662,9 +1057,21 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
         final_score = base_score + today_analysis.get('today_score_bonus', 0) + trend_bonus
         final_rank = get_rank(final_score)
 
-        # 推奨理由を生成
+        # 推奨理由を生成（過去日データと当日履歴を渡す）
+        unit_days = []
+        today_history = []
+        if unit_history:
+            unit_days = unit_history.get('days', [])
+            # 当日の履歴を取得
+            today_str = datetime.now().strftime('%Y-%m-%d')
+            for day in unit_days:
+                if day.get('date') == today_str:
+                    today_history = day.get('history', [])
+                    break
+
         reasons = generate_reasons(
-            unit_id, trend_data, today_analysis, comparison, base_rank, final_rank
+            unit_id, trend_data, today_analysis, comparison, base_rank, final_rank,
+            days=unit_days, today_history=today_history
         )
 
         # リアルタイム空き状況がある場合は上書き
@@ -683,6 +1090,11 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
                     is_running = False
                     status = '空き'
 
+        # 差枚見込み計算
+        total_games = today_analysis.get('total_games', 0)
+        art_count = today_analysis.get('art_count', 0)
+        profit_info = calculate_expected_profit(total_games, art_count, machine_key)
+
         rec = {
             'unit_id': unit_id,
             'base_rank': base_rank,
@@ -692,10 +1104,10 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
             'status': status,
             'is_running': is_running,
             'availability': availability_status,  # リアルタイム空き状況
-            'art_count': today_analysis.get('art_count', 0),
+            'art_count': art_count,
             'bb_count': today_analysis.get('bb_count', 0),
             'rb_count': today_analysis.get('rb_count', 0),
-            'total_games': today_analysis.get('total_games', 0),
+            'total_games': total_games,
             'art_prob': today_analysis.get('art_prob', 0),
             'last_hit_time': today_analysis.get('last_hit_time'),
             'first_hit_time': today_analysis.get('first_hit_time'),
@@ -709,6 +1121,12 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
             'consecutive_plus': trend_data.get('consecutive_plus', 0),
             'consecutive_minus': trend_data.get('consecutive_minus', 0),
             'avg_art_7days': trend_data.get('avg_art_7days', 0),
+            # 差枚見込み
+            'current_estimate': profit_info['current_estimate'],
+            'closing_estimate': profit_info['closing_estimate'],
+            'profit_category': profit_info['profit_category'],
+            'estimated_setting': profit_info['setting_info']['estimated_setting'],
+            'payout_estimate': profit_info['setting_info']['payout_estimate'],
         }
 
         recommendations.append(rec)
