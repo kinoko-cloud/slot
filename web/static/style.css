@@ -1,0 +1,733 @@
+/* SBJ 台選びアシスタント - モバイル対応CSS */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: #1a1a2e;
+    color: #eee;
+    line-height: 1.5;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 10px;
+}
+
+/* ヘッダー */
+header {
+    text-align: center;
+    padding: 15px 0;
+    border-bottom: 1px solid #333;
+    margin-bottom: 15px;
+}
+
+header h1 {
+    font-size: 1.4em;
+    font-weight: 600;
+    color: #fff;
+}
+
+.back-link {
+    display: inline-block;
+    color: #70a1ff;
+    text-decoration: none;
+    font-size: 0.9em;
+    margin-bottom: 5px;
+}
+
+.update-info {
+    font-size: 0.8em;
+    color: #888;
+    margin-top: 5px;
+}
+
+.refresh-btn {
+    background: #333;
+    color: #fff;
+    border: none;
+    padding: 5px 12px;
+    border-radius: 4px;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+.refresh-btn:active {
+    background: #444;
+}
+
+/* 機種リスト */
+.machine-list h2,
+.store-list h2 {
+    font-size: 1em;
+    color: #888;
+    margin-bottom: 10px;
+}
+
+.machine-card {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: #252541;
+    border-radius: 8px;
+    padding: 20px 15px;
+    margin-bottom: 10px;
+    text-decoration: none;
+    color: #fff;
+    transition: background 0.2s;
+}
+
+.machine-card:active {
+    background: #333355;
+}
+
+.machine-icon {
+    font-size: 2em;
+}
+
+.machine-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.machine-name {
+    font-size: 1.2em;
+    font-weight: 600;
+}
+
+.machine-detail {
+    font-size: 0.85em;
+    color: #888;
+    margin-top: 2px;
+}
+
+.arrow {
+    font-size: 1.5em;
+    color: #555;
+}
+
+/* 店舗リスト */
+.store-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #252541;
+    border-radius: 8px;
+    padding: 18px 15px;
+    margin-bottom: 10px;
+    text-decoration: none;
+    color: #fff;
+    transition: background 0.2s;
+}
+
+.store-card:active {
+    background: #333355;
+}
+
+.store-name {
+    font-size: 1.1em;
+    font-weight: 500;
+}
+
+.unit-count {
+    font-size: 0.9em;
+    color: #888;
+}
+
+/* 推奨セクション */
+.recommendations {
+    margin-bottom: 20px;
+}
+
+.recommendations h2 {
+    font-size: 1em;
+    color: #ffa502;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.recommendations.top h2::before {
+    content: "★★★";
+    margin-right: 8px;
+}
+
+.recommendations.other h2 {
+    color: #888;
+}
+
+.recommendations.other h2::before {
+    content: "";
+}
+
+/* 台カード */
+.unit-card {
+    background: #252541;
+    border-radius: 8px;
+    padding: 12px 15px;
+    margin-bottom: 8px;
+}
+
+.unit-card.running {
+    opacity: 0.6;
+}
+
+.unit-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 5px;
+}
+
+.unit-id {
+    font-size: 1.3em;
+    font-weight: 700;
+    color: #fff;
+}
+
+.rank-badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    font-weight: 600;
+    color: #fff;
+}
+
+.rank-badge.small {
+    padding: 1px 6px;
+    font-size: 0.8em;
+}
+
+.stars {
+    color: #ffd700;
+    font-size: 0.9em;
+}
+
+.unit-status {
+    margin: 5px 0;
+}
+
+.status {
+    font-size: 0.9em;
+    color: #2ed573;
+}
+
+.status.running {
+    color: #ff6b6b;
+}
+
+.unit-today {
+    font-size: 0.85em;
+    color: #70a1ff;
+}
+
+.unit-note {
+    font-size: 0.8em;
+    color: #888;
+    margin-top: 3px;
+}
+
+/* コンパクトカード */
+.unit-card.compact {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+}
+
+.unit-card.compact .unit-id {
+    font-size: 1.1em;
+    min-width: 50px;
+}
+
+.unit-card.compact .status {
+    flex: 1;
+    font-size: 0.85em;
+}
+
+.unit-card.compact .art-info {
+    font-size: 0.8em;
+    color: #70a1ff;
+}
+
+/* 推奨なし */
+.no-recommendation {
+    text-align: center;
+    padding: 30px;
+    background: #252541;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.no-recommendation p {
+    font-size: 1.1em;
+    color: #888;
+}
+
+.no-recommendation .sub {
+    font-size: 0.9em;
+    color: #666;
+    margin-top: 5px;
+}
+
+/* フッター */
+footer {
+    text-align: center;
+    padding: 20px 0;
+    color: #666;
+    font-size: 0.8em;
+}
+
+.api-link {
+    color: #555;
+    text-decoration: none;
+}
+
+/* ランク別ボーダー */
+.unit-card.rank-s {
+    border-left: 4px solid #ff6b6b;
+}
+
+.unit-card.rank-a {
+    border-left: 4px solid #ffa502;
+}
+
+.unit-card.rank-b {
+    border-left: 4px solid #2ed573;
+}
+
+.unit-card.rank-c {
+    border-left: 4px solid #70a1ff;
+}
+
+.unit-card.rank-d {
+    border-left: 4px solid #747d8c;
+}
+
+/* スクレイピングボタン */
+.scrape-btn {
+    background: #ff6b6b;
+    color: #fff;
+    border: none;
+    padding: 5px 12px;
+    border-radius: 4px;
+    margin-left: 5px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.scrape-btn:active {
+    background: #ee5a5a;
+}
+
+.scrape-btn:disabled {
+    background: #555;
+    cursor: not-allowed;
+}
+
+/* ローディングオーバーレイ */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(26, 26, 46, 0.95);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.loading-overlay.hidden {
+    display: none;
+}
+
+.loading-content {
+    text-align: center;
+    padding: 30px;
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid #333;
+    border-top-color: #ff6b6b;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.loading-text {
+    font-size: 1.3em;
+    color: #fff;
+    margin-bottom: 20px;
+}
+
+.loading-progress {
+    max-width: 250px;
+    margin: 0 auto;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: #333;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #ff6b6b, #ffa502);
+    width: 0;
+    transition: width 0.3s ease;
+}
+
+.progress-time {
+    font-size: 1.5em;
+    color: #ffa502;
+    font-weight: 700;
+}
+
+.loading-hint {
+    font-size: 0.85em;
+    color: #888;
+    margin-top: 15px;
+}
+
+/* キャッシュバッジ */
+.cache-badge {
+    background: #2ed573;
+    color: #000;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.75em;
+    font-weight: 600;
+    margin-left: 8px;
+}
+
+/* アクションボタン */
+.action-buttons {
+    margin-top: 8px;
+}
+
+/* スコア表示 */
+.score {
+    font-size: 0.85em;
+    color: #888;
+    margin-left: auto;
+}
+
+/* 展開アイコン */
+.expand-icon {
+    color: #555;
+    font-size: 0.8em;
+    margin-left: 8px;
+    transition: transform 0.2s;
+}
+
+.expand-icon.small {
+    font-size: 0.7em;
+}
+
+/* 本日ART表示 */
+.today-art {
+    font-size: 0.85em;
+    color: #70a1ff;
+    margin-left: 10px;
+}
+
+/* 詳細セクション */
+.unit-details {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #333;
+}
+
+.unit-details.hidden {
+    display: none;
+}
+
+/* 推奨理由セクション */
+.reasons-section {
+    margin-bottom: 12px;
+}
+
+.section-title {
+    font-size: 0.8em;
+    color: #ffa502;
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+
+.reason-item {
+    font-size: 0.85em;
+    color: #ddd;
+    padding: 4px 0;
+    padding-left: 12px;
+    border-left: 2px solid #ffa502;
+    margin-bottom: 4px;
+    background: rgba(255, 165, 2, 0.05);
+}
+
+.reason-item.small {
+    font-size: 0.8em;
+    padding: 3px 0 3px 10px;
+}
+
+/* 統計セクション */
+.stats-section {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+    padding: 10px;
+}
+
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    font-size: 0.85em;
+}
+
+.stat-label {
+    color: #888;
+}
+
+.stat-value {
+    color: #fff;
+    font-weight: 600;
+}
+
+.stat-value.plus {
+    color: #2ed573;
+}
+
+.stat-value.minus {
+    color: #ff6b6b;
+}
+
+/* コンパクトカード用 */
+.compact-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.stats-row {
+    display: flex;
+    gap: 15px;
+    font-size: 0.8em;
+    color: #888;
+    margin-top: 8px;
+}
+
+/* 当日データサマリー */
+.today-summary {
+    margin: 8px 0;
+    padding: 8px 10px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+}
+
+.today-stats {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.stat-item .label {
+    font-size: 0.7em;
+    color: #888;
+}
+
+.stat-item .value {
+    font-size: 1em;
+    font-weight: 600;
+    color: #fff;
+}
+
+.stat-item.highlight .value {
+    color: #ffa502;
+}
+
+.no-data {
+    font-size: 0.9em;
+    color: #2ed573;
+    font-weight: 500;
+}
+
+/* 推奨理由プレビュー */
+.reasons-preview {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 0;
+    margin-top: 5px;
+}
+
+.reason-icon {
+    font-size: 0.9em;
+}
+
+.reason-text {
+    font-size: 0.85em;
+    color: #ffa502;
+}
+
+/* 空き状態 */
+.status.available {
+    color: #2ed573;
+    font-weight: 600;
+}
+
+.unit-card.available {
+    background: rgba(46, 213, 115, 0.1);
+}
+
+/* コンパクト用ゲーム数表示 */
+.games-info {
+    font-size: 0.8em;
+    color: #888;
+}
+
+/* コンパクト用当日統計 */
+.compact-stats {
+    display: flex;
+    gap: 10px;
+    font-size: 0.8em;
+    color: #aaa;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+}
+
+/* ランキングボタン */
+.ranking-section {
+    margin-bottom: 20px;
+}
+
+.ranking-button {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: linear-gradient(135deg, #ffa502, #ff6b6b);
+    border-radius: 10px;
+    padding: 16px 18px;
+    text-decoration: none;
+    color: #fff;
+    font-weight: 600;
+    transition: transform 0.2s;
+}
+
+.ranking-button:active {
+    transform: scale(0.98);
+}
+
+.ranking-icon {
+    font-size: 1.5em;
+}
+
+.ranking-text {
+    flex: 1;
+    font-size: 1.1em;
+}
+
+/* ランキング番号 */
+.ranking-num {
+    font-size: 0.9em;
+    font-weight: 700;
+    color: #ffa502;
+    min-width: 28px;
+}
+
+/* 店舗タグ */
+.unit-store {
+    font-size: 0.85em;
+    color: #70a1ff;
+    margin: 3px 0;
+}
+
+.unit-store a {
+    color: #70a1ff;
+    text-decoration: none;
+}
+
+.store-tag {
+    font-size: 0.75em;
+    background: #333;
+    padding: 2px 6px;
+    border-radius: 3px;
+    color: #aaa;
+}
+
+/* 機種ラベル */
+.machine-label {
+    font-size: 0.9em;
+    color: #ffa502;
+    margin-top: 3px;
+}
+
+/* 最終当たり時間 */
+.last-hit {
+    font-size: 0.8em;
+    color: #70a1ff;
+    margin-left: 10px;
+}
+
+/* 時間情報 */
+.time-info {
+    font-size: 0.8em;
+    color: #888;
+    margin-top: 6px;
+}
+
+.time-info.small {
+    font-size: 0.75em;
+    margin-top: 4px;
+}
+
+/* 確率情報（コンパクト） */
+.prob-info {
+    font-size: 0.75em;
+    color: #ffa502;
+    font-weight: 600;
+}
+
+/* フッターリンク */
+.footer-link {
+    color: #70a1ff;
+    text-decoration: none;
+    margin: 0 5px;
+}
+
+/* 非表示テキスト */
+.hidden-text {
+    color: #1a1a2e;
+    font-size: 1px;
+}
+
+/* サブタイトル */
+.subtitle {
+    font-size: 0.9em;
+    color: #888;
+    margin-top: 5px;
+}

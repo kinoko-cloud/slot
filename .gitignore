@@ -21,5 +21,10 @@ ENV/
 .DS_Store
 Thumbs.db
 
-# Data (大きいファイルは除外、必要なものだけ含める)
-# data/raw/*.json は含める（履歴データ）
+# Data (大きいファイルは除外)
+data/raw/*.png
+data/raw/*.json
+slot_deploy.tar.gz
+
+# Keep daily data
+!data/daily/

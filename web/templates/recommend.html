@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+    <meta name="googlebot" content="noindex, nofollow">
+    <title>{{ store.name }} - {{ machine.short_name }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="{{ url_for('machine_stores', machine_key=machine_key) }}" class="back-link">&lt; {{ machine.short_name }}</a>
+            <h1>{{ store.name }}</h1>
+            <div class="machine-label">{{ machine.icon }} {{ machine.short_name }}</div>
+            <div class="update-info">
+                更新: <span id="update-time">{{ updated_at }}</span>
+                {% if cache_info %}
+                <span class="cache-badge">リアルタイム</span>
+                {% endif %}
+            </div>
+            <div class="action-buttons">
+                <button onclick="location.reload()" class="refresh-btn">更新</button>
+                <button onclick="startScraping()" class="scrape-btn" id="scrape-btn">最新取得</button>
+            </div>
+        </header>
+
+        <!-- ローディングオーバーレイ -->
+        <div id="loading-overlay" class="loading-overlay hidden">
+            <div class="loading-content">
+                <div class="loading-spinner"></div>
+                <div class="loading-text">データ取得中...</div>
+                <div class="loading-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill"></div>
+                    </div>
+                    <div class="progress-time" id="progress-time">0秒</div>
+                </div>
+                <div class="loading-hint">通常10-30秒かかります</div>
+            </div>
+        </div>
+
+        <main>
+            {% if top_recs %}
+            <section class="recommendations top">
+                <h2>推奨台</h2>
+                {% for rec in top_recs %}
+                <div class="unit-card rank-{{ rec.final_rank|lower }}" onclick="toggleDetails(this)">
+                    <div class="unit-header">
+                        <span class="unit-id">{{ rec.unit_id }}番台</span>
+                        <span class="rank-badge" style="background-color: {{ rank_color(rec.final_rank) }}">
+                            {{ rec.final_rank }}
+                        </span>
+                        <span class="score">{{ rec.final_score|int }}pt</span>
+                        <span class="expand-icon">▼</span>
+                    </div>
+                    <div class="unit-status">
+                        <span class="status {{ 'running' if rec.is_running else 'available' if '空き' in rec.status else 'idle' }}">
+                            {{ rec.status }}
+                        </span>
+                        {% if rec.last_hit_time %}
+                        <span class="last-hit">最終当たり {{ rec.last_hit_time }}</span>
+                        {% endif %}
+                    </div>
+
+                    <!-- 当日データサマリー -->
+                    <div class="today-summary">
+                        {% if rec.total_games > 0 %}
+                        <div class="today-stats">
+                            <span class="stat-item">
+                                <span class="label">総G数</span>
+                                <span class="value">{{ '{:,}'.format(rec.total_games) }}</span>
+                            </span>
+                            <span class="stat-item">
+                                <span class="label">ART</span>
+                                <span class="value">{{ rec.art_count }}回</span>
+                            </span>
+                            {% if rec.bb_count is defined and rec.bb_count > 0 %}
+                            <span class="stat-item">
+                                <span class="label">BB</span>
+                                <span class="value">{{ rec.bb_count }}</span>
+                            </span>
+                            {% endif %}
+                            {% if rec.rb_count is defined and rec.rb_count > 0 %}
+                            <span class="stat-item">
+                                <span class="label">RB</span>
+                                <span class="value">{{ rec.rb_count }}</span>
+                            </span>
+                            {% endif %}
+                            {% if rec.art_prob > 0 %}
+                            <span class="stat-item highlight">
+                                <span class="label">ART確率</span>
+                                <span class="value">1/{{ rec.art_prob|int }}</span>
+                            </span>
+                            {% endif %}
+                        </div>
+                        {% if rec.first_hit_time %}
+                        <div class="time-info">
+                            初当たり {{ rec.first_hit_time }} → 最終 {{ rec.last_hit_time or '-' }}
+                        </div>
+                        {% endif %}
+                        {% else %}
+                        <div class="no-data">本日未稼働 → 狙い目候補</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- 推奨理由（常に表示） -->
+                    {% if rec.reasons %}
+                    <div class="reasons-preview">
+                        <span class="reason-icon">💡</span>
+                        <span class="reason-text">{{ rec.reasons[0] }}</span>
+                    </div>
+                    {% endif %}
+
+                    <!-- 根拠詳細（クリックで展開） -->
+                    <div class="unit-details hidden">
+                        {% if rec.reasons|length > 1 %}
+                        <div class="reasons-section">
+                            <div class="section-title">全ての推奨理由</div>
+                            {% for reason in rec.reasons %}
+                            <div class="reason-item">{{ reason }}</div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                        <div class="stats-section">
+                            <div class="section-title">過去データ</div>
+                            <div class="stat-row">
+                                <span class="stat-label">昨日の推定差枚</span>
+                                <span class="stat-value {% if rec.yesterday_diff > 0 %}plus{% elif rec.yesterday_diff < 0 %}minus{% endif %}">
+                                    {{ '%+d'|format(rec.yesterday_diff) }}枚
+                                </span>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-label">7日間 平均ART</span>
+                                <span class="stat-value">{{ rec.avg_art_7days|round(1) }}回/日</span>
+                            </div>
+                            {% if rec.consecutive_plus > 0 %}
+                            <div class="stat-row">
+                                <span class="stat-label">連続プラス日数</span>
+                                <span class="stat-value plus">{{ rec.consecutive_plus }}日連続</span>
+                            </div>
+                            {% endif %}
+                            {% if rec.consecutive_minus > 0 %}
+                            <div class="stat-row">
+                                <span class="stat-label">連続マイナス日数</span>
+                                <span class="stat-value minus">{{ rec.consecutive_minus }}日連続</span>
+                            </div>
+                            {% endif %}
+                            <div class="stat-row">
+                                <span class="stat-label">基本評価</span>
+                                <span class="stat-value">{{ rec.base_rank }}ランク ({{ rec.base_score|int }}pt)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </section>
+            {% else %}
+            <section class="no-recommendation">
+                <p>推奨台なし</p>
+                <p class="sub">全台稼働中または評価データなし</p>
+            </section>
+            {% endif %}
+
+            <section class="recommendations other">
+                <h2>その他の台</h2>
+                {% for rec in other_recs %}
+                <div class="unit-card compact rank-{{ rec.final_rank|lower }} {{ 'running' if rec.is_running else 'available' if '空き' in rec.status else '' }}" onclick="toggleDetails(this)">
+                    <div class="compact-header">
+                        <span class="unit-id">{{ rec.unit_id }}</span>
+                        <span class="rank-badge small" style="background-color: {{ rank_color(rec.final_rank) }}">
+                            {{ rec.final_rank }}
+                        </span>
+                        <span class="status {{ 'available' if '空き' in rec.status else '' }}">{{ rec.status }}</span>
+                        {% if rec.total_games > 0 %}
+                        <span class="games-info">{{ '{:,}'.format(rec.total_games) }}G</span>
+                        <span class="art-info">ART{{ rec.art_count }}</span>
+                        {% if rec.art_prob > 0 %}
+                        <span class="prob-info">1/{{ rec.art_prob|int }}</span>
+                        {% endif %}
+                        {% endif %}
+                        <span class="expand-icon small">▼</span>
+                    </div>
+
+                    <!-- 根拠詳細（クリックで展開） -->
+                    <div class="unit-details hidden">
+                        {% if rec.total_games > 0 %}
+                        <div class="compact-stats">
+                            <span>総G数: {{ '{:,}'.format(rec.total_games) }}</span>
+                            <span>ART: {{ rec.art_count }}回</span>
+                            {% if rec.art_prob > 0 %}<span>確率: 1/{{ rec.art_prob|int }}</span>{% endif %}
+                            {% if rec.bb_count is defined and rec.bb_count > 0 %}<span>BB: {{ rec.bb_count }}</span>{% endif %}
+                            {% if rec.rb_count is defined and rec.rb_count > 0 %}<span>RB: {{ rec.rb_count }}</span>{% endif %}
+                        </div>
+                        {% if rec.first_hit_time %}
+                        <div class="time-info small">初当たり {{ rec.first_hit_time }} → 最終 {{ rec.last_hit_time or '-' }}</div>
+                        {% endif %}
+                        {% endif %}
+                        {% if rec.reasons %}
+                        <div class="reasons-section">
+                            {% for reason in rec.reasons[:3] %}
+                            <div class="reason-item small">{{ reason }}</div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        <div class="stats-row">
+                            <span>昨日: {{ '%+d'|format(rec.yesterday_diff) }}枚</span>
+                            <span>7日平均: {{ rec.avg_art_7days|round(1) }}ART</span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </section>
+        </main>
+
+        <footer>
+            <p>
+                <a href="{{ url_for('ranking', machine_key=machine_key) }}" class="footer-link">総合ランキング</a>
+                |
+                <a href="{{ url_for('api_status', store_key=store_key) }}" class="api-link">JSON</a>
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        const storeKey = '{{ store_key }}';
+        let scrapingTimer = null;
+        let elapsedSeconds = 0;
+
+        function toggleDetails(card) {
+            const details = card.querySelector('.unit-details');
+            const icon = card.querySelector('.expand-icon');
+            if (details) {
+                details.classList.toggle('hidden');
+                if (icon) {
+                    icon.textContent = details.classList.contains('hidden') ? '▼' : '▲';
+                }
+            }
+        }
+
+        function showLoading() {
+            document.getElementById('loading-overlay').classList.remove('hidden');
+            document.getElementById('scrape-btn').disabled = true;
+            elapsedSeconds = 0;
+            updateProgress();
+            scrapingTimer = setInterval(updateProgress, 1000);
+        }
+
+        function hideLoading() {
+            document.getElementById('loading-overlay').classList.add('hidden');
+            document.getElementById('scrape-btn').disabled = false;
+            if (scrapingTimer) {
+                clearInterval(scrapingTimer);
+                scrapingTimer = null;
+            }
+        }
+
+        function updateProgress() {
+            elapsedSeconds++;
+            const timeText = document.getElementById('progress-time');
+            const progressFill = document.getElementById('progress-fill');
+
+            timeText.textContent = elapsedSeconds + '秒';
+
+            // 30秒を想定したプログレスバー
+            const progress = Math.min((elapsedSeconds / 30) * 100, 95);
+            progressFill.style.width = progress + '%';
+        }
+
+        function startScraping() {
+            showLoading();
+
+            // スクレイピング開始
+            fetch('/api/scrape/' + storeKey)
+                .then(r => r.json())
+                .then(data => {
+                    console.log('Scraping started:', data);
+                    checkScrapingStatus();
+                })
+                .catch(err => {
+                    console.error('Error starting scraping:', err);
+                    hideLoading();
+                    alert('エラーが発生しました');
+                });
+        }
+
+        function checkScrapingStatus() {
+            fetch('/api/scrape_status/' + storeKey)
+                .then(r => r.json())
+                .then(data => {
+                    console.log('Status:', data);
+
+                    if (data.status === 'completed') {
+                        // 完了 - ページをリロード
+                        hideLoading();
+                        location.reload();
+                    } else if (data.status === 'error') {
+                        hideLoading();
+                        alert('取得エラー: ' + (data.error || '不明なエラー'));
+                    } else if (data.status === 'running') {
+                        // まだ実行中 - 1秒後に再チェック
+                        setTimeout(checkScrapingStatus, 1000);
+                    } else {
+                        // その他（idle等）- 少し待って再チェック
+                        setTimeout(checkScrapingStatus, 500);
+                    }
+                })
+                .catch(err => {
+                    console.error('Error checking status:', err);
+                    hideLoading();
+                    alert('ステータス確認エラー');
+                });
+        }
+
+        // 自動更新（5分ごと）
+        setTimeout(function() {
+            location.reload();
+        }, 5 * 60 * 1000);
+    </script>
+</body>
+</html>

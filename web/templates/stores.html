@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+    <meta name="googlebot" content="noindex, nofollow">
+    <title>{{ machine.short_name }} - 店舗選択</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="{{ url_for('index') }}" class="back-link">&lt; 機種選択</a>
+            <h1>{{ machine.icon }} {{ machine.short_name }}</h1>
+        </header>
+
+        <main>
+            <!-- 総合ランキングボタン -->
+            <section class="ranking-section">
+                <a href="{{ url_for('ranking', machine_key=machine_key) }}" class="ranking-button">
+                    <span class="ranking-icon">🏆</span>
+                    <span class="ranking-text">全店舗 総合ランキング</span>
+                    <span class="arrow">›</span>
+                </a>
+            </section>
+
+            <section class="store-list">
+                <h2>店舗を選択</h2>
+                {% for store in stores %}
+                <a href="{{ url_for('recommend', store_key=store.key) }}" class="store-card">
+                    <span class="store-name">{{ store.name }}</span>
+                    <span class="unit-count">{{ store.unit_count }}台</span>
+                </a>
+                {% endfor %}
+            </section>
+        </main>
+
+        <footer>
+            <p class="hidden-text">.</p>
+        </footer>
+    </div>
+</body>
+</html>
