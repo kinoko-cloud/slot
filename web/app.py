@@ -42,7 +42,7 @@ REALTIME_CACHE = {}
 SCRAPING_STATUS = {}
 
 # バージョン確認用
-APP_VERSION = '2026-01-26-v3'
+APP_VERSION = '2026-01-26-v4-debug'
 
 @app.route('/version')
 def version():
@@ -446,7 +446,8 @@ def api_debug(store_key: str):
             'fetched_at': cache.get('fetched_at').isoformat() if cache.get('fetched_at') else None,
             'store_name': cache_data.get('store_name'),
             'units_count': len(cache_data.get('units', [])),
-            'units_preview': [{'unit_id': u.get('unit_id'), 'art': u.get('art'), 'total_start': u.get('total_start')} for u in cache_data.get('units', [])[:3]],
+            'units_preview': [{'unit_id': u.get('unit_id'), 'art': u.get('art'), 'total_start': u.get('total_start')} for u in cache_data.get('units', [])[:5]],
+            'debug': cache_data.get('debug'),
         }
 
     # スクレイピング状態
@@ -456,6 +457,7 @@ def api_debug(store_key: str):
         'store': store['name'],
         'cache': cache_info,
         'scraping_status': status,
+        'app_version': APP_VERSION,
     })
 
 

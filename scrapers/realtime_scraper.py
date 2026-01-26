@@ -159,7 +159,7 @@ def create_daidata_session(hall_id: str) -> requests.Session:
     return session
 
 
-def scrape_daidata_current(session_or_page, hall_id: str, units: list) -> list:
+def scrape_daidata_current(session_or_page, hall_id: str, units: list, debug_info: dict = None) -> list:
     """台データオンラインから当日データを取得（requestsベース）"""
     results = []
 
@@ -178,6 +178,15 @@ def scrape_daidata_current(session_or_page, hall_id: str, units: list) -> list:
 
             data = {'unit_id': unit_id}
 
+            # デバッグ情報（最初の台のみ）
+            if debug_info is not None and len(results) == 0:
+                debug_info['status_code'] = resp.status_code
+                debug_info['html_length'] = len(text)
+                debug_info['html_preview'] = text[:500] if text else 'empty'
+                debug_info['has_bb_rB_art'] = 'BB' in text and 'RB' in text and 'ART' in text
+                debug_info['has_start'] = 'スタート回数' in text
+                debug_info['has_bs4'] = HAS_BS4
+
             # サマリーデータを取得（HTMLテーブルから）
             summary_match = re.search(
                 r'BB\s+RB\s+ART\s+スタート回数\s*</th>\s*</tr>\s*<tr[^>]*>\s*'
@@ -190,6 +199,8 @@ def scrape_daidata_current(session_or_page, hall_id: str, units: list) -> list:
                 data['rb'] = int(summary_match.group(2))
                 data['art'] = int(summary_match.group(3))
                 data['final_start'] = int(summary_match.group(4))
+                if debug_info is not None and len(results) == 0:
+                    debug_info['match_type'] = 'html_table'
             else:
                 # フォールバック: テキストからパース
                 if HAS_BS4:
@@ -202,6 +213,12 @@ def scrape_daidata_current(session_or_page, hall_id: str, units: list) -> list:
                     data['rb'] = int(alt_match.group(2))
                     data['art'] = int(alt_match.group(3))
                     data['final_start'] = int(alt_match.group(4))
+                    if debug_info is not None and len(results) == 0:
+                        debug_info['match_type'] = 'text_fallback'
+                else:
+                    if debug_info is not None and len(results) == 0:
+                        debug_info['match_type'] = 'no_match'
+                        debug_info['text_preview'] = text_content[:300] if text_content else 'empty'
 
             # 累計スタート
             total_match = re.search(r'累計スタート\s*</th>\s*<td[^>]*>(\d+)</td>', text)
@@ -225,6 +242,8 @@ def scrape_daidata_current(session_or_page, hall_id: str, units: list) -> list:
         except Exception as e:
             print(f"  台{unit_id}: エラー - {e}")
             results.append({'unit_id': unit_id, 'error': str(e)})
+            if debug_info is not None and len(results) == 1:
+                debug_info['exception'] = str(e)
 
     return results
 
@@ -252,13 +271,14 @@ def scrape_realtime(store_key: str = None) -> dict:
         print(f"\n【{store['name']}】")
 
         try:
+            debug_info = {}
             if store['source'] == 'daidata':
                 # requestsベースで取得（PythonAnywhereでも動作）
                 hall_id = store['hall_id']
                 if hall_id not in daidata_sessions:
                     daidata_sessions[hall_id] = create_daidata_session(hall_id)
                 session = daidata_sessions[hall_id]
-                data = scrape_daidata_current(session, hall_id, store['units'])
+                data = scrape_daidata_current(session, hall_id, store['units'], debug_info)
 
             elif store['source'] == 'papimo':
                 # Playwrightベース（ローカル専用）
@@ -278,6 +298,7 @@ def scrape_realtime(store_key: str = None) -> dict:
                 'store_name': store['name'],
                 'fetched_at': now.isoformat(),
                 'units': data,
+                'debug': debug_info if debug_info else None,
             }
         except Exception as e:
             print(f"  エラー: {e}")
