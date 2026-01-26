@@ -1,0 +1,35 @@
+name: Fetch Availability
+
+on:
+  schedule:
+    # 毎日 10:00-23:00 JST の間、10分ごとに実行
+    - cron: '*/10 1-14 * * *'  # UTC 1:00-14:00 = JST 10:00-23:00
+  workflow_dispatch:  # 手動実行も可能
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install playwright
+          playwright install chromium
+          playwright install-deps chromium
+
+      - name: Fetch daidata availability
+        run: python scripts/fetch_daidata_availability.py
+
+      - name: Commit and push
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add data/availability.json
+          git diff --staged --quiet || git commit -m "update: availability $(date +'%Y-%m-%d %H:%M') JST"
+          git push
