@@ -55,7 +55,7 @@
                         <span class="{% if rec.art_prob <= 100 %}excellent{% elif rec.art_prob <= 130 %}good{% elif rec.art_prob >= 200 %}bad{% endif %}">1/{{ rec.art_prob|int }}</span>
                         {% endif %}
                         {% if rec.closing_estimate %}
-                        <span class="profit {% if rec.closing_estimate >= 3000 %}high{% elif rec.closing_estimate >= 1000 %}mid{% else %}low{% endif %}">見込{{ '%+,d'|format(rec.closing_estimate) }}枚</span>
+                        <span class="profit {% if rec.closing_estimate >= 3000 %}high{% elif rec.closing_estimate >= 1000 %}mid{% else %}low{% endif %}">見込{% if rec.closing_estimate >= 0 %}+{% endif %}{{ '{:,}'.format(rec.closing_estimate) }}枚</span>
                         {% endif %}
                     </div>
                     {% endif %}
@@ -83,7 +83,7 @@
                         <span class="store-name-sm">{{ rec.store_name }}</span>
                     </div>
                     <div class="yesterday-stats">
-                        <span class="yesterday-diff plus">昨日 {{ '%+,d'|format(rec.yesterday_diff) }}枚</span>
+                        <span class="yesterday-diff plus">昨日 {{ signed_number(rec.yesterday_diff) }}枚</span>
                         <span class="avg-art">平均{{ rec.avg_art_7days|round(1) }}ART</span>
                     </div>
                 </a>

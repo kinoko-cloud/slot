@@ -420,7 +420,18 @@ def utility_processor():
         }
         return stars.get(rank, 0)
 
-    return dict(rank_color=rank_color, rank_stars=rank_stars)
+    def signed_number(value):
+        """符号付きカンマ区切り数値フォーマット"""
+        try:
+            num = int(value)
+            if num >= 0:
+                return f'+{num:,}'
+            else:
+                return f'{num:,}'
+        except (ValueError, TypeError):
+            return str(value)
+
+    return dict(rank_color=rank_color, rank_stars=rank_stars, signed_number=signed_number)
 
 
 if __name__ == '__main__':
