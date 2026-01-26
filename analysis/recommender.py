@@ -891,13 +891,13 @@ def analyze_today_graph(history: List[dict]) -> dict:
             description = f'連チャン中（直近{len(recent_valleys)}回全て100G以内）'
     elif has_explosion:
         recent_trend = 'exploded'
-        description = f'本日{max_rensa}連の爆発あり'
+        description = f'【本日】{max_rensa}連の爆発あり！'
     elif explosion_potential == 'low':
         recent_trend = 'flat'
-        description = f'ART{total_hits}回で10連なし → 大爆発しにくい展開'
+        description = f'【本日】{total_hits}ART消化、連荘控えめ → 高設定でもムラあり'
     elif explosion_potential == 'building':
         recent_trend = 'building'
-        description = f'ハマりなしで{total_hits}回当選、爆発待ち → そろそろ来る可能性'
+        description = f'【本日】ハマりなく{total_hits}回当選中 → 連荘期待'
     elif no_deep_valley and avg_valley < 100:
         recent_trend = 'very_hot'
         description = f'絶好調（平均{avg_valley:.0f}G、最大{max_valley}G）'
@@ -942,11 +942,11 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
     if days:
         graph = analyze_graph_pattern(days)
         if graph['description']:
-            reasons.append(graph['description'])
+            reasons.append(f"【過去7日】{graph['description']}")
         # 過去に10連実績がない + モミモミ = 爆発待ち
         if graph.get('likely_to_rise') and not graph.get('has_big_rensa'):
             if graph['pattern'] in ('mimizu', 'momimomi'):
-                reasons.append(f"過去7日で10連なし → 爆発待ち状態、打ち始めから狙い目")
+                reasons.append(f"【過去7日】大連荘なし → 爆発待ち台、打ち始めから狙い目")
 
     # 3. 本日のグラフ分析
     if today_history:
