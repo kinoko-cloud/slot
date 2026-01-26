@@ -12,11 +12,38 @@
     <div class="container">
         <header>
             <h1>本日のおすすめ台</h1>
-            <p class="subtitle">機種を選んでください</p>
         </header>
 
         <main>
+            {% if top3 %}
+            <section class="recommendations top">
+                <h2>いま狙い目 TOP3</h2>
+                {% for rec in top3 %}
+                <a href="{{ url_for('recommend', store_key=rec.store_key) }}" class="unit-card rank-{{ rec.final_rank|lower }}" style="text-decoration: none;">
+                    <div class="unit-header">
+                        <span class="ranking-num">#{{ loop.index }}</span>
+                        <span class="unit-id">{{ rec.unit_id }}番台</span>
+                        <span class="rank-badge" style="background-color: {{ rank_color(rec.final_rank) }}">
+                            {{ rec.final_rank }}
+                        </span>
+                    </div>
+                    <div class="unit-store">
+                        <span class="machine-icon">{{ rec.machine_icon }}</span>
+                        {{ rec.store_name }} / {{ rec.machine_name }}
+                    </div>
+                    {% if rec.reasons %}
+                    <div class="reasons-preview">
+                        <span class="reason-icon">💡</span>
+                        <span class="reason-text">{{ rec.reasons[0][:30] }}{% if rec.reasons[0]|length > 30 %}...{% endif %}</span>
+                    </div>
+                    {% endif %}
+                </a>
+                {% endfor %}
+            </section>
+            {% endif %}
+
             <section class="machine-list">
+                <h2>機種から探す</h2>
                 {% for machine in machines %}
                 <a href="{{ url_for('machine_stores', machine_key=machine.key) }}" class="machine-card">
                     <span class="machine-icon">{{ machine.icon }}</span>
