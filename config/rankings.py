@@ -25,6 +25,7 @@ STORES = {
     # === SBJ ===
     'island_akihabara_sbj': {
         'name': 'アイランド秋葉原',
+        'short_name': 'アイランド秋葉原',
         'hall_id': None,
         'machine': 'sbj',
         'units': [
@@ -35,6 +36,7 @@ STORES = {
     },
     'shibuya_espass_sbj': {
         'name': 'エスパス日拓渋谷新館',
+        'short_name': 'エスパス渋谷新館',
         'hall_id': '100860',
         'machine': 'sbj',
         'units': ['3011', '3012', '3013'],
@@ -42,6 +44,7 @@ STORES = {
     },
     'shinjuku_espass_sbj': {
         'name': 'エスパス日拓新宿歌舞伎町店',
+        'short_name': 'エスパス歌舞伎町',
         'hall_id': '100949',
         'machine': 'sbj',
         'units': ['682', '683', '684', '685'],
@@ -49,6 +52,7 @@ STORES = {
     },
     'seibu_shinjuku_espass_sbj': {
         'name': 'エスパス日拓西武新宿駅前店',
+        'short_name': 'エスパス西武新宿',
         'hall_id': '100950',
         'machine': 'sbj',
         'units': ['3185', '3186', '3187', '4109', '4118', '4125', '4168'],
@@ -56,6 +60,7 @@ STORES = {
     },
     'akihabara_espass_sbj': {
         'name': 'エスパス日拓秋葉原駅前店',
+        'short_name': 'エスパス秋葉原',
         'hall_id': '100928',
         'machine': 'sbj',
         'units': ['2158', '2159', '2160', '2161'],
@@ -64,6 +69,7 @@ STORES = {
     # === 北斗転生2 ===
     'shibuya_espass_hokuto': {
         'name': 'エスパス日拓渋谷新館',
+        'short_name': 'エスパス渋谷新館',
         'hall_id': '100860',
         'machine': 'hokuto_tensei2',
         'units': [str(i) for i in range(2046, 2068)] + [str(i) for i in range(2233, 2241)],  # 2046-2067, 2233-2240
@@ -71,6 +77,7 @@ STORES = {
     },
     'shinjuku_espass_hokuto': {
         'name': 'エスパス日拓新宿歌舞伎町店',
+        'short_name': 'エスパス歌舞伎町',
         'hall_id': '100949',
         'machine': 'hokuto_tensei2',
         'units': [str(i) for i in range(1, 38)] + [str(i) for i in range(125, 129)],  # 1-37, 125-128
@@ -78,6 +85,7 @@ STORES = {
     },
     'akihabara_espass_hokuto': {
         'name': 'エスパス日拓秋葉原駅前店',
+        'short_name': 'エスパス秋葉原',
         'hall_id': '100928',
         'machine': 'hokuto_tensei2',
         'units': [str(i) for i in range(2011, 2020)] + [str(i) for i in range(2056, 2069)],  # 2011-2019, 2056-2068
@@ -85,6 +93,7 @@ STORES = {
     },
     'island_akihabara_hokuto': {
         'name': 'アイランド秋葉原',
+        'short_name': 'アイランド秋葉原',
         'hall_id': None,
         'machine': 'hokuto_tensei2',
         'units': [f'{i:04d}' for i in range(731, 739)] + [f'{i:04d}' for i in range(750, 758)],  # 0731-0738, 0750-0757
