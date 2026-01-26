@@ -34,28 +34,28 @@ STORES = {
         'data_source': 'papimo',
     },
     'shibuya_espass_sbj': {
-        'name': '渋谷エスパス新館',
+        'name': 'エスパス日拓渋谷新館',
         'hall_id': '100860',
         'machine': 'sbj',
         'units': ['3011', '3012', '3013'],
         'data_source': 'daidata',
     },
     'shinjuku_espass_sbj': {
-        'name': '新宿エスパス歌舞伎町',
+        'name': 'エスパス日拓新宿歌舞伎町店',
         'hall_id': '100949',
         'machine': 'sbj',
         'units': ['682', '683', '684', '685'],
         'data_source': 'daidata',
     },
     'seibu_shinjuku_espass_sbj': {
-        'name': '西武新宿駅前エスパス',
+        'name': 'エスパス日拓西武新宿駅前店',
         'hall_id': '100950',
         'machine': 'sbj',
         'units': ['3185', '3186', '3187', '4109', '4118', '4125', '4168'],
         'data_source': 'daidata',
     },
     'akihabara_espass_sbj': {
-        'name': '秋葉原エスパス駅前',
+        'name': 'エスパス日拓秋葉原駅前店',
         'hall_id': '100928',
         'machine': 'sbj',
         'units': ['2158', '2159', '2160', '2161'],
@@ -63,21 +63,21 @@ STORES = {
     },
     # === 北斗転生2 ===
     'shibuya_espass_hokuto': {
-        'name': '渋谷エスパス新館',
+        'name': 'エスパス日拓渋谷新館',
         'hall_id': '100860',
         'machine': 'hokuto_tensei2',
         'units': [str(i) for i in range(2046, 2068)] + [str(i) for i in range(2233, 2241)],  # 2046-2067, 2233-2240
         'data_source': 'daidata',
     },
     'shinjuku_espass_hokuto': {
-        'name': '新宿エスパス歌舞伎町',
+        'name': 'エスパス日拓新宿歌舞伎町店',
         'hall_id': '100949',
         'machine': 'hokuto_tensei2',
         'units': [str(i) for i in range(1, 38)] + [str(i) for i in range(125, 129)],  # 1-37, 125-128
         'data_source': 'daidata',
     },
     'akihabara_espass_hokuto': {
-        'name': '秋葉原エスパス駅前',
+        'name': 'エスパス日拓秋葉原駅前店',
         'hall_id': '100928',
         'machine': 'hokuto_tensei2',
         'units': [str(i) for i in range(2011, 2020)] + [str(i) for i in range(2056, 2069)],  # 2011-2019, 2056-2068

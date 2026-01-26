@@ -455,18 +455,28 @@ def analyze_today_data(unit_data: dict, current_hour: int = None, machine_key: s
             return result
 
         today = datetime.now().strftime('%Y-%m-%d')
+        yesterday = (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d')
         today_data = None
+        yesterday_data = None
+
         for day in days:
             if day.get('date') == today:
                 today_data = day
                 break
+            elif day.get('date') == yesterday:
+                yesterday_data = day
 
         if not today_data:
-            # 当日データなし
-            result['status'] = 'データなし'
-            result['today_score_bonus'] = 5  # 未稼働台は狙い目の可能性
-            result['today_reasons'].append('本日のデータなし（狙い目の可能性）')
-            return result
+            # 当日データなし → 昨日のデータを使用
+            if yesterday_data:
+                today_data = yesterday_data
+                result['status'] = '昨日データ'
+                result['today_reasons'].append('本日データなし（昨日のデータを表示）')
+            else:
+                result['status'] = 'データなし'
+                result['today_score_bonus'] = 5  # 未稼働台は狙い目の可能性
+                result['today_reasons'].append('本日のデータなし（狙い目の可能性）')
+                return result
 
     result['art_count'] = today_data.get('art', 0)
     result['bb_count'] = today_data.get('bb', 0)

@@ -26,6 +26,14 @@ from scrapers.availability_checker import get_availability
 
 app = Flask(__name__)
 
+# キャッシュ無効化
+@app.after_request
+def add_header(response):
+    response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+    return response
+
 # デプロイ用シークレット
 DEPLOY_SECRET = 'slot_deploy_2026'
 
@@ -80,17 +88,17 @@ def index():
     # 店舗別おすすめ曜日（過去データからの傾向）
     store_recommendations = {
         'island_akihabara_sbj': {
-            'name': 'アイランド秋葉原',
+            'name': 'アイランド秋葉原店',
             'best_days': ['土', '日'],
             'note': '週末に高設定投入傾向',
         },
         'shibuya_espass_sbj': {
-            'name': '渋谷エスパス新館',
+            'name': 'エスパス日拓渋谷新館',
             'best_days': ['金', '土'],
             'note': '金曜夜から狙い目',
         },
         'shinjuku_espass_sbj': {
-            'name': '新宿エスパス歌舞伎町',
+            'name': 'エスパス日拓新宿歌舞伎町店',
             'best_days': ['土'],
             'note': '土曜日がアツい',
         },
