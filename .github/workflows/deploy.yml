@@ -1,0 +1,22 @@
+name: Deploy to PythonAnywhere
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to PythonAnywhere
+        run: |
+          # git pull実行
+          curl -s -X POST "${{ secrets.PYTHONANYWHERE_DEPLOY_URL }}?secret=${{ secrets.DEPLOY_SECRET }}"
+
+          # Webアプリをリロード
+          curl -s -X POST \
+            -H "Authorization: Token ${{ secrets.PYTHONANYWHERE_API_TOKEN }}" \
+            "https://www.pythonanywhere.com/api/v0/user/${{ secrets.PYTHONANYWHERE_USERNAME }}/webapps/${{ secrets.PYTHONANYWHERE_DOMAIN }}/reload/"
+
+          echo "Deploy completed"
