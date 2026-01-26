@@ -198,8 +198,13 @@
                         <span class="compact-prob {% if rec.art_prob <= 100 %}excellent{% elif rec.art_prob <= 130 %}good{% elif rec.art_prob >= 200 %}bad{% endif %}">1/{{ rec.art_prob|int }}</span>
                         {% endif %}
                         <span class="compact-profit {% if rec.closing_estimate >= 1000 %}profit-high{% elif rec.closing_estimate > 0 %}profit-mid{% else %}profit-minus{% endif %}">{{ '%+,d'|format(rec.closing_estimate) }}</span>
+                        {% elif rec.avg_art_7days > 0 %}
+                        <span class="compact-data past-data">7日平均{{ rec.avg_art_7days|round(0)|int }}AT</span>
+                        {% if rec.yesterday_diff != 0 %}
+                        <span class="compact-data past-data">昨日{{ '%+,d'|format(rec.yesterday_diff) }}枚</span>
+                        {% endif %}
                         {% else %}
-                        <span class="compact-data no-data">-</span>
+                        <span class="compact-data no-data">本日未稼働</span>
                         {% endif %}
                         <span class="expand-icon small">▼</span>
                     </div>
