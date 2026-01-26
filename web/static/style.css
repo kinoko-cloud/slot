@@ -1262,22 +1262,58 @@ strong.minus {
 .setting-estimate {
     padding: 3px 10px;
     border-radius: 4px;
-    font-weight: 600;
+    font-weight: 700;
+    font-size: 1.1em;
 }
 
-.setting-estimate.high {
+.setting-estimate .payout {
+    font-weight: 400;
+    font-size: 0.85em;
+    opacity: 0.8;
+}
+
+/* 設定別カラー: 6=赤, 5=オレンジ, 4=黄, 3=緑, 2=青, 1=白 */
+.setting-estimate.setting-6 {
+    background: rgba(255, 71, 87, 0.25);
+    color: #ff4757;
+    border: 1px solid rgba(255, 71, 87, 0.5);
+}
+
+.setting-estimate.setting-5 {
+    background: rgba(255, 165, 2, 0.25);
+    color: #ffa502;
+    border: 1px solid rgba(255, 165, 2, 0.5);
+}
+
+.setting-estimate.setting-4 {
+    background: rgba(255, 230, 0, 0.2);
+    color: #ffe600;
+    border: 1px solid rgba(255, 230, 0, 0.4);
+}
+
+.setting-estimate.setting-3 {
     background: rgba(46, 213, 115, 0.2);
     color: #2ed573;
+    border: 1px solid rgba(46, 213, 115, 0.4);
 }
 
-.setting-estimate.mid {
-    background: rgba(255, 165, 2, 0.2);
-    color: #ffa502;
+.setting-estimate.setting-2 {
+    background: rgba(112, 161, 255, 0.2);
+    color: #70a1ff;
+    border: 1px solid rgba(112, 161, 255, 0.4);
 }
 
-.setting-estimate.low {
-    background: rgba(116, 125, 140, 0.2);
-    color: #aaa;
+.setting-estimate.setting-1,
+.setting-estimate.setting-0 {
+    background: rgba(200, 200, 200, 0.15);
+    color: #ccc;
+    border: 1px solid rgba(200, 200, 200, 0.3);
+}
+
+/* 単位を小さく */
+.unit-small {
+    font-size: 0.7em;
+    opacity: 0.7;
 }
 
 .past-eval {
