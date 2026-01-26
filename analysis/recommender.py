@@ -85,6 +85,7 @@ def estimate_setting_from_prob(art_prob: float, machine_key: str = 'sbj') -> dic
     if art_prob <= 0:
         return {
             'estimated_setting': '不明',
+            'setting_num': 0,
             'payout_estimate': 100.0,
             'hourly_expected': 0,
             'confidence': 'none',
@@ -99,28 +100,28 @@ def estimate_setting_from_prob(art_prob: float, machine_key: str = 'sbj') -> dic
     # ART確率が設定6より良い場合
     if art_prob <= s6_prob:
         payout = s6_payout + (s6_prob - art_prob) * 0.1  # さらに上乗せ
-        setting = '設定6超'
+        setting = '設定6'
+        setting_num = 6
         confidence = 'high'
     # 設定6〜設定1の間
     elif art_prob <= s1_prob:
         ratio = (s1_prob - art_prob) / (s1_prob - s6_prob)
         payout = s1_payout + (s6_payout - s1_payout) * ratio
+        # ratioを設定番号に変換（1.0→6, 0.0→1）
+        setting_num = round(1 + ratio * 5)
+        setting_num = max(1, min(6, setting_num))  # 1-6にクランプ
+        setting = f'設定{setting_num}'
         if ratio >= 0.8:
-            setting = '高設定濃厚'
             confidence = 'high'
         elif ratio >= 0.5:
-            setting = '高設定域'
-            confidence = 'medium'
-        elif ratio >= 0.3:
-            setting = '中間'
             confidence = 'medium'
         else:
-            setting = '低設定域'
             confidence = 'low'
     # 設定1より悪い場合
     else:
         payout = s1_payout - (art_prob - s1_prob) * 0.05
-        setting = '低設定'
+        setting = '設定1'
+        setting_num = 1
         confidence = 'low'
 
     # 1時間あたりの期待差枚（700G/時間 × 3枚/G × (機械割-100%)/100）
@@ -129,6 +130,7 @@ def estimate_setting_from_prob(art_prob: float, machine_key: str = 'sbj') -> dic
 
     return {
         'estimated_setting': setting,
+        'setting_num': setting_num,
         'payout_estimate': round(payout, 1),
         'hourly_expected': hourly_expected,
         'confidence': confidence,
@@ -1247,6 +1249,7 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
             'closing_estimate': profit_info['closing_estimate'],
             'profit_category': profit_info['profit_category'],
             'estimated_setting': profit_info['setting_info']['estimated_setting'],
+            'setting_num': profit_info['setting_info'].get('setting_num', 0),
             'payout_estimate': profit_info['setting_info']['payout_estimate'],
         }
 

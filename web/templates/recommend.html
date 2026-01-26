@@ -86,24 +86,28 @@
                         {% if rec.data_date and not rec.is_today_data %}
                         <div class="data-date-badge">{{ rec.data_date[-5:] }}のデータ</div>
                         {% endif %}
+                        <!-- 回転数（AT間G数）を最初に -->
                         <div class="data-cell">
-                            <span class="data-label">G数</span>
+                            <span class="data-label">回転数</span>
                             <span class="data-value">{{ '{:,}'.format(rec.total_games) }}</span>
                         </div>
+                        <!-- ART -->
                         <div class="data-cell highlight">
+                            <span class="data-value"><span class="art-num">{{ rec.art_count }}</span><span class="unit-small">回</span></span>
                             <span class="data-label">ART</span>
-                            <span class="data-value">{{ rec.art_count }}回</span>
                         </div>
-                        {% if rec.art_prob > 0 %}
-                        <div class="data-cell {% if rec.art_prob <= 100 %}excellent{% elif rec.art_prob <= 130 %}good{% elif rec.art_prob >= 200 %}bad{% endif %}">
-                            <span class="data-label">確率</span>
-                            <span class="data-value">1/{{ rec.art_prob|int }}</span>
+                        <!-- RB -->
+                        {% if rec.rb_count > 0 %}
+                        <div class="data-cell">
+                            <span class="data-value"><span class="rb-num">{{ rec.rb_count }}</span><span class="unit-small">回</span></span>
+                            <span class="data-label">RB</span>
                         </div>
                         {% endif %}
+                        <!-- 差枚 -->
                         {% if rec.is_today_data %}
                         <div class="data-cell {% if rec.closing_estimate >= 3000 %}profit-high{% elif rec.closing_estimate >= 1000 %}profit-mid{% elif rec.closing_estimate > 0 %}profit-low{% else %}profit-minus{% endif %}">
+                            <span class="data-value">{{ signed_number(rec.closing_estimate) }}<span class="unit-small">枚</span></span>
                             <span class="data-label">閉店見込</span>
-                            <span class="data-value">{{ signed_number(rec.closing_estimate) }}枚</span>
                         </div>
                         {% endif %}
                         {% else %}
@@ -143,8 +147,8 @@
                     <!-- 設定推定 + 過去評価 -->
                     <div class="estimation-row">
                         {% if rec.total_games > 0 and rec.estimated_setting %}
-                        <span class="setting-estimate {% if '高設定' in rec.estimated_setting %}high{% elif '中間' in rec.estimated_setting %}mid{% else %}low{% endif %}">
-                            {{ rec.estimated_setting }} ({{ rec.payout_estimate }}%)
+                        <span class="setting-estimate setting-{{ rec.setting_num|default(0) }}">
+                            {{ rec.estimated_setting }} <span class="payout">({{ rec.payout_estimate }}%)</span>
                         </span>
                         {% endif %}
                         <span class="past-eval">
