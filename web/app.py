@@ -138,44 +138,67 @@ def index():
     # 表示モードを判定
     display_mode = get_display_mode()
 
-    # 店舗別おすすめ曜日（過去データからの傾向）+ 星評価
-    store_recommendations = {
+    # 店舗別曜日傾向（過去データ分析結果）
+    # 各曜日の評価: 5=最強, 4=強い, 3=普通, 2=やや弱い, 1=避けるべき
+    store_day_ratings = {
         'island_akihabara_sbj': {
             'name': 'アイランド秋葉原',
             'short_name': 'アイランド秋葉原',
-            'best_days': ['土', '日'],
-            'note': '週末に高設定投入傾向',
-            'rating': 4,  # 5段階
+            # 水曜最強、日月が次、木金普通、土曜は避ける
+            'day_ratings': {'月': 4, '火': 3, '水': 5, '木': 3, '金': 3, '土': 1, '日': 4},
+            'best_note': '水曜が最強、日月も狙い目',
+            'worst_note': '土曜は避けるべき',
+            'overall_rating': 4,
         },
         'shibuya_espass_sbj': {
             'name': 'エスパス日拓渋谷新館',
             'short_name': 'エスパス渋谷新館',
-            'best_days': ['金', '土'],
-            'note': '金曜夜から狙い目',
-            'rating': 3,
+            # 木曜最強、水火が次、金土月普通、日曜は避ける
+            'day_ratings': {'月': 3, '火': 4, '水': 4, '木': 5, '金': 3, '土': 3, '日': 1},
+            'best_note': '木曜が最強、火水も狙い目',
+            'worst_note': '日曜は避けるべき',
+            'overall_rating': 3,
         },
         'shinjuku_espass_sbj': {
             'name': 'エスパス日拓新宿歌舞伎町店',
             'short_name': 'エスパス歌舞伎町',
-            'best_days': ['土'],
-            'note': '土曜日がアツい',
-            'rating': 3,
+            # 土曜がメイン、金曜も狙い目
+            'day_ratings': {'月': 2, '火': 3, '水': 3, '木': 3, '金': 4, '土': 5, '日': 3},
+            'best_note': '土曜が最強、金曜も狙い目',
+            'worst_note': '月曜は控えめ',
+            'overall_rating': 3,
         },
         'akihabara_espass_sbj': {
             'name': 'エスパス日拓秋葉原駅前店',
             'short_name': 'エスパス秋葉原',
-            'best_days': ['土', '日'],
-            'note': '週末狙い目',
-            'rating': 3,
+            # 週末メイン
+            'day_ratings': {'月': 2, '火': 3, '水': 3, '木': 3, '金': 4, '土': 5, '日': 4},
+            'best_note': '土日が狙い目、金曜も可',
+            'worst_note': '月曜は控えめ',
+            'overall_rating': 3,
         },
         'seibu_shinjuku_espass_sbj': {
             'name': 'エスパス日拓西武新宿駅前店',
             'short_name': 'エスパス西武新宿',
-            'best_days': ['金', '土'],
-            'note': '週末前後が狙い目',
-            'rating': 2,
+            # 金土がメイン
+            'day_ratings': {'月': 2, '火': 2, '水': 3, '木': 3, '金': 4, '土': 4, '日': 3},
+            'best_note': '金土が狙い目',
+            'worst_note': '月火は控えめ',
+            'overall_rating': 2,
         },
     }
+
+    # 旧形式との互換性のためstore_recommendationsも作成
+    store_recommendations = {}
+    for key, info in store_day_ratings.items():
+        best_days = [day for day, rating in info['day_ratings'].items() if rating >= 4]
+        store_recommendations[key] = {
+            'name': info['name'],
+            'short_name': info['short_name'],
+            'best_days': best_days,
+            'note': info['best_note'],
+            'rating': info['overall_rating'],
+        }
 
     # 今日の日付と曜日
     now = datetime.now(JST)
@@ -254,12 +277,28 @@ def index():
     yesterday_top10.sort(key=lambda x: -x['max_medals'])
     yesterday_top10 = yesterday_top10[:10]
 
-    # 今日おすすめの店舗
-    today_recommended_stores = []
-    for store_key, info in store_recommendations.items():
-        if today_weekday in info['best_days']:
-            info['store_key'] = store_key
-            today_recommended_stores.append(info)
+    # 今日の曜日で店舗をランキング（評価の高い順）
+    today_store_ranking = []
+    for store_key, info in store_day_ratings.items():
+        today_rating = info['day_ratings'].get(today_weekday, 3)
+        today_store_ranking.append({
+            'store_key': store_key,
+            'name': info['name'],
+            'short_name': info['short_name'],
+            'today_rating': today_rating,
+            'best_note': info['best_note'],
+            'worst_note': info['worst_note'],
+            'overall_rating': info['overall_rating'],
+            'day_ratings': info['day_ratings'],
+        })
+    # 今日の評価でソート（高い順）
+    today_store_ranking.sort(key=lambda x: -x['today_rating'])
+
+    # 今日おすすめの店舗（評価4以上）
+    today_recommended_stores = [s for s in today_store_ranking if s['today_rating'] >= 4]
+
+    # 今日避けるべき店舗（評価1-2）
+    today_avoid_stores = [s for s in today_store_ranking if s['today_rating'] <= 2]
 
     # 結果モードの場合、対象日付を取得
     result_date = None
@@ -276,6 +315,9 @@ def index():
                            today_date=today_date,
                            store_recommendations=store_recommendations,
                            today_recommended_stores=today_recommended_stores,
+                           today_store_ranking=today_store_ranking,
+                           today_avoid_stores=today_avoid_stores,
+                           store_day_ratings=store_day_ratings,
                            display_mode=display_mode,
                            result_date_str=result_date_str)
 
