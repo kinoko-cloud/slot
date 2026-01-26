@@ -376,6 +376,19 @@ footer {
     margin-bottom: 20px;
 }
 
+.loading-text::after {
+    content: '';
+    animation: dots 1.5s steps(4, end) infinite;
+}
+
+@keyframes dots {
+    0% { content: ''; }
+    25% { content: '.'; }
+    50% { content: '..'; }
+    75% { content: '...'; }
+    100% { content: ''; }
+}
+
 .loading-progress {
     max-width: 250px;
     margin: 0 auto;
