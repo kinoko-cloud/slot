@@ -8,8 +8,11 @@ iPhoneから店舗でアクセスして、推奨台を確認するためのWeb�
 import json
 import sys
 import threading
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from pathlib import Path
+
+# 日本時間
+JST = timezone(timedelta(hours=9))
 
 from flask import Flask, render_template, jsonify, request
 
@@ -69,8 +72,10 @@ def deploy():
 
 @app.route('/')
 def index():
-    """メインページ - 機種選択"""
+    """メインページ - 機種選択 + トップ3"""
     machines = []
+    top3_all = []
+
     for key, machine in MACHINES.items():
         stores = get_stores_by_machine(key)
         total_units = sum(len(s['units']) for s in stores.values())
@@ -82,7 +87,27 @@ def index():
             'store_count': len(stores),
             'unit_count': total_units,
         })
-    return render_template('index.html', machines=machines)
+
+        # 各機種のトップ台を集める
+        for store_key, store in stores.items():
+            try:
+                recs = recommend_units(store_key)
+                for rec in recs[:2]:  # 各店舗上位2台
+                    if not rec['is_running'] and rec['final_rank'] in ('S', 'A'):
+                        rec['store_name'] = store['name']
+                        rec['store_key'] = store_key
+                        rec['machine_key'] = key
+                        rec['machine_icon'] = machine['icon']
+                        rec['machine_name'] = machine['short_name']
+                        top3_all.append(rec)
+            except:
+                pass
+
+    # スコア順でソートして上位3つ
+    top3_all.sort(key=lambda x: -x['final_score'])
+    top3 = top3_all[:3]
+
+    return render_template('index.html', machines=machines, top3=top3)
 
 
 @app.route('/machine/<machine_key>')
@@ -163,14 +188,18 @@ def recommend(store_key: str):
             }
 
     # リアルタイム空き状況を取得
-    availability = get_availability(store_key)
+    availability = {}
     availability_info = None
-    if availability:
-        availability_info = {
-            'fetched_at': datetime.now().strftime('%H:%M'),
-            'empty_count': sum(1 for v in availability.values() if v == '空き'),
-            'playing_count': sum(1 for v in availability.values() if v == '遊技中'),
-        }
+    try:
+        availability = get_availability(store_key)
+        if availability:
+            availability_info = {
+                'fetched_at': datetime.now(JST).strftime('%H:%M'),
+                'empty_count': sum(1 for v in availability.values() if v == '空き'),
+                'playing_count': sum(1 for v in availability.values() if v == '遊技中'),
+            }
+    except Exception as e:
+        print(f"Availability check failed: {e}")
 
     recommendations = recommend_units(store_key, realtime_data, availability)
 
@@ -178,7 +207,7 @@ def recommend(store_key: str):
     top_recs = [r for r in recommendations if r['final_rank'] in ('S', 'A') and not r['is_running']]
     other_recs = [r for r in recommendations if r not in top_recs]
 
-    updated_at = cache_info['fetched_at'] if cache_info else datetime.now().strftime('%H:%M')
+    updated_at = cache_info['fetched_at'] if cache_info else datetime.now(JST).strftime('%H:%M')
 
     return render_template('recommend.html',
                            store=store,
