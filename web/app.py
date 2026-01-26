@@ -314,8 +314,14 @@ def recommend(store_key: str):
 
     recommendations = recommend_units(store_key, realtime_data, availability)
 
-    # ランク別に分類
-    top_recs = [r for r in recommendations if r['final_rank'] in ('S', 'A') and not r['is_running']]
+    # ランク別に分類（S/Aランクかつ非稼働を優先、なければ上位3台を表示）
+    sa_recs = [r for r in recommendations if r['final_rank'] in ('S', 'A') and not r['is_running']]
+    if sa_recs:
+        top_recs = sa_recs
+    else:
+        # S/Aがなくても上位3台は表示（暫定おすすめ）
+        top_recs = [r for r in recommendations if not r['is_running']][:3]
+
     other_recs = [r for r in recommendations if r not in top_recs]
 
     updated_at = cache_info['fetched_at'] if cache_info else datetime.now(JST).strftime('%H:%M')
