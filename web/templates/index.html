@@ -21,18 +21,44 @@
         </header>
 
         <main>
-            <!-- 本日おすすめ店舗 -->
-            {% if today_recommended_stores %}
+            <!-- 今日の曜日の店舗評価 -->
             <section class="today-stores">
-                <h2>{{ today_weekday }}曜日のおすすめ店舗</h2>
-                {% for store in today_recommended_stores %}
-                <div class="store-recommend-card">
-                    <span class="store-name">{{ store.name }}</span>
-                    <span class="store-note">{{ store.note }}</span>
+                <h2>{{ today_weekday }}曜日の店舗評価</h2>
+                {% if today_recommended_stores %}
+                <div class="day-section good">
+                    <div class="day-section-label">狙い目</div>
+                    {% for store in today_recommended_stores %}
+                    <a href="{{ url_for('recommend', store_key=store.store_key) }}" class="store-day-card good">
+                        <span class="store-name">{{ store.short_name }}</span>
+                        <span class="day-rating">
+                            {% for i in range(5) %}{% if i < store.today_rating %}★{% else %}<span class="empty">☆</span>{% endif %}{% endfor %}
+                        </span>
+                        <span class="store-note">{{ store.best_note }}</span>
+                    </a>
+                    {% endfor %}
                 </div>
-                {% endfor %}
+                {% endif %}
+                {% if today_avoid_stores %}
+                <div class="day-section bad">
+                    <div class="day-section-label">避けるべき</div>
+                    {% for store in today_avoid_stores %}
+                    <a href="{{ url_for('recommend', store_key=store.store_key) }}" class="store-day-card bad">
+                        <span class="store-name">{{ store.short_name }}</span>
+                        <span class="day-rating dim">
+                            {% for i in range(5) %}{% if i < store.today_rating %}★{% else %}<span class="empty">☆</span>{% endif %}{% endfor %}
+                        </span>
+                        <span class="store-note">{{ store.worst_note }}</span>
+                    </a>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% if not today_recommended_stores and not today_avoid_stores %}
+                <div class="day-section neutral">
+                    <div class="day-section-label">本日は特に傾向なし</div>
+                    <p class="neutral-note">全店舗で普通の傾向です</p>
+                </div>
+                {% endif %}
             </section>
-            {% endif %}
 
             <!-- 狙い目 / 結果 TOP5 -->
             {% if top3 %}
@@ -106,25 +132,6 @@
             </section>
             {% endif %}
 
-            <!-- 店舗別おすすめ曜日 -->
-            <section class="store-schedule">
-                <h2>店舗別おすすめ曜日</h2>
-                {% for store_key, info in store_recommendations.items() %}
-                <a href="{{ url_for('recommend', store_key=store_key) }}" class="schedule-card" style="text-decoration: none;">
-                    <span class="schedule-store">{{ info.short_name }}</span>
-                    <span class="star-rating">
-                        {% for i in range(5) %}{% if i < info.rating %}★{% else %}<span class="empty">☆</span>{% endif %}{% endfor %}
-                    </span>
-                    <span class="schedule-days">
-                        {% for day in info.best_days %}
-                        <span class="day-badge {% if day == today_weekday %}today{% endif %}">{{ day }}</span>
-                        {% endfor %}
-                    </span>
-                    <span class="schedule-note">{{ info.note }}</span>
-                </a>
-                {% endfor %}
-            </section>
-
             <!-- 機種から探す -->
             <section class="machine-list">
                 <h2>機種から探す</h2>
@@ -136,6 +143,34 @@
                         <span class="machine-detail">{{ machine.store_count }}店舗 / {{ machine.unit_count }}台</span>
                     </div>
                     <span class="arrow">›</span>
+                </a>
+                {% endfor %}
+            </section>
+
+            <!-- 店舗別曜日傾向（全曜日） -->
+            <section class="store-schedule">
+                <h2>店舗別 曜日傾向</h2>
+                <div class="schedule-legend">
+                    <span class="legend-item best">★5=最強</span>
+                    <span class="legend-item good">★4=狙い目</span>
+                    <span class="legend-item normal">★3=普通</span>
+                    <span class="legend-item weak">★2以下=避ける</span>
+                </div>
+                {% for store in today_store_ranking %}
+                <a href="{{ url_for('recommend', store_key=store.store_key) }}" class="schedule-card-full" style="text-decoration: none;">
+                    <div class="schedule-store-name">{{ store.short_name }}</div>
+                    <div class="schedule-week">
+                        {% for day in ['月', '火', '水', '木', '金', '土', '日'] %}
+                        {% set rating = store.day_ratings[day] %}
+                        <span class="day-cell {% if rating >= 5 %}best{% elif rating >= 4 %}good{% elif rating <= 2 %}weak{% else %}normal{% endif %} {% if day == today_weekday %}today{% endif %}">
+                            <span class="day-name">{{ day }}</span>
+                            <span class="day-stars">{{ '★' * rating }}</span>
+                        </span>
+                        {% endfor %}
+                    </div>
+                    <div class="schedule-notes">
+                        <span class="note-best">{{ store.best_note }}</span>
+                    </div>
                 </a>
                 {% endfor %}
             </section>

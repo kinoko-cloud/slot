@@ -2056,3 +2056,225 @@ strong.minus {
     font-weight: 900;
     color: #ff6b6b;
 }
+
+/* ===================================
+   曜日別店舗評価 - 新スタイル
+   =================================== */
+
+/* 今日の曜日の店舗評価セクション */
+.today-stores h2 {
+    font-size: 1em;
+    color: #888;
+    margin-bottom: 10px;
+}
+
+.day-section {
+    margin-bottom: 15px;
+}
+
+.day-section-label {
+    font-size: 0.85em;
+    font-weight: 600;
+    margin-bottom: 8px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+.day-section.good .day-section-label {
+    background: #1e4620;
+    color: #4ade80;
+}
+
+.day-section.bad .day-section-label {
+    background: #4a2020;
+    color: #f87171;
+}
+
+.day-section.neutral .day-section-label {
+    background: #3a3a4a;
+    color: #999;
+}
+
+.neutral-note {
+    color: #666;
+    font-size: 0.85em;
+    padding: 10px;
+}
+
+/* 店舗カード（曜日評価用） */
+.store-day-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 15px;
+    background: #252541;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    text-decoration: none;
+    color: #fff;
+    border-left: 4px solid transparent;
+}
+
+.store-day-card.good {
+    border-left-color: #4ade80;
+}
+
+.store-day-card.bad {
+    border-left-color: #f87171;
+}
+
+.store-day-card .store-name {
+    flex: 1;
+    font-weight: 600;
+    font-size: 0.95em;
+}
+
+.store-day-card .day-rating {
+    color: #ffd700;
+    font-size: 0.85em;
+}
+
+.store-day-card .day-rating.dim {
+    color: #666;
+}
+
+.store-day-card .day-rating .empty {
+    color: #444;
+}
+
+.store-day-card .store-note {
+    font-size: 0.75em;
+    color: #888;
+    max-width: 120px;
+    text-align: right;
+}
+
+/* 店舗別曜日傾向（全曜日表示） */
+.store-schedule h2 {
+    font-size: 1em;
+    color: #888;
+    margin-bottom: 8px;
+}
+
+.schedule-legend {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+    font-size: 0.7em;
+}
+
+.legend-item {
+    padding: 3px 8px;
+    border-radius: 4px;
+}
+
+.legend-item.best {
+    background: #3b2a00;
+    color: #ffd700;
+}
+
+.legend-item.good {
+    background: #1e3a1e;
+    color: #4ade80;
+}
+
+.legend-item.normal {
+    background: #2a2a3a;
+    color: #888;
+}
+
+.legend-item.weak {
+    background: #3a2020;
+    color: #f87171;
+}
+
+/* 店舗カード（全曜日） */
+.schedule-card-full {
+    display: block;
+    background: #252541;
+    border-radius: 8px;
+    padding: 12px 15px;
+    margin-bottom: 10px;
+    text-decoration: none;
+    color: #fff;
+}
+
+.schedule-store-name {
+    font-weight: 600;
+    font-size: 0.95em;
+    margin-bottom: 8px;
+}
+
+.schedule-week {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 8px;
+}
+
+.day-cell {
+    flex: 1;
+    text-align: center;
+    padding: 6px 2px;
+    border-radius: 4px;
+    background: #1a1a2e;
+}
+
+.day-cell .day-name {
+    display: block;
+    font-size: 0.7em;
+    color: #888;
+    margin-bottom: 2px;
+}
+
+.day-cell .day-stars {
+    font-size: 0.55em;
+    letter-spacing: -1px;
+}
+
+.day-cell.best {
+    background: #3b2a00;
+}
+
+.day-cell.best .day-stars {
+    color: #ffd700;
+}
+
+.day-cell.good {
+    background: #1e3a1e;
+}
+
+.day-cell.good .day-stars {
+    color: #4ade80;
+}
+
+.day-cell.normal .day-stars {
+    color: #888;
+}
+
+.day-cell.weak {
+    background: #3a2020;
+}
+
+.day-cell.weak .day-stars {
+    color: #f87171;
+}
+
+.day-cell.today {
+    border: 2px solid #70a1ff;
+}
+
+.day-cell.today .day-name {
+    color: #70a1ff;
+    font-weight: 600;
+}
+
+.schedule-notes {
+    font-size: 0.75em;
+    color: #888;
+}
+
+.note-best {
+    color: #4ade80;
+}
