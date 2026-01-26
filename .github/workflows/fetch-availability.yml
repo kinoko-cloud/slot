@@ -23,13 +23,35 @@ jobs:
           playwright install chromium
           playwright install-deps chromium
 
-      - name: Fetch daidata availability
-        run: python scripts/fetch_daidata_availability.py
+      - name: Fetch daidata availability (with retry)
+        run: |
+          # リトライ機能付きで実行
+          max_attempts=3
+          attempt=1
+          while [ $attempt -le $max_attempts ]; do
+            echo "Attempt $attempt of $max_attempts"
+            if python scripts/fetch_daidata_availability.py; then
+              echo "Success!"
+              break
+            else
+              echo "Failed, waiting 30 seconds before retry..."
+              sleep 30
+              attempt=$((attempt + 1))
+            fi
+          done
+
+          # 最終的にファイルが存在するか確認
+          if [ -f data/availability.json ]; then
+            echo "Data file exists, proceeding with commit"
+          else
+            echo "Warning: Data file not created after all attempts"
+            exit 1
+          fi
 
       - name: Commit and push
         run: |
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
           git add data/availability.json
-          git diff --staged --quiet || git commit -m "update: availability $(date +'%Y-%m-%d %H:%M') JST"
+          git diff --staged --quiet || git commit -m "update: availability $(TZ='Asia/Tokyo' date +'%Y-%m-%d %H:%M') JST"
           git push

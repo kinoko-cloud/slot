@@ -42,7 +42,35 @@ REALTIME_CACHE = {}
 SCRAPING_STATUS = {}
 
 # バージョン確認用
-APP_VERSION = '2026-01-26-v8-ui'
+APP_VERSION = '2026-01-26-v9-timemode'
+
+# 営業時間設定
+OPEN_HOUR = 10   # 開店時刻
+CLOSE_HOUR = 23  # 閉店時刻（22:45には閉店）
+
+
+def get_display_mode():
+    """現在時刻から表示モードを決定"""
+    now = datetime.now(JST)
+    hour = now.hour
+
+    if CLOSE_HOUR <= hour or hour < OPEN_HOUR:
+        # 閉店後〜開店前: 結果モード
+        return 'result'
+    else:
+        # 営業中: リアルタイム予測モード
+        return 'realtime'
+
+
+def get_result_date():
+    """結果モード時に表示する日付を取得（23時以降は当日、0時以降は前日）"""
+    now = datetime.now(JST)
+    if now.hour >= CLOSE_HOUR:
+        # 23時以降は当日の結果
+        return now
+    else:
+        # 0時〜10時は前日の結果
+        return now - timedelta(days=1)
 
 @app.route('/version')
 def version():
@@ -102,10 +130,13 @@ def deploy():
 
 @app.route('/')
 def index():
-    """メインページ - 機種選択 + トップ3 + 店舗おすすめ曜日 + 前日トップ10"""
+    """メインページ - 機種選択 + トップ5 + 店舗おすすめ曜日 + 前日トップ10"""
     machines = []
     top3_all = []
     yesterday_top10 = []
+
+    # 表示モードを判定
+    display_mode = get_display_mode()
 
     # 店舗別おすすめ曜日（過去データからの傾向）+ 星評価
     store_recommendations = {
@@ -230,6 +261,13 @@ def index():
             info['store_key'] = store_key
             today_recommended_stores.append(info)
 
+    # 結果モードの場合、対象日付を取得
+    result_date = None
+    result_date_str = None
+    if display_mode == 'result':
+        result_date = get_result_date()
+        result_date_str = result_date.strftime('%m月%d日')
+
     return render_template('index.html',
                            machines=machines,
                            top3=top3,
@@ -237,7 +275,9 @@ def index():
                            today_weekday=today_weekday,
                            today_date=today_date,
                            store_recommendations=store_recommendations,
-                           today_recommended_stores=today_recommended_stores)
+                           today_recommended_stores=today_recommended_stores,
+                           display_mode=display_mode,
+                           result_date_str=result_date_str)
 
 
 @app.route('/machine/<machine_key>')
