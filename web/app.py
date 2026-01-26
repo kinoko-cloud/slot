@@ -19,6 +19,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 from config.rankings import STORES, RANKINGS, MACHINES, get_stores_by_machine, get_machine_info
 from analysis.recommender import recommend_units, load_daily_data
+from scrapers.availability_checker import get_availability
 
 app = Flask(__name__)
 
@@ -129,7 +130,17 @@ def recommend(store_key: str):
                 'age_seconds': int(cache_age),
             }
 
-    recommendations = recommend_units(store_key, realtime_data)
+    # リアルタイム空き状況を取得
+    availability = get_availability(store_key)
+    availability_info = None
+    if availability:
+        availability_info = {
+            'fetched_at': datetime.now().strftime('%H:%M'),
+            'empty_count': sum(1 for v in availability.values() if v == '空き'),
+            'playing_count': sum(1 for v in availability.values() if v == '遊技中'),
+        }
+
+    recommendations = recommend_units(store_key, realtime_data, availability)
 
     # ランク別に分類
     top_recs = [r for r in recommendations if r['final_rank'] in ('S', 'A') and not r['is_running']]
@@ -145,7 +156,8 @@ def recommend(store_key: str):
                            top_recs=top_recs,
                            other_recs=other_recs,
                            updated_at=updated_at,
-                           cache_info=cache_info)
+                           cache_info=cache_info,
+                           availability_info=availability_info)
 
 
 @app.route('/api/status/<store_key>')

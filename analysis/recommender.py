@@ -524,12 +524,13 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
     return reasons
 
 
-def recommend_units(store_key: str, realtime_data: dict = None) -> list:
+def recommend_units(store_key: str, realtime_data: dict = None, availability: dict = None) -> list:
     """推奨台リストを生成
 
     Args:
         store_key: 店舗キー
         realtime_data: リアルタイムで取得したデータ（オプション）
+        availability: リアルタイム空き状況 {台番号: '空き' or '遊技中'}
 
     Returns:
         推奨台リスト（スコア順）
@@ -666,14 +667,31 @@ def recommend_units(store_key: str, realtime_data: dict = None) -> list:
             unit_id, trend_data, today_analysis, comparison, base_rank, final_rank
         )
 
+        # リアルタイム空き状況がある場合は上書き
+        status = today_analysis.get('status', '不明')
+        is_running = today_analysis.get('is_running', False)
+        availability_status = None
+
+        if availability:
+            avail = availability.get(unit_id)
+            if avail:
+                availability_status = avail
+                if avail == '遊技中':
+                    is_running = True
+                    status = '遊技中'
+                elif avail == '空き':
+                    is_running = False
+                    status = '空き'
+
         rec = {
             'unit_id': unit_id,
             'base_rank': base_rank,
             'base_score': base_score,
             'final_rank': final_rank,
             'final_score': final_score,
-            'status': today_analysis.get('status', '不明'),
-            'is_running': today_analysis.get('is_running', False),
+            'status': status,
+            'is_running': is_running,
+            'availability': availability_status,  # リアルタイム空き状況
             'art_count': today_analysis.get('art_count', 0),
             'bb_count': today_analysis.get('bb_count', 0),
             'rb_count': today_analysis.get('rb_count', 0),
