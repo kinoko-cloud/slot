@@ -184,8 +184,10 @@ def index():
                     # 空き状況
                     rec['availability'] = availability.get(rec['unit_id'], '')
 
-                    # S/A評価かつ空き台を優先
-                    if not rec['is_running'] and rec['final_rank'] in ('S', 'A'):
+                    # S/A評価台を狙い目に追加（空き・稼働中両方）
+                    # ただし「様子見」推奨は除外
+                    reasons_text = ' '.join(rec.get('reasons', []))
+                    if rec['final_rank'] in ('S', 'A') and '様子見' not in reasons_text:
                         top3_all.append(rec)
 
                     # 前日トップ10用のデータを収集（最大枚数が多い台）
