@@ -86,30 +86,37 @@
                         {% if rec.data_date and not rec.is_today_data %}
                         <div class="data-date-badge">{{ rec.data_date[-5:] }}のデータ</div>
                         {% endif %}
-                        <!-- 回転数（AT間G数）を最初に -->
-                        <div class="data-cell">
-                            <span class="data-label">回転数</span>
-                            <span class="data-value">{{ '{:,}'.format(rec.total_games) }}</span>
-                        </div>
-                        <!-- ART -->
+                        <!-- ART を最初に大きく -->
                         <div class="data-cell highlight">
-                            <span class="data-value"><span class="art-num">{{ rec.art_count }}</span><span class="unit-small">回</span></span>
+                            <span class="data-value"><span class="art-num-lg">{{ rec.art_count }}</span></span>
                             <span class="data-label">ART</span>
                         </div>
+                        <!-- 確率 -->
+                        {% if rec.art_prob > 0 %}
+                        <div class="data-cell {% if rec.art_prob <= 100 %}excellent{% elif rec.art_prob <= 130 %}good{% elif rec.art_prob >= 200 %}bad{% endif %}">
+                            <span class="data-value">1/{{ rec.art_prob|int }}</span>
+                            <span class="data-label">確率</span>
+                        </div>
+                        {% endif %}
+                        <!-- 最大枚数 -->
+                        {% if rec.max_medals and rec.max_medals > 0 %}
+                        <div class="data-cell highlight">
+                            <span class="data-value">{{ '{:,}'.format(rec.max_medals) }}</span>
+                            <span class="data-label">最大枚</span>
+                        </div>
+                        {% endif %}
                         <!-- RB -->
                         {% if rec.rb_count > 0 %}
                         <div class="data-cell">
-                            <span class="data-value"><span class="rb-num">{{ rec.rb_count }}</span><span class="unit-small">回</span></span>
+                            <span class="data-value"><span class="rb-num">{{ rec.rb_count }}</span></span>
                             <span class="data-label">RB</span>
                         </div>
                         {% endif %}
-                        <!-- 差枚 -->
-                        {% if rec.is_today_data %}
-                        <div class="data-cell {% if rec.closing_estimate >= 3000 %}profit-high{% elif rec.closing_estimate >= 1000 %}profit-mid{% elif rec.closing_estimate > 0 %}profit-low{% else %}profit-minus{% endif %}">
-                            <span class="data-value">{{ signed_number(rec.closing_estimate) }}<span class="unit-small">枚</span></span>
-                            <span class="data-label">閉店見込</span>
+                        <!-- 回転数を最後に -->
+                        <div class="data-cell">
+                            <span class="data-value">{{ '{:,}'.format(rec.total_games) }}</span>
+                            <span class="data-label">G数</span>
                         </div>
-                        {% endif %}
                         {% else %}
                         <!-- 本日も昨日もデータなしの場合は過去データを表示 -->
                         {% if rec.avg_art_7days > 0 %}
@@ -225,17 +232,19 @@
                         <span class="rank-sm" style="background-color: {{ rank_color(rec.final_rank) }}">{{ rec.final_rank }}</span>
 
                         {% if rec.total_games > 0 %}
-                        <span class="compact-data"><span class="num">{{ '{:,}'.format(rec.total_games) }}</span><span class="lbl">G</span></span>
-                        <span class="compact-data"><span class="num">{{ rec.art_count }}</span><span class="lbl">ART</span></span>
+                        <!-- ART数を大きく目立たせる -->
+                        <span class="compact-art"><span class="art-num">{{ rec.art_count }}</span><span class="art-lbl">ART</span></span>
                         {% if rec.art_prob > 0 %}
                         <span class="compact-prob {% if rec.art_prob <= 100 %}excellent{% elif rec.art_prob <= 130 %}good{% elif rec.art_prob >= 200 %}bad{% endif %}">1/{{ rec.art_prob|int }}</span>
                         {% endif %}
-                        <span class="compact-profit {% if rec.closing_estimate >= 1000 %}profit-high{% elif rec.closing_estimate > 0 %}profit-mid{% else %}profit-minus{% endif %}">{{ signed_number(rec.closing_estimate) }}</span>
-                        {% elif rec.avg_art_7days > 0 %}
-                        <span class="compact-data past-data"><span class="num">{{ rec.avg_art_7days|round(0)|int }}</span><span class="lbl">ART/日</span></span>
-                        {% if rec.yesterday_diff != 0 %}
-                        <span class="compact-data past-data">昨{{ signed_number(rec.yesterday_diff) }}</span>
+                        <!-- 最大枚数 -->
+                        {% if rec.max_medals and rec.max_medals > 0 %}
+                        <span class="compact-max">最大<span class="num">{{ '{:,}'.format(rec.max_medals) }}</span></span>
                         {% endif %}
+                        <!-- 回転数は最後に小さく -->
+                        <span class="compact-games">{{ '{:,}'.format(rec.total_games) }}G</span>
+                        {% elif rec.avg_art_7days > 0 %}
+                        <span class="compact-art past"><span class="art-num">{{ rec.avg_art_7days|round(0)|int }}</span><span class="art-lbl">ART/日</span></span>
                         {% else %}
                         <span class="compact-data no-data">データなし</span>
                         {% endif %}
@@ -245,12 +254,15 @@
                     <div class="unit-details hidden">
                         <div class="compact-details">
                             {% if rec.total_games > 0 %}
-                            <div>本日: {{ '{:,}'.format(rec.total_games) }}G / ART{{ rec.art_count }}回 / 見込{{ signed_number(rec.closing_estimate) }}枚</div>
+                            <div>本日: ART <span class="art-num">{{ rec.art_count }}</span>回 / {{ '{:,}'.format(rec.total_games) }}G</div>
+                            {% if rec.max_medals and rec.max_medals > 0 %}
+                            <div>最大: {{ '{:,}'.format(rec.max_medals) }}枚</div>
+                            {% endif %}
                             {% if rec.estimated_setting %}
                             <div>推定: {{ rec.estimated_setting }} ({{ rec.payout_estimate }}%)</div>
                             {% endif %}
                             {% endif %}
-                            <div>過去7日: 平均{{ rec.avg_art_7days|round(1) }}ART / 昨日{{ signed_number(rec.yesterday_diff) }}枚</div>
+                            <div>過去7日: 平均{{ rec.avg_art_7days|round(1) }}ART</div>
                             {% if rec.reasons %}
                             <div class="compact-reason">{{ rec.reasons[0] }}</div>
                             {% endif %}
