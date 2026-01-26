@@ -9,23 +9,46 @@ import json
 from datetime import datetime
 from pathlib import Path
 
-# 店舗設定
+# 店舗設定（キーはconfig/rankings.pyと統一）
 STORES = {
-    'island_akihabara': {
-        'name': 'アイランド秋葉原店',
+    # SBJ
+    'island_akihabara_sbj': {
+        'name': 'アイランド秋葉原',
         'source': 'papimo',
         'hall_id': '00031715',
         'sbj_machine_id': '225010000',
         'units': ['1015', '1016', '1017', '1018', '1020', '1021', '1022', '1023',
                   '1025', '1026', '1027', '1028', '1030', '1031'],
     },
-    'shibuya_espass': {
-        'name': '渋谷エスパス新館',
+    'shibuya_espass_sbj': {
+        'name': 'エスパス日拓渋谷新館',
         'source': 'daidata',
         'hall_id': '100860',
         'units': ['3011', '3012', '3013'],
     },
+    'shinjuku_espass_sbj': {
+        'name': 'エスパス日拓新宿歌舞伎町店',
+        'source': 'daidata',
+        'hall_id': '100949',
+        'units': ['682', '683', '684', '685'],
+    },
+    'akihabara_espass_sbj': {
+        'name': 'エスパス日拓秋葉原駅前店',
+        'source': 'daidata',
+        'hall_id': '100928',
+        'units': ['2158', '2159', '2160', '2161'],
+    },
+    'seibu_shinjuku_espass_sbj': {
+        'name': 'エスパス日拓西武新宿駅前店',
+        'source': 'daidata',
+        'hall_id': '100950',
+        'units': ['3185', '3186', '3187', '4109', '4118', '4125', '4168'],
+    },
 }
+
+# 旧キーとの互換性
+STORES['island_akihabara'] = STORES['island_akihabara_sbj']
+STORES['shibuya_espass'] = STORES['shibuya_espass_sbj']
 
 
 def scrape_papimo_current(page, hall_id: str, units: list) -> list:
