@@ -1,5 +1,9 @@
 # プロジェクト情報
 
+## 自動デプロイ
+- GitHub Actionsで `main` ブランチにpushすると自動でPythonAnywhereにデプロイ
+- URL: https://autogmail.pythonanywhere.com/
+
 ## 利用可能な環境
 
 | 環境 | 種類 | 主な用途 |
