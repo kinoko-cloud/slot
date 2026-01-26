@@ -132,29 +132,50 @@ def scrape_papimo_current(page, hall_id: str, units: list) -> list:
     return results
 
 
-def create_daidata_session(hall_id: str) -> requests.Session:
+def create_daidata_session(hall_id: str, debug_info: dict = None) -> requests.Session:
     """daidata用セッションを作成し、規約同意を行う"""
     session = requests.Session()
     session.headers.update({
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
     })
 
-    # 規約同意ページにアクセス
-    accept_url = f"https://daidata.goraggio.com/{hall_id}/accept"
-    resp = session.get(accept_url, timeout=15)
+    try:
+        # 規約同意ページにアクセス
+        accept_url = f"https://daidata.goraggio.com/{hall_id}/accept"
+        resp = session.get(accept_url, timeout=15)
 
-    # CSRFトークンを取得してPOST
-    if HAS_BS4:
-        soup = BeautifulSoup(resp.text, 'html.parser')
-        token_input = soup.find('input', {'name': '_token'})
-        if token_input:
-            token = token_input.get('value')
-            session.post(accept_url, data={'_token': token}, timeout=15)
-    else:
-        # bs4がない場合は正規表現で
-        match = re.search(r'name="_token"\s+value="([^"]+)"', resp.text)
-        if match:
-            session.post(accept_url, data={'_token': match.group(1)}, timeout=15)
+        if debug_info is not None:
+            debug_info['session_accept_status'] = resp.status_code
+            debug_info['session_accept_length'] = len(resp.text)
+
+        # CSRFトークンを取得してPOST
+        if HAS_BS4:
+            soup = BeautifulSoup(resp.text, 'html.parser')
+            token_input = soup.find('input', {'name': '_token'})
+            if token_input:
+                token = token_input.get('value')
+                post_resp = session.post(accept_url, data={'_token': token}, timeout=15)
+                if debug_info is not None:
+                    debug_info['session_post_status'] = post_resp.status_code
+                    debug_info['csrf_method'] = 'bs4'
+            else:
+                if debug_info is not None:
+                    debug_info['csrf_error'] = 'token not found (bs4)'
+        else:
+            # bs4がない場合は正規表現で
+            match = re.search(r'name="_token"\s+value="([^"]+)"', resp.text)
+            if match:
+                post_resp = session.post(accept_url, data={'_token': match.group(1)}, timeout=15)
+                if debug_info is not None:
+                    debug_info['session_post_status'] = post_resp.status_code
+                    debug_info['csrf_method'] = 'regex'
+            else:
+                if debug_info is not None:
+                    debug_info['csrf_error'] = 'token not found (regex)'
+
+    except Exception as e:
+        if debug_info is not None:
+            debug_info['session_error'] = str(e)
 
     return session
 
@@ -271,12 +292,12 @@ def scrape_realtime(store_key: str = None) -> dict:
         print(f"\n【{store['name']}】")
 
         try:
-            debug_info = {}
+            debug_info = {'source': store['source'], 'hall_id': store.get('hall_id')}
             if store['source'] == 'daidata':
                 # requestsベースで取得（PythonAnywhereでも動作）
                 hall_id = store['hall_id']
                 if hall_id not in daidata_sessions:
-                    daidata_sessions[hall_id] = create_daidata_session(hall_id)
+                    daidata_sessions[hall_id] = create_daidata_session(hall_id, debug_info)
                 session = daidata_sessions[hall_id]
                 data = scrape_daidata_current(session, hall_id, store['units'], debug_info)
 
@@ -298,7 +319,7 @@ def scrape_realtime(store_key: str = None) -> dict:
                 'store_name': store['name'],
                 'fetched_at': now.isoformat(),
                 'units': data,
-                'debug': debug_info if debug_info else None,
+                'debug': debug_info,  # 空でも辞書として保持
             }
         except Exception as e:
             print(f"  エラー: {e}")

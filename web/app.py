@@ -42,7 +42,7 @@ REALTIME_CACHE = {}
 SCRAPING_STATUS = {}
 
 # バージョン確認用
-APP_VERSION = '2026-01-26-v4-debug'
+APP_VERSION = '2026-01-26-v5-debug'
 
 @app.route('/version')
 def version():
