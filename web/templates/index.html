@@ -86,8 +86,8 @@
             <!-- 前日トップ10 -->
             {% if yesterday_top10 %}
             <section class="yesterday-section">
-                <h2>前日の好調台 TOP10</h2>
-                <div class="yesterday-note">昨日プラスだった台（据え置き狙い）</div>
+                <h2>前日の爆発台 TOP10</h2>
+                <div class="yesterday-note">最大枚数が多かった台（据え置き狙い）</div>
                 {% for rec in yesterday_top10 %}
                 <a href="{{ url_for('recommend', store_key=rec.store_key) }}" class="yesterday-card">
                     <div class="yesterday-header">
@@ -102,11 +102,16 @@
                         {% endif %}
                     </div>
                     <div class="yesterday-stats">
-                        <span class="yesterday-diff plus">昨日<span class="num">{{ signed_number(rec.yesterday_diff) }}</span>枚</span>
-                        {% if rec.yesterday_art > 0 %}
-                        <span class="avg-art">ART{{ rec.yesterday_art }}回</span>
+                        {% if rec.max_medals > 0 %}
+                        <span class="max-medals">最大<span class="num">{{ '{:,}'.format(rec.max_medals) }}</span>枚</span>
                         {% endif %}
-                        <span class="machine-name-sm">{{ rec.machine_name }}</span>
+                        {% if rec.yesterday_art > 0 %}
+                        <span>ART<span class="art-num">{{ rec.yesterday_art }}</span></span>
+                        {% endif %}
+                        {% if rec.yesterday_rb and rec.yesterday_rb > 0 %}
+                        <span>RB<span class="rb-num">{{ rec.yesterday_rb }}</span></span>
+                        {% endif %}
+                        <span class="yesterday-diff-sm {% if rec.yesterday_diff > 0 %}plus{% else %}minus{% endif %}">{{ signed_number(rec.yesterday_diff) }}</span>
                     </div>
                 </a>
                 {% endfor %}
