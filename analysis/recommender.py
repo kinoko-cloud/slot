@@ -286,7 +286,7 @@ def analyze_today_data(unit_data: dict, current_hour: int = None, machine_key: s
         'first_hit_time': None,
         'is_running': False,
         'today_score_bonus': 0,
-        'status': '未稼働',
+        'status': '-',
         'hourly_rate': 0,  # 1時間あたりのART数
         'expected_games': 0,  # この時間帯での期待G数
         'today_reasons': [],
@@ -312,10 +312,10 @@ def analyze_today_data(unit_data: dict, current_hour: int = None, machine_key: s
                 break
 
         if not today_data:
-            # 当日データなし = 未稼働の可能性
-            result['status'] = '未稼働'
+            # 当日データなし
+            result['status'] = 'データなし'
             result['today_score_bonus'] = 5  # 未稼働台は狙い目の可能性
-            result['today_reasons'].append('本日未稼働（誰も座っていない可能性）')
+            result['today_reasons'].append('本日のデータなし（狙い目の可能性）')
             return result
 
     result['art_count'] = today_data.get('art', 0)
@@ -601,7 +601,7 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
                         break
 
         # 当日データ分析
-        today_analysis = {'status': '未稼働', 'today_score_bonus': 0, 'today_reasons': []}
+        today_analysis = {'status': '-', 'today_score_bonus': 0, 'today_reasons': []}
 
         # リアルタイムデータがあれば使用
         if realtime_data:
@@ -625,7 +625,7 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
                         break
 
         # 日別データからも分析（リアルタイムデータがない場合）
-        if daily_data and today_analysis.get('status') == '未稼働':
+        if daily_data and today_analysis.get('status') == '-':
             # データ内の店舗キーで検索
             store_data = None
             for key_to_try in [data_store_key, store_key, f'{store_key}_sbj']:
