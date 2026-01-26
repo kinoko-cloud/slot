@@ -2,17 +2,25 @@
 """
 空き状況チェッカー
 - GAS経由: papimo.jp (アイランド秋葉原)
-- GitHub JSON: daidata (エスパス系)
+- GitHub JSON or ローカル: daidata (エスパス系)
 """
 
+import json
 import requests
+from datetime import datetime, timezone, timedelta
+from pathlib import Path
 from typing import Dict
+
+JST = timezone(timedelta(hours=9))
 
 # GAS WebアプリURL (papimo.jp用)
 GAS_URL = "https://script.google.com/macros/s/AKfycbxPxFOrfhytabAS9R8xg_PJbFFXAWsTuBIciJMaYdil3BxlV0-XL3yPYSvQHxyuRO_7/exec"
 
 # GitHub raw JSON URL (daidata用)
 GITHUB_JSON_URL = "https://raw.githubusercontent.com/kinoko-cloud/slot/main/data/availability.json"
+
+# ローカルJSONパス
+LOCAL_JSON_PATH = Path(__file__).parent.parent / 'data' / 'availability.json'
 
 # GASでサポートしている店舗 (papimo.jp)
 GAS_STORES = ['island_akihabara_sbj']
@@ -34,6 +42,20 @@ def get_availability_from_gas() -> Dict[str, Dict]:
         return {}
 
 
+def get_availability_from_local() -> Dict[str, Dict]:
+    """
+    ローカルファイルから空き状況を取得
+    """
+    try:
+        if LOCAL_JSON_PATH.exists():
+            with open(LOCAL_JSON_PATH, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                return data
+    except Exception as e:
+        print(f"Error reading local file: {e}")
+    return {}
+
+
 def get_availability_from_github() -> Dict[str, Dict]:
     """
     GitHubから空き状況JSONを取得 (daidata)
@@ -42,10 +64,48 @@ def get_availability_from_github() -> Dict[str, Dict]:
         response = requests.get(GITHUB_JSON_URL, timeout=30)
         response.raise_for_status()
         data = response.json()
-        return data.get('stores', {})
+        return data
     except Exception as e:
         print(f"Error fetching from GitHub: {e}")
         return {}
+
+
+def get_daidata_availability() -> Dict[str, Dict]:
+    """
+    daidata空き状況を取得（ローカル優先、なければGitHub）
+    """
+    # ローカルファイルを確認
+    local_data = get_availability_from_local()
+
+    if local_data:
+        # ローカルデータの鮮度をチェック（30分以内なら使う）
+        fetched_at = local_data.get('fetched_at', '')
+        if fetched_at:
+            try:
+                fetch_time = datetime.fromisoformat(fetched_at)
+                now = datetime.now(JST)
+                age_minutes = (now - fetch_time).total_seconds() / 60
+
+                if age_minutes <= 30:
+                    print(f"Using local data (fetched {int(age_minutes)} minutes ago)")
+                    return local_data
+                else:
+                    print(f"Local data is stale ({int(age_minutes)} minutes old)")
+            except Exception as e:
+                print(f"Error parsing local data timestamp: {e}")
+
+    # ローカルがない/古い場合はGitHubから
+    github_data = get_availability_from_github()
+
+    if github_data:
+        return github_data
+
+    # GitHubも失敗したらローカルを返す（古くても）
+    if local_data:
+        print("Using stale local data as fallback")
+        return local_data
+
+    return {}
 
 
 def get_availability(store_key: str) -> Dict[str, str]:
@@ -65,13 +125,13 @@ def get_availability(store_key: str) -> Dict[str, str]:
         except Exception as e:
             print(f"Error getting from GAS: {e}")
 
-    # GitHub (daidata) から取得
+    # daidata (ローカル優先、GitHub fallback) から取得
     elif store_key in GITHUB_STORES:
         try:
-            data = get_availability_from_github()
-            store_data = data.get(store_key, {})
+            data = get_daidata_availability()
+            store_data = data.get('stores', {}).get(store_key, {})
         except Exception as e:
-            print(f"Error getting from GitHub: {e}")
+            print(f"Error getting daidata availability: {e}")
 
     if not store_data:
         return {}
@@ -88,13 +148,47 @@ def get_availability(store_key: str) -> Dict[str, str]:
     return result
 
 
-if __name__ == "__main__":
-    print("=== 空き状況チェック (GAS経由) ===\n")
+def get_all_availability() -> Dict[str, Dict[str, str]]:
+    """
+    全店舗の空き状況を取得
+    """
+    result = {}
 
-    data = get_availability_from_gas()
-    for store_key, store_data in data.items():
+    # GAS店舗
+    gas_data = get_availability_from_gas()
+    for store_key in GAS_STORES:
+        if store_key in gas_data:
+            store_data = gas_data[store_key]
+            result[store_key] = {}
+            for u in store_data.get('empty', []):
+                result[store_key][u] = '空き'
+            for u in store_data.get('playing', []):
+                result[store_key][u] = '遊技中'
+
+    # daidata店舗
+    daidata = get_daidata_availability()
+    stores_data = daidata.get('stores', {})
+    for store_key in GITHUB_STORES:
+        if store_key in stores_data:
+            store_data = stores_data[store_key]
+            result[store_key] = {}
+            for u in store_data.get('empty', []):
+                result[store_key][u] = '空き'
+            for u in store_data.get('playing', []):
+                result[store_key][u] = '遊技中'
+
+    return result
+
+
+if __name__ == "__main__":
+    print("=== 空き状況チェック ===\n")
+
+    all_avail = get_all_availability()
+
+    for store_key, units in all_avail.items():
+        empty = [u for u, status in units.items() if status == '空き']
+        playing = [u for u, status in units.items() if status == '遊技中']
         print(f"【{store_key}】")
-        empty = store_data.get('empty', [])
-        playing = store_data.get('playing', [])
         print(f"  空き ({len(empty)}台): {', '.join(empty) if empty else 'なし'}")
         print(f"  遊技中 ({len(playing)}台): {', '.join(playing) if playing else 'なし'}")
+        print()
