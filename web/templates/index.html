@@ -33,45 +33,42 @@
             {% if top3 %}
             <section class="recommendations top">
                 <h2>いま狙い目 TOP5</h2>
+                <div class="top5-note">※空き台優先、稼働中も高評価台は表示</div>
                 {% for rec in top3 %}
                 <a href="{{ url_for('recommend', store_key=rec.store_key) }}" class="unit-card rank-{{ rec.final_rank|lower }}" style="text-decoration: none;">
                     <div class="unit-header">
                         <span class="ranking-num">#{{ loop.index }}</span>
-                        <span class="unit-id">{{ rec.unit_id }}番台</span>
-                        {% if rec.availability == '空き' %}
-                        <span class="top3-avail empty">空き</span>
-                        {% elif rec.availability == '遊技中' %}
-                        <span class="top3-avail playing">稼働中</span>
-                        {% endif %}
+                        <!-- 機種名 → 店舗名 → 番台の順 -->
+                        <span class="machine-icon">{{ rec.machine_icon }}</span>
+                        <span class="machine-name-top">{{ rec.machine_name }}</span>
                         <span class="rank-badge" style="background-color: {{ rank_color(rec.final_rank) }}">
                             {{ rec.final_rank }}
                         </span>
                     </div>
                     <div class="unit-store">
-                        <span class="machine-icon">{{ rec.machine_icon }}</span>
-                        {{ rec.store_name }} / {{ rec.machine_name }}
+                        {{ rec.store_name }} / <strong>{{ rec.unit_id }}番</strong>
+                        {% if rec.availability == '空き' %}
+                        <span class="top3-avail empty">空き</span>
+                        {% elif rec.availability == '遊技中' %}
+                        <span class="top3-avail playing">稼働中</span>
+                        {% endif %}
                     </div>
-                    <!-- 本日データサマリ -->
-                    {% if rec.total_games > 0 %}
+                    <!-- データサマリ -->
                     <div class="top3-stats">
+                        {% if rec.total_games > 0 %}
                         <span><span class="num">{{ '{:,}'.format(rec.total_games) }}</span><span class="label">G</span></span>
                         <span><span class="num">{{ rec.art_count }}</span><span class="label">ART</span></span>
                         {% if rec.art_prob > 0 %}
                         <span class="{% if rec.art_prob <= 100 %}excellent{% elif rec.art_prob <= 130 %}good{% elif rec.art_prob >= 200 %}bad{% endif %}">1/{{ rec.art_prob|int }}</span>
                         {% endif %}
-                        {% if rec.closing_estimate %}
-                        <span class="profit {% if rec.closing_estimate >= 3000 %}high{% elif rec.closing_estimate >= 1000 %}mid{% else %}low{% endif %}">閉店見込{% if rec.closing_estimate >= 0 %}+{% endif %}{{ '{:,}'.format(rec.closing_estimate) }}枚</span>
-                        {% endif %}
-                    </div>
-                    {% else %}
-                    <!-- 本日データなしでも過去データ表示 -->
-                    <div class="top3-stats">
+                        {% else %}
                         <span class="past-data">7日平均<span class="num">{{ rec.avg_art_7days|round(0)|int }}</span>ART</span>
-                        {% if rec.yesterday_diff != 0 %}
-                        <span class="{% if rec.yesterday_diff > 0 %}good{% else %}bad{% endif %}">昨日{{ signed_number(rec.yesterday_diff) }}枚</span>
+                        {% endif %}
+                        <!-- 最大枚数を表示 -->
+                        {% if rec.max_medals and rec.max_medals > 0 %}
+                        <span class="max-medals-top">最大<span class="num">{{ '{:,}'.format(rec.max_medals) }}</span><span class="label">枚</span></span>
                         {% endif %}
                     </div>
-                    {% endif %}
                     {% if rec.reasons %}
                     <div class="reasons-preview">
                         <span class="reason-icon">💡</span>
