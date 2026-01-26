@@ -42,7 +42,7 @@ REALTIME_CACHE = {}
 SCRAPING_STATUS = {}
 
 # バージョン確認用
-APP_VERSION = '2026-01-26-v6-github'
+APP_VERSION = '2026-01-26-v7-realtime'
 
 @app.route('/version')
 def version():
@@ -389,7 +389,26 @@ def api_status(store_key: str):
     if not store:
         return jsonify({'error': 'Store not found'}), 404
 
-    recommendations = recommend_units(store_key)
+    # リアルタイムデータを取得
+    realtime_data = None
+    if store_key in REALTIME_CACHE:
+        cache = REALTIME_CACHE[store_key]
+        cache_age = (datetime.now() - cache['fetched_at']).total_seconds()
+        if cache_age < 600:
+            realtime_data = cache['data']
+
+    # キャッシュがない場合はGitHubから取得
+    if not realtime_data:
+        realtime_data = get_realtime_data(store_key)
+
+    # 空き状況も取得
+    availability = {}
+    try:
+        availability = get_availability(store_key)
+    except:
+        pass
+
+    recommendations = recommend_units(store_key, realtime_data, availability)
 
     return jsonify({
         'store': store['name'],
