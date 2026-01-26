@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+    <meta name="googlebot" content="noindex, nofollow">
+    <title>本日のおすすめ台</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>本日のおすすめ台</h1>
+            <p class="subtitle">機種を選んでください</p>
+        </header>
+
+        <main>
+            <section class="machine-list">
+                {% for machine in machines %}
+                <a href="{{ url_for('machine_stores', machine_key=machine.key) }}" class="machine-card">
+                    <span class="machine-icon">{{ machine.icon }}</span>
+                    <div class="machine-info">
+                        <span class="machine-name">{{ machine.short_name }}</span>
+                        <span class="machine-detail">{{ machine.store_count }}店舗 / {{ machine.unit_count }}台</span>
+                    </div>
+                    <span class="arrow">›</span>
+                </a>
+                {% endfor %}
+            </section>
+        </main>
+
+        <footer>
+            <p class="hidden-text">.</p>
+        </footer>
+    </div>
+</body>
+</html>
