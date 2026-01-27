@@ -145,52 +145,53 @@
                         <span class="expand-icon">▼</span>
                     </div>
 
-                    <!-- データ（常にART/RB/G数を表示、0でも表示） -->
+                    <!-- データ: 2段レイアウト -->
                     <div class="today-data-row">
-                        <!-- ART を最初に大きく -->
-                        <div class="data-cell highlight">
-                            <span class="data-value"><span class="art-num-lg">{{ rec.art_count }}</span></span>
-                            <span class="data-label">ART</span>
+                        <!-- 1段目: ART + 確率 + 連チャン -->
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">{{ rec.art_count }}</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            {% if rec.art_prob > 0 %}
+                            <div class="data-cell {% if rec.art_prob <= 100 %}excellent{% elif rec.art_prob <= 130 %}good{% elif rec.art_prob >= 200 %}bad{% endif %}">
+                                <span class="data-value">1/{{ rec.art_prob|int }}</span>
+                                <span class="data-label">ART確率</span>
+                            </div>
+                            {% endif %}
+                            {% if rec.today_max_rensa and rec.today_max_rensa >= 3 %}
+                            <div class="data-cell rensa-cell {% if rec.today_max_rensa >= 10 %}excellent{% elif rec.today_max_rensa >= 5 %}good{% endif %}">
+                                <span class="data-value">最大{{ rec.today_max_rensa }}連</span>
+                            </div>
+                            {% endif %}
                         </div>
-                        <!-- 確率 -->
-                        {% if rec.art_prob > 0 %}
-                        <div class="data-cell {% if rec.art_prob <= 100 %}excellent{% elif rec.art_prob <= 130 %}good{% elif rec.art_prob >= 200 %}bad{% endif %}">
-                            <span class="data-value">1/{{ rec.art_prob|int }}</span>
-                            <span class="data-label">ART確率</span>
-                        </div>
-                        {% endif %}
-                        <!-- 最大枚数 -->
-                        {% if rec.max_medals and rec.max_medals > 0 %}
-                        {% set badge = medals_badge(rec.max_medals) %}
-                        <div class="data-cell highlight {% if badge %}{{ badge.class }}{% endif %}">
-                            <span class="data-value">
-                                {% if badge %}<span class="medals-icon">{{ badge.icon }}</span>{% endif %}
-                                {{ '{:,}'.format(rec.max_medals) }}
-                            </span>
-                            <span class="data-label">最大枚{% if badge %} {{ badge.label }}{% endif %}</span>
-                        </div>
-                        {% endif %}
-                        <!-- RB -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value"><span class="rb-num">{{ rec.rb_count }}</span></span>
-                            <span class="data-label">RB</span>
-                        </div>
-                        <!-- 現在スタート -->
-                        <div class="data-cell {% if rec.current_hama and rec.current_hama >= 500 %}bad{% elif rec.current_hama and rec.current_hama >= 300 %}warn{% endif %}">
-                            <span class="data-value">{{ rec.current_hama or 0 }}</span>
-                            <span class="data-label">現在G</span>
-                        </div>
-                        <!-- ハマり回数 -->
-                        {% if rec.today_deep_hama and rec.today_deep_hama > 0 %}
-                        <div class="data-cell bad">
-                            <span class="data-value">{{ rec.today_deep_hama }}回</span>
-                            <span class="data-label">500G超</span>
-                        </div>
-                        {% endif %}
-                        <!-- 回転数を最後に -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value">{{ '{:,}'.format(rec.total_games) }}</span>
-                            <span class="data-label">累計G</span>
+                        <!-- 2段目: その他の統計（均一サイズ） -->
+                        <div class="data-row-secondary">
+                            {% if rec.max_medals and rec.max_medals > 0 %}
+                            {% set badge = medals_badge(rec.max_medals) %}
+                            <div class="data-cell {% if badge %}{{ badge.class }}{% endif %}">
+                                <span class="data-value">{{ '{:,}'.format(rec.max_medals) }}</span>
+                                <span class="data-label">最大枚{% if badge %} {{ badge.label }}{% endif %}</span>
+                            </div>
+                            {% endif %}
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">{{ rec.rb_count }}</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell {% if rec.current_hama and rec.current_hama >= 500 %}bad{% elif rec.current_hama and rec.current_hama >= 300 %}warn{% endif %}">
+                                <span class="data-value">{{ rec.current_hama or 0 }}</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            {% if rec.today_deep_hama and rec.today_deep_hama > 0 %}
+                            <div class="data-cell bad">
+                                <span class="data-value">{{ rec.today_deep_hama }}回</span>
+                                <span class="data-label">500G超</span>
+                            </div>
+                            {% endif %}
+                            <div class="data-cell">
+                                <span class="data-value">{{ '{:,}'.format(rec.total_games) }}</span>
+                                <span class="data-label">累計G</span>
+                            </div>
                         </div>
                     </div>
 
@@ -377,6 +378,9 @@
                             {% if badge %}<span class="medals-icon-sm">{{ badge.icon }}</span>{% endif %}
                             最大<span class="num">{{ '{:,}'.format(rec.max_medals) }}</span>
                         </span>
+                        {% endif %}
+                        {% if rec.today_max_rensa and rec.today_max_rensa >= 3 %}
+                        <span class="rensa-badge-sm">{{ rec.today_max_rensa }}連</span>
                         {% endif %}
                         {% if rec.total_games >= 1000 and rec.estimated_setting %}
                         <span class="setting-badge-sm setting-{{ rec.setting_num|default(0) }}">{{ rec.setting_num }}{% if rec.total_games < 3000 %}?{% endif %}</span>

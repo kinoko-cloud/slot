@@ -53,8 +53,9 @@
                         <span class="avail-sm playing">稼</span>
                         {% endif %}
                     </div>
-                    <div class="yesterday-stats">
-                        <span class="art-badge">ART <span class="art-num">{{ rec.yesterday_art }}</span></span>
+                    <div class="yesterday-stats prev-day-stats">
+                        <span class="day-label">前日:</span>
+                        <span class="art-badge prev"><span class="art-lbl-prev">ART</span> <span class="art-num-prev">{{ rec.yesterday_art }}</span></span>
                         {% if rec.yesterday_rb and rec.yesterday_rb > 0 %}
                         <span class="rb-badge-sm">RB <span class="num">{{ rec.yesterday_rb }}</span></span>
                         {% endif %}
@@ -62,7 +63,7 @@
                         <span class="max-medals">最大<span class="num">{{ '{:,}'.format(rec.yesterday_max_medals) }}</span>枚</span>
                         {% endif %}
                         {% if rec.yesterday_games and rec.yesterday_games > 0 %}
-                        <span class="total-games-sm">{{ '{:,}'.format(rec.yesterday_games) }}G</span>
+                        <span class="total-games-label">累計 <span class="num">{{ '{:,}'.format(rec.yesterday_games) }}</span>G</span>
                         {% endif %}
                     </div>
                     {% if rec.yesterday_prob and rec.yesterday_prob > 0 %}
@@ -74,7 +75,7 @@
                     </div>
                     {% endif %}
                     {% if rec.day_before_art %}
-                    <div class="yesterday-prev">前々日: ART {{ rec.day_before_art }}</div>
+                    <div class="prev-day-sub">前々日: ART {{ rec.day_before_art }}{% if rec.day_before_rb %} / RB {{ rec.day_before_rb }}{% endif %}{% if rec.day_before_games %} ({{ '{:,}'.format(rec.day_before_games) }}G){% endif %}</div>
                     {% endif %}
                 </a>
                 {% endfor %}
@@ -206,11 +207,14 @@
                         {% if rec.rb_count and rec.rb_count > 0 %}
                         <span class="rb-badge-sm">RB <span class="num">{{ rec.rb_count }}</span></span>
                         {% endif %}
+                        {% if rec.today_max_rensa and rec.today_max_rensa >= 3 %}
+                        <span class="rensa-badge">最大<span class="num">{{ rec.today_max_rensa }}</span>連</span>
+                        {% endif %}
                         {% if rec.max_medals and rec.max_medals > 0 %}
                         <span class="max-medals">最大<span class="num">{{ '{:,}'.format(rec.max_medals) }}</span>枚</span>
                         {% endif %}
                         {% if rec.total_games and rec.total_games > 0 %}
-                        <span class="total-games-sm">{{ '{:,}'.format(rec.total_games) }}G</span>
+                        <span class="total-games-label">累計 <span class="num">{{ '{:,}'.format(rec.total_games) }}</span>G</span>
                         {% endif %}
                         {% if rec.total_games and rec.total_games >= 1000 and rec.estimated_setting %}
                         <span class="setting-badge-sm setting-{{ rec.setting_num|default(0) }}">{{ rec.setting_num }}{% if rec.total_games < 2000 %}?{% endif %}</span>
@@ -290,8 +294,9 @@
                         <span class="avail-sm playing">稼</span>
                         {% endif %}
                     </div>
-                    <div class="yesterday-stats">
-                        <span class="art-badge">ART <span class="art-num">{{ rec.yesterday_art }}</span></span>
+                    <div class="yesterday-stats prev-day-stats">
+                        <span class="day-label">前日:</span>
+                        <span class="art-badge prev"><span class="art-lbl-prev">ART</span> <span class="art-num-prev">{{ rec.yesterday_art }}</span></span>
                         {% if rec.yesterday_rb and rec.yesterday_rb > 0 %}
                         <span class="rb-badge-sm">RB <span class="num">{{ rec.yesterday_rb }}</span></span>
                         {% endif %}
@@ -299,7 +304,7 @@
                         <span class="max-medals">最大<span class="num">{{ '{:,}'.format(rec.yesterday_max_medals) }}</span>枚</span>
                         {% endif %}
                         {% if rec.yesterday_games and rec.yesterday_games > 0 %}
-                        <span class="total-games-sm">{{ '{:,}'.format(rec.yesterday_games) }}G</span>
+                        <span class="total-games-label">累計 <span class="num">{{ '{:,}'.format(rec.yesterday_games) }}</span>G</span>
                         {% endif %}
                     </div>
                     {% if rec.yesterday_prob and rec.yesterday_prob > 0 %}
@@ -311,7 +316,7 @@
                     </div>
                     {% endif %}
                     {% if rec.day_before_art %}
-                    <div class="yesterday-prev">前々日: ART {{ rec.day_before_art }}</div>
+                    <div class="prev-day-sub">前々日: ART {{ rec.day_before_art }}{% if rec.day_before_rb %} / RB {{ rec.day_before_rb }}{% endif %}{% if rec.day_before_games %} ({{ '{:,}'.format(rec.day_before_games) }}G){% endif %}</div>
                     {% endif %}
                 </a>
                 {% endfor %}

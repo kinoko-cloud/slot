@@ -20,7 +20,7 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from config.rankings import STORES, RANKINGS, get_rank, get_unit_ranking, MACHINES
-from analysis.analyzer import calculate_at_intervals, calculate_current_at_games
+from analysis.analyzer import calculate_at_intervals, calculate_current_at_games, calculate_max_rensa
 
 # 機種別の設定情報
 # SBJ: 設定1=1/241.7(97.8%), 設定6=1/181.3(112.7%)
@@ -410,6 +410,233 @@ def _merge_raw_data(daily_data: dict, date_str: str) -> dict:
     return daily_data
 
 
+def calculate_unit_historical_performance(days: List[dict], machine_key: str = 'sbj') -> dict:
+    """【改善1】台番号ごとの過去実績（好調率）を計算
+
+    過去の日別データから各台の「好調率」（ART確率が好調域だった日の割合）を算出。
+    分析結果: 常に的中する台と常に外れる台で好調率に明確な差がある。
+
+    Args:
+        days: 過去日のデータリスト
+        machine_key: 機種キー
+
+    Returns:
+        {
+            'good_day_rate': float,     # 好調日の割合 (0.0-1.0)
+            'good_days': int,           # 好調日数
+            'total_days': int,          # 有効日数
+            'score_bonus': float,       # スコアボーナス (-8 to +10)
+            'avg_prob': float,          # 平均ART確率
+            'consecutive_bad': int,     # 直近の連続不調日数
+        }
+    """
+    # 機種別の好調判定閾値
+    good_prob_threshold = 130 if machine_key == 'sbj' else 330  # ART確率がこれ以下なら好調
+    bad_prob_threshold = 150 if machine_key == 'sbj' else 366   # ART確率がこれ以上なら不調
+
+    good_days = 0
+    bad_days = 0
+    total_days = 0
+    probs = []
+    consecutive_bad = 0  # 直近の連続不調日数
+
+    # 日付順にソート（新しい順）
+    sorted_days = sorted(days, key=lambda x: x.get('date', ''), reverse=True)
+
+    for day in sorted_days:
+        art = day.get('art', 0)
+        games = day.get('total_start', 0)
+        if art > 0 and games > 0:
+            prob = games / art
+            probs.append(prob)
+            total_days += 1
+            if prob <= good_prob_threshold:
+                good_days += 1
+            if prob >= bad_prob_threshold:
+                bad_days += 1
+
+    # 直近の連続不調日数を計算
+    for day in sorted_days:
+        art = day.get('art', 0)
+        games = day.get('total_start', 0)
+        if art > 0 and games > 0:
+            prob = games / art
+            if prob >= bad_prob_threshold:
+                consecutive_bad += 1
+            else:
+                break
+
+    good_day_rate = good_days / total_days if total_days > 0 else 0.5
+    avg_prob = sum(probs) / len(probs) if probs else 0
+
+    # スコアボーナス計算
+    # 好調率が高い台にボーナス、低い台にペナルティ（最大±10点）
+    if good_day_rate >= 0.8:
+        score_bonus = 10  # 80%以上好調 → 高設定が頻繁に入る台
+    elif good_day_rate >= 0.7:
+        score_bonus = 7
+    elif good_day_rate >= 0.6:
+        score_bonus = 4
+    elif good_day_rate >= 0.5:
+        score_bonus = 0   # 半々 → ニュートラル
+    elif good_day_rate >= 0.4:
+        score_bonus = -3
+    elif good_day_rate >= 0.3:
+        score_bonus = -5
+    else:
+        score_bonus = -8  # 30%未満好調 → 低設定が入りやすい台
+
+    return {
+        'good_day_rate': good_day_rate,
+        'good_days': good_days,
+        'total_days': total_days,
+        'score_bonus': score_bonus,
+        'avg_prob': avg_prob,
+        'consecutive_bad': consecutive_bad,
+    }
+
+
+def analyze_activity_pattern(history: List[dict], day_data: dict = None) -> dict:
+    """【改善4】稼働パターン分析（時刻データ活用）
+
+    当たり履歴の時刻から稼働パターンを分析:
+    - 粘り度: 朝から閉店まで打たれてる台は高設定の可能性UP
+    - 途中放棄: 当たり間の時間差1時間以上 = 離席判定
+    - 好調台の途中放棄 = おいしい台（ボーナス）
+    - 不調台の途中放棄 = 低設定と見切られた（ペナルティ）
+    - 100-200Gでやめてる台 = 狙い目（天井狙い余地）
+
+    Args:
+        history: 当日の当たり履歴リスト
+        day_data: 当日のデータ（art, total_start等）
+
+    Returns:
+        {
+            'persistence_score': float,    # 粘り度スコア (-5 to +8)
+            'abandonment_type': str,       # 'none', 'good_abandoned', 'bad_abandoned', 'early_quit'
+            'abandonment_bonus': float,    # 途中放棄ボーナス (-5 to +5)
+            'play_duration_hours': float,  # 稼働時間
+            'gap_count': int,              # 1時間以上の空きの回数
+            'is_hyena_target': bool,       # ハイエナ対象か【改善5】
+            'hyena_penalty': float,        # ハイエナペナルティ (0 to -5)
+            'description': str,
+        }
+    """
+    result = {
+        'persistence_score': 0,
+        'abandonment_type': 'none',
+        'abandonment_bonus': 0,
+        'play_duration_hours': 0,
+        'gap_count': 0,
+        'is_hyena_target': False,
+        'hyena_penalty': 0,
+        'description': '',
+    }
+
+    if not history or len(history) < 2:
+        return result
+
+    # 時刻順にソート
+    sorted_hist = sorted(history, key=lambda x: x.get('time', '00:00'))
+
+    # 稼働時間を計算
+    try:
+        first_time = datetime.strptime(sorted_hist[0].get('time', '10:00'), '%H:%M')
+        last_time = datetime.strptime(sorted_hist[-1].get('time', '10:00'), '%H:%M')
+        duration_hours = (last_time - first_time).total_seconds() / 3600
+        result['play_duration_hours'] = max(0, duration_hours)
+    except:
+        return result
+
+    # --- 粘り度分析 ---
+    # 朝（10:00-11:00）から始まり、夜（19:00以降）まで打ち続けた台は高設定可能性UP
+    first_hour = first_time.hour
+    last_hour = last_time.hour
+
+    if first_hour <= 11 and last_hour >= 19:
+        # 朝から閉店近くまで粘っている → 高設定の可能性
+        result['persistence_score'] = 8
+        result['description'] = '朝から夜まで粘り → 高設定の可能性'
+    elif first_hour <= 11 and last_hour >= 17:
+        result['persistence_score'] = 5
+        result['description'] = '朝から夕方まで稼働'
+    elif first_hour <= 11 and last_hour < 15:
+        # 朝から始めて午後早めにやめた → 見切りの可能性
+        result['persistence_score'] = -3
+        result['description'] = '朝から稼働も早めに撤退'
+    elif first_hour >= 15:
+        # 夕方以降から稼働 → 天井狙い or 空き台狙いの可能性
+        result['persistence_score'] = -2
+        result['description'] = '夕方以降から稼働（ハイエナの可能性）'
+
+    # --- 途中放棄分析 ---
+    gap_count = 0
+    max_gap_minutes = 0
+    gap_positions = []  # 空きが発生した位置
+
+    for i in range(1, len(sorted_hist)):
+        try:
+            t1 = datetime.strptime(sorted_hist[i-1].get('time', '00:00'), '%H:%M')
+            t2 = datetime.strptime(sorted_hist[i].get('time', '00:00'), '%H:%M')
+            gap_minutes = (t2 - t1).total_seconds() / 60
+
+            if gap_minutes >= 60:  # 1時間以上の空き = 離席判定
+                gap_count += 1
+                max_gap_minutes = max(max_gap_minutes, gap_minutes)
+                gap_positions.append(i)
+        except:
+            continue
+
+    result['gap_count'] = gap_count
+
+    if gap_count > 0:
+        # 空きの前までの確率を計算（好調台の途中放棄かどうか）
+        art = day_data.get('art', 0) if day_data else 0
+        games = day_data.get('total_start', 0) if day_data else 0
+        overall_prob = games / art if art > 0 and games > 0 else 999
+
+        if overall_prob <= 130:
+            # 好調台なのに途中放棄 = おいしい台（ボーナス）
+            result['abandonment_type'] = 'good_abandoned'
+            result['abandonment_bonus'] = 5
+            result['description'] = f'好調台(1/{overall_prob:.0f})が途中放棄 → おいしい台'
+        elif overall_prob >= 180:
+            # 不調台の途中放棄 = 低設定と見切られた（ペナルティ）
+            result['abandonment_type'] = 'bad_abandoned'
+            result['abandonment_bonus'] = -5
+            result['description'] = f'不調台(1/{overall_prob:.0f})が見切られた → 低設定疑い'
+        else:
+            result['abandonment_type'] = 'neutral_abandoned'
+            result['abandonment_bonus'] = 0
+
+    # --- 早期撤退分析（100-200Gでやめてる台） ---
+    if sorted_hist:
+        last_start = sorted_hist[-1].get('start', 0)
+        # 最終当たりが100-200Gの少ないG数で、かつ稼働時間が短い
+        if day_data:
+            final_start = day_data.get('final_start', 0)
+            if 100 <= final_start <= 200:
+                result['description'] = f'最終{final_start}Gでやめ → 天井狙い余地あり'
+
+    # --- 【改善5】ハイエナ検知 ---
+    # 夕方以降（16時以降）に急に当たり始めた台 = 天井狙いの可能性
+    evening_hits = [h for h in sorted_hist if h.get('time', '00:00') >= '16:00']
+    morning_hits = [h for h in sorted_hist if h.get('time', '00:00') < '16:00']
+
+    if len(evening_hits) > 0 and len(morning_hits) == 0:
+        # 夕方以降にしか当たりがない → ハイエナの可能性
+        result['is_hyena_target'] = True
+        result['hyena_penalty'] = -5
+        result['description'] = '夕方以降のみ稼働 → ハイエナの可能性（高設定とは限らない）'
+    elif len(evening_hits) > len(morning_hits) * 2 and len(evening_hits) >= 10:
+        # 夕方以降に当たりが集中 → 天井狙い後の連チャンの可能性
+        result['is_hyena_target'] = True
+        result['hyena_penalty'] = -3
+        result['description'] = '夕方以降に当たり集中 → ハイエナ後の連チャンの可能性'
+
+    return result
+
+
 def analyze_trend(days: List[dict]) -> dict:
     """過去日のトレンドを分析
 
@@ -524,9 +751,7 @@ def analyze_trend(days: List[dict]) -> dict:
         # 昨日の最大連チャン数
         yesterday_history = yesterday_day.get('history', [])
         if yesterday_history:
-            result['yesterday_max_rensa'] = max(
-                (h.get('rensa', 1) for h in yesterday_history), default=1
-            )
+            result['yesterday_max_rensa'] = calculate_max_rensa(yesterday_history)
 
     # 前々日の結果
     if len(daily_results) >= 2:
@@ -568,6 +793,24 @@ def analyze_trend(days: List[dict]) -> dict:
         elif recent_avg < older_avg * 0.8:
             result['art_trend'] = 'declining'
             result['reasons'].append('直近ART確率悪化傾向')
+
+    # --- 【改善2】前日・前々日のART確率を計算（不調→翌日狙い目判定用） ---
+    if sorted_days:
+        d = sorted_days[0]
+        art = d.get('art', 0)
+        games = d.get('total_start', 0)
+        if art > 0 and games > 0:
+            result['yesterday_prob'] = games / art
+        else:
+            result['yesterday_prob'] = 0
+    if len(sorted_days) >= 2:
+        d = sorted_days[1]
+        art = d.get('art', 0)
+        games = d.get('total_start', 0)
+        if art > 0 and games > 0:
+            result['day_before_prob'] = games / art
+        else:
+            result['day_before_prob'] = 0
 
     # --- 実用指標の計算 ---
 
@@ -873,7 +1116,7 @@ def analyze_graph_pattern(days: List[dict]) -> dict:
             # 履歴から最大連チャンを計算
             history = d.get('history', [])
             if history:
-                max_rensa = max((h.get('rensa', 1) for h in history), default=1)
+                max_rensa = calculate_max_rensa(history)
                 max_rensas.append(max_rensa)
 
     if len(arts) < 3:
@@ -1048,12 +1291,8 @@ def analyze_today_graph(history: List[dict]) -> dict:
     # AT間（大当たり間のG数）を正しく計算（RBを跨いで合算）
     valleys = calculate_at_intervals(history)
 
-    # 連チャン数を取得
-    rensas = []
-    for h in history:
-        rensa = h.get('rensa', 1)
-        if rensa > 0:
-            rensas.append(rensa)
+    # 連チャン数を計算（履歴のstart値から70G以下の連続大当たりを算出）
+    max_rensa = calculate_max_rensa(history)
 
     if not valleys:
         return default_result
@@ -1061,9 +1300,6 @@ def analyze_today_graph(history: List[dict]) -> dict:
     max_valley = max(valleys)
     avg_valley = sum(valleys) / len(valleys)
     recent_valleys = valleys[-5:] if len(valleys) >= 5 else valleys
-
-    # 連チャン分析
-    max_rensa = max(rensas) if rensas else 0
     has_explosion = max_rensa >= 10  # 10連以上を爆発とみなす
 
     # 深いハマりなし判定
@@ -1131,7 +1367,8 @@ def analyze_today_graph(history: List[dict]) -> dict:
 def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
                      base_rank: str, final_rank: str, days: List[dict] = None,
                      today_history: List[dict] = None,
-                     store_key: str = None) -> List[str]:
+                     store_key: str = None,
+                     **kwargs) -> List[str]:
     """推奨理由を生成（台固有の根拠を最優先）
 
     優先順位:
@@ -1159,8 +1396,17 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
     day_before_art = trend.get('day_before_art', 0)
     day_before_games = trend.get('day_before_games', 0)
 
-    # === 1. この台の過去ランク（なぜこの台を選んだのか） ===
-    if base_rank == 'S':
+    # === 1. この台の過去ランク + 過去実績（なぜこの台を選んだのか） ===
+    # 【改善1】好調率データがあれば使う
+    historical_perf = kwargs.get('historical_perf', {})
+    good_day_rate = historical_perf.get('good_day_rate', 0)
+    good_days = historical_perf.get('good_days', 0)
+    total_perf_days = historical_perf.get('total_days', 0)
+    if total_perf_days > 0 and good_day_rate >= 0.7:
+        reasons.append(f"好調率{good_day_rate:.0%}（{good_days}/{total_perf_days}日好調）→ 高設定が入りやすい台")
+    elif total_perf_days > 0 and good_day_rate <= 0.4:
+        reasons.append(f"好調率{good_day_rate:.0%}（{good_days}/{total_perf_days}日好調）→ 低設定が入りやすい台")
+    elif base_rank == 'S':
         reasons.append(f"過去データSランク: 高設定が頻繁に入る台")
     elif base_rank == 'A':
         reasons.append(f"過去データAランク: 高設定が入りやすい台")
@@ -1187,6 +1433,25 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
             reasons.append(f"前々日ART {day_before_art}回(1/{day_before_prob:.0f}) → 前日{yesterday_art}回(1/{yesterday_prob:.0f})に悪化 → リセット期待")
         elif yesterday_prob < day_before_prob * 0.7 and yesterday_prob <= 150:
             reasons.append(f"前日のART確率が前々日から大幅改善 → 設定が上がった可能性")
+
+    # === 2.5 【改善2】前日不調→翌日狙い目パターン ===
+    yesterday_prob_val = trend.get('yesterday_prob', 0)
+    day_before_prob_val = trend.get('day_before_prob', 0)
+    if yesterday_prob_val >= 150 and day_before_prob_val >= 150:
+        reasons.append(f"2日連続不調（前々日1/{day_before_prob_val:.0f}、前日1/{yesterday_prob_val:.0f}）→ 設定変更期待大")
+    elif yesterday_prob_val >= 150:
+        reasons.append(f"前日不調（1/{yesterday_prob_val:.0f}）→ 設定変更期待")
+
+    # === 2.6 【改善4+5】稼働パターン分析 ===
+    activity_data = kwargs.get('activity_data', {})
+    if activity_data:
+        activity_desc = activity_data.get('description', '')
+        if activity_data.get('is_hyena_target'):
+            reasons.append(f"⚠ {activity_desc}")
+        elif activity_data.get('abandonment_type') == 'good_abandoned':
+            reasons.append(f"💡 {activity_desc}")
+        elif activity_data.get('persistence_score', 0) >= 8:
+            reasons.append(f"📊 {activity_desc}")
 
     # === 3. 連続パターン（設定変更サイクルの読み） ===
     if consecutive_minus >= 4:
@@ -1510,7 +1775,7 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
         # 他台との比較
         comparison = compare_with_others(store_key, unit_id, all_units_today)
 
-        # トレンドによるスコア調整
+        # === トレンドによるスコア調整 ===
         trend_bonus = 0
         if trend_data.get('consecutive_minus', 0) >= 3:
             trend_bonus += 10  # 凹み続きは上げ期待
@@ -1526,8 +1791,60 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
         if trend_data.get('art_trend') == 'improving':
             trend_bonus += 3
 
-        # 最終スコア計算
-        final_score = base_score + today_analysis.get('today_score_bonus', 0) + trend_bonus
+        # === 【改善1】台番号ごとの的中率（過去実績）をスコアに反映 ===
+        # 過去の好調率が高い台にボーナス、低い台にペナルティ
+        historical_bonus = 0
+        historical_perf = {}
+        if unit_history:
+            unit_days_for_perf = unit_history.get('days', [])
+            historical_perf = calculate_unit_historical_performance(unit_days_for_perf, machine_key)
+            historical_bonus = historical_perf.get('score_bonus', 0)
+
+        # === 【改善2】前日不調→翌日狙い目の重み付け強化 ===
+        # 前日不調（1/150以上）の台は、翌日設定変更で上がる可能性が75%
+        # 2日連続不調の台はさらにスコアアップ（設定変更期待）
+        slump_bonus = 0
+        yesterday_prob = trend_data.get('yesterday_prob', 0)
+        day_before_prob = trend_data.get('day_before_prob', 0)
+        bad_prob_threshold = 150 if machine_key == 'sbj' else 366
+
+        if yesterday_prob >= bad_prob_threshold:
+            slump_bonus += 5  # 前日不調 → 翌日設定変更期待
+            if day_before_prob >= bad_prob_threshold:
+                slump_bonus += 5  # 2日連続不調 → さらに設定変更期待（合計+10）
+
+        # === 【改善4】稼働パターン分析 ===
+        activity_bonus = 0
+        activity_data = {}
+        if unit_history:
+            # 直近日の履歴データで稼働パターン分析
+            sorted_unit_days = sorted(
+                unit_history.get('days', []),
+                key=lambda x: x.get('date', ''), reverse=True
+            )
+            for day_item in sorted_unit_days:
+                hist_for_activity = day_item.get('history', [])
+                if hist_for_activity:
+                    activity_data = analyze_activity_pattern(hist_for_activity, day_item)
+                    activity_bonus = (
+                        activity_data.get('persistence_score', 0)
+                        + activity_data.get('abandonment_bonus', 0)
+                        + activity_data.get('hyena_penalty', 0)  # 【改善5】ハイエナペナルティ
+                    )
+                    # 稼働パターンボーナスは最大±10に制限
+                    activity_bonus = max(-10, min(10, activity_bonus))
+                    break
+
+        # === 最終スコア計算 ===
+        raw_score = (base_score
+                     + today_analysis.get('today_score_bonus', 0)
+                     + trend_bonus
+                     + historical_bonus   # 【改善1】過去実績ボーナス
+                     + slump_bonus        # 【改善2】不調翌日ボーナス
+                     + activity_bonus     # 【改善4+5】稼働パターン+ハイエナ
+                     )
+        final_score = raw_score
+        # 【改善3】ランクは後でまとめて相対評価で決定するため、ここでは仮ランク
         final_rank = get_rank(final_score)
 
         # 推奨理由を生成（過去日データと当日履歴を渡す）
@@ -1555,7 +1872,8 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
 
         reasons = generate_reasons(
             unit_id, trend_data, today_analysis, comparison, base_rank, final_rank,
-            days=unit_days, today_history=today_history, store_key=store_key
+            days=unit_days, today_history=today_history, store_key=store_key,
+            historical_perf=historical_perf, activity_data=activity_data,
         )
 
         # リアルタイム空き状況がある場合は上書き
@@ -1607,6 +1925,7 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
         today_at_intervals = calculate_at_intervals(today_history) if today_history else []
         today_deep_hama_count = sum(1 for g in today_at_intervals if g >= 500)  # 500G以上のハマり
         today_max_at_interval = max(today_at_intervals) if today_at_intervals else 0
+        today_max_rensa = calculate_max_rensa(today_history) if today_history else 0
 
         rec = {
             'unit_id': unit_id,
@@ -1653,6 +1972,20 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
             # 本日のAT間分析
             'today_deep_hama': today_deep_hama_count,  # 500G以上のハマり回数
             'today_max_at_interval': today_max_at_interval,  # 本日最大AT間
+            'today_max_rensa': today_max_rensa,  # 本日最大連チャン数
+            # スコア内訳（デバッグ・分析用）
+            'score_breakdown': {
+                'base': base_score,
+                'today_bonus': today_analysis.get('today_score_bonus', 0),
+                'trend_bonus': trend_bonus,
+                'historical_bonus': historical_bonus,
+                'slump_bonus': slump_bonus,
+                'activity_bonus': activity_bonus,
+            },
+            # 過去実績データ【改善1】
+            'historical_perf': historical_perf,
+            # 稼働パターンデータ【改善4+5】
+            'activity_data': activity_data,
             # 差枚見込み（内部計算用）
             'current_estimate': profit_info['current_estimate'],
             'closing_estimate': profit_info['closing_estimate'],
@@ -1686,6 +2019,28 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
                     pass
 
         recommendations.append(rec)
+
+    # === 【改善3】相対評価によるランク付け ===
+    # 全台がS/Aにならないよう、スコアの分布に基づいてランクを再割り当て
+    # 上位20%=S, 次20%=A, 次30%=B, 次20%=C, 残り=D
+    if len(recommendations) >= 3:
+        # スコア降順でソート
+        sorted_by_score = sorted(recommendations, key=lambda r: -r['final_score'])
+        n = len(sorted_by_score)
+
+        # パーセンタイルでランク割り当て
+        for i, rec in enumerate(sorted_by_score):
+            percentile = i / n  # 0.0 = トップ, 1.0 = 最下位
+            if percentile < 0.20:
+                rec['final_rank'] = 'S'
+            elif percentile < 0.40:
+                rec['final_rank'] = 'A'
+            elif percentile < 0.70:
+                rec['final_rank'] = 'B'
+            elif percentile < 0.90:
+                rec['final_rank'] = 'C'
+            else:
+                rec['final_rank'] = 'D'
 
     # スコア順にソート（稼働中の台は少し下げる）
     def sort_key(r):
