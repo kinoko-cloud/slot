@@ -1429,9 +1429,15 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
             reasons.append(f"🔄 2日連続不調 → リセット期待")
 
     if consecutive_plus >= 3:
-        reasons.append(f"🔄 {consecutive_plus}日連続好調 → 据え置き期待（下げ警戒も）")
+        if today_rating >= 4:
+            reasons.append(f"🔄 {consecutive_plus}日連続好調 + {store_name}{today_weekday}曜★{today_rating} → 据え置き濃厚")
+        else:
+            reasons.append(f"🔄 {consecutive_plus}日連続好調 → 据え置き期待（ただし{store_name}の{today_weekday}曜は★{today_rating}、下げ警戒）")
     elif consecutive_plus == 2:
-        reasons.append(f"🔄 2日連続好調 → 据え置きの可能性")
+        if today_rating >= 4:
+            reasons.append(f"🔄 2日連続好調 + {store_name}{today_weekday}曜★{today_rating} → 据え置き期待")
+        else:
+            reasons.append(f"🔄 2日連続好調（{store_name}{today_weekday}曜★{today_rating}で下げの可能性も）")
 
     # 2日連続不調→翌日リセット期待
     yesterday_prob_val = trend.get('yesterday_prob', 0)

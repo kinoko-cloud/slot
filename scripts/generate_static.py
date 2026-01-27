@@ -143,7 +143,17 @@ def generate_index(env):
     now = datetime.now(JST)
     display_mode = get_display_mode()
     is_open = is_business_hours()
-    today_weekday = WEEKDAY_NAMES[now.weekday()]
+    # 曜日傾向は常に「次に開店する日」の曜日
+    # 22:45〜23:59は翌日、0:00〜09:59はその日（既に日付が変わっている）
+    if is_open:
+        today_weekday = WEEKDAY_NAMES[now.weekday()]
+    elif now.hour >= 22:
+        # 22:45〜23:59 → 翌日の曜日
+        tomorrow_dt = now + timedelta(days=1)
+        today_weekday = WEEKDAY_NAMES[tomorrow_dt.weekday()]
+    else:
+        # 0:00〜09:59 → 今日の曜日（日付は既に変わっている）
+        today_weekday = WEEKDAY_NAMES[now.weekday()]
     today_date = now.strftime('%Y/%m/%d')
     today_date_formatted = format_date_with_weekday(now)
 
