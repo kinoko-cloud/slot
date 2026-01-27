@@ -108,6 +108,17 @@ def setup_jinja():
     env.globals['medals_badge'] = medals_badge
     env.globals['url_for'] = lambda endpoint, **kwargs: generate_url(endpoint, **kwargs)
 
+    def format_short_date(date_str):
+        """'2026-01-26' → '1/26(月)'"""
+        if not date_str:
+            return ''
+        try:
+            dt = datetime.strptime(str(date_str), '%Y-%m-%d')
+            return f"{dt.month}/{dt.day}({WEEKDAY_NAMES[dt.weekday()]})"
+        except:
+            return str(date_str)
+    env.globals['short_date'] = format_short_date
+
     return env
 
 
