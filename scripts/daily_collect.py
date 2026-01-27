@@ -50,7 +50,7 @@ def collect_daily_data(machine_keys: list = None, max_units_per_store: int = Non
     print(f'対象機種: {", ".join(machine_keys)}')
     print('=' * 60)
 
-    # 1. 台データオンライン店舗
+    # 1. 台データオンライン店舗（当日分も含め全日データを取得）
     for store_key, store_config in DAIDATA_STORES.items():
         hall_id = store_config['hall_id']
         hall_name = store_config['name']
@@ -115,7 +115,8 @@ def collect_daily_data(machine_keys: list = None, max_units_per_store: int = Non
 
                     for unit_id in units:
                         print(f'  台{unit_id}...')
-                        result = get_unit_history(page, hall_id, unit_id, days_back=1)
+                        # 当日分（23:00実行時点のリアルタイムデータ）+ 前日分を取得
+                        result = get_unit_history(page, hall_id, unit_id, days_back=2)
                         result['hall_name'] = hall_name
                         result['machine_key'] = machine_key
                         result['machine_name'] = machine_name
