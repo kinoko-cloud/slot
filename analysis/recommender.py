@@ -1310,8 +1310,9 @@ def analyze_rotation_pattern(days: List[dict]) -> dict:
 
     # 交互パターン（+-+-）
     alternating = sum(1 for i in range(len(results)-1) if results[i] != results[i+1])
-    if alternating >= 4:
-        # 直近パターンを表示
+    alt_rate = alternating / (len(results) - 1) if len(results) > 1 else 0
+    # 80%以上 かつ 直近2日が同じでない場合のみ
+    if alt_rate >= 0.8 and len(results) >= 2 and results[0] != results[1]:
         pattern_display = '→'.join(results[:min(6, len(results))])
         return {
             'has_pattern': True,
@@ -1453,6 +1454,10 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
     today_weekday = weekday_info.get('today_weekday', '')
     today_rating = weekday_info.get('today_rating', 3)
 
+    # 翌日/本日の表現（0:00〜10:00は「本日」、10:00〜24:00は「翌日」）
+    _hour = datetime.now().hour
+    next_day_label = '本日' if _hour < 10 else '翌日'
+
     total_games = today.get('total_games', 0)
     art_prob = today.get('art_prob', 0)
 
@@ -1593,14 +1598,14 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
     # === 2. 連続パターン・傾向（設定変更サイクルの読み） ===
     # これが翌日予測の核心 — 前日単体の成績ではなく「流れ」
     if consecutive_minus >= 4:
-        reasons.append(f"🔄 {consecutive_minus}日連続不調 → 設定変更の可能性大")
+        reasons.append(f"🔄 {consecutive_minus}日連続不調 → {next_day_label}設定変更の可能性大")
     elif consecutive_minus >= 3:
-        reasons.append(f"🔄 {consecutive_minus}日連続不調 → そろそろ設定上げ期待")
+        reasons.append(f"🔄 {consecutive_minus}日連続不調 → そろそろ{next_day_label}設定上げ期待")
     elif consecutive_minus == 2:
         if today_rating >= 4:
-            reasons.append(f"🔄 2日連続不調 + {store_name}の{today_weekday}曜は狙い目 → リセット期待")
+            reasons.append(f"🔄 2日連続不調 + {store_name}の{today_weekday}曜は狙い目 → {next_day_label}リセット期待")
         else:
-            reasons.append(f"🔄 2日連続不調 → リセット期待")
+            reasons.append(f"🔄 2日連続不調 → {next_day_label}リセット期待")
 
     if consecutive_plus >= 3:
         if today_rating >= 4:
@@ -1621,13 +1626,13 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
     yesterday_prob_val = trend.get('yesterday_prob', 0)
     day_before_prob_val = trend.get('day_before_prob', 0)
     if yesterday_prob_val >= 150 and day_before_prob_val >= 150:
-        reasons.append(f"🔄 直近2日とも不調（1/{day_before_prob_val:.0f}→1/{yesterday_prob_val:.0f}）→ 設定変更期待大")
+        reasons.append(f"🔄 直近2日とも不調（1/{day_before_prob_val:.0f}→1/{yesterday_prob_val:.0f}）→ {next_day_label}設定変更期待大")
 
     # ローテーションパターン
     if days:
         rotation = analyze_rotation_pattern(days)
         if rotation['has_pattern'] and rotation['next_high_chance']:
-            reasons.append(f"🔄 ローテ傾向: {rotation['description']} → 次回上げ期待")
+            reasons.append(f"🔄 ローテ傾向: {rotation['description']} → {next_day_label}上げ期待")
 
     # === 2.5 稼働パターン分析 ===
     activity_data = kwargs.get('activity_data', {})
