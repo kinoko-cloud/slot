@@ -236,9 +236,9 @@
                         <div class="yh-list">
                             {% for hit in hit_history|sort(attribute='time') %}
                             {% set is_art = hit.type in ['ART', 'AT', 'BIG'] %}
-                            {% set is_chain = hit.start is defined and hit.start <= 5 and not loop.first %}
+                            {% set is_chain = hit.start is defined and hit.start <= 70 and not loop.first %}
                             <div class="yh-row {% if is_art %}yh-art{% else %}yh-rb{% endif %}{% if is_chain %} yh-chain{% endif %}">
-                                {% if is_chain %}<span class="yh-chain-marker">🔗</span>{% endif %}
+                                <span class="yh-chain-marker">{% if is_chain %}🔗{% endif %}</span>
                                 <span class="yh-time">{{ hit.time or '-' }}</span>
                                 <span class="yh-start {% if hit.start is defined and hit.start >= 500 %}deep{% elif hit.start is defined and hit.start <= 10 and not loop.first %}shallow{% endif %}">{{ hit.start|default(0) }}G</span>
                                 <span class="yh-type">{{ hit.type|default('?') }}</span>
@@ -546,9 +546,9 @@
                         <div class="yh-list">
                             {% for hit in hit_history2|sort(attribute='time') %}
                             {% set is_art = hit.type in ['ART', 'AT', 'BIG'] %}
-                            {% set is_chain = hit.start is defined and hit.start <= 5 and not loop.first %}
+                            {% set is_chain = hit.start is defined and hit.start <= 70 and not loop.first %}
                             <div class="yh-row {% if is_art %}yh-art{% else %}yh-rb{% endif %}{% if is_chain %} yh-chain{% endif %}">
-                                {% if is_chain %}<span class="yh-chain-marker">🔗</span>{% endif %}
+                                <span class="yh-chain-marker">{% if is_chain %}🔗{% endif %}</span>
                                 <span class="yh-time">{{ hit.time or '-' }}</span>
                                 <span class="yh-start {% if hit.start is defined and hit.start >= 500 %}deep{% elif hit.start is defined and hit.start <= 10 and not loop.first %}shallow{% endif %}">{{ hit.start|default(0) }}G</span>
                                 <span class="yh-type">{{ hit.type|default('?') }}</span>

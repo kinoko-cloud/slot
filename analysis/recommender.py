@@ -816,12 +816,15 @@ def analyze_trend(days: List[dict]) -> dict:
         yesterday_day = sorted_days[0]
         result['yesterday_rb'] = yesterday_day.get('rb', 0)
         result['yesterday_date'] = yesterday_day.get('date', '')
-        result['yesterday_max_medals'] = yesterday_day.get('max_medals', 0)
-        # 昨日の最大連チャン数
+        # 昨日の最大連チャン数・最大連チャン枚数
         yesterday_history = yesterday_day.get('history', [])
         if yesterday_history:
+            from analysis.analyzer import calculate_max_chain_medals
             result['yesterday_max_rensa'] = calculate_max_rensa(yesterday_history)
+            result['yesterday_max_medals'] = calculate_max_chain_medals(yesterday_history)
             result['yesterday_history'] = yesterday_history
+        else:
+            result['yesterday_max_medals'] = yesterday_day.get('max_medals', 0)
 
     # 前々日の結果
     if len(daily_results) >= 2:
@@ -930,6 +933,14 @@ def analyze_trend(days: List[dict]) -> dict:
         art = d.get('art', 0)
         games = d.get('games', 0) or d.get('total_start', 0)
         prob = games / art if art > 0 and games > 0 else 0
+        # max_medals: historyがあれば連チャン累計で計算
+        day_history = d.get('history', [])
+        if day_history:
+            from analysis.analyzer import calculate_max_chain_medals
+            day_max_medals = calculate_max_chain_medals(day_history)
+        else:
+            day_max_medals = d.get('max_medals', 0)
+
         recent_days.append({
             'date': d.get('date', ''),
             'art': art,
@@ -937,8 +948,8 @@ def analyze_trend(days: List[dict]) -> dict:
             'games': games,
             'prob': round(prob, 1) if prob > 0 else 0,
             'max_rensa': d.get('max_rensa', 0),
-            'max_medals': d.get('max_medals', 0),
-            'history': d.get('history', []),
+            'max_medals': day_max_medals,
+            'history': day_history,
         })
     result['recent_days'] = recent_days
 

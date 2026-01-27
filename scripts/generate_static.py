@@ -376,13 +376,15 @@ def generate_index(env):
                                 intervals = calculate_at_intervals(hist)
                                 y_ceilings = sum(1 for g in intervals if g >= 999)
                                 if not y_max_medals:
-                                    y_max_medals = max((h.get('medals', 0) for h in hist), default=0)
+                                    from analysis.analyzer import calculate_max_chain_medals
+                                    y_max_medals = calculate_max_chain_medals(hist)
                             except:
                                 pass
                         # 蓄積DBからも補完
                         if not y_max_rensa or not y_max_medals:
                             try:
                                 from analysis.history_accumulator import load_unit_history
+                                from analysis.analyzer import calculate_max_chain_medals as _calc_chain
                                 acc_hist = load_unit_history(store_key, rec['unit_id'])
                                 y_date = rec.get('yesterday_date', '')
                                 for ad in acc_hist.get('days', []):
@@ -390,7 +392,12 @@ def generate_index(env):
                                         if not y_max_rensa:
                                             y_max_rensa = ad.get('max_rensa', 0)
                                         if not y_max_medals:
-                                            y_max_medals = ad.get('max_medals', 0)
+                                            # historyがあれば連チャン累計で再計算
+                                            ad_hist = ad.get('history', [])
+                                            if ad_hist:
+                                                y_max_medals = _calc_chain(ad_hist)
+                                            else:
+                                                y_max_medals = ad.get('max_medals', 0)
                                         break
                             except:
                                 pass
@@ -1429,8 +1436,13 @@ def generate_history_pages(env):
                 prob = d.get('prob', 0) or 0
                 is_good = d.get('is_good', False)
                 max_rensa = d.get('max_rensa', 0) or 0
-                max_medals = d.get('max_medals', 0) or 0
                 history = d.get('history', [])
+                # 最大枚数: historyがあれば連チャン区間累計で再計算
+                if history:
+                    from analysis.analyzer import calculate_max_chain_medals
+                    max_medals = calculate_max_chain_medals(history)
+                else:
+                    max_medals = d.get('max_medals', 0) or 0
 
                 # 差枚計算
                 diff_medals = 0
