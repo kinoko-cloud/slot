@@ -376,10 +376,22 @@ def generate_index(env):
     yesterday = now - timedelta(days=1)
     yesterday_str = format_date_with_weekday(yesterday)
 
-    # 「本日」「前日」を日付付きに（24時すぎたら前日扱い）
-    # データの日付は常にavailability.jsonのfetched_atに基づく
-    data_date_str = format_date_with_weekday(now)  # 今日のデータ
-    prev_date_str = format_date_with_weekday(yesterday)  # 昨日のデータ
+    # 「本日」「前日」を日付付きに
+    # データの日付はavailability.jsonのfetched_atから取得
+    try:
+        from scrapers.availability_checker import get_daidata_availability
+        avail_data = get_daidata_availability()
+        fetched_at = avail_data.get('fetched_at', '')
+        if fetched_at:
+            data_dt = datetime.fromisoformat(fetched_at)
+            data_date_str = format_date_with_weekday(data_dt)
+            prev_date_str = format_date_with_weekday(data_dt - timedelta(days=1))
+        else:
+            data_date_str = format_date_with_weekday(now)
+            prev_date_str = format_date_with_weekday(yesterday)
+    except:
+        data_date_str = format_date_with_weekday(now)
+        prev_date_str = format_date_with_weekday(yesterday)
 
     # 機種別的中率（ヒーロー表示用: 高い順に2つ）
     accuracy_hero = []

@@ -30,7 +30,7 @@
 
         <main>
             {# === 閉店後/集計中: 的中率ヒーロー表示 === #}
-            {% if display_mode in ('result', 'collecting') and accuracy_hero %}
+            {% if display_mode in ('result', 'collecting') and accuracy_hero and accuracy_hero[0].rate > 0 %}
             <a href="{{ url_for('verify') }}" class="accuracy-hero-link">
             <section class="accuracy-hero">
                 <div class="hero-title">昨日の的中率 ({{ data_date_str }})</div>
