@@ -13,16 +13,13 @@
         <div class="version-info">{{ now_short }} Ver.</div>
         <header>
             {% if display_mode == 'result' %}
-            <h1><span class="title-main">本日の結果</span></h1>
-            <div class="title-date">{{ result_date_str }}</div>
+            <h1><span class="title-main">{{ data_date_str }}の結果</span></h1>
             <div class="mode-badge result">閉店後</div>
             {% elif display_mode == 'collecting' %}
-            <h1><span class="title-main">本日の結果</span></h1>
-            <div class="title-date">{{ result_date_str }}</div>
+            <h1><span class="title-main">{{ data_date_str }}の結果</span></h1>
             <div class="mode-badge collecting">集計中...</div>
             {% else %}
-            <h1><span class="title-main">本日のおすすめ台</span></h1>
-            <div class="title-date">{{ today_date_formatted }}</div>
+            <h1><span class="title-main">{{ data_date_str }}のおすすめ台</span></h1>
             <div class="mode-badge realtime">営業中</div>
             {% endif %}
             <div class="realtime-bar">
@@ -35,7 +32,7 @@
             {# === 閉店後: 前日の爆発台を最上部に表示 === #}
             {% if display_mode in ('result', 'collecting') and yesterday_top10 %}
             <section class="today-hot-section">
-                <h2>前日の爆発台 TOP{{ yesterday_top10|length }}</h2>
+                <h2>{{ data_date_str }}の爆発台 TOP{{ yesterday_top10|length }}</h2>
                 <div class="today-hot-note">据え置き狙いの参考に</div>
                 {% for rec in yesterday_top10 %}
                 <a href="{{ url_for('recommend', store_key=rec.store_key) }}" class="yesterday-card">
@@ -86,7 +83,7 @@
             {% if top3 %}
             <section class="recommendations top" id="top3-section">
                 {% if night_mode %}
-                <h2>🌙 明日のおすすめ予想台 TOP{{ top3|length }}</h2>
+                <h2>🌙 {{ tomorrow_str }}のおすすめ予想台 TOP{{ top3|length }}</h2>
                 <div class="top5-note">{{ tomorrow_str }}の狙い目予想 ※今日の結果＋過去傾向から分析</div>
                 {% elif display_mode == 'result' %}
                 <h2>{{ result_date_str }}の好調台</h2>
@@ -188,8 +185,8 @@
             {# === 営業中: 本日の爆発台（TOP3の直後） === #}
             {% if is_open and today_top10 %}
             <section class="today-hot-section">
-                <h2>本日の爆発台 TOP{{ today_top10|length }}</h2>
-                <div class="today-hot-note">本日の出玉上位</div>
+                <h2>{{ data_date_str }}の爆発台 TOP{{ today_top10|length }}</h2>
+                <div class="today-hot-note">出玉上位</div>
                 {% for rec in today_top10 %}
                 <a href="{{ url_for('recommend', store_key=rec.store_key) }}" class="yesterday-card">
                     <div class="yesterday-header">
@@ -309,7 +306,7 @@
             {# === 営業中: 前日の爆発台を最下部に表示 === #}
             {% if is_open and yesterday_top10 %}
             <section class="today-hot-section">
-                <h2>前日の爆発台 TOP{{ yesterday_top10|length }}</h2>
+                <h2>{{ prev_date_str }}の爆発台 TOP{{ yesterday_top10|length }}</h2>
                 <div class="today-hot-note">据え置き狙いの参考に</div>
                 {% for rec in yesterday_top10 %}
                 <a href="{{ url_for('recommend', store_key=rec.store_key) }}" class="yesterday-card">
