@@ -448,6 +448,7 @@ def analyze_trend(days: List[dict]) -> dict:
         yesterday_date, yesterday_diff, yesterday_art, yesterday_games = daily_results[0]
         result['yesterday_diff'] = int(yesterday_diff)
         result['yesterday_art'] = yesterday_art  # 昨日のART数を追加
+        result['yesterday_games'] = int(yesterday_games)  # 昨日のG数
         if yesterday_diff > 500:
             result['yesterday_result'] = 'big_plus'
         elif yesterday_diff > 0:
@@ -458,6 +459,27 @@ def analyze_trend(days: List[dict]) -> dict:
             result['yesterday_result'] = 'minus'
         else:
             result['yesterday_result'] = 'even'
+
+    # 昨日のRB・最大連チャンを取得
+    if sorted_days:
+        yesterday_day = sorted_days[0]
+        result['yesterday_rb'] = yesterday_day.get('rb', 0)
+        result['yesterday_date'] = yesterday_day.get('date', '')
+        # 昨日の最大連チャン数
+        yesterday_history = yesterday_day.get('history', [])
+        if yesterday_history:
+            result['yesterday_max_rensa'] = max(
+                (h.get('rensa', 1) for h in yesterday_history), default=1
+            )
+
+    # 前々日の結果
+    if len(daily_results) >= 2:
+        db_date, db_diff, db_art, db_games = daily_results[1]
+        result['day_before_art'] = db_art
+        result['day_before_games'] = int(db_games)
+        result['day_before_date'] = db_date
+    if len(sorted_days) >= 2:
+        result['day_before_rb'] = sorted_days[1].get('rb', 0)
 
     # トレンド判定
     if consecutive_plus >= 3:
@@ -1422,6 +1444,14 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
             # サマリー
             'yesterday_diff': trend_data.get('yesterday_diff', 0),
             'yesterday_art': trend_data.get('yesterday_art', 0),
+            'yesterday_rb': trend_data.get('yesterday_rb', 0),
+            'yesterday_games': trend_data.get('yesterday_games', 0),
+            'yesterday_date': trend_data.get('yesterday_date', ''),
+            'day_before_art': trend_data.get('day_before_art', 0),
+            'day_before_rb': trend_data.get('day_before_rb', 0),
+            'day_before_games': trend_data.get('day_before_games', 0),
+            'day_before_date': trend_data.get('day_before_date', ''),
+            'yesterday_max_rensa': trend_data.get('yesterday_max_rensa', 0),
             'max_medals': max_medals,
             'consecutive_plus': trend_data.get('consecutive_plus', 0),
             'consecutive_minus': trend_data.get('consecutive_minus', 0),
