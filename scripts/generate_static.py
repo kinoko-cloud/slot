@@ -746,6 +746,13 @@ def generate_ranking_pages(env):
             for rec in recommendations:
                 rec['store_name'] = store.get('short_name', store['name'])
                 rec['store_key'] = store_key
+                # 差枚概算
+                for prefix in ['yesterday', 'day_before', 'three_days_ago']:
+                    _art = rec.get(f'{prefix}_art', 0)
+                    _games = rec.get(f'{prefix}_games', 0)
+                    if _art and _art > 0 and _games and _games > 0:
+                        _p = calculate_expected_profit(_games, _art, machine_key)
+                        rec[f'{prefix}_diff_medals'] = _p.get('current_estimate', 0)
                 all_recommendations.append(rec)
 
         # スコア順でソート
