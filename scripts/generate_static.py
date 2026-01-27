@@ -890,8 +890,26 @@ def _process_history_for_verify(history):
     # 最後のチェーンを処理
     if chain_hits:
         chain_len = len(chain_hits)
-        for ch in chain_hits:
+        for idx, ch in enumerate(chain_hits):
             ch['chain_len'] = chain_len
+            ch['chain_pos'] = idx + 1  # 1連目, 2連目, ...
+
+    # 全てのチェーンにchain_posを付与（最後のチェーン以外は既にループ内で処理済み）
+    # → 上のループ内で処理する必要がある。修正:
+    # chain_hitsの処理を再走査して全チェーンにchain_posを付与
+    current_chain_id = 0
+    pos = 0
+    for entry in processed:
+        cid = entry.get('chain_id', 0)
+        if cid > 0:
+            if cid != current_chain_id:
+                current_chain_id = cid
+                pos = 1
+            else:
+                pos += 1
+            entry['chain_pos'] = pos
+        else:
+            entry['chain_pos'] = 0
 
     # ホットチェーン(5連以上)にフラグ付与
     for entry in processed:
@@ -1000,9 +1018,18 @@ def generate_verify_page(env):
                 # リアルタイム予測（当日データ込み）
                 predicted_rank = rec.get('final_rank', 'C')
                 predicted_score = rec.get('final_score', 50)
+
+                # 閉店後は前日データを実績として使う
                 actual_art = rec.get('art_count', 0)
                 actual_games = rec.get('total_games', 0)
                 actual_prob = rec.get('art_prob', 0)
+                if actual_art == 0 and not is_business_hours():
+                    actual_art = rec.get('yesterday_art', 0)
+                    actual_games = rec.get('yesterday_games', 0)
+                    if actual_art > 0 and actual_games > 0:
+                        actual_prob = actual_games / actual_art
+                    else:
+                        actual_prob = 0
 
                 # 開店前予測（過去データのみ）
                 uid = str(rec.get('unit_id', ''))
