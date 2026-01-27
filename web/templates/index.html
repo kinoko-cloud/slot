@@ -206,6 +206,25 @@
                         </div>
                     </div>
                     {% endif %}
+                    {# === 直近データ（蓄積DB） === #}
+                    {% if rec.recent_days and rec.recent_days|length > 0 %}
+                    <div class="yh-toggle" onclick="toggleYesterdayHistory(event, this)">
+                        直近{{ rec.recent_days|length }}日間データ <span class="yh-toggle-arrow">▼</span>
+                    </div>
+                    <div class="yh-panel hidden" onclick="event.preventDefault(); event.stopPropagation();">
+                        <div class="recent-days compact">
+                        {% for day in rec.recent_days[:7] %}
+                        {% if day.art > 0 %}
+                        <div class="recent-day-row">
+                            <span class="recent-label">{{ short_date(day.date) }}</span>
+                            <span class="recent-art">ART {{ day.art }}</span>
+                            {% if day.prob > 0 %}<span class="recent-prob {% if day.prob <= 100 %}excellent{% elif day.prob <= 130 %}good{% elif day.prob >= 200 %}bad{% endif %}">1/{{ day.prob|int }}</span>{% endif %}
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
                 </a>
                 {% endfor %}
             </section>

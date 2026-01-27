@@ -17,6 +17,8 @@ PAPIMO_CONFIG = {
         'sbj_machine_id': '225010000',
         'sbj_units': ['1015', '1016', '1017', '1018', '1020', '1021', '1022', '1023',
                       '1025', '1026', '1027', '1028', '1030', '1031'],
+        'hokuto_units': ['0731', '0732', '0733', '0735', '0736', '0737', '0738',
+                         '0750', '0751', '0752', '0753', '0755', '0756', '0757'],
     }
 }
 
@@ -238,3 +240,64 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+def scrape_island_machine(machine_key: str = 'hokuto', days_back: int = 7) -> list:
+    """アイランド秋葉原の指定機種の全台データを取得"""
+    config = PAPIMO_CONFIG['island_akihabara']
+    hall_id = config['hall_id']
+    hall_name = config['hall_name']
+
+    if machine_key in ('hokuto', 'hokuto_tensei2'):
+        units = config['hokuto_units']
+        machine_name = 'L北斗の拳 転生の章2'
+    else:
+        units = config['sbj_units']
+        machine_name = 'Lスーパーブラックジャック'
+
+    print("=" * 70)
+    print(f"papimo.jp - {hall_name} {machine_name} データ取得")
+    print(f"対象台: {len(units)}台")
+    print(f"取得日数: {days_back}日分")
+    print("=" * 70)
+
+    all_results = []
+
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True)
+        page = browser.new_page(viewport={'width': 1280, 'height': 900})
+
+        try:
+            for unit_id in units:
+                print(f"\n【台{unit_id}】")
+                result = get_unit_history(page, hall_id, unit_id, days_back)
+                result['hall_id'] = hall_id
+                result['hall_name'] = hall_name
+                result['machine_name'] = machine_name
+                result['fetched_at'] = datetime.now().isoformat()
+                all_results.append(result)
+        except Exception as e:
+            print(f"エラー: {e}")
+            import traceback
+            traceback.print_exc()
+        finally:
+            browser.close()
+
+    # 保存
+    tag = 'hokuto' if 'hokuto' in machine_key else 'sbj'
+    save_path = Path('data/raw') / f'papimo_island_{tag}_{datetime.now().strftime("%Y%m%d_%H%M")}.json'
+    save_path.parent.mkdir(parents=True, exist_ok=True)
+    with open(save_path, 'w', encoding='utf-8') as f:
+        json.dump(all_results, f, ensure_ascii=False, indent=2)
+    print(f"\n✓ 保存: {save_path}")
+    return all_results
+
+
+if __name__ == '__main__':
+    import sys
+    machine = sys.argv[1] if len(sys.argv) > 1 else 'sbj'
+    days = int(sys.argv[2]) if len(sys.argv) > 2 else 7
+    if machine in ('hokuto', 'hokuto_tensei2'):
+        scrape_island_machine('hokuto', days)
+    else:
+        scrape_sbj_island(days)
