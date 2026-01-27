@@ -85,12 +85,13 @@
                         <div class="recent-day-row">
                             <span class="recent-label">{{ short_date(rec.yesterday_date) or '前日' }}</span>
                             <span class="recent-art">ART {{ y_art }}</span>
+                            {% if rec.first_hit_count is defined and rec.first_hit_count > 0 %}<span class="first-hit-count-sm">初当たり{{ rec.first_hit_count }}回</span>{% endif %}
                             {% if y_prob > 0 %}<span class="recent-prob {% if y_prob <= 100 %}excellent{% elif y_prob <= 130 %}good{% elif y_prob >= 200 %}bad{% endif %}">1/{{ y_prob }}</span>{% endif %}
                             {% if rec.yesterday_diff_medals is defined and rec.yesterday_diff_medals != 0 %}
                             <span class="diff-medals-sm {% if rec.yesterday_diff_medals > 0 %}plus{% else %}minus{% endif %}">{{ '{:+,}'.format(rec.yesterday_diff_medals) }}枚</span>
                             {% endif %}
                             {% if rec.yesterday_max_rensa and rec.yesterday_max_rensa >= 3 %}<span class="rensa-sm">{{ rec.yesterday_max_rensa }}連</span>{% endif %}
-                            {% if rec.yesterday_max_medals and rec.yesterday_max_medals > 300 %}<span class="max-medals-sm">最大{{ '{:,}'.format(rec.yesterday_max_medals) }}枚</span>{% endif %}
+                            {% if rec.yesterday_max_medals and rec.yesterday_max_medals > 0 %}<span class="max-medals-sm">最大{{ '{:,}'.format(rec.yesterday_max_medals) }}枚</span>{% endif %}
                         </div>
                         {% endif %}
                         {% if db_art > 0 %}
@@ -102,7 +103,7 @@
                             <span class="diff-medals-sm {% if rec.day_before_diff_medals > 0 %}plus{% else %}minus{% endif %}">{{ '{:+,}'.format(rec.day_before_diff_medals) }}枚</span>
                             {% endif %}
                             {% if rec.day_before_max_rensa is defined and rec.day_before_max_rensa >= 3 %}<span class="rensa-sm">{{ rec.day_before_max_rensa }}連</span>{% endif %}
-                            {% if rec.day_before_max_medals is defined and rec.day_before_max_medals > 300 %}<span class="max-medals-sm">最大{{ '{:,}'.format(rec.day_before_max_medals) }}枚</span>{% endif %}
+                            {% if rec.day_before_max_medals is defined and rec.day_before_max_medals > 0 %}<span class="max-medals-sm">最大{{ '{:,}'.format(rec.day_before_max_medals) }}枚</span>{% endif %}
                         </div>
                         {% endif %}
                         {% if rec.three_days_ago_art is defined and rec.three_days_ago_art > 0 %}
@@ -115,7 +116,7 @@
                             <span class="diff-medals-sm {% if rec.three_days_ago_diff_medals > 0 %}plus{% else %}minus{% endif %}">{{ '{:+,}'.format(rec.three_days_ago_diff_medals) }}枚</span>
                             {% endif %}
                             {% if rec.three_days_ago_max_rensa is defined and rec.three_days_ago_max_rensa >= 3 %}<span class="rensa-sm">{{ rec.three_days_ago_max_rensa }}連</span>{% endif %}
-                            {% if rec.three_days_ago_max_medals is defined and rec.three_days_ago_max_medals > 300 %}<span class="max-medals-sm">最大{{ '{:,}'.format(rec.three_days_ago_max_medals) }}枚</span>{% endif %}
+                            {% if rec.three_days_ago_max_medals is defined and rec.three_days_ago_max_medals > 0 %}<span class="max-medals-sm">最大{{ '{:,}'.format(rec.three_days_ago_max_medals) }}枚</span>{% endif %}
                         </div>
                         {% endif %}
                     </div>
@@ -187,10 +188,13 @@
                         {% endif %}
                     </div>
                     {% endif %}
-                    {# === メインデータ: ART / RB / 確率 === #}
+                    {# === メインデータ: ART / RB / 確率 / 初当たり === #}
                     <div class="yesterday-stats">
                         {% if rec.yesterday_art and rec.yesterday_art > 0 %}
                         <span class="art-badge">ART <span class="art-num">{{ rec.yesterday_art }}</span></span>
+                        {% endif %}
+                        {% if rec.first_hit_count is defined and rec.first_hit_count > 0 %}
+                        <span class="first-hit-count">初当たり<span class="num">{{ rec.first_hit_count }}</span>回</span>
                         {% endif %}
                         {% if rec.yesterday_rb and rec.yesterday_rb > 0 %}
                         <span class="rb-badge">RB <span class="rb-num">{{ rec.yesterday_rb }}</span></span>
@@ -237,12 +241,14 @@
                             {% for hit in hit_history|sort(attribute='time') %}
                             {% set is_art = hit.type in ['ART', 'AT', 'BIG'] %}
                             {% set is_chain = hit.start is defined and hit.start <= 70 and not loop.first %}
-                            <div class="yh-row {% if is_art %}yh-art{% else %}yh-rb{% endif %}{% if is_chain %} yh-chain{% endif %}">
-                                <span class="yh-chain-marker">{% if is_chain %}🔗{% endif %}</span>
+                            {% set is_first_hit = hit.is_first_hit is defined and hit.is_first_hit %}
+                            <div class="yh-row {% if is_art %}yh-art{% else %}yh-rb{% endif %}{% if is_chain %} yh-chain{% endif %}{% if is_first_hit %} yh-first-hit{% endif %}">
+                                <span class="yh-chain-marker">{% if is_first_hit %}⭐{% elif is_chain %}🔗{% endif %}</span>
                                 <span class="yh-time">{{ hit.time or '-' }}</span>
                                 <span class="yh-start {% if hit.start is defined and hit.start >= 500 %}deep{% elif hit.start is defined and hit.start <= 10 and not loop.first %}shallow{% endif %}">{{ hit.start|default(0) }}G</span>
                                 <span class="yh-type">{{ hit.type|default('?') }}</span>
                                 <span class="yh-medals">{% if hit.medals is defined and hit.medals > 0 %}{{ '{:,}'.format(hit.medals) }}枚{% else %}-{% endif %}</span>
+                                {% if is_first_hit %}<span class="yh-first-hit-badge">初当たり</span>{% endif %}
                             </div>
                             {% endfor %}
                         </div>
@@ -547,12 +553,14 @@
                             {% for hit in hit_history2|sort(attribute='time') %}
                             {% set is_art = hit.type in ['ART', 'AT', 'BIG'] %}
                             {% set is_chain = hit.start is defined and hit.start <= 70 and not loop.first %}
-                            <div class="yh-row {% if is_art %}yh-art{% else %}yh-rb{% endif %}{% if is_chain %} yh-chain{% endif %}">
-                                <span class="yh-chain-marker">{% if is_chain %}🔗{% endif %}</span>
+                            {% set is_first_hit = hit.is_first_hit is defined and hit.is_first_hit %}
+                            <div class="yh-row {% if is_art %}yh-art{% else %}yh-rb{% endif %}{% if is_chain %} yh-chain{% endif %}{% if is_first_hit %} yh-first-hit{% endif %}">
+                                <span class="yh-chain-marker">{% if is_first_hit %}⭐{% elif is_chain %}🔗{% endif %}</span>
                                 <span class="yh-time">{{ hit.time or '-' }}</span>
                                 <span class="yh-start {% if hit.start is defined and hit.start >= 500 %}deep{% elif hit.start is defined and hit.start <= 10 and not loop.first %}shallow{% endif %}">{{ hit.start|default(0) }}G</span>
                                 <span class="yh-type">{{ hit.type|default('?') }}</span>
                                 <span class="yh-medals">{% if hit.medals is defined and hit.medals > 0 %}{{ '{:,}'.format(hit.medals) }}枚{% else %}-{% endif %}</span>
+                                {% if is_first_hit %}<span class="yh-first-hit-badge">初当たり</span>{% endif %}
                             </div>
                             {% endfor %}
                         </div>

@@ -5431,6 +5431,53 @@ strong.minus {
     font-weight: 600;
 }
 
+/* === 初当たり表示 === */
+/* 初当たり行 */
+.yh-row.yh-first-hit {
+    background: rgba(255, 215, 0, 0.12);
+    border-left: 2px solid #ffd700;
+}
+
+/* 初当たりバッジ（履歴行内） */
+.yh-first-hit-badge {
+    display: inline-block;
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-size: 0.7em;
+    font-weight: 700;
+    background: rgba(255, 215, 0, 0.2);
+    color: #ffd700;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* 初当たり回数（爆発台カード内） */
+.first-hit-count {
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: 6px;
+    font-size: 0.78em;
+    font-weight: 600;
+    background: rgba(255, 215, 0, 0.15);
+    color: #ffd700;
+    white-space: nowrap;
+}
+.first-hit-count .num {
+    font-weight: 700;
+}
+
+/* 初当たり回数（TOP3の直近データ行内、小さめ） */
+.first-hit-count-sm {
+    display: inline-block;
+    padding: 1px 4px;
+    border-radius: 4px;
+    font-size: 0.72em;
+    font-weight: 600;
+    background: rgba(255, 215, 0, 0.12);
+    color: #ffd700;
+    white-space: nowrap;
+}
+
 /* 仮説セクション */
 .hypotheses-section {
     margin-bottom: 20px;

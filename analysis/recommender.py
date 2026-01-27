@@ -832,8 +832,35 @@ def analyze_trend(days: List[dict]) -> dict:
         result['day_before_art'] = db_art
         result['day_before_games'] = int(db_games)
         result['day_before_date'] = db_date
+        result['day_before_diff_medals'] = int(db_diff) if db_diff else 0
     if len(sorted_days) >= 2:
         result['day_before_rb'] = sorted_days[1].get('rb', 0)
+        db_history = sorted_days[1].get('history', [])
+        if db_history:
+            from analysis.analyzer import calculate_max_chain_medals
+            result['day_before_max_rensa'] = calculate_max_rensa(db_history)
+            result['day_before_max_medals'] = calculate_max_chain_medals(db_history)
+        else:
+            result['day_before_max_rensa'] = sorted_days[1].get('max_rensa', 0)
+            result['day_before_max_medals'] = sorted_days[1].get('max_medals', 0)
+
+    # 3日前の結果
+    if len(daily_results) >= 3:
+        td_date, td_diff, td_art, td_games = daily_results[2]
+        result['three_days_ago_art'] = td_art
+        result['three_days_ago_games'] = int(td_games)
+        result['three_days_ago_date'] = td_date
+        result['three_days_ago_diff_medals'] = int(td_diff) if td_diff else 0
+    if len(sorted_days) >= 3:
+        result['three_days_ago_rb'] = sorted_days[2].get('rb', 0)
+        td_history = sorted_days[2].get('history', [])
+        if td_history:
+            from analysis.analyzer import calculate_max_chain_medals
+            result['three_days_ago_max_rensa'] = calculate_max_rensa(td_history)
+            result['three_days_ago_max_medals'] = calculate_max_chain_medals(td_history)
+        else:
+            result['three_days_ago_max_rensa'] = sorted_days[2].get('max_rensa', 0)
+            result['three_days_ago_max_medals'] = sorted_days[2].get('max_medals', 0)
 
     # トレンド判定
     if consecutive_plus >= 3:

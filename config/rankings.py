@@ -16,6 +16,10 @@ MACHINES = {
         'bad_prob': 150,       # ART確率がこれ以上なら不調判定
         'very_bad_prob': 200,  # 明確に低設定
         'typical_daily_games': 6500,  # 1日あたりの一般的な消化G数
+        # 天井パラメータ（設定変更/リセット時の天井短縮恩恵）
+        'normal_ceiling': 800,        # 通常天井
+        'reset_ceiling': 600,         # リセット時天井（朝イチ天井）
+        'reset_first_hit_bonus': True, # 朝イチ初当たりに恩恵あり
     },
     'hokuto_tensei2': {
         'name': 'L北斗の拳 転生の章2',
@@ -26,6 +30,10 @@ MACHINES = {
         'bad_prob': 366,
         'very_bad_prob': 500,
         'typical_daily_games': 4000,
+        # 天井パラメータ
+        'normal_ceiling': 1500,       # 通常天井（スマスロ系で天井が深い）
+        'reset_ceiling': 600,         # リセット時天井（朝イチ天井）
+        'reset_first_hit_bonus': True, # 朝イチ初当たりに恩恵あり
     },
 }
 
@@ -35,6 +43,9 @@ MACHINE_DEFAULTS = {
     'bad_prob': 250,
     'very_bad_prob': 350,
     'typical_daily_games': 5000,
+    'normal_ceiling': 999,
+    'reset_ceiling': 999,       # デフォルトはリセット恩恵なし（通常天井と同じ）
+    'reset_first_hit_bonus': False,
 }
 
 
