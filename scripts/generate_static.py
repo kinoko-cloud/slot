@@ -353,6 +353,7 @@ def generate_index(env):
                             'machine_icon': machine['icon'],
                             'machine_name': machine.get('display_name', machine['short_name']),
                             'yesterday_art': y_art,
+                            'yesterday_rb': rec.get('yesterday_rb', 0),
                             'yesterday_games': y_games,
                             'yesterday_max_rensa': y_max_rensa,
                             'yesterday_max_medals': y_max_medals,

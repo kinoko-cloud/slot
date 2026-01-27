@@ -159,30 +159,40 @@
                         <span class="store-name-sm">{{ rec.store_name }}</span>
                         <span class="unit-id-sm">{{ rec.unit_id }}番</span>
                     </div>
-                    <div class="yesterday-stats">
-                        {% if rec.diff_medals is defined and rec.diff_medals != 0 %}
-                        <span class="diff-medals {% if rec.diff_medals > 0 %}plus{% else %}minus{% endif %}">
+                    {# === 差枚（目立たせる） === #}
+                    {% if rec.diff_medals is defined and rec.diff_medals != 0 %}
+                    <div class="yesterday-diff-line">
+                        <span class="diff-medals-lg {% if rec.diff_medals > 0 %}plus{% else %}minus{% endif %}">
                             {{ '{:+,}'.format(rec.diff_medals) }}枚
                         </span>
+                        {% if rec.estimated_setting %}
+                        <span class="setting-badge-sm setting-{{ rec.setting_num|default(0) }}">設定{{ rec.setting_num }}</span>
                         {% endif %}
+                    </div>
+                    {% endif %}
+                    {# === メインデータ: ART / RB / 確率 === #}
+                    <div class="yesterday-stats">
                         {% if rec.yesterday_art and rec.yesterday_art > 0 %}
                         <span class="art-badge">ART <span class="art-num">{{ rec.yesterday_art }}</span></span>
                         {% endif %}
-                        {% if rec.yesterday_max_rensa and rec.yesterday_max_rensa >= 3 %}
-                        <span class="rensa-badge">最大<span class="num">{{ rec.yesterday_max_rensa }}</span>連</span>
+                        {% if rec.yesterday_rb and rec.yesterday_rb > 0 %}
+                        <span class="rb-badge">RB <span class="rb-num">{{ rec.yesterday_rb }}</span></span>
                         {% endif %}
-                        {% if rec.yesterday_max_medals and rec.yesterday_max_medals > 0 %}
-                        <span class="max-medals">最大<span class="num">{{ '{:,}'.format(rec.yesterday_max_medals) }}</span>枚</span>
+                        {% if rec.yesterday_prob and rec.yesterday_prob > 0 %}
+                        <span class="art-prob-sm {% if rec.yesterday_prob <= 100 %}excellent{% elif rec.yesterday_prob <= 130 %}good{% elif rec.yesterday_prob >= 200 %}bad{% endif %}">1/{{ rec.yesterday_prob|int }}</span>
                         {% endif %}
                         {% if rec.yesterday_games and rec.yesterday_games > 0 %}
                         <span class="total-games-label">{{ '{:,}'.format(rec.yesterday_games) }}G</span>
                         {% endif %}
                     </div>
-                    {% if rec.yesterday_prob and rec.yesterday_prob > 0 %}
-                    <div class="yesterday-prob-line">
-                        <span class="art-prob-sm {% if rec.yesterday_prob <= 100 %}excellent{% elif rec.yesterday_prob <= 130 %}good{% elif rec.yesterday_prob >= 200 %}bad{% endif %}">ART確率 1/{{ rec.yesterday_prob|int }}</span>
-                        {% if rec.estimated_setting %}
-                        <span class="setting-badge-sm setting-{{ rec.setting_num|default(0) }}">設定{{ rec.setting_num }}</span>
+                    {# === サブデータ: 連チャン / 最大枚数 / 天井 === #}
+                    {% if (rec.yesterday_max_rensa and rec.yesterday_max_rensa >= 3) or (rec.yesterday_max_medals and rec.yesterday_max_medals > 0) or (rec.yesterday_ceilings and rec.yesterday_ceilings > 0) %}
+                    <div class="yesterday-sub-stats">
+                        {% if rec.yesterday_max_rensa and rec.yesterday_max_rensa >= 3 %}
+                        <span class="rensa-badge">最大<span class="num">{{ rec.yesterday_max_rensa }}</span>連</span>
+                        {% endif %}
+                        {% if rec.yesterday_max_medals and rec.yesterday_max_medals > 0 %}
+                        <span class="max-medals">最大<span class="num">{{ '{:,}'.format(rec.yesterday_max_medals) }}</span>枚</span>
                         {% endif %}
                         {% if rec.yesterday_ceilings and rec.yesterday_ceilings > 0 %}
                         <span class="ceiling-badge">天井<span class="num">{{ rec.yesterday_ceilings }}</span>回</span>
