@@ -1802,7 +1802,19 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
                 today_confidence_parts.append(f"過去{total_perf_days}日中{good_days}日好調（{good_day_rate:.0%}）")
 
         if today_confidence_parts:
-            reasons.append(f"💡 {' / '.join(today_confidence_parts)}")
+            # 好調率が既に📊で出てる場合は💡から省略（重複回避）
+            filtered_parts = []
+            for part in today_confidence_parts:
+                # 「過去X日中Y日好調（Z%）」は📊の好調率と重複するので省略
+                if '日中' in part and '日好調' in part and good_day_rate >= 0.5:
+                    continue
+                # 「X日連続好調中」は🔄の連続好調と重複するので省略
+                # （🔄は後で追加されるため、consecutive_plus >= 2で判定）
+                if '連続好調中' in part and consecutive_plus >= 2:
+                    continue
+                filtered_parts.append(part)
+            if filtered_parts:
+                reasons.append(f"💡 {' / '.join(filtered_parts)}")
 
         # 据え置き率（安心材料）
         if continuation_total >= 3 and continuation_rate >= 0.5:
