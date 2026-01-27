@@ -82,10 +82,13 @@
             </section>
             {% endif %}
 
-            <!-- 狙い目 / 結果 TOP3 -->
+            <!-- 狙い目 / 結果 / 明日予想 TOP3 -->
             {% if top3 %}
             <section class="recommendations top" id="top3-section">
-                {% if display_mode == 'result' %}
+                {% if night_mode %}
+                <h2>🌙 明日のおすすめ予想台 TOP{{ top3|length }}</h2>
+                <div class="top5-note">{{ tomorrow_str }}の狙い目予想 ※今日の結果＋過去傾向から分析</div>
+                {% elif display_mode == 'result' %}
                 <h2>{{ result_date_str }}の好調台</h2>
                 <div class="top5-note">※実績データ（ART回数・出玉）で評価</div>
                 {% elif display_mode == 'collecting' %}

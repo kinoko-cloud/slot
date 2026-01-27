@@ -130,7 +130,7 @@
 
                     <!-- メインヘッダー: 台番号 + 機種名 + 空き状況 + ランク -->
                     <div class="unit-main-header">
-                        <a href="{{ url_for('unit_history', store_key=store_key, unit_id=rec.unit_id) }}" class="unit-id-large unit-id-link">{{ rec.unit_id }}</a>
+                        <a href="{{ url_for('unit_history', store_key=store_key, unit_id=rec.unit_id) }}" class="unit-id-large unit-id-link">{{ rec.unit_id }}番台</a>
                         <span class="machine-name-sm">{{ machine.short_name }}</span>
                         {% if is_open %}
                             {% if rec.availability == '空き' %}
@@ -354,7 +354,7 @@
                 <div class="unit-card-compact rank-{{ rec.final_rank|lower }} {{ 'avail-card-empty' if rec.availability == '空き' else 'avail-card-playing' if rec.availability == '遊技中' else '' }}" data-availability="{{ rec.availability or 'unknown' }}" onclick="toggleDetails(this)">
                     <div class="compact-row">
                         <span class="compact-rank-num">#{{ loop.index + top_recs|length }}</span>
-                        <span class="unit-id-sm">{{ rec.unit_id }}</span>
+                        <span class="unit-id-sm">{{ rec.unit_id }}番台</span>
                         {% if is_open %}
                             {% if rec.availability == '空き' %}
                             <span class="avail-sm empty">空</span>
