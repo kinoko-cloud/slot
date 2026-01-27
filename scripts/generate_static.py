@@ -18,7 +18,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 from jinja2 import Environment, FileSystemLoader
 from config.rankings import STORES, MACHINES, get_stores_by_machine, get_machine_info
-from analysis.recommender import recommend_units, load_daily_data, generate_store_analysis
+from analysis.recommender import recommend_units, load_daily_data, generate_store_analysis, calculate_expected_profit
 from scrapers.availability_checker import get_availability, get_realtime_data
 from scripts.verify_units import get_active_alerts, get_unit_status
 
@@ -288,7 +288,13 @@ def generate_index(env):
                 for rec in recs:
                     t_art = rec.get('art_count', 0)
                     t_medals = rec.get('max_medals', 0)
+                    t_games = rec.get('total_games', 0)
                     if t_art > 0 or t_medals > 0:
+                        # 差枚計算
+                        diff_medals = 0
+                        if t_art > 0 and t_games > 0:
+                            profit = calculate_expected_profit(t_games, t_art, machine_key)
+                            diff_medals = profit.get('current_estimate', 0)
                         today_top10.append({
                             'unit_id': rec['unit_id'],
                             'store_name': rec['store_name'],
@@ -297,7 +303,7 @@ def generate_index(env):
                             'machine_name': machine.get('display_name', machine['short_name']),
                             'art_count': t_art,
                             'rb_count': rec.get('rb_count', 0),
-                            'total_games': rec.get('total_games', 0),
+                            'total_games': t_games,
                             'max_medals': t_medals,
                             'art_prob': rec.get('art_prob', 0),
                             'availability': rec.get('availability', ''),
@@ -305,6 +311,7 @@ def generate_index(env):
                             'setting_num': rec.get('setting_num', 0),
                             'payout_estimate': rec.get('payout_estimate', ''),
                             'today_max_rensa': rec.get('today_max_rensa', 0),
+                            'diff_medals': diff_medals,
                         })
             except Exception as e:
                 print(f"Error processing {store_key}: {e}")
@@ -323,8 +330,8 @@ def generate_index(env):
     yesterday_top10.sort(key=lambda x: -x['yesterday_art'])
     yesterday_top10 = yesterday_top10[:10]
 
-    # 本日の爆発台: max_medalsでソート（同値ならart_count）
-    today_top10.sort(key=lambda x: (-x['max_medals'], -x['art_count']))
+    # 本日の爆発台: 差枚でソート（推定差枚の多い順）
+    today_top10.sort(key=lambda x: (-x.get('diff_medals', 0), -x['max_medals']))
     today_top10 = today_top10[:10]
 
     # 曜日ランキング
