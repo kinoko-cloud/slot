@@ -1596,9 +1596,15 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
     elif total_perf_days > 0 and good_day_rate <= 0.4:
         reasons.append(f"📊 {total_perf_days}日間中{good_days}日好調（好調率{good_day_rate:.0%}）→ 低設定が入りやすい台")
     elif base_rank == 'S':
-        reasons.append(f"📊 過去データSランク: 高設定が頻繁に入る台")
+        if total_perf_days > 0 and good_day_rate < 0.5:
+            reasons.append(f"📊 過去データSランク（ただし直近{total_perf_days}日は好調{good_days}日のみ={good_day_rate:.0%}）")
+        else:
+            reasons.append(f"📊 過去データSランク: 高設定が頻繁に入る台")
     elif base_rank == 'A':
-        reasons.append(f"📊 過去データAランク: 高設定が入りやすい台")
+        if total_perf_days > 0 and good_day_rate < 0.5:
+            reasons.append(f"📊 過去データAランク（ただし直近{total_perf_days}日は好調{good_days}日のみ={good_day_rate:.0%}）")
+        else:
+            reasons.append(f"📊 過去データAランク: 高設定が入りやすい台")
     elif base_rank == 'B':
         reasons.append(f"📊 過去データBランク: 中間設定以上が多い台")
 
