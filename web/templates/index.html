@@ -50,9 +50,7 @@
                         <span class="ranking-num">#{{ loop.index }}</span>
                         <span class="machine-icon">{{ rec.machine_icon }}</span>
                         <span class="machine-name-top">{{ rec.machine_name }}</span>
-                        <span class="rank-badge" style="background-color: {{ rank_color(rec.final_rank) }}">
-                            {{ rec.final_rank }}
-                        </span>
+                        <span class="rank-badge" style="background-color: {{ rank_color(rec.final_rank) }}">{{ rec.final_rank }}</span>
                     </div>
                     <div class="unit-store">
                         <a href="{{ url_for('recommend', store_key=rec.store_key) }}" class="store-link">{{ rec.store_name }}</a> / <span class="unit-id-sub">{{ rec.unit_id }}番</span>
@@ -72,11 +70,7 @@
                         <span class="art-main">
                             <span class="art-num-big">{{ rec.art_count }}</span><span class="art-label">ART</span>
                         </span>
-                        {% if rec.art_prob > 0 %}
-                        <span class="art-prob {% if rec.art_prob <= 100 %}excellent{% elif rec.art_prob <= 130 %}good{% elif rec.art_prob >= 200 %}bad{% endif %}" title="合成確率">
-                            1/{{ rec.art_prob|int }}
-                        </span>
-                        {% endif %}
+                        {% if rec.art_prob > 0 %}<span class="art-prob {% if rec.art_prob <= 100 %}excellent{% elif rec.art_prob <= 130 %}good{% elif rec.art_prob >= 200 %}bad{% endif %}" title="合成確率">1/{{ rec.art_prob|int }}</span>{% endif %}
                         {% else %}
                         <span class="art-main past">
                             <span class="art-num-big">{{ rec.avg_art_7days|round(0)|int }}</span><span class="art-label">ART(7日平均)</span>

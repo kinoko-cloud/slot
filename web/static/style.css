@@ -261,9 +261,15 @@ header h1 {
 /* 台カード */
 .unit-card {
     background: #252541;
-    border-radius: 8px;
+    border-radius: 10px;
     padding: 12px 15px;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.unit-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .unit-card.running {
@@ -273,8 +279,9 @@ header h1 {
 .unit-header {
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 5px;
+    gap: 8px;
+    margin-bottom: 6px;
+    flex-wrap: wrap;
 }
 
 .unit-id {
@@ -423,25 +430,29 @@ footer {
     text-decoration: none;
 }
 
-/* ランク別ボーダー */
+/* ランク別スタイル（左ボーダーを細く、グラデーション追加） */
 .unit-card.rank-s {
-    border-left: 4px solid #ff6b6b;
+    border-left: 3px solid #ff6b6b;
+    background: linear-gradient(90deg, rgba(255, 107, 107, 0.15) 0%, #252541 20%);
 }
 
 .unit-card.rank-a {
-    border-left: 4px solid #ffa502;
+    border-left: 3px solid #ffa502;
+    background: linear-gradient(90deg, rgba(255, 165, 2, 0.15) 0%, #252541 20%);
 }
 
 .unit-card.rank-b {
-    border-left: 4px solid #2ed573;
+    border-left: 3px solid #2ed573;
+    background: linear-gradient(90deg, rgba(46, 213, 115, 0.1) 0%, #252541 20%);
 }
 
 .unit-card.rank-c {
-    border-left: 4px solid #70a1ff;
+    border-left: 3px solid #70a1ff;
+    background: linear-gradient(90deg, rgba(112, 161, 255, 0.1) 0%, #252541 20%);
 }
 
 .unit-card.rank-d {
-    border-left: 4px solid #747d8c;
+    border-left: 3px solid #747d8c;
 }
 
 /* スクレイピングボタン */
@@ -868,9 +879,13 @@ footer {
 
 /* 店舗タグ */
 .unit-store {
+    display: flex;
+    align-items: center;
+    gap: 6px;
     font-size: 0.85em;
     color: #70a1ff;
-    margin: 3px 0;
+    margin: 2px 0;
+    flex-wrap: wrap;
 }
 
 .unit-store a {
@@ -2216,9 +2231,10 @@ strong.minus {
 /* ===== トップページ: ART数メイン表示 ===== */
 .top3-stats-main {
     display: flex;
-    align-items: baseline;
-    gap: 12px;
-    margin: 8px 0 4px 0;
+    align-items: center;
+    gap: 10px;
+    margin: 6px 0 2px 0;
+    flex-wrap: wrap;
 }
 
 .art-main {
@@ -2264,10 +2280,11 @@ strong.minus {
 /* サブ情報行 */
 .top3-stats-sub {
     display: flex;
-    gap: 12px;
+    gap: 10px;
     font-size: 0.8em;
     color: #888;
-    margin-top: 4px;
+    margin-top: 2px;
+    flex-wrap: wrap;
     flex-wrap: wrap;
 }
 
