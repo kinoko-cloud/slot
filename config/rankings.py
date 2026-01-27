@@ -81,7 +81,7 @@ STORES = {
         'units': ['3185', '3186', '3187'],  # 4000番台は全て低貸のため除外
         'data_source': 'daidata',
     },
-    'akihabara_espass_sbj': {
+    'akiba_espass_sbj': {
         'name': 'エスパス日拓秋葉原駅前店',
         'short_name': 'エスパス秋葉原',
         'hall_id': '100928',
@@ -106,7 +106,7 @@ STORES = {
         'units': [str(i) for i in range(1, 38)] + [str(i) for i in range(125, 129)],  # 1-37, 125-128
         'data_source': 'daidata',
     },
-    'akihabara_espass_hokuto': {
+    'akiba_espass_hokuto': {
         'name': 'エスパス日拓秋葉原駅前店',
         'short_name': 'エスパス秋葉原',
         'hall_id': '100928',

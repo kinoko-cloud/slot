@@ -48,7 +48,7 @@ STORES = {
         'hall_id': '100949',
         'units': ['682', '683', '684', '685'],
     },
-    'akihabara_espass_sbj': {
+    'akiba_espass_sbj': {
         'name': 'エスパス日拓秋葉原駅前店',
         'source': 'daidata',
         'hall_id': '100928',

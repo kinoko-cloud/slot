@@ -216,7 +216,7 @@ def index():
                 {'store_key': 'shinjuku_espass_hokuto', 'icon': '👊', 'short_name': '北斗転生2'},
             ],
         },
-        'akihabara_espass': {
+        'akiba_espass': {
             'name': 'エスパス日拓秋葉原駅前店',
             'short_name': 'エスパス秋葉原',
             'day_ratings': {'月': 2, '火': 3, '水': 3, '木': 3, '金': 4, '土': 5, '日': 4},
@@ -224,8 +224,8 @@ def index():
             'worst_note': '月曜は控えめ',
             'overall_rating': 3,
             'machine_links': [
-                {'store_key': 'akihabara_espass_sbj', 'icon': '🃏', 'short_name': 'SBJ'},
-                {'store_key': 'akihabara_espass_hokuto', 'icon': '👊', 'short_name': '北斗転生2'},
+                {'store_key': 'akiba_espass_sbj', 'icon': '🃏', 'short_name': 'SBJ'},
+                {'store_key': 'akiba_espass_hokuto', 'icon': '👊', 'short_name': '北斗転生2'},
             ],
         },
         'seibu_shinjuku_espass': {
@@ -618,7 +618,7 @@ def rules():
                 '平日は控えめな傾向',
             ],
         },
-        'akihabara_espass_sbj': {
+        'akiba_espass_sbj': {
             'name': 'エスパス秋葉原駅前',
             'day_ratings': {'月': 2, '火': 3, '水': 3, '木': 3, '金': 4, '土': 5, '日': 4},
             'best_note': '土日が狙い目、金曜も可',
@@ -1039,7 +1039,7 @@ def api_v2_index():
             'name': 'エスパス歌舞伎町',
             'day_ratings': {'月': 2, '火': 3, '水': 3, '木': 3, '金': 4, '土': 5, '日': 3},
         },
-        'akihabara_espass_sbj': {
+        'akiba_espass_sbj': {
             'name': 'エスパス秋葉原',
             'day_ratings': {'月': 2, '火': 3, '水': 3, '木': 3, '金': 4, '土': 5, '日': 4},
         },
