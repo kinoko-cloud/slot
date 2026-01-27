@@ -1370,6 +1370,8 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
                      store_key: str = None,
                      is_today_data: bool = False,
                      current_at_games: int = 0,
+                     data_date_label: str = None,
+                     prev_date_label: str = None,
                      **kwargs) -> List[str]:
     """推奨理由を生成（台固有の根拠を最優先）
 
@@ -1475,7 +1477,7 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
     if days:
         rotation = analyze_rotation_pattern(days)
         if rotation['has_pattern'] and rotation['next_high_chance']:
-            reasons.append(f"ローテ傾向: {rotation['description']} → 本日上げ期待")
+            reasons.append(f"ローテ傾向: {rotation['description']} → 次回上げ期待")
 
     # === 4. 本日のデータ（稼働中の場合） ===
     if total_games > 0:
@@ -1540,6 +1542,37 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
         if r not in seen:
             seen.add(r)
             unique.append(r)
+
+    # 「本日」「前日」「前々日」を日付ラベルに置換
+    if data_date_label or prev_date_label:
+        # 前々日ラベルを計算
+        prev_prev_label = None
+        if prev_date_label:
+            try:
+                # prev_date_labelから日付を逆算して前々日を求める
+                import re as _re
+                m = _re.match(r'(\d+)/(\d+)', prev_date_label)
+                if m:
+                    from datetime import datetime as _dt, timedelta as _td
+                    _now = _dt.now()
+                    _prev = _now.replace(month=int(m.group(1)), day=int(m.group(2)))
+                    _prev2 = _prev - _td(days=1)
+                    _weekdays = ['月','火','水','木','金','土','日']
+                    prev_prev_label = f"{_prev2.month}/{_prev2.day}({_weekdays[_prev2.weekday()]})"
+            except:
+                prev_prev_label = f'{prev_date_label}の前日'
+
+        replaced = []
+        for r in unique[:5]:
+            # 前々日を先に置換（「前日」の前に処理しないと重複置換される）
+            if prev_prev_label:
+                r = r.replace('前々日', prev_prev_label)
+            if data_date_label:
+                r = r.replace('本日', data_date_label)
+            if prev_date_label:
+                r = r.replace('前日', prev_date_label)
+            replaced.append(r)
+        return replaced
 
     return unique[:5]
 
@@ -1657,7 +1690,8 @@ def generate_store_analysis(store_key: str, daily_data: dict = None) -> dict:
     }
 
 
-def recommend_units(store_key: str, realtime_data: dict = None, availability: dict = None) -> list:
+def recommend_units(store_key: str, realtime_data: dict = None, availability: dict = None,
+                    data_date_label: str = None, prev_date_label: str = None) -> list:
     """推奨台リストを生成
 
     Args:
@@ -1928,6 +1962,7 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
             is_today_data=is_today_data, current_at_games=current_at_games,
             historical_perf=historical_perf, activity_data=activity_data,
             medal_balance_penalty=medal_balance_penalty,
+            data_date_label=data_date_label, prev_date_label=prev_date_label,
         )
 
         # リアルタイム空き状況がある場合は上書き
@@ -2105,6 +2140,14 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
         return -score
 
     recommendations.sort(key=sort_key)
+
+    # 「本日」を日付ラベルに置換（today_reasons, comparison_note等）
+    if data_date_label:
+        for rec in recommendations:
+            if rec.get('today_reasons'):
+                rec['today_reasons'] = [r.replace('本日', data_date_label) for r in rec['today_reasons']]
+            if rec.get('comparison_note'):
+                rec['comparison_note'] = rec['comparison_note'].replace('本日', data_date_label)
 
     return recommendations
 
