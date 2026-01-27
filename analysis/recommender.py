@@ -2268,6 +2268,25 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
                     rec['three_days_ago_max_rensa'] = ad.get('max_rensa', 0)
                     rec['three_days_ago_max_medals'] = ad.get('max_medals', 0)
 
+        # 閉店後: availabilityのtoday_historyを前日データとして補完
+        if not realtime_is_today and realtime_data and not rec.get('yesterday_max_rensa'):
+            units_list = realtime_data.get('units', [])
+            for _unit in units_list:
+                if _unit.get('unit_id') == unit_id:
+                    rt_hist = _unit.get('today_history', [])
+                    if rt_hist:
+                        from analysis.history_accumulator import _calc_history_stats
+                        calc_rensa, calc_medals = _calc_history_stats(rt_hist)
+                        if calc_rensa > 0:
+                            rec['yesterday_max_rensa'] = calc_rensa
+                        rt_max = _unit.get('max_medals', 0)
+                        if rt_max > 0:
+                            rec['yesterday_max_medals'] = rt_max
+                        elif calc_medals > 0:
+                            rec['yesterday_max_medals'] = calc_medals
+                        rec['today_history'] = rt_hist
+                    break
+
         recommendations.append(rec)
 
     # === 【改善3】相対評価によるランク付け ===
