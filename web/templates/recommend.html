@@ -11,7 +11,7 @@
 <body data-page-type="recommend" data-store-key="{{ store_key }}">
     <div class="container">
         <header>
-            <a href="{{ url_for('machine_stores', machine_key=machine_key) }}" class="back-link">&lt; {{ machine.short_name }}</a>
+            <a href="{{ url_for('index') }}" class="back-link">&lt; トップに戻る</a>
             <h1>{{ store.name }}</h1>
             <div class="machine-label">{{ machine.icon }} {{ machine.short_name }}</div>
             <div class="realtime-bar">
@@ -182,7 +182,19 @@
                         {% endif %}
                     </div>
 
-                    <!-- 設定推定 + 過去評価 -->
+                    {# === 前日・前々日データ === #}
+                    {% if rec.yesterday_art or rec.day_before_art %}
+                    <div class="rec-prev-days">
+                        {% if rec.yesterday_art %}
+                        <span class="prev-day-rec">前日: ART {{ rec.yesterday_art }}{% if rec.yesterday_rb %} / RB {{ rec.yesterday_rb }}{% endif %}{% if rec.yesterday_games %} ({{ '{:,}'.format(rec.yesterday_games) }}G){% endif %}</span>
+                        {% endif %}
+                        {% if rec.day_before_art %}
+                        <span class="prev-day-rec">前々日: ART {{ rec.day_before_art }}{% if rec.day_before_rb %} / RB {{ rec.day_before_rb }}{% endif %}{% if rec.day_before_games %} ({{ '{:,}'.format(rec.day_before_games) }}G){% endif %}</span>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                    {# === 設定推定 + 過去分析の結論 === #}
                     <div class="estimation-row">
                         {% if rec.total_games >= 3000 and rec.estimated_setting %}
                         <span class="setting-estimate setting-{{ rec.setting_num|default(0) }}">
@@ -198,9 +210,13 @@
                         </span>
                         {% endif %}
                         <span class="past-eval">
-                            過去7日: <strong style="color: {{ rank_color(rec.base_rank) }}">{{ rec.base_rank }}</strong>
-                            {% if rec.trend and rec.trend.get('avg_art_prob', 0) > 0 %}
-                            (確率1/{{ rec.trend.get('avg_art_prob', 0)|round(0)|int }})
+                            過去分析: <strong style="color: {{ rank_color(rec.base_rank) }}">{{ rec.base_rank }}ランク</strong>
+                            {% if rec.consecutive_minus >= 2 %}
+                            → 凹み{{ rec.consecutive_minus }}日、設定上げ期待
+                            {% elif rec.consecutive_plus >= 2 %}
+                            → {{ rec.consecutive_plus }}日連続好調、据え置き期待
+                            {% elif rec.trend and rec.trend.get('art_trend') == 'improving' %}
+                            → 直近ART改善傾向
                             {% endif %}
                         </span>
                     </div>
@@ -240,20 +256,20 @@
                                 {% endif %}
                             </div>
                             <div class="detail-section">
-                                <div class="detail-title">過去7日間</div>
+                                <div class="detail-title">過去データ分析</div>
                                 {% if rec.trend and rec.trend.get('avg_art_prob', 0) > 0 %}
-                                <div class="detail-item">ART確率: 1/{{ rec.trend.get('avg_art_prob', 0)|round(0)|int }}（7日平均）</div>
+                                <div class="detail-item">平均ART確率 1/{{ rec.trend.get('avg_art_prob', 0)|round(0)|int }} → {% if rec.trend.get('avg_art_prob', 999) <= 100 %}高設定域{% elif rec.trend.get('avg_art_prob', 999) <= 130 %}中間以上{% else %}設定不明{% endif %}</div>
+                                {% endif %}
+                                {% if rec.trend and rec.trend.get('avg_at_interval', 0) > 0 %}
+                                <div class="detail-item">平均AT間 {{ rec.trend.get('avg_at_interval', 0)|round(0)|int }}G{% if rec.trend.get('ceiling_count', 0) > 0 %} / 天井到達{{ rec.trend.get('ceiling_count', 0) }}回{% endif %}</div>
                                 {% endif %}
                                 {% if rec.consecutive_plus > 0 %}
-                                <div class="detail-item plus">{{ rec.consecutive_plus }}日連続プラス → 据え置き期待</div>
+                                <div class="detail-item plus">{{ rec.consecutive_plus }}日連続プラス推定 → 据え置き期待</div>
                                 {% elif rec.consecutive_minus > 0 %}
                                 <div class="detail-item minus">{{ rec.consecutive_minus }}日連続マイナス → 設定上げ期待</div>
                                 {% endif %}
-                                {% if rec.yesterday_art > 0 %}
-                                <div class="detail-item">昨日ART: {{ rec.yesterday_art }}回</div>
-                                {% endif %}
                                 {% if rec.trend and rec.trend.get('max_art_day') and rec.trend.get('max_art_day').art > 0 %}
-                                <div class="detail-item">最高日: {{ rec.trend.get('max_art_day').art }}ART（{{ rec.trend.get('max_art_day').date[-5:] }}）</div>
+                                <div class="detail-item">最高: {{ rec.trend.get('max_art_day').art }}ART（{{ rec.trend.get('max_art_day').date[-5:] }}）</div>
                                 {% endif %}
                             </div>
                         </div>
@@ -336,7 +352,7 @@
                             <div>推定: {{ rec.estimated_setting }}{% if rec.total_games < 3000 %}？{% endif %} ({{ rec.payout_estimate }}%)</div>
                             {% endif %}
                             {% endif %}
-                            <div>過去7日: ランク{{ rec.base_rank }}{% if rec.trend and rec.trend.get('avg_art_prob', 0) > 0 %} (確率1/{{ rec.trend.get('avg_art_prob', 0)|round(0)|int }}){% endif %}</div>
+                            <div>過去分析: {{ rec.base_rank }}ランク{% if rec.trend and rec.trend.get('avg_art_prob', 0) > 0 %} (平均1/{{ rec.trend.get('avg_art_prob', 0)|round(0)|int }} → {% if rec.trend.get('avg_art_prob', 999) <= 100 %}高設定域{% elif rec.trend.get('avg_art_prob', 999) <= 130 %}中間以上{% else %}設定不明{% endif %}){% endif %}</div>
                             {% if rec.reasons %}
                             <div class="compact-reason">{{ rec.reasons[0] }}</div>
                             {% endif %}

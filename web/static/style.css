@@ -2272,6 +2272,21 @@ strong.minus {
     color: #666;
 }
 
+/* 推奨台カード内の前日・前々日 */
+.rec-prev-days {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+    margin-top: 4px;
+    padding-top: 4px;
+    border-top: 1px solid #333;
+}
+
+.prev-day-rec {
+    font-size: 0.72em;
+    color: #666;
+}
+
 .today-data-row {
     position: relative;
 }
