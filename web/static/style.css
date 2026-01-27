@@ -177,6 +177,16 @@ header h1 {
     color: #c9b8ff;
 }
 
+.mode-badge.before-open {
+    background: #2a2a4a;
+    color: #9a9aff;
+}
+
+.mode-badge.after-close {
+    background: #3a2a20;
+    color: #ffb088;
+}
+
 .mode-badge.collecting {
     background: #5a4a20;
     color: #ffd700;
@@ -5451,4 +5461,26 @@ strong.minus {
     color: #666;
     font-size: 0.75em;
     text-align: right;
+}
+
+/* 予想結果バッジ */
+.prediction-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 8px;
+    font-size: 0.7em;
+    font-weight: 600;
+    margin-left: 6px;
+}
+.prediction-badge.hit {
+    background: #1e5128;
+    color: #a8e6a3;
+}
+.prediction-badge.missed {
+    background: #5a2020;
+    color: #ff9999;
+}
+.prediction-badge.miss {
+    background: #4a3f20;
+    color: #ffd700;
 }

@@ -30,13 +30,20 @@ OUTPUT_DIR = PROJECT_ROOT / 'docs'  # GitHub Pages互換
 
 
 def get_display_mode():
-    """現在時刻から表示モードを決定"""
+    """現在時刻から表示モードを決定
+    - before_open: 0:00-9:59（営業前）
+    - after_close: 23:00-23:59（閉店後）
+    - collecting: 22:50-22:59（集計中）
+    - realtime: 10:00-22:49（営業中）
+    """
     now = datetime.now(JST)
     hour = now.hour
     minute = now.minute
 
-    if hour >= 23 or hour < 10:
-        return 'result'
+    if hour < 10:
+        return 'before_open'
+    elif hour >= 23:
+        return 'after_close'
     elif hour == 22 and minute >= 50:
         return 'collecting'
     else:
@@ -390,6 +397,23 @@ def generate_index(env):
                                         break
                             except:
                                 pass
+                        # 前日の予想ランクを取得
+                        predicted_rank = rec.get('rank', 'C')
+                        predicted_score = rec.get('score', 50)
+                        was_predicted_good = predicted_rank in ('S', 'A')
+                        # 実際の結果（好調だったか）
+                        good_threshold = 130 if key == 'sbj' else 330
+                        was_actually_good = y_prob > 0 and y_prob <= good_threshold
+                        # 的中判定
+                        if was_predicted_good and was_actually_good:
+                            prediction_result = 'hit'    # 予想◎→結果◎
+                        elif was_predicted_good and not was_actually_good:
+                            prediction_result = 'miss'   # 予想◎→結果✗
+                        elif not was_predicted_good and was_actually_good:
+                            prediction_result = 'missed'  # 見逃し（予想外の好調）
+                        else:
+                            prediction_result = 'correct'  # 予想通り不調
+
                         yesterday_top10.append({
                             'unit_id': rec['unit_id'],
                             'store_name': rec['store_name'],
@@ -406,6 +430,9 @@ def generate_index(env):
                             'diff_medals': y_diff_medals,
                             'estimated_setting': y_setting,
                             'setting_num': y_setting_num,
+                            'predicted_rank': predicted_rank,
+                            'predicted_score': predicted_score,
+                            'prediction_result': prediction_result,
                             'yesterday_history': rec.get('yesterday_history', []),
                             'today_history': rec.get('today_history', []),
                             'recent_days': rec.get('recent_days', []),
@@ -502,7 +529,7 @@ def generate_index(env):
 
     result_date_str = None
     date_prefix = ''  # 「昨日」or「本日」
-    if display_mode in ('result', 'collecting'):
+    if display_mode in ('before_open', 'after_close', 'collecting'):
         if now.hour >= 23:
             result_date = now
             date_prefix = '本日'

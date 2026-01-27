@@ -12,12 +12,18 @@
     <div class="container">
         <div class="version-info">{{ now_short }} Ver.</div>
         <header>
-            {% if display_mode in ('result', 'collecting') %}
+            {% if display_mode == 'before_open' %}
             <h1><span class="title-main">{{ next_day_prefix }} {{ next_day_str }}のおすすめ台</span></h1>
-            <div class="mode-badge result">{{ date_prefix }} {{ data_date_str }}の結果を反映</div>
+            <div class="mode-badge before-open">🌙 営業前</div>
+            {% elif display_mode == 'after_close' %}
+            <h1><span class="title-main">{{ next_day_prefix }} {{ next_day_str }}のおすすめ台</span></h1>
+            <div class="mode-badge after-close">🔒 閉店後</div>
+            {% elif display_mode == 'collecting' %}
+            <h1><span class="title-main">{{ next_day_prefix }} {{ next_day_str }}のおすすめ台</span></h1>
+            <div class="mode-badge after-close">🔒 閉店後</div>
             {% else %}
             <h1><span class="title-main">{{ date_prefix }} {{ data_date_str }}のおすすめ台</span></h1>
-            <div class="mode-badge realtime">営業中</div>
+            <div class="mode-badge realtime">🟢 営業中</div>
             {% endif %}
             <div class="realtime-bar">
                 <span id="realtime-status" class="realtime-status">読込中...</span>
@@ -27,7 +33,7 @@
 
         <main>
             {# === 閉店後: おすすめ台を最上部に === #}
-            {% if display_mode in ('result', 'collecting') and top3 %}
+            {% if display_mode in ('before_open', 'after_close', 'collecting') and top3 %}
             <section class="recommendations top" id="top3-section">
                 <h2>{{ next_day_prefix }} {{ next_day_str }}のおすすめ台 TOP{{ top3|length }}</h2>
                 <div class="top5-note">{{ date_prefix }}の結果＋過去傾向から分析</div>
@@ -69,20 +75,52 @@
                         <div class="reason-line-top">💡 過去データに基づくおすすめ台</div>
                         {% endif %}
                     </div>
-                    {# === 2. 直近7日間データ（蓄積データから） === #}
+                    {# === 2. 直近3日間データ === #}
                     <div class="recent-days">
                         <div class="recent-header">直近データ</div>
-                        {% for day in rec.recent_days[:7] %}
-                        {% if day.art > 0 %}
+                        {% set y_art = rec.yesterday_art or 0 %}
+                        {% set y_games = rec.yesterday_games or 0 %}
+                        {% set y_prob = (y_games / y_art)|int if y_art > 0 and y_games > 0 else 0 %}
+                        {% set db_art = rec.day_before_art or 0 %}
+                        {% set db_games = rec.day_before_games or 0 %}
+                        {% set db_prob = (db_games / db_art)|int if db_art > 0 and db_games > 0 else 0 %}
+                        {% if y_art > 0 %}
                         <div class="recent-day-row">
-                            <span class="recent-label">{{ short_date(day.date) }}</span>
-                            <span class="recent-art">ART {{ day.art }}</span>
-                            {% if day.prob > 0 %}<span class="recent-prob {% if day.prob <= 100 %}excellent{% elif day.prob <= 130 %}good{% elif day.prob >= 200 %}bad{% endif %}">1/{{ day.prob|int }}</span>{% endif %}
-                            {% if day.max_rensa and day.max_rensa >= 3 %}<span class="rensa-sm">{{ day.max_rensa }}連</span>{% endif %}
-                            {% if day.max_medals and day.max_medals > 300 %}<span class="max-medals-sm">最大{{ '{:,}'.format(day.max_medals) }}枚</span>{% endif %}
+                            <span class="recent-label">{{ short_date(rec.yesterday_date) or '前日' }}</span>
+                            <span class="recent-art">ART {{ y_art }}</span>
+                            {% if y_prob > 0 %}<span class="recent-prob {% if y_prob <= 100 %}excellent{% elif y_prob <= 130 %}good{% elif y_prob >= 200 %}bad{% endif %}">1/{{ y_prob }}</span>{% endif %}
+                            {% if rec.yesterday_diff_medals is defined and rec.yesterday_diff_medals != 0 %}
+                            <span class="diff-medals-sm {% if rec.yesterday_diff_medals > 0 %}plus{% else %}minus{% endif %}">{{ '{:+,}'.format(rec.yesterday_diff_medals) }}枚</span>
+                            {% endif %}
+                            {% if rec.yesterday_max_rensa and rec.yesterday_max_rensa >= 3 %}<span class="rensa-sm">{{ rec.yesterday_max_rensa }}連</span>{% endif %}
+                            {% if rec.yesterday_max_medals and rec.yesterday_max_medals > 300 %}<span class="max-medals-sm">最大{{ '{:,}'.format(rec.yesterday_max_medals) }}枚</span>{% endif %}
                         </div>
                         {% endif %}
-                        {% endfor %}
+                        {% if db_art > 0 %}
+                        <div class="recent-day-row">
+                            <span class="recent-label">{{ short_date(rec.day_before_date) or '前々日' }}</span>
+                            <span class="recent-art">ART {{ db_art }}</span>
+                            {% if db_prob > 0 %}<span class="recent-prob {% if db_prob <= 100 %}excellent{% elif db_prob <= 130 %}good{% elif db_prob >= 200 %}bad{% endif %}">1/{{ db_prob }}</span>{% endif %}
+                            {% if rec.day_before_diff_medals is defined and rec.day_before_diff_medals != 0 %}
+                            <span class="diff-medals-sm {% if rec.day_before_diff_medals > 0 %}plus{% else %}minus{% endif %}">{{ '{:+,}'.format(rec.day_before_diff_medals) }}枚</span>
+                            {% endif %}
+                            {% if rec.day_before_max_rensa is defined and rec.day_before_max_rensa >= 3 %}<span class="rensa-sm">{{ rec.day_before_max_rensa }}連</span>{% endif %}
+                            {% if rec.day_before_max_medals is defined and rec.day_before_max_medals > 300 %}<span class="max-medals-sm">最大{{ '{:,}'.format(rec.day_before_max_medals) }}枚</span>{% endif %}
+                        </div>
+                        {% endif %}
+                        {% if rec.three_days_ago_art is defined and rec.three_days_ago_art > 0 %}
+                        <div class="recent-day-row">
+                            <span class="recent-label">{{ short_date(rec.three_days_ago_date) or '3日前' }}</span>
+                            <span class="recent-art">ART {{ rec.three_days_ago_art }}</span>
+                            {% set td_prob = (rec.three_days_ago_games / rec.three_days_ago_art)|int if rec.three_days_ago_art > 0 and rec.three_days_ago_games > 0 else 0 %}
+                            {% if td_prob > 0 %}<span class="recent-prob {% if td_prob <= 100 %}excellent{% elif td_prob <= 130 %}good{% elif td_prob >= 200 %}bad{% endif %}">1/{{ td_prob }}</span>{% endif %}
+                            {% if rec.three_days_ago_diff_medals is defined and rec.three_days_ago_diff_medals != 0 %}
+                            <span class="diff-medals-sm {% if rec.three_days_ago_diff_medals > 0 %}plus{% else %}minus{% endif %}">{{ '{:+,}'.format(rec.three_days_ago_diff_medals) }}枚</span>
+                            {% endif %}
+                            {% if rec.three_days_ago_max_rensa is defined and rec.three_days_ago_max_rensa >= 3 %}<span class="rensa-sm">{{ rec.three_days_ago_max_rensa }}連</span>{% endif %}
+                            {% if rec.three_days_ago_max_medals is defined and rec.three_days_ago_max_medals > 300 %}<span class="max-medals-sm">最大{{ '{:,}'.format(rec.three_days_ago_max_medals) }}枚</span>{% endif %}
+                        </div>
+                        {% endif %}
                     </div>
                 </a>
                 {% endfor %}
@@ -95,7 +133,7 @@
             {% endif %}
 
             {# === 閉店後/集計中: 的中率ヒーロー表示 === #}
-            {% if display_mode in ('result', 'collecting') and accuracy_hero and accuracy_hero[0].rate > 0 %}
+            {% if display_mode in ('before_open', 'after_close', 'collecting') and accuracy_hero and accuracy_hero[0].rate > 0 %}
             <a href="{{ url_for('verify') }}" class="accuracy-hero-link">
             <section class="accuracy-hero">
                 <div class="hero-title">{{ date_prefix }} {{ data_date_str }}の的中率</div>
@@ -118,7 +156,7 @@
             {% endif %}
 
             {# === 閉店後: 当日の爆発台 === #}
-            {% if display_mode in ('result', 'collecting') and yesterday_top10 %}
+            {% if display_mode in ('before_open', 'after_close', 'collecting') and yesterday_top10 %}
             <section class="today-hot-section">
                 <h2>{{ date_prefix }} {{ data_date_str }}の爆発台 TOP{{ yesterday_top10|length }}</h2>
                 {% for rec in yesterday_top10 %}
@@ -133,6 +171,13 @@
                     <div class="yesterday-sub-header">
                         <span class="store-name-sm">{{ rec.store_name }}</span>
                         <span class="unit-id-sm">{{ rec.unit_id|pad_id }}番</span>
+                        {% if rec.prediction_result == 'hit' %}
+                        <span class="prediction-badge hit">✅ 的中 ({{ rec.predicted_rank }})</span>
+                        {% elif rec.prediction_result == 'missed' %}
+                        <span class="prediction-badge missed">😱 見逃し ({{ rec.predicted_rank }})</span>
+                        {% elif rec.prediction_result == 'miss' %}
+                        <span class="prediction-badge miss">❌ 外れ ({{ rec.predicted_rank }})</span>
+                        {% endif %}
                     </div>
                     {# === 差枚（目立たせる） === #}
                     {% if rec.diff_medals is defined and rec.diff_medals != 0 %}
@@ -236,7 +281,7 @@
                 {% if night_mode %}
                 <h2>🌙 {{ tomorrow_str }}のおすすめ予想台 TOP{{ top3|length }}</h2>
                 <div class="top5-note">{{ tomorrow_str }}の狙い目予想 ※今日の結果＋過去傾向から分析</div>
-                {% elif display_mode == 'result' %}
+                {% elif display_mode in ('before_open', 'after_close') %}
                 <h2>{{ date_prefix }} {{ result_date_str }}の好調台</h2>
                 <div class="top5-note">※実績データ（ART回数・出玉）で評価</div>
                 {% elif display_mode == 'collecting' %}
