@@ -34,9 +34,9 @@
         <main>
             {# === 閉店後: 前日の爆発台を最上部に表示 === #}
             {% if display_mode in ('result', 'collecting') and yesterday_top10 %}
-            <section class="yesterday-section">
+            <section class="today-hot-section">
                 <h2>前日の爆発台 TOP{{ yesterday_top10|length }}</h2>
-                <div class="yesterday-note">据え置き狙いの参考に</div>
+                <div class="today-hot-note">据え置き狙いの参考に</div>
                 {% for rec in yesterday_top10 %}
                 <a href="{{ url_for('recommend', store_key=rec.store_key) }}" class="yesterday-card">
                     <div class="yesterday-header">
@@ -47,19 +47,32 @@
                     <div class="yesterday-sub-header">
                         <span class="store-name-sm">{{ rec.store_name }}</span>
                         <span class="unit-id-sm">{{ rec.unit_id }}番</span>
+                        {% if rec.availability == '空き' %}
+                        <span class="avail-sm empty">空</span>
+                        {% elif rec.availability == '遊技中' %}
+                        <span class="avail-sm playing">稼</span>
+                        {% endif %}
                     </div>
                     <div class="yesterday-stats">
                         <span class="art-badge">ART <span class="art-num">{{ rec.yesterday_art }}</span></span>
                         {% if rec.yesterday_rb and rec.yesterday_rb > 0 %}
                         <span class="rb-badge-sm">RB <span class="num">{{ rec.yesterday_rb }}</span></span>
                         {% endif %}
+                        {% if rec.yesterday_max_medals and rec.yesterday_max_medals > 0 %}
+                        <span class="max-medals">最大<span class="num">{{ '{:,}'.format(rec.yesterday_max_medals) }}</span>枚</span>
+                        {% endif %}
                         {% if rec.yesterday_games and rec.yesterday_games > 0 %}
                         <span class="total-games-sm">{{ '{:,}'.format(rec.yesterday_games) }}G</span>
                         {% endif %}
+                    </div>
+                    {% if rec.yesterday_prob and rec.yesterday_prob > 0 %}
+                    <div class="yesterday-prob-line">
+                        <span class="art-prob-sm {% if rec.yesterday_prob <= 100 %}excellent{% elif rec.yesterday_prob <= 130 %}good{% elif rec.yesterday_prob >= 200 %}bad{% endif %}">ART 1/{{ rec.yesterday_prob|int }}</span>
                         {% if rec.yesterday_max_rensa and rec.yesterday_max_rensa >= 3 %}
                         <span class="rensa-badge">最大<span class="num">{{ rec.yesterday_max_rensa }}</span>連</span>
                         {% endif %}
                     </div>
+                    {% endif %}
                     {% if rec.day_before_art %}
                     <div class="yesterday-prev">前々日: ART {{ rec.day_before_art }}</div>
                     {% endif %}
@@ -105,7 +118,7 @@
                     <div class="top3-stats-main">
                         <span class="art-main"><span class="art-num-big">{{ rec.art_count }}</span><span class="art-label">ART</span></span>
                         {% if rec.rb_count > 0 %}<span class="rb-badge-top">RB {{ rec.rb_count }}</span>{% endif %}
-                        {% if rec.art_prob > 0 %}<span class="art-prob {% if rec.art_prob <= 100 %}excellent{% elif rec.art_prob <= 130 %}good{% elif rec.art_prob >= 200 %}bad{% endif %}" title="合成確率"><span class="prob-label">合成</span>1/{{ rec.art_prob|int }}</span>{% endif %}
+                        {% if rec.art_prob > 0 %}<span class="art-prob {% if rec.art_prob <= 100 %}excellent{% elif rec.art_prob <= 130 %}good{% elif rec.art_prob >= 200 %}bad{% endif %}" title="合成確率"><span class="prob-label">ART</span>1/{{ rec.art_prob|int }}</span>{% endif %}
                     </div>
                     {# === 現在スタート・累計G === #}
                     <div class="top3-stats-sub">
@@ -258,9 +271,9 @@
 
             {# === 営業中: 前日の爆発台を最下部に表示 === #}
             {% if is_open and yesterday_top10 %}
-            <section class="yesterday-section">
+            <section class="today-hot-section">
                 <h2>前日の爆発台 TOP{{ yesterday_top10|length }}</h2>
-                <div class="yesterday-note">据え置き狙いの参考に</div>
+                <div class="today-hot-note">据え置き狙いの参考に</div>
                 {% for rec in yesterday_top10 %}
                 <a href="{{ url_for('recommend', store_key=rec.store_key) }}" class="yesterday-card">
                     <div class="yesterday-header">
@@ -282,13 +295,21 @@
                         {% if rec.yesterday_rb and rec.yesterday_rb > 0 %}
                         <span class="rb-badge-sm">RB <span class="num">{{ rec.yesterday_rb }}</span></span>
                         {% endif %}
+                        {% if rec.yesterday_max_medals and rec.yesterday_max_medals > 0 %}
+                        <span class="max-medals">最大<span class="num">{{ '{:,}'.format(rec.yesterday_max_medals) }}</span>枚</span>
+                        {% endif %}
                         {% if rec.yesterday_games and rec.yesterday_games > 0 %}
                         <span class="total-games-sm">{{ '{:,}'.format(rec.yesterday_games) }}G</span>
                         {% endif %}
+                    </div>
+                    {% if rec.yesterday_prob and rec.yesterday_prob > 0 %}
+                    <div class="yesterday-prob-line">
+                        <span class="art-prob-sm {% if rec.yesterday_prob <= 100 %}excellent{% elif rec.yesterday_prob <= 130 %}good{% elif rec.yesterday_prob >= 200 %}bad{% endif %}">ART 1/{{ rec.yesterday_prob|int }}</span>
                         {% if rec.yesterday_max_rensa and rec.yesterday_max_rensa >= 3 %}
                         <span class="rensa-badge">最大<span class="num">{{ rec.yesterday_max_rensa }}</span>連</span>
                         {% endif %}
                     </div>
+                    {% endif %}
                     {% if rec.day_before_art %}
                     <div class="yesterday-prev">前々日: ART {{ rec.day_before_art }}</div>
                     {% endif %}

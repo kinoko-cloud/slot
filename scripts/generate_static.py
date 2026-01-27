@@ -263,6 +263,8 @@ def generate_index(env):
                 for rec in recs:
                     y_art = rec.get('yesterday_art', 0)
                     if y_art and y_art > 0:
+                        y_games = rec.get('yesterday_games', 0)
+                        y_prob = y_games / y_art if y_art > 0 and y_games > 0 else 0
                         yesterday_top10.append({
                             'unit_id': rec['unit_id'],
                             'store_name': rec['store_name'],
@@ -273,8 +275,10 @@ def generate_index(env):
                             'avg_art_7days': rec.get('avg_art_7days', 0),
                             'yesterday_art': y_art,
                             'yesterday_rb': rec.get('yesterday_rb', 0),
-                            'yesterday_games': rec.get('yesterday_games', 0),
+                            'yesterday_games': y_games,
                             'yesterday_max_rensa': rec.get('yesterday_max_rensa', 0),
+                            'yesterday_prob': y_prob,
+                            'yesterday_max_medals': rec.get('yesterday_max_medals', 0),
                             'day_before_art': rec.get('day_before_art', 0),
                             'max_medals': rec.get('max_medals', 0),
                             'availability': rec.get('availability', ''),
@@ -550,6 +554,125 @@ def generate_recommend_pages(env):
     print(f"  -> {output_subdir}/")
 
 
+def _process_history_for_verify(history):
+    """当たり履歴を答え合わせ表示用に加工する
+
+    - 時間順にソート
+    - チェーン（連チャン）を計算
+    - 深いハマり・浅い当たりのフラグを付与
+    """
+    from analysis.analyzer import is_big_hit, RENCHAIN_THRESHOLD
+
+    if not history:
+        return [], {}
+
+    # 時間順にソート
+    sorted_hist = sorted(history, key=lambda x: x.get('time', '00:00'))
+
+    # チェーン計算: AT間のG数を蓄積し、閾値以下なら連チャン
+    processed = []
+    chain_id = 0
+    chain_hits = []  # 現在のチェーン内のヒット
+    accumulated_games = 0  # RBを跨いだAT間G数
+
+    for i, hit in enumerate(sorted_hist):
+        start = hit.get('start', 0)
+        hit_type = hit.get('type', 'ART')
+        medals = hit.get('medals', 0)
+        time_str = hit.get('time', '')
+
+        accumulated_games += start
+
+        entry = {
+            'index': i + 1,
+            'time': time_str,
+            'start': start,
+            'type': hit_type,
+            'medals': medals,
+            'is_deep': start >= 500,
+            'is_shallow': start <= 10 and i > 0,
+            'is_tenjou': start >= 800,
+        }
+
+        if is_big_hit(hit_type):
+            if i == 0 or accumulated_games > RENCHAIN_THRESHOLD:
+                # 新しいチェーン開始
+                if chain_hits:
+                    chain_len = len(chain_hits)
+                    for ch in chain_hits:
+                        ch['chain_len'] = chain_len
+                chain_id += 1
+                chain_hits = [entry]
+            else:
+                # 連チャン継続
+                chain_hits.append(entry)
+
+            entry['chain_id'] = chain_id
+            entry['is_hot_chain'] = False  # 後で更新
+            accumulated_games = 0  # AT間リセット
+        else:
+            # RB: チェーンに含めない（AT間は継続）
+            entry['chain_id'] = 0
+            entry['chain_len'] = 0
+            entry['is_hot_chain'] = False
+
+        processed.append(entry)
+
+    # 最後のチェーンを処理
+    if chain_hits:
+        chain_len = len(chain_hits)
+        for ch in chain_hits:
+            ch['chain_len'] = chain_len
+
+    # ホットチェーン(5連以上)にフラグ付与
+    for entry in processed:
+        if entry.get('chain_len', 0) >= 5:
+            entry['is_hot_chain'] = True
+
+    # サマリー計算
+    starts = [h.get('start', 0) for h in sorted_hist]
+    big_hit_starts = []
+    acc = 0
+    for hit in sorted_hist:
+        acc += hit.get('start', 0)
+        if is_big_hit(hit.get('type', '')):
+            big_hit_starts.append(acc)
+            acc = 0
+
+    total_games = sum(starts)
+    total_hits = len(sorted_hist)
+    total_medals = sum(h.get('medals', 0) for h in sorted_hist)
+
+    # AT間ベースの谷
+    valleys = big_hit_starts if big_hit_starts else starts
+    max_valley = max(valleys) if valleys else 0
+    avg_valley = int(sum(valleys) / len(valleys)) if valleys else 0
+    tenjou_count = sum(1 for v in valleys if v >= 800)
+
+    # 最大チェーン
+    chain_lengths = [e.get('chain_len', 0) for e in processed if e.get('chain_id', 0) > 0]
+    # 各チェーンの長さをユニークに取得
+    seen_chains = {}
+    for e in processed:
+        cid = e.get('chain_id', 0)
+        clen = e.get('chain_len', 0)
+        if cid > 0 and cid not in seen_chains:
+            seen_chains[cid] = clen
+    max_chain = max(seen_chains.values()) if seen_chains else 0
+
+    summary = {
+        'total_games': total_games,
+        'total_hits': total_hits,
+        'total_medals': total_medals,
+        'max_valley': max_valley,
+        'avg_valley': avg_valley,
+        'tenjou_count': tenjou_count,
+        'max_chain': max_chain,
+    }
+
+    return processed, summary
+
+
 def generate_verify_page(env):
     """答え合わせページを生成 - 予測 vs 実績の比較"""
     print("Generating verify page...")
@@ -566,6 +689,10 @@ def generate_verify_page(env):
         stores_data = []
         stores = get_stores_by_machine(machine_key)
 
+        # 日別データを読み込み（当たり履歴取得用）
+        daily_data = load_daily_data(machine_key=machine_key)
+        daily_stores = daily_data.get('stores', {}) if daily_data else {}
+
         for store_key, store in stores.items():
             if store_key in old_keys:
                 continue
@@ -579,6 +706,12 @@ def generate_verify_page(env):
 
             recommendations = recommend_units(store_key, availability=availability)
             units_data = []
+
+            # この店舗の日別データからユニットマップを作成
+            store_daily = daily_stores.get(store_key, {})
+            daily_units_map = {}
+            for u in store_daily.get('units', []):
+                daily_units_map[str(u.get('unit_id', ''))] = u
 
             for rec in recommendations:
                 predicted_rank = rec.get('final_rank', 'C')
@@ -620,6 +753,19 @@ def generate_verify_page(env):
                     verdict = '\u25B3'  # △
                     verdict_class = 'neutral'
 
+                # 当たり履歴を取得
+                unit_daily = daily_units_map.get(str(rec.get('unit_id', '')), {})
+                days = unit_daily.get('days', [])
+                today_history_raw = []
+                history_date = ''
+                if days:
+                    # 最新の日付データを使用
+                    today_data = days[0]
+                    today_history_raw = today_data.get('history', [])
+                    history_date = today_data.get('date', '')
+
+                processed_history, history_summary = _process_history_for_verify(today_history_raw)
+
                 units_data.append({
                     'unit_id': rec.get('unit_id', ''),
                     'predicted_rank': predicted_rank,
@@ -629,6 +775,9 @@ def generate_verify_page(env):
                     'actual_games': actual_games,
                     'verdict': verdict,
                     'verdict_class': verdict_class,
+                    'history': processed_history,
+                    'history_summary': history_summary,
+                    'history_date': history_date,
                 })
 
             if units_data:

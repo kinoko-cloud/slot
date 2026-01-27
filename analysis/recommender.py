@@ -515,11 +515,12 @@ def analyze_trend(days: List[dict]) -> dict:
         else:
             result['yesterday_result'] = 'even'
 
-    # 昨日のRB・最大連チャンを取得
+    # 昨日のRB・最大連チャン・最大枚数を取得
     if sorted_days:
         yesterday_day = sorted_days[0]
         result['yesterday_rb'] = yesterday_day.get('rb', 0)
         result['yesterday_date'] = yesterday_day.get('date', '')
+        result['yesterday_max_medals'] = yesterday_day.get('max_medals', 0)
         # 昨日の最大連チャン数
         yesterday_history = yesterday_day.get('history', [])
         if yesterday_history:
@@ -738,22 +739,31 @@ def analyze_today_data(unit_data: dict, current_hour: int = None, machine_key: s
                 pass
 
     # 当日のART確率評価（機種別閾値を使用）
+    # ゲーム数が多いほど信頼度が高いため、ボーナスを増やす
     thresholds = get_machine_thresholds(machine_key)
+    games_multiplier = 1.0
+    if result['total_games'] >= 5000:
+        games_multiplier = 1.5  # 5000G以上: 信頼度高
+    elif result['total_games'] >= 3000:
+        games_multiplier = 1.3  # 3000G以上: やや信頼
+    elif result['total_games'] < 1000:
+        games_multiplier = 0.5  # 1000G未満: 信頼度低
+
     if result['art_prob'] > 0:
         if result['art_prob'] <= thresholds['setting6_at_prob']:
-            result['today_score_bonus'] = 20
-            result['today_reasons'].append(f'本日AT確率 1/{result["art_prob"]:.0f} (設定6域)')
+            result['today_score_bonus'] = int(25 * games_multiplier)
+            result['today_reasons'].append(f'本日ART確率 1/{result["art_prob"]:.0f} (設定6域)')
         elif result['art_prob'] <= thresholds['high_at_prob']:
-            result['today_score_bonus'] = 15
-            result['today_reasons'].append(f'本日AT確率 1/{result["art_prob"]:.0f} (高設定域)')
+            result['today_score_bonus'] = int(18 * games_multiplier)
+            result['today_reasons'].append(f'本日ART確率 1/{result["art_prob"]:.0f} (高設定域)')
         elif result['art_prob'] <= thresholds['mid_at_prob']:
-            result['today_score_bonus'] = 10
-            result['today_reasons'].append(f'本日AT確率 1/{result["art_prob"]:.0f} (中間設定域)')
+            result['today_score_bonus'] = int(12 * games_multiplier)
+            result['today_reasons'].append(f'本日ART確率 1/{result["art_prob"]:.0f} (中間設定域)')
         elif result['art_prob'] <= thresholds['low_at_prob']:
             result['today_score_bonus'] = 0
         elif result['art_prob'] >= thresholds['very_low_at_prob']:
-            result['today_score_bonus'] = -10
-            result['today_reasons'].append(f'本日AT確率 1/{result["art_prob"]:.0f} (低設定域)')
+            result['today_score_bonus'] = int(-10 * games_multiplier)
+            result['today_reasons'].append(f'本日ART確率 1/{result["art_prob"]:.0f} (低設定域)')
 
     # 時間帯に対する稼働量の評価
     if current_hour >= 10:
@@ -1523,14 +1533,25 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
         # 推奨理由を生成（過去日データと当日履歴を渡す）
         unit_days = []
         today_history = []
+        history_date = ''
         if unit_history:
             unit_days = unit_history.get('days', [])
-            # 当日の履歴を取得
+            # 当日の履歴を取得（なければ直近日にフォールバック）
             today_str = datetime.now().strftime('%Y-%m-%d')
+            yesterday_str = (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d')
             for day in unit_days:
                 if day.get('date') == today_str:
                     today_history = day.get('history', [])
+                    history_date = today_str
                     break
+            if not today_history:
+                # 直近の履歴データを探す（日付降順）
+                sorted_days = sorted(unit_days, key=lambda x: x.get('date', ''), reverse=True)
+                for day in sorted_days:
+                    if day.get('history'):
+                        today_history = day.get('history', [])
+                        history_date = day.get('date', '')
+                        break
 
         reasons = generate_reasons(
             unit_id, trend_data, today_analysis, comparison, base_rank, final_rank,
@@ -1622,6 +1643,7 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
             'day_before_games': trend_data.get('day_before_games', 0),
             'day_before_date': trend_data.get('day_before_date', ''),
             'yesterday_max_rensa': trend_data.get('yesterday_max_rensa', 0),
+            'yesterday_max_medals': trend_data.get('yesterday_max_medals', 0),
             'max_medals': max_medals,
             'consecutive_plus': trend_data.get('consecutive_plus', 0),
             'consecutive_minus': trend_data.get('consecutive_minus', 0),
@@ -1638,6 +1660,9 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
             'estimated_setting': profit_info['setting_info']['estimated_setting'],
             'setting_num': profit_info['setting_info'].get('setting_num', 0),
             'payout_estimate': profit_info['setting_info']['payout_estimate'],
+            # 当日履歴（波グラフ・当たり一覧用）
+            'today_history': today_history,
+            'history_date': history_date,
         }
 
         # リアルタイムデータが昨日のものだった場合、前日データとして補完

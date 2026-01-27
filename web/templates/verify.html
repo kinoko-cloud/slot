@@ -65,17 +65,86 @@
                             <span class="vh-result">判定</span>
                         </div>
                         {% for unit in store.units %}
-                        <div class="verify-row verdict-{{ unit.verdict_class }}">
-                            <span class="vr-unit">{{ unit.unit_id }}</span>
-                            <span class="vr-pred">
-                                <span class="rank-badge-xs" style="background-color: {{ rank_color(unit.predicted_rank) }}">{{ unit.predicted_rank }}</span>
-                                <span class="vr-score">{{ unit.predicted_score|int }}pt</span>
-                            </span>
-                            <span class="vr-art">{{ unit.actual_art }}</span>
-                            <span class="vr-prob {% if unit.actual_prob > 0 and unit.actual_prob <= 100 %}excellent{% elif unit.actual_prob > 0 and unit.actual_prob <= 130 %}good{% elif unit.actual_prob >= 200 %}bad{% endif %}">
-                                {% if unit.actual_prob > 0 %}1/{{ unit.actual_prob|int }}{% else %}-{% endif %}
-                            </span>
-                            <span class="vr-verdict">{{ unit.verdict }}</span>
+                        <div class="verify-row-wrapper">
+                            <div class="verify-row verdict-{{ unit.verdict_class }}{% if unit.history %} has-detail{% endif %}" onclick="toggleDetail(this)">
+                                <span class="vr-unit">{{ unit.unit_id }}</span>
+                                <span class="vr-pred">
+                                    <span class="rank-badge-xs" style="background-color: {{ rank_color(unit.predicted_rank) }}">{{ unit.predicted_rank }}</span>
+                                    <span class="vr-score">{{ unit.predicted_score|int }}pt</span>
+                                </span>
+                                <span class="vr-art">{{ unit.actual_art }}</span>
+                                <span class="vr-prob {% if unit.actual_prob > 0 and unit.actual_prob <= 100 %}excellent{% elif unit.actual_prob > 0 and unit.actual_prob <= 130 %}good{% elif unit.actual_prob >= 200 %}bad{% endif %}">
+                                    {% if unit.actual_prob > 0 %}1/{{ unit.actual_prob|int }}{% else %}-{% endif %}
+                                </span>
+                                <span class="vr-verdict">{{ unit.verdict }}{% if unit.history %}<span class="vr-expand-icon">▼</span>{% endif %}</span>
+                            </div>
+
+                            {# 展開可能な当たり履歴セクション #}
+                            {% if unit.history %}
+                            <div class="verify-detail hidden">
+                                {# サマリ統計 #}
+                                {% if unit.history_summary %}
+                                <div class="vd-summary">
+                                    <div class="vd-stat-grid">
+                                        <div class="vd-stat">
+                                            <span class="vd-stat-value">{{ '{:,}'.format(unit.history_summary.total_games) }}</span>
+                                            <span class="vd-stat-label">総G数</span>
+                                        </div>
+                                        <div class="vd-stat">
+                                            <span class="vd-stat-value">{{ unit.history_summary.total_hits }}</span>
+                                            <span class="vd-stat-label">当たり数</span>
+                                        </div>
+                                        <div class="vd-stat{% if unit.history_summary.max_chain >= 5 %} hot{% endif %}">
+                                            <span class="vd-stat-value">{{ unit.history_summary.max_chain }}連</span>
+                                            <span class="vd-stat-label">最大連</span>
+                                        </div>
+                                        <div class="vd-stat">
+                                            <span class="vd-stat-value">{{ unit.history_summary.avg_valley }}G</span>
+                                            <span class="vd-stat-label">平均谷</span>
+                                        </div>
+                                        {% if unit.history_summary.tenjou_count > 0 %}
+                                        <div class="vd-stat warn">
+                                            <span class="vd-stat-value">{{ unit.history_summary.tenjou_count }}回</span>
+                                            <span class="vd-stat-label">天井</span>
+                                        </div>
+                                        {% endif %}
+                                        <div class="vd-stat{% if unit.history_summary.max_valley >= 500 %} deep{% endif %}">
+                                            <span class="vd-stat-value">{{ unit.history_summary.max_valley }}G</span>
+                                            <span class="vd-stat-label">最深</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+
+                                {# 当たり履歴テーブル #}
+                                <div class="vd-history-table">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>時刻</th>
+                                                <th>G数</th>
+                                                <th>種類</th>
+                                                <th>連</th>
+                                                <th>枚数</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for hit in unit.history %}
+                                            <tr class="{% if hit.is_tenjou %}tenjou{% elif hit.is_hot_chain %}hot-chain{% elif hit.is_deep %}deep{% endif %}">
+                                                <td class="vd-num">{{ hit.index }}</td>
+                                                <td class="vd-time">{{ hit.time or '-' }}</td>
+                                                <td class="vd-games {% if hit.is_deep %}deep{% elif hit.is_shallow %}shallow{% endif %}">{{ hit.start }}G</td>
+                                                <td class="vd-type {{ hit.type|lower }}">{{ hit.type }}</td>
+                                                <td class="vd-chain {% if hit.is_hot_chain %}hot{% endif %}">{% if hit.chain_len is defined and hit.chain_len > 1 %}{{ hit.chain_len }}連{% else %}-{% endif %}</td>
+                                                <td class="vd-medals">{% if hit.medals > 0 %}{{ '{:,}'.format(hit.medals) }}{% else %}-{% endif %}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            {% endif %}
                         </div>
                         {% endfor %}
                     </div>
@@ -103,5 +172,31 @@
             <p><a href="{{ url_for('index') }}" class="api-link">トップへ</a></p>
         </footer>
     </div>
+
+    <script>
+    function toggleDetail(rowEl) {
+        var wrapper = rowEl.closest('.verify-row-wrapper');
+        if (!wrapper) return;
+        var detail = wrapper.querySelector('.verify-detail');
+        if (!detail) return;
+
+        var isHidden = detail.classList.contains('hidden');
+        // Close all others in the same store
+        var store = wrapper.closest('.verify-table');
+        if (store) {
+            store.querySelectorAll('.verify-detail').forEach(function(d) {
+                d.classList.add('hidden');
+            });
+            store.querySelectorAll('.verify-row').forEach(function(r) {
+                r.classList.remove('expanded');
+            });
+        }
+
+        if (isHidden) {
+            detail.classList.remove('hidden');
+            rowEl.classList.add('expanded');
+        }
+    }
+    </script>
 </body>
 </html>

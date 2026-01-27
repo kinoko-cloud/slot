@@ -3714,3 +3714,117 @@ strong.minus {
     width: 18px;
     text-align: center;
 }
+
+/* ===================================
+   波グラフ・当たり履歴（recommend詳細内）
+   =================================== */
+
+.wave-graph {
+    display: flex;
+    align-items: flex-end;
+    gap: 1px;
+    padding: 8px 4px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 6px;
+    min-height: 40px;
+    flex-wrap: wrap;
+}
+
+.wave-bar {
+    font-size: 1.4em;
+    line-height: 1;
+    color: #70a1ff;
+    cursor: default;
+}
+
+.wave-bar.deep {
+    color: #ff6b6b;
+}
+
+.wave-bar.mid {
+    color: #ffa502;
+}
+
+.wave-bar.rensa {
+    color: #2ed573;
+}
+
+.wave-legend {
+    display: flex;
+    gap: 10px;
+    margin-top: 4px;
+    font-size: 0.7em;
+    color: #888;
+}
+
+.wave-leg {
+    color: #70a1ff;
+}
+
+.wave-leg.rensa {
+    color: #2ed573;
+}
+
+.wave-leg.mid {
+    color: #ffa502;
+}
+
+.wave-leg.deep {
+    color: #ff6b6b;
+}
+
+/* 当たり履歴テーブル */
+.hit-history-table {
+    max-height: 300px;
+    overflow-y: auto;
+    border-radius: 6px;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.hit-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    font-size: 0.85em;
+}
+
+.hit-row:last-child {
+    border-bottom: none;
+}
+
+.hit-row.deep {
+    background: rgba(255, 107, 107, 0.08);
+}
+
+.hit-row.rensa {
+    background: rgba(46, 213, 115, 0.08);
+}
+
+.hit-time {
+    color: #70a1ff;
+    font-size: 0.9em;
+    min-width: 42px;
+}
+
+.hit-type {
+    font-weight: 700;
+    color: #fff;
+    min-width: 30px;
+}
+
+.hit-games {
+    color: #aaa;
+    margin-left: auto;
+}
+
+.hit-games.bad {
+    color: #ff6b6b;
+    font-weight: 700;
+}
+
+.hit-games.good {
+    color: #2ed573;
+    font-weight: 700;
+}
