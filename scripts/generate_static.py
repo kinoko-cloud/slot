@@ -193,6 +193,7 @@ def generate_index(env):
     machines = []
     top3_all = []
     yesterday_top10 = []
+    today_top10 = []
 
     for key, machine in MACHINES.items():
         stores = get_stores_by_machine(key)
@@ -222,33 +223,59 @@ def generate_index(env):
                     pass
 
                 recs = recommend_units(store_key, realtime_data=realtime, availability=availability)
-                for rec in recs[:3]:
+
+                # 全recsにメタデータを付与
+                for rec in recs:
                     rec['store_name'] = store.get('short_name', store['name'])
                     rec['store_key'] = store_key
                     rec['machine_key'] = key
                     rec['machine_icon'] = machine['icon']
                     rec['machine_name'] = machine.get('display_name', machine['short_name'])
-                    rec['availability'] = availability.get(rec['unit_id'], '')
+                    if 'availability' not in rec or rec['availability'] is None:
+                        rec['availability'] = availability.get(rec['unit_id'], '')
 
-                    # ランクに関係なくすべて追加（スコア順でソート後に上位3件を表示）
+                # TOP3候補（上位3台/店舗）
+                for rec in recs[:3]:
                     top3_all.append(rec)
 
-                    max_medals = rec.get('max_medals', 0)
-                    if max_medals > 3000 or rec.get('yesterday_diff', 0) > 500:
+                # 前日の爆発台（全台から収集、yesterday_art > 0）
+                for rec in recs:
+                    y_art = rec.get('yesterday_art', 0)
+                    if y_art and y_art > 0:
                         yesterday_top10.append({
                             'unit_id': rec['unit_id'],
-                            'store_name': store.get('short_name', store['name']),
+                            'store_name': rec['store_name'],
                             'store_key': store_key,
                             'machine_icon': machine['icon'],
                             'machine_name': machine.get('display_name', machine['short_name']),
                             'yesterday_diff': rec.get('yesterday_diff', 0),
                             'avg_art_7days': rec.get('avg_art_7days', 0),
-                            'yesterday_art': rec.get('yesterday_art', 0),
+                            'yesterday_art': y_art,
                             'yesterday_rb': rec.get('yesterday_rb', 0),
+                            'yesterday_games': rec.get('yesterday_games', 0),
                             'yesterday_max_rensa': rec.get('yesterday_max_rensa', 0),
                             'day_before_art': rec.get('day_before_art', 0),
-                            'max_medals': max_medals,
-                            'availability': availability.get(rec['unit_id'], ''),
+                            'max_medals': rec.get('max_medals', 0),
+                            'availability': rec.get('availability', ''),
+                        })
+
+                # 本日の爆発台（全台から収集、art_count > 0）
+                for rec in recs:
+                    t_art = rec.get('art_count', 0)
+                    t_medals = rec.get('max_medals', 0)
+                    if t_art > 0 or t_medals > 0:
+                        today_top10.append({
+                            'unit_id': rec['unit_id'],
+                            'store_name': rec['store_name'],
+                            'store_key': store_key,
+                            'machine_icon': machine['icon'],
+                            'machine_name': machine.get('display_name', machine['short_name']),
+                            'art_count': t_art,
+                            'rb_count': rec.get('rb_count', 0),
+                            'total_games': rec.get('total_games', 0),
+                            'max_medals': t_medals,
+                            'art_prob': rec.get('art_prob', 0),
+                            'availability': rec.get('availability', ''),
                         })
             except Exception as e:
                 print(f"Error processing {store_key}: {e}")
@@ -263,8 +290,13 @@ def generate_index(env):
     top3_all.sort(key=top3_sort_key)
     top3 = top3_all[:3]
 
-    yesterday_top10.sort(key=lambda x: -x['max_medals'])
+    # 前日の爆発台: ART数でソート
+    yesterday_top10.sort(key=lambda x: -x['yesterday_art'])
     yesterday_top10 = yesterday_top10[:10]
+
+    # 本日の爆発台: max_medalsでソート（同値ならart_count）
+    today_top10.sort(key=lambda x: (-x['max_medals'], -x['art_count']))
+    today_top10 = today_top10[:10]
 
     # 曜日ランキング
     today_store_ranking = []
@@ -297,6 +329,7 @@ def generate_index(env):
         machines=machines,
         top3=top3,
         yesterday_top10=yesterday_top10,
+        today_top10=today_top10,
         today_weekday=today_weekday,
         today_date=today_date,
         today_date_formatted=today_date_formatted,
