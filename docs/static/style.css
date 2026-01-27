@@ -2784,6 +2784,20 @@ strong.minus {
 .diff-medals.plus { color: #2ed573; }
 .diff-medals.minus { color: #ff6b6b; }
 
+/* 天井バッジ */
+.ceiling-badge {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 2px;
+    color: #e17055;
+    font-size: 0.85em;
+    font-weight: 600;
+}
+.ceiling-badge .num {
+    font-size: 1.1em;
+    font-weight: 700;
+}
+
 .art-badge {
     display: inline-flex;
     align-items: baseline;
