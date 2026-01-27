@@ -283,7 +283,7 @@
                             {# === 波グラフ（テキスト） === #}
                             {% if rec.today_history %}
                             <div class="detail-section">
-                                <div class="detail-title">{% if rec.history_date and rec.history_date != today_str %}{{ rec.history_date }}{% else %}本日{% endif %}の波</div>
+                                <div class="detail-title">{% if rec.history_date %}{{ rec.history_date }}{% else %}本日{% endif %}の波</div>
                                 <div class="wave-graph">
                                     {% for h in rec.today_history %}
                                     <span class="wave-bar {% if h.start >= 500 %}deep{% elif h.start >= 300 %}mid{% elif h.start <= 70 %}rensa{% endif %}" title="{{ h.time }} {{ h.start }}G {{ h.type }}">
@@ -300,7 +300,7 @@
                             </div>
                             {# === 当たり履歴テーブル === #}
                             <div class="detail-section">
-                                <div class="detail-title">当たり履歴</div>
+                                <div class="detail-title">{% if rec.history_date %}{{ rec.history_date }} {% endif %}当たり履歴</div>
                                 <div class="hit-history-table">
                                     {% for h in rec.today_history %}
                                     <div class="hit-row {% if h.start >= 500 %}deep{% elif h.start <= 70 %}rensa{% endif %}">
