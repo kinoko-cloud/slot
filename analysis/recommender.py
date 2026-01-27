@@ -2183,6 +2183,11 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
             'yesterday_max_rensa': trend_data.get('yesterday_max_rensa', 0),
             'yesterday_max_medals': trend_data.get('yesterday_max_medals', 0),
             'max_medals': max_medals,
+            # 3日目のデータ（蓄積DBから取得）
+            'three_days_ago_art': 0,
+            'three_days_ago_rb': 0,
+            'three_days_ago_games': 0,
+            'three_days_ago_date': '',
             'consecutive_plus': trend_data.get('consecutive_plus', 0),
             'consecutive_minus': trend_data.get('consecutive_minus', 0),
             'avg_art_7days': trend_data.get('avg_art_7days', 0),
@@ -2237,6 +2242,31 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
                                 break
                 except:
                     pass
+
+        # 蓄積DBから3日目+各日の最大連チャン・最大枚数を取得
+        if accumulated and accumulated.get('days'):
+            acc_days = sorted(accumulated['days'], key=lambda x: x.get('date', ''), reverse=True)
+            y_date = rec.get('yesterday_date', '')
+            db_date = rec.get('day_before_date', '')
+
+            # 各日の最大連チャン・最大枚数を蓄積DBから補完
+            for ad in acc_days:
+                d = ad.get('date', '')
+                if d == y_date:
+                    if not rec.get('yesterday_max_rensa'):
+                        rec['yesterday_max_rensa'] = ad.get('max_rensa', 0)
+                    if not rec.get('yesterday_max_medals'):
+                        rec['yesterday_max_medals'] = ad.get('max_medals', 0)
+                elif d == db_date:
+                    rec['day_before_max_rensa'] = ad.get('max_rensa', 0)
+                    rec['day_before_max_medals'] = ad.get('max_medals', 0)
+                elif d and d < (db_date or y_date or '9999') and not rec.get('three_days_ago_date'):
+                    rec['three_days_ago_art'] = ad.get('art', 0)
+                    rec['three_days_ago_rb'] = ad.get('rb', 0)
+                    rec['three_days_ago_games'] = ad.get('games', 0)
+                    rec['three_days_ago_date'] = d
+                    rec['three_days_ago_max_rensa'] = ad.get('max_rensa', 0)
+                    rec['three_days_ago_max_medals'] = ad.get('max_medals', 0)
 
         recommendations.append(rec)
 

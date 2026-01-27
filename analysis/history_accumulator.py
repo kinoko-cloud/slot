@@ -11,6 +11,38 @@ from pathlib import Path
 
 HISTORY_DIR = Path(__file__).parent.parent / 'data' / 'history'
 
+RENCHAIN_THRESHOLD = 100  # AT間100G以内なら連チャン
+
+
+def _calc_history_stats(history: list) -> tuple:
+    """当たり履歴から最大連チャン・最大枚数を計算"""
+    if not history:
+        return 0, 0
+
+    sorted_hist = sorted(history, key=lambda x: x.get('time', '00:00'))
+    max_medals = max((h.get('medals', 0) for h in sorted_hist), default=0)
+
+    # 連チャン計算
+    chain_len = 0
+    max_chain = 0
+    accumulated_games = 0
+
+    for i, hit in enumerate(sorted_hist):
+        hit_type = hit.get('type', 'ART')
+        start = hit.get('start', 0)
+        accumulated_games += start
+
+        if hit_type in ('ART', 'AT', 'BIG'):
+            if i == 0 or accumulated_games > RENCHAIN_THRESHOLD:
+                max_chain = max(max_chain, chain_len)
+                chain_len = 1
+            else:
+                chain_len += 1
+            accumulated_games = 0
+
+    max_chain = max(max_chain, chain_len)
+    return max_chain, max_medals
+
 
 def accumulate_from_daily(daily_data: dict, machine_key: str = 'sbj'):
     """daily JSONデータから各台の履歴を蓄積する
@@ -83,10 +115,15 @@ def _accumulate_unit(store_key: str, unit_id: str, days: list, machine_key: str)
             'is_good': prob > 0 and prob <= good_prob,
         }
 
-        # 当たり履歴があれば含める
+        # 当たり履歴があれば最大連チャン・最大枚数を計算
         history = day.get('history', [])
         if history:
             entry['history'] = history
+            max_rensa, max_medals = _calc_history_stats(history)
+            if max_rensa > 0:
+                entry['max_rensa'] = max_rensa
+            if max_medals > 0:
+                entry['max_medals'] = max_medals
 
         existing['days'].append(entry)
         existing_dates.add(date)
