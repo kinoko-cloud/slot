@@ -1517,6 +1517,10 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
                     reasons.append(f"⚠ {today_weekday}曜の好調率: {wd_good}/{wd_total}回({wd_rate:.0%}) → 要注意")
 
         # なぜ今日も好調と見るかの根拠を追加
+        continuation_rate = historical_perf.get('continuation_rate', 0)
+        continuation_total = historical_perf.get('continuation_total', 0)
+        continuation_good = historical_perf.get('continuation_good', 0)
+
         today_confidence_parts = []
         if today_rating >= 4:
             rating_label = '高設定投入日' if today_rating >= 5 else '狙い目の曜日'
@@ -1525,11 +1529,23 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
             today_confidence_parts.append(f"現在{consecutive_plus}日連続好調中")
         elif consecutive_minus >= 2:
             today_confidence_parts.append(f"{consecutive_minus}日不調→反転期待")
-        if miss_days <= 1 and total_perf_days >= 5:
-            today_confidence_parts.append(f"外れたのは{total_perf_days}日中{miss_days}日のみ")
+
+        # 台の好調実績
+        if total_perf_days >= 3:
+            today_confidence_parts.append(f"この台の好調率: {good_days}/{total_perf_days}日（{good_day_rate:.0%}）")
+
         if today_confidence_parts:
-            reasons.append(f"💡 今日も期待できる根拠: {' / '.join(today_confidence_parts)}")
-        elif today_rating >= 3:
+            reasons.append(f"💡 期待できる根拠: {' / '.join(today_confidence_parts)}")
+
+        # 据え置き率（安心材料）
+        if continuation_total >= 3 and continuation_rate >= 0.5:
+            reasons.append(f"📊 好調翌日も好調だった率: {continuation_good}/{continuation_total}回（{continuation_rate:.0%}）→ 据え置き傾向あり")
+        elif continuation_total >= 3 and continuation_rate < 0.5:
+            reasons.append(f"📊 好調翌日も好調だった率: {continuation_good}/{continuation_total}回（{continuation_rate:.0%}）→ 据え置き少なめ、下げ注意")
+        elif total_perf_days >= 5 and good_day_rate >= 0.7:
+            reasons.append(f"📊 高好調率の台（{good_days}/{total_perf_days}日好調）→ 高設定が入りやすい台番号")
+
+        if not today_confidence_parts and today_rating >= 3:
             reasons.append(f"💡 {store_name}の{today_weekday}曜は過去実績から普通〜やや期待できる日")
     elif total_perf_days > 0 and good_day_rate <= 0.4:
         reasons.append(f"📊 {total_perf_days}日間中{good_days}日好調（好調率{good_day_rate:.0%}）→ 低設定が入りやすい台")
@@ -1644,13 +1660,29 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
             rating_label = {5: '高設定投入日', 4: '狙い目', 3: '普通', 2: '弱い日', 1: '回収日'}.get(today_rating, '普通')
             reasons.append(f"{store_name}の{today_weekday}曜は{rating_label}（店舗傾向{'：' + best_info if best_info else ''}）")
 
-    # 重複除去、上位5つ
+    # 重複除去 + 同カテゴリ重複排除、上位4つ
     seen = set()
+    seen_categories = set()
     unique = []
     for r in reasons:
-        if r not in seen:
-            seen.add(r)
-            unique.append(r)
+        if r in seen:
+            continue
+        # 同カテゴリの重複を排除（店舗傾向が2回出るのを防ぐ等）
+        category = None
+        if '店舗傾向' in r:
+            category = 'store_weekday'
+        elif '好調翌日' in r or '据え置き' in r:
+            category = 'continuation'
+        elif '好調率' in r and '台' in r:
+            category = 'unit_rate'
+        elif '平均ART' in r:
+            category = 'avg_prob'
+        if category and category in seen_categories:
+            continue
+        if category:
+            seen_categories.add(category)
+        seen.add(r)
+        unique.append(r)
 
     # 「本日」「前日」「前々日」を日付ラベルに置換
     if data_date_label or prev_date_label:
