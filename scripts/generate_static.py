@@ -32,8 +32,7 @@ OUTPUT_DIR = PROJECT_ROOT / 'docs'  # GitHub Pages互換
 def get_display_mode():
     """現在時刻から表示モードを決定
     - before_open: 0:00-9:59（営業前）
-    - after_close: 23:00-23:59（閉店後）
-    - collecting: 22:50-22:59（集計中）
+    - after_close: 22:50-23:59（閉店後）
     - realtime: 10:00-22:49（営業中）
     """
     now = datetime.now(JST)
@@ -42,10 +41,8 @@ def get_display_mode():
 
     if hour < 10:
         return 'before_open'
-    elif hour >= 23:
+    elif hour >= 23 or (hour == 22 and minute >= 50):
         return 'after_close'
-    elif hour == 22 and minute >= 50:
-        return 'collecting'
     else:
         return 'realtime'
 
@@ -529,7 +526,7 @@ def generate_index(env):
 
     result_date_str = None
     date_prefix = ''  # 「昨日」or「本日」
-    if display_mode in ('before_open', 'after_close', 'collecting'):
+    if display_mode in ('before_open', 'after_close'):
         if now.hour >= 23:
             result_date = now
             date_prefix = '本日'

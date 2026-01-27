@@ -18,9 +18,6 @@
             {% elif display_mode == 'after_close' %}
             <h1><span class="title-main">{{ next_day_prefix }} {{ next_day_str }}のおすすめ台</span></h1>
             <div class="mode-badge after-close">🔒 閉店後</div>
-            {% elif display_mode == 'collecting' %}
-            <h1><span class="title-main">{{ next_day_prefix }} {{ next_day_str }}のおすすめ台</span></h1>
-            <div class="mode-badge after-close">🔒 閉店後</div>
             {% else %}
             <h1><span class="title-main">{{ date_prefix }} {{ data_date_str }}のおすすめ台</span></h1>
             <div class="mode-badge realtime">🟢 営業中</div>
@@ -33,7 +30,7 @@
 
         <main>
             {# === 閉店後: おすすめ台を最上部に === #}
-            {% if display_mode in ('before_open', 'after_close', 'collecting') and top3 %}
+            {% if display_mode in ('before_open', 'after_close') and top3 %}
             <section class="recommendations top" id="top3-section">
                 <h2>{{ next_day_prefix }} {{ next_day_str }}のおすすめ台 TOP{{ top3|length }}</h2>
                 <div class="top5-note">{{ date_prefix }}の結果＋過去傾向から分析</div>
@@ -133,7 +130,7 @@
             {% endif %}
 
             {# === 閉店後/集計中: 的中率ヒーロー表示 === #}
-            {% if display_mode in ('before_open', 'after_close', 'collecting') and accuracy_hero and accuracy_hero[0].rate > 0 %}
+            {% if display_mode in ('before_open', 'after_close') and accuracy_hero and accuracy_hero[0].rate > 0 %}
             <a href="{{ url_for('verify') }}" class="accuracy-hero-link">
             <section class="accuracy-hero">
                 <div class="hero-title">{{ date_prefix }} {{ data_date_str }}の的中率</div>
@@ -156,7 +153,7 @@
             {% endif %}
 
             {# === 閉店後: 当日の爆発台 === #}
-            {% if display_mode in ('before_open', 'after_close', 'collecting') and yesterday_top10 %}
+            {% if display_mode in ('before_open', 'after_close') and yesterday_top10 %}
             <section class="today-hot-section">
                 <h2>{{ date_prefix }} {{ data_date_str }}の爆発台 TOP{{ yesterday_top10|length }}</h2>
                 {% for rec in yesterday_top10 %}
@@ -276,17 +273,11 @@
             {% endif %}
 
             <!-- 狙い目 / 結果 TOP3 (営業中のみ — 閉店後は上で表示済み) -->
-            {% if top3 and display_mode not in ('result', 'collecting') %}
+            {% if top3 and display_mode not in ('before_open', 'after_close') %}
             <section class="recommendations top" id="top3-section">
                 {% if night_mode %}
                 <h2>🌙 {{ tomorrow_str }}のおすすめ予想台 TOP{{ top3|length }}</h2>
                 <div class="top5-note">{{ tomorrow_str }}の狙い目予想 ※今日の結果＋過去傾向から分析</div>
-                {% elif display_mode in ('before_open', 'after_close') %}
-                <h2>{{ date_prefix }} {{ result_date_str }}の好調台</h2>
-                <div class="top5-note">※実績データ（ART回数・出玉）で評価</div>
-                {% elif display_mode == 'collecting' %}
-                <h2>{{ date_prefix }} {{ result_date_str }}の速報</h2>
-                <div class="top5-note">※データ集計中...</div>
                 {% else %}
                 <h2>いま狙い目の台</h2>
                 <div class="top5-note">※機種 / 店名 / 台番号</div>
