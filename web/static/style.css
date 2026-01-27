@@ -2418,7 +2418,7 @@ strong.minus {
 .yesterday-card {
     background: #252541;
     border-radius: 8px;
-    padding: 12px 15px;
+    padding: 10px 12px;
     margin-bottom: 8px;
     text-decoration: none;
     display: block;
@@ -2427,31 +2427,35 @@ strong.minus {
 .yesterday-header {
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin-bottom: 6px;
+    gap: 4px;
+    margin-bottom: 4px;
+    flex-wrap: nowrap;
 }
 
 .machine-icon-sm {
-    font-size: 1em;
+    font-size: 0.9em;
 }
 
 .unit-id-sm {
     font-weight: 700;
     color: #fff;
-    min-width: 50px;
+    white-space: nowrap;
 }
 
 .store-name-sm {
-    font-size: 0.85em;
+    font-size: 0.8em;
     color: #aaa;
+    white-space: nowrap;
 }
 
 .yesterday-sub-header {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 4px;
     margin-bottom: 6px;
-    font-size: 0.85em;
+    font-size: 0.8em;
+    flex-wrap: nowrap;
+    overflow: hidden;
 }
 
 .yesterday-header .machine-name-sm {
@@ -2462,8 +2466,8 @@ strong.minus {
 
 .yesterday-stats {
     display: flex;
-    gap: 10px;
-    font-size: 0.85em;
+    gap: 6px;
+    font-size: 0.8em;
     flex-wrap: wrap;
     align-items: center;
 }
@@ -5466,11 +5470,13 @@ strong.minus {
 /* 予想結果バッジ */
 .prediction-badge {
     display: inline-block;
-    padding: 2px 8px;
-    border-radius: 8px;
-    font-size: 0.7em;
+    padding: 1px 5px;
+    border-radius: 6px;
+    font-size: 0.65em;
     font-weight: 600;
-    margin-left: 6px;
+    margin-left: 4px;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 .prediction-badge.hit {
     background: #1e5128;
