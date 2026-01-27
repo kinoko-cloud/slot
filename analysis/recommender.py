@@ -206,7 +206,7 @@ STORE_KEY_MAPPING = {
     # 北斗転生2
     'shibuya_espass_hokuto': 'shibuya_espass_hokuto_tensei2',
     'shinjuku_espass_hokuto': 'shinjuku_espass_hokuto_tensei2',
-    'akihabara_espass_hokuto': 'akiba_espass_hokuto_tensei2',
+    'akiba_espass_hokuto': 'akiba_espass_hokuto_tensei2',
     'island_akihabara_hokuto': 'island_akihabara_hokuto_tensei2',
 }
 
@@ -231,7 +231,7 @@ STORE_DAY_RATINGS = {
         'best_days': '土曜が最強、金曜も狙い目',
         'worst_days': '月曜は控えめ',
     },
-    'akihabara_espass_sbj': {
+    'akiba_espass_sbj': {
         'short_name': 'エスパス秋葉原',
         'day_ratings': {'月': 2, '火': 3, '水': 3, '木': 3, '金': 4, '土': 5, '日': 4},
         'best_days': '土日が狙い目、金曜も可',

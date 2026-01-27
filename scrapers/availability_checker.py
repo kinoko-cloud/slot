@@ -27,10 +27,10 @@ GAS_STORES = ['island_akihabara_sbj']
 
 # GitHubでサポートしている店舗 (availability.json経由 = daidata + papimo)
 GITHUB_STORES = [
-    'shibuya_espass_sbj', 'shinjuku_espass_sbj', 'akihabara_espass_sbj',
+    'shibuya_espass_sbj', 'shinjuku_espass_sbj', 'akiba_espass_sbj',
     'seibu_shinjuku_espass_sbj', 'island_akihabara_sbj',
     # 北斗転生2
-    'shibuya_espass_hokuto', 'shinjuku_espass_hokuto', 'akihabara_espass_hokuto',
+    'shibuya_espass_hokuto', 'shinjuku_espass_hokuto', 'akiba_espass_hokuto',
     'island_akihabara_hokuto',
 ]
 

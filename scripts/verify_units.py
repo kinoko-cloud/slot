@@ -357,7 +357,7 @@ def verify_data_integrity(availability_data: dict) -> list:
         'island_akihabara_sbj': {'name': 'アイランド秋葉原', 'min_units': 14},
         'shibuya_espass_sbj': {'name': '渋谷エスパス新館', 'min_units': 3},
         'shinjuku_espass_sbj': {'name': '新宿エスパス歌舞伎町', 'min_units': 4},
-        'akihabara_espass_sbj': {'name': '秋葉原エスパス駅前', 'min_units': 4},
+        'akiba_espass_sbj': {'name': '秋葉原エスパス駅前', 'min_units': 4},
         'seibu_shinjuku_espass_sbj': {'name': '西武新宿駅前エスパス', 'min_units': 7},
     }
 

@@ -26,7 +26,7 @@ DAIDATA_STORES = {
         'model_encoded': 'L%EF%BD%BD%EF%BD%B0%EF%BE%8A%EF%BE%9F%EF%BD%B0%EF%BE%8C%EF%BE%9E%EF%BE%97%EF%BD%AF%EF%BD%B8%EF%BD%BC%EF%BE%9E%EF%BD%AC%EF%BD%AF%EF%BD%B8',
         'units': ['682', '683', '684', '685'],
     },
-    'akihabara_espass_sbj': {
+    'akiba_espass_sbj': {
         'hall_id': '100928',
         'name': '秋葉原エスパス駅前',
         'model_encoded': 'L%EF%BD%BD%EF%BD%B0%EF%BE%8A%EF%BE%9F%EF%BD%B0%EF%BE%8C%EF%BE%9E%EF%BE%97%EF%BD%AF%EF%BD%B8%EF%BD%BC%EF%BE%9E%EF%BD%AC%EF%BD%AF%EF%BD%B8',
@@ -51,7 +51,7 @@ DAIDATA_STORES = {
         'model_encoded': None,
         'units': [str(i) for i in range(1, 38)] + [str(i) for i in range(125, 129)],
     },
-    'akihabara_espass_hokuto': {
+    'akiba_espass_hokuto': {
         'hall_id': '100928',
         'name': 'エスパス秋葉原(北斗)',
         'model_encoded': None,

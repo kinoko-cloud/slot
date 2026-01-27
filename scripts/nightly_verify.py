@@ -81,7 +81,7 @@ def run_verification():
         'island_akihabara_sbj',
         'shibuya_espass_sbj',
         'shinjuku_espass_sbj',
-        'akihabara_espass_sbj',
+        'akiba_espass_sbj',
         'seibu_shinjuku_espass_sbj',
     ]
     

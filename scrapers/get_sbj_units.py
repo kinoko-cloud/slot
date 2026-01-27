@@ -162,7 +162,7 @@ if __name__ == "__main__":
         'units': {},
         'data_source': 'daidata',
     }},
-    'akihabara_espass_sbj': {{
+    'akiba_espass_sbj': {{
         'name': '秋葉原エスパス駅前',
         'hall_id': '100928',
         'machine': 'sbj',
