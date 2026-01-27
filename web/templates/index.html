@@ -40,7 +40,7 @@
                         <span class="rank-badge" style="background-color: {{ rank_color(rec.final_rank) }}">{{ rec.final_rank }}</span>
                     </div>
                     <div class="unit-store">
-                        <span class="store-link">{{ rec.store_name }}</span> / <span class="unit-id-sub"><span class="unit-id-num">{{ rec.unit_id }}</span><span class="unit-id-ban">番</span></span>
+                        <span class="store-link">{{ rec.store_name }}</span> / <span class="unit-id-sub"><span class="unit-id-num">{{ rec.unit_id|pad_id }}</span><span class="unit-id-ban">番</span></span>
                         <span class="top3-avail closed">営業外</span>
                     </div>
                     {# === 1. 推奨理由（最重要） === #}
@@ -157,7 +157,7 @@
                     </div>
                     <div class="yesterday-sub-header">
                         <span class="store-name-sm">{{ rec.store_name }}</span>
-                        <span class="unit-id-sm">{{ rec.unit_id }}番</span>
+                        <span class="unit-id-sm">{{ rec.unit_id|pad_id }}番</span>
                     </div>
                     {# === 差枚（目立たせる） === #}
                     {% if rec.diff_medals is defined and rec.diff_medals != 0 %}
@@ -229,7 +229,7 @@
                         <span class="rank-badge" style="background-color: {{ rank_color(rec.final_rank) }}">{{ rec.final_rank }}</span>
                     </div>
                     <div class="unit-store">
-                        <span class="store-link">{{ rec.store_name }}</span> / <span class="unit-id-sub"><span class="unit-id-num">{{ rec.unit_id }}</span><span class="unit-id-ban">番</span></span>
+                        <span class="store-link">{{ rec.store_name }}</span> / <span class="unit-id-sub"><span class="unit-id-num">{{ rec.unit_id|pad_id }}</span><span class="unit-id-ban">番</span></span>
                         {% if is_open %}
                             {% if rec.availability == '空き' %}
                             <span class="top3-avail empty">空き</span>
@@ -360,7 +360,7 @@
                     </div>
                     <div class="yesterday-sub-header">
                         <span class="store-name-sm">{{ rec.store_name }}</span>
-                        <span class="unit-id-sm">{{ rec.unit_id }}番</span>
+                        <span class="unit-id-sm">{{ rec.unit_id|pad_id }}番</span>
                         {% if rec.availability == '空き' %}
                         <span class="avail-sm empty">空</span>
                         {% elif rec.availability == '遊技中' %}
@@ -444,7 +444,7 @@
                     </div>
                     <div class="yesterday-sub-header">
                         <span class="store-name-sm">{{ rec.store_name }}</span>
-                        <span class="unit-id-sm">{{ rec.unit_id }}番</span>
+                        <span class="unit-id-sm">{{ rec.unit_id|pad_id }}番</span>
                         {% if rec.availability == '空き' %}
                         <span class="avail-sm empty">空</span>
                         {% elif rec.availability == '遊技中' %}

@@ -91,7 +91,7 @@
                         {% for unit in store.units %}
                         <div class="verify-row-wrapper">
                             <div class="verify-row verdict-{{ unit.verdict_class }}{% if unit.history %} has-detail{% endif %}" onclick="toggleDetail(this)">
-                                <span class="vr-unit">{{ unit.unit_id }}</span>
+                                <span class="vr-unit">{{ unit.unit_id|pad_id }}</span>
                                 <span class="vr-pred">
                                     <span class="rank-badge-xs" style="background-color: {{ rank_color(unit.pre_open_rank) }}">{{ unit.pre_open_rank }}</span>
                                     <span class="vr-score">{{ unit.pre_open_score|int }}pt</span>

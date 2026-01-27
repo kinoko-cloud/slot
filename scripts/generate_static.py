@@ -108,6 +108,15 @@ def setup_jinja():
     env.globals['medals_badge'] = medals_badge
     env.globals['url_for'] = lambda endpoint, **kwargs: generate_url(endpoint, **kwargs)
 
+    def pad_unit_id(uid):
+        """台番号を4桁ゼロパディング（1→0001, 23→0023, 0752→0752）"""
+        s = str(uid)
+        if s.isdigit() and len(s) < 4:
+            return s.zfill(4)
+        return s
+    env.filters['pad_id'] = pad_unit_id
+    env.globals['pad_id'] = pad_unit_id
+
     def format_short_date(date_str):
         """'2026-01-26' → '1/26(月)'"""
         if not date_str:
