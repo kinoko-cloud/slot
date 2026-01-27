@@ -876,6 +876,26 @@ footer {
     padding: 2px 0;
 }
 
+.reason-line-top.reason-rank {
+    color: #7cb9e8;
+}
+
+.reason-line-top.reason-prev {
+    color: #ffa502;
+}
+
+.reason-line-top.reason-pattern {
+    color: #ff6b9d;
+}
+
+.reason-line-top.reason-today {
+    color: #2ed573;
+}
+
+.reason-line-top.reason-weekday {
+    color: #a0a0a0;
+}
+
 .reason-line-top .reason-icon {
     font-size: 0.85em;
     margin-right: 4px;
@@ -1846,6 +1866,26 @@ strong.minus {
     padding: 2px 0;
 }
 
+.reason-line.reason-rank {
+    color: #7cb9e8;
+}
+
+.reason-line.reason-prev {
+    color: #ffa502;
+}
+
+.reason-line.reason-pattern {
+    color: #ff6b9d;
+}
+
+.reason-line.reason-today {
+    color: #2ed573;
+}
+
+.reason-line.reason-weekday {
+    color: #a0a0a0;
+}
+
 /* 詳細グリッド */
 .detail-grid {
     display: grid;
@@ -2177,10 +2217,26 @@ strong.minus {
     color: #888;
 }
 
+.yesterday-sub-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+    font-size: 0.85em;
+}
+
+.yesterday-header .machine-name-sm {
+    margin-left: 0;
+    font-size: 0.85em;
+    color: #ccc;
+}
+
 .yesterday-stats {
     display: flex;
-    gap: 15px;
+    gap: 10px;
     font-size: 0.85em;
+    flex-wrap: wrap;
+    align-items: center;
 }
 
 .yesterday-diff {
@@ -2553,24 +2609,38 @@ strong.minus {
 
 /* RBバッジ（小） */
 .rb-badge-sm {
-    display: inline-block;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 3px;
     background: #5352ed;
     color: #fff;
-    padding: 0 5px;
+    padding: 1px 6px;
     border-radius: 3px;
     font-size: 0.75em;
     font-weight: 700;
 }
 
+.rb-badge-sm .num {
+    font-size: 1.15em;
+    font-weight: 800;
+}
+
 /* 連チャンバッジ */
 .rensa-badge {
-    display: inline-block;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 3px;
     background: #ff6348;
     color: #fff;
-    padding: 0 5px;
+    padding: 1px 6px;
     border-radius: 3px;
     font-size: 0.75em;
     font-weight: 700;
+}
+
+.rensa-badge .num {
+    font-size: 1.15em;
+    font-weight: 800;
 }
 
 /* 前々日情報（爆発台セクション内） */
