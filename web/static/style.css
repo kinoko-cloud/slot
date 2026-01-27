@@ -460,6 +460,12 @@ header h1 {
     font-size: 0.9em;
 }
 
+.trend-store-name {
+    color: #70a1ff;
+    font-size: 0.9em;
+    font-weight: 600;
+}
+
 /* フッター */
 footer {
     text-align: center;
@@ -1473,15 +1479,15 @@ strong.minus {
 .unit-main-header {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 6px;
     margin-bottom: 8px;
 }
 
 .unit-id-large {
-    font-size: 1.5em;
+    font-size: 1.15em;
     font-weight: 800;
     color: #fff;
-    min-width: 70px;
+    min-width: auto;
 }
 
 .unit-id-link {
@@ -1495,9 +1501,9 @@ strong.minus {
 }
 
 .avail-badge-lg {
-    padding: 4px 12px;
-    border-radius: 6px;
-    font-size: 0.9em;
+    padding: 2px 8px;
+    border-radius: 5px;
+    font-size: 0.75em;
     font-weight: 700;
 }
 
@@ -1528,9 +1534,9 @@ strong.minus {
 }
 
 .rank-badge-lg {
-    padding: 4px 14px;
-    border-radius: 6px;
-    font-size: 1.1em;
+    padding: 3px 10px;
+    border-radius: 5px;
+    font-size: 0.9em;
     font-weight: 800;
     color: #fff;
     margin-left: auto;
@@ -1539,21 +1545,22 @@ strong.minus {
 /* 本日データ横並び */
 .today-data-row {
     display: flex;
-    gap: 8px;
-    padding: 10px;
+    gap: 5px;
+    padding: 8px 6px;
     background: rgba(0, 0, 0, 0.2);
     border-radius: 8px;
     margin-bottom: 8px;
+    flex-wrap: wrap;
 }
 
 .data-cell {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 6px 12px;
+    padding: 5px 8px;
     background: rgba(255, 255, 255, 0.05);
     border-radius: 6px;
-    min-width: 55px;
+    min-width: 48px;
 }
 
 .data-cell .data-label {
@@ -1564,7 +1571,7 @@ strong.minus {
 }
 
 .data-cell .data-value {
-    font-size: 1.2em;
+    font-size: 1.1em;
     font-weight: 800;
     color: #fff;
 }
@@ -1749,9 +1756,9 @@ strong.minus {
 }
 
 .machine-name-sm {
-    font-size: 0.75em;
-    color: #888;
-    margin-left: 5px;
+    font-size: 0.85em;
+    color: #aaa;
+    margin-left: 3px;
 }
 
 /* トップページ: 最大枚数 */
@@ -1766,12 +1773,18 @@ strong.minus {
 
 /* ===== 最大枚数バッジ ===== */
 .medals-icon {
-    margin-right: 2px;
+    margin-right: 1px;
+    font-size: 0.85em;
 }
 
 .medals-icon-sm {
-    font-size: 0.9em;
+    font-size: 0.8em;
     margin-right: 1px;
+}
+
+/* data-cell内の絵文字を非表示にしてレイアウト崩れ防止 */
+.data-cell .medals-icon {
+    display: none;
 }
 
 .medals-10k {
@@ -2529,8 +2542,8 @@ strong.minus {
 
 /* ===== 機種名（小） ===== */
 .machine-name-sm {
-    font-size: 0.75em;
-    color: #888;
+    font-size: 0.85em;
+    color: #aaa;
     margin-left: auto;
 }
 
@@ -2565,9 +2578,16 @@ strong.minus {
 }
 
 .art-prob {
-    font-size: 1.1em;
+    font-size: 0.9em;
     font-weight: 700;
     color: #aaa;
+}
+
+.prob-label {
+    font-size: 0.8em;
+    font-weight: 400;
+    opacity: 0.7;
+    margin-right: 1px;
 }
 
 .art-prob.excellent {
@@ -2618,8 +2638,20 @@ strong.minus {
 /* 台番号をサブ情報に */
 .unit-id-sub {
     font-weight: 400;
-    color: #888;
+    color: #ccc;
     font-size: 0.95em;
+}
+
+.unit-id-num {
+    font-weight: 700;
+    color: #fff;
+    font-size: 1.05em;
+}
+
+.unit-id-ban {
+    font-size: 0.75em;
+    color: #888;
+    margin-left: 1px;
 }
 
 /* ARTバッジ */
@@ -2688,7 +2720,7 @@ strong.minus {
 }
 
 .compact-art .art-num {
-    font-size: 1.4em;
+    font-size: 1.2em;
     font-weight: 900;
     color: #ff6b6b;
 }
@@ -2946,6 +2978,28 @@ strong.minus {
 .schedule-notes {
     font-size: 0.75em;
     color: #888;
+}
+
+.schedule-links {
+    display: flex;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.schedule-machine-link {
+    display: inline-block;
+    padding: 4px 10px;
+    background: rgba(112, 161, 255, 0.15);
+    border: 1px solid rgba(112, 161, 255, 0.3);
+    border-radius: 5px;
+    color: #70a1ff;
+    font-size: 0.8em;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.schedule-machine-link:active {
+    background: rgba(112, 161, 255, 0.3);
 }
 
 .note-best {
@@ -3412,4 +3466,78 @@ strong.minus {
     padding: 8px;
     background: rgba(46, 213, 115, 0.1);
     border-radius: 4px;
+}
+
+/* ===================================
+   設定バッジ（コンパクト）
+   =================================== */
+.setting-badge-sm {
+    display: inline-block;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 0.7em;
+    font-weight: 800;
+    min-width: 18px;
+    text-align: center;
+}
+
+.setting-badge-sm.setting-6 {
+    background: rgba(255, 71, 87, 0.3);
+    color: #ff4757;
+    border: 1px solid rgba(255, 71, 87, 0.5);
+}
+
+.setting-badge-sm.setting-5 {
+    background: rgba(255, 165, 2, 0.3);
+    color: #ffa502;
+    border: 1px solid rgba(255, 165, 2, 0.5);
+}
+
+.setting-badge-sm.setting-4 {
+    background: rgba(255, 230, 0, 0.25);
+    color: #ffe600;
+    border: 1px solid rgba(255, 230, 0, 0.4);
+}
+
+.setting-badge-sm.setting-3 {
+    background: rgba(46, 213, 115, 0.25);
+    color: #2ed573;
+    border: 1px solid rgba(46, 213, 115, 0.4);
+}
+
+.setting-badge-sm.setting-2 {
+    background: rgba(112, 161, 255, 0.2);
+    color: #70a1ff;
+    border: 1px solid rgba(112, 161, 255, 0.4);
+}
+
+.setting-badge-sm.setting-1,
+.setting-badge-sm.setting-0 {
+    background: rgba(200, 200, 200, 0.15);
+    color: #999;
+    border: 1px solid rgba(200, 200, 200, 0.3);
+}
+
+/* ランキング番号（コンパクト行） */
+.compact-rank-num {
+    font-size: 0.7em;
+    font-weight: 700;
+    color: #666;
+    min-width: 20px;
+}
+
+/* TOP3設定推定行 */
+.top3-setting {
+    margin-top: 4px;
+}
+
+/* RB/G数など重要度の低いdata-cell */
+.data-cell-minor {
+    min-width: 40px;
+    padding: 4px 6px;
+}
+
+.data-cell-minor .data-value {
+    font-size: 0.9em;
+    font-weight: 700;
 }

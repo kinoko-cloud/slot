@@ -177,53 +177,67 @@ def index():
     # 表示モードを判定
     display_mode = get_display_mode()
 
-    # 店舗別曜日傾向（過去データ分析結果）
+    # 店舗別曜日傾向（物理店舗ベース）
     # 各曜日の評価: 5=最強, 4=強い, 3=普通, 2=やや弱い, 1=避けるべき
     store_day_ratings = {
-        'island_akihabara_sbj': {
+        'island_akihabara': {
             'name': 'アイランド秋葉原',
             'short_name': 'アイランド秋葉原',
-            # 水曜最強、日月が次、木金普通、土曜は避ける
             'day_ratings': {'月': 4, '火': 3, '水': 5, '木': 3, '金': 3, '土': 1, '日': 4},
             'best_note': '水曜が最強、日月も狙い目',
             'worst_note': '土曜は避けるべき',
             'overall_rating': 4,
+            'machine_links': [
+                {'store_key': 'island_akihabara_sbj', 'icon': '🃏', 'short_name': 'SBJ'},
+                {'store_key': 'island_akihabara_hokuto', 'icon': '👊', 'short_name': '北斗転生2'},
+            ],
         },
-        'shibuya_espass_sbj': {
+        'shibuya_espass': {
             'name': 'エスパス日拓渋谷新館',
             'short_name': 'エスパス渋谷新館',
-            # 木曜最強、水火が次、金土月普通、日曜は避ける
             'day_ratings': {'月': 3, '火': 4, '水': 4, '木': 5, '金': 3, '土': 3, '日': 1},
             'best_note': '木曜が最強、火水も狙い目',
             'worst_note': '日曜は避けるべき',
             'overall_rating': 3,
+            'machine_links': [
+                {'store_key': 'shibuya_espass_sbj', 'icon': '🃏', 'short_name': 'SBJ'},
+                {'store_key': 'shibuya_espass_hokuto', 'icon': '👊', 'short_name': '北斗転生2'},
+            ],
         },
-        'shinjuku_espass_sbj': {
+        'shinjuku_espass': {
             'name': 'エスパス日拓新宿歌舞伎町店',
             'short_name': 'エスパス歌舞伎町',
-            # 土曜がメイン、金曜も狙い目
             'day_ratings': {'月': 2, '火': 3, '水': 3, '木': 3, '金': 4, '土': 5, '日': 3},
             'best_note': '土曜が最強、金曜も狙い目',
             'worst_note': '月曜は控えめ',
             'overall_rating': 3,
+            'machine_links': [
+                {'store_key': 'shinjuku_espass_sbj', 'icon': '🃏', 'short_name': 'SBJ'},
+                {'store_key': 'shinjuku_espass_hokuto', 'icon': '👊', 'short_name': '北斗転生2'},
+            ],
         },
-        'akihabara_espass_sbj': {
+        'akihabara_espass': {
             'name': 'エスパス日拓秋葉原駅前店',
             'short_name': 'エスパス秋葉原',
-            # 週末メイン
             'day_ratings': {'月': 2, '火': 3, '水': 3, '木': 3, '金': 4, '土': 5, '日': 4},
             'best_note': '土日が狙い目、金曜も可',
             'worst_note': '月曜は控えめ',
             'overall_rating': 3,
+            'machine_links': [
+                {'store_key': 'akihabara_espass_sbj', 'icon': '🃏', 'short_name': 'SBJ'},
+                {'store_key': 'akihabara_espass_hokuto', 'icon': '👊', 'short_name': '北斗転生2'},
+            ],
         },
-        'seibu_shinjuku_espass_sbj': {
+        'seibu_shinjuku_espass': {
             'name': 'エスパス日拓西武新宿駅前店',
             'short_name': 'エスパス西武新宿',
-            # 金土がメイン
             'day_ratings': {'月': 2, '火': 2, '水': 3, '木': 3, '金': 4, '土': 4, '日': 3},
             'best_note': '金土が狙い目',
             'worst_note': '月火は控えめ',
             'overall_rating': 2,
+            'machine_links': [
+                {'store_key': 'seibu_shinjuku_espass_sbj', 'icon': '🃏', 'short_name': 'SBJ'},
+            ],
         },
     }
 
@@ -338,6 +352,7 @@ def index():
             'worst_note': info['worst_note'],
             'overall_rating': info['overall_rating'],
             'day_ratings': info['day_ratings'],
+            'machine_links': info.get('machine_links', []),
         })
     # 今日の評価でソート（高い順）
     today_store_ranking.sort(key=lambda x: -x['today_rating'])

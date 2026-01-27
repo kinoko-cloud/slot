@@ -90,7 +90,7 @@
                         <span class="rank-badge" style="background-color: {{ rank_color(rec.final_rank) }}">{{ rec.final_rank }}</span>
                     </div>
                     <div class="unit-store">
-                        <span class="store-link">{{ rec.store_name }}</span> / <span class="unit-id-sub">{{ rec.unit_id }}番</span>
+                        <span class="store-link">{{ rec.store_name }}</span> / <span class="unit-id-sub"><span class="unit-id-num">{{ rec.unit_id }}</span><span class="unit-id-ban">番</span></span>
                         {% if is_open %}
                             {% if rec.availability == '空き' %}
                             <span class="top3-avail empty">空き</span>
@@ -105,14 +105,28 @@
                     <div class="top3-stats-main">
                         <span class="art-main"><span class="art-num-big">{{ rec.art_count }}</span><span class="art-label">ART</span></span>
                         {% if rec.rb_count > 0 %}<span class="rb-badge-top">RB {{ rec.rb_count }}</span>{% endif %}
-                        {% if rec.art_prob > 0 %}<span class="art-prob {% if rec.art_prob <= 100 %}excellent{% elif rec.art_prob <= 130 %}good{% elif rec.art_prob >= 200 %}bad{% endif %}" title="合成確率">合成1/{{ rec.art_prob|int }}</span>{% endif %}
+                        {% if rec.art_prob > 0 %}<span class="art-prob {% if rec.art_prob <= 100 %}excellent{% elif rec.art_prob <= 130 %}good{% elif rec.art_prob >= 200 %}bad{% endif %}" title="合成確率"><span class="prob-label">合成</span>1/{{ rec.art_prob|int }}</span>{% endif %}
                     </div>
                     {# === 現在スタート・累計G === #}
                     <div class="top3-stats-sub">
-                        <span class="current-hama">現在<span class="num">{{ rec.current_hama or 0 }}</span>Gスタート</span>
+                        <span class="current-hama">現在: <span class="num">{{ rec.current_hama or 0 }}</span>G</span>
                         {% if rec.total_games > 0 %}<span class="total-games">累計<span class="num">{{ '{:,}'.format(rec.total_games) }}</span>G</span>{% endif %}
                         {% if rec.max_medals and rec.max_medals > 0 %}{% set badge = medals_badge(rec.max_medals) %}<span class="max-medals-top {% if badge %}{{ badge.class }}{% endif %}">{% if badge %}<span class="medals-icon">{{ badge.icon }}</span>{% endif %}最大<span class="num">{{ '{:,}'.format(rec.max_medals) }}</span>枚</span>{% endif %}
                     </div>
+                    {# === 設定推定 === #}
+                    {% if rec.total_games >= 2000 and rec.estimated_setting %}
+                    <div class="top3-setting">
+                        <span class="setting-estimate setting-{{ rec.setting_num|default(0) }}">
+                            {{ rec.estimated_setting }} <span class="payout">({{ rec.payout_estimate }}%)</span>
+                        </span>
+                    </div>
+                    {% elif rec.total_games >= 1000 and rec.estimated_setting %}
+                    <div class="top3-setting">
+                        <span class="setting-estimate setting-{{ rec.setting_num|default(0) }} tentative">
+                            {{ rec.estimated_setting }}? <span class="payout">(要様子見)</span>
+                        </span>
+                    </div>
+                    {% endif %}
                     {# === 前日・前々日データ === #}
                     {% if rec.yesterday_art or rec.day_before_art %}
                     <div class="top3-prev-days">
@@ -185,6 +199,9 @@
                         {% if rec.total_games and rec.total_games > 0 %}
                         <span class="total-games-sm">{{ '{:,}'.format(rec.total_games) }}G</span>
                         {% endif %}
+                        {% if rec.total_games and rec.total_games >= 1000 and rec.estimated_setting %}
+                        <span class="setting-badge-sm setting-{{ rec.setting_num|default(0) }}">{{ rec.setting_num }}{% if rec.total_games < 2000 %}?{% endif %}</span>
+                        {% endif %}
                     </div>
                 </a>
                 {% endfor %}
@@ -216,7 +233,7 @@
                     <span class="legend-item weak">★2以下=避ける</span>
                 </div>
                 {% for store in today_store_ranking %}
-                <a href="{{ url_for('recommend', store_key=store.store_key) }}" class="schedule-card-full" style="text-decoration: none;">
+                <div class="schedule-card-full">
                     <div class="schedule-store-name">{{ store.short_name }}</div>
                     <div class="schedule-week">
                         {% for day in ['月', '火', '水', '木', '金', '土', '日'] %}
@@ -230,7 +247,12 @@
                     <div class="schedule-notes">
                         <span class="note-best">{{ store.best_note }}</span>
                     </div>
-                </a>
+                    <div class="schedule-links">
+                        {% for link in store.machine_links %}
+                        <a href="{{ url_for('recommend', store_key=link.store_key) }}" class="schedule-machine-link">{{ link.icon }} {{ link.short_name }}</a>
+                        {% endfor %}
+                    </div>
+                </div>
                 {% endfor %}
             </section>
 
@@ -283,7 +305,7 @@
             <div class="trend-item good">
                 <span class="trend-label">狙い目店舗:</span>
                 {% for store in today_recommended_stores %}
-                <a href="{{ url_for('recommend', store_key=store.store_key) }}" class="trend-store">{{ store.short_name }}</a>{% if not loop.last %}、{% endif %}
+                <span class="trend-store-name">{{ store.short_name }}</span>{% if not loop.last %}、{% endif %}
                 {% endfor %}
             </div>
             {% endif %}
@@ -291,7 +313,7 @@
             <div class="trend-item bad">
                 <span class="trend-label">避けるべき:</span>
                 {% for store in today_avoid_stores %}
-                <a href="{{ url_for('recommend', store_key=store.store_key) }}" class="trend-store">{{ store.short_name }}</a>{% if not loop.last %}、{% endif %}
+                <span class="trend-store-name">{{ store.short_name }}</span>{% if not loop.last %}、{% endif %}
                 {% endfor %}
             </div>
             {% endif %}
