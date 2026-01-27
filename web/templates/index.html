@@ -88,11 +88,23 @@
                         {% endif %}
                     </div>
                     {% endif %}
-                    {# === 推奨理由（全件表示） === #}
+                    {# === 推奨理由（全件表示・カテゴリ色分け） === #}
                     <div class="reasons-full">
                         {% if rec.reasons %}
                         {% for reason in rec.reasons %}
+                        {% if '過去データ' in reason and 'ランク' in reason %}
+                        <div class="reason-line-top reason-rank"><span class="reason-icon">📊</span> {{ reason }}</div>
+                        {% elif '前日' in reason or '前々日' in reason %}
+                        <div class="reason-line-top reason-prev"><span class="reason-icon">📅</span> {{ reason }}</div>
+                        {% elif '連続' in reason or 'リセット' in reason or 'ローテ' in reason %}
+                        <div class="reason-line-top reason-pattern"><span class="reason-icon">🔄</span> {{ reason }}</div>
+                        {% elif '本日' in reason %}
+                        <div class="reason-line-top reason-today"><span class="reason-icon">🔥</span> {{ reason }}</div>
+                        {% elif '補足' in reason or '曜' in reason %}
+                        <div class="reason-line-top reason-weekday"><span class="reason-icon">📌</span> {{ reason }}</div>
+                        {% else %}
                         <div class="reason-line-top"><span class="reason-icon">💡</span> {{ reason }}</div>
+                        {% endif %}
                         {% endfor %}
                         {% else %}
                         <div class="reason-line-top"><span class="reason-icon">💡</span> 過去データに基づくおすすめ台</div>
@@ -150,12 +162,15 @@
             {% if yesterday_top10 %}
             <section class="yesterday-section">
                 <h2>前日の爆発台 TOP10</h2>
-                <div class="yesterday-note">最大枚数が多かった台（据え置き狙い参考）</div>
+                <div class="yesterday-note">据え置き狙いの参考に</div>
                 {% for rec in yesterday_top10 %}
                 <a href="{{ url_for('recommend', store_key=rec.store_key) }}" class="yesterday-card">
                     <div class="yesterday-header">
                         <span class="ranking-num-sm">#{{ loop.index }}</span>
                         <span class="machine-icon-sm">{{ rec.machine_icon }}</span>
+                        <span class="machine-name-sm">{{ rec.machine_name }}</span>
+                    </div>
+                    <div class="yesterday-sub-header">
                         <span class="store-name-sm">{{ rec.store_name }}</span>
                         <span class="unit-id-sm">{{ rec.unit_id }}番</span>
                         {% if is_open %}
@@ -167,17 +182,17 @@
                         {% endif %}
                     </div>
                     <div class="yesterday-stats">
-                        {% if rec.max_medals > 0 %}
-                        <span class="max-medals">最大<span class="num">{{ '{:,}'.format(rec.max_medals) }}</span>枚</span>
-                        {% endif %}
                         {% if rec.yesterday_art > 0 %}
                         <span class="art-badge">ART <span class="art-num">{{ rec.yesterday_art }}</span></span>
                         {% endif %}
                         {% if rec.yesterday_rb > 0 %}
-                        <span class="rb-badge-sm">RB {{ rec.yesterday_rb }}</span>
+                        <span class="rb-badge-sm">RB <span class="num">{{ rec.yesterday_rb }}</span></span>
                         {% endif %}
-                        {% if rec.yesterday_max_rensa and rec.yesterday_max_rensa >= 5 %}
-                        <span class="rensa-badge">最大{{ rec.yesterday_max_rensa }}連</span>
+                        {% if rec.max_medals > 0 %}
+                        <span class="max-medals">最大<span class="num">{{ '{:,}'.format(rec.max_medals) }}</span>枚</span>
+                        {% endif %}
+                        {% if rec.yesterday_max_rensa and rec.yesterday_max_rensa >= 3 %}
+                        <span class="rensa-badge">最大<span class="num">{{ rec.yesterday_max_rensa }}</span>連</span>
                         {% endif %}
                     </div>
                     {% if rec.day_before_art %}

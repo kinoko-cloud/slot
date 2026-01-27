@@ -1161,11 +1161,11 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
     if yesterday_art and yesterday_games:
         prob = yesterday_games / yesterday_art if yesterday_art > 0 else 999
         if prob <= 130:
-            reasons.append(f"前日ART {yesterday_art}回 (確率1/{prob:.0f}, {yesterday_games:,}G) → 好調、据え置き期待")
+            reasons.append(f"前日ART {yesterday_art}回 (確率1/{prob:.0f}) → 好調、据え置き期待")
         elif prob <= 200:
-            reasons.append(f"前日ART {yesterday_art}回 ({yesterday_games:,}G) → 中間設定域")
+            reasons.append(f"前日ART {yesterday_art}回 (確率1/{prob:.0f}) → 中間設定域")
         else:
-            reasons.append(f"前日ART {yesterday_art}回 (確率1/{prob:.0f}, {yesterday_games:,}G) → 低設定域、リセット期待")
+            reasons.append(f"前日ART {yesterday_art}回 (確率1/{prob:.0f}) → 低設定域、リセット期待")
     elif yesterday_art:
         reasons.append(f"前日ART {yesterday_art}回")
 

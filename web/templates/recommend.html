@@ -233,11 +233,23 @@
                         </span>
                     </div>
 
-                    <!-- 推奨理由（具体的に） -->
+                    <!-- 推奨理由（具体的に・カテゴリ色分け） -->
                     {% if rec.reasons %}
                     <div class="reason-main">
                         {% for reason in rec.reasons[:2] %}
-                        <div class="reason-line">{{ reason }}</div>
+                        {% if '過去データ' in reason and 'ランク' in reason %}
+                        <div class="reason-line reason-rank">📊 {{ reason }}</div>
+                        {% elif '前日' in reason or '前々日' in reason %}
+                        <div class="reason-line reason-prev">📅 {{ reason }}</div>
+                        {% elif '連続' in reason or 'リセット' in reason or 'ローテ' in reason %}
+                        <div class="reason-line reason-pattern">🔄 {{ reason }}</div>
+                        {% elif '本日' in reason %}
+                        <div class="reason-line reason-today">🔥 {{ reason }}</div>
+                        {% elif '補足' in reason or '曜' in reason %}
+                        <div class="reason-line reason-weekday">📌 {{ reason }}</div>
+                        {% else %}
+                        <div class="reason-line">💡 {{ reason }}</div>
+                        {% endif %}
                         {% endfor %}
                     </div>
                     {% endif %}
