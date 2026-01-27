@@ -1906,6 +1906,26 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
             rating_label = {5: '高設定投入日', 4: '狙い目', 3: '普通', 2: '弱い日', 1: '回収日'}.get(today_rating, '普通')
             reasons.append(f"{store_name}の{today_weekday}曜は{rating_label}（店舗傾向{'：' + best_info if best_info else ''}）")
 
+    # 根拠の優先度ソート（ローテ・周期・傾向を先に、過去ランクは後に）
+    def _reason_priority(r):
+        if '🔄' in r and ('ローテ' in r or '連続不調' in r or '連続好調' in r):
+            return 0  # ローテ・設定変更パターン（台ごとに違う→差別化できる）
+        if '🔁' in r:
+            return 1  # 設定変更周期
+        if '🔥' in r or '💡' in r:
+            return 2  # 本日データ・期待根拠
+        if '📈' in r:
+            return 3  # 統計データ（台ごとに違う）
+        if '📅' in r and 'この台の' in r:
+            return 4  # 台固有の曜日傾向
+        if '📅' in r:
+            return 7  # 店舗全体の曜日傾向（全台共通→差別化できない→後回し）
+        if '📊' in r and ('好調率' in r or '高設定' in r):
+            return 8  # 過去ランク（差別化弱い→最後）
+        return 5
+
+    reasons.sort(key=_reason_priority)
+
     # 重複除去 + 同カテゴリ重複排除、上位4つ
     seen = set()
     seen_categories = set()
