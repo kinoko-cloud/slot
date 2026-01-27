@@ -4281,3 +4281,112 @@ strong.minus {
 .store-dir-machine-name {
     font-size: 0.9em;
 }
+
+/* ===================================
+   夜間モード（22:45以降 翌日予想）
+   =================================== */
+
+/* 明日予想モードバッジ */
+.mode-badge.tomorrow {
+    background: linear-gradient(135deg, #2d1b69, #44337a);
+    color: #c9b8ff;
+    border: 1px solid rgba(124, 93, 250, 0.4);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+/* 明日の予想セクション */
+.tomorrow-section {
+    margin: 8px 0;
+    padding: 8px;
+    background: rgba(0, 0, 0, 0.25);
+    border-radius: 8px;
+}
+
+.tomorrow-prediction {
+    margin: 8px 0;
+    padding: 10px;
+    background: linear-gradient(135deg, rgba(45, 27, 105, 0.3), rgba(68, 51, 122, 0.2));
+    border: 1px solid rgba(124, 93, 250, 0.25);
+    border-radius: 8px;
+}
+
+/* 設定推移行 */
+.setting-history-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 6px 0;
+    font-size: 0.85em;
+    flex-wrap: wrap;
+}
+
+.setting-history-label {
+    color: #aaa;
+    font-weight: 600;
+    font-size: 0.85em;
+}
+
+.setting-trend {
+    font-weight: 700;
+    font-size: 0.9em;
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+.setting-trend.minus {
+    background: rgba(255, 107, 107, 0.15);
+    color: #ff6b6b;
+}
+
+.setting-trend.plus {
+    background: rgba(46, 213, 115, 0.15);
+    color: #2ed573;
+}
+
+.setting-trend.improving {
+    background: rgba(112, 161, 255, 0.15);
+    color: #70a1ff;
+}
+
+.setting-trend.flat {
+    background: rgba(100, 100, 100, 0.2);
+    color: #999;
+}
+
+/* 過去分析評価行 */
+.past-eval-row {
+    margin-top: 6px;
+    font-size: 0.85em;
+}
+
+/* ランク別スタイル: unit-card-compact にも適用 */
+.unit-card-compact.rank-s {
+    border-left: 3px solid #ff6b6b;
+}
+
+.unit-card-compact.rank-a {
+    border-left: 3px solid #ffa502;
+}
+
+.unit-card-compact.rank-b {
+    border-left: 3px solid #2ed573;
+}
+
+.unit-card-compact.rank-c {
+    border-left: 3px solid #70a1ff;
+}
+
+.unit-card-compact.rank-d {
+    border-left: 3px solid #747d8c;
+}
+
+/* unit-card-compact に空き状況スタイル適用 */
+.unit-card-compact.avail-card-empty {
+    background: rgba(46, 213, 115, 0.15);
+    border-left-color: #2ed573 !important;
+}
+
+.unit-card-compact.avail-card-playing {
+    background: rgba(255, 107, 107, 0.1);
+    opacity: 0.75;
+}
