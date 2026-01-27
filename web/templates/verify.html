@@ -160,7 +160,7 @@
                                                 <td class="vd-time">{{ hit.time or '-' }}</td>
                                                 <td class="vd-games {% if hit.is_deep %}deep{% elif hit.is_shallow %}shallow{% endif %}">{{ hit.start }}G</td>
                                                 <td class="vd-type {{ hit.type|lower }}">{{ hit.type }}</td>
-                                                <td class="vd-chain {% if hit.is_hot_chain %}hot{% endif %}">{% if hit.chain_len is defined and hit.chain_len > 1 %}{{ hit.chain_len }}連{% else %}-{% endif %}</td>
+                                                <td class="vd-chain {% if hit.is_hot_chain %}hot{% endif %}">{% if hit.chain_pos is defined and hit.chain_pos > 1 %}{{ hit.chain_pos }}連{% elif hit.chain_len is defined and hit.chain_len == 1 %}-{% else %}-{% endif %}</td>
                                                 <td class="vd-medals">{% if hit.medals > 0 %}{{ '{:,}'.format(hit.medals) }}{% else %}-{% endif %}</td>
                                             </tr>
                                             {% endfor %}
