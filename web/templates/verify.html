@@ -13,7 +13,7 @@
         <header>
             <a href="{{ url_for('index') }}" class="back-link">&lt; トップに戻る</a>
             <h1>答え合わせ</h1>
-            <div class="update-info">昨日までのデータで本日を予測できたか？</div>
+            <div class="update-info">開店前の予測（過去データのみ）で当日の好調台を当てられたか？</div>
         </header>
 
         <main>
@@ -83,7 +83,7 @@
                     <div class="verify-table">
                         <div class="verify-header-row">
                             <span class="vh-unit">台番</span>
-                            <span class="vh-pred">予測</span>
+                            <span class="vh-pred">朝予測</span>
                             <span class="vh-art">ART</span>
                             <span class="vh-prob">ART確率</span>
                             <span class="vh-result">判定</span>
@@ -93,8 +93,8 @@
                             <div class="verify-row verdict-{{ unit.verdict_class }}{% if unit.history %} has-detail{% endif %}" onclick="toggleDetail(this)">
                                 <span class="vr-unit">{{ unit.unit_id }}</span>
                                 <span class="vr-pred">
-                                    <span class="rank-badge-xs" style="background-color: {{ rank_color(unit.predicted_rank) }}">{{ unit.predicted_rank }}</span>
-                                    <span class="vr-score">{{ unit.predicted_score|int }}pt</span>
+                                    <span class="rank-badge-xs" style="background-color: {{ rank_color(unit.pre_open_rank) }}">{{ unit.pre_open_rank }}</span>
+                                    <span class="vr-score">{{ unit.pre_open_score|int }}pt</span>
                                 </span>
                                 <span class="vr-art">{{ unit.actual_art }}</span>
                                 <span class="vr-prob {% if unit.actual_prob > 0 and unit.actual_prob <= 100 %}excellent{% elif unit.actual_prob > 0 and unit.actual_prob <= 130 %}good{% elif unit.actual_prob >= 200 %}bad{% endif %}">

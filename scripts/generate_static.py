@@ -766,7 +766,9 @@ def generate_verify_page(env):
             if store_key in old_keys:
                 continue
 
-            # 予測（過去データのみでスコア算出）+ 当日リアルタイムデータ
+            # 2種類の予測を取得
+            # (1) 開店前予測: 過去データのみ（リアルタイムなし）
+            # (2) リアルタイム予測: 当日データ込み
             availability = {}
             realtime = None
             try:
@@ -775,6 +777,16 @@ def generate_verify_page(env):
             except:
                 pass
 
+            # 開店前予測（過去データのみ）
+            pre_open_recs = recommend_units(store_key, availability=availability)
+            pre_open_map = {}
+            for r in pre_open_recs:
+                pre_open_map[str(r.get('unit_id', ''))] = {
+                    'rank': r.get('final_rank', 'C'),
+                    'score': r.get('final_score', 50),
+                }
+
+            # リアルタイム予測（当日データ込み）
             recommendations = recommend_units(store_key, realtime_data=realtime, availability=availability)
             units_data = []
 
@@ -785,11 +797,18 @@ def generate_verify_page(env):
                 daily_units_map[str(u.get('unit_id', ''))] = u
 
             for rec in recommendations:
+                # リアルタイム予測（当日データ込み）
                 predicted_rank = rec.get('final_rank', 'C')
                 predicted_score = rec.get('final_score', 50)
                 actual_art = rec.get('art_count', 0)
                 actual_games = rec.get('total_games', 0)
                 actual_prob = rec.get('art_prob', 0)
+
+                # 開店前予測（過去データのみ）
+                uid = str(rec.get('unit_id', ''))
+                pre_open = pre_open_map.get(uid, {})
+                pre_open_rank = pre_open.get('rank', 'C')
+                pre_open_score = pre_open.get('score', 50)
 
                 # 判定
                 is_predicted_good = predicted_rank in ('S', 'A')
@@ -841,6 +860,8 @@ def generate_verify_page(env):
                     'unit_id': rec.get('unit_id', ''),
                     'predicted_rank': predicted_rank,
                     'predicted_score': predicted_score,
+                    'pre_open_rank': pre_open_rank,
+                    'pre_open_score': pre_open_score,
                     'actual_art': actual_art,
                     'actual_prob': actual_prob,
                     'actual_games': actual_games,
@@ -852,9 +873,9 @@ def generate_verify_page(env):
                 })
 
             if units_data:
-                # 店舗別的中率
-                store_sa_total = sum(1 for u in units_data if u['predicted_rank'] in ('S', 'A'))
-                store_sa_hit = sum(1 for u in units_data if u['predicted_rank'] in ('S', 'A') and u.get('actual_prob', 0) > 0 and u['actual_prob'] <= 130)
+                # 店舗別的中率（開店前予測ベース）
+                store_sa_total = sum(1 for u in units_data if u['pre_open_rank'] in ('S', 'A'))
+                store_sa_hit = sum(1 for u in units_data if u['pre_open_rank'] in ('S', 'A') and u.get('actual_prob', 0) > 0 and u['actual_prob'] <= 130)
                 store_sa_rate = (store_sa_hit / store_sa_total * 100) if store_sa_total > 0 else 0
                 stores_data.append({
                     'name': store.get('name', store_key),
@@ -876,7 +897,7 @@ def generate_verify_page(env):
     if total_predicted_good > 0:
         accuracy = (total_actual_good / total_predicted_good) * 100
 
-    # 機種別の的中率
+    # 機種別の的中率（開店前予測ベース）
     machine_accuracy = []
     for machine_key, machine_data in verify_data.items():
         m_predicted = 0
@@ -884,7 +905,7 @@ def generate_verify_page(env):
         m_surprise = 0
         for store in machine_data.get('stores', []):
             for unit in store.get('units', []):
-                is_sa = unit['predicted_rank'] in ('S', 'A')
+                is_sa = unit['pre_open_rank'] in ('S', 'A')
                 prob = unit.get('actual_prob', 0)
                 is_good = prob > 0 and prob <= 130
                 if is_sa:
