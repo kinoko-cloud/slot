@@ -267,12 +267,17 @@ header h1 {
 .unit-card {
     background: #252541;
     border-radius: 8px;
-    padding: 10px 12px;
-    margin-bottom: 8px;
+    padding: 12px;
+    margin-bottom: 10px;
+    display: block;
 }
 
 .unit-card:active {
     background: #2a2a4a;
+}
+
+.unit-card * {
+    line-height: 1.4;
 }
 
 .unit-card.running {
@@ -284,7 +289,8 @@ header h1 {
     align-items: center;
     gap: 8px;
     margin-bottom: 6px;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    overflow: hidden;
 }
 
 .unit-id {
@@ -433,29 +439,30 @@ footer {
     text-decoration: none;
 }
 
-/* ランク別スタイル（左ボーダーなし、背景のみ） */
+/* ランク別スタイル（左カラーライン 3px） */
 .unit-card.rank-s {
-    background: linear-gradient(90deg, rgba(255, 107, 107, 0.2) 0%, #252541 30%);
-    box-shadow: inset 2px 0 0 #ff6b6b;
+    background: #252541;
+    border-left: 3px solid #ff6b6b;
 }
 
 .unit-card.rank-a {
-    background: linear-gradient(90deg, rgba(255, 165, 2, 0.2) 0%, #252541 30%);
-    box-shadow: inset 2px 0 0 #ffa502;
+    background: #252541;
+    border-left: 3px solid #ffa502;
 }
 
 .unit-card.rank-b {
-    background: linear-gradient(90deg, rgba(46, 213, 115, 0.15) 0%, #252541 30%);
-    box-shadow: inset 2px 0 0 #2ed573;
+    background: #252541;
+    border-left: 3px solid #2ed573;
 }
 
 .unit-card.rank-c {
-    background: linear-gradient(90deg, rgba(112, 161, 255, 0.15) 0%, #252541 30%);
-    box-shadow: inset 2px 0 0 #70a1ff;
+    background: #252541;
+    border-left: 3px solid #70a1ff;
 }
 
 .unit-card.rank-d {
-    box-shadow: inset 2px 0 0 #747d8c;
+    background: #252541;
+    border-left: 3px solid #747d8c;
 }
 
 /* スクレイピングボタン */
@@ -882,13 +889,10 @@ footer {
 
 /* 店舗タグ */
 .unit-store {
-    display: flex;
-    align-items: center;
-    gap: 6px;
     font-size: 0.85em;
     color: #70a1ff;
-    margin: 2px 0;
-    flex-wrap: wrap;
+    margin: 4px 0;
+    line-height: 1.5;
 }
 
 .unit-store a {
@@ -2242,8 +2246,7 @@ strong.minus {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin: 6px 0 2px 0;
-    flex-wrap: wrap;
+    margin: 6px 0 4px 0;
 }
 
 .art-main {
@@ -2289,11 +2292,10 @@ strong.minus {
 /* サブ情報行 */
 .top3-stats-sub {
     display: flex;
-    gap: 10px;
+    gap: 12px;
     font-size: 0.8em;
     color: #888;
-    margin-top: 2px;
-    flex-wrap: wrap;
+    margin-top: 4px;
     flex-wrap: wrap;
 }
 
