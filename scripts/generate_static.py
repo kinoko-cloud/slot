@@ -18,7 +18,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 from jinja2 import Environment, FileSystemLoader
 from config.rankings import STORES, MACHINES, get_stores_by_machine, get_machine_info
-from analysis.recommender import recommend_units, load_daily_data, generate_store_analysis, calculate_expected_profit
+from analysis.recommender import recommend_units, load_daily_data, generate_store_analysis, calculate_expected_profit, analyze_today_graph, calculate_at_intervals
 from scrapers.availability_checker import get_availability, get_realtime_data
 from scripts.verify_units import get_active_alerts, get_unit_status
 
@@ -289,6 +289,21 @@ def generate_index(env):
                             y_si = y_profit.get('setting_info', {})
                             y_setting = y_si.get('estimated_setting', '')
                             y_setting_num = y_si.get('setting_num', 0)
+                        # today_historyから連チャン・天井・最大メダルを計算
+                        y_max_rensa = rec.get('yesterday_max_rensa', 0) or rec.get('today_max_rensa', 0)
+                        y_max_medals = rec.get('yesterday_max_medals', 0)
+                        y_ceilings = 0
+                        hist = rec.get('today_history', [])
+                        if hist:
+                            try:
+                                graph = analyze_today_graph(hist)
+                                y_max_rensa = max(y_max_rensa, graph.get('max_rensa', 0))
+                                intervals = calculate_at_intervals(hist)
+                                y_ceilings = sum(1 for g in intervals if g >= 999)
+                                if not y_max_medals:
+                                    y_max_medals = max((h.get('medals', 0) for h in hist), default=0)
+                            except:
+                                pass
                         yesterday_top10.append({
                             'unit_id': rec['unit_id'],
                             'store_name': rec['store_name'],
@@ -297,7 +312,9 @@ def generate_index(env):
                             'machine_name': machine.get('display_name', machine['short_name']),
                             'yesterday_art': y_art,
                             'yesterday_games': y_games,
-                            'yesterday_max_rensa': rec.get('yesterday_max_rensa', 0),
+                            'yesterday_max_rensa': y_max_rensa,
+                            'yesterday_max_medals': y_max_medals,
+                            'yesterday_ceilings': y_ceilings,
                             'yesterday_prob': y_prob,
                             'diff_medals': y_diff_medals,
                             'estimated_setting': y_setting,
