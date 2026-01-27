@@ -220,9 +220,8 @@ def generate_index(env):
                     rec['machine_name'] = machine.get('display_name', machine['short_name'])
                     rec['availability'] = availability.get(rec['unit_id'], '')
 
-                    reasons_text = ' '.join(rec.get('reasons', []))
-                    if rec['final_rank'] in ('S', 'A') and '様子見' not in reasons_text:
-                        top3_all.append(rec)
+                    # ランクに関係なくすべて追加（スコア順でソート後に上位3件を表示）
+                    top3_all.append(rec)
 
                     max_medals = rec.get('max_medals', 0)
                     if max_medals > 3000 or rec.get('yesterday_diff', 0) > 500:
