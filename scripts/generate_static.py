@@ -126,6 +126,8 @@ def generate_url(endpoint, **kwargs):
         return '/rules.html'
     elif endpoint == 'unit_history':
         return f"/history/{kwargs.get('store_key', '')}_{kwargs.get('unit_id', '')}.html"
+    elif endpoint == 'api_status':
+        return f"https://autogmail.pythonanywhere.com/api/status/{kwargs.get('store_key', '')}"
     return '#'
 
 

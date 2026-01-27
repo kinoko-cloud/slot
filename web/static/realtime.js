@@ -50,8 +50,21 @@ async function updateIndexPage() {
         // 更新時刻を表示
         if (statusEl) {
             const updatedAt = new Date(data.updated_at);
-            statusEl.textContent = `${updatedAt.getHours()}:${String(updatedAt.getMinutes()).padStart(2, '0')} 更新`;
-            statusEl.className = 'realtime-status success';
+            const now = new Date();
+            const ageMinutes = Math.floor((now - updatedAt) / 60000);
+
+            if (ageMinutes > 30) {
+                const hours = Math.floor(ageMinutes / 60);
+                const mins = ageMinutes % 60;
+                statusEl.textContent = `${hours}時間${mins}分前のデータ`;
+                statusEl.className = 'realtime-status stale';
+            } else if (ageMinutes > 10) {
+                statusEl.textContent = `${ageMinutes}分前のデータ`;
+                statusEl.className = 'realtime-status warning';
+            } else {
+                statusEl.textContent = `${updatedAt.getHours()}:${String(updatedAt.getMinutes()).padStart(2, '0')} 更新`;
+                statusEl.className = 'realtime-status success';
+            }
         }
 
         // トップ3を更新
@@ -131,8 +144,21 @@ async function updateRecommendPage(storeKey) {
         // 更新時刻
         if (statusEl) {
             const updatedAt = new Date(data.updated_at);
-            statusEl.textContent = `${updatedAt.getHours()}:${String(updatedAt.getMinutes()).padStart(2, '0')} 更新`;
-            statusEl.className = 'realtime-status success';
+            const now = new Date();
+            const ageMinutes = Math.floor((now - updatedAt) / 60000);
+
+            if (ageMinutes > 30) {
+                const hours = Math.floor(ageMinutes / 60);
+                const mins = ageMinutes % 60;
+                statusEl.textContent = `${hours}時間${mins}分前のデータ`;
+                statusEl.className = 'realtime-status stale';
+            } else if (ageMinutes > 10) {
+                statusEl.textContent = `${ageMinutes}分前のデータ`;
+                statusEl.className = 'realtime-status warning';
+            } else {
+                statusEl.textContent = `${updatedAt.getHours()}:${String(updatedAt.getMinutes()).padStart(2, '0')} 更新`;
+                statusEl.className = 'realtime-status success';
+            }
         }
 
         // データ取得時刻
@@ -140,6 +166,9 @@ async function updateRecommendPage(storeKey) {
         if (updateTimeEl && data.cache_info) {
             updateTimeEl.textContent = data.cache_info.fetched_at;
         }
+
+        // 古いデータ警告バナー
+        updateStaleWarning(data.updated_at);
 
         // 推奨台を更新
         updateRecommendations(data.top_recs, 'top-recs-container');
@@ -204,6 +233,31 @@ document.addEventListener('DOMContentLoaded', function() {
         setInterval(() => updateRecommendPage(storeKey), 3 * 60 * 1000);
     }
 });
+
+// 古いデータ警告バナーの更新
+function updateStaleWarning(updatedAtStr) {
+    const existing = document.getElementById('stale-warning-banner');
+    if (existing) existing.remove();
+
+    if (!updatedAtStr) return;
+
+    const updatedAt = new Date(updatedAtStr);
+    const now = new Date();
+    const ageMinutes = Math.floor((now - updatedAt) / 60000);
+
+    if (ageMinutes > 30) {
+        const hours = Math.floor(ageMinutes / 60);
+        const mins = ageMinutes % 60;
+        const banner = document.createElement('div');
+        banner.id = 'stale-warning-banner';
+        banner.className = 'stale-warning-banner';
+        banner.innerHTML = `データが${hours}時間${mins}分前のものです。「最新データ取得」を押してください。`;
+        const container = document.querySelector('.container');
+        if (container) {
+            container.insertBefore(banner, container.firstChild);
+        }
+    }
+}
 
 // 手動更新ボタン
 function refreshData() {

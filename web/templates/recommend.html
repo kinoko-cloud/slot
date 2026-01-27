@@ -24,6 +24,11 @@
                     データ取得: <span id="update-time">{{ cache_info.fetched_at }}</span>
                 </span>
                 <span class="cache-badge {{ cache_info.source }}">{{ cache_info.source|upper }}</span>
+                {% if cache_info.age_seconds and cache_info.age_seconds > 1800 %}
+                <div class="stale-warning">データが{{ (cache_info.age_seconds // 3600) }}時間{{ ((cache_info.age_seconds % 3600) // 60) }}分前のものです</div>
+                {% elif cache_info.age_seconds and cache_info.age_seconds > 600 %}
+                <div class="stale-notice">{{ (cache_info.age_seconds // 60) }}分前のデータです</div>
+                {% endif %}
                 {% else %}
                 <span class="data-source no-realtime">リアルタイムデータなし（過去の傾向で評価）</span>
                 {% endif %}
@@ -248,13 +253,11 @@
                                 {% elif rec.consecutive_minus > 0 %}
                                 <div class="detail-item minus">{{ rec.consecutive_minus }}日連続マイナス → 設定上げ期待</div>
                                 {% endif %}
-                                {% if rec.trend and rec.trend.get('art_trend') == 'improving' %}
-                                <div class="detail-item plus">直近のART確率が改善傾向</div>
-                                {% elif rec.trend and rec.trend.get('art_trend') == 'declining' %}
-                                <div class="detail-item minus">直近のART確率が悪化傾向</div>
+                                {% if rec.yesterday_art %}
+                                <div class="detail-item">前日ART {{ rec.yesterday_art }}回{% if rec.yesterday_games %} ({{ '{:,}'.format(rec.yesterday_games) }}G){% endif %}</div>
                                 {% endif %}
-                                {% if rec.trend and rec.trend.get('ceiling_count', 0) > 0 %}
-                                <div class="detail-item minus">直近で天井到達{{ rec.trend.get('ceiling_count', 0) }}回 → 低設定の日があった</div>
+                                {% if rec.day_before_art %}
+                                <div class="detail-item">前々日ART {{ rec.day_before_art }}回{% if rec.day_before_games %} ({{ '{:,}'.format(rec.day_before_games) }}G){% endif %}</div>
                                 {% endif %}
                             </div>
                         </div>
