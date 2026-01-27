@@ -1405,8 +1405,24 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
     good_day_rate = historical_perf.get('good_day_rate', 0)
     good_days = historical_perf.get('good_days', 0)
     total_perf_days = historical_perf.get('total_days', 0)
+    miss_days = total_perf_days - good_days if total_perf_days > 0 else 0
+
     if total_perf_days > 0 and good_day_rate >= 0.7:
         reasons.append(f"📊 {total_perf_days}日間中{good_days}日好調（好調率{good_day_rate:.0%}）→ 高設定が入りやすい台")
+        # なぜ今日も好調と見るかの根拠を追加
+        today_confidence_parts = []
+        if today_rating >= 4:
+            today_confidence_parts.append(f"{store_name}の{today_weekday}曜は★{today_rating}（高設定投入日）")
+        if consecutive_plus >= 2:
+            today_confidence_parts.append(f"現在{consecutive_plus}日連続好調中")
+        elif consecutive_minus >= 2:
+            today_confidence_parts.append(f"{consecutive_minus}日不調→反転期待")
+        if miss_days <= 1 and total_perf_days >= 5:
+            today_confidence_parts.append(f"外れたのは{total_perf_days}日中{miss_days}日のみ")
+        if today_confidence_parts:
+            reasons.append(f"💡 今日も期待できる根拠: {' / '.join(today_confidence_parts)}")
+        elif today_rating >= 3:
+            reasons.append(f"💡 {store_name}{today_weekday}曜★{today_rating} → 好調維持の期待あり")
     elif total_perf_days > 0 and good_day_rate <= 0.4:
         reasons.append(f"📊 {total_perf_days}日間中{good_days}日好調（好調率{good_day_rate:.0%}）→ 低設定が入りやすい台")
     elif base_rank == 'S':
@@ -1495,13 +1511,15 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
         reasons.append(f"⚠ ART回数の割に出玉が伸びていない")
 
     # === 6. 店舗曜日傾向（補足情報） ===
-    if store_name and today_weekday:
+    # 好調率の根拠で既に曜日情報を出してたら重複させない
+    has_weekday_in_confidence = any('今日も期待できる根拠' in r and today_weekday in r for r in reasons)
+    if store_name and today_weekday and not has_weekday_in_confidence:
         if today_rating >= 5:
-            reasons.append(f"補足: {store_name}の{today_weekday}曜は最強日（★5）→ 高設定投入期待大")
+            reasons.append(f"📅 {store_name}の{today_weekday}曜は最強日（★5）→ 高設定投入期待大")
         elif today_rating >= 4:
-            reasons.append(f"補足: {store_name}は{today_weekday}曜が狙い目（★4）")
+            reasons.append(f"📅 {store_name}は{today_weekday}曜が狙い目（★4）")
         elif today_rating <= 2:
-            reasons.append(f"注意: {store_name}は{today_weekday}曜★{today_rating}（弱い日）→ 回収傾向")
+            reasons.append(f"⚠ {store_name}は{today_weekday}曜★{today_rating}（弱い日）→ 回収傾向")
 
     # === フォールバック ===
     if not reasons:
