@@ -145,7 +145,7 @@ def fetch_unit_detail(page, hall_id: str, unit_id: str) -> dict:
         # テキストからデータを抽出
         text = page.inner_text('body')
 
-        data = {'unit_id': unit_id}
+        data = {'unit_id': unit_id, 'bb': 0, 'rb': 0, 'art': 0, 'total_start': 0, 'final_start': 0}
 
         # BB/RB/ART/スタート回数を取得
         # パターン: BB RB ART スタート回数\n数値 数値 数値 数値
@@ -188,7 +188,7 @@ def fetch_unit_detail(page, hall_id: str, unit_id: str) -> dict:
 
     except Exception as e:
         print(f"    {unit_id}: Error - {e}")
-        return {'unit_id': unit_id, 'error': str(e)}
+        return {'unit_id': unit_id, 'bb': 0, 'rb': 0, 'art': 0, 'total_start': 0, 'final_start': 0, 'error': str(e)}
 
 
 # ===== papimo.jp対応 =====
@@ -241,7 +241,7 @@ def fetch_papimo_unit_detail(page, hall_id: str, unit_id: str) -> dict:
 
         text = page.inner_text('body')
 
-        data = {'unit_id': unit_id}
+        data = {'unit_id': unit_id, 'bb': 0, 'rb': 0, 'art': 0, 'total_start': 0, 'final_start': 0}
 
         def parse_num(s):
             return int(s.replace(',', ''))
@@ -284,7 +284,7 @@ def fetch_papimo_unit_detail(page, hall_id: str, unit_id: str) -> dict:
 
     except Exception as e:
         print(f"    {unit_id}: Error - {e}")
-        return {'unit_id': unit_id, 'error': str(e)}
+        return {'unit_id': unit_id, 'bb': 0, 'rb': 0, 'art': 0, 'total_start': 0, 'final_start': 0, 'error': str(e)}
 
 
 def main():
