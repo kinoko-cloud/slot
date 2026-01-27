@@ -85,7 +85,6 @@
                         <div class="recent-day-row">
                             <span class="recent-label">{{ short_date(rec.yesterday_date) or '前日' }}</span>
                             <span class="recent-art">ART {{ y_art }}</span>
-                            {% if rec.first_hit_count is defined and rec.first_hit_count > 0 %}<span class="first-hit-count-sm">初当たり{{ rec.first_hit_count }}回</span>{% endif %}
                             {% if y_prob > 0 %}<span class="recent-prob {% if y_prob <= 100 %}excellent{% elif y_prob <= 130 %}good{% elif y_prob >= 200 %}bad{% endif %}">1/{{ y_prob }}</span>{% endif %}
                             {% if rec.yesterday_diff_medals is defined and rec.yesterday_diff_medals != 0 %}
                             <span class="diff-medals-sm {% if rec.yesterday_diff_medals > 0 %}plus{% else %}minus{% endif %}">{{ '{:+,}'.format(rec.yesterday_diff_medals) }}枚</span>
