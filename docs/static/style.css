@@ -5458,14 +5458,15 @@ strong.minus {
 /* 初当たりバッジ（履歴行内） */
 .yh-first-hit-badge {
     display: inline-block;
-    padding: 1px 5px;
-    border-radius: 4px;
-    font-size: 0.7em;
+    padding: 0 3px;
+    border-radius: 3px;
+    font-size: 0.65em;
     font-weight: 700;
-    background: rgba(255, 215, 0, 0.2);
+    background: rgba(255, 215, 0, 0.25);
     color: #ffd700;
     white-space: nowrap;
-    flex-shrink: 0;
+    margin-left: 2px;
+    vertical-align: middle;
 }
 
 /* 初当たり回数（爆発台カード内） */
