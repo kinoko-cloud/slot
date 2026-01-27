@@ -21,7 +21,7 @@ PROJECT_ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
 from config.rankings import STORES, RANKINGS, MACHINES, get_stores_by_machine, get_machine_info
-from analysis.recommender import recommend_units, load_daily_data
+from analysis.recommender import recommend_units, load_daily_data, generate_store_analysis
 from scrapers.availability_checker import get_availability, get_realtime_data
 
 app = Flask(__name__)
@@ -534,6 +534,10 @@ def recommend(store_key: str):
     is_open = is_business_hours()
     display_mode = get_display_mode()
 
+    # 店舗分析（この店舗の機種全体傾向）
+    daily_data = load_daily_data(machine_key=machine_key)
+    store_analysis = generate_store_analysis(store_key, daily_data)
+
     return render_template('recommend.html',
                            store=store,
                            store_key=store_key,
@@ -545,7 +549,8 @@ def recommend(store_key: str):
                            cache_info=cache_info,
                            availability_info=availability_info,
                            is_open=is_open,
-                           display_mode=display_mode)
+                           display_mode=display_mode,
+                           store_analysis=store_analysis)
 
 
 @app.route('/rules')

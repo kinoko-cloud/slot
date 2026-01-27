@@ -175,4 +175,12 @@ def get_store_units(store_key: str) -> list:
 def get_unit_ranking(store_key: str, unit_id: str) -> dict:
     """台のランキング情報を取得"""
     store_rankings = RANKINGS.get(store_key, {})
+    if not store_rankings:
+        # 機種サフィックスなしのキーでも検索
+        for suffix in ['_sbj', '_hokuto', '_hokuto_tensei2']:
+            if store_key.endswith(suffix):
+                alt_key = store_key[:-len(suffix)]
+                store_rankings = RANKINGS.get(alt_key, {})
+                if store_rankings:
+                    break
     return store_rankings.get(unit_id, {'rank': 'C', 'score': 50, 'note': '未評価'})
