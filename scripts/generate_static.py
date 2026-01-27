@@ -116,6 +116,7 @@ def setup_jinja():
         return s
     env.filters['pad_id'] = pad_unit_id
     env.globals['pad_id'] = pad_unit_id
+    env.globals['build_time'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
     def format_short_date(date_str):
         """'2026-01-26' → '1/26(月)'"""
