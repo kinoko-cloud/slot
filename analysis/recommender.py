@@ -1271,6 +1271,9 @@ def analyze_rotation_pattern(days: List[dict]) -> dict:
         return {'has_pattern': False, 'cycle_days': 0, 'next_high_chance': False, 'description': ''}
 
     # 直近7日の結果（プラス/マイナス）をパターン化
+    SYMBOL_GOOD = '◎'
+    SYMBOL_BAD = '✕'
+    SYMBOL_MID = '△'
     results = []
     for day in days[:7]:
         art = day.get('art', 0)
@@ -1278,47 +1281,51 @@ def analyze_rotation_pattern(days: List[dict]) -> dict:
         if games > 0 and art > 0:
             prob = games / art
             if prob <= 130:  # 高設定域
-                results.append('+')
+                results.append(SYMBOL_GOOD)
             elif prob >= 200:  # 低設定域
-                results.append('-')
+                results.append(SYMBOL_BAD)
             else:
-                results.append('=')
+                results.append(SYMBOL_MID)
 
     if len(results) < 5:
         return {'has_pattern': False, 'cycle_days': 0, 'next_high_chance': False, 'description': ''}
 
     # 連続マイナス後のプラスパターンを検出
-    pattern_str = ''.join(results)
+    is_bad = lambda s: s == SYMBOL_BAD
+    is_good = lambda s: s == SYMBOL_GOOD
+
+    # 表示用（古い→新しいの順、→で繋ぐ）
+    def _fmt_pattern(r):
+        return '→'.join(reversed(r[:min(6, len(r))]))
 
     # 2日下げて上げるパターン
-    if '--+' in pattern_str[:4]:
+    if len(results) >= 3 and is_bad(results[2]) and is_bad(results[1]) and is_good(results[0]):
         return {
             'has_pattern': True,
             'cycle_days': 3,
-            'next_high_chance': results[0] == '-' and results[1] == '-',
-            'description': '2日下げ→上げのローテ傾向あり'
+            'next_high_chance': is_bad(results[0]) and is_bad(results[1]),
+            'description': f'{_fmt_pattern(results)}（2日下げ→上げのローテ傾向）'
         }
 
     # 3日下げて上げるパターン
-    if '---+' in pattern_str[:5]:
+    if len(results) >= 4 and is_bad(results[3]) and is_bad(results[2]) and is_bad(results[1]) and is_good(results[0]):
         return {
             'has_pattern': True,
             'cycle_days': 4,
-            'next_high_chance': results[0] == '-' and results[1] == '-' and results[2] == '-',
-            'description': '3日下げ→上げのローテ傾向あり'
+            'next_high_chance': is_bad(results[0]) and is_bad(results[1]) and is_bad(results[2]),
+            'description': f'{_fmt_pattern(results)}（3日下げ→上げのローテ傾向）'
         }
 
-    # 交互パターン（+-+-）
+    # 交互パターン
     alternating = sum(1 for i in range(len(results)-1) if results[i] != results[i+1])
     alt_rate = alternating / (len(results) - 1) if len(results) > 1 else 0
     # 80%以上 かつ 直近2日が同じでない場合のみ
     if alt_rate >= 0.8 and len(results) >= 2 and results[0] != results[1]:
-        pattern_display = '→'.join(results[:min(6, len(results))])
         return {
             'has_pattern': True,
             'cycle_days': 2,
-            'next_high_chance': results[0] == '-',
-            'description': f'直近{len(results)}日の実績: {pattern_display}（交互傾向{alternating}/{len(results)-1}回）'
+            'next_high_chance': is_bad(results[0]),
+            'description': f'{_fmt_pattern(results)}（{alternating}/{len(results)-1}回交互）'
         }
 
     return {'has_pattern': False, 'cycle_days': 0, 'next_high_chance': False, 'description': ''}
