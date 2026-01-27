@@ -304,13 +304,13 @@
             <!-- 店舗一覧 -->
             {% if all_stores %}
             <section class="store-directory">
-                <h2>🏢 店舗一覧</h2>
-                <div class="store-directory-note">全{{ all_stores|length }}店舗</div>
+                <h2>🏢 {{ today_weekday }}曜日の店舗おすすめ度</h2>
+                <div class="store-directory-note">★が多いほど高設定が入りやすい曜日（過去データ分析）</div>
                 {% for store in all_stores %}
                 <div class="store-directory-card {% if store.today_rating >= 4 %}store-dir-good{% elif store.today_rating <= 2 %}store-dir-weak{% endif %}">
                     <div class="store-dir-header">
                         <span class="store-dir-name">{{ store.short_name }}</span>
-                        <span class="store-dir-rating {% if store.today_rating >= 4 %}good{% elif store.today_rating <= 2 %}weak{% endif %}">{{ '★' * store.today_rating }}</span>
+                        <span class="store-dir-rating {% if store.today_rating >= 4 %}good{% elif store.today_rating <= 2 %}weak{% endif %}">{{ today_weekday }}曜 {{ '★' * store.today_rating }}</span>
                     </div>
                     <div class="store-dir-machines">
                         {% for link in store.machine_links %}
