@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
     <meta name="googlebot" content="noindex, nofollow">
-    <title>{{ store.name }} {{ unit_id }}番 - 当たり履歴</title>
+    <title>{{ store.name }} {{ unit_id|pad_id }}番 - 当たり履歴</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <div class="container">
         <header>
             <a href="{{ url_for('recommend', store_key=store_key) }}" class="back-link">&lt; {{ store.name }}</a>
-            <h1>{{ unit_id }}番 当たり履歴</h1>
+            <h1>{{ unit_id|pad_id }}番 当たり履歴</h1>
             <div class="machine-label">{{ machine.icon }} {{ machine.short_name }}</div>
             {% if history_date %}
             <div class="subtitle">{{ history_date }}のデータ</div>

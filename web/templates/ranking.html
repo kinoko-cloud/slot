@@ -44,7 +44,7 @@
                     <!-- メインヘッダー: ランキング番号 + 台番号 + 店舗 + ランク -->
                     <div class="unit-main-header">
                         <span class="ranking-num">#{{ loop.index }}</span>
-                        <a href="{{ url_for('recommend', store_key=rec.store_key) }}" class="unit-id-large unit-id-link" onclick="event.stopPropagation()">{{ rec.unit_id }}番台</a>
+                        <a href="{{ url_for('recommend', store_key=rec.store_key) }}" class="unit-id-large unit-id-link" onclick="event.stopPropagation()">{{ rec.unit_id|pad_id }}番台</a>
 
                         <!-- 空き状況バッジ -->
                         {% if rec.availability == '空き' %}
@@ -351,7 +351,7 @@
                 <div class="unit-card-compact rank-{{ rec.final_rank|lower }} {{ 'avail-card-empty' if rec.availability == '空き' else 'avail-card-playing' if rec.availability == '遊技中' else '' }}" onclick="toggleDetails(this)">
                     <div class="compact-row">
                         <span class="compact-rank-num">#{{ loop.index + top_recs|length }}</span>
-                        <span class="unit-id-sm">{{ rec.unit_id }}番台</span>
+                        <span class="unit-id-sm">{{ rec.unit_id|pad_id }}番台</span>
 
                         {% if rec.availability == '空き' %}
                         <span class="avail-sm empty">空</span>
