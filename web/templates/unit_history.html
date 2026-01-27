@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+    <meta name="googlebot" content="noindex, nofollow">
+    <title>{{ store.name }} {{ unit_id|pad_id }}番台 - 履歴</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body data-page-type="unit-history">
+    <div class="container">
+        <header>
+            <a href="{{ url_for('recommend', store_key=store_key) }}" class="back-link">&lt; {{ store.name }}</a>
+            <h1>{{ unit_id|pad_id }}番台 履歴</h1>
+            <div class="machine-label">{{ machine.icon }} {{ machine.short_name }}</div>
+            <div class="uh-meta">
+                全{{ days|length }}日分のデータ
+                {% if days %}
+                <span class="uh-meta-range">（{{ days[-1].date }} 〜 {{ days[0].date }}）</span>
+                {% endif %}
+            </div>
+        </header>
+
+        <main>
+            {# === 全期間サマリー === #}
+            {% if total_summary %}
+            <section class="uh-total-summary">
+                <div class="uh-total-title">全期間サマリー</div>
+                <div class="uh-total-grid">
+                    <div class="uh-total-item">
+                        <span class="uh-total-value">{{ total_summary.total_days }}</span>
+                        <span class="uh-total-label">日数</span>
+                    </div>
+                    <div class="uh-total-item">
+                        <span class="uh-total-value">{{ total_summary.good_days }}</span>
+                        <span class="uh-total-label">好調日</span>
+                    </div>
+                    <div class="uh-total-item {% if total_summary.good_rate >= 60 %}excellent{% elif total_summary.good_rate >= 40 %}good{% elif total_summary.good_rate < 30 %}bad{% endif %}">
+                        <span class="uh-total-value">{{ total_summary.good_rate }}%</span>
+                        <span class="uh-total-label">好調率</span>
+                    </div>
+                    <div class="uh-total-item">
+                        <span class="uh-total-value">1/{{ total_summary.avg_prob|int }}</span>
+                        <span class="uh-total-label">平均確率</span>
+                    </div>
+                    {% if total_summary.total_diff_medals != 0 %}
+                    <div class="uh-total-item {% if total_summary.total_diff_medals > 0 %}plus{% else %}minus{% endif %}">
+                        <span class="uh-total-value">{{ '{:+,}'.format(total_summary.total_diff_medals) }}</span>
+                        <span class="uh-total-label">累計差枚</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </section>
+            {% endif %}
+
+            {# === 日別データ（アコーディオン） === #}
+            {% if days %}
+            <section class="uh-days">
+                {% for day in days %}
+                <div class="uh-day-card {% if loop.first %}open{% endif %}" data-day-index="{{ loop.index0 }}">
+                    {# 日付ヘッダー（クリックで開閉） #}
+                    <div class="uh-day-header" onclick="toggleDay(this)">
+                        <div class="uh-day-date">
+                            <span class="uh-date-text">{{ day.date_display }}</span>
+                            {% if day.is_good %}
+                            <span class="uh-day-badge good">好調</span>
+                            {% elif day.prob and day.prob >= 200 %}
+                            <span class="uh-day-badge bad">不調</span>
+                            {% endif %}
+                        </div>
+                        <div class="uh-day-quick">
+                            <span class="uh-q-art">ART <strong>{{ day.art or 0 }}</strong></span>
+                            {% if day.rb %}<span class="uh-q-rb">RB {{ day.rb }}</span>{% endif %}
+                            {% if day.prob %}<span class="uh-q-prob {% if day.prob <= 100 %}excellent{% elif day.prob <= 130 %}good{% elif day.prob >= 200 %}bad{% endif %}">1/{{ day.prob|int }}</span>{% endif %}
+                            {% if day.diff_medals and day.diff_medals != 0 %}
+                            <span class="uh-q-diff {% if day.diff_medals > 0 %}plus{% else %}minus{% endif %}">{{ '{:+,}'.format(day.diff_medals) }}枚</span>
+                            {% endif %}
+                        </div>
+                        <span class="uh-day-toggle">{{ '▲' if loop.first else '▼' }}</span>
+                    </div>
+
+                    {# 展開時の詳細 #}
+                    <div class="uh-day-body" {% if not loop.first %}style="display:none"{% endif %}>
+                        {# 日サマリー #}
+                        <div class="uh-day-summary">
+                            <div class="uh-ds-grid">
+                                <div class="uh-ds-item">
+                                    <span class="uh-ds-val">{{ day.art or 0 }}</span>
+                                    <span class="uh-ds-lbl">ART</span>
+                                </div>
+                                <div class="uh-ds-item">
+                                    <span class="uh-ds-val">{{ day.rb or 0 }}</span>
+                                    <span class="uh-ds-lbl">RB</span>
+                                </div>
+                                {% if day.prob %}
+                                <div class="uh-ds-item {% if day.prob <= 100 %}excellent{% elif day.prob <= 130 %}good{% elif day.prob >= 200 %}bad{% endif %}">
+                                    <span class="uh-ds-val">1/{{ day.prob|int }}</span>
+                                    <span class="uh-ds-lbl">ART確率</span>
+                                </div>
+                                {% endif %}
+                                {% if day.games %}
+                                <div class="uh-ds-item">
+                                    <span class="uh-ds-val">{{ '{:,}'.format(day.games) }}</span>
+                                    <span class="uh-ds-lbl">G数</span>
+                                </div>
+                                {% endif %}
+                                {% if day.diff_medals and day.diff_medals != 0 %}
+                                <div class="uh-ds-item {% if day.diff_medals > 0 %}plus{% else %}minus{% endif %}">
+                                    <span class="uh-ds-val">{{ '{:+,}'.format(day.diff_medals) }}</span>
+                                    <span class="uh-ds-lbl">差枚</span>
+                                </div>
+                                {% endif %}
+                                {% if day.max_medals and day.max_medals > 0 %}
+                                <div class="uh-ds-item highlight">
+                                    <span class="uh-ds-val">{{ '{:,}'.format(day.max_medals) }}</span>
+                                    <span class="uh-ds-lbl">最大枚数</span>
+                                </div>
+                                {% endif %}
+                                {% if day.max_rensa and day.max_rensa > 0 %}
+                                <div class="uh-ds-item {% if day.max_rensa >= 10 %}excellent{% elif day.max_rensa >= 5 %}good{% endif %}">
+                                    <span class="uh-ds-val">{{ day.max_rensa }}連</span>
+                                    <span class="uh-ds-lbl">最大連チャン</span>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        {# 当たり履歴テーブル #}
+                        {% if day.history %}
+                        <div class="uh-hit-table">
+                            <div class="uh-hit-title">当たり履歴（全{{ day.history|length }}回）</div>
+                            <div class="uh-hit-wrapper">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>時刻</th>
+                                            <th>スタートG</th>
+                                            <th>種別</th>
+                                            <th>獲得枚数</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for h in day.history_sorted %}
+                                        <tr class="{% if h.start >= 800 %}tenjou{% elif h.start >= 500 %}deep{% elif h.start <= 50 and h.type in ('ART','AT','BIG') %}rensa{% endif %}">
+                                            <td class="num">{{ loop.index }}</td>
+                                            <td class="time">{{ h.time or '-' }}</td>
+                                            <td class="games {% if h.start >= 500 %}deep{% elif h.start <= 50 %}shallow{% endif %}">{{ h.start }}G</td>
+                                            <td class="type {{ h.type|lower if h.type else 'art' }}">{{ h.type or 'ART' }}</td>
+                                            <td class="medals">{% if h.medals > 0 %}{{ '{:,}'.format(h.medals) }}{% else %}-{% endif %}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="uh-no-hist">当たり履歴データなし（サマリーのみ）</div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </section>
+            {% else %}
+            <section class="uh-no-data">
+                <p>履歴データがありません</p>
+            </section>
+            {% endif %}
+        </main>
+
+        <footer>
+            <p>
+                <a href="{{ url_for('recommend', store_key=store_key) }}" class="footer-link">{{ store.name }}に戻る</a>
+                |
+                <a href="{{ url_for('index') }}" class="footer-link">トップ</a>
+            </p>
+        </footer>
+    </div>
+
+    <script>
+    function toggleDay(header) {
+        const card = header.closest('.uh-day-card');
+        const body = card.querySelector('.uh-day-body');
+        const toggle = card.querySelector('.uh-day-toggle');
+        const isOpen = card.classList.contains('open');
+
+        if (isOpen) {
+            body.style.display = 'none';
+            card.classList.remove('open');
+            toggle.textContent = '▼';
+        } else {
+            body.style.display = '';
+            card.classList.add('open');
+            toggle.textContent = '▲';
+        }
+    }
+    </script>
+</body>
+</html>

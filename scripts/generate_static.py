@@ -321,22 +321,7 @@ def generate_index(env):
                     rec['machine_name'] = machine.get('display_name', machine['short_name'])
                     if 'availability' not in rec or rec['availability'] is None:
                         rec['availability'] = availability.get(rec['unit_id'], '')
-                    # 前日・前々日の差枚計算
-                    y_art = rec.get('yesterday_art', 0)
-                    y_games = rec.get('yesterday_games', 0)
-                    if y_art and y_art > 0 and y_games and y_games > 0:
-                        y_p = calculate_expected_profit(y_games, y_art, key)
-                        rec['yesterday_diff_medals'] = y_p.get('current_estimate', 0)
-                    db_art = rec.get('day_before_art', 0)
-                    db_games = rec.get('day_before_games', 0)
-                    if db_art and db_art > 0 and db_games and db_games > 0:
-                        db_p = calculate_expected_profit(db_games, db_art, key)
-                        rec['day_before_diff_medals'] = db_p.get('current_estimate', 0)
-                    td_art = rec.get('three_days_ago_art', 0)
-                    td_games = rec.get('three_days_ago_games', 0)
-                    if td_art and td_art > 0 and td_games and td_games > 0:
-                        td_p = calculate_expected_profit(td_games, td_art, key)
-                        rec['three_days_ago_diff_medals'] = td_p.get('current_estimate', 0)
+                    # 差枚計算はrecommend_units内で統合済み
 
                 # TOP3候補（上位3台/店舗）
                 for rec in recs[:3]:
@@ -746,13 +731,7 @@ def generate_ranking_pages(env):
             for rec in recommendations:
                 rec['store_name'] = store.get('short_name', store['name'])
                 rec['store_key'] = store_key
-                # 差枚概算
-                for prefix in ['yesterday', 'day_before', 'three_days_ago']:
-                    _art = rec.get(f'{prefix}_art', 0)
-                    _games = rec.get(f'{prefix}_games', 0)
-                    if _art and _art > 0 and _games and _games > 0:
-                        _p = calculate_expected_profit(_games, _art, machine_key)
-                        rec[f'{prefix}_diff_medals'] = _p.get('current_estimate', 0)
+                # 差枚計算はrecommend_units内で統合済み
                 all_recommendations.append(rec)
 
         # スコア順でソート
@@ -840,23 +819,7 @@ def generate_recommend_pages(env):
         recommendations = recommend_units(store_key, realtime_data, availability,
                                           data_date_label=reason_data_label, prev_date_label=reason_prev_label)
 
-        # 差枚概算（全rec）
-        for rec in recommendations:
-            y_art = rec.get('yesterday_art', 0)
-            y_games = rec.get('yesterday_games', 0)
-            if y_art and y_art > 0 and y_games and y_games > 0:
-                y_p = calculate_expected_profit(y_games, y_art, machine_key)
-                rec['yesterday_diff_medals'] = y_p.get('current_estimate', 0)
-            db_art = rec.get('day_before_art', 0)
-            db_games = rec.get('day_before_games', 0)
-            if db_art and db_art > 0 and db_games and db_games > 0:
-                db_p = calculate_expected_profit(db_games, db_art, machine_key)
-                rec['day_before_diff_medals'] = db_p.get('current_estimate', 0)
-            td_art = rec.get('three_days_ago_art', 0)
-            td_games = rec.get('three_days_ago_games', 0)
-            if td_art and td_art > 0 and td_games and td_games > 0:
-                td_p = calculate_expected_profit(td_games, td_art, machine_key)
-                rec['three_days_ago_diff_medals'] = td_p.get('current_estimate', 0)
+        # 差枚計算はrecommend_units内で統合済み
 
         # 分類
         sa_recs = [r for r in recommendations if r['final_rank'] in ('S', 'A') and not r['is_running']]
