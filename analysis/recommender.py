@@ -2307,6 +2307,12 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
                     activity_bonus = max(-10, min(10, activity_bonus))
                     break
 
+        # === 曜日ボーナス ===
+        # 店舗の曜日傾向をスコアに反映（rating 1-5 → -6 〜 +6）
+        weekday_info = get_store_weekday_info(store_key) if store_key else {}
+        _today_rating = weekday_info.get('today_rating', 3)
+        weekday_bonus = (_today_rating - 3) * 3  # rating3=0, rating5=+6, rating1=-6
+
         # === 最終スコア計算 ===
         raw_score = (base_score
                      + today_analysis.get('today_score_bonus', 0)
@@ -2315,6 +2321,7 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
                      + slump_bonus        # 【改善2】不調翌日ボーナス
                      + activity_bonus     # 【改善4+5】稼働パターン+ハイエナ
                      + medal_balance_penalty  # 出玉バランスペナルティ
+                     + weekday_bonus      # 曜日ボーナス
                      )
         final_score = raw_score
         # 【改善3】ランクは後でまとめて相対評価で決定するため、ここでは仮ランク

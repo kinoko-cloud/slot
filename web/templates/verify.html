@@ -54,11 +54,19 @@
                 {% if machine_accuracy %}
                 <div class="machine-accuracy-breakdown">
                     {% for ma in machine_accuracy %}
-                    <div class="machine-acc-row">
-                        <span class="ma-icon">{{ ma.icon }}</span>
-                        <span class="ma-name">{{ ma.name }}</span>
-                        <span class="ma-rate {% if ma.rate >= 60 %}good{% elif ma.rate >= 40 %}ok{% else %}bad{% endif %}">{{ ma.rate|int }}%</span>
-                        <span class="ma-detail">S/A予測{{ ma.hit }}/{{ ma.total }}台的中（全{{ ma.all_units }}台中好調{{ ma.total_good }}台）</span>
+                    <div class="machine-acc-card">
+                        <div class="mac-header">
+                            <span class="ma-icon">{{ ma.icon }}</span>
+                            <span class="ma-name">{{ ma.name }}</span>
+                            <span class="ma-rate {% if ma.rate >= 60 %}good{% elif ma.rate >= 40 %}ok{% else %}bad{% endif %}">{{ ma.rate|int }}%</span>
+                        </div>
+                        <div class="mac-body">
+                            <div class="mac-row">全{{ ma.all_units }}台中 → 好調{{ ma.total_good }}台</div>
+                            <div class="mac-row">S/A予測{{ ma.total }}台中 → 的中{{ ma.hit }}台</div>
+                            {% if ma.surprise > 0 %}
+                            <div class="mac-row mac-miss">B以下{{ ma.all_units - ma.total }}台中 → {{ ma.surprise }}台が好調（見逃し）</div>
+                            {% endif %}
+                        </div>
                     </div>
                     {% endfor %}
                 </div>
