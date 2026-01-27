@@ -55,6 +55,27 @@
             </div>
         </header>
 
+        <!-- 台番号アラート -->
+        {% if unit_alerts %}
+        <div class="unit-alerts">
+            {% for alert in unit_alerts %}
+            <div class="alert-item alert-{{ alert.severity }}">
+                {% if alert.type == 'unit_move_suspected' %}
+                <span class="alert-icon">⚠</span> 台移動検知: {{ alert.missing|join(', ') }} → {{ alert.new|join(', ') }}
+                {% elif alert.type == 'unit_missing' %}
+                <span class="alert-icon">⚠</span> 台撤去の可能性: {{ alert.units|join(', ') }}番
+                {% elif alert.type == 'unit_new' %}
+                <span class="alert-icon">🆕</span> 新台検出: {{ alert.units|join(', ') }}番
+                {% elif alert.type == 'unit_count_change' %}
+                <span class="alert-icon">📊</span> 台数変動: {{ alert.config_count }}台 → {{ alert.actual_count }}台
+                {% else %}
+                <span class="alert-icon">ℹ</span> {{ alert.message }}
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
         <!-- 店舗分析 -->
         {% if store_analysis %}
         <div class="store-analysis">

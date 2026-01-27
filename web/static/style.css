@@ -1351,6 +1351,40 @@ strong.minus {
 /* ===== 新UI: 推奨ページ改善 ===== */
 
 /* 店舗分析セクション */
+/* 台番号アラート */
+.unit-alerts {
+    margin-bottom: 12px;
+}
+
+.alert-item {
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.85em;
+    margin-bottom: 6px;
+}
+
+.alert-item.alert-warning {
+    background: rgba(255, 165, 2, 0.15);
+    border: 1px solid rgba(255, 165, 2, 0.4);
+    color: #ffa502;
+}
+
+.alert-item.alert-info {
+    background: rgba(46, 213, 115, 0.15);
+    border: 1px solid rgba(46, 213, 115, 0.4);
+    color: #2ed573;
+}
+
+.alert-item.alert-critical {
+    background: rgba(255, 107, 107, 0.15);
+    border: 1px solid rgba(255, 107, 107, 0.4);
+    color: #ff6b6b;
+}
+
+.alert-icon {
+    margin-right: 4px;
+}
+
 .store-analysis {
     background: linear-gradient(135deg, rgba(30, 60, 114, 0.4), rgba(42, 82, 152, 0.3));
     border: 1px solid rgba(100, 150, 255, 0.3);

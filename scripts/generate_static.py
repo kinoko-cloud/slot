@@ -20,6 +20,7 @@ from jinja2 import Environment, FileSystemLoader
 from config.rankings import STORES, MACHINES, get_stores_by_machine, get_machine_info
 from analysis.recommender import recommend_units, load_daily_data, generate_store_analysis
 from scrapers.availability_checker import get_availability, get_realtime_data
+from scripts.verify_units import get_active_alerts, get_unit_status
 
 JST = timezone(timedelta(hours=9))
 WEEKDAY_NAMES = ['月', '火', '水', '木', '金', '土', '日']
@@ -386,6 +387,9 @@ def generate_recommend_pages(env):
         daily_data = load_daily_data(machine_key=machine_key)
         store_analysis = generate_store_analysis(store_key, daily_data)
 
+        # 台番号アラート
+        store_alerts = [a for a in get_active_alerts() if a.get('store_key') == store_key]
+
         html = template.render(
             store=store,
             store_key=store_key,
@@ -399,6 +403,7 @@ def generate_recommend_pages(env):
             is_open=is_open,
             display_mode=display_mode,
             store_analysis=store_analysis,
+            unit_alerts=store_alerts,
         )
 
         output_path = output_subdir / f'{store_key}.html'
@@ -437,11 +442,34 @@ def generate_metadata():
     print(f"  -> {output_path}")
 
 
+def run_unit_verification():
+    """台番号検証を実行し、アラートがあれば保存"""
+    print("Running unit verification...")
+    try:
+        from scripts.verify_units import verify_units_from_availability, save_alerts, print_report
+        avail_path = PROJECT_ROOT / 'data' / 'availability.json'
+        if avail_path.exists():
+            with open(avail_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            alerts = verify_units_from_availability(data)
+            print_report(alerts)
+            if alerts:
+                save_alerts(alerts, source='availability')
+        else:
+            print("  availability.json not found, skipping")
+    except Exception as e:
+        print(f"  Verification error: {e}")
+
+
 def main():
     print("=" * 50)
     print("静的サイト生成開始")
     print(f"出力先: {OUTPUT_DIR}")
     print("=" * 50)
+    print()
+
+    # 台番号検証（アラート生成）
+    run_unit_verification()
     print()
 
     # 出力ディレクトリを作成

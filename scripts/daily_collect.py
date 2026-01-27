@@ -22,6 +22,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from config.stores import DAIDATA_STORES, PAPIMO_STORES, MACHINES
 from scrapers.daidata_detail_history import get_all_history
+from scripts.verify_units import verify_units_from_daily, save_alerts, print_report
 
 
 def collect_daily_data(machine_keys: list = None, max_units_per_store: int = None):
@@ -225,7 +226,17 @@ def main():
         else:
             machine_keys = args.machine
 
-        collect_daily_data(machine_keys=machine_keys, max_units_per_store=args.max_units)
+        results = collect_daily_data(machine_keys=machine_keys, max_units_per_store=args.max_units)
+
+        # 台番号検証
+        print('\n' + '=' * 60)
+        print('台番号検証')
+        print('=' * 60)
+        alerts = verify_units_from_daily(results)
+        print_report(alerts)
+        if alerts:
+            save_path = save_alerts(alerts, source='daily')
+            print(f'アラート保存: {save_path}')
 
 
 if __name__ == '__main__':
