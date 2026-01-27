@@ -151,12 +151,6 @@
                             <span class="data-label">7日平均</span>
                             <span class="data-value">{{ rec.avg_art_7days|round(0)|int }}ART</span>
                         </div>
-                        {% if rec.yesterday_diff != 0 %}
-                        <div class="data-cell {% if rec.yesterday_diff > 0 %}profit-mid{% else %}profit-minus{% endif %}">
-                            <span class="data-label">昨日差枚</span>
-                            <span class="data-value">{{ signed_number(rec.yesterday_diff) }}枚</span>
-                        </div>
-                        {% endif %}
                         <div class="no-data-inline">
                             {% if rec.availability == '空き' %}
                             <span class="target-badge">空き</span>
@@ -233,6 +227,9 @@
                             <div class="detail-section">
                                 <div class="detail-title">過去7日間</div>
                                 <div class="detail-item">平均ART: {{ rec.avg_art_7days|round(1) }}回/日</div>
+                                {% if rec.avg_max_rensa and rec.avg_max_rensa > 0 %}
+                                <div class="detail-item">平均最大連チャン: {{ rec.avg_max_rensa|round(0)|int }}連</div>
+                                {% endif %}
                                 {% if rec.consecutive_plus > 0 %}
                                 <div class="detail-item plus">{{ rec.consecutive_plus }}日連続プラス → 据え置き期待</div>
                                 {% elif rec.consecutive_minus > 0 %}
