@@ -387,7 +387,10 @@ def generate_index(env):
         stores = get_stores_by_machine(machine_key)
         m_total = 0
         m_hit = 0
-        for store_key in stores:
+        store_results = []  # 店舗別の結果
+        for store_key, store in stores.items():
+            s_total = 0
+            s_hit = 0
             try:
                 pre_recs = recommend_units(store_key)  # 過去データのみ
                 rt = get_realtime_data(store_key)
@@ -399,13 +402,30 @@ def generate_index(env):
                     uid = str(r.get('unit_id', ''))
                     if r.get('final_rank', 'C') in ('S', 'A'):
                         m_total += 1
+                        s_total += 1
                         rt_r = rt_map.get(uid, {})
                         art = rt_r.get('art_count', 0)
                         games = rt_r.get('total_games', 0)
                         if art > 0 and games / art <= 130:
                             m_hit += 1
+                            s_hit += 1
             except:
                 pass
+            if s_total > 0:
+                s_rate = s_hit / s_total * 100
+                short_name = store.get('name', store_key).replace('エスパス日拓', '').replace('店', '')
+                store_results.append({'name': short_name, 'rate': s_rate, 'hit': s_hit, 'total': s_total})
+
+        # 的中率が高い店舗を表示（100%の店は名前、それ以外は率）
+        store_results.sort(key=lambda x: -x['rate'])
+        top_parts = []
+        for sr in store_results[:3]:
+            if sr['rate'] >= 100:
+                top_parts.append(f"{sr['name']}全的中")
+            elif sr['rate'] >= 50:
+                top_parts.append(f"{sr['name']}{sr['hit']}/{sr['total']}")
+        top_stores = ' / '.join(top_parts) if top_parts else ''
+
         rate = (m_hit / m_total * 100) if m_total > 0 else 0
         accuracy_hero.append({
             'name': machine['short_name'],
@@ -413,6 +433,7 @@ def generate_index(env):
             'rate': rate,
             'hit': m_hit,
             'total': m_total,
+            'top_stores': top_stores,
         })
     # 高い順にソート
     accuracy_hero.sort(key=lambda x: -x['rate'])

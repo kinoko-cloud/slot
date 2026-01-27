@@ -31,6 +31,7 @@
         <main>
             {# === 閉店後/集計中: 的中率ヒーロー表示 === #}
             {% if display_mode in ('result', 'collecting') and accuracy_hero %}
+            <a href="{{ url_for('verify') }}" class="accuracy-hero-link">
             <section class="accuracy-hero">
                 <div class="hero-title">昨日の的中率 ({{ data_date_str }})</div>
                 <div class="hero-rates">
@@ -40,10 +41,15 @@
                         <span class="hero-name">{{ hero.name }}</span>
                         <span class="hero-pct {% if hero.rate >= 80 %}excellent{% elif hero.rate >= 60 %}good{% else %}normal{% endif %}">{{ hero.rate|int }}%</span>
                         <span class="hero-detail">{{ hero.hit }}/{{ hero.total }}的中</span>
+                        {% if hero.top_stores %}
+                        <span class="hero-stores">{{ hero.top_stores }}</span>
+                        {% endif %}
                     </div>
                     {% endfor %}
                 </div>
+                <div class="hero-footer">答え合わせ詳細を見る →</div>
             </section>
+            </a>
             {% endif %}
 
             {# === 閉店後: 前日の爆発台を最上部に表示 === #}
