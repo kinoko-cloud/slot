@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+    <meta name="googlebot" content="noindex, nofollow">
+    <title>答え合わせ - 予測精度検証</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="{{ url_for('index') }}" class="back-link">&lt; トップに戻る</a>
+            <h1>答え合わせ</h1>
+            <div class="update-info">昨日までのデータで本日を予測できたか？</div>
+        </header>
+
+        <main>
+            {% if not verify_data %}
+            <section class="no-recommendation">
+                <p>本日のデータがまだありません</p>
+                <p class="sub">営業中にデータが蓄積されると答え合わせが表示されます</p>
+            </section>
+            {% else %}
+
+            <!-- 的中率サマリ -->
+            <section class="verify-summary">
+                <div class="verify-accuracy">
+                    <div class="accuracy-circle {% if accuracy >= 60 %}good{% elif accuracy >= 40 %}ok{% else %}bad{% endif %}">
+                        <span class="accuracy-num">{{ accuracy|int }}%</span>
+                        <span class="accuracy-label">的中率</span>
+                    </div>
+                    <div class="accuracy-detail">
+                        <div class="accuracy-row">
+                            <span class="acc-label">予測S/A台</span>
+                            <span class="acc-value">{{ predicted_good }}台</span>
+                        </div>
+                        <div class="accuracy-row">
+                            <span class="acc-label">実際に好調</span>
+                            <span class="acc-value hit">{{ actual_good }}台</span>
+                        </div>
+                        <div class="accuracy-row">
+                            <span class="acc-label">予測外の好調</span>
+                            <span class="acc-value surprise">{{ surprise_good }}台</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 予測 vs 実績テーブル -->
+            {% for machine_name, machine_data in verify_data.items() %}
+            <section class="verify-section">
+                <h2>{{ machine_data.icon }} {{ machine_data.name }}</h2>
+
+                {% for store in machine_data.stores %}
+                <div class="verify-store">
+                    <h3 class="verify-store-name">{{ store.name }}</h3>
+                    <div class="verify-table">
+                        <div class="verify-header-row">
+                            <span class="vh-unit">台番</span>
+                            <span class="vh-pred">予測</span>
+                            <span class="vh-art">ART</span>
+                            <span class="vh-prob">確率</span>
+                            <span class="vh-result">判定</span>
+                        </div>
+                        {% for unit in store.units %}
+                        <div class="verify-row verdict-{{ unit.verdict_class }}">
+                            <span class="vr-unit">{{ unit.unit_id }}</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: {{ rank_color(unit.predicted_rank) }}">{{ unit.predicted_rank }}</span>
+                                <span class="vr-score">{{ unit.predicted_score|int }}pt</span>
+                            </span>
+                            <span class="vr-art">{{ unit.actual_art }}</span>
+                            <span class="vr-prob {% if unit.actual_prob > 0 and unit.actual_prob <= 100 %}excellent{% elif unit.actual_prob > 0 and unit.actual_prob <= 130 %}good{% elif unit.actual_prob >= 200 %}bad{% endif %}">
+                                {% if unit.actual_prob > 0 %}1/{{ unit.actual_prob|int }}{% else %}-{% endif %}
+                            </span>
+                            <span class="vr-verdict">{{ unit.verdict }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+            </section>
+            {% endfor %}
+
+            <!-- 判定基準 -->
+            <section class="verify-legend">
+                <h3>判定基準</h3>
+                <div class="legend-items">
+                    <div class="legend-row"><span class="verdict-icon">&#x25CE;</span> 完璧: 予測S/A → 実際に合成1/100以下</div>
+                    <div class="legend-row"><span class="verdict-icon">&#x25CB;</span> 的中: 予測S/A → 実際に合成1/130以下</div>
+                    <div class="legend-row"><span class="verdict-icon">&#x25B3;</span> 普通: 予測通りの平凡な結果</div>
+                    <div class="legend-row"><span class="verdict-icon">&#x2715;</span> 外れ: 予測S/A → 実際に合成1/200以上</div>
+                    <div class="legend-row"><span class="verdict-icon">&#x2605;</span> 発掘: 予測B以下 → 実際に合成1/130以下（お宝台）</div>
+                </div>
+            </section>
+
+            {% endif %}
+        </main>
+
+        <footer>
+            <p><a href="{{ url_for('index') }}" class="api-link">トップへ</a></p>
+        </footer>
+    </div>
+</body>
+</html>
