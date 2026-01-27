@@ -456,6 +456,9 @@ def generate_ranking_pages(env):
     now = datetime.now(JST)
     tomorrow = now + timedelta(days=1)
     tomorrow_str = format_date_with_weekday(tomorrow)
+    yesterday = now - timedelta(days=1)
+    data_date_str = format_date_with_weekday(now)
+    prev_date_str = format_date_with_weekday(yesterday)
 
     for machine_key, machine in MACHINES.items():
         stores = get_stores_by_machine(machine_key)
