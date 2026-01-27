@@ -5413,3 +5413,42 @@ strong.minus {
     margin-left: auto;
     font-weight: 600;
 }
+
+/* 仮説セクション */
+.hypotheses-section {
+    margin-bottom: 20px;
+}
+.hypotheses-section h2 {
+    font-size: 1.1em;
+    margin-bottom: 12px;
+}
+.hypothesis-card {
+    background: rgba(30, 40, 60, 0.6);
+    border-left: 3px solid #ffa502;
+    border-radius: 0 8px 8px 0;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+}
+.hyp-title {
+    font-weight: 700;
+    color: #ffa502;
+    margin-bottom: 6px;
+    font-size: 0.95em;
+}
+.hyp-evidence {
+    color: #aaa;
+    font-size: 0.82em;
+    margin-bottom: 4px;
+    line-height: 1.4;
+}
+.hyp-action {
+    color: #2ed573;
+    font-size: 0.82em;
+    margin-bottom: 4px;
+    line-height: 1.4;
+}
+.hyp-confidence {
+    color: #666;
+    font-size: 0.75em;
+    text-align: right;
+}

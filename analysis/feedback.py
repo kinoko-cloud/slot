@@ -154,6 +154,126 @@ def load_feedback_history(store_key: str, days: int = 30) -> list:
     return results[-days:]
 
 
+def generate_hypotheses(all_feedbacks: list) -> list:
+    """全フィードバックから仮説を生成する
+
+    Returns:
+        [{'hypothesis': str, 'evidence': str, 'action': str, 'confidence': str}, ...]
+    """
+    hypotheses = []
+
+    if not all_feedbacks:
+        return hypotheses
+
+    # 集計
+    total_hits = sum(fb.get('hits', 0) for fb in all_feedbacks)
+    total_misses = sum(fb.get('misses', 0) for fb in all_feedbacks)
+    total_surprises = sum(fb.get('surprises', 0) for fb in all_feedbacks)
+    total_units = sum(fb.get('total_units', 0) for fb in all_feedbacks)
+
+    # 当日の日付情報
+    date_str = all_feedbacks[0].get('date', '') if all_feedbacks else ''
+    weekday = all_feedbacks[0].get('weekday', '') if all_feedbacks else ''
+    day_of_month = 0
+    month_period = ''
+    if date_str:
+        try:
+            dt = datetime.strptime(date_str, '%Y-%m-%d')
+            day_of_month = dt.day
+            if day_of_month <= 10:
+                month_period = '月初（1-10日）'
+            elif day_of_month <= 20:
+                month_period = '月中（11-20日）'
+            else:
+                month_period = '月末（21日以降）'
+        except ValueError:
+            pass
+
+    # === 仮説1: 北斗のスコアが横並び ===
+    hokuto_fbs = [fb for fb in all_feedbacks if 'hokuto' in fb.get('machine_key', '')]
+    if hokuto_fbs:
+        h_surprises = sum(fb.get('surprises', 0) for fb in hokuto_fbs)
+        h_total = sum(fb.get('total_units', 0) for fb in hokuto_fbs)
+        if h_surprises > 10 and h_total > 0:
+            surprise_rate = h_surprises / h_total * 100
+            hypotheses.append({
+                'hypothesis': '北斗はスコアが横並びで差別化できていない',
+                'evidence': f'B以下予測の{h_surprises}台が実は好調（見逃し率{surprise_rate:.0f}%）。'
+                           f'スコアが全台50-56点で差がなく、S/A判定が少数台に偏っている',
+                'action': '北斗は台数が多いため、好調率だけでなく台番号のローテパターン・'
+                         '連日データの差分をもっと活用してスコアに差をつける',
+                'confidence': '高（データから明確）',
+            })
+
+    # === 仮説2: 曜日の影響 ===
+    if weekday:
+        miss_rate = total_misses / max(1, total_hits + total_misses) * 100
+        if miss_rate > 30:
+            hypotheses.append({
+                'hypothesis': f'{weekday}曜日は予測精度が低い可能性',
+                'evidence': f'{weekday}曜の外れ率{miss_rate:.0f}%（{total_misses}台外れ / {total_hits}台的中）',
+                'action': f'{weekday}曜日のS/A判定を厳しくする（曜日ペナルティ強化）',
+                'confidence': '低（1日分のデータのみ。複数週の同曜日データが必要）',
+            })
+
+    # === 仮説3: 月の時期 ===
+    if month_period:
+        hypotheses.append({
+            'hypothesis': f'{month_period}の傾向がある可能性',
+            'evidence': f'本日は{day_of_month}日。月初/月末で設定配分が変わる店舗がある（イベント日等）',
+            'action': '月の時期ごとの好調率を蓄積して比較する（要長期データ）',
+            'confidence': '未検証（最低1ヶ月分のデータが必要）',
+        })
+
+    # === 仮説4: B台の見逃しが多い店舗 ===
+    for fb in all_feedbacks:
+        if fb.get('surprises', 0) >= 3:
+            store = fb.get('store_key', '')
+            n = fb['surprises']
+            total = fb.get('total_units', 0)
+            surprise_details = fb.get('surprise_details', [])
+            # スコアの分布を見る
+            scores = [s.get('score', 0) for s in surprise_details]
+            avg_score = sum(scores) / len(scores) if scores else 0
+
+            if avg_score >= 60:
+                hypotheses.append({
+                    'hypothesis': f'{store}: B/C台のスコアがS/Aに近いのに見逃している',
+                    'evidence': f'見逃し{n}台の平均スコア={avg_score:.0f}点。'
+                               f'S/A判定のしきい値が高すぎる可能性',
+                    'action': 'この店舗のS/A判定しきい値を下げるか、'
+                             f'スコア{avg_score:.0f}点以上はA判定にする',
+                    'confidence': '中（傾向は見えるが、1日分のデータ）',
+                })
+            elif len(set(scores)) <= 2:
+                hypotheses.append({
+                    'hypothesis': f'{store}: 全台のスコアが同じで差別化できていない',
+                    'evidence': f'見逃し{n}台のスコアが全て{scores[0] if scores else "?"}点。'
+                               f'蓄積データ不足でスコアが初期値のまま',
+                    'action': 'この店舗の蓄積データを増やす。'
+                             '初回取得から日が浅い台はスコアの信頼度を下げる',
+                    'confidence': '高（データ不足が原因）',
+                })
+
+    # === 仮説5: 低稼働台の外れ ===
+    low_activity_misses = []
+    for fb in all_feedbacks:
+        for m in fb.get('miss_details', []):
+            if '低稼働' in str(m.get('reasons', [])):
+                low_activity_misses.append(m)
+    if low_activity_misses:
+        hypotheses.append({
+            'hypothesis': '低稼働台（<1000G）をS/A判定するのは危険',
+            'evidence': f'{len(low_activity_misses)}台が低稼働で外れ。'
+                       f'打ち手が早々にやめた=設定が悪い可能性',
+            'action': '前日稼働が1000G未満の台はS/Aランクから除外するか、'
+                     'ランクを1段階下げる',
+            'confidence': '中（台数が少ないため断定は困難）',
+        })
+
+    return hypotheses
+
+
 def calculate_correction_factors(store_key: str, machine_key: str) -> dict:
     """過去のフィードバックから補正係数を算出
 
