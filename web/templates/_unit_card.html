@@ -1,0 +1,89 @@
+{# === 台カード共通マクロ === #}
+
+{% macro unit_compact(rec, loop_index, show_store=false, store_key='') %}
+{# コンパクトな台カード（3日間データ + 根拠） #}
+<div class="unit-card-v2 rank-{{ rec.final_rank|lower }}" onclick="toggleDetails(this)">
+    {# ヘッダー: 台番号 + 店舗 + ランク #}
+    <div class="v2-header">
+        <span class="v2-rank-num">#{{ loop_index }}</span>
+        <a href="{{ url_for('unit_history', store_key=(rec.store_key or store_key), unit_id=rec.unit_id) }}" class="v2-unit-id" onclick="event.stopPropagation()">{{ rec.unit_id|pad_id }}番台</a>
+        {% if show_store %}
+        <a href="{{ url_for('recommend', store_key=(rec.store_key or store_key)) }}" class="v2-store" onclick="event.stopPropagation()">{{ rec.store_name }}</a>
+        {% endif %}
+        <span class="v2-rank" style="background-color: {{ rank_color(rec.final_rank) }}">{{ rec.final_rank }}</span>
+        <span class="expand-icon small">▼</span>
+    </div>
+
+    {# 根拠（一番目立つ位置） #}
+    {% if rec.reasons %}
+    <div class="v2-reason">{{ rec.reasons[0] }}</div>
+    {% endif %}
+
+    {# 直近3日間データ #}
+    <div class="v2-days">
+        {% if rec.yesterday_art %}
+        <div class="v2-day">
+            <span class="v2-day-label">{{ short_date(rec.yesterday_date) or '前日' }}</span>
+            <span class="v2-day-art">ART {{ rec.yesterday_art }}</span>
+            {% if rec.yesterday_rb %}<span class="v2-day-rb">RB {{ rec.yesterday_rb }}</span>{% endif %}
+            {% if rec.yesterday_prob %}<span class="v2-day-prob {% if rec.yesterday_prob <= 100 %}excellent{% elif rec.yesterday_prob <= 130 %}good{% elif rec.yesterday_prob >= 200 %}bad{% endif %}">1/{{ rec.yesterday_prob|int }}</span>{% endif %}
+            {% if rec.yesterday_diff_medals is defined and rec.yesterday_diff_medals and rec.yesterday_diff_medals != 0 %}<span class="diff-medals-sm {% if rec.yesterday_diff_medals > 0 %}plus{% else %}minus{% endif %}">{{ '{:+,}'.format(rec.yesterday_diff_medals) }}枚</span>{% endif %}
+            {% if rec.yesterday_max_rensa and rec.yesterday_max_rensa >= 3 %}<span class="rensa-sm">{{ rec.yesterday_max_rensa }}連</span>{% endif %}
+        </div>
+        {% else %}
+        <div class="v2-day no-data"><span class="v2-day-label">前日</span> データなし</div>
+        {% endif %}
+
+        {% if rec.day_before_art %}
+        <div class="v2-day">
+            <span class="v2-day-label">{{ short_date(rec.day_before_date) or '前々日' }}</span>
+            <span class="v2-day-art">ART {{ rec.day_before_art }}</span>
+            {% if rec.day_before_rb %}<span class="v2-day-rb">RB {{ rec.day_before_rb }}</span>{% endif %}
+            {% if rec.day_before_diff_medals is defined and rec.day_before_diff_medals and rec.day_before_diff_medals != 0 %}<span class="diff-medals-sm {% if rec.day_before_diff_medals > 0 %}plus{% else %}minus{% endif %}">{{ '{:+,}'.format(rec.day_before_diff_medals) }}枚</span>{% endif %}
+            {% if rec.day_before_max_rensa and rec.day_before_max_rensa >= 3 %}<span class="rensa-sm">{{ rec.day_before_max_rensa }}連</span>{% endif %}
+        </div>
+        {% else %}
+        <div class="v2-day no-data"><span class="v2-day-label">前々日</span> データなし</div>
+        {% endif %}
+
+        {% if rec.three_days_ago_art %}
+        <div class="v2-day">
+            <span class="v2-day-label">{{ short_date(rec.three_days_ago_date) or '3日前' }}</span>
+            <span class="v2-day-art">ART {{ rec.three_days_ago_art }}</span>
+            {% if rec.three_days_ago_rb %}<span class="v2-day-rb">RB {{ rec.three_days_ago_rb }}</span>{% endif %}
+            {% if rec.three_days_ago_diff_medals is defined and rec.three_days_ago_diff_medals and rec.three_days_ago_diff_medals != 0 %}<span class="diff-medals-sm {% if rec.three_days_ago_diff_medals > 0 %}plus{% else %}minus{% endif %}">{{ '{:+,}'.format(rec.three_days_ago_diff_medals) }}枚</span>{% endif %}
+            {% if rec.three_days_ago_max_rensa and rec.three_days_ago_max_rensa >= 3 %}<span class="rensa-sm">{{ rec.three_days_ago_max_rensa }}連</span>{% endif %}
+        </div>
+        {% else %}
+        <div class="v2-day no-data"><span class="v2-day-label">3日前</span> データなし</div>
+        {% endif %}
+    </div>
+
+    {# 設定推定（あれば） #}
+    {% if rec.total_games >= 1000 and rec.estimated_setting %}
+    <div class="v2-setting">
+        <span class="setting-badge-sm setting-{{ rec.setting_num|default(0) }}">{{ rec.estimated_setting }}{% if rec.total_games < 3000 %}？{% endif %}</span>
+    </div>
+    {% endif %}
+
+    {# 展開時の詳細 #}
+    <div class="unit-details hidden">
+        <div class="v2-detail-reasons">
+            {% for reason in rec.reasons %}
+            <div class="reason-item">{{ reason }}</div>
+            {% endfor %}
+        </div>
+        {% if rec.total_games > 0 %}
+        <div class="v2-detail-today">
+            本日: ART {{ rec.art_count }} / RB {{ rec.rb_count }} / {{ '{:,}'.format(rec.total_games) }}G
+            {% if rec.art_prob > 0 %} / 1/{{ rec.art_prob|int }}{% endif %}
+            {% if rec.max_medals and rec.max_medals > 0 %} / 最大{{ '{:,}'.format(rec.max_medals) }}枚{% endif %}
+        </div>
+        {% endif %}
+        <div class="v2-detail-trend">蓄積傾向: {{ rec.base_rank }}ランク
+            {% if rec.consecutive_minus >= 2 %} → 凹み{{ rec.consecutive_minus }}日{% endif %}
+            {% if rec.consecutive_plus >= 2 %} → {{ rec.consecutive_plus }}日連続好調{% endif %}
+        </div>
+    </div>
+</div>
+{% endmacro %}
