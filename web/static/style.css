@@ -2816,6 +2816,35 @@ strong.minus {
 .diff-medals.plus { color: #2ed573; }
 .diff-medals.minus { color: #ff6b6b; }
 
+.yesterday-diff-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.diff-medals-lg {
+    font-size: 1.3em;
+    font-weight: 800;
+}
+.diff-medals-lg.plus { color: #2ed573; }
+.diff-medals-lg.minus { color: #ff6b6b; }
+
+.yesterday-sub-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.rb-badge {
+    color: #70a1ff;
+    font-weight: 600;
+}
+.rb-badge .rb-num {
+    font-weight: 700;
+}
+
 .diff-medals-sm {
     font-weight: 700;
     font-size: 0.85em;
