@@ -251,7 +251,7 @@
                     {# === 直近データ（蓄積DB） === #}
                     {% if rec.recent_days and rec.recent_days|length > 0 %}
                     <div class="yh-toggle" onclick="toggleYesterdayHistory(event, this)">
-                        直近{{ rec.recent_days|length }}日間データ <span class="yh-toggle-arrow">▼</span>
+                        直近データ <span class="yh-toggle-arrow">▼</span>
                     </div>
                     <div class="yh-panel hidden" onclick="event.preventDefault(); event.stopPropagation();">
                         <div class="recent-days compact">
