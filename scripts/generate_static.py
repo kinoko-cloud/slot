@@ -375,12 +375,20 @@ def generate_index(env):
     today_avoid_stores = [s for s in today_store_ranking if s['today_rating'] <= 2]
 
     result_date_str = None
+    date_prefix = ''  # 「昨日」or「本日」
     if display_mode in ('result', 'collecting'):
         if now.hour >= 23:
             result_date = now
+            date_prefix = '本日'
+        elif now.hour < 10:
+            result_date = now - timedelta(days=1)
+            date_prefix = '昨日'
         else:
             result_date = now - timedelta(days=1)
+            date_prefix = '昨日'
         result_date_str = format_date_with_weekday(result_date)
+    elif is_open:
+        date_prefix = '本日'
 
     # 全店舗一覧（店舗導線用）
     all_stores = []
@@ -502,6 +510,7 @@ def generate_index(env):
         data_date_str=data_date_str,
         prev_date_str=prev_date_str,
         accuracy_hero=accuracy_hero,
+        date_prefix=date_prefix,
     )
 
     output_path = OUTPUT_DIR / 'index.html'
