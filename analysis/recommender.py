@@ -208,6 +208,57 @@ STORE_KEY_MAPPING = {
     'island_akihabara_hokuto': 'island_akihabara_hokuto_tensei2',
 }
 
+# 店舗別曜日傾向データ（★評価 1-5）
+WEEKDAY_NAMES = ['月', '火', '水', '木', '金', '土', '日']
+STORE_DAY_RATINGS = {
+    'island_akihabara_sbj': {
+        'short_name': 'アイランド秋葉原',
+        'day_ratings': {'月': 4, '火': 3, '水': 5, '木': 3, '金': 3, '土': 1, '日': 4},
+        'best_days': '水曜が最強、日月も狙い目',
+        'worst_days': '土曜は避けるべき',
+    },
+    'shibuya_espass_sbj': {
+        'short_name': 'エスパス渋谷新館',
+        'day_ratings': {'月': 3, '火': 4, '水': 4, '木': 5, '金': 3, '土': 3, '日': 1},
+        'best_days': '木曜が最強、火水も狙い目',
+        'worst_days': '日曜は避けるべき',
+    },
+    'shinjuku_espass_sbj': {
+        'short_name': 'エスパス歌舞伎町',
+        'day_ratings': {'月': 2, '火': 3, '水': 3, '木': 3, '金': 4, '土': 5, '日': 3},
+        'best_days': '土曜が最強、金曜も狙い目',
+        'worst_days': '月曜は控えめ',
+    },
+    'akihabara_espass_sbj': {
+        'short_name': 'エスパス秋葉原',
+        'day_ratings': {'月': 2, '火': 3, '水': 3, '木': 3, '金': 4, '土': 5, '日': 4},
+        'best_days': '土日が狙い目、金曜も可',
+        'worst_days': '月曜は控えめ',
+    },
+    'seibu_shinjuku_espass_sbj': {
+        'short_name': 'エスパス西武新宿',
+        'day_ratings': {'月': 2, '火': 2, '水': 3, '木': 3, '金': 4, '土': 4, '日': 3},
+        'best_days': '金土が狙い目',
+        'worst_days': '月火は控えめ',
+    },
+}
+
+
+def get_store_weekday_info(store_key: str) -> dict:
+    """店舗の今日の曜日傾向を返す"""
+    store_info = STORE_DAY_RATINGS.get(store_key, {})
+    if not store_info:
+        return {}
+    today_weekday = WEEKDAY_NAMES[datetime.now().weekday()]
+    today_rating = store_info['day_ratings'].get(today_weekday, 3)
+    return {
+        'short_name': store_info['short_name'],
+        'today_weekday': today_weekday,
+        'today_rating': today_rating,
+        'best_days': store_info['best_days'],
+        'worst_days': store_info['worst_days'],
+    }
+
 
 def get_machine_from_store_key(store_key: str) -> str:
     """店舗キーから機種キーを取得"""
@@ -438,6 +489,37 @@ def analyze_trend(days: List[dict]) -> dict:
         elif recent_avg < older_avg * 0.8:
             result['art_trend'] = 'declining'
             result['reasons'].append('直近ART確率悪化傾向')
+
+    # --- 実用指標の計算 ---
+    # AT間平均G数（全日のゲーム数 / ART回数）
+    total_art_sum = sum(art_counts)
+    total_games_sum = sum(game_counts)
+    if total_art_sum > 0 and total_games_sum > 0:
+        result['avg_games_per_art'] = total_games_sum / total_art_sum
+    else:
+        result['avg_games_per_art'] = 0
+
+    # 軽い当たり率の推定（ART確率からの推定）
+    art_probs = []
+    for day in sorted_days[:7]:
+        art = day.get('art', 0)
+        games = day.get('total_start', 0)
+        if art > 0 and games > 0:
+            art_probs.append(games / art)
+    if art_probs:
+        result['avg_art_prob'] = sum(art_probs) / len(art_probs)
+    else:
+        result['avg_art_prob'] = 0
+
+    # 最大出玉日の情報
+    max_art_day = None
+    if sorted_days:
+        max_art_day = max(sorted_days[:7], key=lambda x: x.get('art', 0))
+        result['max_art_day'] = {
+            'date': max_art_day.get('date', ''),
+            'art': max_art_day.get('art', 0),
+            'games': max_art_day.get('total_start', 0),
+        }
 
     return result
 
@@ -950,102 +1032,134 @@ def analyze_today_graph(history: List[dict]) -> dict:
 
 def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
                      base_rank: str, final_rank: str, days: List[dict] = None,
-                     today_history: List[dict] = None) -> List[str]:
-    """推奨理由を生成（より具体的な分析付き）"""
+                     today_history: List[dict] = None,
+                     store_key: str = None) -> List[str]:
+    """推奨理由を生成（店舗傾向・具体的根拠付き）"""
     reasons = []
 
-    # 1. ローテーションパターン分析
+    # --- 店舗の曜日傾向情報を取得 ---
+    weekday_info = get_store_weekday_info(store_key) if store_key else {}
+    store_name = weekday_info.get('short_name', '')
+    today_weekday = weekday_info.get('today_weekday', '')
+    today_rating = weekday_info.get('today_rating', 3)
+
+    # 1. 曜日傾向 × 連続マイナス/プラスの組み合わせ（最重要）
+    consecutive_plus = trend.get('consecutive_plus', 0)
+    consecutive_minus = trend.get('consecutive_minus', 0)
+    yesterday = trend.get('yesterday_result', 'unknown')
+    yesterday_diff = trend.get('yesterday_diff', 0)
+
+    if today_rating >= 5:
+        reasons.append(f"{store_name}は{today_weekday}曜が最強日（★5） → 高設定投入の期待大")
+    elif today_rating >= 4:
+        reasons.append(f"{store_name}は{today_weekday}曜が狙い目（★4）")
+
+    if consecutive_minus >= 4:
+        reasons.append(f"{consecutive_minus}日連続マイナス → この店の投入サイクル的に上げ濃厚")
+    elif consecutive_minus >= 3:
+        if today_rating >= 4:
+            reasons.append(f"{consecutive_minus}日マイナス + {today_weekday}曜★{today_rating} → 設定上げの好条件が揃っている")
+        else:
+            reasons.append(f"{consecutive_minus}日マイナス継続 → そろそろ上げる可能性")
+    elif consecutive_minus == 2:
+        if today_rating >= 4:
+            reasons.append(f"2日マイナス + {today_weekday}曜★{today_rating} → リセット期待")
+
+    if consecutive_plus >= 4:
+        reasons.append(f"{consecutive_plus}日連続プラス → 高設定据え置き中（ただし下げ警戒も）")
+    elif consecutive_plus >= 3:
+        reasons.append(f"{consecutive_plus}日連続プラス → 据え置き期待だが、そろそろ下げる店もある")
+
+    # 2. 昨日の結果 + 背景根拠
+    if yesterday == 'big_minus' and yesterday_diff < -2000:
+        if today_rating >= 4:
+            reasons.append(f"昨日推定-{abs(yesterday_diff):,}枚 + {today_weekday}曜★{today_rating} → リセット狙い目（天井666Gに短縮）")
+        elif consecutive_minus >= 2:
+            reasons.append(f"昨日推定-{abs(yesterday_diff):,}枚（{consecutive_minus}日連続凹み）→ リセット期待（天井666G短縮）")
+        else:
+            reasons.append(f"昨日推定-{abs(yesterday_diff):,}枚 → リセットなら天井666Gに短縮")
+    elif yesterday == 'big_minus':
+        if consecutive_minus >= 2:
+            reasons.append(f"昨日マイナス（{consecutive_minus}日連続）→ 店の傾向的に設定変更の可能性")
+        elif today_rating >= 4:
+            reasons.append(f"昨日マイナス + {today_weekday}曜★{today_rating} → 設定変更期待")
+    elif yesterday == 'big_plus' and yesterday_diff > 3000:
+        reasons.append(f"昨日推定+{yesterday_diff:,}枚 → 据え置きなら引き続き狙い目")
+
+    # 3. ローテーションパターン分析
     if days:
         rotation = analyze_rotation_pattern(days)
         if rotation['has_pattern']:
             if rotation['next_high_chance']:
-                reasons.append(f"{rotation['description']} → 本日上げ期待大")
-            else:
-                reasons.append(rotation['description'])
+                reasons.append(f"ローテ傾向: {rotation['description']} → 本日上げ期待")
 
-    # 2. グラフパターン分析（ミミズ/モミモミ等）
-    if days:
-        graph = analyze_graph_pattern(days)
-        if graph['description']:
-            reasons.append(f"【過去7日】{graph['description']}")
-        # 過去に10連実績がない + モミモミ = 爆発待ち
-        if graph.get('likely_to_rise') and not graph.get('has_big_rensa'):
-            if graph['pattern'] in ('mimizu', 'momimomi'):
-                reasons.append(f"【過去7日】大連荘なし → 爆発待ち台、打ち始めから狙い目")
-
-    # 3. 本日のグラフ分析
-    if today_history:
-        today_graph = analyze_today_graph(today_history)
-        if today_graph['description']:
-            reasons.append(today_graph['description'])
-        # 爆発ポテンシャルに基づく判断
-        if today_graph.get('explosion_potential') == 'low':
-            pass  # descriptionで既に言及
-        elif today_graph.get('explosion_potential') == 'building':
-            if not today_graph.get('has_explosion'):
-                reasons.append("モミモミ展開から爆発の兆候 → 継続推奨")
-
-    # 4. 連続プラス/マイナスからの推論
-    consecutive_plus = trend.get('consecutive_plus', 0)
-    consecutive_minus = trend.get('consecutive_minus', 0)
-
-    if consecutive_plus >= 4:
-        reasons.append(f"{consecutive_plus}日連続プラス → 高設定据え置き継続中、明日まで狙える")
-    elif consecutive_plus >= 3:
-        reasons.append(f"{consecutive_plus}日連続プラス → 据え置き濃厚だが下げ警戒も")
-    elif consecutive_plus >= 2:
-        pass  # 弱いので表示しない
-
-    if consecutive_minus >= 4:
-        reasons.append(f"{consecutive_minus}日連続マイナス → 店の設定投入サイクル的に上げ濃厚")
-    elif consecutive_minus >= 3:
-        reasons.append(f"{consecutive_minus}日マイナス継続 → そろそろ上げる可能性高")
-    elif consecutive_minus == 2:
-        reasons.append(f"2日連続マイナス → 3日目の上げに期待")
-
-    # 5. 昨日の結果（具体的に）
-    yesterday = trend.get('yesterday_result', 'unknown')
-    yesterday_diff = trend.get('yesterday_diff', 0)
-    avg_games = trend.get('avg_games_7days', 0)
-
-    if yesterday == 'big_minus' and yesterday_diff < -2000:
-        reasons.append(f"昨日-{abs(yesterday_diff):,}枚の大凹み → リセット狙い目")
-    elif yesterday == 'big_minus':
-        reasons.append(f"昨日マイナス → 設定変更で天井短縮の可能性")
-    elif yesterday == 'big_plus' and yesterday_diff > 3000:
-        reasons.append(f"昨日+{yesterday_diff:,}枚の大勝ち → 据え置きなら狙い目、下げなら回避")
-
-    # 6. 当日の状況からの推論
+    # 4. 当日のART確率（打つべきか判断する核心データ）
     art_prob = today.get('art_prob', 0)
     total_games = today.get('total_games', 0)
 
     if total_games > 0:
         if art_prob > 0 and art_prob <= 80:
-            reasons.append(f"本日ART確率1/{art_prob:.0f} → 設定6以上の挙動")
+            reasons.append(f"本日ART確率1/{art_prob:.0f}（{total_games:,}G消化）→ 設定6域の挙動")
         elif art_prob > 0 and art_prob <= 100:
-            reasons.append(f"本日ART確率1/{art_prob:.0f} → 高設定濃厚")
+            reasons.append(f"本日ART確率1/{art_prob:.0f}（{total_games:,}G消化）→ 高設定濃厚")
+        elif art_prob > 0 and art_prob <= 130:
+            if total_games >= 5000:
+                reasons.append(f"本日1/{art_prob:.0f}で{total_games:,}G消化 → 中間以上の設定で安定稼働中")
 
-        # 稼働量と出玉の関係
-        if total_games >= 5000 and art_prob <= 130:
-            reasons.append(f"5,000G以上消化で好調維持 → 信頼度高")
-        elif total_games >= 3000 and art_prob <= 100:
-            reasons.append(f"3,000G消化で高設定挙動継続中")
-    else:
-        # 未稼働台の分析
-        if consecutive_minus >= 2:
-            reasons.append("未稼働 + 連日マイナス → リセット台として狙い目")
-        elif avg_games > 0 and avg_games < 3000:
-            reasons.append("低稼働傾向の台 → 隠れ高設定の可能性")
+    # 5. AT間平均G数（過去7日）
+    avg_games_per_art = trend.get('avg_games_per_art', 0)
+    avg_art_prob = trend.get('avg_art_prob', 0)
+    if avg_art_prob > 0:
+        if avg_art_prob <= 100:
+            reasons.append(f"7日間のART確率 平均1/{avg_art_prob:.0f} → 高設定域が続いている台")
+        elif avg_art_prob <= 130:
+            reasons.append(f"7日間のART確率 平均1/{avg_art_prob:.0f} → 中間設定以上の台")
 
-    # 7. 他台との比較
+    # 6. グラフパターン分析
+    if days:
+        graph = analyze_graph_pattern(days)
+        if graph.get('likely_to_rise') and not graph.get('has_big_rensa'):
+            if graph['pattern'] in ('mimizu', 'momimomi'):
+                reasons.append("過去7日モミモミで大連荘なし → 爆発のタイミングが近い可能性")
+
+    # 7. 本日のグラフ分析
+    if today_history:
+        today_graph = analyze_today_graph(today_history)
+        if today_graph['description']:
+            reasons.append(today_graph['description'])
+
+    # 8. 他台との比較
     if comparison.get('is_top_performer'):
-        reasons.append("本日この店舗でトップの出玉 → 高設定濃厚")
+        reasons.append("本日この店舗でトップの出玉")
     elif comparison.get('rank_in_store', 99) <= 2 and comparison.get('total_units', 0) > 3:
-        reasons.append(f"本日{comparison['rank_in_store']}位/{comparison['total_units']}台中 → 上位台")
+        reasons.append(f"本日{comparison['rank_in_store']}位/{comparison['total_units']}台中")
 
-    # 8. ランク変動
-    if final_rank < base_rank:  # ランクが上がった（A < B）
-        reasons.append(f"本日データで評価上昇（{base_rank}→{final_rank}）")
+    # 9. 曜日が弱い日の警告
+    if today_rating <= 2 and store_name:
+        reasons.append(f"注意: {store_name}は{today_weekday}曜★{today_rating}（弱い日）→ 回収傾向")
+
+    # 10. 未稼働台の分析
+    if total_games == 0:
+        if consecutive_minus >= 2 and today_rating >= 4:
+            reasons.append(f"未稼働 + {consecutive_minus}日凹み + {today_weekday}曜★{today_rating} → リセット台狙い目")
+        elif consecutive_minus >= 2:
+            reasons.append(f"未稼働 + {consecutive_minus}日連続マイナス → リセット台の可能性")
+
+    # 本日と7日の確率が同じ場合、7日の方を削除（1日分データしかない場合）
+    if art_prob > 0 and avg_art_prob > 0 and abs(art_prob - avg_art_prob) < 5:
+        reasons = [r for r in reasons if '7日間のART確率' not in r]
+
+    # reasonsが空の台にデフォルト理由を追加
+    if not reasons:
+        if total_games > 0 and art_prob > 0:
+            if art_prob <= 180:
+                reasons.append(f"ART確率1/{art_prob:.0f}（{total_games:,}G消化）")
+            else:
+                reasons.append(f"ART確率1/{art_prob:.0f} → 低設定域（{total_games:,}G消化）")
+        elif today_rating >= 4:
+            reasons.append(f"{store_name}は{today_weekday}曜★{today_rating}")
+        elif today_rating <= 2:
+            reasons.append(f"{store_name}は{today_weekday}曜★{today_rating}（弱い日）")
 
     # 重複を除去して上位5つに絞る
     seen = set()
@@ -1210,7 +1324,7 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
 
         reasons = generate_reasons(
             unit_id, trend_data, today_analysis, comparison, base_rank, final_rank,
-            days=unit_days, today_history=today_history
+            days=unit_days, today_history=today_history, store_key=store_key
         )
 
         # リアルタイム空き状況がある場合は上書き

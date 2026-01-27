@@ -171,24 +171,23 @@
                     <!-- 設定推定 + 過去評価 -->
                     <div class="estimation-row">
                         {% if rec.total_games >= 3000 and rec.estimated_setting %}
-                        <!-- 3000G以上で信頼度高い設定推測を表示 -->
                         <span class="setting-estimate setting-{{ rec.setting_num|default(0) }}">
                             {{ rec.estimated_setting }} <span class="payout">({{ rec.payout_estimate }}%)</span>
                         </span>
                         {% elif rec.total_games >= 1000 and rec.estimated_setting %}
-                        <!-- 1000G以上3000G未満は参考程度 -->
                         <span class="setting-estimate setting-{{ rec.setting_num|default(0) }} tentative">
                             {{ rec.estimated_setting }}？ <span class="payout">(要様子見)</span>
                         </span>
                         {% elif rec.total_games > 0 and rec.total_games < 1000 %}
-                        <!-- 1000G未満は設定判別困難 -->
                         <span class="setting-estimate tentative-weak">
                             判別困難 <span class="payout">({{ rec.total_games }}G)</span>
                         </span>
                         {% endif %}
                         <span class="past-eval">
                             過去7日: <strong style="color: {{ rank_color(rec.base_rank) }}">{{ rec.base_rank }}</strong>
-                            (平均{{ rec.avg_art_7days|round(1) }}ART)
+                            {% if rec.trend and rec.trend.get('avg_art_prob', 0) > 0 %}
+                            (確率1/{{ rec.trend.get('avg_art_prob', 0)|round(0)|int }})
+                            {% endif %}
                         </span>
                     </div>
 
@@ -222,9 +221,11 @@
                             </div>
                             <div class="detail-section">
                                 <div class="detail-title">過去7日間</div>
-                                <div class="detail-item">平均ART: {{ rec.avg_art_7days|round(1) }}回/日</div>
-                                {% if rec.avg_max_rensa and rec.avg_max_rensa > 0 %}
-                                <div class="detail-item">平均最大連チャン: {{ rec.avg_max_rensa|round(0)|int }}連</div>
+                                {% if rec.trend and rec.trend.get('avg_art_prob', 0) > 0 %}
+                                <div class="detail-item">ART確率: 1/{{ rec.trend.get('avg_art_prob', 0)|round(0)|int }}（7日平均）</div>
+                                {% endif %}
+                                {% if rec.trend and rec.trend.get('avg_games_per_art', 0) > 0 %}
+                                <div class="detail-item">AT間: 平均{{ rec.trend.get('avg_games_per_art', 0)|round(0)|int }}G</div>
                                 {% endif %}
                                 {% if rec.consecutive_plus > 0 %}
                                 <div class="detail-item plus">{{ rec.consecutive_plus }}日連続プラス → 据え置き期待</div>
@@ -233,6 +234,9 @@
                                 {% endif %}
                                 {% if rec.yesterday_art > 0 %}
                                 <div class="detail-item">昨日ART: {{ rec.yesterday_art }}回</div>
+                                {% endif %}
+                                {% if rec.trend and rec.trend.get('max_art_day') and rec.trend.get('max_art_day').art > 0 %}
+                                <div class="detail-item">最高日: {{ rec.trend.get('max_art_day').art }}ART（{{ rec.trend.get('max_art_day').date[-5:] }}）</div>
                                 {% endif %}
                             </div>
                         </div>
@@ -305,7 +309,7 @@
                             <div>推定: {{ rec.estimated_setting }}{% if rec.total_games < 3000 %}？{% endif %} ({{ rec.payout_estimate }}%)</div>
                             {% endif %}
                             {% endif %}
-                            <div>過去7日: 平均{{ rec.avg_art_7days|round(1) }}ART</div>
+                            <div>過去7日: ランク{{ rec.base_rank }}{% if rec.trend and rec.trend.get('avg_art_prob', 0) > 0 %} (確率1/{{ rec.trend.get('avg_art_prob', 0)|round(0)|int }}){% endif %}</div>
                             {% if rec.reasons %}
                             <div class="compact-reason">{{ rec.reasons[0] }}</div>
                             {% endif %}
