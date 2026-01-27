@@ -122,6 +122,58 @@ def calculate_max_rensa(history: list) -> int:
     return max_chain
 
 
+def calculate_max_chain_medals(history: list) -> int:
+    """最大連チャン区間の累計枚数を計算する
+
+    連チャンが途切れるまでの全当たり（RB含む）の出玉合計。
+    複数の連チャン区間がある場合は最も枚数が多い区間を返す。
+
+    Args:
+        history: 当たり履歴リスト
+
+    Returns:
+        最大連チャン区間の累計枚数
+    """
+    if not history:
+        return 0
+
+    sorted_history = sorted(history, key=lambda x: x.get('time', '00:00'))
+
+    max_medals = 0
+    current_chain_medals = 0
+    current_chain = 0
+    accumulated_games = 0
+
+    for hit in sorted_history:
+        start = hit.get('start', 0)
+        hit_type = hit.get('type', '')
+        medals = hit.get('medals', 0)
+
+        accumulated_games += start
+
+        if is_big_hit(hit_type):
+            if accumulated_games <= RENCHAIN_THRESHOLD:
+                # 連チャン継続：RB分も含めて累計
+                current_chain += 1
+                current_chain_medals += medals
+            else:
+                # 連チャン途切れ → 新しい区間開始
+                if current_chain_medals > max_medals:
+                    max_medals = current_chain_medals
+                current_chain = 1
+                current_chain_medals = medals
+            accumulated_games = 0
+        else:
+            # RBは連チャン数にカウントしないが、枚数は累計する
+            current_chain_medals += medals
+
+    # 最後の区間
+    if current_chain_medals > max_medals:
+        max_medals = current_chain_medals
+
+    return max_medals
+
+
 def calculate_current_at_games(history: list, final_start: int = 0) -> int:
     """現在のAT間G数を計算（最終大当たりから現在までの総G数）
 
