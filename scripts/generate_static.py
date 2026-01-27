@@ -290,6 +290,11 @@ def generate_index(env):
                     if db_art and db_art > 0 and db_games and db_games > 0:
                         db_p = calculate_expected_profit(db_games, db_art, key)
                         rec['day_before_diff_medals'] = db_p.get('current_estimate', 0)
+                    td_art = rec.get('three_days_ago_art', 0)
+                    td_games = rec.get('three_days_ago_games', 0)
+                    if td_art and td_art > 0 and td_games and td_games > 0:
+                        td_p = calculate_expected_profit(td_games, td_art, key)
+                        rec['three_days_ago_diff_medals'] = td_p.get('current_estimate', 0)
 
                 # TOP3候補（上位3台/店舗）
                 for rec in recs[:3]:
