@@ -2483,6 +2483,34 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
             if rec.get('comparison_note'):
                 rec['comparison_note'] = rec['comparison_note'].replace('本日', data_date_label)
 
+    # === 前日データの相対評価（店舗内比較） ===
+    # 前日の成績が店舗平均より弱い場合は注意を追加
+    y_arts = [r.get('yesterday_art', 0) for r in recommendations if r.get('yesterday_art', 0) > 0]
+    y_rensas = [r.get('yesterday_max_rensa', 0) for r in recommendations if r.get('yesterday_max_rensa', 0) > 0]
+    y_probs = [r.get('yesterday_prob', 0) for r in recommendations if r.get('yesterday_prob') and r.get('yesterday_prob', 0) > 0]
+    if len(y_arts) >= 5:
+        avg_y_art = sum(y_arts) / len(y_arts)
+        avg_y_rensa = sum(y_rensas) / len(y_rensas) if y_rensas else 0
+        median_y_prob = sorted(y_probs)[len(y_probs)//2] if y_probs else 0
+        for rec in recommendations:
+            ya = rec.get('yesterday_art', 0)
+            ymr = rec.get('yesterday_max_rensa', 0)
+            yp = rec.get('yesterday_prob', 0)
+            warnings = []
+            if ya > 0 and ya < avg_y_art * 0.75:
+                warnings.append(f"ART{ya}回（平均{avg_y_art:.0f}回）")
+            if ymr > 0 and avg_y_rensa > 0 and ymr < avg_y_rensa * 0.5:
+                warnings.append(f"最大{ymr}連（平均{avg_y_rensa:.0f}連）")
+            if yp > 0 and median_y_prob > 0 and yp > median_y_prob * 1.5:
+                warnings.append(f"確率1/{yp}（中央値1/{median_y_prob:.0f}）")
+            if warnings:
+                good_rate = rec.get('historical_perf', {}).get('good_day_rate', 0) if isinstance(rec.get('historical_perf'), dict) else 0
+                # 好調率が高い台なら安心材料を添える
+                if good_rate >= 0.7:
+                    rec['reasons'].append(f"⚠ 前日は店舗内で弱め: {' / '.join(warnings)} → ただし好調率{good_rate:.0%}なので本日戻す期待あり")
+                else:
+                    rec['reasons'].append(f"⚠ 前日は店舗内で弱め: {' / '.join(warnings)} → 前日は低設定の可能性")
+
     return recommendations
 
 
