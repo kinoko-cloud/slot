@@ -122,6 +122,78 @@ def calculate_max_rensa(history: list) -> int:
     return max_chain
 
 
+def calculate_first_hits(history: list) -> dict:
+    """履歴データから初当たり（連チャンの起点）を計算する
+
+    初当たりの定義:
+    - 連チャン（AT間70G以内）が途切れた後の次の大当たり
+    - つまり「is_chainでない大当たり」= 初当たり
+    - 最初の大当たりも初当たり
+
+    Args:
+        history: 当たり履歴リスト。各要素に 'start', 'type', 'time' フィールドが必要
+
+    Returns:
+        dict: {
+            'first_hit_count': int,      # 初当たり回数
+            'first_hit_indices': [int],   # 初当たりのindex（sorted_history内）
+        }
+    """
+    if not history:
+        return {'first_hit_count': 0, 'first_hit_indices': []}
+
+    sorted_history = sorted(history, key=lambda x: x.get('time', '00:00'))
+
+    first_hit_indices = []
+    accumulated_games = 0
+
+    for i, hit in enumerate(sorted_history):
+        start = hit.get('start', 0)
+        hit_type = hit.get('type', '')
+
+        accumulated_games += start
+
+        if is_big_hit(hit_type):
+            # 最初の大当たり、またはAT間がRENMAIN_THRESHOLDを超えている → 初当たり
+            if i == 0 or accumulated_games > RENCHAIN_THRESHOLD:
+                first_hit_indices.append(i)
+            accumulated_games = 0
+        # RB/REGの場合はaccumulated_gamesを継続
+
+    return {
+        'first_hit_count': len(first_hit_indices),
+        'first_hit_indices': first_hit_indices,
+    }
+
+
+def mark_first_hits(history: list) -> list:
+    """履歴の各hitに is_first_hit フラグを付与して返す
+
+    generate_static.pyからテンプレートに渡す前に呼ぶ。
+    元のhistoryは変更せず、新しいリストを返す。
+
+    Args:
+        history: 当たり履歴リスト
+
+    Returns:
+        list: is_first_hit フラグが付与された履歴リスト（時刻順）
+    """
+    if not history:
+        return []
+
+    sorted_history = sorted(history, key=lambda x: x.get('time', '00:00'))
+    result = calculate_first_hits(sorted_history)
+    first_hit_set = set(result['first_hit_indices'])
+
+    marked = []
+    for i, hit in enumerate(sorted_history):
+        new_hit = dict(hit)
+        new_hit['is_first_hit'] = i in first_hit_set
+        marked.append(new_hit)
+
+    return marked
+
+
 def calculate_max_chain_medals(history: list) -> int:
     """最大連チャン区間の累計枚数を計算する
 

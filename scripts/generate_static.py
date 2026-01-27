@@ -19,6 +19,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 from jinja2 import Environment, FileSystemLoader
 from config.rankings import STORES, MACHINES, get_stores_by_machine, get_machine_info
 from analysis.recommender import recommend_units, load_daily_data, generate_store_analysis, calculate_expected_profit, analyze_today_graph, calculate_at_intervals
+from analysis.analyzer import calculate_first_hits, mark_first_hits
 from scrapers.availability_checker import get_availability, get_realtime_data
 from scripts.verify_units import get_active_alerts, get_unit_status
 
@@ -343,6 +344,12 @@ def generate_index(env):
                     if 'availability' not in rec or rec['availability'] is None:
                         rec['availability'] = availability.get(rec['unit_id'], '')
                     # 差枚計算はrecommend_units内で統合済み
+                    # 初当たり回数を計算（TOP3表示用）
+                    _y_hist = rec.get('yesterday_history', [])
+                    if _y_hist:
+                        rec['first_hit_count'] = calculate_first_hits(_y_hist)['first_hit_count']
+                    else:
+                        rec['first_hit_count'] = 0
 
                 # TOP3候補（上位3台/店舗）
                 for rec in recs[:3]:
@@ -418,6 +425,14 @@ def generate_index(env):
                         else:
                             prediction_result = 'correct'  # 予想通り不調
 
+                        # 初当たり計算 & 履歴マーキング
+                        y_hist_raw = rec.get('yesterday_history', [])
+                        t_hist_raw = rec.get('today_history', [])
+                        y_first_hits = calculate_first_hits(y_hist_raw)
+                        y_first_hit_count = y_first_hits['first_hit_count']
+                        y_hist_marked = mark_first_hits(y_hist_raw)
+                        t_hist_marked = mark_first_hits(t_hist_raw)
+
                         yesterday_top10.append({
                             'unit_id': rec['unit_id'],
                             'store_name': rec['store_name'],
@@ -432,14 +447,31 @@ def generate_index(env):
                             'yesterday_ceilings': y_ceilings,
                             'yesterday_prob': y_prob,
                             'diff_medals': y_diff_medals,
+                            'yesterday_diff_medals': y_diff_medals,
                             'estimated_setting': y_setting,
                             'setting_num': y_setting_num,
                             'predicted_rank': predicted_rank,
                             'predicted_score': predicted_score,
                             'prediction_result': prediction_result,
-                            'yesterday_history': rec.get('yesterday_history', []),
-                            'today_history': rec.get('today_history', []),
+                            'yesterday_history': y_hist_marked,
+                            'today_history': t_hist_marked,
                             'recent_days': rec.get('recent_days', []),
+                            'first_hit_count': y_first_hit_count,
+                            # 前々日・3日前データ
+                            'day_before_art': rec.get('day_before_art', 0),
+                            'day_before_rb': rec.get('day_before_rb', 0),
+                            'day_before_games': rec.get('day_before_games', 0),
+                            'day_before_date': rec.get('day_before_date', ''),
+                            'day_before_diff_medals': rec.get('day_before_diff_medals', 0),
+                            'day_before_max_rensa': rec.get('day_before_max_rensa', 0),
+                            'day_before_max_medals': rec.get('day_before_max_medals', 0),
+                            'three_days_ago_art': rec.get('three_days_ago_art', 0),
+                            'three_days_ago_rb': rec.get('three_days_ago_rb', 0),
+                            'three_days_ago_games': rec.get('three_days_ago_games', 0),
+                            'three_days_ago_date': rec.get('three_days_ago_date', ''),
+                            'three_days_ago_diff_medals': rec.get('three_days_ago_diff_medals', 0),
+                            'three_days_ago_max_rensa': rec.get('three_days_ago_max_rensa', 0),
+                            'three_days_ago_max_medals': rec.get('three_days_ago_max_medals', 0),
                         })
 
                 # 本日の爆発台（全台から収集、art_count > 0）
@@ -453,6 +485,12 @@ def generate_index(env):
                         if t_art > 0 and t_games > 0:
                             profit = calculate_expected_profit(t_games, t_art, key)
                             diff_medals = profit.get('current_estimate', 0)
+                        # 初当たり計算
+                        t_hist_raw2 = rec.get('today_history', [])
+                        t_first_hits = calculate_first_hits(t_hist_raw2)
+                        t_first_hit_count = t_first_hits['first_hit_count']
+                        t_hist_marked2 = mark_first_hits(t_hist_raw2)
+
                         today_top10.append({
                             'unit_id': rec['unit_id'],
                             'store_name': rec['store_name'],
@@ -470,7 +508,8 @@ def generate_index(env):
                             'payout_estimate': rec.get('payout_estimate', ''),
                             'today_max_rensa': rec.get('today_max_rensa', 0),
                             'diff_medals': diff_medals,
-                            'today_history': rec.get('today_history', []),
+                            'today_history': t_hist_marked2,
+                            'first_hit_count': t_first_hit_count,
                         })
             except Exception as e:
                 print(f"Error processing {store_key}: {e}")
