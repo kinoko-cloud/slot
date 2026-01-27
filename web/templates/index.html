@@ -29,6 +29,23 @@
         </header>
 
         <main>
+            {# === 閉店後/集計中: 的中率ヒーロー表示 === #}
+            {% if display_mode in ('result', 'collecting') and accuracy_hero %}
+            <section class="accuracy-hero">
+                <div class="hero-title">{{ data_date_str }}の予測的中率</div>
+                <div class="hero-rates">
+                    {% for hero in accuracy_hero %}
+                    <div class="hero-rate-card">
+                        <span class="hero-icon">{{ hero.icon }}</span>
+                        <span class="hero-name">{{ hero.name }}</span>
+                        <span class="hero-pct {% if hero.rate >= 80 %}excellent{% elif hero.rate >= 60 %}good{% else %}normal{% endif %}">{{ hero.rate|int }}%</span>
+                        <span class="hero-detail">{{ hero.hit }}/{{ hero.total }}的中</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+            {% endif %}
+
             {# === 閉店後: 前日の爆発台を最上部に表示 === #}
             {% if display_mode in ('result', 'collecting') and yesterday_top10 %}
             <section class="today-hot-section">
