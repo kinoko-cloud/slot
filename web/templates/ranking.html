@@ -47,11 +47,13 @@
                         <span class="ranking-num">#{{ loop.index }}</span>
                         <a href="{{ url_for('recommend', store_key=rec.store_key) }}" class="unit-id-large unit-id-link" onclick="event.stopPropagation()">{{ rec.unit_id|pad_id }}番台</a>
 
-                        <!-- 空き状況バッジ -->
+                        <!-- 空き状況バッジ（営業中のみ） -->
+                        {% if is_open %}
                         {% if rec.availability == '空き' %}
                         <span class="avail-badge-lg empty">空き</span>
                         {% elif rec.availability == '遊技中' %}
                         <span class="avail-badge-lg playing">遊技中</span>
+                        {% endif %}
                         {% endif %}
 
                         <span class="rank-badge-lg" style="background-color: {{ rank_color(rec.final_rank) }}">
@@ -143,9 +145,11 @@
                         <div class="setting-history-row">
                             <span class="setting-history-label">直近の傾向:</span>
                             {% if rec.consecutive_minus >= 2 %}
-                            <span class="setting-trend minus">凹み{{ rec.consecutive_minus }}日 → 設定変更↑期待</span>
+                            <span class="setting-trend minus">{{ rec.consecutive_minus }}日連続不調 → 設定上げの可能性あり</span>
+                            {% elif rec.consecutive_plus >= 3 %}
+                            <span class="setting-trend plus">{{ rec.consecutive_plus }}日連続好調 → 据え置き or 転落警戒</span>
                             {% elif rec.consecutive_plus >= 2 %}
-                            <span class="setting-trend plus">{{ rec.consecutive_plus }}日連続好調 → 据え置き期待</span>
+                            <span class="setting-trend plus">2日連続好調 → 据え置き期待</span>
                             {% elif rec.trend and rec.trend.get('art_trend') == 'improving' %}
                             <span class="setting-trend improving">ART改善傾向 → 好転の兆し</span>
                             {% else %}
@@ -231,9 +235,11 @@
                         <span class="past-eval">
                             過去: <strong style="color: {{ rank_color(rec.base_rank) }}">{{ rec.base_rank }}</strong>
                             {% if rec.consecutive_minus >= 2 %}
-                            → 凹み{{ rec.consecutive_minus }}日
+                            → {{ rec.consecutive_minus }}日連続不調、設定上げ期待
+                            {% elif rec.consecutive_plus >= 3 %}
+                            → {{ rec.consecutive_plus }}日好調、転落警戒も
                             {% elif rec.consecutive_plus >= 2 %}
-                            → {{ rec.consecutive_plus }}日好調
+                            → 2日好調、据え置き期待
                             {% endif %}
                         </span>
                     </div>

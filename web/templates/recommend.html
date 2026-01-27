@@ -139,8 +139,6 @@
                             {% elif rec.availability == '遊技中' %}
                             <span class="avail-badge-lg playing">遊技中</span>
                             {% endif %}
-                        {% else %}
-                            <span class="avail-badge-lg closed">営業外</span>
                         {% endif %}
                         <span class="rank-badge-lg" style="background-color: {{ rank_color(rec.final_rank) }}">{{ rec.final_rank }}</span>
                         <span class="expand-icon">▼</span>
@@ -220,52 +218,6 @@
                         {% endfor %}
                         {% endif %}
                     </div>
-                    {# 2. 過去3日データ #}
-                    <div class="recent-days">
-                        {% set y_art = rec.yesterday_art or 0 %}
-                        {% set y_games = rec.yesterday_games or 0 %}
-                        {% set y_prob = (y_games / y_art)|int if y_art > 0 and y_games > 0 else 0 %}
-                        {% if y_art > 0 %}
-                        <div class="recent-day-row">
-                            <span class="recent-label">{{ short_date(rec.yesterday_date) or '前日' }}</span>
-                            <span class="recent-art">ART {{ y_art }}</span>
-                            {% if y_prob > 0 %}<span class="recent-prob {% if y_prob <= 100 %}excellent{% elif y_prob <= 130 %}good{% elif y_prob >= 200 %}bad{% endif %}">1/{{ y_prob }}</span>{% endif %}
-                            {% if y_games > 0 %}<span class="recent-games">{{ '{:,}'.format(y_games) }}G</span>{% endif %}
-                            {% if rec.yesterday_diff_medals is defined and rec.yesterday_diff_medals != 0 %}
-                            <span class="diff-medals-sm {% if rec.yesterday_diff_medals > 0 %}plus{% else %}minus{% endif %}">{{ '{:+,}'.format(rec.yesterday_diff_medals) }}枚</span>
-                            {% endif %}
-                            {% if rec.yesterday_max_rensa and rec.yesterday_max_rensa >= 3 %}<span class="rensa-sm">{{ rec.yesterday_max_rensa }}連</span>{% endif %}
-                        </div>
-                        {% endif %}
-                        {% set db_art = rec.day_before_art or 0 %}
-                        {% set db_games = rec.day_before_games or 0 %}
-                        {% set db_prob = (db_games / db_art)|int if db_art > 0 and db_games > 0 else 0 %}
-                        {% if db_art > 0 %}
-                        <div class="recent-day-row">
-                            <span class="recent-label">{{ short_date(rec.day_before_date) or '前々日' }}</span>
-                            <span class="recent-art">ART {{ db_art }}</span>
-                            {% if db_prob > 0 %}<span class="recent-prob {% if db_prob <= 100 %}excellent{% elif db_prob <= 130 %}good{% elif db_prob >= 200 %}bad{% endif %}">1/{{ db_prob }}</span>{% endif %}
-                            {% if db_games > 0 %}<span class="recent-games">{{ '{:,}'.format(db_games) }}G</span>{% endif %}
-                            {% if rec.day_before_diff_medals is defined and rec.day_before_diff_medals != 0 %}
-                            <span class="diff-medals-sm {% if rec.day_before_diff_medals > 0 %}plus{% else %}minus{% endif %}">{{ '{:+,}'.format(rec.day_before_diff_medals) }}枚</span>
-                            {% endif %}
-                            {% if rec.day_before_max_rensa is defined and rec.day_before_max_rensa >= 3 %}<span class="rensa-sm">{{ rec.day_before_max_rensa }}連</span>{% endif %}
-                        </div>
-                        {% endif %}
-                        {% if rec.three_days_ago_art is defined and rec.three_days_ago_art > 0 %}
-                        <div class="recent-day-row">
-                            <span class="recent-label">{{ short_date(rec.three_days_ago_date) or '3日前' }}</span>
-                            <span class="recent-art">ART {{ rec.three_days_ago_art }}</span>
-                            {% set td_prob = (rec.three_days_ago_games / rec.three_days_ago_art)|int if rec.three_days_ago_art > 0 and rec.three_days_ago_games > 0 else 0 %}
-                            {% if td_prob > 0 %}<span class="recent-prob {% if td_prob <= 100 %}excellent{% elif td_prob <= 130 %}good{% elif td_prob >= 200 %}bad{% endif %}">1/{{ td_prob }}</span>{% endif %}
-                            {% if rec.three_days_ago_games > 0 %}<span class="recent-games">{{ '{:,}'.format(rec.three_days_ago_games) }}G</span>{% endif %}
-                            {% if rec.three_days_ago_diff_medals is defined and rec.three_days_ago_diff_medals != 0 %}
-                            <span class="diff-medals-sm {% if rec.three_days_ago_diff_medals > 0 %}plus{% else %}minus{% endif %}">{{ '{:+,}'.format(rec.three_days_ago_diff_medals) }}枚</span>
-                            {% endif %}
-                            {% if rec.three_days_ago_max_rensa is defined and rec.three_days_ago_max_rensa >= 3 %}<span class="rensa-sm">{{ rec.three_days_ago_max_rensa }}連</span>{% endif %}
-                        </div>
-                        {% endif %}
-                    </div>
                     {% endif %}
 
                     {# === 直近3日間データ === #}
@@ -309,13 +261,16 @@
                         </span>
                         {% endif %}
                         <span class="past-eval">
-                            蓄積傾向: <strong style="color: {{ rank_color(rec.base_rank) }}">{{ rec.base_rank }}ランク</strong>
                             {% if rec.consecutive_minus >= 2 %}
-                            → 凹み{{ rec.consecutive_minus }}日、設定上げ期待
+                            {{ rec.consecutive_minus }}日連続不調 → 設定上げの可能性あり
+                            {% elif rec.consecutive_plus >= 3 %}
+                            {{ rec.consecutive_plus }}日連続好調 → 据え置き or 転落警戒
                             {% elif rec.consecutive_plus >= 2 %}
-                            → {{ rec.consecutive_plus }}日連続好調、据え置き期待
+                            2日連続好調 → 据え置き期待
                             {% elif rec.trend and rec.trend.get('art_trend') == 'improving' %}
-                            → 直近ART改善傾向
+                            直近ART改善傾向
+                            {% else %}
+                            蓄積傾向: <strong style="color: {{ rank_color(rec.base_rank) }}">{{ rec.base_rank }}ランク</strong>
                             {% endif %}
                         </span>
                     </div>

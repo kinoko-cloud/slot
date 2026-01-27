@@ -80,9 +80,16 @@
             {% if rec.max_medals and rec.max_medals > 0 %} / 最大{{ '{:,}'.format(rec.max_medals) }}枚{% endif %}
         </div>
         {% endif %}
-        <div class="v2-detail-trend">蓄積傾向: {{ rec.base_rank }}ランク
-            {% if rec.consecutive_minus >= 2 %} → 凹み{{ rec.consecutive_minus }}日{% endif %}
-            {% if rec.consecutive_plus >= 2 %} → {{ rec.consecutive_plus }}日連続好調{% endif %}
+        <div class="v2-detail-trend">
+            {% if rec.consecutive_minus >= 2 %}
+            {{ rec.consecutive_minus }}日連続不調 → 設定上げの可能性あり
+            {% elif rec.consecutive_plus >= 3 %}
+            {{ rec.consecutive_plus }}日連続好調 → 据え置き or 転落警戒
+            {% elif rec.consecutive_plus >= 2 %}
+            2日連続好調 → 据え置き期待
+            {% else %}
+            蓄積傾向: {{ rec.base_rank }}ランク
+            {% endif %}
         </div>
     </div>
 </div>
