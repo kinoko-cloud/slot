@@ -98,13 +98,8 @@
                         <span class="expand-icon">▼</span>
                     </div>
 
-                    <!-- データ（本日 or 昨日） -->
+                    <!-- データ（常にART/RB/G数を表示、0でも表示） -->
                     <div class="today-data-row">
-                        {% if rec.total_games > 0 %}
-                        <!-- データ日付を表示 -->
-                        {% if rec.data_date and not rec.is_today_data %}
-                        <div class="data-date-badge">{{ rec.data_date[-5:] }}のデータ</div>
-                        {% endif %}
                         <!-- ART を最初に大きく -->
                         <div class="data-cell highlight">
                             <span class="data-value"><span class="art-num-lg">{{ rec.art_count }}</span></span>
@@ -129,19 +124,15 @@
                         </div>
                         {% endif %}
                         <!-- RB -->
-                        {% if rec.rb_count > 0 %}
                         <div class="data-cell">
                             <span class="data-value"><span class="rb-num">{{ rec.rb_count }}</span></span>
                             <span class="data-label">RB</span>
                         </div>
-                        {% endif %}
                         <!-- 現在スタート -->
-                        {% if rec.current_hama and rec.current_hama > 0 %}
-                        <div class="data-cell {% if rec.current_hama >= 500 %}bad{% elif rec.current_hama >= 300 %}warn{% endif %}">
-                            <span class="data-value">{{ rec.current_hama }}</span>
+                        <div class="data-cell {% if rec.current_hama and rec.current_hama >= 500 %}bad{% elif rec.current_hama and rec.current_hama >= 300 %}warn{% endif %}">
+                            <span class="data-value">{{ rec.current_hama or 0 }}</span>
                             <span class="data-label">現在G</span>
                         </div>
-                        {% endif %}
                         <!-- ハマり回数 -->
                         {% if rec.today_deep_hama and rec.today_deep_hama > 0 %}
                         <div class="data-cell bad">
@@ -154,16 +145,6 @@
                             <span class="data-value">{{ '{:,}'.format(rec.total_games) }}</span>
                             <span class="data-label">G数</span>
                         </div>
-                        {% else %}
-                        <div class="no-data-inline">
-                            本日未稼働
-                            {% if rec.availability == '空き' %}
-                            <span class="target-badge">空き</span>
-                            {% elif rec.availability == '遊技中' %}
-                            <span class="playing-badge">遊技中</span>
-                            {% endif %}
-                        </div>
-                        {% endif %}
                     </div>
 
                     {# === 前日・前々日データ === #}
@@ -290,17 +271,14 @@
                         {% endif %}
                         <span class="rank-sm" style="background-color: {{ rank_color(rec.final_rank) }}">{{ rec.final_rank }}</span>
 
-                        {% if rec.total_games > 0 %}
-                        <!-- ART数を大きく目立たせる -->
-                        <span class="compact-art"><span class="art-num">{{ rec.art_count }}</span><span class="art-lbl">ART</span></span>
+                        <!-- ART数を常に表示（0でも） -->
+                        <span class="compact-art{% if rec.total_games == 0 %} past{% endif %}"><span class="art-num">{{ rec.art_count }}</span><span class="art-lbl">ART</span></span>
                         {% if rec.art_prob > 0 %}
                         <span class="compact-prob {% if rec.art_prob <= 100 %}excellent{% elif rec.art_prob <= 130 %}good{% elif rec.art_prob >= 200 %}bad{% endif %}">1/{{ rec.art_prob|int }}</span>
                         {% endif %}
-                        <!-- RB回数 -->
                         {% if rec.rb_count > 0 %}
                         <span class="compact-rb">RB<span class="num">{{ rec.rb_count }}</span></span>
                         {% endif %}
-                        <!-- 最大枚数 -->
                         {% if rec.max_medals and rec.max_medals > 0 %}
                         {% set badge = medals_badge(rec.max_medals) %}
                         <span class="compact-max {% if badge %}{{ badge.class }}{% endif %}">
@@ -308,20 +286,16 @@
                             最大<span class="num">{{ '{:,}'.format(rec.max_medals) }}</span>
                         </span>
                         {% endif %}
-                        <!-- 回転数は最後に小さく -->
                         <span class="compact-games">{{ '{:,}'.format(rec.total_games) }}G</span>
-                        {% elif rec.yesterday_art > 0 %}
-                        <span class="compact-art past"><span class="art-num">{{ rec.yesterday_art }}</span><span class="art-lbl">ART(前日)</span></span>
-                        {% else %}
-                        <span class="compact-data no-data">データなし</span>
+                        {% if rec.total_games == 0 and rec.yesterday_art %}
+                        <span class="compact-art past"><span class="art-num">{{ rec.yesterday_art }}</span><span class="art-lbl">(前日)</span></span>
                         {% endif %}
                         <span class="expand-icon small">▼</span>
                     </div>
 
                     <div class="unit-details hidden">
                         <div class="compact-details">
-                            {% if rec.total_games > 0 %}
-                            <div>本日: ART <span class="art-num">{{ rec.art_count }}</span>回{% if rec.rb_count > 0 %} / RB {{ rec.rb_count }}回{% endif %} / {{ '{:,}'.format(rec.total_games) }}G</div>
+                            <div>本日: ART <span class="art-num">{{ rec.art_count }}</span>回 / RB {{ rec.rb_count }}回 / {{ '{:,}'.format(rec.total_games) }}G</div>
                             {% if rec.max_medals and rec.max_medals > 0 %}
                             <div>最大: {{ '{:,}'.format(rec.max_medals) }}枚</div>
                             {% endif %}
@@ -333,7 +307,6 @@
                             {% endif %}
                             {% if rec.total_games >= 1000 and rec.estimated_setting %}
                             <div>推定: {{ rec.estimated_setting }}{% if rec.total_games < 3000 %}？{% endif %} ({{ rec.payout_estimate }}%)</div>
-                            {% endif %}
                             {% endif %}
                             <div>過去分析: {{ rec.base_rank }}ランク{% if rec.consecutive_minus >= 2 %} → 凹み{{ rec.consecutive_minus }}日、設定上げ期待{% elif rec.consecutive_plus >= 2 %} → {{ rec.consecutive_plus }}日好調、据え置き期待{% endif %}</div>
                             {% if rec.reasons %}
