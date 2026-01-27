@@ -301,7 +301,7 @@ def index():
         return -score
 
     top3_all.sort(key=top3_sort_key)
-    top3 = top3_all[:5]
+    top3 = top3_all[:3]
 
     # 前日トップ10（最大枚数順）
     yesterday_top10.sort(key=lambda x: -x['max_medals'])
@@ -1033,7 +1033,7 @@ def api_v2_index():
         return -score
 
     top3_all.sort(key=top3_sort_key)
-    top3 = top3_all[:5]
+    top3 = top3_all[:3]
 
     # 今日の曜日ランキング
     today_store_ranking = []
