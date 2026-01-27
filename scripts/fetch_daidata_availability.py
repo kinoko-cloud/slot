@@ -156,25 +156,43 @@ def fetch_unit_detail(page, hall_id: str, unit_id: str) -> dict:
     try:
         page.goto(url, timeout=20000, wait_until='domcontentloaded')
 
-        # 規約同意ボタンをクリック
+        # 規約同意ボタンがある場合（店舗ごとに別セッション）
         try:
             accept_btn = page.locator('text="利用規約に同意する"')
             if accept_btn.count() > 0:
                 accept_btn.click()
+                page.wait_for_timeout(2000)
+                # 規約同意後、元のdetailページに戻る
+                page.goto(url, timeout=20000, wait_until='domcontentloaded')
                 page.wait_for_timeout(1500)
         except:
             pass
 
         page.wait_for_timeout(1500)
 
-        # テキストからデータを抽出
-        text = page.inner_text('body')
+        # テキストからデータを抽出（最大2回試行）
+        text = page.inner_text('body', timeout=30000)
 
         data = {'unit_id': unit_id, 'bb': 0, 'rb': 0, 'art': 0, 'total_start': 0, 'final_start': 0}
 
         # BB/RB/ART/スタート回数を取得
         # パターン: BB RB ART スタート回数\n数値 数値 数値 数値
         match = re.search(r'BB\s+RB\s+ART\s+スタート回数\s*\n?\s*(\d+)\s+(\d+)\s+(\d+)\s+(\d+)', text)
+
+        # マッチしない場合、規約ページが表示されてる可能性 → リトライ
+        if not match:
+            try:
+                page.goto(url, timeout=20000, wait_until='domcontentloaded')
+                accept_btn = page.locator('text="利用規約に同意する"')
+                if accept_btn.count() > 0:
+                    accept_btn.click()
+                    page.wait_for_timeout(2000)
+                page.goto(url, timeout=20000, wait_until='domcontentloaded')
+                page.wait_for_timeout(2000)
+                text = page.inner_text('body', timeout=30000)
+                match = re.search(r'BB\s+RB\s+ART\s+スタート回数\s*\n?\s*(\d+)\s+(\d+)\s+(\d+)\s+(\d+)', text)
+            except:
+                pass
         if match:
             data['bb'] = int(match.group(1))
             data['rb'] = int(match.group(2))
@@ -422,15 +440,21 @@ def main():
         page.route("**/geniee*", lambda route: route.abort())
         page.route("**/doubleclick*", lambda route: route.abort())
 
-        # ===== daidata規約同意（セッション全体で1回）=====
-        try:
-            page.goto('https://daidata.goraggio.com/100860/all_list?ps=S', wait_until='load', timeout=30000)
-            page.wait_for_timeout(2000)
-            page.evaluate('() => { const form = document.querySelector("form"); if (form) form.submit(); }')
-            page.wait_for_timeout(3000)
-            print("daidata規約同意完了")
-        except Exception as e:
-            print(f"daidata規約同意エラー（続行）: {e}")
+        # ===== daidata規約同意（店舗ごとに必要）=====
+        agreed_halls = set()
+        for config in DAIDATA_STORES.values():
+            hall_id = config['hall_id']
+            if hall_id in agreed_halls:
+                continue
+            try:
+                page.goto(f'https://daidata.goraggio.com/{hall_id}/all_list?ps=S', wait_until='load', timeout=30000)
+                page.wait_for_timeout(2000)
+                page.evaluate('() => { const form = document.querySelector("form"); if (form) form.submit(); }')
+                page.wait_for_timeout(2000)
+                agreed_halls.add(hall_id)
+                print(f"daidata規約同意完了: {hall_id} ({config['name']})")
+            except Exception as e:
+                print(f"daidata規約同意エラー（続行）: {hall_id} - {e}")
 
         # ===== daidata店舗 =====
         for store_key, config in DAIDATA_STORES.items():
