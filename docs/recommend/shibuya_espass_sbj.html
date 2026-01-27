@@ -21,22 +21,16 @@
             <div class="update-info">
                 
                 <span class="data-source">
-                    データ取得: <span id="update-time">22:26</span>
+                    データ取得: <span id="update-time">22:57</span>
                 </span>
                 <span class="cache-badge github">GITHUB</span>
-                
-                <div class="stale-notice">11分前のデータです</div>
                 
                 
             </div>
 
             <!-- 空き状況サマリ -->
             
-            <div class="availability-summary">
-                <span class="avail-empty" onclick="filterUnits('empty')">空き 0台</span>
-                <span class="avail-playing" onclick="filterUnits('playing')">遊技中 3台</span>
-                <span class="avail-all" onclick="filterUnits('all')">全て</span>
-            </div>
+            <div class="closed-notice">現在営業時間外です</div>
             
 
             <div class="action-buttons">
@@ -99,232 +93,542 @@
 
         <main>
             
-            <section class="no-recommendation">
-                <p>推奨台なし</p>
-                <p class="sub">全台稼働中または評価データなし</p>
-            </section>
-            
-
-            <section class="recommendations other">
-                <h2>その他の台</h2>
+            <section class="recommendations top">
+                <h2>推奨台</h2>
                 
-                <div class="unit-card-compact rank-s avail-card-playing" data-availability="遊技中" onclick="toggleDetails(this)">
-                    <div class="compact-row">
-                        <span class="compact-rank-num">#1</span>
-                        <span class="unit-id-sm">3011</span>
-                        
-                            
-                            <span class="avail-sm playing">稼</span>
-                            
-                        
-                        <span class="rank-sm" style="background-color: #ff6b6b">S</span>
+                <div class="unit-card rank-s avail-card-empty" data-availability="空き" onclick="toggleDetails(this)">
 
-                        <!-- ART数を常に表示（0でも） -->
-                        <span class="compact-art"><span class="art-num">63</span><span class="art-lbl">ART</span></span>
+                    <!-- メインヘッダー: 台番号 + 機種名 + 空き状況 + ランク -->
+                    <div class="unit-main-header">
+                        <a href="/history/shibuya_espass_sbj_3011.html" class="unit-id-large unit-id-link">3011</a>
+                        <span class="machine-name-sm">スーパーブラックジャック</span>
                         
-                        <span class="compact-prob excellent">1/74</span>
+                            <span class="avail-badge-lg closed">営業外</span>
                         
-                        
-                        <span class="compact-rb">RB<span class="num">14</span></span>
-                        
-                        
-                        
-                        <span class="compact-max medals-5k">
-                            <span class="medals-icon-sm">💰</span>
-                            最大<span class="num">6,168</span>
-                        </span>
-                        
-                        
-                        <span class="rensa-badge-sm">24連</span>
-                        
-                        
-                        <span class="setting-badge-sm setting-6">6</span>
-                        
-                        <span class="compact-games">4,683G</span>
-                        
-                        <span class="expand-icon small">▼</span>
+                        <span class="rank-badge-lg" style="background-color: #ff6b6b">S</span>
+                        <span class="expand-icon">▼</span>
                     </div>
 
+                    <!-- データ: 2段レイアウト -->
+                    <div class="today-data-row">
+                        <!-- 1段目: ART + 確率 + 連チャン -->
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">71</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            <div class="data-cell excellent">
+                                <span class="data-value">1/68</span>
+                                <span class="data-label">ART確率</span>
+                            </div>
+                            
+                            
+                            <div class="data-cell rensa-cell excellent">
+                                <span class="data-value">最大24連</span>
+                            </div>
+                            
+                        </div>
+                        <!-- 2段目: その他の統計（均一サイズ） -->
+                        <div class="data-row-secondary">
+                            
+                            
+                            <div class="data-cell medals-5k">
+                                <span class="data-value">6,422</span>
+                                <span class="data-label">最大枚 5千枚OVER</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">14</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell ">
+                                <span class="data-value">105</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell bad">
+                                <span class="data-value">3回</span>
+                                <span class="data-label">500G超</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">4,840</span>
+                                <span class="data-label">累計G</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    
+                    
+                    <div class="rec-prev-days">
+                        
+                        <span class="prev-day-rec">前日: <span class="prev-art">ART 9</span> / RB 2 (970G)</span>
+                        
+                        
+                        <span class="prev-day-rec">前々日: <span class="prev-art">ART 33</span> / RB 6 (3,630G)</span>
+                        
+                    </div>
+                    
+
+                    
+                    <div class="estimation-row">
+                        
+                        <span class="setting-estimate setting-6">
+                            設定6 <span class="payout">(124.0%)</span>
+                        </span>
+                        
+                        <span class="past-eval">
+                            過去分析: <strong style="color: #ffa502">Aランク</strong>
+                            
+                            → 2日連続好調、据え置き期待
+                            
+                        </span>
+                    </div>
+
+                    <!-- 推奨理由（具体的に・カテゴリ色分け） -->
+                    
+                    <div class="reason-main">
+                        
+                        
+                        <div class="reason-line">💡 好調率86%（6/7日好調）→ 高設定が入りやすい台</div>
+                        
+                        
+                        
+                        <div class="reason-line reason-prev">📅 前日ART 9回 (確率1/108) → 好調、据え置き期待</div>
+                        
+                        
+                    </div>
+                    
+
+                    <!-- 詳細（クリックで展開） -->
                     <div class="unit-details hidden">
-                        <div class="compact-details">
-                            <div>本日: ART <span class="art-num">63</span>回 / RB 14回 / 4,683G</div>
-                            
-                            <div>最大: 6,168枚</div>
-                            
-                            
-                            
-                            <div>本日ハマり: 500G超 3回 (最大1028G)</div>
-                            
-                            
-                            <div>推定: 設定6 (123.4%)</div>
-                            
-                            <div>過去分析: Aランク → 2日好調、据え置き期待</div>
-                            
-                            <div class="compact-reason">好調率86%（6/7日好調）→ 高設定が入りやすい台</div>
-                            
+                        <div class="detail-grid">
+                            <div class="detail-section">
+                                <div class="detail-title">本日詳細</div>
+                                
+                                
+                                <div class="detail-item highlight">最大持ち玉: <strong class="plus">6,422枚</strong></div>
+                                
+                                
+                                <div class="detail-item">現在のスタート: <strong>105G</strong>（最終大当たり後）</div>
+                                
+                                
+                                <div class="detail-item minus">本日ハマり: 500G超 <strong>3回</strong> (最大1028G)</div>
+                                
+                                
+                                <div class="detail-item">RB: 14回</div>
+                                
+                                
+                                
+                            </div>
 
                             
                             
-                            <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #333;">
-                                <div class="detail-title">2026-01-25 波</div>
+                            <div class="detail-section">
+                                <div class="detail-title">2026-01-25の波</div>
                                 <div class="wave-graph">
                                     
-                                    <span class="wave-bar rensa" title="21:26 1G ART">&#x2581;</span>
-                                    
-                                    <span class="wave-bar rensa" title="21:22 1G ART">&#x2581;</span>
-                                    
-                                    <span class="wave-bar rensa" title="21:18 10G ART">&#x2581;</span>
-                                    
-                                    <span class="wave-bar rensa" title="21:16 10G ART">&#x2581;</span>
-                                    
-                                    <span class="wave-bar rensa" title="21:13 20G ART">&#x2581;</span>
-                                    
-                                    <span class="wave-bar rensa" title="21:09 22G ART">&#x2581;</span>
-                                    
-                                    <span class="wave-bar rensa" title="21:06 23G ART">&#x2581;</span>
-                                    
-                                    <span class="wave-bar rensa" title="21:01 8G ART">&#x2581;</span>
-                                    
-                                    <span class="wave-bar rensa" title="20:56 16G ART">&#x2581;</span>
-                                    
-                                    <span class="wave-bar rensa" title="20:51 11G ART">&#x2581;</span>
-                                    
-                                    <span class="wave-bar rensa" title="20:20 1G ART">&#x2581;</span>
-                                    
-                                    <span class="wave-bar rensa" title="20:07 6G ART">&#x2581;</span>
-                                    
-                                    <span class="wave-bar rensa" title="20:05 8G ART">&#x2581;</span>
-                                    
-                                    <span class="wave-bar " title="20:04 237G ART">&#x2584;</span>
-                                    
-                                    <span class="wave-bar " title="18:31 127G RB">&#x2583;</span>
-                                    
-                                    <span class="wave-bar rensa" title="18:20 2G ART">&#x2581;</span>
-                                    
-                                    <span class="wave-bar rensa" title="18:18 2G ART">&#x2581;</span>
-                                    
-                                    <span class="wave-bar rensa" title="18:17 1G ART">&#x2581;</span>
-                                    
-                                    <span class="wave-bar rensa" title="18:13 1G ART">&#x2581;</span>
-                                    
-                                    <span class="wave-bar rensa" title="18:10 1G ART">&#x2581;</span>
-                                    
-                                    <span class="wave-bar rensa" title="18:07 1G ART">&#x2581;</span>
-                                    
-                                    <span class="wave-bar rensa" title="18:03 4G ART">&#x2581;</span>
-                                    
-                                    <span class="wave-bar " title="18:01 114G ART">&#x2583;</span>
-                                    
-                                    <span class="wave-bar " title="17:52 115G RB">&#x2583;</span>
-                                    
-                                    <span class="wave-bar rensa" title="17:43 28G ART">&#x2581;</span>
-                                    
-                                    <span class="wave-bar rensa" title="17:40 13G ART">&#x2581;</span>
-                                    
-                                    <span class="wave-bar rensa" title="17:36 15G ART">&#x2581;</span>
-                                    
-                                    <span class="wave-bar rensa" title="17:34 16G ART">&#x2581;</span>
-                                    
-                                    <span class="wave-bar rensa" title="17:32 12G ART">&#x2581;</span>
-                                    
-                                    <span class="wave-bar rensa" title="17:26 36G ART">&#x2581;</span>
-                                    
-                                    <span class="wave-bar rensa" title="17:21 16G ART">&#x2581;</span>
-                                    
-                                    <span class="wave-bar rensa" title="17:16 14G ART">&#x2581;</span>
-                                    
-                                    <span class="wave-bar rensa" title="17:14 42G ART">&#x2581;</span>
-                                    
-                                    <span class="wave-bar rensa" title="17:10 25G ART">&#x2581;</span>
-                                    
-                                    <span class="wave-bar rensa" title="17:07 5G ART">&#x2581;</span>
-                                    
-                                    <span class="wave-bar rensa" title="17:03 1G ART">&#x2581;</span>
-                                    
-                                    <span class="wave-bar rensa" title="16:58 1G ART">&#x2581;</span>
-                                    
-                                    <span class="wave-bar rensa" title="16:55 1G ART">&#x2581;</span>
-                                    
-                                    <span class="wave-bar rensa" title="16:49 23G ART">&#x2581;</span>
-                                    
-                                    <span class="wave-bar rensa" title="16:44 2G ART">&#x2581;</span>
-                                    
-                                    <span class="wave-bar rensa" title="16:41 33G ART">&#x2581;</span>
-                                    
-                                    <span class="wave-bar rensa" title="16:36 2G ART">&#x2581;</span>
-                                    
-                                    <span class="wave-bar rensa" title="16:32 2G ART">&#x2581;</span>
-                                    
-                                    <span class="wave-bar rensa" title="16:30 2G ART">&#x2581;</span>
-                                    
-                                    <span class="wave-bar rensa" title="16:28 1G ART">&#x2581;</span>
-                                    
-                                    <span class="wave-bar rensa" title="16:19 20G ART">&#x2581;</span>
-                                    
-                                    <span class="wave-bar rensa" title="16:16 9G ART">&#x2581;</span>
-                                    
-                                    <span class="wave-bar rensa" title="16:14 22G ART">&#x2581;</span>
-                                    
-                                    <span class="wave-bar " title="16:12 97G RB">&#x2582;</span>
-                                    
-                                    <span class="wave-bar " title="16:03 88G RB">&#x2582;</span>
-                                    
-                                    <span class="wave-bar rensa" title="15:53 31G ART">&#x2581;</span>
-                                    
-                                    <span class="wave-bar mid" title="15:50 438G ART">&#x2585;</span>
-                                    
-                                    <span class="wave-bar " title="15:18 224G RB">&#x2584;</span>
-                                    
-                                    <span class="wave-bar " title="15:00 186G RB">&#x2583;</span>
-                                    
-                                    <span class="wave-bar " title="14:45 180G RB">&#x2583;</span>
-                                    
-                                    <span class="wave-bar rensa" title="14:31 2G ART">&#x2581;</span>
-                                    
-                                    <span class="wave-bar rensa" title="14:24 43G ART">&#x2581;</span>
-                                    
-                                    <span class="wave-bar rensa" title="14:18 7G ART">&#x2581;</span>
-                                    
-                                    <span class="wave-bar rensa" title="14:15 33G ART">&#x2581;</span>
-                                    
-                                    <span class="wave-bar rensa" title="14:12 15G ART">&#x2581;</span>
-                                    
-                                    <span class="wave-bar rensa" title="14:09 11G ART">&#x2581;</span>
-                                    
-                                    <span class="wave-bar " title="14:04 195G ART">&#x2583;</span>
-                                    
-                                    <span class="wave-bar rensa" title="13:49 67G RB">&#x2581;</span>
-                                    
-                                    <span class="wave-bar " title="13:44 259G RB">&#x2584;</span>
-                                    
-                                    <span class="wave-bar mid" title="13:24 380G RB">&#x2585;</span>
-                                    
-                                    <span class="wave-bar " title="12:54 80G RB">&#x2582;</span>
-                                    
-                                    <span class="wave-bar rensa" title="12:46 40G ART">&#x2581;</span>
-                                    
-                                    <span class="wave-bar rensa" title="12:40 23G ART">&#x2581;</span>
-                                    
-                                    <span class="wave-bar " title="12:38 150G ART">&#x2583;</span>
-                                    
-                                    <span class="wave-bar mid" title="12:26 422G RB">&#x2585;</span>
-                                    
-                                    <span class="wave-bar mid" title="11:56 343G RB">&#x2585;</span>
-                                    
-                                    <span class="wave-bar " title="11:29 79G RB">&#x2582;</span>
-                                    
-                                    <span class="wave-bar rensa" title="11:17 4G ART">&#x2581;</span>
-                                    
-                                    <span class="wave-bar rensa" title="11:13 2G ART">&#x2581;</span>
-                                    
-                                    <span class="wave-bar rensa" title="11:09 1G ART">&#x2581;</span>
-                                    
-                                    <span class="wave-bar rensa" title="11:05 1G ART">&#x2581;</span>
-                                    
-                                    <span class="wave-bar " title="11:01 144G ART">&#x2583;</span>
+                                    <span class="wave-bar rensa" title="21:51 4G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="21:49 12G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="21:47 32G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="21:43 2G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="21:42 1G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="21:38 1G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="21:35 15G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="21:33 40G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="21:26 1G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="21:22 1G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="21:18 10G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="21:16 10G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="21:13 20G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="21:09 22G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="21:06 23G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="21:01 8G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="20:56 16G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="20:51 11G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="20:20 1G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="20:07 6G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="20:05 8G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar " title="20:04 237G ART">
+                                        &#x2584;
+                                    </span>
+                                    
+                                    <span class="wave-bar " title="18:31 127G RB">
+                                        &#x2583;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="18:20 2G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="18:18 2G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="18:17 1G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="18:13 1G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="18:10 1G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="18:07 1G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="18:03 4G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar " title="18:01 114G ART">
+                                        &#x2583;
+                                    </span>
+                                    
+                                    <span class="wave-bar " title="17:52 115G RB">
+                                        &#x2583;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="17:43 28G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="17:40 13G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="17:36 15G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="17:34 16G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="17:32 12G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="17:26 36G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="17:21 16G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="17:16 14G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="17:14 42G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="17:10 25G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="17:07 5G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="17:03 1G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="16:58 1G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="16:55 1G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="16:49 23G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="16:44 2G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="16:41 33G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="16:36 2G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="16:32 2G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="16:30 2G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="16:28 1G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="16:19 20G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="16:16 9G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="16:14 22G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar " title="16:12 97G RB">
+                                        &#x2582;
+                                    </span>
+                                    
+                                    <span class="wave-bar " title="16:03 88G RB">
+                                        &#x2582;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="15:53 31G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar mid" title="15:50 438G ART">
+                                        &#x2585;
+                                    </span>
+                                    
+                                    <span class="wave-bar " title="15:18 224G RB">
+                                        &#x2584;
+                                    </span>
+                                    
+                                    <span class="wave-bar " title="15:00 186G RB">
+                                        &#x2583;
+                                    </span>
+                                    
+                                    <span class="wave-bar " title="14:45 180G RB">
+                                        &#x2583;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="14:31 2G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="14:24 43G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="14:18 7G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="14:15 33G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="14:12 15G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="14:09 11G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar " title="14:04 195G ART">
+                                        &#x2583;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="13:49 67G RB">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar " title="13:44 259G RB">
+                                        &#x2584;
+                                    </span>
+                                    
+                                    <span class="wave-bar mid" title="13:24 380G RB">
+                                        &#x2585;
+                                    </span>
+                                    
+                                    <span class="wave-bar " title="12:54 80G RB">
+                                        &#x2582;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="12:46 40G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="12:40 23G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar " title="12:38 150G ART">
+                                        &#x2583;
+                                    </span>
+                                    
+                                    <span class="wave-bar mid" title="12:26 422G RB">
+                                        &#x2585;
+                                    </span>
+                                    
+                                    <span class="wave-bar mid" title="11:56 343G RB">
+                                        &#x2585;
+                                    </span>
+                                    
+                                    <span class="wave-bar " title="11:29 79G RB">
+                                        &#x2582;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="11:17 4G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="11:13 2G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="11:09 1G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar rensa" title="11:05 1G ART">
+                                        &#x2581;
+                                    </span>
+                                    
+                                    <span class="wave-bar " title="11:01 144G ART">
+                                        &#x2583;
+                                    </span>
                                     
                                 </div>
-                                <div class="hit-history-table" style="margin-top: 6px;">
+                                <div class="wave-legend">
+                                    <span class="wave-leg rensa">&#x2581;連チャン</span>
+                                    <span class="wave-leg">&#x2583;100G</span>
+                                    <span class="wave-leg mid">&#x2585;300G</span>
+                                    <span class="wave-leg deep">&#x2587;500G+</span>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">2026-01-25 当たり履歴</div>
+                                <div class="hit-history-table">
+                                    
+                                    <div class="hit-row rensa">
+                                        <span class="hit-time">21:51</span>
+                                        <span class="hit-type">ART</span>
+                                        <span class="hit-games good">4G</span>
+                                    </div>
+                                    
+                                    <div class="hit-row rensa">
+                                        <span class="hit-time">21:49</span>
+                                        <span class="hit-type">ART</span>
+                                        <span class="hit-games good">12G</span>
+                                    </div>
+                                    
+                                    <div class="hit-row rensa">
+                                        <span class="hit-time">21:47</span>
+                                        <span class="hit-type">ART</span>
+                                        <span class="hit-games good">32G</span>
+                                    </div>
+                                    
+                                    <div class="hit-row rensa">
+                                        <span class="hit-time">21:43</span>
+                                        <span class="hit-type">ART</span>
+                                        <span class="hit-games good">2G</span>
+                                    </div>
+                                    
+                                    <div class="hit-row rensa">
+                                        <span class="hit-time">21:42</span>
+                                        <span class="hit-type">ART</span>
+                                        <span class="hit-games good">1G</span>
+                                    </div>
+                                    
+                                    <div class="hit-row rensa">
+                                        <span class="hit-time">21:38</span>
+                                        <span class="hit-type">ART</span>
+                                        <span class="hit-games good">1G</span>
+                                    </div>
+                                    
+                                    <div class="hit-row rensa">
+                                        <span class="hit-time">21:35</span>
+                                        <span class="hit-type">ART</span>
+                                        <span class="hit-games good">15G</span>
+                                    </div>
+                                    
+                                    <div class="hit-row rensa">
+                                        <span class="hit-time">21:33</span>
+                                        <span class="hit-type">ART</span>
+                                        <span class="hit-games good">40G</span>
+                                    </div>
                                     
                                     <div class="hit-row rensa">
                                         <span class="hit-time">21:26</span>
@@ -791,187 +1095,397 @@
                                 </div>
                             </div>
                             
+
+                            <div class="detail-section">
+                                <div class="detail-title">過去データ分析</div>
+                                
+                                <div class="detail-item plus">2日連続プラス推定 → 据え置き期待</div>
+                                
+                                
+                                <div class="detail-item">前日ART 9回 (970G)</div>
+                                
+                                
+                                <div class="detail-item">前々日ART 33回 (3,630G)</div>
+                                
+                            </div>
                         </div>
+                        
+                        <div class="all-reasons">
+                            <div class="detail-title">全ての根拠</div>
+                            
+                            <div class="reason-item">好調率86%（6/7日好調）→ 高設定が入りやすい台</div>
+                            
+                            <div class="reason-item">前日ART 9回 (確率1/108) → 好調、据え置き期待</div>
+                            
+                            <div class="reason-item">2日連続好調 → 据え置きの可能性</div>
+                            
+                            <div class="reason-item">本日ART確率1/68 (4,840G消化) → 設定6域の挙動</div>
+                            
+                            <div class="reason-item">本日この店舗でトップの出玉</div>
+                            
+                        </div>
+                        
                     </div>
                 </div>
                 
-                <div class="unit-card-compact rank-a avail-card-playing" data-availability="遊技中" onclick="toggleDetails(this)">
-                    <div class="compact-row">
-                        <span class="compact-rank-num">#2</span>
-                        <span class="unit-id-sm">3012</span>
-                        
-                            
-                            <span class="avail-sm playing">稼</span>
-                            
-                        
-                        <span class="rank-sm" style="background-color: #ffa502">A</span>
+                <div class="unit-card rank-a avail-card-empty" data-availability="空き" onclick="toggleDetails(this)">
 
-                        <!-- ART数を常に表示（0でも） -->
-                        <span class="compact-art"><span class="art-num">46</span><span class="art-lbl">ART</span></span>
+                    <!-- メインヘッダー: 台番号 + 機種名 + 空き状況 + ランク -->
+                    <div class="unit-main-header">
+                        <a href="/history/shibuya_espass_sbj_3012.html" class="unit-id-large unit-id-link">3012</a>
+                        <span class="machine-name-sm">スーパーブラックジャック</span>
                         
-                        <span class="compact-prob good">1/106</span>
+                            <span class="avail-badge-lg closed">営業外</span>
                         
-                        
-                        <span class="compact-rb">RB<span class="num">10</span></span>
-                        
-                        
-                        
-                        <span class="compact-max medals-1k">
-                            <span class="medals-icon-sm">👍</span>
-                            最大<span class="num">1,515</span>
-                        </span>
-                        
-                        
-                        <span class="rensa-badge-sm">12連</span>
-                        
-                        
-                        <span class="setting-badge-sm setting-6">6</span>
-                        
-                        <span class="compact-games">4,907G</span>
-                        
-                        <span class="expand-icon small">▼</span>
+                        <span class="rank-badge-lg" style="background-color: #ffa502">A</span>
+                        <span class="expand-icon">▼</span>
                     </div>
 
+                    <!-- データ: 2段レイアウト -->
+                    <div class="today-data-row">
+                        <!-- 1段目: ART + 確率 + 連チャン -->
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">46</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            <div class="data-cell good">
+                                <span class="data-value">1/106</span>
+                                <span class="data-label">ART確率</span>
+                            </div>
+                            
+                            
+                            <div class="data-cell rensa-cell excellent">
+                                <span class="data-value">最大12連</span>
+                            </div>
+                            
+                        </div>
+                        <!-- 2段目: その他の統計（均一サイズ） -->
+                        <div class="data-row-secondary">
+                            
+                            
+                            <div class="data-cell medals-1k">
+                                <span class="data-value">1,515</span>
+                                <span class="data-label">最大枚 1千枚OVER</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">10</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell ">
+                                <span class="data-value">130</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell bad">
+                                <span class="data-value">4回</span>
+                                <span class="data-label">500G超</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">4,907</span>
+                                <span class="data-label">累計G</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    
+                    
+
+                    
+                    <div class="estimation-row">
+                        
+                        <span class="setting-estimate setting-6">
+                            設定6 <span class="payout">(120.2%)</span>
+                        </span>
+                        
+                        <span class="past-eval">
+                            過去分析: <strong style="color: #ffa502">Aランク</strong>
+                            
+                        </span>
+                    </div>
+
+                    <!-- 推奨理由（具体的に・カテゴリ色分け） -->
+                    
+                    <div class="reason-main">
+                        
+                        
+                        <div class="reason-line reason-rank">📊 過去データAランク: 高設定が入りやすい台</div>
+                        
+                        
+                        
+                        <div class="reason-line reason-today">🔥 本日1/107で安定稼働中 (4,907G消化)</div>
+                        
+                        
+                    </div>
+                    
+
+                    <!-- 詳細（クリックで展開） -->
                     <div class="unit-details hidden">
-                        <div class="compact-details">
-                            <div>本日: ART <span class="art-num">46</span>回 / RB 10回 / 4,907G</div>
-                            
-                            <div>最大: 1,515枚</div>
-                            
-                            
-                            <div>現在: 130Gスタート</div>
-                            
-                            
-                            <div>本日ハマり: 500G超 4回 (最大996G)</div>
-                            
-                            
-                            <div>推定: 設定6 (120.2%)</div>
-                            
-                            <div>過去分析: Aランク</div>
-                            
-                            <div class="compact-reason">過去データAランク: 高設定が入りやすい台</div>
-                            
+                        <div class="detail-grid">
+                            <div class="detail-section">
+                                <div class="detail-title">本日詳細</div>
+                                
+                                
+                                <div class="detail-item highlight">最大持ち玉: <strong class="plus">1,515枚</strong></div>
+                                
+                                
+                                <div class="detail-item">現在のスタート: <strong>130G</strong>（最終大当たり後）</div>
+                                
+                                
+                                <div class="detail-item minus">本日ハマり: 500G超 <strong>4回</strong> (最大996G)</div>
+                                
+                                
+                                <div class="detail-item">RB: 10回</div>
+                                
+                                
+                                
+                            </div>
 
                             
                             
-                            <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #333;">
-                                <div class="detail-title">波</div>
+                            <div class="detail-section">
+                                <div class="detail-title">本日の波</div>
                                 <div class="wave-graph">
                                     
-                                    <span class="wave-bar rensa" title="20:01 32G ART">&#x2581;</span>
+                                    <span class="wave-bar rensa" title="20:01 32G ART">
+                                        &#x2581;
+                                    </span>
                                     
-                                    <span class="wave-bar rensa" title="19:58 17G ART">&#x2581;</span>
+                                    <span class="wave-bar rensa" title="19:58 17G ART">
+                                        &#x2581;
+                                    </span>
                                     
-                                    <span class="wave-bar rensa" title="19:54 2G ART">&#x2581;</span>
+                                    <span class="wave-bar rensa" title="19:54 2G ART">
+                                        &#x2581;
+                                    </span>
                                     
-                                    <span class="wave-bar rensa" title="19:50 17G ART">&#x2581;</span>
+                                    <span class="wave-bar rensa" title="19:50 17G ART">
+                                        &#x2581;
+                                    </span>
                                     
-                                    <span class="wave-bar deep" title="19:48 569G ART">&#x2587;</span>
+                                    <span class="wave-bar deep" title="19:48 569G ART">
+                                        &#x2587;
+                                    </span>
                                     
-                                    <span class="wave-bar mid" title="19:08 311G RB">&#x2585;</span>
+                                    <span class="wave-bar mid" title="19:08 311G RB">
+                                        &#x2585;
+                                    </span>
                                     
-                                    <span class="wave-bar rensa" title="18:46 57G RB">&#x2581;</span>
+                                    <span class="wave-bar rensa" title="18:46 57G RB">
+                                        &#x2581;
+                                    </span>
                                     
-                                    <span class="wave-bar rensa" title="18:41 59G RB">&#x2581;</span>
+                                    <span class="wave-bar rensa" title="18:41 59G RB">
+                                        &#x2581;
+                                    </span>
                                     
-                                    <span class="wave-bar rensa" title="18:36 28G ART">&#x2581;</span>
+                                    <span class="wave-bar rensa" title="18:36 28G ART">
+                                        &#x2581;
+                                    </span>
                                     
-                                    <span class="wave-bar rensa" title="18:32 16G ART">&#x2581;</span>
+                                    <span class="wave-bar rensa" title="18:32 16G ART">
+                                        &#x2581;
+                                    </span>
                                     
-                                    <span class="wave-bar rensa" title="18:28 8G ART">&#x2581;</span>
+                                    <span class="wave-bar rensa" title="18:28 8G ART">
+                                        &#x2581;
+                                    </span>
                                     
-                                    <span class="wave-bar rensa" title="18:26 4G ART">&#x2581;</span>
+                                    <span class="wave-bar rensa" title="18:26 4G ART">
+                                        &#x2581;
+                                    </span>
                                     
-                                    <span class="wave-bar " title="18:24 288G ART">&#x2584;</span>
+                                    <span class="wave-bar " title="18:24 288G ART">
+                                        &#x2584;
+                                    </span>
                                     
-                                    <span class="wave-bar mid" title="18:04 335G RB">&#x2585;</span>
+                                    <span class="wave-bar mid" title="18:04 335G RB">
+                                        &#x2585;
+                                    </span>
                                     
-                                    <span class="wave-bar rensa" title="17:39 15G ART">&#x2581;</span>
+                                    <span class="wave-bar rensa" title="17:39 15G ART">
+                                        &#x2581;
+                                    </span>
                                     
-                                    <span class="wave-bar rensa" title="17:37 9G ART">&#x2581;</span>
+                                    <span class="wave-bar rensa" title="17:37 9G ART">
+                                        &#x2581;
+                                    </span>
                                     
-                                    <span class="wave-bar " title="17:34 235G ART">&#x2584;</span>
+                                    <span class="wave-bar " title="17:34 235G ART">
+                                        &#x2584;
+                                    </span>
                                     
-                                    <span class="wave-bar " title="17:17 234G RB">&#x2584;</span>
+                                    <span class="wave-bar " title="17:17 234G RB">
+                                        &#x2584;
+                                    </span>
                                     
-                                    <span class="wave-bar rensa" title="16:58 15G ART">&#x2581;</span>
+                                    <span class="wave-bar rensa" title="16:58 15G ART">
+                                        &#x2581;
+                                    </span>
                                     
-                                    <span class="wave-bar " title="16:56 136G ART">&#x2583;</span>
+                                    <span class="wave-bar " title="16:56 136G ART">
+                                        &#x2583;
+                                    </span>
                                     
-                                    <span class="wave-bar rensa" title="16:43 4G ART">&#x2581;</span>
+                                    <span class="wave-bar rensa" title="16:43 4G ART">
+                                        &#x2581;
+                                    </span>
                                     
-                                    <span class="wave-bar rensa" title="16:40 2G ART">&#x2581;</span>
+                                    <span class="wave-bar rensa" title="16:40 2G ART">
+                                        &#x2581;
+                                    </span>
                                     
-                                    <span class="wave-bar rensa" title="16:37 1G ART">&#x2581;</span>
+                                    <span class="wave-bar rensa" title="16:37 1G ART">
+                                        &#x2581;
+                                    </span>
                                     
-                                    <span class="wave-bar rensa" title="16:34 1G ART">&#x2581;</span>
+                                    <span class="wave-bar rensa" title="16:34 1G ART">
+                                        &#x2581;
+                                    </span>
                                     
-                                    <span class="wave-bar rensa" title="16:29 16G ART">&#x2581;</span>
+                                    <span class="wave-bar rensa" title="16:29 16G ART">
+                                        &#x2581;
+                                    </span>
                                     
-                                    <span class="wave-bar " title="16:26 287G ART">&#x2584;</span>
+                                    <span class="wave-bar " title="16:26 287G ART">
+                                        &#x2584;
+                                    </span>
                                     
-                                    <span class="wave-bar rensa" title="16:03 17G ART">&#x2581;</span>
+                                    <span class="wave-bar rensa" title="16:03 17G ART">
+                                        &#x2581;
+                                    </span>
                                     
-                                    <span class="wave-bar rensa" title="15:58 2G ART">&#x2581;</span>
+                                    <span class="wave-bar rensa" title="15:58 2G ART">
+                                        &#x2581;
+                                    </span>
                                     
-                                    <span class="wave-bar rensa" title="15:49 2G ART">&#x2581;</span>
+                                    <span class="wave-bar rensa" title="15:49 2G ART">
+                                        &#x2581;
+                                    </span>
                                     
-                                    <span class="wave-bar rensa" title="15:48 1G ART">&#x2581;</span>
+                                    <span class="wave-bar rensa" title="15:48 1G ART">
+                                        &#x2581;
+                                    </span>
                                     
-                                    <span class="wave-bar rensa" title="15:44 2G ART">&#x2581;</span>
+                                    <span class="wave-bar rensa" title="15:44 2G ART">
+                                        &#x2581;
+                                    </span>
                                     
-                                    <span class="wave-bar rensa" title="15:40 1G ART">&#x2581;</span>
+                                    <span class="wave-bar rensa" title="15:40 1G ART">
+                                        &#x2581;
+                                    </span>
                                     
-                                    <span class="wave-bar rensa" title="15:37 1G ART">&#x2581;</span>
+                                    <span class="wave-bar rensa" title="15:37 1G ART">
+                                        &#x2581;
+                                    </span>
                                     
-                                    <span class="wave-bar rensa" title="15:33 6G ART">&#x2581;</span>
+                                    <span class="wave-bar rensa" title="15:33 6G ART">
+                                        &#x2581;
+                                    </span>
                                     
-                                    <span class="wave-bar rensa" title="15:28 12G ART">&#x2581;</span>
+                                    <span class="wave-bar rensa" title="15:28 12G ART">
+                                        &#x2581;
+                                    </span>
                                     
-                                    <span class="wave-bar rensa" title="15:26 29G ART">&#x2581;</span>
+                                    <span class="wave-bar rensa" title="15:26 29G ART">
+                                        &#x2581;
+                                    </span>
                                     
-                                    <span class="wave-bar rensa" title="15:23 48G ART">&#x2581;</span>
+                                    <span class="wave-bar rensa" title="15:23 48G ART">
+                                        &#x2581;
+                                    </span>
                                     
-                                    <span class="wave-bar mid" title="15:18 362G ART">&#x2585;</span>
+                                    <span class="wave-bar mid" title="15:18 362G ART">
+                                        &#x2585;
+                                    </span>
                                     
-                                    <span class="wave-bar " title="14:16 141G RB">&#x2583;</span>
+                                    <span class="wave-bar " title="14:16 141G RB">
+                                        &#x2583;
+                                    </span>
                                     
-                                    <span class="wave-bar " title="14:05 97G ART">&#x2582;</span>
+                                    <span class="wave-bar " title="14:05 97G ART">
+                                        &#x2582;
+                                    </span>
                                     
-                                    <span class="wave-bar " title="13:56 152G RB">&#x2583;</span>
+                                    <span class="wave-bar " title="13:56 152G RB">
+                                        &#x2583;
+                                    </span>
                                     
-                                    <span class="wave-bar rensa" title="13:40 21G ART">&#x2581;</span>
+                                    <span class="wave-bar rensa" title="13:40 21G ART">
+                                        &#x2581;
+                                    </span>
                                     
-                                    <span class="wave-bar mid" title="13:38 316G ART">&#x2585;</span>
+                                    <span class="wave-bar mid" title="13:38 316G ART">
+                                        &#x2585;
+                                    </span>
                                     
-                                    <span class="wave-bar mid" title="13:15 365G RB">&#x2585;</span>
+                                    <span class="wave-bar mid" title="13:15 365G RB">
+                                        &#x2585;
+                                    </span>
                                     
-                                    <span class="wave-bar rensa" title="12:47 36G ART">&#x2581;</span>
+                                    <span class="wave-bar rensa" title="12:47 36G ART">
+                                        &#x2581;
+                                    </span>
                                     
-                                    <span class="wave-bar " title="12:44 118G RB">&#x2583;</span>
+                                    <span class="wave-bar " title="12:44 118G RB">
+                                        &#x2583;
+                                    </span>
                                     
-                                    <span class="wave-bar rensa" title="12:29 5G ART">&#x2581;</span>
+                                    <span class="wave-bar rensa" title="12:29 5G ART">
+                                        &#x2581;
+                                    </span>
                                     
-                                    <span class="wave-bar rensa" title="12:25 1G ART">&#x2581;</span>
+                                    <span class="wave-bar rensa" title="12:25 1G ART">
+                                        &#x2581;
+                                    </span>
                                     
-                                    <span class="wave-bar rensa" title="12:21 16G ART">&#x2581;</span>
+                                    <span class="wave-bar rensa" title="12:21 16G ART">
+                                        &#x2581;
+                                    </span>
                                     
-                                    <span class="wave-bar rensa" title="12:16 40G ART">&#x2581;</span>
+                                    <span class="wave-bar rensa" title="12:16 40G ART">
+                                        &#x2581;
+                                    </span>
                                     
-                                    <span class="wave-bar rensa" title="12:12 62G ART">&#x2581;</span>
+                                    <span class="wave-bar rensa" title="12:12 62G ART">
+                                        &#x2581;
+                                    </span>
                                     
-                                    <span class="wave-bar rensa" title="12:06 10G ART">&#x2581;</span>
+                                    <span class="wave-bar rensa" title="12:06 10G ART">
+                                        &#x2581;
+                                    </span>
                                     
-                                    <span class="wave-bar rensa" title="12:05 19G ART">&#x2581;</span>
+                                    <span class="wave-bar rensa" title="12:05 19G ART">
+                                        &#x2581;
+                                    </span>
                                     
-                                    <span class="wave-bar rensa" title="12:02 7G ART">&#x2581;</span>
+                                    <span class="wave-bar rensa" title="12:02 7G ART">
+                                        &#x2581;
+                                    </span>
                                     
-                                    <span class="wave-bar rensa" title="12:00 47G ART">&#x2581;</span>
+                                    <span class="wave-bar rensa" title="12:00 47G ART">
+                                        &#x2581;
+                                    </span>
                                     
-                                    <span class="wave-bar " title="11:57 143G RB">&#x2583;</span>
+                                    <span class="wave-bar " title="11:57 143G RB">
+                                        &#x2583;
+                                    </span>
                                     
                                 </div>
-                                <div class="hit-history-table" style="margin-top: 6px;">
+                                <div class="wave-legend">
+                                    <span class="wave-leg rensa">&#x2581;連チャン</span>
+                                    <span class="wave-leg">&#x2583;100G</span>
+                                    <span class="wave-leg mid">&#x2585;300G</span>
+                                    <span class="wave-leg deep">&#x2587;500G+</span>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">当たり履歴</div>
+                                <div class="hit-history-table">
                                     
                                     <div class="hit-row rensa">
                                         <span class="hit-time">20:01</span>
@@ -1312,18 +1826,41 @@
                                 </div>
                             </div>
                             
+
+                            <div class="detail-section">
+                                <div class="detail-title">過去データ分析</div>
+                                
+                                
+                                
+                            </div>
                         </div>
+                        
+                        <div class="all-reasons">
+                            <div class="detail-title">全ての根拠</div>
+                            
+                            <div class="reason-item">過去データAランク: 高設定が入りやすい台</div>
+                            
+                            <div class="reason-item">本日1/107で安定稼働中 (4,907G消化)</div>
+                            
+                            <div class="reason-item">注意: ART回数の割に出玉が伸びていない</div>
+                            
+                            <div class="reason-item">補足: エスパス渋谷新館は火曜が狙い目（★4）</div>
+                            
+                        </div>
+                        
                     </div>
                 </div>
                 
-                <div class="unit-card-compact rank-b avail-card-playing" data-availability="遊技中" onclick="toggleDetails(this)">
+            </section>
+            
+
+            <section class="recommendations other">
+                <h2>その他の台</h2>
+                
+                <div class="unit-card-compact rank-b avail-card-empty" data-availability="空き" onclick="toggleDetails(this)">
                     <div class="compact-row">
                         <span class="compact-rank-num">#3</span>
                         <span class="unit-id-sm">3013</span>
-                        
-                            
-                            <span class="avail-sm playing">稼</span>
-                            
                         
                         <span class="rank-sm" style="background-color: #2ed573">B</span>
 
