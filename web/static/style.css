@@ -2652,8 +2652,8 @@ strong.minus {
 /* 推奨台カード内の前日・前々日 */
 .rec-prev-days {
     display: flex;
-    flex-wrap: wrap;
-    gap: 4px 12px;
+    flex-direction: column;
+    gap: 3px;
     margin-top: 4px;
     padding-top: 4px;
     border-top: 1px solid #333;
@@ -2662,6 +2662,10 @@ strong.minus {
 .prev-day-rec {
     font-size: 0.8em;
     color: #bbb;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
 }
 
 .prev-day-rec .prev-art {

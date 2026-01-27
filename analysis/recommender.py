@@ -534,7 +534,28 @@ def calculate_unit_historical_performance(days: List[dict], machine_key: str = '
         'continuation_total': good_after_good_total,    # サンプル数
         'continuation_good': good_after_good,           # 翌日も好調だった回数
         'recent_probs': recent_probs,                   # 直近3日のART確率（新→古）
+        'weekday_breakdown': _calc_weekday_breakdown(days, good_prob_threshold),  # 曜日別好調率
     }
+
+
+def _calc_weekday_breakdown(days: list, good_threshold: int) -> dict:
+    """曜日別の好調率を計算"""
+    from datetime import datetime as _dt
+    WDAYS = ['月','火','水','木','金','土','日']
+    stats = {w: {'good': 0, 'total': 0} for w in WDAYS}
+    for day in days:
+        date_str = day.get('date', '')
+        art = day.get('art', 0)
+        games = day.get('games', 0) or day.get('total_start', 0)
+        if date_str and art > 0 and games > 0:
+            try:
+                wd = WDAYS[_dt.strptime(date_str, '%Y-%m-%d').weekday()]
+                stats[wd]['total'] += 1
+                if games / art <= good_threshold:
+                    stats[wd]['good'] += 1
+            except:
+                pass
+    return stats
 
 
 def analyze_activity_pattern(history: List[dict], day_data: dict = None) -> dict:
@@ -1290,11 +1311,13 @@ def analyze_rotation_pattern(days: List[dict]) -> dict:
     # 交互パターン（+-+-）
     alternating = sum(1 for i in range(len(results)-1) if results[i] != results[i+1])
     if alternating >= 4:
+        # 直近パターンを表示
+        pattern_display = '→'.join(results[:min(6, len(results))])
         return {
             'has_pattern': True,
             'cycle_days': 2,
             'next_high_chance': results[0] == '-',
-            'description': '日替わりローテ傾向（交互に変動）'
+            'description': f'直近{len(results)}日の実績: {pattern_display}（交互傾向{alternating}/{len(results)-1}回）'
         }
 
     return {'has_pattern': False, 'cycle_days': 0, 'next_high_chance': False, 'description': ''}
@@ -1512,9 +1535,20 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
                 wd_total = wd_data['total']
                 wd_good = wd_data['good']
                 if wd_rate >= 0.7:
-                    reasons.append(f"📅 {today_weekday}曜の好調率: {wd_good}/{wd_total}回({wd_rate:.0%}) → 期待大")
+                    reasons.append(f"📅 この台の{today_weekday}曜好調率: {wd_good}/{wd_total}回({wd_rate:.0%}) → 期待大")
                 elif wd_rate <= 0.3:
-                    reasons.append(f"⚠ {today_weekday}曜の好調率: {wd_good}/{wd_total}回({wd_rate:.0%}) → 要注意")
+                    reasons.append(f"⚠ この台の{today_weekday}曜好調率: {wd_good}/{wd_total}回({wd_rate:.0%}) → 要注意")
+
+        # 台個別の曜日別好調率（蓄積データから）
+        unit_weekday = historical_perf.get('weekday_breakdown', {})
+        if unit_weekday and today_weekday:
+            uwd = unit_weekday.get(today_weekday, {})
+            if uwd.get('total', 0) >= 3:  # サンプル3以上
+                uwd_rate = uwd['good'] / uwd['total']
+                if uwd_rate >= 0.8:
+                    reasons.append(f"📅 この台の{today_weekday}曜実績: {uwd['good']}/{uwd['total']}回好調（{uwd_rate:.0%}）")
+                elif uwd_rate <= 0.2:
+                    reasons.append(f"⚠ この台の{today_weekday}曜実績: {uwd['good']}/{uwd['total']}回好調（{uwd_rate:.0%}）→ この曜日は弱い")
 
         # なぜ今日も好調と見るかの根拠を追加
         continuation_rate = historical_perf.get('continuation_rate', 0)
