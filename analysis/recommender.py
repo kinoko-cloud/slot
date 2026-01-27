@@ -20,6 +20,7 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from config.rankings import STORES, RANKINGS, get_rank, get_unit_ranking, MACHINES
+from analysis.analyzer import calculate_at_intervals, calculate_current_at_games
 
 # 機種別の設定情報
 # SBJ: 設定1=1/241.7(97.8%), 設定6=1/181.3(112.7%)
@@ -491,15 +492,26 @@ def analyze_trend(days: List[dict]) -> dict:
             result['reasons'].append('直近ART確率悪化傾向')
 
     # --- 実用指標の計算 ---
-    # AT間平均G数（全日のゲーム数 / ART回数）
-    total_art_sum = sum(art_counts)
-    total_games_sum = sum(game_counts)
-    if total_art_sum > 0 and total_games_sum > 0:
-        result['avg_games_per_art'] = total_games_sum / total_art_sum
-    else:
-        result['avg_games_per_art'] = 0
 
-    # 軽い当たり率の推定（ART確率からの推定）
+    # AT間（ART→ART間のG数）を履歴から正しく計算
+    # RBを跨いでART到達までの総G数を算出
+    all_at_intervals = []
+    for day in sorted_days[:7]:
+        history = day.get('history', [])
+        if history:
+            day_intervals = calculate_at_intervals(history)
+            all_at_intervals.extend(day_intervals)
+
+    if all_at_intervals:
+        result['avg_at_interval'] = sum(all_at_intervals) / len(all_at_intervals)
+        result['max_at_interval'] = max(all_at_intervals)
+        result['ceiling_count'] = sum(1 for g in all_at_intervals if g >= 999)
+    else:
+        result['avg_at_interval'] = 0
+        result['max_at_interval'] = 0
+        result['ceiling_count'] = 0
+
+    # ART確率（total_start / art_count）
     art_probs = []
     for day in sorted_days[:7]:
         art = day.get('art', 0)
@@ -1106,14 +1118,21 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
             if total_games >= 5000:
                 reasons.append(f"本日1/{art_prob:.0f}で{total_games:,}G消化 → 中間以上の設定で安定稼働中")
 
-    # 5. AT間平均G数（過去7日）
-    avg_games_per_art = trend.get('avg_games_per_art', 0)
+    # 5. ART確率 + AT間（過去7日）
     avg_art_prob = trend.get('avg_art_prob', 0)
     if avg_art_prob > 0:
         if avg_art_prob <= 100:
             reasons.append(f"7日間のART確率 平均1/{avg_art_prob:.0f} → 高設定域が続いている台")
         elif avg_art_prob <= 130:
             reasons.append(f"7日間のART確率 平均1/{avg_art_prob:.0f} → 中間設定以上の台")
+
+    # AT間の分析（履歴ベースの正確な計算）
+    avg_at_interval = trend.get('avg_at_interval', 0)
+    ceiling_count = trend.get('ceiling_count', 0)
+    if ceiling_count > 0:
+        reasons.append(f"7日間で天井到達{ceiling_count}回 → 低設定の可能性に注意")
+    elif avg_at_interval > 0 and avg_at_interval <= 150:
+        reasons.append(f"AT間平均{avg_at_interval:.0f}G → 軽い台（高設定域）")
 
     # 6. グラフパターン分析
     if days:
@@ -1352,9 +1371,9 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
         data_date = today_analysis.get('data_date', '')
         is_today_data = data_date == datetime.now().strftime('%Y-%m-%d') if data_date else False
 
-        # max_medals, final_start（現在ハマり）をリアルタイムデータから取得
+        # max_medals, final_start をリアルタイムデータから取得
         max_medals = 0
-        final_start = 0  # 現在ハマり（最終ART後のG数）
+        final_start = 0
         if realtime_data:
             units_list = realtime_data.get('units', [])
             for unit in units_list:
@@ -1362,6 +1381,20 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
                     max_medals = unit.get('max_medals', 0)
                     final_start = unit.get('final_start', 0)
                     break
+
+        # 現在のAT間G数を正しく計算（最終大当たりからのG数）
+        # final_startだけでは最終RB後のG数しか分からないため、
+        # 履歴から最終大当たり以降の全G数を合算する
+        current_at_games = 0
+        if today_history and final_start > 0:
+            current_at_games = calculate_current_at_games(today_history, final_start)
+        elif final_start > 0:
+            current_at_games = final_start  # 履歴がない場合はfinal_startをそのまま使用
+
+        # 本日のAT間データ（履歴から計算）
+        today_at_intervals = calculate_at_intervals(today_history) if today_history else []
+        today_deep_hama_count = sum(1 for g in today_at_intervals if g >= 500)  # 500G以上のハマり
+        today_max_at_interval = max(today_at_intervals) if today_at_intervals else 0
 
         rec = {
             'unit_id': unit_id,
@@ -1394,9 +1427,14 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
             'consecutive_plus': trend_data.get('consecutive_plus', 0),
             'consecutive_minus': trend_data.get('consecutive_minus', 0),
             'avg_art_7days': trend_data.get('avg_art_7days', 0),
-            # 差枚見込み
+            # 現在のスタート（最終大当たり後のG数、RBを跨いで正確に計算）
+            'current_hama': current_at_games,
+            # 本日のAT間分析
+            'today_deep_hama': today_deep_hama_count,  # 500G以上のハマり回数
+            'today_max_at_interval': today_max_at_interval,  # 本日最大AT間
+            # 差枚見込み（内部計算用）
             'current_estimate': profit_info['current_estimate'],
-            'closing_estimate': final_start if final_start > 0 else profit_info['closing_estimate'],
+            'closing_estimate': profit_info['closing_estimate'],
             'profit_category': profit_info['profit_category'],
             'estimated_setting': profit_info['setting_info']['estimated_setting'],
             'setting_num': profit_info['setting_info'].get('setting_num', 0),

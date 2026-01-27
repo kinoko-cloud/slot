@@ -135,6 +135,20 @@
                             <span class="data-label">RB</span>
                         </div>
                         {% endif %}
+                        <!-- 現在スタート -->
+                        {% if rec.current_hama and rec.current_hama > 0 %}
+                        <div class="data-cell {% if rec.current_hama >= 500 %}bad{% elif rec.current_hama >= 300 %}warn{% endif %}">
+                            <span class="data-value">{{ rec.current_hama }}</span>
+                            <span class="data-label">現在G</span>
+                        </div>
+                        {% endif %}
+                        <!-- ハマり回数 -->
+                        {% if rec.today_deep_hama and rec.today_deep_hama > 0 %}
+                        <div class="data-cell bad">
+                            <span class="data-value">{{ rec.today_deep_hama }}回</span>
+                            <span class="data-label">500G超</span>
+                        </div>
+                        {% endif %}
                         <!-- 回転数を最後に -->
                         <div class="data-cell">
                             <span class="data-value">{{ '{:,}'.format(rec.total_games) }}</span>
@@ -209,8 +223,14 @@
                                 {% if rec.max_medals and rec.max_medals > 0 %}
                                 <div class="detail-item highlight">最大持ち玉: <strong class="plus">{{ '{:,}'.format(rec.max_medals) }}枚</strong></div>
                                 {% endif %}
-                                {% if rec.closing_estimate > 0 %}
-                                <div class="detail-item">現在ハマり: <strong>{{ rec.closing_estimate }}G</strong></div>
+                                {% if rec.current_hama and rec.current_hama > 0 %}
+                                <div class="detail-item">現在のスタート: <strong>{{ rec.current_hama }}G</strong>（最終大当たり後）</div>
+                                {% endif %}
+                                {% if rec.today_deep_hama and rec.today_deep_hama > 0 %}
+                                <div class="detail-item minus">本日ハマり: 500G超 <strong>{{ rec.today_deep_hama }}回</strong>{% if rec.today_max_at_interval %} (最大{{ rec.today_max_at_interval }}G){% endif %}</div>
+                                {% endif %}
+                                {% if rec.rb_count > 0 %}
+                                <div class="detail-item">RB: {{ rec.rb_count }}回</div>
                                 {% endif %}
                                 {% if rec.first_hit_time %}
                                 <div class="detail-item">稼働時間: {{ rec.first_hit_time }} 〜 {{ rec.last_hit_time or '-' }}</div>
@@ -223,9 +243,6 @@
                                 <div class="detail-title">過去7日間</div>
                                 {% if rec.trend and rec.trend.get('avg_art_prob', 0) > 0 %}
                                 <div class="detail-item">ART確率: 1/{{ rec.trend.get('avg_art_prob', 0)|round(0)|int }}（7日平均）</div>
-                                {% endif %}
-                                {% if rec.trend and rec.trend.get('avg_games_per_art', 0) > 0 %}
-                                <div class="detail-item">AT間: 平均{{ rec.trend.get('avg_games_per_art', 0)|round(0)|int }}G</div>
                                 {% endif %}
                                 {% if rec.consecutive_plus > 0 %}
                                 <div class="detail-item plus">{{ rec.consecutive_plus }}日連続プラス → 据え置き期待</div>
@@ -280,6 +297,10 @@
                         {% if rec.art_prob > 0 %}
                         <span class="compact-prob {% if rec.art_prob <= 100 %}excellent{% elif rec.art_prob <= 130 %}good{% elif rec.art_prob >= 200 %}bad{% endif %}">1/{{ rec.art_prob|int }}</span>
                         {% endif %}
+                        <!-- RB回数 -->
+                        {% if rec.rb_count > 0 %}
+                        <span class="compact-rb">RB<span class="num">{{ rec.rb_count }}</span></span>
+                        {% endif %}
                         <!-- 最大枚数 -->
                         {% if rec.max_medals and rec.max_medals > 0 %}
                         {% set badge = medals_badge(rec.max_medals) %}
@@ -301,9 +322,15 @@
                     <div class="unit-details hidden">
                         <div class="compact-details">
                             {% if rec.total_games > 0 %}
-                            <div>本日: ART <span class="art-num">{{ rec.art_count }}</span>回 / {{ '{:,}'.format(rec.total_games) }}G</div>
+                            <div>本日: ART <span class="art-num">{{ rec.art_count }}</span>回{% if rec.rb_count > 0 %} / RB {{ rec.rb_count }}回{% endif %} / {{ '{:,}'.format(rec.total_games) }}G</div>
                             {% if rec.max_medals and rec.max_medals > 0 %}
                             <div>最大: {{ '{:,}'.format(rec.max_medals) }}枚</div>
+                            {% endif %}
+                            {% if rec.current_hama and rec.current_hama > 0 %}
+                            <div>現在: {{ rec.current_hama }}Gスタート</div>
+                            {% endif %}
+                            {% if rec.today_deep_hama and rec.today_deep_hama > 0 %}
+                            <div>本日ハマり: 500G超 {{ rec.today_deep_hama }}回{% if rec.today_max_at_interval %} (最大{{ rec.today_max_at_interval }}G){% endif %}</div>
                             {% endif %}
                             {% if rec.total_games >= 1000 and rec.estimated_setting %}
                             <div>推定: {{ rec.estimated_setting }}{% if rec.total_games < 3000 %}？{% endif %} ({{ rec.payout_estimate }}%)</div>

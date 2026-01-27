@@ -33,6 +33,95 @@ SBJ_ART_PROB = {
 # SBJ天井
 SBJ_CEILING = 999
 
+# AT間で連チャンとみなす閾値（この値以下なら連チャン）
+RENCHAIN_THRESHOLD = 70
+
+
+def is_big_hit(hit_type: str) -> bool:
+    """大当たり判定（BB/AT/ART = 大当たり、RB/REG = 非大当たり）
+
+    機種や表記によってBB/AT/ARTの呼び方は違うが、全て同一の「大当たり」扱い。
+    RB(REG)のみがカウントされない（AT間をリセットしない）。
+    """
+    return hit_type in ('ART', 'AT', 'BB')
+
+
+def calculate_at_intervals(history: list) -> list:
+    """履歴データからAT間（大当たり間のG数）を正しく計算する
+
+    AT間の定義:
+    - 前の大当たり（BB/AT/ART）が終わってから次の大当たりまでの総G数
+    - 途中のRB/REGのstartも加算する（RBではAT間はリセットされない）
+    - 最大値は天井（999G+α）
+
+    Args:
+        history: 当たり履歴リスト。各要素に 'start', 'type' フィールドが必要
+
+    Returns:
+        AT間のG数リスト（各大当たりに到達するまでのG数）
+    """
+    if not history:
+        return []
+
+    # 時間順にソート
+    sorted_history = sorted(history, key=lambda x: x.get('time', '00:00'))
+
+    at_intervals = []
+    accumulated_games = 0  # 大当たり間に蓄積されたG数
+
+    for hit in sorted_history:
+        start = hit.get('start', 0)
+        hit_type = hit.get('type', '')
+
+        accumulated_games += start
+
+        if is_big_hit(hit_type):
+            # 大当たり（BB/AT/ART）に到達 → accumulated_gamesがAT間
+            at_intervals.append(accumulated_games)
+            accumulated_games = 0  # リセット
+        # RB/REGの場合はaccumulated_gamesを継続（AT間に加算）
+
+    return at_intervals
+
+
+def calculate_current_at_games(history: list, final_start: int = 0) -> int:
+    """現在のAT間G数を計算（最終大当たりから現在までの総G数）
+
+    最終大当たり（BB/AT/ART）の後にRBが挟まっている場合、
+    final_startだけでは不十分。最終大当たり以降の全hitのstart + final_start を合算する。
+
+    Args:
+        history: 当たり履歴リスト
+        final_start: 最終当たり後のG数（リアルタイムデータから取得）
+
+    Returns:
+        最終大当たりからの総G数（= 現在のAT間）
+    """
+    if not history:
+        return final_start
+
+    # 時間順にソート
+    sorted_history = sorted(history, key=lambda x: x.get('time', '00:00'))
+
+    # 最後の大当たり（BB/AT/ART）の位置を探す
+    last_big_hit_index = -1
+    for i, hit in enumerate(sorted_history):
+        if is_big_hit(hit.get('type', '')):
+            last_big_hit_index = i
+
+    if last_big_hit_index == -1:
+        # 大当たりが1回もない → 全start + final_startが現在のAT間
+        total = sum(h.get('start', 0) for h in sorted_history) + final_start
+        return total
+
+    # 最終大当たり以降のhit（RB等）のstart + final_startを合算
+    games_after_last_big_hit = 0
+    for hit in sorted_history[last_big_hit_index + 1:]:
+        games_after_last_big_hit += hit.get('start', 0)
+    games_after_last_big_hit += final_start
+
+    return games_after_last_big_hit
+
 
 def time_to_minutes(time_str: str) -> int:
     """時間文字列を分に変換（10:00からの経過分）"""
@@ -158,14 +247,13 @@ def analyze_day(day_data: dict, store_context: dict = None) -> dict:
         result['art_probability'] = 0
         result['estimated_setting'] = None
 
-    # 6. 天井到達チェック
-    art_starts = [h.get('start', 0) for h in history if h.get('type') == 'ART']
-    rb_starts = [h.get('start', 0) for h in history if h.get('type') == 'RB']
+    # 6. 天井到達チェック（AT間ベース: RBを跨いだART→ART間のG数で判定）
+    at_intervals = calculate_at_intervals(history_sorted)
 
-    # SBJはARTとART間（RBは無視）で天井判定
-    ceiling_hits = [s for s in art_starts if s >= SBJ_CEILING]
+    ceiling_hits = [g for g in at_intervals if g >= SBJ_CEILING]
     result['ceiling_hits'] = len(ceiling_hits)
-    result['max_hamar'] = max(art_starts) if art_starts else 0
+    result['max_hamar'] = max(at_intervals) if at_intervals else 0
+    result['at_intervals'] = at_intervals  # 全AT間データを保持
 
     # 7. 稼働十分性判定
     # 店舗+機種+曜日の平均50%以上なら十分と判定（相対評価）

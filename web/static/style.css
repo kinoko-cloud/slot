@@ -1455,6 +1455,14 @@ strong.minus {
     color: #ff6b6b;
 }
 
+.data-cell.warn {
+    background: rgba(255, 165, 2, 0.15);
+}
+
+.data-cell.warn .data-value {
+    color: #ffa502;
+}
+
 /* 差枚見込み */
 .data-cell.profit-high {
     background: rgba(46, 213, 115, 0.3);
@@ -1842,6 +1850,16 @@ strong.minus {
     color: #ff6b6b;
 }
 
+.compact-rb {
+    font-size: 0.7em;
+    color: #a0a0a0;
+}
+
+.compact-rb .num {
+    font-weight: 600;
+    margin-left: 1px;
+}
+
 .compact-profit {
     font-size: 0.8em;
     font-weight: 600;
@@ -2226,6 +2244,25 @@ strong.minus {
     border-radius: 4px;
     font-size: 0.7em;
     font-weight: 700;
+}
+
+.data-date-badge-sm {
+    display: inline-block;
+    background: #ffa502;
+    color: #000;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 0.65em;
+    font-weight: 700;
+    margin-left: 4px;
+}
+
+.art-main.past {
+    opacity: 0.7;
+}
+
+.art-prob.past {
+    opacity: 0.7;
 }
 
 .today-data-row {
