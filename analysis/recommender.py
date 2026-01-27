@@ -2030,7 +2030,20 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
             replaced.append(r)
         return replaced
 
-    return unique[:5]
+    # 店舗傾向の根拠を末尾に移動
+    # 台個別のデータ根拠を優先、店舗全体の傾向は補助情報として最後
+    store_reasons = []
+    other_reasons = []
+    for r in unique[:5]:
+        # 「💡 ◯◯の◯曜は」パターン = 店舗傾向
+        if r.startswith('💡') and '曜' in r and '店舗傾向' in r:
+            store_reasons.append(r)
+        # 「📅 ◯◯の◯曜は高設定投入日」パターン = 店舗傾向
+        elif r.startswith('📅') and '曜' in r and ('投入日' in r or '狙い目' in r):
+            store_reasons.append(r)
+        else:
+            other_reasons.append(r)
+    return (other_reasons + store_reasons)[:5]
 
 
 def generate_store_analysis(store_key: str, daily_data: dict = None) -> dict:
