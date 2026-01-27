@@ -1519,7 +1519,8 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
         # なぜ今日も好調と見るかの根拠を追加
         today_confidence_parts = []
         if today_rating >= 4:
-            today_confidence_parts.append(f"{store_name}の{today_weekday}曜は★{today_rating}（高設定投入日）")
+            rating_label = '高設定投入日' if today_rating >= 5 else '狙い目の曜日'
+            today_confidence_parts.append(f"{store_name}の{today_weekday}曜は{rating_label}（店舗傾向）")
         if consecutive_plus >= 2:
             today_confidence_parts.append(f"現在{consecutive_plus}日連続好調中")
         elif consecutive_minus >= 2:
@@ -1529,7 +1530,7 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
         if today_confidence_parts:
             reasons.append(f"💡 今日も期待できる根拠: {' / '.join(today_confidence_parts)}")
         elif today_rating >= 3:
-            reasons.append(f"💡 {store_name}{today_weekday}曜★{today_rating} → 好調維持の期待あり")
+            reasons.append(f"💡 {store_name}の{today_weekday}曜は過去実績から普通〜やや期待できる日")
     elif total_perf_days > 0 and good_day_rate <= 0.4:
         reasons.append(f"📊 {total_perf_days}日間中{good_days}日好調（好調率{good_day_rate:.0%}）→ 低設定が入りやすい台")
     elif base_rank == 'S':
@@ -1547,20 +1548,24 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
         reasons.append(f"🔄 {consecutive_minus}日連続不調 → そろそろ設定上げ期待")
     elif consecutive_minus == 2:
         if today_rating >= 4:
-            reasons.append(f"🔄 2日連続不調 + {today_weekday}曜★{today_rating} → リセット期待")
+            reasons.append(f"🔄 2日連続不調 + {store_name}の{today_weekday}曜は狙い目 → リセット期待")
         else:
             reasons.append(f"🔄 2日連続不調 → リセット期待")
 
     if consecutive_plus >= 3:
         if today_rating >= 4:
-            reasons.append(f"🔄 {consecutive_plus}日連続好調 + {store_name}{today_weekday}曜★{today_rating} → 据え置き濃厚")
+            reasons.append(f"🔄 {consecutive_plus}日連続好調 + {store_name}は{today_weekday}曜が狙い目 → 据え置き濃厚")
+        elif today_rating <= 2:
+            reasons.append(f"🔄 {consecutive_plus}日連続好調だが{store_name}の{today_weekday}曜は弱い日 → 転落警戒")
         else:
-            reasons.append(f"🔄 {consecutive_plus}日連続好調 → 据え置き期待（ただし{store_name}の{today_weekday}曜は★{today_rating}、下げ警戒）")
+            reasons.append(f"🔄 {consecutive_plus}日連続好調 → 据え置き期待（ただし転落警戒も）")
     elif consecutive_plus == 2:
         if today_rating >= 4:
-            reasons.append(f"🔄 2日連続好調 + {store_name}{today_weekday}曜★{today_rating} → 据え置き期待")
+            reasons.append(f"🔄 2日連続好調 + {store_name}は{today_weekday}曜が狙い目 → 据え置き期待")
+        elif today_rating <= 2:
+            reasons.append(f"🔄 2日連続好調だが{store_name}の{today_weekday}曜は弱い日 → 下げの可能性")
         else:
-            reasons.append(f"🔄 2日連続好調（{store_name}{today_weekday}曜★{today_rating}で下げの可能性も）")
+            reasons.append(f"🔄 2日連続好調 → 据え置き期待")
 
     # 2日連続不調→翌日リセット期待
     yesterday_prob_val = trend.get('yesterday_prob', 0)
@@ -1621,12 +1626,14 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
     # 好調率の根拠で既に曜日情報を出してたら重複させない
     has_weekday_in_confidence = any('今日も期待できる根拠' in r and today_weekday in r for r in reasons)
     if store_name and today_weekday and not has_weekday_in_confidence:
+        best_info = weekday_info.get('best_days', '')
         if today_rating >= 5:
-            reasons.append(f"📅 {store_name}の{today_weekday}曜は最強日（★5）→ 高設定投入期待大")
+            reasons.append(f"📅 {store_name}の{today_weekday}曜は高設定投入日（店舗傾向: {best_info}）")
         elif today_rating >= 4:
-            reasons.append(f"📅 {store_name}は{today_weekday}曜が狙い目（★4）")
+            reasons.append(f"📅 {store_name}は{today_weekday}曜が狙い目（店舗傾向: {best_info}）")
         elif today_rating <= 2:
-            reasons.append(f"⚠ {store_name}は{today_weekday}曜★{today_rating}（弱い日）→ 回収傾向")
+            worst_info = weekday_info.get('worst_days', '')
+            reasons.append(f"⚠ {store_name}の{today_weekday}曜は弱い日（店舗傾向: {worst_info}）→ 回収傾向")
 
     # === フォールバック ===
     if not reasons:
@@ -1634,7 +1641,8 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
             reasons.append(f"過去データ{base_rank}ランク")
         if store_name and today_weekday:
             best_info = weekday_info.get('best_days', '')
-            reasons.append(f"{store_name}の{today_weekday}曜は★{today_rating}{'（' + best_info + '）' if best_info else ''}")
+            rating_label = {5: '高設定投入日', 4: '狙い目', 3: '普通', 2: '弱い日', 1: '回収日'}.get(today_rating, '普通')
+            reasons.append(f"{store_name}の{today_weekday}曜は{rating_label}（店舗傾向{'：' + best_info if best_info else ''}）")
 
     # 重複除去、上位5つ
     seen = set()

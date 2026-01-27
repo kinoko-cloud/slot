@@ -90,9 +90,9 @@
             {% endif %}
             {% if store_analysis.weekday_info %}
             <div class="analysis-weekday">
-                {{ store_analysis.weekday_info.today_weekday }}曜は★{{ store_analysis.weekday_info.today_rating }}
-                {% if store_analysis.weekday_info.today_rating >= 4 %}（狙い目）{% elif store_analysis.weekday_info.today_rating <= 2 %}（弱い日）{% else %}（普通）{% endif %}
-                / {{ store_analysis.weekday_info.best_days }}
+                {{ store_analysis.weekday_info.today_weekday }}曜の店舗傾向:
+                {% if store_analysis.weekday_info.today_rating >= 5 %}高設定投入日{% elif store_analysis.weekday_info.today_rating >= 4 %}狙い目{% elif store_analysis.weekday_info.today_rating <= 2 %}弱い日（回収傾向）{% else %}普通{% endif %}
+                （{{ store_analysis.weekday_info.best_days }}）
             </div>
             {% endif %}
         </div>
