@@ -2775,6 +2775,15 @@ strong.minus {
 }
 
 /* ARTバッジ */
+/* 差枚表示 */
+.diff-medals {
+    font-weight: 900;
+    font-size: 1.1em;
+    margin-right: 4px;
+}
+.diff-medals.plus { color: #2ed573; }
+.diff-medals.minus { color: #ff6b6b; }
+
 .art-badge {
     display: inline-flex;
     align-items: baseline;
