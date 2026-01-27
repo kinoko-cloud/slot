@@ -17,6 +17,16 @@ FEEDBACK_DIR.mkdir(parents=True, exist_ok=True)
 WEEKDAY_NAMES = ['月', '火', '水', '木', '金', '土', '日']
 
 
+def _store_display(store_key: str) -> str:
+    """ストアキーを表示名に変換"""
+    try:
+        from config.rankings import STORES
+        store = STORES.get(store_key, {})
+        return store.get('short_name', store.get('name', store_key))
+    except Exception:
+        return store_key
+
+
 def analyze_prediction_errors(verify_results: list, store_key: str, machine_key: str) -> dict:
     """予測誤差を分析し、補正情報を返す
 
@@ -238,7 +248,7 @@ def generate_hypotheses(all_feedbacks: list) -> list:
 
             if avg_score >= 60:
                 hypotheses.append({
-                    'hypothesis': f'{store}: B/C台のスコアがS/Aに近いのに見逃している',
+                    'hypothesis': f'{_store_display(store)}: B/C台のスコアがS/Aに近いのに見逃している',
                     'evidence': f'見逃し{n}台の平均スコア={avg_score:.0f}点。'
                                f'S/A判定のしきい値が高すぎる可能性',
                     'action': 'この店舗のS/A判定しきい値を下げるか、'
@@ -247,7 +257,7 @@ def generate_hypotheses(all_feedbacks: list) -> list:
                 })
             elif len(set(scores)) <= 2:
                 hypotheses.append({
-                    'hypothesis': f'{store}: 全台のスコアが同じで差別化できていない',
+                    'hypothesis': f'{_store_display(store)}: 全台のスコアが同じで差別化できていない',
                     'evidence': f'見逃し{n}台のスコアが全て{scores[0] if scores else "?"}点。'
                                f'蓄積データ不足でスコアが初期値のまま',
                     'action': 'この店舗の蓄積データを増やす。'
