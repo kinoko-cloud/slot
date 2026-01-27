@@ -1572,6 +1572,25 @@ def main():
                     print(f"  📦 {mk}: {result['new_entries']}件蓄積 ({result['updated_units']}台)")
     except Exception as e:
         print(f"  ⚠ 蓄積エラー: {e}")
+
+    # パターンデータ記録（蓄積済みhistoryからパターン分析用データを生成）
+    try:
+        from analysis.pattern_detector import record_from_history
+        import os
+        for store_dir in os.listdir('data/history'):
+            if not os.path.isdir(f'data/history/{store_dir}'):
+                continue
+            if '_sbj' in store_dir:
+                mk = 'sbj'
+            elif '_hokuto' in store_dir:
+                mk = 'hokuto_tensei2'
+            else:
+                continue
+            n = record_from_history(store_dir, mk)
+            if n > 0:
+                print(f"  📊 パターン記録: {store_dir} ({n}件)")
+    except Exception as e:
+        print(f"  ⚠ パターン記録エラー: {e}")
     print()
 
     # 出力ディレクトリを作成
