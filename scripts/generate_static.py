@@ -111,21 +111,21 @@ def setup_jinja():
 
 
 def generate_url(endpoint, **kwargs):
-    """静的サイト用のURL生成"""
+    """静的サイト用のURL生成（絶対パス）"""
     if endpoint == 'index':
-        return 'index.html'
+        return '/index.html'
     elif endpoint == 'static':
-        return kwargs.get('filename', '')
+        return f"/static/{kwargs.get('filename', '')}"
     elif endpoint == 'recommend':
-        return f"recommend/{kwargs.get('store_key', '')}.html"
+        return f"/recommend/{kwargs.get('store_key', '')}.html"
     elif endpoint == 'machine_stores':
-        return f"machine/{kwargs.get('machine_key', '')}.html"
+        return f"/machine/{kwargs.get('machine_key', '')}.html"
     elif endpoint == 'ranking':
-        return f"ranking/{kwargs.get('machine_key', '')}.html"
+        return f"/ranking/{kwargs.get('machine_key', '')}.html"
     elif endpoint == 'rules':
-        return 'rules.html'
+        return '/rules.html'
     elif endpoint == 'unit_history':
-        return f"history/{kwargs.get('store_key', '')}_{kwargs.get('unit_id', '')}.html"
+        return f"/history/{kwargs.get('store_key', '')}_{kwargs.get('unit_id', '')}.html"
     return '#'
 
 
