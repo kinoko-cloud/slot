@@ -8,7 +8,7 @@
     <title>本日のおすすめ台</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-<body>
+<body data-page-type="index">
     <div class="container">
         <header>
             {% if display_mode == 'result' %}
@@ -24,6 +24,10 @@
             <div class="title-date">{{ today_date_formatted }}</div>
             <div class="mode-badge realtime">営業中</div>
             {% endif %}
+            <div class="realtime-bar">
+                <span id="realtime-status" class="realtime-status">読込中...</span>
+                <button onclick="refreshData()" class="refresh-btn">🔄 更新</button>
+            </div>
         </header>
 
         <main>
@@ -68,7 +72,7 @@
 
             <!-- 狙い目 / 結果 TOP5 -->
             {% if top3 %}
-            <section class="recommendations top">
+            <section class="recommendations top" id="top3-section">
                 {% if display_mode == 'result' %}
                 <h2>{{ result_date_str }}の好調台</h2>
                 <div class="top5-note">※実績データ（ART回数・出玉）で評価</div>
@@ -230,5 +234,6 @@
             </p>
         </footer>
     </div>
+    <script src="{{ url_for('static', filename='realtime.js') }}"></script>
 </body>
 </html>

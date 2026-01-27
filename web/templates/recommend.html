@@ -8,12 +8,16 @@
     <title>{{ store.name }}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-<body>
+<body data-page-type="recommend" data-store-key="{{ store_key }}">
     <div class="container">
         <header>
             <a href="{{ url_for('machine_stores', machine_key=machine_key) }}" class="back-link">&lt; {{ machine.short_name }}</a>
             <h1>{{ store.name }}</h1>
             <div class="machine-label">{{ machine.icon }} {{ machine.short_name }}</div>
+            <div class="realtime-bar">
+                <span id="realtime-status" class="realtime-status">読込中...</span>
+                <button onclick="refreshData()" class="refresh-btn">🔄 更新</button>
+            </div>
             <div class="update-info">
                 {% if cache_info %}
                 <span class="data-source">
@@ -328,6 +332,7 @@
         </footer>
     </div>
 
+    <script src="{{ url_for('static', filename='realtime.js') }}"></script>
     <script>
         const storeKey = '{{ store_key }}';
         let scrapingTimer = null;

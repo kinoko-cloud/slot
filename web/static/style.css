@@ -105,6 +105,54 @@ header h1 {
     color: #a8e6a3;
 }
 
+/* リアルタイム更新バー */
+.realtime-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+    padding: 8px;
+    background: #1e1e3a;
+    border-radius: 8px;
+}
+
+.realtime-status {
+    font-size: 0.85em;
+    color: #888;
+}
+
+.realtime-status.loading {
+    color: #ffd700;
+}
+
+.realtime-status.success {
+    color: #a8e6a3;
+}
+
+.realtime-status.error {
+    color: #ff6b6b;
+}
+
+.refresh-btn {
+    padding: 6px 12px;
+    background: #3a3a5c;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.85em;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.refresh-btn:hover {
+    background: #4a4a7c;
+}
+
+.refresh-btn:active {
+    background: #2a2a4c;
+}
+
 /* 機種リスト */
 .machine-list h2,
 .store-list h2 {
