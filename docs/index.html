@@ -8,7 +8,7 @@
     <title>本日のおすすめ台</title>
     <link rel="stylesheet" href="/static/style.css">
 </head>
-<body>
+<body data-page-type="index">
     <div class="container">
         <header>
             
@@ -16,6 +16,10 @@
             <div class="title-date">1月27日(火)</div>
             <div class="mode-badge realtime">営業中</div>
             
+            <div class="realtime-bar">
+                <span id="realtime-status" class="realtime-status">読込中...</span>
+                <button onclick="refreshData()" class="refresh-btn">🔄 更新</button>
+            </div>
         </header>
 
         <main>
@@ -362,5 +366,6 @@
             </p>
         </footer>
     </div>
+    <script src="/static/realtime.js"></script>
 </body>
 </html>

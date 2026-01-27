@@ -8,18 +8,22 @@
     <title>エスパス日拓西武新宿駅前店</title>
     <link rel="stylesheet" href="/static/style.css">
 </head>
-<body>
+<body data-page-type="recommend" data-store-key="seibu_shinjuku_espass_sbj">
     <div class="container">
         <header>
             <a href="/machine/sbj.html" class="back-link">&lt; スーパーブラックジャック</a>
             <h1>エスパス日拓西武新宿駅前店</h1>
             <div class="machine-label">🃏 スーパーブラックジャック</div>
+            <div class="realtime-bar">
+                <span id="realtime-status" class="realtime-status">読込中...</span>
+                <button onclick="refreshData()" class="refresh-btn">🔄 更新</button>
+            </div>
             <div class="update-info">
                 
                 <span class="data-source">
                     データ取得: <span id="update-time">21:25</span>
                     
-                    <span class="data-age stale">（972分前）</span>
+                    <span class="data-age stale">（979分前）</span>
                     
                 </span>
                 <span class="cache-badge github">GITHUB</span>
@@ -413,6 +417,7 @@
         </footer>
     </div>
 
+    <script src="/static/realtime.js"></script>
     <script>
         const storeKey = 'seibu_shinjuku_espass_sbj';
         let scrapingTimer = null;

@@ -26,12 +26,16 @@ from scrapers.availability_checker import get_availability, get_realtime_data
 
 app = Flask(__name__)
 
-# キャッシュ無効化
+# キャッシュ無効化 + CORS対応
 @app.after_request
 def add_header(response):
     response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
     response.headers['Pragma'] = 'no-cache'
     response.headers['Expires'] = '0'
+    # CORS: Cloudflare Pagesからのアクセスを許可
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
     return response
 
 # デプロイ用シークレット
@@ -954,6 +958,177 @@ def api_scrape_status(store_key: str):
             })
 
     return jsonify(status)
+
+
+# ========================================
+# Cloudflare Pages用 JSON API (v2)
+# ========================================
+
+@app.route('/api/v2/index')
+def api_v2_index():
+    """API v2: トップページ用データをJSON形式で返す"""
+    now = datetime.now(JST)
+    display_mode = get_display_mode()
+    is_open = is_business_hours()
+    today_weekday = WEEKDAY_NAMES[now.weekday()]
+
+    # 店舗曜日傾向
+    store_day_ratings = {
+        'island_akihabara_sbj': {
+            'name': 'アイランド秋葉原',
+            'day_ratings': {'月': 4, '火': 3, '水': 5, '木': 3, '金': 3, '土': 1, '日': 4},
+        },
+        'shibuya_espass_sbj': {
+            'name': 'エスパス渋谷新館',
+            'day_ratings': {'月': 3, '火': 4, '水': 4, '木': 5, '金': 3, '土': 3, '日': 1},
+        },
+        'shinjuku_espass_sbj': {
+            'name': 'エスパス歌舞伎町',
+            'day_ratings': {'月': 2, '火': 3, '水': 3, '木': 3, '金': 4, '土': 5, '日': 3},
+        },
+        'akihabara_espass_sbj': {
+            'name': 'エスパス秋葉原',
+            'day_ratings': {'月': 2, '火': 3, '水': 3, '木': 3, '金': 4, '土': 5, '日': 4},
+        },
+        'seibu_shinjuku_espass_sbj': {
+            'name': 'エスパス西武新宿',
+            'day_ratings': {'月': 2, '火': 2, '水': 3, '木': 3, '金': 4, '土': 4, '日': 3},
+        },
+    }
+
+    # トップ台を収集
+    top3_all = []
+    for key, machine in MACHINES.items():
+        stores = get_stores_by_machine(key)
+        for store_key, store in stores.items():
+            try:
+                availability = {}
+                try:
+                    availability = get_availability(store_key)
+                except:
+                    pass
+
+                realtime_data = get_realtime_data(store_key)
+                recs = recommend_units(store_key, realtime_data, availability)
+
+                for rec in recs[:3]:
+                    rec['store_name'] = store.get('short_name', store['name'])
+                    rec['store_key'] = store_key
+                    rec['machine_key'] = key
+                    rec['machine_icon'] = machine['icon']
+                    rec['machine_name'] = machine.get('display_name', machine['short_name'])
+                    rec['availability'] = availability.get(rec['unit_id'], '')
+
+                    reasons_text = ' '.join(rec.get('reasons', []))
+                    if rec['final_rank'] in ('S', 'A') and '様子見' not in reasons_text:
+                        top3_all.append(rec)
+            except Exception as e:
+                print(f"API v2 error for {store_key}: {e}")
+
+    # ソート
+    def top3_sort_key(r):
+        score = r['final_score']
+        if r.get('availability') == '空き':
+            score += 10
+        return -score
+
+    top3_all.sort(key=top3_sort_key)
+    top3 = top3_all[:5]
+
+    # 今日の曜日ランキング
+    today_store_ranking = []
+    for store_key, info in store_day_ratings.items():
+        today_rating = info['day_ratings'].get(today_weekday, 3)
+        today_store_ranking.append({
+            'store_key': store_key,
+            'name': info['name'],
+            'today_rating': today_rating,
+        })
+    today_store_ranking.sort(key=lambda x: -x['today_rating'])
+
+    return jsonify({
+        'updated_at': now.isoformat(),
+        'display_mode': display_mode,
+        'is_open': is_open,
+        'today_weekday': today_weekday,
+        'today_date': format_date_with_weekday(now),
+        'top3': top3,
+        'today_store_ranking': today_store_ranking,
+    })
+
+
+@app.route('/api/v2/recommend/<store_key>')
+def api_v2_recommend(store_key: str):
+    """API v2: 店舗別推奨台データをJSON形式で返す"""
+    store = STORES.get(store_key)
+    if not store:
+        return jsonify({'error': 'Store not found'}), 404
+
+    now = datetime.now(JST)
+    display_mode = get_display_mode()
+    is_open = is_business_hours()
+
+    machine_key = store.get('machine', 'sbj')
+    machine = get_machine_info(machine_key)
+
+    # 空き状況とリアルタイムデータを取得
+    availability = {}
+    realtime_data = None
+    cache_info = None
+
+    try:
+        availability = get_availability(store_key)
+    except:
+        pass
+
+    try:
+        rt_data = get_realtime_data(store_key)
+        if rt_data and rt_data.get('units'):
+            realtime_data = rt_data
+            fetched_at_str = rt_data.get('fetched_at', '')
+            if fetched_at_str:
+                try:
+                    fetched_time = datetime.fromisoformat(fetched_at_str.replace('Z', '+00:00'))
+                    fetched_time_jst = fetched_time.astimezone(JST)
+                    cache_info = {
+                        'fetched_at': fetched_time_jst.strftime('%H:%M'),
+                        'age_seconds': int((now - fetched_time_jst).total_seconds()),
+                        'source': rt_data.get('source', 'unknown'),
+                    }
+                except:
+                    pass
+    except:
+        pass
+
+    recommendations = recommend_units(store_key, realtime_data, availability)
+
+    # 分類
+    sa_recs = [r for r in recommendations if r['final_rank'] in ('S', 'A') and not r['is_running']]
+    if sa_recs:
+        top_recs = sa_recs
+    else:
+        top_recs = [r for r in recommendations if not r['is_running']][:3]
+
+    other_recs = [r for r in recommendations if r not in top_recs]
+
+    return jsonify({
+        'updated_at': now.isoformat(),
+        'display_mode': display_mode,
+        'is_open': is_open,
+        'store': {
+            'key': store_key,
+            'name': store['name'],
+            'short_name': store.get('short_name', store['name']),
+        },
+        'machine': {
+            'key': machine_key,
+            'name': machine['name'],
+            'icon': machine['icon'],
+        },
+        'cache_info': cache_info,
+        'top_recs': top_recs,
+        'other_recs': other_recs,
+    })
 
 
 # テンプレートにランク色を提供

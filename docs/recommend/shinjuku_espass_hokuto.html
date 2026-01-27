@@ -8,12 +8,16 @@
     <title>エスパス日拓新宿歌舞伎町店</title>
     <link rel="stylesheet" href="/static/style.css">
 </head>
-<body>
+<body data-page-type="recommend" data-store-key="shinjuku_espass_hokuto">
     <div class="container">
         <header>
             <a href="/machine/hokuto_tensei2.html" class="back-link">&lt; 北斗の拳 転生の章2</a>
             <h1>エスパス日拓新宿歌舞伎町店</h1>
             <div class="machine-label">👊 北斗の拳 転生の章2</div>
+            <div class="realtime-bar">
+                <span id="realtime-status" class="realtime-status">読込中...</span>
+                <button onclick="refreshData()" class="refresh-btn">🔄 更新</button>
+            </div>
             <div class="update-info">
                 
                 <span class="data-source no-realtime">リアルタイムデータなし（過去7日間のデータで評価）</span>
@@ -1128,6 +1132,7 @@
         </footer>
     </div>
 
+    <script src="/static/realtime.js"></script>
     <script>
         const storeKey = 'shinjuku_espass_hokuto';
         let scrapingTimer = null;

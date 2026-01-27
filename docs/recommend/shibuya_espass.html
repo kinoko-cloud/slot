@@ -8,12 +8,16 @@
     <title>エスパス日拓渋谷新館</title>
     <link rel="stylesheet" href="/static/style.css">
 </head>
-<body>
+<body data-page-type="recommend" data-store-key="shibuya_espass">
     <div class="container">
         <header>
             <a href="/machine/sbj.html" class="back-link">&lt; スーパーブラックジャック</a>
             <h1>エスパス日拓渋谷新館</h1>
             <div class="machine-label">🃏 スーパーブラックジャック</div>
+            <div class="realtime-bar">
+                <span id="realtime-status" class="realtime-status">読込中...</span>
+                <button onclick="refreshData()" class="refresh-btn">🔄 更新</button>
+            </div>
             <div class="update-info">
                 
                 <span class="data-source no-realtime">リアルタイムデータなし（過去7日間のデータで評価）</span>
@@ -219,6 +223,7 @@
         </footer>
     </div>
 
+    <script src="/static/realtime.js"></script>
     <script>
         const storeKey = 'shibuya_espass';
         let scrapingTimer = null;
