@@ -25,7 +25,7 @@
                 </span>
                 <span class="cache-badge github">GITHUB</span>
                 
-                <div class="stale-notice">14分前のデータです</div>
+                <div class="stale-warning">データが0時間30分前のものです</div>
                 
                 
             </div>
@@ -111,52 +111,53 @@
                         <span class="expand-icon">▼</span>
                     </div>
 
-                    <!-- データ（常にART/RB/G数を表示、0でも表示） -->
+                    <!-- データ: 2段レイアウト -->
                     <div class="today-data-row">
-                        <!-- ART を最初に大きく -->
-                        <div class="data-cell highlight">
-                            <span class="data-value"><span class="art-num-lg">50</span></span>
-                            <span class="data-label">ART</span>
+                        <!-- 1段目: ART + 確率 + 連チャン -->
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">50</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            <div class="data-cell good">
+                                <span class="data-value">1/125</span>
+                                <span class="data-label">ART確率</span>
+                            </div>
+                            
+                            
+                            <div class="data-cell rensa-cell excellent">
+                                <span class="data-value">最大17連</span>
+                            </div>
+                            
                         </div>
-                        <!-- 確率 -->
-                        
-                        <div class="data-cell good">
-                            <span class="data-value">1/125</span>
-                            <span class="data-label">ART確率</span>
-                        </div>
-                        
-                        <!-- 最大枚数 -->
-                        
-                        
-                        <div class="data-cell highlight medals-2k">
-                            <span class="data-value">
-                                <span class="medals-icon">⭐</span>
-                                2,574
-                            </span>
-                            <span class="data-label">最大枚 2千枚OVER</span>
-                        </div>
-                        
-                        <!-- RB -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value"><span class="rb-num">18</span></span>
-                            <span class="data-label">RB</span>
-                        </div>
-                        <!-- 現在スタート -->
-                        <div class="data-cell warn">
-                            <span class="data-value">485</span>
-                            <span class="data-label">現在G</span>
-                        </div>
-                        <!-- ハマり回数 -->
-                        
-                        <div class="data-cell bad">
-                            <span class="data-value">3回</span>
-                            <span class="data-label">500G超</span>
-                        </div>
-                        
-                        <!-- 回転数を最後に -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value">6,274</span>
-                            <span class="data-label">累計G</span>
+                        <!-- 2段目: その他の統計（均一サイズ） -->
+                        <div class="data-row-secondary">
+                            
+                            
+                            <div class="data-cell medals-2k">
+                                <span class="data-value">2,574</span>
+                                <span class="data-label">最大枚 2千枚OVER</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">18</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell warn">
+                                <span class="data-value">485</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell bad">
+                                <span class="data-value">3回</span>
+                                <span class="data-label">500G超</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">6,274</span>
+                                <span class="data-label">累計G</span>
+                            </div>
                         </div>
                     </div>
 
@@ -1260,7 +1261,7 @@
                             
                             <div class="reason-item">本日1/125で安定稼働中 (6,274G消化)</div>
                             
-                            <div class="reason-item">連チャン中 → 高設定継続の期待</div>
+                            <div class="reason-item">本日17連の爆発あり</div>
                             
                         </div>
                         
@@ -1282,47 +1283,44 @@
                         <span class="expand-icon">▼</span>
                     </div>
 
-                    <!-- データ（常にART/RB/G数を表示、0でも表示） -->
+                    <!-- データ: 2段レイアウト -->
                     <div class="today-data-row">
-                        <!-- ART を最初に大きく -->
-                        <div class="data-cell highlight">
-                            <span class="data-value"><span class="art-num-lg">37</span></span>
-                            <span class="data-label">ART</span>
+                        <!-- 1段目: ART + 確率 + 連チャン -->
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">37</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            <div class="data-cell ">
+                                <span class="data-value">1/151</span>
+                                <span class="data-label">ART確率</span>
+                            </div>
+                            
+                            
                         </div>
-                        <!-- 確率 -->
-                        
-                        <div class="data-cell ">
-                            <span class="data-value">1/151</span>
-                            <span class="data-label">ART確率</span>
-                        </div>
-                        
-                        <!-- 最大枚数 -->
-                        
-                        
-                        <div class="data-cell highlight medals-2k">
-                            <span class="data-value">
-                                <span class="medals-icon">⭐</span>
-                                2,025
-                            </span>
-                            <span class="data-label">最大枚 2千枚OVER</span>
-                        </div>
-                        
-                        <!-- RB -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value"><span class="rb-num">16</span></span>
-                            <span class="data-label">RB</span>
-                        </div>
-                        <!-- 現在スタート -->
-                        <div class="data-cell ">
-                            <span class="data-value">2</span>
-                            <span class="data-label">現在G</span>
-                        </div>
-                        <!-- ハマり回数 -->
-                        
-                        <!-- 回転数を最後に -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value">5,612</span>
-                            <span class="data-label">累計G</span>
+                        <!-- 2段目: その他の統計（均一サイズ） -->
+                        <div class="data-row-secondary">
+                            
+                            
+                            <div class="data-cell medals-2k">
+                                <span class="data-value">2,025</span>
+                                <span class="data-label">最大枚 2千枚OVER</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">16</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell ">
+                                <span class="data-value">2</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">5,612</span>
+                                <span class="data-label">累計G</span>
+                            </div>
                         </div>
                     </div>
 
@@ -1394,47 +1392,44 @@
                         <span class="expand-icon">▼</span>
                     </div>
 
-                    <!-- データ（常にART/RB/G数を表示、0でも表示） -->
+                    <!-- データ: 2段レイアウト -->
                     <div class="today-data-row">
-                        <!-- ART を最初に大きく -->
-                        <div class="data-cell highlight">
-                            <span class="data-value"><span class="art-num-lg">56</span></span>
-                            <span class="data-label">ART</span>
+                        <!-- 1段目: ART + 確率 + 連チャン -->
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">56</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            <div class="data-cell excellent">
+                                <span class="data-value">1/95</span>
+                                <span class="data-label">ART確率</span>
+                            </div>
+                            
+                            
                         </div>
-                        <!-- 確率 -->
-                        
-                        <div class="data-cell excellent">
-                            <span class="data-value">1/95</span>
-                            <span class="data-label">ART確率</span>
-                        </div>
-                        
-                        <!-- 最大枚数 -->
-                        
-                        
-                        <div class="data-cell highlight medals-1k">
-                            <span class="data-value">
-                                <span class="medals-icon">👍</span>
-                                1,608
-                            </span>
-                            <span class="data-label">最大枚 1千枚OVER</span>
-                        </div>
-                        
-                        <!-- RB -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value"><span class="rb-num">17</span></span>
-                            <span class="data-label">RB</span>
-                        </div>
-                        <!-- 現在スタート -->
-                        <div class="data-cell ">
-                            <span class="data-value">116</span>
-                            <span class="data-label">現在G</span>
-                        </div>
-                        <!-- ハマり回数 -->
-                        
-                        <!-- 回転数を最後に -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value">5,355</span>
-                            <span class="data-label">累計G</span>
+                        <!-- 2段目: その他の統計（均一サイズ） -->
+                        <div class="data-row-secondary">
+                            
+                            
+                            <div class="data-cell medals-1k">
+                                <span class="data-value">1,608</span>
+                                <span class="data-label">最大枚 1千枚OVER</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">17</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell ">
+                                <span class="data-value">116</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">5,355</span>
+                                <span class="data-label">累計G</span>
+                            </div>
                         </div>
                     </div>
 
@@ -1514,47 +1509,44 @@
                         <span class="expand-icon">▼</span>
                     </div>
 
-                    <!-- データ（常にART/RB/G数を表示、0でも表示） -->
+                    <!-- データ: 2段レイアウト -->
                     <div class="today-data-row">
-                        <!-- ART を最初に大きく -->
-                        <div class="data-cell highlight">
-                            <span class="data-value"><span class="art-num-lg">38</span></span>
-                            <span class="data-label">ART</span>
+                        <!-- 1段目: ART + 確率 + 連チャン -->
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">38</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            <div class="data-cell ">
+                                <span class="data-value">1/141</span>
+                                <span class="data-label">ART確率</span>
+                            </div>
+                            
+                            
                         </div>
-                        <!-- 確率 -->
-                        
-                        <div class="data-cell ">
-                            <span class="data-value">1/141</span>
-                            <span class="data-label">ART確率</span>
-                        </div>
-                        
-                        <!-- 最大枚数 -->
-                        
-                        
-                        <div class="data-cell highlight medals-1k">
-                            <span class="data-value">
-                                <span class="medals-icon">👍</span>
-                                1,480
-                            </span>
-                            <span class="data-label">最大枚 1千枚OVER</span>
-                        </div>
-                        
-                        <!-- RB -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value"><span class="rb-num">13</span></span>
-                            <span class="data-label">RB</span>
-                        </div>
-                        <!-- 現在スタート -->
-                        <div class="data-cell ">
-                            <span class="data-value">150</span>
-                            <span class="data-label">現在G</span>
-                        </div>
-                        <!-- ハマり回数 -->
-                        
-                        <!-- 回転数を最後に -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value">5,360</span>
-                            <span class="data-label">累計G</span>
+                        <!-- 2段目: その他の統計（均一サイズ） -->
+                        <div class="data-row-secondary">
+                            
+                            
+                            <div class="data-cell medals-1k">
+                                <span class="data-value">1,480</span>
+                                <span class="data-label">最大枚 1千枚OVER</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">13</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell ">
+                                <span class="data-value">150</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">5,360</span>
+                                <span class="data-label">累計G</span>
+                            </div>
                         </div>
                     </div>
 
@@ -1626,47 +1618,44 @@
                         <span class="expand-icon">▼</span>
                     </div>
 
-                    <!-- データ（常にART/RB/G数を表示、0でも表示） -->
+                    <!-- データ: 2段レイアウト -->
                     <div class="today-data-row">
-                        <!-- ART を最初に大きく -->
-                        <div class="data-cell highlight">
-                            <span class="data-value"><span class="art-num-lg">47</span></span>
-                            <span class="data-label">ART</span>
+                        <!-- 1段目: ART + 確率 + 連チャン -->
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">47</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            <div class="data-cell good">
+                                <span class="data-value">1/118</span>
+                                <span class="data-label">ART確率</span>
+                            </div>
+                            
+                            
                         </div>
-                        <!-- 確率 -->
-                        
-                        <div class="data-cell good">
-                            <span class="data-value">1/118</span>
-                            <span class="data-label">ART確率</span>
-                        </div>
-                        
-                        <!-- 最大枚数 -->
-                        
-                        
-                        <div class="data-cell highlight medals-1k">
-                            <span class="data-value">
-                                <span class="medals-icon">👍</span>
-                                1,487
-                            </span>
-                            <span class="data-label">最大枚 1千枚OVER</span>
-                        </div>
-                        
-                        <!-- RB -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value"><span class="rb-num">18</span></span>
-                            <span class="data-label">RB</span>
-                        </div>
-                        <!-- 現在スタート -->
-                        <div class="data-cell warn">
-                            <span class="data-value">480</span>
-                            <span class="data-label">現在G</span>
-                        </div>
-                        <!-- ハマり回数 -->
-                        
-                        <!-- 回転数を最後に -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value">5,560</span>
-                            <span class="data-label">累計G</span>
+                        <!-- 2段目: その他の統計（均一サイズ） -->
+                        <div class="data-row-secondary">
+                            
+                            
+                            <div class="data-cell medals-1k">
+                                <span class="data-value">1,487</span>
+                                <span class="data-label">最大枚 1千枚OVER</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">18</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell warn">
+                                <span class="data-value">480</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">5,560</span>
+                                <span class="data-label">累計G</span>
+                            </div>
                         </div>
                     </div>
 
@@ -1746,47 +1735,44 @@
                         <span class="expand-icon">▼</span>
                     </div>
 
-                    <!-- データ（常にART/RB/G数を表示、0でも表示） -->
+                    <!-- データ: 2段レイアウト -->
                     <div class="today-data-row">
-                        <!-- ART を最初に大きく -->
-                        <div class="data-cell highlight">
-                            <span class="data-value"><span class="art-num-lg">68</span></span>
-                            <span class="data-label">ART</span>
+                        <!-- 1段目: ART + 確率 + 連チャン -->
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">68</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            <div class="data-cell excellent">
+                                <span class="data-value">1/74</span>
+                                <span class="data-label">ART確率</span>
+                            </div>
+                            
+                            
                         </div>
-                        <!-- 確率 -->
-                        
-                        <div class="data-cell excellent">
-                            <span class="data-value">1/74</span>
-                            <span class="data-label">ART確率</span>
-                        </div>
-                        
-                        <!-- 最大枚数 -->
-                        
-                        
-                        <div class="data-cell highlight medals-5k">
-                            <span class="data-value">
-                                <span class="medals-icon">💰</span>
-                                5,339
-                            </span>
-                            <span class="data-label">最大枚 5千枚OVER</span>
-                        </div>
-                        
-                        <!-- RB -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value"><span class="rb-num">13</span></span>
-                            <span class="data-label">RB</span>
-                        </div>
-                        <!-- 現在スタート -->
-                        <div class="data-cell bad">
-                            <span class="data-value">515</span>
-                            <span class="data-label">現在G</span>
-                        </div>
-                        <!-- ハマり回数 -->
-                        
-                        <!-- 回転数を最後に -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value">5,048</span>
-                            <span class="data-label">累計G</span>
+                        <!-- 2段目: その他の統計（均一サイズ） -->
+                        <div class="data-row-secondary">
+                            
+                            
+                            <div class="data-cell medals-5k">
+                                <span class="data-value">5,339</span>
+                                <span class="data-label">最大枚 5千枚OVER</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">13</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell bad">
+                                <span class="data-value">515</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">5,048</span>
+                                <span class="data-label">累計G</span>
+                            </div>
                         </div>
                     </div>
 
@@ -1866,47 +1852,44 @@
                         <span class="expand-icon">▼</span>
                     </div>
 
-                    <!-- データ（常にART/RB/G数を表示、0でも表示） -->
+                    <!-- データ: 2段レイアウト -->
                     <div class="today-data-row">
-                        <!-- ART を最初に大きく -->
-                        <div class="data-cell highlight">
-                            <span class="data-value"><span class="art-num-lg">51</span></span>
-                            <span class="data-label">ART</span>
+                        <!-- 1段目: ART + 確率 + 連チャン -->
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">51</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            <div class="data-cell good">
+                                <span class="data-value">1/116</span>
+                                <span class="data-label">ART確率</span>
+                            </div>
+                            
+                            
                         </div>
-                        <!-- 確率 -->
-                        
-                        <div class="data-cell good">
-                            <span class="data-value">1/116</span>
-                            <span class="data-label">ART確率</span>
-                        </div>
-                        
-                        <!-- 最大枚数 -->
-                        
-                        
-                        <div class="data-cell highlight medals-2k">
-                            <span class="data-value">
-                                <span class="medals-icon">⭐</span>
-                                2,137
-                            </span>
-                            <span class="data-label">最大枚 2千枚OVER</span>
-                        </div>
-                        
-                        <!-- RB -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value"><span class="rb-num">19</span></span>
-                            <span class="data-label">RB</span>
-                        </div>
-                        <!-- 現在スタート -->
-                        <div class="data-cell ">
-                            <span class="data-value">216</span>
-                            <span class="data-label">現在G</span>
-                        </div>
-                        <!-- ハマり回数 -->
-                        
-                        <!-- 回転数を最後に -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value">5,951</span>
-                            <span class="data-label">累計G</span>
+                        <!-- 2段目: その他の統計（均一サイズ） -->
+                        <div class="data-row-secondary">
+                            
+                            
+                            <div class="data-cell medals-2k">
+                                <span class="data-value">2,137</span>
+                                <span class="data-label">最大枚 2千枚OVER</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">19</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell ">
+                                <span class="data-value">216</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">5,951</span>
+                                <span class="data-label">累計G</span>
+                            </div>
                         </div>
                     </div>
 
@@ -1986,47 +1969,44 @@
                         <span class="expand-icon">▼</span>
                     </div>
 
-                    <!-- データ（常にART/RB/G数を表示、0でも表示） -->
+                    <!-- データ: 2段レイアウト -->
                     <div class="today-data-row">
-                        <!-- ART を最初に大きく -->
-                        <div class="data-cell highlight">
-                            <span class="data-value"><span class="art-num-lg">57</span></span>
-                            <span class="data-label">ART</span>
+                        <!-- 1段目: ART + 確率 + 連チャン -->
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">57</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            <div class="data-cell excellent">
+                                <span class="data-value">1/94</span>
+                                <span class="data-label">ART確率</span>
+                            </div>
+                            
+                            
                         </div>
-                        <!-- 確率 -->
-                        
-                        <div class="data-cell excellent">
-                            <span class="data-value">1/94</span>
-                            <span class="data-label">ART確率</span>
-                        </div>
-                        
-                        <!-- 最大枚数 -->
-                        
-                        
-                        <div class="data-cell highlight medals-3k">
-                            <span class="data-value">
-                                <span class="medals-icon">✨</span>
-                                3,494
-                            </span>
-                            <span class="data-label">最大枚 3千枚OVER</span>
-                        </div>
-                        
-                        <!-- RB -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value"><span class="rb-num">14</span></span>
-                            <span class="data-label">RB</span>
-                        </div>
-                        <!-- 現在スタート -->
-                        <div class="data-cell bad">
-                            <span class="data-value">512</span>
-                            <span class="data-label">現在G</span>
-                        </div>
-                        <!-- ハマり回数 -->
-                        
-                        <!-- 回転数を最後に -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value">5,379</span>
-                            <span class="data-label">累計G</span>
+                        <!-- 2段目: その他の統計（均一サイズ） -->
+                        <div class="data-row-secondary">
+                            
+                            
+                            <div class="data-cell medals-3k">
+                                <span class="data-value">3,494</span>
+                                <span class="data-label">最大枚 3千枚OVER</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">14</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell bad">
+                                <span class="data-value">512</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">5,379</span>
+                                <span class="data-label">累計G</span>
+                            </div>
                         </div>
                     </div>
 
@@ -2106,47 +2086,44 @@
                         <span class="expand-icon">▼</span>
                     </div>
 
-                    <!-- データ（常にART/RB/G数を表示、0でも表示） -->
+                    <!-- データ: 2段レイアウト -->
                     <div class="today-data-row">
-                        <!-- ART を最初に大きく -->
-                        <div class="data-cell highlight">
-                            <span class="data-value"><span class="art-num-lg">49</span></span>
-                            <span class="data-label">ART</span>
+                        <!-- 1段目: ART + 確率 + 連チャン -->
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">49</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            <div class="data-cell good">
+                                <span class="data-value">1/109</span>
+                                <span class="data-label">ART確率</span>
+                            </div>
+                            
+                            
                         </div>
-                        <!-- 確率 -->
-                        
-                        <div class="data-cell good">
-                            <span class="data-value">1/109</span>
-                            <span class="data-label">ART確率</span>
-                        </div>
-                        
-                        <!-- 最大枚数 -->
-                        
-                        
-                        <div class="data-cell highlight medals-1k">
-                            <span class="data-value">
-                                <span class="medals-icon">👍</span>
-                                1,369
-                            </span>
-                            <span class="data-label">最大枚 1千枚OVER</span>
-                        </div>
-                        
-                        <!-- RB -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value"><span class="rb-num">19</span></span>
-                            <span class="data-label">RB</span>
-                        </div>
-                        <!-- 現在スタート -->
-                        <div class="data-cell ">
-                            <span class="data-value">0</span>
-                            <span class="data-label">現在G</span>
-                        </div>
-                        <!-- ハマり回数 -->
-                        
-                        <!-- 回転数を最後に -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value">5,364</span>
-                            <span class="data-label">累計G</span>
+                        <!-- 2段目: その他の統計（均一サイズ） -->
+                        <div class="data-row-secondary">
+                            
+                            
+                            <div class="data-cell medals-1k">
+                                <span class="data-value">1,369</span>
+                                <span class="data-label">最大枚 1千枚OVER</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">19</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell ">
+                                <span class="data-value">0</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">5,364</span>
+                                <span class="data-label">累計G</span>
+                            </div>
                         </div>
                     </div>
 
@@ -2224,47 +2201,44 @@
                         <span class="expand-icon">▼</span>
                     </div>
 
-                    <!-- データ（常にART/RB/G数を表示、0でも表示） -->
+                    <!-- データ: 2段レイアウト -->
                     <div class="today-data-row">
-                        <!-- ART を最初に大きく -->
-                        <div class="data-cell highlight">
-                            <span class="data-value"><span class="art-num-lg">47</span></span>
-                            <span class="data-label">ART</span>
+                        <!-- 1段目: ART + 確率 + 連チャン -->
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">47</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            <div class="data-cell good">
+                                <span class="data-value">1/110</span>
+                                <span class="data-label">ART確率</span>
+                            </div>
+                            
+                            
                         </div>
-                        <!-- 確率 -->
-                        
-                        <div class="data-cell good">
-                            <span class="data-value">1/110</span>
-                            <span class="data-label">ART確率</span>
-                        </div>
-                        
-                        <!-- 最大枚数 -->
-                        
-                        
-                        <div class="data-cell highlight medals-2k">
-                            <span class="data-value">
-                                <span class="medals-icon">⭐</span>
-                                2,776
-                            </span>
-                            <span class="data-label">最大枚 2千枚OVER</span>
-                        </div>
-                        
-                        <!-- RB -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value"><span class="rb-num">14</span></span>
-                            <span class="data-label">RB</span>
-                        </div>
-                        <!-- 現在スタート -->
-                        <div class="data-cell ">
-                            <span class="data-value">142</span>
-                            <span class="data-label">現在G</span>
-                        </div>
-                        <!-- ハマり回数 -->
-                        
-                        <!-- 回転数を最後に -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value">5,190</span>
-                            <span class="data-label">累計G</span>
+                        <!-- 2段目: その他の統計（均一サイズ） -->
+                        <div class="data-row-secondary">
+                            
+                            
+                            <div class="data-cell medals-2k">
+                                <span class="data-value">2,776</span>
+                                <span class="data-label">最大枚 2千枚OVER</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">14</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell ">
+                                <span class="data-value">142</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">5,190</span>
+                                <span class="data-label">累計G</span>
+                            </div>
                         </div>
                     </div>
 
@@ -2344,47 +2318,44 @@
                         <span class="expand-icon">▼</span>
                     </div>
 
-                    <!-- データ（常にART/RB/G数を表示、0でも表示） -->
+                    <!-- データ: 2段レイアウト -->
                     <div class="today-data-row">
-                        <!-- ART を最初に大きく -->
-                        <div class="data-cell highlight">
-                            <span class="data-value"><span class="art-num-lg">36</span></span>
-                            <span class="data-label">ART</span>
+                        <!-- 1段目: ART + 確率 + 連チャン -->
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">36</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            <div class="data-cell ">
+                                <span class="data-value">1/139</span>
+                                <span class="data-label">ART確率</span>
+                            </div>
+                            
+                            
                         </div>
-                        <!-- 確率 -->
-                        
-                        <div class="data-cell ">
-                            <span class="data-value">1/139</span>
-                            <span class="data-label">ART確率</span>
-                        </div>
-                        
-                        <!-- 最大枚数 -->
-                        
-                        
-                        <div class="data-cell highlight medals-1k">
-                            <span class="data-value">
-                                <span class="medals-icon">👍</span>
-                                1,287
-                            </span>
-                            <span class="data-label">最大枚 1千枚OVER</span>
-                        </div>
-                        
-                        <!-- RB -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value"><span class="rb-num">14</span></span>
-                            <span class="data-label">RB</span>
-                        </div>
-                        <!-- 現在スタート -->
-                        <div class="data-cell ">
-                            <span class="data-value">0</span>
-                            <span class="data-label">現在G</span>
-                        </div>
-                        <!-- ハマり回数 -->
-                        
-                        <!-- 回転数を最後に -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value">5,010</span>
-                            <span class="data-label">累計G</span>
+                        <!-- 2段目: その他の統計（均一サイズ） -->
+                        <div class="data-row-secondary">
+                            
+                            
+                            <div class="data-cell medals-1k">
+                                <span class="data-value">1,287</span>
+                                <span class="data-label">最大枚 1千枚OVER</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">14</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell ">
+                                <span class="data-value">0</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">5,010</span>
+                                <span class="data-label">累計G</span>
+                            </div>
                         </div>
                     </div>
 
@@ -2454,47 +2425,44 @@
                         <span class="expand-icon">▼</span>
                     </div>
 
-                    <!-- データ（常にART/RB/G数を表示、0でも表示） -->
+                    <!-- データ: 2段レイアウト -->
                     <div class="today-data-row">
-                        <!-- ART を最初に大きく -->
-                        <div class="data-cell highlight">
-                            <span class="data-value"><span class="art-num-lg">80</span></span>
-                            <span class="data-label">ART</span>
+                        <!-- 1段目: ART + 確率 + 連チャン -->
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">80</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            <div class="data-cell excellent">
+                                <span class="data-value">1/65</span>
+                                <span class="data-label">ART確率</span>
+                            </div>
+                            
+                            
                         </div>
-                        <!-- 確率 -->
-                        
-                        <div class="data-cell excellent">
-                            <span class="data-value">1/65</span>
-                            <span class="data-label">ART確率</span>
-                        </div>
-                        
-                        <!-- 最大枚数 -->
-                        
-                        
-                        <div class="data-cell highlight medals-3k">
-                            <span class="data-value">
-                                <span class="medals-icon">✨</span>
-                                4,323
-                            </span>
-                            <span class="data-label">最大枚 3千枚OVER</span>
-                        </div>
-                        
-                        <!-- RB -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value"><span class="rb-num">13</span></span>
-                            <span class="data-label">RB</span>
-                        </div>
-                        <!-- 現在スタート -->
-                        <div class="data-cell ">
-                            <span class="data-value">131</span>
-                            <span class="data-label">現在G</span>
-                        </div>
-                        <!-- ハマり回数 -->
-                        
-                        <!-- 回転数を最後に -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value">5,203</span>
-                            <span class="data-label">累計G</span>
+                        <!-- 2段目: その他の統計（均一サイズ） -->
+                        <div class="data-row-secondary">
+                            
+                            
+                            <div class="data-cell medals-3k">
+                                <span class="data-value">4,323</span>
+                                <span class="data-label">最大枚 3千枚OVER</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">13</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell ">
+                                <span class="data-value">131</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">5,203</span>
+                                <span class="data-label">累計G</span>
+                            </div>
                         </div>
                     </div>
 
@@ -2574,47 +2542,44 @@
                         <span class="expand-icon">▼</span>
                     </div>
 
-                    <!-- データ（常にART/RB/G数を表示、0でも表示） -->
+                    <!-- データ: 2段レイアウト -->
                     <div class="today-data-row">
-                        <!-- ART を最初に大きく -->
-                        <div class="data-cell highlight">
-                            <span class="data-value"><span class="art-num-lg">47</span></span>
-                            <span class="data-label">ART</span>
+                        <!-- 1段目: ART + 確率 + 連チャン -->
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">47</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            <div class="data-cell good">
+                                <span class="data-value">1/112</span>
+                                <span class="data-label">ART確率</span>
+                            </div>
+                            
+                            
                         </div>
-                        <!-- 確率 -->
-                        
-                        <div class="data-cell good">
-                            <span class="data-value">1/112</span>
-                            <span class="data-label">ART確率</span>
-                        </div>
-                        
-                        <!-- 最大枚数 -->
-                        
-                        
-                        <div class="data-cell highlight medals-2k">
-                            <span class="data-value">
-                                <span class="medals-icon">⭐</span>
-                                2,704
-                            </span>
-                            <span class="data-label">最大枚 2千枚OVER</span>
-                        </div>
-                        
-                        <!-- RB -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value"><span class="rb-num">16</span></span>
-                            <span class="data-label">RB</span>
-                        </div>
-                        <!-- 現在スタート -->
-                        <div class="data-cell bad">
-                            <span class="data-value">570</span>
-                            <span class="data-label">現在G</span>
-                        </div>
-                        <!-- ハマり回数 -->
-                        
-                        <!-- 回転数を最後に -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value">5,283</span>
-                            <span class="data-label">累計G</span>
+                        <!-- 2段目: その他の統計（均一サイズ） -->
+                        <div class="data-row-secondary">
+                            
+                            
+                            <div class="data-cell medals-2k">
+                                <span class="data-value">2,704</span>
+                                <span class="data-label">最大枚 2千枚OVER</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">16</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell bad">
+                                <span class="data-value">570</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">5,283</span>
+                                <span class="data-label">累計G</span>
+                            </div>
                         </div>
                     </div>
 
@@ -2694,47 +2659,44 @@
                         <span class="expand-icon">▼</span>
                     </div>
 
-                    <!-- データ（常にART/RB/G数を表示、0でも表示） -->
+                    <!-- データ: 2段レイアウト -->
                     <div class="today-data-row">
-                        <!-- ART を最初に大きく -->
-                        <div class="data-cell highlight">
-                            <span class="data-value"><span class="art-num-lg">24</span></span>
-                            <span class="data-label">ART</span>
+                        <!-- 1段目: ART + 確率 + 連チャン -->
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">24</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            <div class="data-cell bad">
+                                <span class="data-value">1/244</span>
+                                <span class="data-label">ART確率</span>
+                            </div>
+                            
+                            
                         </div>
-                        <!-- 確率 -->
-                        
-                        <div class="data-cell bad">
-                            <span class="data-value">1/244</span>
-                            <span class="data-label">ART確率</span>
-                        </div>
-                        
-                        <!-- 最大枚数 -->
-                        
-                        
-                        <div class="data-cell highlight ">
-                            <span class="data-value">
-                                
-                                669
-                            </span>
-                            <span class="data-label">最大枚</span>
-                        </div>
-                        
-                        <!-- RB -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value"><span class="rb-num">10</span></span>
-                            <span class="data-label">RB</span>
-                        </div>
-                        <!-- 現在スタート -->
-                        <div class="data-cell bad">
-                            <span class="data-value">974</span>
-                            <span class="data-label">現在G</span>
-                        </div>
-                        <!-- ハマり回数 -->
-                        
-                        <!-- 回転数を最後に -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value">5,870</span>
-                            <span class="data-label">累計G</span>
+                        <!-- 2段目: その他の統計（均一サイズ） -->
+                        <div class="data-row-secondary">
+                            
+                            
+                            <div class="data-cell ">
+                                <span class="data-value">669</span>
+                                <span class="data-label">最大枚</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">10</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell bad">
+                                <span class="data-value">974</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">5,870</span>
+                                <span class="data-label">累計G</span>
+                            </div>
                         </div>
                     </div>
 
@@ -2814,47 +2776,44 @@
                         <span class="expand-icon">▼</span>
                     </div>
 
-                    <!-- データ（常にART/RB/G数を表示、0でも表示） -->
+                    <!-- データ: 2段レイアウト -->
                     <div class="today-data-row">
-                        <!-- ART を最初に大きく -->
-                        <div class="data-cell highlight">
-                            <span class="data-value"><span class="art-num-lg">51</span></span>
-                            <span class="data-label">ART</span>
+                        <!-- 1段目: ART + 確率 + 連チャン -->
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">51</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            <div class="data-cell excellent">
+                                <span class="data-value">1/97</span>
+                                <span class="data-label">ART確率</span>
+                            </div>
+                            
+                            
                         </div>
-                        <!-- 確率 -->
-                        
-                        <div class="data-cell excellent">
-                            <span class="data-value">1/97</span>
-                            <span class="data-label">ART確率</span>
-                        </div>
-                        
-                        <!-- 最大枚数 -->
-                        
-                        
-                        <div class="data-cell highlight medals-1k">
-                            <span class="data-value">
-                                <span class="medals-icon">👍</span>
-                                1,879
-                            </span>
-                            <span class="data-label">最大枚 1千枚OVER</span>
-                        </div>
-                        
-                        <!-- RB -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value"><span class="rb-num">16</span></span>
-                            <span class="data-label">RB</span>
-                        </div>
-                        <!-- 現在スタート -->
-                        <div class="data-cell ">
-                            <span class="data-value">70</span>
-                            <span class="data-label">現在G</span>
-                        </div>
-                        <!-- ハマり回数 -->
-                        
-                        <!-- 回転数を最後に -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value">4,957</span>
-                            <span class="data-label">累計G</span>
+                        <!-- 2段目: その他の統計（均一サイズ） -->
+                        <div class="data-row-secondary">
+                            
+                            
+                            <div class="data-cell medals-1k">
+                                <span class="data-value">1,879</span>
+                                <span class="data-label">最大枚 1千枚OVER</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">16</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell ">
+                                <span class="data-value">70</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">4,957</span>
+                                <span class="data-label">累計G</span>
+                            </div>
                         </div>
                     </div>
 
@@ -2934,47 +2893,44 @@
                         <span class="expand-icon">▼</span>
                     </div>
 
-                    <!-- データ（常にART/RB/G数を表示、0でも表示） -->
+                    <!-- データ: 2段レイアウト -->
                     <div class="today-data-row">
-                        <!-- ART を最初に大きく -->
-                        <div class="data-cell highlight">
-                            <span class="data-value"><span class="art-num-lg">45</span></span>
-                            <span class="data-label">ART</span>
+                        <!-- 1段目: ART + 確率 + 連チャン -->
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">45</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            <div class="data-cell good">
+                                <span class="data-value">1/105</span>
+                                <span class="data-label">ART確率</span>
+                            </div>
+                            
+                            
                         </div>
-                        <!-- 確率 -->
-                        
-                        <div class="data-cell good">
-                            <span class="data-value">1/105</span>
-                            <span class="data-label">ART確率</span>
-                        </div>
-                        
-                        <!-- 最大枚数 -->
-                        
-                        
-                        <div class="data-cell highlight medals-2k">
-                            <span class="data-value">
-                                <span class="medals-icon">⭐</span>
-                                2,302
-                            </span>
-                            <span class="data-label">最大枚 2千枚OVER</span>
-                        </div>
-                        
-                        <!-- RB -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value"><span class="rb-num">18</span></span>
-                            <span class="data-label">RB</span>
-                        </div>
-                        <!-- 現在スタート -->
-                        <div class="data-cell ">
-                            <span class="data-value">60</span>
-                            <span class="data-label">現在G</span>
-                        </div>
-                        <!-- ハマり回数 -->
-                        
-                        <!-- 回転数を最後に -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value">4,764</span>
-                            <span class="data-label">累計G</span>
+                        <!-- 2段目: その他の統計（均一サイズ） -->
+                        <div class="data-row-secondary">
+                            
+                            
+                            <div class="data-cell medals-2k">
+                                <span class="data-value">2,302</span>
+                                <span class="data-label">最大枚 2千枚OVER</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">18</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell ">
+                                <span class="data-value">60</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">4,764</span>
+                                <span class="data-label">累計G</span>
+                            </div>
                         </div>
                     </div>
 
@@ -3054,47 +3010,44 @@
                         <span class="expand-icon">▼</span>
                     </div>
 
-                    <!-- データ（常にART/RB/G数を表示、0でも表示） -->
+                    <!-- データ: 2段レイアウト -->
                     <div class="today-data-row">
-                        <!-- ART を最初に大きく -->
-                        <div class="data-cell highlight">
-                            <span class="data-value"><span class="art-num-lg">61</span></span>
-                            <span class="data-label">ART</span>
+                        <!-- 1段目: ART + 確率 + 連チャン -->
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">61</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            <div class="data-cell excellent">
+                                <span class="data-value">1/81</span>
+                                <span class="data-label">ART確率</span>
+                            </div>
+                            
+                            
                         </div>
-                        <!-- 確率 -->
-                        
-                        <div class="data-cell excellent">
-                            <span class="data-value">1/81</span>
-                            <span class="data-label">ART確率</span>
-                        </div>
-                        
-                        <!-- 最大枚数 -->
-                        
-                        
-                        <div class="data-cell highlight medals-2k">
-                            <span class="data-value">
-                                <span class="medals-icon">⭐</span>
-                                2,441
-                            </span>
-                            <span class="data-label">最大枚 2千枚OVER</span>
-                        </div>
-                        
-                        <!-- RB -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value"><span class="rb-num">15</span></span>
-                            <span class="data-label">RB</span>
-                        </div>
-                        <!-- 現在スタート -->
-                        <div class="data-cell ">
-                            <span class="data-value">57</span>
-                            <span class="data-label">現在G</span>
-                        </div>
-                        <!-- ハマり回数 -->
-                        
-                        <!-- 回転数を最後に -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value">4,964</span>
-                            <span class="data-label">累計G</span>
+                        <!-- 2段目: その他の統計（均一サイズ） -->
+                        <div class="data-row-secondary">
+                            
+                            
+                            <div class="data-cell medals-2k">
+                                <span class="data-value">2,441</span>
+                                <span class="data-label">最大枚 2千枚OVER</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">15</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell ">
+                                <span class="data-value">57</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">4,964</span>
+                                <span class="data-label">累計G</span>
+                            </div>
                         </div>
                     </div>
 
@@ -3174,47 +3127,44 @@
                         <span class="expand-icon">▼</span>
                     </div>
 
-                    <!-- データ（常にART/RB/G数を表示、0でも表示） -->
+                    <!-- データ: 2段レイアウト -->
                     <div class="today-data-row">
-                        <!-- ART を最初に大きく -->
-                        <div class="data-cell highlight">
-                            <span class="data-value"><span class="art-num-lg">96</span></span>
-                            <span class="data-label">ART</span>
+                        <!-- 1段目: ART + 確率 + 連チャン -->
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">96</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            <div class="data-cell excellent">
+                                <span class="data-value">1/40</span>
+                                <span class="data-label">ART確率</span>
+                            </div>
+                            
+                            
                         </div>
-                        <!-- 確率 -->
-                        
-                        <div class="data-cell excellent">
-                            <span class="data-value">1/40</span>
-                            <span class="data-label">ART確率</span>
-                        </div>
-                        
-                        <!-- 最大枚数 -->
-                        
-                        
-                        <div class="data-cell highlight medals-5k">
-                            <span class="data-value">
-                                <span class="medals-icon">💰</span>
-                                8,039
-                            </span>
-                            <span class="data-label">最大枚 5千枚OVER</span>
-                        </div>
-                        
-                        <!-- RB -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value"><span class="rb-num">12</span></span>
-                            <span class="data-label">RB</span>
-                        </div>
-                        <!-- 現在スタート -->
-                        <div class="data-cell warn">
-                            <span class="data-value">301</span>
-                            <span class="data-label">現在G</span>
-                        </div>
-                        <!-- ハマり回数 -->
-                        
-                        <!-- 回転数を最後に -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value">3,867</span>
-                            <span class="data-label">累計G</span>
+                        <!-- 2段目: その他の統計（均一サイズ） -->
+                        <div class="data-row-secondary">
+                            
+                            
+                            <div class="data-cell medals-5k">
+                                <span class="data-value">8,039</span>
+                                <span class="data-label">最大枚 5千枚OVER</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">12</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell warn">
+                                <span class="data-value">301</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">3,867</span>
+                                <span class="data-label">累計G</span>
+                            </div>
                         </div>
                     </div>
 
@@ -3298,47 +3248,44 @@
                         <span class="expand-icon">▼</span>
                     </div>
 
-                    <!-- データ（常にART/RB/G数を表示、0でも表示） -->
+                    <!-- データ: 2段レイアウト -->
                     <div class="today-data-row">
-                        <!-- ART を最初に大きく -->
-                        <div class="data-cell highlight">
-                            <span class="data-value"><span class="art-num-lg">75</span></span>
-                            <span class="data-label">ART</span>
+                        <!-- 1段目: ART + 確率 + 連チャン -->
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">75</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            <div class="data-cell excellent">
+                                <span class="data-value">1/62</span>
+                                <span class="data-label">ART確率</span>
+                            </div>
+                            
+                            
                         </div>
-                        <!-- 確率 -->
-                        
-                        <div class="data-cell excellent">
-                            <span class="data-value">1/62</span>
-                            <span class="data-label">ART確率</span>
-                        </div>
-                        
-                        <!-- 最大枚数 -->
-                        
-                        
-                        <div class="data-cell highlight medals-5k">
-                            <span class="data-value">
-                                <span class="medals-icon">💰</span>
-                                6,521
-                            </span>
-                            <span class="data-label">最大枚 5千枚OVER</span>
-                        </div>
-                        
-                        <!-- RB -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value"><span class="rb-num">11</span></span>
-                            <span class="data-label">RB</span>
-                        </div>
-                        <!-- 現在スタート -->
-                        <div class="data-cell warn">
-                            <span class="data-value">314</span>
-                            <span class="data-label">現在G</span>
-                        </div>
-                        <!-- ハマり回数 -->
-                        
-                        <!-- 回転数を最後に -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value">4,651</span>
-                            <span class="data-label">累計G</span>
+                        <!-- 2段目: その他の統計（均一サイズ） -->
+                        <div class="data-row-secondary">
+                            
+                            
+                            <div class="data-cell medals-5k">
+                                <span class="data-value">6,521</span>
+                                <span class="data-label">最大枚 5千枚OVER</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">11</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell warn">
+                                <span class="data-value">314</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">4,651</span>
+                                <span class="data-label">累計G</span>
+                            </div>
                         </div>
                     </div>
 
@@ -3418,47 +3365,44 @@
                         <span class="expand-icon">▼</span>
                     </div>
 
-                    <!-- データ（常にART/RB/G数を表示、0でも表示） -->
+                    <!-- データ: 2段レイアウト -->
                     <div class="today-data-row">
-                        <!-- ART を最初に大きく -->
-                        <div class="data-cell highlight">
-                            <span class="data-value"><span class="art-num-lg">80</span></span>
-                            <span class="data-label">ART</span>
+                        <!-- 1段目: ART + 確率 + 連チャン -->
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">80</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            <div class="data-cell excellent">
+                                <span class="data-value">1/48</span>
+                                <span class="data-label">ART確率</span>
+                            </div>
+                            
+                            
                         </div>
-                        <!-- 確率 -->
-                        
-                        <div class="data-cell excellent">
-                            <span class="data-value">1/48</span>
-                            <span class="data-label">ART確率</span>
-                        </div>
-                        
-                        <!-- 最大枚数 -->
-                        
-                        
-                        <div class="data-cell highlight medals-5k">
-                            <span class="data-value">
-                                <span class="medals-icon">💰</span>
-                                7,331
-                            </span>
-                            <span class="data-label">最大枚 5千枚OVER</span>
-                        </div>
-                        
-                        <!-- RB -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value"><span class="rb-num">15</span></span>
-                            <span class="data-label">RB</span>
-                        </div>
-                        <!-- 現在スタート -->
-                        <div class="data-cell bad">
-                            <span class="data-value">628</span>
-                            <span class="data-label">現在G</span>
-                        </div>
-                        <!-- ハマり回数 -->
-                        
-                        <!-- 回転数を最後に -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value">3,912</span>
-                            <span class="data-label">累計G</span>
+                        <!-- 2段目: その他の統計（均一サイズ） -->
+                        <div class="data-row-secondary">
+                            
+                            
+                            <div class="data-cell medals-5k">
+                                <span class="data-value">7,331</span>
+                                <span class="data-label">最大枚 5千枚OVER</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">15</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell bad">
+                                <span class="data-value">628</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">3,912</span>
+                                <span class="data-label">累計G</span>
+                            </div>
                         </div>
                     </div>
 
@@ -3538,47 +3482,44 @@
                         <span class="expand-icon">▼</span>
                     </div>
 
-                    <!-- データ（常にART/RB/G数を表示、0でも表示） -->
+                    <!-- データ: 2段レイアウト -->
                     <div class="today-data-row">
-                        <!-- ART を最初に大きく -->
-                        <div class="data-cell highlight">
-                            <span class="data-value"><span class="art-num-lg">95</span></span>
-                            <span class="data-label">ART</span>
+                        <!-- 1段目: ART + 確率 + 連チャン -->
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">95</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            <div class="data-cell excellent">
+                                <span class="data-value">1/40</span>
+                                <span class="data-label">ART確率</span>
+                            </div>
+                            
+                            
                         </div>
-                        <!-- 確率 -->
-                        
-                        <div class="data-cell excellent">
-                            <span class="data-value">1/40</span>
-                            <span class="data-label">ART確率</span>
-                        </div>
-                        
-                        <!-- 最大枚数 -->
-                        
-                        
-                        <div class="data-cell highlight medals-10k">
-                            <span class="data-value">
-                                <span class="medals-icon">🔥</span>
-                                10,870
-                            </span>
-                            <span class="data-label">最大枚 1万枚OVER</span>
-                        </div>
-                        
-                        <!-- RB -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value"><span class="rb-num">20</span></span>
-                            <span class="data-label">RB</span>
-                        </div>
-                        <!-- 現在スタート -->
-                        <div class="data-cell ">
-                            <span class="data-value">144</span>
-                            <span class="data-label">現在G</span>
-                        </div>
-                        <!-- ハマり回数 -->
-                        
-                        <!-- 回転数を最後に -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value">3,888</span>
-                            <span class="data-label">累計G</span>
+                        <!-- 2段目: その他の統計（均一サイズ） -->
+                        <div class="data-row-secondary">
+                            
+                            
+                            <div class="data-cell medals-10k">
+                                <span class="data-value">10,870</span>
+                                <span class="data-label">最大枚 1万枚OVER</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">20</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell ">
+                                <span class="data-value">144</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">3,888</span>
+                                <span class="data-label">累計G</span>
+                            </div>
                         </div>
                     </div>
 
@@ -3658,47 +3599,44 @@
                         <span class="expand-icon">▼</span>
                     </div>
 
-                    <!-- データ（常にART/RB/G数を表示、0でも表示） -->
+                    <!-- データ: 2段レイアウト -->
                     <div class="today-data-row">
-                        <!-- ART を最初に大きく -->
-                        <div class="data-cell highlight">
-                            <span class="data-value"><span class="art-num-lg">58</span></span>
-                            <span class="data-label">ART</span>
+                        <!-- 1段目: ART + 確率 + 連チャン -->
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">58</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            <div class="data-cell excellent">
+                                <span class="data-value">1/81</span>
+                                <span class="data-label">ART確率</span>
+                            </div>
+                            
+                            
                         </div>
-                        <!-- 確率 -->
-                        
-                        <div class="data-cell excellent">
-                            <span class="data-value">1/81</span>
-                            <span class="data-label">ART確率</span>
-                        </div>
-                        
-                        <!-- 最大枚数 -->
-                        
-                        
-                        <div class="data-cell highlight medals-5k">
-                            <span class="data-value">
-                                <span class="medals-icon">💰</span>
-                                5,104
-                            </span>
-                            <span class="data-label">最大枚 5千枚OVER</span>
-                        </div>
-                        
-                        <!-- RB -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value"><span class="rb-num">12</span></span>
-                            <span class="data-label">RB</span>
-                        </div>
-                        <!-- 現在スタート -->
-                        <div class="data-cell ">
-                            <span class="data-value">0</span>
-                            <span class="data-label">現在G</span>
-                        </div>
-                        <!-- ハマり回数 -->
-                        
-                        <!-- 回転数を最後に -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value">4,700</span>
-                            <span class="data-label">累計G</span>
+                        <!-- 2段目: その他の統計（均一サイズ） -->
+                        <div class="data-row-secondary">
+                            
+                            
+                            <div class="data-cell medals-5k">
+                                <span class="data-value">5,104</span>
+                                <span class="data-label">最大枚 5千枚OVER</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">12</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell ">
+                                <span class="data-value">0</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">4,700</span>
+                                <span class="data-label">累計G</span>
+                            </div>
                         </div>
                     </div>
 
@@ -3776,47 +3714,44 @@
                         <span class="expand-icon">▼</span>
                     </div>
 
-                    <!-- データ（常にART/RB/G数を表示、0でも表示） -->
+                    <!-- データ: 2段レイアウト -->
                     <div class="today-data-row">
-                        <!-- ART を最初に大きく -->
-                        <div class="data-cell highlight">
-                            <span class="data-value"><span class="art-num-lg">50</span></span>
-                            <span class="data-label">ART</span>
+                        <!-- 1段目: ART + 確率 + 連チャン -->
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">50</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            <div class="data-cell excellent">
+                                <span class="data-value">1/94</span>
+                                <span class="data-label">ART確率</span>
+                            </div>
+                            
+                            
                         </div>
-                        <!-- 確率 -->
-                        
-                        <div class="data-cell excellent">
-                            <span class="data-value">1/94</span>
-                            <span class="data-label">ART確率</span>
-                        </div>
-                        
-                        <!-- 最大枚数 -->
-                        
-                        
-                        <div class="data-cell highlight medals-2k">
-                            <span class="data-value">
-                                <span class="medals-icon">⭐</span>
-                                2,091
-                            </span>
-                            <span class="data-label">最大枚 2千枚OVER</span>
-                        </div>
-                        
-                        <!-- RB -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value"><span class="rb-num">16</span></span>
-                            <span class="data-label">RB</span>
-                        </div>
-                        <!-- 現在スタート -->
-                        <div class="data-cell warn">
-                            <span class="data-value">311</span>
-                            <span class="data-label">現在G</span>
-                        </div>
-                        <!-- ハマり回数 -->
-                        
-                        <!-- 回転数を最後に -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value">4,742</span>
-                            <span class="data-label">累計G</span>
+                        <!-- 2段目: その他の統計（均一サイズ） -->
+                        <div class="data-row-secondary">
+                            
+                            
+                            <div class="data-cell medals-2k">
+                                <span class="data-value">2,091</span>
+                                <span class="data-label">最大枚 2千枚OVER</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">16</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell warn">
+                                <span class="data-value">311</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">4,742</span>
+                                <span class="data-label">累計G</span>
+                            </div>
                         </div>
                     </div>
 
@@ -3896,47 +3831,44 @@
                         <span class="expand-icon">▼</span>
                     </div>
 
-                    <!-- データ（常にART/RB/G数を表示、0でも表示） -->
+                    <!-- データ: 2段レイアウト -->
                     <div class="today-data-row">
-                        <!-- ART を最初に大きく -->
-                        <div class="data-cell highlight">
-                            <span class="data-value"><span class="art-num-lg">85</span></span>
-                            <span class="data-label">ART</span>
+                        <!-- 1段目: ART + 確率 + 連チャン -->
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">85</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            <div class="data-cell excellent">
+                                <span class="data-value">1/45</span>
+                                <span class="data-label">ART確率</span>
+                            </div>
+                            
+                            
                         </div>
-                        <!-- 確率 -->
-                        
-                        <div class="data-cell excellent">
-                            <span class="data-value">1/45</span>
-                            <span class="data-label">ART確率</span>
-                        </div>
-                        
-                        <!-- 最大枚数 -->
-                        
-                        
-                        <div class="data-cell highlight medals-5k">
-                            <span class="data-value">
-                                <span class="medals-icon">💰</span>
-                                6,232
-                            </span>
-                            <span class="data-label">最大枚 5千枚OVER</span>
-                        </div>
-                        
-                        <!-- RB -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value"><span class="rb-num">16</span></span>
-                            <span class="data-label">RB</span>
-                        </div>
-                        <!-- 現在スタート -->
-                        <div class="data-cell ">
-                            <span class="data-value">16</span>
-                            <span class="data-label">現在G</span>
-                        </div>
-                        <!-- ハマり回数 -->
-                        
-                        <!-- 回転数を最後に -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value">3,851</span>
-                            <span class="data-label">累計G</span>
+                        <!-- 2段目: その他の統計（均一サイズ） -->
+                        <div class="data-row-secondary">
+                            
+                            
+                            <div class="data-cell medals-5k">
+                                <span class="data-value">6,232</span>
+                                <span class="data-label">最大枚 5千枚OVER</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">16</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell ">
+                                <span class="data-value">16</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">3,851</span>
+                                <span class="data-label">累計G</span>
+                            </div>
                         </div>
                     </div>
 
@@ -4016,47 +3948,44 @@
                         <span class="expand-icon">▼</span>
                     </div>
 
-                    <!-- データ（常にART/RB/G数を表示、0でも表示） -->
+                    <!-- データ: 2段レイアウト -->
                     <div class="today-data-row">
-                        <!-- ART を最初に大きく -->
-                        <div class="data-cell highlight">
-                            <span class="data-value"><span class="art-num-lg">98</span></span>
-                            <span class="data-label">ART</span>
+                        <!-- 1段目: ART + 確率 + 連チャン -->
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">98</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            <div class="data-cell excellent">
+                                <span class="data-value">1/33</span>
+                                <span class="data-label">ART確率</span>
+                            </div>
+                            
+                            
                         </div>
-                        <!-- 確率 -->
-                        
-                        <div class="data-cell excellent">
-                            <span class="data-value">1/33</span>
-                            <span class="data-label">ART確率</span>
-                        </div>
-                        
-                        <!-- 最大枚数 -->
-                        
-                        
-                        <div class="data-cell highlight medals-10k">
-                            <span class="data-value">
-                                <span class="medals-icon">🔥</span>
-                                15,166
-                            </span>
-                            <span class="data-label">最大枚 1万枚OVER</span>
-                        </div>
-                        
-                        <!-- RB -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value"><span class="rb-num">6</span></span>
-                            <span class="data-label">RB</span>
-                        </div>
-                        <!-- 現在スタート -->
-                        <div class="data-cell ">
-                            <span class="data-value">0</span>
-                            <span class="data-label">現在G</span>
-                        </div>
-                        <!-- ハマり回数 -->
-                        
-                        <!-- 回転数を最後に -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value">3,305</span>
-                            <span class="data-label">累計G</span>
+                        <!-- 2段目: その他の統計（均一サイズ） -->
+                        <div class="data-row-secondary">
+                            
+                            
+                            <div class="data-cell medals-10k">
+                                <span class="data-value">15,166</span>
+                                <span class="data-label">最大枚 1万枚OVER</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">6</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell ">
+                                <span class="data-value">0</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">3,305</span>
+                                <span class="data-label">累計G</span>
+                            </div>
                         </div>
                     </div>
 
@@ -4138,47 +4067,44 @@
                         <span class="expand-icon">▼</span>
                     </div>
 
-                    <!-- データ（常にART/RB/G数を表示、0でも表示） -->
+                    <!-- データ: 2段レイアウト -->
                     <div class="today-data-row">
-                        <!-- ART を最初に大きく -->
-                        <div class="data-cell highlight">
-                            <span class="data-value"><span class="art-num-lg">80</span></span>
-                            <span class="data-label">ART</span>
+                        <!-- 1段目: ART + 確率 + 連チャン -->
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">80</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            <div class="data-cell excellent">
+                                <span class="data-value">1/57</span>
+                                <span class="data-label">ART確率</span>
+                            </div>
+                            
+                            
                         </div>
-                        <!-- 確率 -->
-                        
-                        <div class="data-cell excellent">
-                            <span class="data-value">1/57</span>
-                            <span class="data-label">ART確率</span>
-                        </div>
-                        
-                        <!-- 最大枚数 -->
-                        
-                        
-                        <div class="data-cell highlight medals-5k">
-                            <span class="data-value">
-                                <span class="medals-icon">💰</span>
-                                9,125
-                            </span>
-                            <span class="data-label">最大枚 5千枚OVER</span>
-                        </div>
-                        
-                        <!-- RB -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value"><span class="rb-num">11</span></span>
-                            <span class="data-label">RB</span>
-                        </div>
-                        <!-- 現在スタート -->
-                        <div class="data-cell bad">
-                            <span class="data-value">832</span>
-                            <span class="data-label">現在G</span>
-                        </div>
-                        <!-- ハマり回数 -->
-                        
-                        <!-- 回転数を最後に -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value">4,589</span>
-                            <span class="data-label">累計G</span>
+                        <!-- 2段目: その他の統計（均一サイズ） -->
+                        <div class="data-row-secondary">
+                            
+                            
+                            <div class="data-cell medals-5k">
+                                <span class="data-value">9,125</span>
+                                <span class="data-label">最大枚 5千枚OVER</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">11</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell bad">
+                                <span class="data-value">832</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">4,589</span>
+                                <span class="data-label">累計G</span>
+                            </div>
                         </div>
                     </div>
 
@@ -4258,47 +4184,44 @@
                         <span class="expand-icon">▼</span>
                     </div>
 
-                    <!-- データ（常にART/RB/G数を表示、0でも表示） -->
+                    <!-- データ: 2段レイアウト -->
                     <div class="today-data-row">
-                        <!-- ART を最初に大きく -->
-                        <div class="data-cell highlight">
-                            <span class="data-value"><span class="art-num-lg">37</span></span>
-                            <span class="data-label">ART</span>
+                        <!-- 1段目: ART + 確率 + 連チャン -->
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">37</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            <div class="data-cell good">
+                                <span class="data-value">1/125</span>
+                                <span class="data-label">ART確率</span>
+                            </div>
+                            
+                            
                         </div>
-                        <!-- 確率 -->
-                        
-                        <div class="data-cell good">
-                            <span class="data-value">1/125</span>
-                            <span class="data-label">ART確率</span>
-                        </div>
-                        
-                        <!-- 最大枚数 -->
-                        
-                        
-                        <div class="data-cell highlight medals-1k">
-                            <span class="data-value">
-                                <span class="medals-icon">👍</span>
-                                1,201
-                            </span>
-                            <span class="data-label">最大枚 1千枚OVER</span>
-                        </div>
-                        
-                        <!-- RB -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value"><span class="rb-num">10</span></span>
-                            <span class="data-label">RB</span>
-                        </div>
-                        <!-- 現在スタート -->
-                        <div class="data-cell ">
-                            <span class="data-value">37</span>
-                            <span class="data-label">現在G</span>
-                        </div>
-                        <!-- ハマり回数 -->
-                        
-                        <!-- 回転数を最後に -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value">4,630</span>
-                            <span class="data-label">累計G</span>
+                        <!-- 2段目: その他の統計（均一サイズ） -->
+                        <div class="data-row-secondary">
+                            
+                            
+                            <div class="data-cell medals-1k">
+                                <span class="data-value">1,201</span>
+                                <span class="data-label">最大枚 1千枚OVER</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">10</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell ">
+                                <span class="data-value">37</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">4,630</span>
+                                <span class="data-label">累計G</span>
+                            </div>
                         </div>
                     </div>
 
@@ -4378,47 +4301,44 @@
                         <span class="expand-icon">▼</span>
                     </div>
 
-                    <!-- データ（常にART/RB/G数を表示、0でも表示） -->
+                    <!-- データ: 2段レイアウト -->
                     <div class="today-data-row">
-                        <!-- ART を最初に大きく -->
-                        <div class="data-cell highlight">
-                            <span class="data-value"><span class="art-num-lg">62</span></span>
-                            <span class="data-label">ART</span>
+                        <!-- 1段目: ART + 確率 + 連チャン -->
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">62</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            <div class="data-cell excellent">
+                                <span class="data-value">1/68</span>
+                                <span class="data-label">ART確率</span>
+                            </div>
+                            
+                            
                         </div>
-                        <!-- 確率 -->
-                        
-                        <div class="data-cell excellent">
-                            <span class="data-value">1/68</span>
-                            <span class="data-label">ART確率</span>
-                        </div>
-                        
-                        <!-- 最大枚数 -->
-                        
-                        
-                        <div class="data-cell highlight medals-3k">
-                            <span class="data-value">
-                                <span class="medals-icon">✨</span>
-                                3,153
-                            </span>
-                            <span class="data-label">最大枚 3千枚OVER</span>
-                        </div>
-                        
-                        <!-- RB -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value"><span class="rb-num">16</span></span>
-                            <span class="data-label">RB</span>
-                        </div>
-                        <!-- 現在スタート -->
-                        <div class="data-cell warn">
-                            <span class="data-value">311</span>
-                            <span class="data-label">現在G</span>
-                        </div>
-                        <!-- ハマり回数 -->
-                        
-                        <!-- 回転数を最後に -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value">4,256</span>
-                            <span class="data-label">累計G</span>
+                        <!-- 2段目: その他の統計（均一サイズ） -->
+                        <div class="data-row-secondary">
+                            
+                            
+                            <div class="data-cell medals-3k">
+                                <span class="data-value">3,153</span>
+                                <span class="data-label">最大枚 3千枚OVER</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">16</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell warn">
+                                <span class="data-value">311</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">4,256</span>
+                                <span class="data-label">累計G</span>
+                            </div>
                         </div>
                     </div>
 
@@ -4498,47 +4418,44 @@
                         <span class="expand-icon">▼</span>
                     </div>
 
-                    <!-- データ（常にART/RB/G数を表示、0でも表示） -->
+                    <!-- データ: 2段レイアウト -->
                     <div class="today-data-row">
-                        <!-- ART を最初に大きく -->
-                        <div class="data-cell highlight">
-                            <span class="data-value"><span class="art-num-lg">52</span></span>
-                            <span class="data-label">ART</span>
+                        <!-- 1段目: ART + 確率 + 連チャン -->
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">52</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            <div class="data-cell excellent">
+                                <span class="data-value">1/83</span>
+                                <span class="data-label">ART確率</span>
+                            </div>
+                            
+                            
                         </div>
-                        <!-- 確率 -->
-                        
-                        <div class="data-cell excellent">
-                            <span class="data-value">1/83</span>
-                            <span class="data-label">ART確率</span>
-                        </div>
-                        
-                        <!-- 最大枚数 -->
-                        
-                        
-                        <div class="data-cell highlight medals-3k">
-                            <span class="data-value">
-                                <span class="medals-icon">✨</span>
-                                3,322
-                            </span>
-                            <span class="data-label">最大枚 3千枚OVER</span>
-                        </div>
-                        
-                        <!-- RB -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value"><span class="rb-num">11</span></span>
-                            <span class="data-label">RB</span>
-                        </div>
-                        <!-- 現在スタート -->
-                        <div class="data-cell ">
-                            <span class="data-value">251</span>
-                            <span class="data-label">現在G</span>
-                        </div>
-                        <!-- ハマり回数 -->
-                        
-                        <!-- 回転数を最後に -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value">4,319</span>
-                            <span class="data-label">累計G</span>
+                        <!-- 2段目: その他の統計（均一サイズ） -->
+                        <div class="data-row-secondary">
+                            
+                            
+                            <div class="data-cell medals-3k">
+                                <span class="data-value">3,322</span>
+                                <span class="data-label">最大枚 3千枚OVER</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">11</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell ">
+                                <span class="data-value">251</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">4,319</span>
+                                <span class="data-label">累計G</span>
+                            </div>
                         </div>
                     </div>
 
@@ -4618,47 +4535,44 @@
                         <span class="expand-icon">▼</span>
                     </div>
 
-                    <!-- データ（常にART/RB/G数を表示、0でも表示） -->
+                    <!-- データ: 2段レイアウト -->
                     <div class="today-data-row">
-                        <!-- ART を最初に大きく -->
-                        <div class="data-cell highlight">
-                            <span class="data-value"><span class="art-num-lg">64</span></span>
-                            <span class="data-label">ART</span>
+                        <!-- 1段目: ART + 確率 + 連チャン -->
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">64</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            <div class="data-cell excellent">
+                                <span class="data-value">1/74</span>
+                                <span class="data-label">ART確率</span>
+                            </div>
+                            
+                            
                         </div>
-                        <!-- 確率 -->
-                        
-                        <div class="data-cell excellent">
-                            <span class="data-value">1/74</span>
-                            <span class="data-label">ART確率</span>
-                        </div>
-                        
-                        <!-- 最大枚数 -->
-                        
-                        
-                        <div class="data-cell highlight medals-5k">
-                            <span class="data-value">
-                                <span class="medals-icon">💰</span>
-                                5,257
-                            </span>
-                            <span class="data-label">最大枚 5千枚OVER</span>
-                        </div>
-                        
-                        <!-- RB -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value"><span class="rb-num">12</span></span>
-                            <span class="data-label">RB</span>
-                        </div>
-                        <!-- 現在スタート -->
-                        <div class="data-cell ">
-                            <span class="data-value">143</span>
-                            <span class="data-label">現在G</span>
-                        </div>
-                        <!-- ハマり回数 -->
-                        
-                        <!-- 回転数を最後に -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value">4,770</span>
-                            <span class="data-label">累計G</span>
+                        <!-- 2段目: その他の統計（均一サイズ） -->
+                        <div class="data-row-secondary">
+                            
+                            
+                            <div class="data-cell medals-5k">
+                                <span class="data-value">5,257</span>
+                                <span class="data-label">最大枚 5千枚OVER</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">12</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell ">
+                                <span class="data-value">143</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">4,770</span>
+                                <span class="data-label">累計G</span>
+                            </div>
                         </div>
                     </div>
 

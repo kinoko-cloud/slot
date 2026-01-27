@@ -25,7 +25,7 @@
                 </span>
                 <span class="cache-badge github">GITHUB</span>
                 
-                <div class="stale-notice">14分前のデータです</div>
+                <div class="stale-warning">データが0時間30分前のものです</div>
                 
                 
             </div>
@@ -117,52 +117,53 @@
                         <span class="expand-icon">▼</span>
                     </div>
 
-                    <!-- データ（常にART/RB/G数を表示、0でも表示） -->
+                    <!-- データ: 2段レイアウト -->
                     <div class="today-data-row">
-                        <!-- ART を最初に大きく -->
-                        <div class="data-cell highlight">
-                            <span class="data-value"><span class="art-num-lg">69</span></span>
-                            <span class="data-label">ART</span>
+                        <!-- 1段目: ART + 確率 + 連チャン -->
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">69</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            <div class="data-cell good">
+                                <span class="data-value">1/108</span>
+                                <span class="data-label">ART確率</span>
+                            </div>
+                            
+                            
+                            <div class="data-cell rensa-cell excellent">
+                                <span class="data-value">最大17連</span>
+                            </div>
+                            
                         </div>
-                        <!-- 確率 -->
-                        
-                        <div class="data-cell good">
-                            <span class="data-value">1/108</span>
-                            <span class="data-label">ART確率</span>
-                        </div>
-                        
-                        <!-- 最大枚数 -->
-                        
-                        
-                        <div class="data-cell highlight medals-2k">
-                            <span class="data-value">
-                                <span class="medals-icon">⭐</span>
-                                2,298
-                            </span>
-                            <span class="data-label">最大枚 2千枚OVER</span>
-                        </div>
-                        
-                        <!-- RB -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value"><span class="rb-num">7</span></span>
-                            <span class="data-label">RB</span>
-                        </div>
-                        <!-- 現在スタート -->
-                        <div class="data-cell ">
-                            <span class="data-value">57</span>
-                            <span class="data-label">現在G</span>
-                        </div>
-                        <!-- ハマり回数 -->
-                        
-                        <div class="data-cell bad">
-                            <span class="data-value">3回</span>
-                            <span class="data-label">500G超</span>
-                        </div>
-                        
-                        <!-- 回転数を最後に -->
-                        <div class="data-cell data-cell-minor">
-                            <span class="data-value">7,475</span>
-                            <span class="data-label">累計G</span>
+                        <!-- 2段目: その他の統計（均一サイズ） -->
+                        <div class="data-row-secondary">
+                            
+                            
+                            <div class="data-cell medals-2k">
+                                <span class="data-value">2,298</span>
+                                <span class="data-label">最大枚 2千枚OVER</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">7</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell ">
+                                <span class="data-value">57</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell bad">
+                                <span class="data-value">3回</span>
+                                <span class="data-label">500G超</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">7,475</span>
+                                <span class="data-label">累計G</span>
+                            </div>
                         </div>
                     </div>
 
@@ -948,7 +949,7 @@
                             
                             <div class="reason-item">本日天井到達1回 → 低設定の可能性に注意</div>
                             
-                            <div class="reason-item">本日2位/14台中</div>
+                            <div class="reason-item">本日17連の爆発あり</div>
                             
                         </div>
                         
@@ -986,6 +987,9 @@
                             <span class="medals-icon-sm">💰</span>
                             最大<span class="num">9,140</span>
                         </span>
+                        
+                        
+                        <span class="rensa-badge-sm">25連</span>
                         
                         
                         <span class="setting-badge-sm setting-6">6</span>
@@ -1486,6 +1490,9 @@
                             <span class="medals-icon-sm">✨</span>
                             最大<span class="num">4,505</span>
                         </span>
+                        
+                        
+                        <span class="rensa-badge-sm">36連</span>
                         
                         
                         <span class="setting-badge-sm setting-6">6</span>
@@ -2110,6 +2117,9 @@
                         </span>
                         
                         
+                        <span class="rensa-badge-sm">11連</span>
+                        
+                        
                         <span class="setting-badge-sm setting-6">6</span>
                         
                         <span class="compact-games">6,172G</span>
@@ -2522,6 +2532,9 @@
                             <span class="medals-icon-sm">👍</span>
                             最大<span class="num">1,968</span>
                         </span>
+                        
+                        
+                        <span class="rensa-badge-sm">31連</span>
                         
                         
                         <span class="setting-badge-sm setting-6">6</span>
@@ -3120,6 +3133,9 @@
                             <span class="medals-icon-sm">⭐</span>
                             最大<span class="num">2,463</span>
                         </span>
+                        
+                        
+                        <span class="rensa-badge-sm">35連</span>
                         
                         
                         <span class="setting-badge-sm setting-6">6</span>
@@ -3952,6 +3968,9 @@
                         </span>
                         
                         
+                        <span class="rensa-badge-sm">55連</span>
+                        
+                        
                         <span class="setting-badge-sm setting-6">6</span>
                         
                         <span class="compact-games">7,126G</span>
@@ -4620,6 +4639,9 @@
                         </span>
                         
                         
+                        <span class="rensa-badge-sm">4連</span>
+                        
+                        
                         <span class="setting-badge-sm setting-5">5</span>
                         
                         <span class="compact-games">4,329G</span>
@@ -4992,6 +5014,9 @@
                             <span class="medals-icon-sm">👍</span>
                             最大<span class="num">1,395</span>
                         </span>
+                        
+                        
+                        <span class="rensa-badge-sm">50連</span>
                         
                         
                         <span class="setting-badge-sm setting-6">6</span>
@@ -5728,6 +5753,9 @@
                         </span>
                         
                         
+                        <span class="rensa-badge-sm">47連</span>
+                        
+                        
                         <span class="setting-badge-sm setting-6">6</span>
                         
                         <span class="compact-games">8,126G</span>
@@ -6402,6 +6430,9 @@
                             <span class="medals-icon-sm">✨</span>
                             最大<span class="num">3,182</span>
                         </span>
+                        
+                        
+                        <span class="rensa-badge-sm">62連</span>
                         
                         
                         <span class="setting-badge-sm setting-6">6</span>
@@ -7178,6 +7209,9 @@
                         </span>
                         
                         
+                        <span class="rensa-badge-sm">10連</span>
+                        
+                        
                         <span class="setting-badge-sm setting-1">1?</span>
                         
                         <span class="compact-games">2,779G</span>
@@ -7486,6 +7520,9 @@
                             
                             最大<span class="num">532</span>
                         </span>
+                        
+                        
+                        <span class="rensa-badge-sm">10連</span>
                         
                         
                         <span class="setting-badge-sm setting-6">6</span>
@@ -7964,6 +8001,9 @@
                             
                             最大<span class="num">740</span>
                         </span>
+                        
+                        
+                        <span class="rensa-badge-sm">30連</span>
                         
                         
                         <span class="setting-badge-sm setting-5">5</span>

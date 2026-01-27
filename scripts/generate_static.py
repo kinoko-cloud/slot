@@ -304,6 +304,7 @@ def generate_index(env):
                             'estimated_setting': rec.get('estimated_setting', ''),
                             'setting_num': rec.get('setting_num', 0),
                             'payout_estimate': rec.get('payout_estimate', ''),
+                            'today_max_rensa': rec.get('today_max_rensa', 0),
                         })
             except Exception as e:
                 print(f"Error processing {store_key}: {e}")

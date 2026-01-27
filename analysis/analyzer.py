@@ -84,6 +84,44 @@ def calculate_at_intervals(history: list) -> list:
     return at_intervals
 
 
+def calculate_max_rensa(history: list) -> int:
+    """履歴データから最大連チャン数を計算する
+
+    連チャンの定義: 大当たり(BB/AT/ART)間のAT間G数がRENMAIN_THRESHOLD(70G)以下の連続当たり
+    RBを跨いでG数を累積して判定する（AT間と同じロジック）
+
+    Args:
+        history: 当たり履歴リスト。各要素に 'start', 'type', 'time' フィールドが必要
+
+    Returns:
+        最大連チャン数（大当たりがあれば1以上、なければ0）
+    """
+    if not history:
+        return 0
+
+    sorted_history = sorted(history, key=lambda x: x.get('time', '00:00'))
+
+    max_chain = 0
+    current_chain = 0
+    accumulated_games = 0
+
+    for hit in sorted_history:
+        start = hit.get('start', 0)
+        hit_type = hit.get('type', '')
+
+        accumulated_games += start
+
+        if is_big_hit(hit_type):
+            if accumulated_games <= RENCHAIN_THRESHOLD:
+                current_chain += 1
+            else:
+                current_chain = 1
+            max_chain = max(max_chain, current_chain)
+            accumulated_games = 0
+
+    return max_chain
+
+
 def calculate_current_at_games(history: list, final_start: int = 0) -> int:
     """現在のAT間G数を計算（最終大当たりから現在までの総G数）
 
