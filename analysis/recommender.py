@@ -1320,6 +1320,33 @@ def get_recovery_stats(store_key: str, machine_key: str = 'sbj') -> dict:
     return _recovery_cache[cache_key]
 
 
+def get_machine_recovery_stats(machine_key: str = 'sbj') -> dict:
+    """全店舗統合の機種別回復率"""
+    cache_key = f'__machine__{machine_key}'
+    if cache_key in _recovery_cache:
+        return _recovery_cache[cache_key]
+
+    total = {}
+    for n in range(1, 6):
+        total[n] = {'total': 0, 'recovered': 0, 'rate': 0.0}
+
+    hist_base = 'data/history'
+    if os.path.isdir(hist_base):
+        for store_dir in os.listdir(hist_base):
+            if machine_key in store_dir or (machine_key == 'sbj' and 'sbj' in store_dir):
+                r = calc_recovery_stats(store_dir, machine_key)
+                for n in range(1, 6):
+                    total[n]['total'] += r[n]['total']
+                    total[n]['recovered'] += r[n]['recovered']
+
+    for n in total:
+        t = total[n]['total']
+        total[n]['rate'] = total[n]['recovered'] / t if t > 0 else 0.0
+
+    _recovery_cache[cache_key] = total
+    return total
+
+
 def analyze_rotation_pattern(days: List[dict]) -> dict:
     """ローテーションパターン分析
 
@@ -1677,20 +1704,29 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
 
     # === 2. 連続パターン・傾向（設定変更サイクルの読み） ===
     # これが翌日予測の核心 — 前日単体の成績ではなく「流れ」
-    # 蓄積データからの回復率統計を取得
-    _recovery = get_recovery_stats(store_key or '', kwargs.get('machine_key', 'sbj')) if store_key else {}
+    # 蓄積データからの回復率統計を取得（店舗 → 足りなければ機種全体）
+    _mk = kwargs.get('machine_key', 'sbj')
+    _recovery = get_recovery_stats(store_key or '', _mk) if store_key else {}
+    _machine_recovery = get_machine_recovery_stats(_mk)
+
+    def _recovery_note(n):
+        """N日連続不調の回復率注記を生成（店舗→機種全体フォールバック）"""
+        rs = _recovery.get(n, {})
+        if rs.get('total', 0) >= 2:
+            return f"（この店の過去実績: {rs['recovered']}/{rs['total']}回={rs['rate']:.0%}で翌日回復）"
+        mrs = _machine_recovery.get(n, {})
+        if mrs.get('total', 0) >= 3:
+            return f"（SBJ全店舗実績: {mrs['recovered']}/{mrs['total']}回={mrs['rate']:.0%}で翌日回復）"
+        return ""
 
     if consecutive_minus >= 4:
-        _rs = _recovery.get(4, {})
-        _r_note = f"（過去実績: {_rs['recovered']}/{_rs['total']}回={_rs['rate']:.0%}で翌日回復）" if _rs.get('total', 0) >= 2 else ""
+        _r_note = _recovery_note(4)
         reasons.append(f"🔄 {consecutive_minus}日連続不調 → {next_day_label}設定変更の可能性大{_r_note}")
     elif consecutive_minus >= 3:
-        _rs = _recovery.get(3, {})
-        _r_note = f"（過去実績: {_rs['recovered']}/{_rs['total']}回={_rs['rate']:.0%}で翌日回復）" if _rs.get('total', 0) >= 2 else ""
+        _r_note = _recovery_note(3)
         reasons.append(f"🔄 {consecutive_minus}日連続不調 → そろそろ{next_day_label}設定上げ期待{_r_note}")
     elif consecutive_minus == 2:
-        _rs = _recovery.get(2, {})
-        _r_note = f"（過去実績: {_rs['recovered']}/{_rs['total']}回={_rs['rate']:.0%}で翌日回復）" if _rs.get('total', 0) >= 2 else ""
+        _r_note = _recovery_note(2)
         if today_rating >= 4:
             reasons.append(f"🔄 2日連続不調 + {store_name}の{today_weekday}曜は狙い目 → {next_day_label}リセット期待{_r_note}")
         else:
@@ -1715,9 +1751,7 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
     yesterday_prob_val = trend.get('yesterday_prob', 0)
     day_before_prob_val = trend.get('day_before_prob', 0)
     if yesterday_prob_val >= 150 and day_before_prob_val >= 150:
-        # 蓄積データからの回復率統計
-        _rs2 = _recovery.get(2, {})
-        _r_note2 = f"（過去実績: {_rs2['recovered']}/{_rs2['total']}回={_rs2['rate']:.0%}で翌日回復）" if _rs2.get('total', 0) >= 2 else ""
+        _r_note2 = _recovery_note(2)
         reasons.append(f"🔄 直近2日とも不調（1/{day_before_prob_val:.0f}→1/{yesterday_prob_val:.0f}）→ {next_day_label}設定変更期待大{_r_note2}")
 
     # ローテーションパターン
