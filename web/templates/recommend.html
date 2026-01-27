@@ -22,11 +22,6 @@
                 {% if cache_info %}
                 <span class="data-source">
                     データ取得: <span id="update-time">{{ cache_info.fetched_at }}</span>
-                    {% if cache_info.age_seconds > 600 %}
-                    <span class="data-age stale">（{{ (cache_info.age_seconds // 60)|int }}分前）</span>
-                    {% elif cache_info.age_seconds > 60 %}
-                    <span class="data-age">（{{ (cache_info.age_seconds // 60)|int }}分前）</span>
-                    {% endif %}
                 </span>
                 <span class="cache-badge {{ cache_info.source }}">{{ cache_info.source|upper }}</span>
                 {% else %}
@@ -86,9 +81,10 @@
                 {% for rec in top_recs %}
                 <div class="unit-card rank-{{ rec.final_rank|lower }} {{ 'avail-card-empty' if rec.availability == '空き' else 'avail-card-playing' if rec.availability == '遊技中' else '' }}" data-availability="{{ rec.availability or 'unknown' }}" onclick="toggleDetails(this)">
 
-                    <!-- メインヘッダー: 台番号 + 空き状況 + ランク -->
+                    <!-- メインヘッダー: 台番号 + 機種名 + 空き状況 + ランク -->
                     <div class="unit-main-header">
                         <a href="{{ url_for('unit_history', store_key=store_key, unit_id=rec.unit_id) }}" class="unit-id-large unit-id-link">{{ rec.unit_id }}</a>
+                        <span class="machine-name-sm">{{ machine.short_name }}</span>
                         {% if is_open %}
                             {% if rec.availability == '空き' %}
                             <span class="avail-badge-lg empty">空き</span>
@@ -395,9 +391,14 @@
             progressFill.style.width = progress + '%';
         }
 
+        // APIベースURL（静的サイトからはPythonAnywhereを呼ぶ）
+        const API_BASE = window.location.hostname.includes('pages.dev')
+            ? 'https://autogmail.pythonanywhere.com'
+            : '';
+
         function startScraping() {
             showLoading();
-            fetch('/api/scrape/' + storeKey)
+            fetch(API_BASE + '/api/scrape/' + storeKey)
                 .then(r => r.json())
                 .then(data => {
                     console.log('Scraping started:', data);
@@ -411,7 +412,7 @@
         }
 
         function checkScrapingStatus() {
-            fetch('/api/scrape_status/' + storeKey)
+            fetch(API_BASE + '/api/scrape_status/' + storeKey)
                 .then(r => r.json())
                 .then(data => {
                     if (data.status === 'completed') {

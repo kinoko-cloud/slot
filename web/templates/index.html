@@ -10,7 +10,7 @@
 </head>
 <body data-page-type="index">
     <div class="container">
-        <div class="version-info">{{ today_date_formatted }} {{ now_time }} ver</div>
+        <div class="version-info">{{ now_short }}</div>
         <header>
             {% if display_mode == 'result' %}
             <h1><span class="title-main">本日の結果</span></h1>
@@ -79,9 +79,13 @@
                         {% endif %}
                     </div>
                     <div class="top3-stats-sub">
-                        <!-- 現在ハマり(final_start)があれば表示 -->
+                        <!-- AT間G数（優先表示） -->
                         {% if rec.closing_estimate and rec.closing_estimate > 0 %}
-                        <span class="current-hama">現在<span class="num">{{ rec.closing_estimate }}</span>G</span>
+                        <span class="current-hama">AT間<span class="num">{{ rec.closing_estimate }}</span>G</span>
+                        {% endif %}
+                        <!-- 累計G数 -->
+                        {% if rec.total_games > 0 %}
+                        <span class="total-games">累計<span class="num">{{ '{:,}'.format(rec.total_games) }}</span>G</span>
                         {% endif %}
                         <!-- 最大枚数 -->
                         {% if rec.max_medals and rec.max_medals > 0 %}
@@ -90,10 +94,6 @@
                             {% if badge %}<span class="medals-icon">{{ badge.icon }}</span>{% endif %}
                             最大<span class="num">{{ '{:,}'.format(rec.max_medals) }}</span>枚
                         </span>
-                        {% endif %}
-                        <!-- 総回転 -->
-                        {% if rec.total_games > 0 %}
-                        <span class="total-games">累計<span class="num">{{ '{:,}'.format(rec.total_games) }}</span>G</span>
                         {% endif %}
                     </div>
                     {% if rec.reasons %}

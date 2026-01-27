@@ -68,9 +68,10 @@
                 
                 <div class="unit-card rank-c " data-availability="unknown" onclick="toggleDetails(this)">
 
-                    <!-- メインヘッダー: 台番号 + 空き状況 + ランク -->
+                    <!-- メインヘッダー: 台番号 + 機種名 + 空き状況 + ランク -->
                     <div class="unit-main-header">
                         <a href="/history/shibuya_espass_hokuto_2046.html" class="unit-id-large unit-id-link">2046</a>
+                        <span class="machine-name-sm">北斗の拳 転生の章2</span>
                         
                             
                         
@@ -127,9 +128,10 @@
                 
                 <div class="unit-card rank-c " data-availability="unknown" onclick="toggleDetails(this)">
 
-                    <!-- メインヘッダー: 台番号 + 空き状況 + ランク -->
+                    <!-- メインヘッダー: 台番号 + 機種名 + 空き状況 + ランク -->
                     <div class="unit-main-header">
                         <a href="/history/shibuya_espass_hokuto_2047.html" class="unit-id-large unit-id-link">2047</a>
+                        <span class="machine-name-sm">北斗の拳 転生の章2</span>
                         
                             
                         
@@ -186,9 +188,10 @@
                 
                 <div class="unit-card rank-c " data-availability="unknown" onclick="toggleDetails(this)">
 
-                    <!-- メインヘッダー: 台番号 + 空き状況 + ランク -->
+                    <!-- メインヘッダー: 台番号 + 機種名 + 空き状況 + ランク -->
                     <div class="unit-main-header">
                         <a href="/history/shibuya_espass_hokuto_2048.html" class="unit-id-large unit-id-link">2048</a>
+                        <span class="machine-name-sm">北斗の拳 転生の章2</span>
                         
                             
                         
@@ -948,9 +951,14 @@
             progressFill.style.width = progress + '%';
         }
 
+        // APIベースURL（静的サイトからはPythonAnywhereを呼ぶ）
+        const API_BASE = window.location.hostname.includes('pages.dev')
+            ? 'https://autogmail.pythonanywhere.com'
+            : '';
+
         function startScraping() {
             showLoading();
-            fetch('/api/scrape/' + storeKey)
+            fetch(API_BASE + '/api/scrape/' + storeKey)
                 .then(r => r.json())
                 .then(data => {
                     console.log('Scraping started:', data);
@@ -964,7 +972,7 @@
         }
 
         function checkScrapingStatus() {
-            fetch('/api/scrape_status/' + storeKey)
+            fetch(API_BASE + '/api/scrape_status/' + storeKey)
                 .then(r => r.json())
                 .then(data => {
                     if (data.status === 'completed') {

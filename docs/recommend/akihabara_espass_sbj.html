@@ -22,9 +22,6 @@
                 
                 <span class="data-source">
                     データ取得: <span id="update-time">21:25</span>
-                    
-                    <span class="data-age stale">（1001分前）</span>
-                    
                 </span>
                 <span class="cache-badge github">GITHUB</span>
                 
@@ -80,9 +77,10 @@
                 
                 <div class="unit-card rank-b avail-card-empty" data-availability="空き" onclick="toggleDetails(this)">
 
-                    <!-- メインヘッダー: 台番号 + 空き状況 + ランク -->
+                    <!-- メインヘッダー: 台番号 + 機種名 + 空き状況 + ランク -->
                     <div class="unit-main-header">
                         <a href="/history/akihabara_espass_sbj_2158.html" class="unit-id-large unit-id-link">2158</a>
+                        <span class="machine-name-sm">スーパーブラックジャック</span>
                         
                             
                             <span class="avail-badge-lg empty">空き</span>
@@ -379,9 +377,14 @@
             progressFill.style.width = progress + '%';
         }
 
+        // APIベースURL（静的サイトからはPythonAnywhereを呼ぶ）
+        const API_BASE = window.location.hostname.includes('pages.dev')
+            ? 'https://autogmail.pythonanywhere.com'
+            : '';
+
         function startScraping() {
             showLoading();
-            fetch('/api/scrape/' + storeKey)
+            fetch(API_BASE + '/api/scrape/' + storeKey)
                 .then(r => r.json())
                 .then(data => {
                     console.log('Scraping started:', data);
@@ -395,7 +398,7 @@
         }
 
         function checkScrapingStatus() {
-            fetch('/api/scrape_status/' + storeKey)
+            fetch(API_BASE + '/api/scrape_status/' + storeKey)
                 .then(r => r.json())
                 .then(data => {
                     if (data.status === 'completed') {

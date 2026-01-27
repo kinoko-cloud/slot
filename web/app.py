@@ -14,7 +14,7 @@ from pathlib import Path
 # 日本時間
 JST = timezone(timedelta(hours=9))
 
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, jsonify, request, redirect
 
 # プロジェクトルートをパスに追加
 PROJECT_ROOT = Path(__file__).parent.parent
@@ -46,7 +46,11 @@ REALTIME_CACHE = {}
 SCRAPING_STATUS = {}
 
 # バージョン確認用
-APP_VERSION = '2026-01-27-v12-time-fix-medals-badge'
+APP_VERSION = '2026-01-27-v13-cloudflare-redirect'
+
+# Cloudflare Pagesへのリダイレクト設定
+CLOUDFLARE_URL = 'https://slot-e8a.pages.dev'
+REDIRECT_TO_CLOUDFLARE = True  # TrueでHTMLページをリダイレクト、APIは維持
 
 # 営業時間設定
 OPEN_HOUR = 10    # 開店時刻
@@ -161,6 +165,10 @@ def deploy():
 @app.route('/')
 def index():
     """メインページ - 機種選択 + トップ5 + 店舗おすすめ曜日 + 前日トップ10"""
+    # Cloudflare Pagesへリダイレクト
+    if REDIRECT_TO_CLOUDFLARE:
+        return redirect(CLOUDFLARE_URL)
+
     machines = []
     top3_all = []
     yesterday_top10 = []
@@ -348,6 +356,7 @@ def index():
                            today_date=today_date,
                            today_date_formatted=format_date_with_weekday(now),
                            now_time=now.strftime('%H:%M'),
+                           now_short=now.strftime('%m%d_%H:%M'),
                            store_recommendations=store_recommendations,
                            today_recommended_stores=today_recommended_stores,
                            today_store_ranking=today_store_ranking,
@@ -421,6 +430,10 @@ def ranking(machine_key: str):
 @app.route('/recommend/<store_key>')
 def recommend(store_key: str):
     """推奨台表示ページ"""
+    # Cloudflare Pagesへリダイレクト
+    if REDIRECT_TO_CLOUDFLARE:
+        return redirect(f"{CLOUDFLARE_URL}/recommend/{store_key}.html")
+
     store = STORES.get(store_key)
     if not store:
         return "店舗が見つかりません", 404
