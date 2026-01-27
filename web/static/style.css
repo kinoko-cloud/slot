@@ -20,6 +20,14 @@ body {
     padding: 10px;
 }
 
+/* バージョン表示（右上） */
+.version-info {
+    text-align: right;
+    font-size: 0.7em;
+    color: #555;
+    padding: 2px 5px;
+}
+
 /* ヘッダー */
 header {
     text-align: center;
@@ -234,20 +242,17 @@ header h1 {
 
 /* 推奨セクション */
 .recommendations {
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 }
 
 .recommendations h2 {
     font-size: 1em;
     color: #ffa502;
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
+    margin-bottom: 8px;
 }
 
 .recommendations.top h2::before {
-    content: "★★★";
-    margin-right: 8px;
+    content: none;
 }
 
 .recommendations.other h2 {
@@ -261,15 +266,13 @@ header h1 {
 /* 台カード */
 .unit-card {
     background: #252541;
-    border-radius: 10px;
-    padding: 12px 15px;
-    margin-bottom: 10px;
-    transition: transform 0.15s, box-shadow 0.15s;
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
 }
 
-.unit-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+.unit-card:active {
+    background: #2a2a4a;
 }
 
 .unit-card.running {
@@ -430,29 +433,29 @@ footer {
     text-decoration: none;
 }
 
-/* ランク別スタイル（左ボーダーを細く、グラデーション追加） */
+/* ランク別スタイル（左ボーダーなし、背景のみ） */
 .unit-card.rank-s {
-    border-left: 3px solid #ff6b6b;
-    background: linear-gradient(90deg, rgba(255, 107, 107, 0.15) 0%, #252541 20%);
+    background: linear-gradient(90deg, rgba(255, 107, 107, 0.2) 0%, #252541 30%);
+    box-shadow: inset 2px 0 0 #ff6b6b;
 }
 
 .unit-card.rank-a {
-    border-left: 3px solid #ffa502;
-    background: linear-gradient(90deg, rgba(255, 165, 2, 0.15) 0%, #252541 20%);
+    background: linear-gradient(90deg, rgba(255, 165, 2, 0.2) 0%, #252541 30%);
+    box-shadow: inset 2px 0 0 #ffa502;
 }
 
 .unit-card.rank-b {
-    border-left: 3px solid #2ed573;
-    background: linear-gradient(90deg, rgba(46, 213, 115, 0.1) 0%, #252541 20%);
+    background: linear-gradient(90deg, rgba(46, 213, 115, 0.15) 0%, #252541 30%);
+    box-shadow: inset 2px 0 0 #2ed573;
 }
 
 .unit-card.rank-c {
-    border-left: 3px solid #70a1ff;
-    background: linear-gradient(90deg, rgba(112, 161, 255, 0.1) 0%, #252541 20%);
+    background: linear-gradient(90deg, rgba(112, 161, 255, 0.15) 0%, #252541 30%);
+    box-shadow: inset 2px 0 0 #70a1ff;
 }
 
 .unit-card.rank-d {
-    border-left: 3px solid #747d8c;
+    box-shadow: inset 2px 0 0 #747d8c;
 }
 
 /* スクレイピングボタン */
