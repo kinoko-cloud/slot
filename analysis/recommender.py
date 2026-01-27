@@ -1257,6 +1257,66 @@ def analyze_graph_pattern(days: List[dict]) -> dict:
     }
 
 
+def calc_no_explosion_next_day_stats(machine_key: str = 'sbj') -> dict:
+    """確率は好調だが爆発しなかった日の翌日統計（全店舗統合）
+
+    Returns:
+        {'total': N, 'next_good': N, 'rate': float}
+    """
+    import glob
+    good_threshold = get_machine_threshold(machine_key, 'good_prob')
+    total = 0
+    next_good = 0
+
+    hist_base = 'data/history'
+    if not os.path.isdir(hist_base):
+        return {'total': 0, 'next_good': 0, 'rate': 0.0}
+
+    for store_dir in os.listdir(hist_base):
+        if machine_key not in store_dir:
+            continue
+        store_path = os.path.join(hist_base, store_dir)
+        if not os.path.isdir(store_path):
+            continue
+        for f in glob.glob(os.path.join(store_path, '*.json')):
+            try:
+                with open(f) as fp:
+                    data = json.load(fp)
+            except:
+                continue
+            days = sorted(data.get('days', []), key=lambda d: d.get('date', ''))
+            for i, d in enumerate(days):
+                art = d.get('art', 0)
+                games = d.get('total_start', 0) or d.get('games', 0)
+                mr = d.get('max_rensa', 0)
+                if art <= 0 or games <= 0 or mr <= 0:
+                    continue
+                prob = games / art
+                # 確率は好調だが最大連チャンが15連未満 → 爆発なし
+                if prob <= good_threshold and mr < 15:
+                    if i + 1 < len(days):
+                        nd = days[i + 1]
+                        na = nd.get('art', 0)
+                        ng = nd.get('total_start', 0) or nd.get('games', 0)
+                        if na > 0 and ng > 0:
+                            total += 1
+                            if (ng / na) <= good_threshold:
+                                next_good += 1
+
+    rate = next_good / total if total > 0 else 0.0
+    return {'total': total, 'next_good': next_good, 'rate': rate}
+
+
+# キャッシュ
+_no_explosion_cache = {}
+
+
+def get_no_explosion_stats(machine_key: str = 'sbj') -> dict:
+    if machine_key not in _no_explosion_cache:
+        _no_explosion_cache[machine_key] = calc_no_explosion_next_day_stats(machine_key)
+    return _no_explosion_cache[machine_key]
+
+
 def calc_recovery_stats(store_key: str, machine_key: str = 'sbj') -> dict:
     """蓄積データから連続不調→翌日回復率を計算
 
@@ -2612,7 +2672,8 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
         _yp = rec.get('yesterday_prob', 0)
         _dbp = rec.get('day_before_prob', 0)
         _has_2day_bad = any('直近2日とも不調' in r for r in rec['reasons'])
-        if _yp >= 150 and _dbp >= 150 and not _has_2day_bad:
+        _bad_th = get_machine_threshold(machine_key, 'bad_prob')
+        if _yp >= _bad_th and _dbp >= _bad_th and not _has_2day_bad:
             _hour = datetime.now().hour
             _ndl = '本日' if _hour < 10 else '翌日'
             _mk = machine_info.get('key', 'sbj') if machine_info else 'sbj'
@@ -2714,10 +2775,14 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
                 elif yp > 150:
                     msg = f"🚨 前日はART確率1/{yp:.0f}でやや不調（全台中央値1/{median_y_prob:.0f}）"
                 else:
+                    # 確率OK+爆発なしの翌日統計を追加
+                    _ne_stats = get_no_explosion_stats(machine_key)
                     msg = f"🚨 前日はART確率1/{yp:.0f}と悪くないが、最大{ymr}連と爆発なし"
+                    if _ne_stats['total'] >= 3:
+                        msg += f" → 過去に同パターン→翌日好調: {_ne_stats['next_good']}/{_ne_stats['total']}回={_ne_stats['rate']:.0%}"
 
                 if good_rate >= 0.7:
-                    msg += f"（この台は好調率{good_rate:.0%}のため本日期待）"
+                    msg += f"（好調率{good_rate:.0%}のため本日も期待）"
 
                 rec['reasons'].append(msg)
 
