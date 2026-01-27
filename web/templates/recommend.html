@@ -1,3 +1,4 @@
+{% from '_unit_card.html' import unit_compact %}
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -436,90 +437,7 @@
             <section class="recommendations other">
                 <h2>その他の台</h2>
                 {% for rec in other_recs %}
-                <div class="unit-card-compact rank-{{ rec.final_rank|lower }} {{ 'avail-card-empty' if rec.availability == '空き' else 'avail-card-playing' if rec.availability == '遊技中' else '' }}" data-availability="{{ rec.availability or 'unknown' }}" onclick="toggleDetails(this)">
-                    <div class="compact-row">
-                        <span class="compact-rank-num">#{{ loop.index + top_recs|length }}</span>
-                        <span class="unit-id-sm">{{ rec.unit_id|pad_id }}番台</span>
-                        {% if is_open %}
-                            {% if rec.availability == '空き' %}
-                            <span class="avail-sm empty">空</span>
-                            {% elif rec.availability == '遊技中' %}
-                            <span class="avail-sm playing">稼</span>
-                            {% endif %}
-                        {% endif %}
-                        <span class="rank-sm" style="background-color: {{ rank_color(rec.final_rank) }}">{{ rec.final_rank }}</span>
-
-                        <!-- ART数を常に表示（0でも） -->
-                        <span class="compact-art{% if rec.total_games == 0 %} past{% endif %}"><span class="art-num">{{ rec.art_count }}</span><span class="art-lbl">ART</span></span>
-                        {% if rec.art_prob > 0 %}
-                        <span class="compact-prob {% if rec.art_prob <= 100 %}excellent{% elif rec.art_prob <= 130 %}good{% elif rec.art_prob >= 200 %}bad{% endif %}">1/{{ rec.art_prob|int }}</span>
-                        {% endif %}
-                        {% if rec.rb_count > 0 %}
-                        <span class="compact-rb">RB<span class="num">{{ rec.rb_count }}</span></span>
-                        {% endif %}
-                        {% if rec.max_medals and rec.max_medals > 0 %}
-                        {% set badge = medals_badge(rec.max_medals) %}
-                        <span class="compact-max {% if badge %}{{ badge.class }}{% endif %}">
-                            {% if badge %}<span class="medals-icon-sm">{{ badge.icon }}</span>{% endif %}
-                            最大<span class="num">{{ '{:,}'.format(rec.max_medals) }}</span>
-                        </span>
-                        {% endif %}
-                        {% if rec.today_max_rensa and rec.today_max_rensa >= 3 %}
-                        <span class="rensa-badge-sm">{{ rec.today_max_rensa }}連</span>
-                        {% endif %}
-                        {% if rec.total_games >= 1000 and rec.estimated_setting %}
-                        <span class="setting-badge-sm setting-{{ rec.setting_num|default(0) }}">{{ rec.setting_num }}{% if rec.total_games < 3000 %}?{% endif %}</span>
-                        {% endif %}
-                        <span class="compact-games">{{ '{:,}'.format(rec.total_games) }}G</span>
-                        {% if rec.total_games == 0 and rec.yesterday_art %}
-                        <span class="compact-art past"><span class="art-num">{{ rec.yesterday_art }}</span><span class="art-lbl">(前日)</span></span>
-                        {% endif %}
-                        <span class="expand-icon small">▼</span>
-                    </div>
-
-                    <div class="unit-details hidden">
-                        <div class="compact-details">
-                            <div>本日: ART <span class="art-num">{{ rec.art_count }}</span>回 / RB {{ rec.rb_count }}回 / {{ '{:,}'.format(rec.total_games) }}G</div>
-                            {% if rec.max_medals and rec.max_medals > 0 %}
-                            <div>最大: {{ '{:,}'.format(rec.max_medals) }}枚</div>
-                            {% endif %}
-                            {% if rec.current_hama and rec.current_hama > 0 %}
-                            <div>現在: {{ rec.current_hama }}Gスタート</div>
-                            {% endif %}
-                            {% if rec.today_deep_hama and rec.today_deep_hama > 0 %}
-                            <div>本日ハマり: 500G超 {{ rec.today_deep_hama }}回{% if rec.today_max_at_interval %} (最大{{ rec.today_max_at_interval }}G){% endif %}</div>
-                            {% endif %}
-                            {% if rec.total_games >= 1000 and rec.estimated_setting %}
-                            <div>推定: {{ rec.estimated_setting }}{% if rec.total_games < 3000 %}？{% endif %} ({{ rec.payout_estimate }}%)</div>
-                            {% endif %}
-                            <div>蓄積傾向: {{ rec.base_rank }}ランク{% if rec.consecutive_minus >= 2 %} → 凹み{{ rec.consecutive_minus }}日、設定上げ期待{% elif rec.consecutive_plus >= 2 %} → {{ rec.consecutive_plus }}日好調、据え置き期待{% endif %}</div>
-                            {% if rec.reasons %}
-                            <div class="compact-reason">{{ rec.reasons[0] }}</div>
-                            {% endif %}
-
-                            {# === 波グラフ（コンパクト展開内） === #}
-                            {% if rec.today_history %}
-                            <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #333;">
-                                <div class="detail-title">{% if rec.history_date %}{{ rec.history_date }} {% endif %}波</div>
-                                <div class="wave-graph">
-                                    {% for h in rec.today_history %}
-                                    <span class="wave-bar {% if h.start >= 500 %}deep{% elif h.start >= 300 %}mid{% elif h.start <= 70 %}rensa{% endif %}" title="{{ h.time }} {{ h.start }}G {{ h.type }}">{% if h.start >= 500 %}&#x2587;{% elif h.start >= 300 %}&#x2585;{% elif h.start >= 200 %}&#x2584;{% elif h.start >= 100 %}&#x2583;{% elif h.start >= 70 %}&#x2582;{% else %}&#x2581;{% endif %}</span>
-                                    {% endfor %}
-                                </div>
-                                <div class="hit-history-table" style="margin-top: 6px;">
-                                    {% for h in rec.today_history %}
-                                    <div class="hit-row {% if h.start >= 500 %}deep{% elif h.start <= 70 %}rensa{% endif %}">
-                                        <span class="hit-time">{{ h.time }}</span>
-                                        <span class="hit-type">{{ h.type }}</span>
-                                        <span class="hit-games {% if h.start >= 500 %}bad{% elif h.start <= 70 %}good{% endif %}">{{ h.start }}G</span>
-                                    </div>
-                                    {% endfor %}
-                                </div>
-                            </div>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
+                {{ unit_compact(rec, loop.index + top_recs|length, store_key=store_key) }}
                 {% endfor %}
             </section>
         </main>

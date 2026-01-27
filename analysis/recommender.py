@@ -249,6 +249,13 @@ def get_store_weekday_info(store_key: str) -> dict:
     """店舗の今日の曜日傾向を返す"""
     store_info = STORE_DAY_RATINGS.get(store_key, {})
     if not store_info:
+        # 同じ店舗の別機種キーを探す（island_akihabara_hokuto → island_akihabara_sbj等）
+        base = store_key.rsplit('_', 1)[0] if '_' in store_key else store_key
+        for k, v in STORE_DAY_RATINGS.items():
+            if k.startswith(base):
+                store_info = v
+                break
+    if not store_info:
         return {}
     today_weekday = WEEKDAY_NAMES[datetime.now().weekday()]
     today_rating = store_info['day_ratings'].get(today_weekday, 3)

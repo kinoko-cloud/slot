@@ -4741,4 +4741,96 @@ strong.minus {
 .prev-prob.good { color: #2ed573; }
 .prev-prob.bad { color: #ff6b6b; }
 
+/* === v2 台カード === */
+.unit-card-v2 {
+    background: rgba(255,255,255,0.04);
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    border-left: 3px solid #555;
+    cursor: pointer;
+}
+.unit-card-v2.rank-s { border-left-color: #ff6b6b; }
+.unit-card-v2.rank-a { border-left-color: #ffa502; }
+.unit-card-v2.rank-b { border-left-color: #2ed573; }
+.unit-card-v2.rank-c { border-left-color: #70a1ff; }
+.unit-card-v2.rank-d { border-left-color: #747d8c; }
+
+.v2-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 6px;
+}
+.v2-rank-num { color: #888; font-size: 0.85em; font-weight: 700; }
+.v2-unit-id {
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.05em;
+    text-decoration: none;
+}
+.v2-store {
+    color: #aaa;
+    font-size: 0.8em;
+    text-decoration: none;
+}
+.v2-rank {
+    padding: 1px 8px;
+    border-radius: 4px;
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.85em;
+    margin-left: auto;
+}
+
+.v2-reason {
+    font-size: 0.85em;
+    color: #ddd;
+    margin-bottom: 6px;
+    padding: 4px 8px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 6px;
+}
+
+.v2-days {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+.v2-day {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.82em;
+}
+.v2-day.no-data {
+    color: #666;
+    font-style: italic;
+}
+.v2-day-label {
+    color: #888;
+    min-width: 52px;
+    font-size: 0.9em;
+}
+.v2-day-art { color: #ffd700; font-weight: 600; }
+.v2-day-rb { color: #70a1ff; }
+.v2-day-prob { font-weight: 600; }
+.v2-day-prob.excellent { color: #ffd700; }
+.v2-day-prob.good { color: #2ed573; }
+.v2-day-prob.bad { color: #ff6b6b; }
+
+.v2-setting { margin-top: 4px; }
+
+.v2-detail-reasons { margin-bottom: 6px; }
+.v2-detail-today {
+    font-size: 0.85em;
+    color: #aaa;
+    margin-bottom: 4px;
+}
+.v2-detail-trend {
+    font-size: 0.82em;
+    color: #888;
+}
+
 .build-time { font-size: 0.7em; color: #555; }
