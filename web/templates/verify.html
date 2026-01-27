@@ -57,7 +57,7 @@
                         <span class="ma-rate {% if ma.rate >= 60 %}good{% elif ma.rate >= 40 %}ok{% else %}bad{% endif %}">{{ ma.rate|int }}%</span>
                         <span class="ma-detail">{{ ma.hit }}/{{ ma.total }} 的中</span>
                         {% if ma.surprise > 0 %}
-                        <span class="ma-surprise">+{{ ma.surprise }}台発掘</span>
+                        <span class="ma-surprise">+{{ ma.surprise }}台ノーマーク好調</span>
                         {% endif %}
                     </div>
                     {% endfor %}
@@ -185,7 +185,7 @@
                     <div class="legend-row"><span class="verdict-icon">&#x25CB;</span> 的中: 予測S/A → 実際に合成1/130以下</div>
                     <div class="legend-row"><span class="verdict-icon">&#x25B3;</span> 普通: 予測通りの平凡な結果</div>
                     <div class="legend-row"><span class="verdict-icon">&#x2715;</span> 外れ: 予測S/A → 実際に合成1/200以上</div>
-                    <div class="legend-row"><span class="verdict-icon">&#x2605;</span> 発掘: 予測B以下 → 実際に合成1/130以下（お宝台）</div>
+                    <div class="legend-row"><span class="verdict-icon">&#x2605;</span> ノーマーク好調: 予測B以下だったが実際は好調だった台</div>
                 </div>
             </section>
 
