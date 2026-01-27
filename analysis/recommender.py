@@ -2337,7 +2337,25 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
                      + weekday_bonus      # 曜日ボーナス
                      + yesterday_diff_bonus  # 前日差枚ボーナス
                      )
-        final_score = raw_score
+
+        # === フィードバック補正 ===
+        # 過去の答え合わせ結果から台・曜日の補正を適用
+        feedback_bonus = 0
+        try:
+            from analysis.feedback import calculate_correction_factors
+            corrections = calculate_correction_factors(store_key, machine_key)
+            if corrections['confidence'] > 0:
+                # 台番号補正
+                uid_str = str(unit_id)
+                unit_corr = corrections['unit_corrections'].get(uid_str, 0)
+                # 曜日補正
+                wd_name = ['月', '火', '水', '木', '金', '土', '日'][datetime.now().weekday()]
+                wd_corr = corrections['weekday_corrections'].get(wd_name, 0)
+                feedback_bonus = int((unit_corr + wd_corr) * corrections['confidence'])
+        except Exception:
+            pass
+
+        final_score = raw_score + feedback_bonus
         # 【改善3】ランクは後でまとめて相対評価で決定するため、ここでは仮ランク
         final_rank = get_rank(final_score)
 

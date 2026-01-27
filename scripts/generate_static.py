@@ -1229,6 +1229,24 @@ def generate_verify_page(env):
                 'stores': stores_data,
             }
 
+            # フィードバック保存（答え合わせ結果を次回予測に反映）
+            try:
+                from analysis.feedback import analyze_prediction_errors, save_feedback
+                for sd in stores_data:
+                    store_name = sd.get('name', '')
+                    # store_keyを逆引き
+                    _sk = ''
+                    for _skey, _sval in get_stores_by_machine(machine_key).items():
+                        if _sval.get('name', '') == store_name:
+                            _sk = _skey
+                            break
+                    if _sk and sd.get('units'):
+                        analysis = analyze_prediction_errors(sd['units'], _sk, machine_key)
+                        if analysis['hits'] + analysis['misses'] + analysis['surprises'] > 0:
+                            save_feedback(analysis)
+            except Exception as e:
+                print(f"  ⚠ フィードバック保存エラー: {e}")
+
     # 的中率計算
     accuracy = 0
     if total_predicted_good > 0:
