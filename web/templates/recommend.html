@@ -186,10 +186,10 @@
                     {% if rec.yesterday_art or rec.day_before_art %}
                     <div class="rec-prev-days">
                         {% if rec.yesterday_art %}
-                        <span class="prev-day-rec">前日: ART {{ rec.yesterday_art }}{% if rec.yesterday_rb %} / RB {{ rec.yesterday_rb }}{% endif %}{% if rec.yesterday_games %} ({{ '{:,}'.format(rec.yesterday_games) }}G){% endif %}</span>
+                        <span class="prev-day-rec">前日: <span class="prev-art">ART {{ rec.yesterday_art }}</span>{% if rec.yesterday_rb %} / RB {{ rec.yesterday_rb }}{% endif %}{% if rec.yesterday_games %} ({{ '{:,}'.format(rec.yesterday_games) }}G){% endif %}</span>
                         {% endif %}
                         {% if rec.day_before_art %}
-                        <span class="prev-day-rec">前々日: ART {{ rec.day_before_art }}{% if rec.day_before_rb %} / RB {{ rec.day_before_rb }}{% endif %}{% if rec.day_before_games %} ({{ '{:,}'.format(rec.day_before_games) }}G){% endif %}</span>
+                        <span class="prev-day-rec">前々日: <span class="prev-art">ART {{ rec.day_before_art }}</span>{% if rec.day_before_rb %} / RB {{ rec.day_before_rb }}{% endif %}{% if rec.day_before_games %} ({{ '{:,}'.format(rec.day_before_games) }}G){% endif %}</span>
                         {% endif %}
                     </div>
                     {% endif %}

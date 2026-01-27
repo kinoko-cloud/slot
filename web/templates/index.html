@@ -85,28 +85,25 @@
                         {% if rec.total_games > 0 %}<span class="total-games">累計<span class="num">{{ '{:,}'.format(rec.total_games) }}</span>G</span>{% endif %}
                         {% if rec.max_medals and rec.max_medals > 0 %}{% set badge = medals_badge(rec.max_medals) %}<span class="max-medals-top {% if badge %}{{ badge.class }}{% endif %}">{% if badge %}<span class="medals-icon">{{ badge.icon }}</span>{% endif %}最大<span class="num">{{ '{:,}'.format(rec.max_medals) }}</span>枚</span>{% endif %}
                     </div>
-                    {# === 前日・前々日データ（小さく表示） === #}
+                    {# === 前日・前々日データ === #}
                     {% if rec.yesterday_art or rec.day_before_art %}
                     <div class="top3-prev-days">
                         {% if rec.yesterday_art %}
-                        <span class="prev-day">前日: ART {{ rec.yesterday_art }}{% if rec.yesterday_rb %} / RB {{ rec.yesterday_rb }}{% endif %}{% if rec.yesterday_games %} ({{ '{:,}'.format(rec.yesterday_games) }}G){% endif %}</span>
+                        <span class="prev-day">前日: <span class="prev-art">ART {{ rec.yesterday_art }}</span>{% if rec.yesterday_rb %} / RB {{ rec.yesterday_rb }}{% endif %}{% if rec.yesterday_games %} ({{ '{:,}'.format(rec.yesterday_games) }}G){% endif %}</span>
                         {% endif %}
                         {% if rec.day_before_art %}
-                        <span class="prev-day">前々日: ART {{ rec.day_before_art }}{% if rec.day_before_rb %} / RB {{ rec.day_before_rb }}{% endif %}{% if rec.day_before_games %} ({{ '{:,}'.format(rec.day_before_games) }}G){% endif %}</span>
+                        <span class="prev-day">前々日: <span class="prev-art">ART {{ rec.day_before_art }}</span>{% if rec.day_before_rb %} / RB {{ rec.day_before_rb }}{% endif %}{% if rec.day_before_games %} ({{ '{:,}'.format(rec.day_before_games) }}G){% endif %}</span>
                         {% endif %}
                     </div>
                     {% endif %}
-                    {# === 推奨理由 === #}
-                    <div class="reasons-preview">
+                    {# === 推奨理由（全件表示） === #}
+                    <div class="reasons-full">
                         {% if rec.reasons %}
-                        <span class="reason-icon">💡</span>
-                        <span class="reason-text">{{ rec.reasons[0][:60] }}{% if rec.reasons[0]|length > 60 %}...{% endif %}</span>
-                        {% if rec.reasons|length > 1 %}
-                        <span class="reason-more">他{{ rec.reasons|length - 1 }}件</span>
-                        {% endif %}
+                        {% for reason in rec.reasons %}
+                        <div class="reason-line-top"><span class="reason-icon">💡</span> {{ reason }}</div>
+                        {% endfor %}
                         {% else %}
-                        <span class="reason-icon">💡</span>
-                        <span class="reason-text">過去データに基づくおすすめ台</span>
+                        <div class="reason-line-top"><span class="reason-icon">💡</span> 過去データに基づくおすすめ台</div>
                         {% endif %}
                     </div>
                 </a>
