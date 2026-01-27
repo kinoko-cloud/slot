@@ -958,13 +958,12 @@ def analyze_today_graph(history: List[dict]) -> dict:
     if not history:
         return default_result
 
-    # 各当たり間のG数と連チャン数を計算
-    valleys = []
+    # AT間（大当たり間のG数）を正しく計算（RBを跨いで合算）
+    valleys = calculate_at_intervals(history)
+
+    # 連チャン数を取得
     rensas = []
     for h in history:
-        start = h.get('start', 0) or h.get('games_between', 0)
-        if start > 0:
-            valleys.append(start)
         rensa = h.get('rensa', 1)
         if rensa > 0:
             rensas.append(rensa)
