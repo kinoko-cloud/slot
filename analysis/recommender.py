@@ -1335,9 +1335,9 @@ def analyze_rotation_pattern(days: List[dict]) -> dict:
         return {'has_pattern': False, 'cycle_days': 0, 'next_high_chance': False, 'description': ''}
 
     # 直近7日の結果（プラス/マイナス）をパターン化
-    SYMBOL_GOOD = '◎'
-    SYMBOL_BAD = '✕'
-    SYMBOL_MID = '△'
+    SYMBOL_GOOD = '<span class="rot-good">◎</span>'
+    SYMBOL_BAD = '<span class="rot-bad">✕</span>'
+    SYMBOL_MID = '<span class="rot-mid">△</span>'
     results = []
     for day in days[:7]:
         art = day.get('art', 0)
@@ -2358,10 +2358,12 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
             'yesterday_rb': trend_data.get('yesterday_rb', 0),
             'yesterday_games': trend_data.get('yesterday_games', 0),
             'yesterday_date': trend_data.get('yesterday_date', ''),
+            'yesterday_prob': trend_data.get('yesterday_prob', 0),
             'day_before_art': trend_data.get('day_before_art', 0),
             'day_before_rb': trend_data.get('day_before_rb', 0),
             'day_before_games': trend_data.get('day_before_games', 0),
             'day_before_date': trend_data.get('day_before_date', ''),
+            'day_before_prob': trend_data.get('day_before_prob', 0),
             'yesterday_max_rensa': trend_data.get('yesterday_max_rensa', 0),
             'yesterday_max_medals': trend_data.get('yesterday_max_medals', 0),
             'max_medals': max_medals,
@@ -2449,6 +2451,9 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
                     rec['three_days_ago_date'] = d
                     rec['three_days_ago_max_rensa'] = ad.get('max_rensa', 0)
                     rec['three_days_ago_max_medals'] = ad.get('max_medals', 0)
+                    _3d_art = ad.get('art', 0)
+                    _3d_games = ad.get('games', 0)
+                    rec['three_days_ago_prob'] = round(_3d_games / _3d_art) if _3d_art > 0 and _3d_games > 0 else 0
 
         # 閉店後: availabilityのデータを補完
         # 注意: availabilityのtoday_historyの日付と蓄積DBのyesterday_dateが異なる場合がある
@@ -2488,6 +2493,7 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
                             rec['three_days_ago_diff_medals'] = rec.get('day_before_diff_medals')
                             rec['three_days_ago_max_rensa'] = rec.get('day_before_max_rensa', 0)
                             rec['three_days_ago_max_medals'] = rec.get('day_before_max_medals', 0)
+                            rec['three_days_ago_prob'] = rec.get('day_before_prob', 0)
 
                             # yesterday → day_before
                             rec['day_before_art'] = rec.get('yesterday_art', 0)
@@ -2497,6 +2503,7 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
                             rec['day_before_diff_medals'] = rec.get('yesterday_diff_medals')
                             rec['day_before_max_rensa'] = rec.get('yesterday_max_rensa', 0)
                             rec['day_before_max_medals'] = rec.get('yesterday_max_medals', 0)
+                            rec['day_before_prob'] = rec.get('yesterday_prob', 0)
 
                         # availabilityデータをyesterdayに設定
                         rec['yesterday_art'] = _rt_art
@@ -2537,6 +2544,33 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
                         if not rec.get('yesterday_rb') and _rt_rb > 0:
                             rec['yesterday_rb'] = _rt_rb
                     break
+
+        # フォールバック後のデータでローテ傾向を再計算
+        # （蓄積DBのdaysにavailabilityの最新日が含まれない問題を修正）
+        if rec.get('yesterday_art') and rec.get('yesterday_games'):
+            _rot_days = []
+            for prefix, date_key in [('yesterday', 'yesterday_date'),
+                                      ('day_before', 'day_before_date'),
+                                      ('three_days_ago', 'three_days_ago_date')]:
+                _a = rec.get(f'{prefix}_art', 0)
+                _g = rec.get(f'{prefix}_games', 0)
+                if _a > 0 and _g > 0:
+                    _rot_days.append({'art': _a, 'total_start': _g, 'date': rec.get(date_key, '')})
+            # 蓄積データの残りを追加（3日間以降）
+            if unit_days:
+                _existing_dates = {d.get('date', '') for d in _rot_days}
+                for ud in unit_days:
+                    if ud.get('date', '') not in _existing_dates:
+                        _rot_days.append(ud)
+            if len(_rot_days) >= 5:
+                _new_rot = analyze_rotation_pattern(_rot_days)
+                # reasonsのローテ行を差し替え
+                _hour = datetime.now().hour
+                _ndl = '本日' if _hour < 10 else '翌日'
+                _old_rot_prefix = '🔄 ローテ傾向:'
+                rec['reasons'] = [r for r in rec['reasons'] if not r.startswith(_old_rot_prefix)]
+                if _new_rot['has_pattern'] and _new_rot['next_high_chance']:
+                    rec['reasons'].insert(1, f"🔄 ローテ傾向: {_new_rot['description']} → {_ndl}上げ期待")
 
         recommendations.append(rec)
 
