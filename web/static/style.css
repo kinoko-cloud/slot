@@ -2784,6 +2784,29 @@ strong.minus {
 .diff-medals.plus { color: #2ed573; }
 .diff-medals.minus { color: #ff6b6b; }
 
+.diff-medals-sm {
+    font-weight: 700;
+    font-size: 0.85em;
+    margin-left: 4px;
+}
+.diff-medals-sm.plus { color: #2ed573; }
+.diff-medals-sm.minus { color: #ff6b6b; }
+
+.prev-day-row {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    flex-wrap: wrap;
+    font-size: 0.82em;
+    color: #999;
+    line-height: 1.6;
+}
+.prev-day-label {
+    color: #777;
+    font-weight: 600;
+    min-width: 3.5em;
+}
+
 /* 天井バッジ */
 .ceiling-badge {
     display: inline-flex;
