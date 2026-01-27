@@ -141,7 +141,12 @@ def _accumulate_unit(store_key: str, unit_id: str, days: list, machine_key: str)
 
 
 def load_unit_history(store_key: str, unit_id: str) -> dict:
-    """蓄積済みの台履歴を読み込む"""
+    """蓄積済みの台履歴を読み込む
+
+    store_keyが完全一致しない場合、サフィックス違いも試す
+    例: island_akihabara_hokuto → island_akihabara_hokuto_tensei2
+    """
+    # 完全一致
     file_path = HISTORY_DIR / store_key / f'{unit_id}.json'
     if file_path.exists():
         try:
@@ -149,6 +154,19 @@ def load_unit_history(store_key: str, unit_id: str) -> dict:
                 return json.load(f)
         except (json.JSONDecodeError, IOError):
             pass
+
+    # store_keyが部分一致するディレクトリを探す
+    if HISTORY_DIR.exists():
+        for d in HISTORY_DIR.iterdir():
+            if d.is_dir() and (d.name.startswith(store_key) or store_key.startswith(d.name)):
+                fp = d / f'{unit_id}.json'
+                if fp.exists():
+                    try:
+                        with open(fp, 'r', encoding='utf-8') as f:
+                            return json.load(f)
+                    except (json.JSONDecodeError, IOError):
+                        pass
+
     return {'store_key': store_key, 'unit_id': unit_id, 'days': []}
 
 

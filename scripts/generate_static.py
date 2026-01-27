@@ -316,7 +316,7 @@ def generate_index(env):
                             y_si = y_profit.get('setting_info', {})
                             y_setting = y_si.get('estimated_setting', '')
                             y_setting_num = y_si.get('setting_num', 0)
-                        # today_historyから連チャン・天井・最大メダルを計算
+                        # 連チャン・天井・最大メダルを計算
                         y_max_rensa = rec.get('yesterday_max_rensa', 0) or rec.get('today_max_rensa', 0)
                         y_max_medals = rec.get('yesterday_max_medals', 0)
                         y_ceilings = 0
@@ -329,6 +329,21 @@ def generate_index(env):
                                 y_ceilings = sum(1 for g in intervals if g >= 999)
                                 if not y_max_medals:
                                     y_max_medals = max((h.get('medals', 0) for h in hist), default=0)
+                            except:
+                                pass
+                        # 蓄積DBからも補完
+                        if not y_max_rensa or not y_max_medals:
+                            try:
+                                from analysis.history_accumulator import load_unit_history
+                                acc_hist = load_unit_history(store_key, rec['unit_id'])
+                                y_date = rec.get('yesterday_date', '')
+                                for ad in acc_hist.get('days', []):
+                                    if ad.get('date') == y_date or (not y_date and ad == acc_hist['days'][-1]):
+                                        if not y_max_rensa:
+                                            y_max_rensa = ad.get('max_rensa', 0)
+                                        if not y_max_medals:
+                                            y_max_medals = ad.get('max_medals', 0)
+                                        break
                             except:
                                 pass
                         yesterday_top10.append({
