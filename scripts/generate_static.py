@@ -408,6 +408,7 @@ def generate_index(env):
                             'setting_num': y_setting_num,
                             'yesterday_history': rec.get('yesterday_history', []),
                             'today_history': rec.get('today_history', []),
+                            'recent_days': rec.get('recent_days', []),
                         })
 
                 # 本日の爆発台（全台から収集、art_count > 0）
