@@ -275,6 +275,31 @@ def load_daily_data(date_str: str = None, machine_key: str = None) -> dict:
             with open(latest, 'r', encoding='utf-8') as f:
                 return json.load(f)
 
+    # 今日のデータがない場合、直近7日間のデータを探す（フォールバック）
+    from datetime import timedelta
+    base_date = datetime.strptime(date_str, '%Y%m%d')
+    for days_back in range(1, 8):
+        fallback_date = (base_date - timedelta(days=days_back)).strftime('%Y%m%d')
+        for pattern in patterns:
+            fallback_pattern = pattern.replace(date_str, fallback_date)
+            file_path = data_dir / fallback_pattern
+            if file_path.exists():
+                with open(file_path, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                    if machine_key:
+                        machines = data.get('machines', [])
+                        if machine_key in machines or not machines:
+                            return data
+                    else:
+                        return data
+        # ワイルドカードでも探す
+        for wp in [f'daily_*_{fallback_date}.json', f'*_daily_{fallback_date}.json']:
+            matches = list(data_dir.glob(wp))
+            if matches:
+                latest = max(matches, key=lambda p: p.stat().st_mtime)
+                with open(latest, 'r', encoding='utf-8') as f:
+                    return json.load(f)
+
     return {}
 
 
