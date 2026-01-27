@@ -390,6 +390,21 @@ def generate_index(env):
     elif is_open:
         date_prefix = '本日'
 
+    # 次の営業日（おすすめ台の対象日）
+    if now.hour >= 22:
+        # 22:45〜23:59 → 翌日
+        next_day_dt = now + timedelta(days=1)
+        next_day_prefix = '明日'
+    elif now.hour < 10:
+        # 0:00〜9:59 → 今日
+        next_day_dt = now
+        next_day_prefix = '本日'
+    else:
+        # 営業中 → 今日
+        next_day_dt = now
+        next_day_prefix = '本日'
+    next_day_str = format_date_with_weekday(next_day_dt)
+
     # 全店舗一覧（店舗導線用）
     all_stores = []
     for store_key, info in store_day_ratings.items():
@@ -511,6 +526,8 @@ def generate_index(env):
         prev_date_str=prev_date_str,
         accuracy_hero=accuracy_hero,
         date_prefix=date_prefix,
+        next_day_prefix=next_day_prefix,
+        next_day_str=next_day_str,
     )
 
     output_path = OUTPUT_DIR / 'index.html'
