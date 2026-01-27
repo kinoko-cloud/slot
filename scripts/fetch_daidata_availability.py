@@ -208,58 +208,39 @@ def fetch_unit_detail(page, hall_id: str, unit_id: str) -> dict:
         if max_match:
             data['max_medals'] = int(max_match.group(1).replace(',', ''))
 
-        # 当日の全当たり履歴を取得（「詳細を見る」リンクから）
+        # 当日の全当たり履歴を取得（台詳細ページに直接表示されている）
+        # daidataの形式: "0 スタート 出玉 種別 時間" のテーブル
         try:
-            detail_links = page.evaluate('''() => {
-                const links = [];
-                document.querySelectorAll('a').forEach(a => {
-                    if (a.innerText.includes('詳細を見る')) {
-                        links.push({ href: a.href, text: a.innerText.trim() });
-                    }
-                });
-                return links;
-            }''')
+            history = []
+            # パターン: 0\tスタート\t出玉\t種別\t時間
+            hits = re.findall(
+                r'0\s+(\d+)\s+(\d+)\s+(ART|BB|RB|AT|REG)\s+(\d{1,2}:\d{2})',
+                text
+            )
 
-            # 最初のリンクが当日データ
-            if detail_links:
-                page.goto(detail_links[0]['href'], wait_until='load', timeout=30000)
-                page.wait_for_timeout(2000)
-                detail_text = page.inner_text('body')
+            for i, match in enumerate(hits):
+                history.append({
+                    'hit_num': i + 1,
+                    'time': match[3],
+                    'start': int(match[0]),
+                    'medals': int(match[1]),
+                    'type': match[2],
+                })
 
-                # 当たり履歴を抽出（時間 回転数 タイプの形式）
-                history = []
-                # daidataの履歴形式: "HH:MM 数値G タイプ" など
-                hits = re.findall(
-                    r'(\d{1,2}:\d{2})\s+(\d+)G?\s+(BB|RB|ART|AT|REG)',
-                    detail_text
-                )
-                if not hits:
-                    # 別パターン: テーブル形式
-                    hits = re.findall(
-                        r'(\d{1,2}:\d{2})\s+(\d+)\s+\d+\s+(BB|RB|ART|AT|REG)',
-                        detail_text
-                    )
-
-                for i, match in enumerate(hits):
-                    history.append({
-                        'hit_num': i + 1,
-                        'time': match[0],
-                        'start': int(match[1]),
-                        'type': match[2],
-                    })
-
-                if history:
-                    data['today_history'] = history
-                    # 最大連チャン数を計算（70G以内の連続当たり）
-                    max_rensa = 1
-                    current_rensa = 1
-                    for j in range(1, len(history)):
-                        if history[j]['start'] <= 70:
-                            current_rensa += 1
-                            max_rensa = max(max_rensa, current_rensa)
-                        else:
-                            current_rensa = 1
-                    data['today_max_rensa'] = max_rensa
+            if history:
+                data['today_history'] = history
+                # 最大連チャン数を計算（70G以内の連続当たり）
+                # 履歴は時間降順（新しい順）なので逆順で計算
+                sorted_hist = sorted(history, key=lambda h: h['time'])
+                max_rensa = 1
+                current_rensa = 1
+                for j in range(1, len(sorted_hist)):
+                    if sorted_hist[j]['start'] <= 70:
+                        current_rensa += 1
+                        max_rensa = max(max_rensa, current_rensa)
+                    else:
+                        current_rensa = 1
+                data['today_max_rensa'] = max_rensa
         except Exception as e:
             print(f"    {unit_id}: 履歴取得エラー（スキップ）: {e}")
 
@@ -429,7 +410,8 @@ def main():
             ]
         )
         context = browser.new_context(
-            user_agent='Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15',
+            user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            viewport={'width': 1280, 'height': 900},
             java_script_enabled=True,
         )
 
@@ -439,6 +421,16 @@ def main():
         page.route("**/google*", lambda route: route.abort())
         page.route("**/geniee*", lambda route: route.abort())
         page.route("**/doubleclick*", lambda route: route.abort())
+
+        # ===== daidata規約同意（セッション全体で1回）=====
+        try:
+            page.goto('https://daidata.goraggio.com/100860/all_list?ps=S', wait_until='load', timeout=30000)
+            page.wait_for_timeout(2000)
+            page.evaluate('() => { const form = document.querySelector("form"); if (form) form.submit(); }')
+            page.wait_for_timeout(3000)
+            print("daidata規約同意完了")
+        except Exception as e:
+            print(f"daidata規約同意エラー（続行）: {e}")
 
         # ===== daidata店舗 =====
         for store_key, config in DAIDATA_STORES.items():
