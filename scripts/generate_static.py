@@ -833,6 +833,24 @@ def generate_recommend_pages(env):
         recommendations = recommend_units(store_key, realtime_data, availability,
                                           data_date_label=reason_data_label, prev_date_label=reason_prev_label)
 
+        # 差枚概算（全rec）
+        for rec in recommendations:
+            y_art = rec.get('yesterday_art', 0)
+            y_games = rec.get('yesterday_games', 0)
+            if y_art and y_art > 0 and y_games and y_games > 0:
+                y_p = calculate_expected_profit(y_games, y_art, machine_key)
+                rec['yesterday_diff_medals'] = y_p.get('current_estimate', 0)
+            db_art = rec.get('day_before_art', 0)
+            db_games = rec.get('day_before_games', 0)
+            if db_art and db_art > 0 and db_games and db_games > 0:
+                db_p = calculate_expected_profit(db_games, db_art, machine_key)
+                rec['day_before_diff_medals'] = db_p.get('current_estimate', 0)
+            td_art = rec.get('three_days_ago_art', 0)
+            td_games = rec.get('three_days_ago_games', 0)
+            if td_art and td_art > 0 and td_games and td_games > 0:
+                td_p = calculate_expected_profit(td_games, td_art, machine_key)
+                rec['three_days_ago_diff_medals'] = td_p.get('current_estimate', 0)
+
         # 分類
         sa_recs = [r for r in recommendations if r['final_rank'] in ('S', 'A') and not r['is_running']]
         if sa_recs:
