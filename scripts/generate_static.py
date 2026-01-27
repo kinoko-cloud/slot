@@ -129,6 +129,8 @@ def generate_url(endpoint, **kwargs):
         return f"/history/{kwargs.get('store_key', '')}_{kwargs.get('unit_id', '')}.html"
     elif endpoint == 'api_status':
         return f"https://autogmail.pythonanywhere.com/api/status/{kwargs.get('store_key', '')}"
+    elif endpoint == 'verify':
+        return '/verify.html'
     return '#'
 
 
@@ -548,6 +550,118 @@ def generate_recommend_pages(env):
     print(f"  -> {output_subdir}/")
 
 
+def generate_verify_page(env):
+    """答え合わせページを生成 - 予測 vs 実績の比較"""
+    print("Generating verify page...")
+
+    template = env.get_template('verify.html')
+    old_keys = {'island_akihabara', 'shibuya_espass', 'shinjuku_espass'}
+
+    verify_data = {}
+    total_predicted_good = 0  # 予測S/A台数
+    total_actual_good = 0     # 予測S/Aのうち実際に好調だった台数
+    total_surprise = 0        # 予測B以下だが実際に好調だった台数
+
+    for machine_key, machine in MACHINES.items():
+        stores_data = []
+        stores = get_stores_by_machine(machine_key)
+
+        for store_key, store in stores.items():
+            if store_key in old_keys:
+                continue
+
+            # 予測（過去データのみでスコア算出）
+            availability = {}
+            try:
+                availability = get_availability(store_key)
+            except:
+                pass
+
+            recommendations = recommend_units(store_key, availability=availability)
+            units_data = []
+
+            for rec in recommendations:
+                predicted_rank = rec.get('final_rank', 'C')
+                predicted_score = rec.get('final_score', 50)
+                actual_art = rec.get('art_count', 0)
+                actual_games = rec.get('total_games', 0)
+                actual_prob = rec.get('art_prob', 0)
+
+                # 判定
+                is_predicted_good = predicted_rank in ('S', 'A')
+                is_actual_good = actual_prob > 0 and actual_prob <= 130
+                is_actual_excellent = actual_prob > 0 and actual_prob <= 100
+                is_actual_bad = actual_prob >= 200 or (actual_games >= 1000 and actual_art == 0)
+
+                if is_predicted_good:
+                    total_predicted_good += 1
+                    if is_actual_excellent:
+                        verdict = '\u25CE'  # ◎
+                        verdict_class = 'perfect'
+                        total_actual_good += 1
+                    elif is_actual_good:
+                        verdict = '\u25CB'  # ○
+                        verdict_class = 'hit'
+                        total_actual_good += 1
+                    elif is_actual_bad:
+                        verdict = '\u2715'  # ✕
+                        verdict_class = 'miss'
+                    else:
+                        verdict = '\u25B3'  # △
+                        verdict_class = 'neutral'
+                elif not is_predicted_good and is_actual_good:
+                    verdict = '\u2605'  # ★ 発掘
+                    verdict_class = 'surprise'
+                    total_surprise += 1
+                elif actual_games < 500:
+                    verdict = '-'
+                    verdict_class = 'nodata'
+                else:
+                    verdict = '\u25B3'  # △
+                    verdict_class = 'neutral'
+
+                units_data.append({
+                    'unit_id': rec.get('unit_id', ''),
+                    'predicted_rank': predicted_rank,
+                    'predicted_score': predicted_score,
+                    'actual_art': actual_art,
+                    'actual_prob': actual_prob,
+                    'actual_games': actual_games,
+                    'verdict': verdict,
+                    'verdict_class': verdict_class,
+                })
+
+            if units_data:
+                stores_data.append({
+                    'name': store.get('name', store_key),
+                    'units': units_data,
+                })
+
+        if stores_data:
+            verify_data[machine_key] = {
+                'name': machine['short_name'],
+                'icon': machine['icon'],
+                'stores': stores_data,
+            }
+
+    # 的中率計算
+    accuracy = 0
+    if total_predicted_good > 0:
+        accuracy = (total_actual_good / total_predicted_good) * 100
+
+    html = template.render(
+        verify_data=verify_data,
+        accuracy=accuracy,
+        predicted_good=total_predicted_good,
+        actual_good=total_actual_good,
+        surprise_good=total_surprise,
+    )
+
+    output_path = OUTPUT_DIR / 'verify.html'
+    output_path.write_text(html, encoding='utf-8')
+    print(f"  -> {output_path}")
+
+
 def copy_static_files():
     """静的ファイルをコピー"""
     print("Copying static files...")
@@ -639,6 +753,7 @@ def main():
     generate_machine_pages(env)
     generate_ranking_pages(env)
     generate_recommend_pages(env)
+    generate_verify_page(env)
     copy_static_files()
     generate_metadata()
 

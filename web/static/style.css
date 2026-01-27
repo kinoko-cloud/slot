@@ -3541,3 +3541,176 @@ strong.minus {
     font-size: 0.9em;
     font-weight: 700;
 }
+
+/* ===== 答え合わせページ ===== */
+.verify-summary {
+    margin: 15px 0;
+    padding: 15px;
+    background: #1a1a2e;
+    border-radius: 12px;
+}
+
+.verify-accuracy {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.accuracy-circle {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid #555;
+    flex-shrink: 0;
+}
+
+.accuracy-circle.good { border-color: #2ed573; }
+.accuracy-circle.ok { border-color: #ffa502; }
+.accuracy-circle.bad { border-color: #ff6b6b; }
+
+.accuracy-num {
+    font-size: 1.6em;
+    font-weight: 700;
+    color: #fff;
+}
+
+.accuracy-label {
+    font-size: 0.7em;
+    color: #aaa;
+}
+
+.accuracy-detail {
+    flex: 1;
+}
+
+.accuracy-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 3px 0;
+    font-size: 0.85em;
+}
+
+.acc-label { color: #aaa; }
+.acc-value { color: #fff; font-weight: 700; }
+.acc-value.hit { color: #2ed573; }
+.acc-value.surprise { color: #ffd700; }
+
+.verify-section {
+    margin: 20px 0;
+}
+
+.verify-section h2 {
+    font-size: 1.1em;
+    margin-bottom: 10px;
+    color: #fff;
+}
+
+.verify-store {
+    margin-bottom: 15px;
+}
+
+.verify-store-name {
+    font-size: 0.9em;
+    color: #aaa;
+    margin-bottom: 5px;
+    font-weight: 400;
+}
+
+.verify-table {
+    background: #16213e;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.verify-header-row {
+    display: flex;
+    padding: 8px 10px;
+    background: #0f3460;
+    font-size: 0.75em;
+    color: #aaa;
+    font-weight: 700;
+}
+
+.verify-row {
+    display: flex;
+    padding: 6px 10px;
+    border-bottom: 1px solid #1a1a2e;
+    font-size: 0.85em;
+    align-items: center;
+}
+
+.vh-unit, .vr-unit { width: 50px; }
+.vh-pred, .vr-pred { width: 80px; }
+.vh-art, .vr-art { width: 40px; text-align: center; }
+.vh-prob, .vr-prob { width: 60px; text-align: center; }
+.vh-result, .vr-verdict { width: 35px; text-align: center; }
+
+.vr-unit {
+    font-weight: 700;
+    color: #fff;
+}
+
+.vr-score {
+    font-size: 0.8em;
+    color: #888;
+    margin-left: 3px;
+}
+
+.vr-art {
+    font-weight: 700;
+    color: #4ecdc4;
+}
+
+.rank-badge-xs {
+    display: inline-block;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 0.75em;
+    font-weight: 700;
+    color: #fff;
+}
+
+.vr-verdict {
+    font-size: 1.1em;
+}
+
+.verdict-perfect .vr-verdict { color: #ffd700; }
+.verdict-hit .vr-verdict { color: #2ed573; }
+.verdict-miss .vr-verdict { color: #ff6b6b; }
+.verdict-surprise .vr-verdict { color: #ffd700; }
+.verdict-neutral .vr-verdict { color: #888; }
+.verdict-nodata .vr-verdict { color: #555; }
+
+.verdict-perfect { background: rgba(255, 215, 0, 0.05); }
+.verdict-hit { background: rgba(46, 213, 115, 0.05); }
+.verdict-miss { background: rgba(255, 107, 107, 0.08); }
+.verdict-surprise { background: rgba(255, 215, 0, 0.08); }
+
+.verify-legend {
+    margin: 20px 0;
+    padding: 12px;
+    background: #16213e;
+    border-radius: 8px;
+}
+
+.verify-legend h3 {
+    font-size: 0.85em;
+    color: #aaa;
+    margin-bottom: 8px;
+}
+
+.legend-row {
+    font-size: 0.8em;
+    color: #ccc;
+    padding: 2px 0;
+}
+
+.verdict-icon {
+    display: inline-block;
+    width: 18px;
+    text-align: center;
+}

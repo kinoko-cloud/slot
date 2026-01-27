@@ -1,0 +1,2040 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+    <meta name="googlebot" content="noindex, nofollow">
+    <title>答え合わせ - 予測精度検証</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="/index.html" class="back-link">&lt; トップに戻る</a>
+            <h1>答え合わせ</h1>
+            <div class="update-info">昨日までのデータで本日を予測できたか？</div>
+        </header>
+
+        <main>
+            
+
+            <!-- 的中率サマリ -->
+            <section class="verify-summary">
+                <div class="verify-accuracy">
+                    <div class="accuracy-circle ok">
+                        <span class="accuracy-num">58%</span>
+                        <span class="accuracy-label">的中率</span>
+                    </div>
+                    <div class="accuracy-detail">
+                        <div class="accuracy-row">
+                            <span class="acc-label">予測S/A台</span>
+                            <span class="acc-value">17台</span>
+                        </div>
+                        <div class="accuracy-row">
+                            <span class="acc-label">実際に好調</span>
+                            <span class="acc-value hit">10台</span>
+                        </div>
+                        <div class="accuracy-row">
+                            <span class="acc-label">予測外の好調</span>
+                            <span class="acc-value surprise">0台</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 予測 vs 実績テーブル -->
+            
+            <section class="verify-section">
+                <h2>🃏 スーパーブラックジャック</h2>
+
+                
+                <div class="verify-store">
+                    <h3 class="verify-store-name">アイランド秋葉原</h3>
+                    <div class="verify-table">
+                        <div class="verify-header-row">
+                            <span class="vh-unit">台番</span>
+                            <span class="vh-pred">予測</span>
+                            <span class="vh-art">ART</span>
+                            <span class="vh-prob">確率</span>
+                            <span class="vh-result">判定</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-miss">
+                            <span class="vr-unit">1027</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #ff6b6b">S</span>
+                                <span class="vr-score">84pt</span>
+                            </span>
+                            <span class="vr-art">24</span>
+                            <span class="vr-prob bad">
+                                1/245
+                            </span>
+                            <span class="vr-verdict">✕</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-perfect">
+                            <span class="vr-unit">1017</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #ff6b6b">S</span>
+                                <span class="vr-score">95pt</span>
+                            </span>
+                            <span class="vr-art">73</span>
+                            <span class="vr-prob excellent">
+                                1/79
+                            </span>
+                            <span class="vr-verdict">◎</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-neutral">
+                            <span class="vr-unit">1015</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #ffa502">A</span>
+                                <span class="vr-score">73pt</span>
+                            </span>
+                            <span class="vr-art">35</span>
+                            <span class="vr-prob ">
+                                1/135
+                            </span>
+                            <span class="vr-verdict">△</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-perfect">
+                            <span class="vr-unit">1023</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #ff6b6b">S</span>
+                                <span class="vr-score">93pt</span>
+                            </span>
+                            <span class="vr-art">79</span>
+                            <span class="vr-prob excellent">
+                                1/81
+                            </span>
+                            <span class="vr-verdict">◎</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-neutral">
+                            <span class="vr-unit">1021</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #ffa502">A</span>
+                                <span class="vr-score">71pt</span>
+                            </span>
+                            <span class="vr-art">44</span>
+                            <span class="vr-prob ">
+                                1/133
+                            </span>
+                            <span class="vr-verdict">△</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-perfect">
+                            <span class="vr-unit">1025</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #ff6b6b">S</span>
+                                <span class="vr-score">90pt</span>
+                            </span>
+                            <span class="vr-art">68</span>
+                            <span class="vr-prob excellent">
+                                1/85
+                            </span>
+                            <span class="vr-verdict">◎</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-perfect">
+                            <span class="vr-unit">1028</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #ff6b6b">S</span>
+                                <span class="vr-score">88pt</span>
+                            </span>
+                            <span class="vr-art">91</span>
+                            <span class="vr-prob excellent">
+                                1/67
+                            </span>
+                            <span class="vr-verdict">◎</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-perfect">
+                            <span class="vr-unit">1030</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #ff6b6b">S</span>
+                                <span class="vr-score">87pt</span>
+                            </span>
+                            <span class="vr-art">81</span>
+                            <span class="vr-prob excellent">
+                                1/81
+                            </span>
+                            <span class="vr-verdict">◎</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-perfect">
+                            <span class="vr-unit">1020</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #ff6b6b">S</span>
+                                <span class="vr-score">87pt</span>
+                            </span>
+                            <span class="vr-art">71</span>
+                            <span class="vr-prob excellent">
+                                1/79
+                            </span>
+                            <span class="vr-verdict">◎</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-neutral">
+                            <span class="vr-unit">1031</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #ffa502">A</span>
+                                <span class="vr-score">66pt</span>
+                            </span>
+                            <span class="vr-art">45</span>
+                            <span class="vr-prob ">
+                                1/153
+                            </span>
+                            <span class="vr-verdict">△</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-hit">
+                            <span class="vr-unit">1016</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #ff6b6b">S</span>
+                                <span class="vr-score">82pt</span>
+                            </span>
+                            <span class="vr-art">61</span>
+                            <span class="vr-prob good">
+                                1/104
+                            </span>
+                            <span class="vr-verdict">○</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-miss">
+                            <span class="vr-unit">1026</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #ff6b6b">S</span>
+                                <span class="vr-score">80pt</span>
+                            </span>
+                            <span class="vr-art">22</span>
+                            <span class="vr-prob bad">
+                                1/210
+                            </span>
+                            <span class="vr-verdict">✕</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-hit">
+                            <span class="vr-unit">1022</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #ff6b6b">S</span>
+                                <span class="vr-score">76pt</span>
+                            </span>
+                            <span class="vr-art">61</span>
+                            <span class="vr-prob good">
+                                1/105
+                            </span>
+                            <span class="vr-verdict">○</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-hit">
+                            <span class="vr-unit">1018</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #ff6b6b">S</span>
+                                <span class="vr-score">75pt</span>
+                            </span>
+                            <span class="vr-art">55</span>
+                            <span class="vr-prob good">
+                                1/108
+                            </span>
+                            <span class="vr-verdict">○</span>
+                        </div>
+                        
+                    </div>
+                </div>
+                
+                <div class="verify-store">
+                    <h3 class="verify-store-name">エスパス日拓渋谷新館</h3>
+                    <div class="verify-table">
+                        <div class="verify-header-row">
+                            <span class="vh-unit">台番</span>
+                            <span class="vh-pred">予測</span>
+                            <span class="vh-art">ART</span>
+                            <span class="vh-prob">確率</span>
+                            <span class="vh-result">判定</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-neutral">
+                            <span class="vr-unit">3011</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #ffa502">A</span>
+                                <span class="vr-score">74pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">△</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-neutral">
+                            <span class="vr-unit">3012</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #ffa502">A</span>
+                                <span class="vr-score">70pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">△</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">3013</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #2ed573">B</span>
+                                <span class="vr-score">62pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                    </div>
+                </div>
+                
+                <div class="verify-store">
+                    <h3 class="verify-store-name">エスパス日拓新宿歌舞伎町店</h3>
+                    <div class="verify-table">
+                        <div class="verify-header-row">
+                            <span class="vh-unit">台番</span>
+                            <span class="vh-pred">予測</span>
+                            <span class="vh-art">ART</span>
+                            <span class="vh-prob">確率</span>
+                            <span class="vh-result">判定</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">682</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">683</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">684</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">685</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                    </div>
+                </div>
+                
+                <div class="verify-store">
+                    <h3 class="verify-store-name">エスパス日拓西武新宿駅前店</h3>
+                    <div class="verify-table">
+                        <div class="verify-header-row">
+                            <span class="vh-unit">台番</span>
+                            <span class="vh-pred">予測</span>
+                            <span class="vh-art">ART</span>
+                            <span class="vh-prob">確率</span>
+                            <span class="vh-result">判定</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">4109</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">4118</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">4125</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">4168</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">3185</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">3186</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">3187</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                    </div>
+                </div>
+                
+                <div class="verify-store">
+                    <h3 class="verify-store-name">エスパス日拓秋葉原駅前店</h3>
+                    <div class="verify-table">
+                        <div class="verify-header-row">
+                            <span class="vh-unit">台番</span>
+                            <span class="vh-pred">予測</span>
+                            <span class="vh-art">ART</span>
+                            <span class="vh-prob">確率</span>
+                            <span class="vh-result">判定</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">2158</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">2159</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">2160</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">2161</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                    </div>
+                </div>
+                
+            </section>
+            
+            <section class="verify-section">
+                <h2>👊 北斗の拳 転生の章2</h2>
+
+                
+                <div class="verify-store">
+                    <h3 class="verify-store-name">エスパス日拓渋谷新館</h3>
+                    <div class="verify-table">
+                        <div class="verify-header-row">
+                            <span class="vh-unit">台番</span>
+                            <span class="vh-pred">予測</span>
+                            <span class="vh-art">ART</span>
+                            <span class="vh-prob">確率</span>
+                            <span class="vh-result">判定</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">2046</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #2ed573">B</span>
+                                <span class="vr-score">58pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">2047</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">2048</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">2049</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">2050</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">2051</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">2052</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">2053</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">2054</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">2055</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">2056</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">2057</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">2058</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">2059</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">2060</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">2061</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">2062</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">2063</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">2064</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">2065</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">2066</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">2067</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">2233</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">2234</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">2235</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">2236</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">2237</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">2238</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">2239</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">2240</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                    </div>
+                </div>
+                
+                <div class="verify-store">
+                    <h3 class="verify-store-name">エスパス日拓新宿歌舞伎町店</h3>
+                    <div class="verify-table">
+                        <div class="verify-header-row">
+                            <span class="vh-unit">台番</span>
+                            <span class="vh-pred">予測</span>
+                            <span class="vh-art">ART</span>
+                            <span class="vh-prob">確率</span>
+                            <span class="vh-result">判定</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">1</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">2</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">3</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">4</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">5</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">6</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">7</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">8</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">9</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">10</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">11</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">12</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">13</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">14</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">15</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">16</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">17</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">18</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">19</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">20</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">21</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">22</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">23</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">24</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">25</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">26</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">27</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">28</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">29</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">30</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">31</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">32</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">33</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">34</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">35</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">36</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">37</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">125</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">126</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">127</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">128</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                    </div>
+                </div>
+                
+                <div class="verify-store">
+                    <h3 class="verify-store-name">エスパス日拓秋葉原駅前店</h3>
+                    <div class="verify-table">
+                        <div class="verify-header-row">
+                            <span class="vh-unit">台番</span>
+                            <span class="vh-pred">予測</span>
+                            <span class="vh-art">ART</span>
+                            <span class="vh-prob">確率</span>
+                            <span class="vh-result">判定</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">2011</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #2ed573">B</span>
+                                <span class="vr-score">58pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">2012</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">2013</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">2014</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">2015</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">2016</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">2017</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">2018</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">2019</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">2056</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">2057</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">2058</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">2059</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">2060</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">2061</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">2062</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">2063</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">2064</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">2065</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">2066</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">2067</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">2068</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                    </div>
+                </div>
+                
+                <div class="verify-store">
+                    <h3 class="verify-store-name">アイランド秋葉原</h3>
+                    <div class="verify-table">
+                        <div class="verify-header-row">
+                            <span class="vh-unit">台番</span>
+                            <span class="vh-pred">予測</span>
+                            <span class="vh-art">ART</span>
+                            <span class="vh-prob">確率</span>
+                            <span class="vh-result">判定</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-perfect">
+                            <span class="vr-unit">0731</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #ffa502">A</span>
+                                <span class="vr-score">70pt</span>
+                            </span>
+                            <span class="vr-art">32</span>
+                            <span class="vr-prob excellent">
+                                1/96
+                            </span>
+                            <span class="vr-verdict">◎</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">0732</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">0733</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">0734</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">0735</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">0736</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">0737</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">0738</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">0750</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">0751</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">0752</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">0753</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">0754</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">0755</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">0756</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                        <div class="verify-row verdict-nodata">
+                            <span class="vr-unit">0757</span>
+                            <span class="vr-pred">
+                                <span class="rank-badge-xs" style="background-color: #70a1ff">C</span>
+                                <span class="vr-score">50pt</span>
+                            </span>
+                            <span class="vr-art">0</span>
+                            <span class="vr-prob ">
+                                -
+                            </span>
+                            <span class="vr-verdict">-</span>
+                        </div>
+                        
+                    </div>
+                </div>
+                
+            </section>
+            
+
+            <!-- 判定基準 -->
+            <section class="verify-legend">
+                <h3>判定基準</h3>
+                <div class="legend-items">
+                    <div class="legend-row"><span class="verdict-icon">&#x25CE;</span> 完璧: 予測S/A → 実際に合成1/100以下</div>
+                    <div class="legend-row"><span class="verdict-icon">&#x25CB;</span> 的中: 予測S/A → 実際に合成1/130以下</div>
+                    <div class="legend-row"><span class="verdict-icon">&#x25B3;</span> 普通: 予測通りの平凡な結果</div>
+                    <div class="legend-row"><span class="verdict-icon">&#x2715;</span> 外れ: 予測S/A → 実際に合成1/200以上</div>
+                    <div class="legend-row"><span class="verdict-icon">&#x2605;</span> 発掘: 予測B以下 → 実際に合成1/130以下（お宝台）</div>
+                </div>
+            </section>
+
+            
+        </main>
+
+        <footer>
+            <p><a href="/index.html" class="api-link">トップへ</a></p>
+        </footer>
+    </div>
+</body>
+</html>
