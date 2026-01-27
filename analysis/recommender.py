@@ -1503,6 +1503,13 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
                 reasons.append("連チャン中 → 高設定継続の期待")
             # 100G超えてたら連チャン終了してるので表示しない
 
+    # === 4.5 出玉バランス判定 ===
+    medal_balance_penalty = kwargs.get('medal_balance_penalty', 0)
+    if medal_balance_penalty <= -8:
+        reasons.append(f"⚠ 出玉バランス悪い: ART多いが最大枚数少ない（低設定の可能性）")
+    elif medal_balance_penalty <= -5:
+        reasons.append(f"注意: ART回数の割に出玉が伸びていない")
+
     # === 5. 他台との比較 ===
     if comparison.get('is_top_performer'):
         reasons.append("本日この店舗でトップの出玉")
@@ -1818,6 +1825,28 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
             if day_before_prob >= bad_prob_threshold:
                 slump_bonus += 5  # 2日連続不調 → さらに設定変更期待（合計+10）
 
+        # === 出玉バランス判定 ===
+        # ART回数が多いのに最大枚数が少ない → 連チャンが弱い = 低設定の可能性
+        # 北斗で50回当たって最大2574枚のようなケースにペナルティ
+        medal_balance_penalty = 0
+        if realtime_data and realtime_is_today:
+            units_list = realtime_data.get('units', [])
+            for _unit in units_list:
+                if _unit.get('unit_id') == unit_id:
+                    _art = _unit.get('art', 0)
+                    _max_medals = _unit.get('max_medals', 0)
+                    if machine_key == 'sbj':
+                        if _art >= 50 and _max_medals > 0 and _max_medals < 5000:
+                            medal_balance_penalty = -8  # ART50回以上で最大5000枚未満
+                        elif _art >= 30 and _max_medals > 0 and _max_medals < 3000:
+                            medal_balance_penalty = -5  # ART30回以上で最大3000枚未満
+                    elif machine_key == 'hokuto_tensei2':
+                        if _art >= 50 and _max_medals > 0 and _max_medals < 3000:
+                            medal_balance_penalty = -10  # AT50回以上で最大3000枚未満
+                        elif _art >= 30 and _max_medals > 0 and _max_medals < 3000:
+                            medal_balance_penalty = -5  # AT30回以上で最大3000枚未満
+                    break
+
         # === 【改善4】稼働パターン分析 ===
         activity_bonus = 0
         activity_data = {}
@@ -1847,6 +1876,7 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
                      + historical_bonus   # 【改善1】過去実績ボーナス
                      + slump_bonus        # 【改善2】不調翌日ボーナス
                      + activity_bonus     # 【改善4+5】稼働パターン+ハイエナ
+                     + medal_balance_penalty  # 出玉バランスペナルティ
                      )
         final_score = raw_score
         # 【改善3】ランクは後でまとめて相対評価で決定するため、ここでは仮ランク
@@ -1897,6 +1927,7 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
             days=unit_days, today_history=today_history, store_key=store_key,
             is_today_data=is_today_data, current_at_games=current_at_games,
             historical_perf=historical_perf, activity_data=activity_data,
+            medal_balance_penalty=medal_balance_penalty,
         )
 
         # リアルタイム空き状況がある場合は上書き
@@ -2000,6 +2031,7 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
                 'historical_bonus': historical_bonus,
                 'slump_bonus': slump_bonus,
                 'activity_bonus': activity_bonus,
+                'medal_balance_penalty': medal_balance_penalty,
             },
             # 過去実績データ【改善1】
             'historical_perf': historical_perf,
