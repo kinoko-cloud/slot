@@ -1303,6 +1303,26 @@ def generate_verify_page(env):
         result_date_str = format_date_with_weekday(now - timedelta(days=1))
         predict_base = format_date_with_weekday(now - timedelta(days=2))
 
+    # 仮説生成
+    hypotheses = []
+    try:
+        from analysis.feedback import generate_hypotheses, load_feedback_history
+        import glob
+        all_fbs = []
+        for fp in sorted(glob.glob('data/feedback/*_2026-*.json')):
+            try:
+                with open(fp) as fh:
+                    all_fbs.append(json.load(fh))
+            except Exception:
+                pass
+        # 今日のフィードバックのみで仮説生成
+        today_str = now.strftime('%Y-%m-%d')
+        today_fbs = [fb for fb in all_fbs if fb.get('date') == today_str]
+        if today_fbs:
+            hypotheses = generate_hypotheses(today_fbs)
+    except Exception as e:
+        print(f"  ⚠ 仮説生成エラー: {e}")
+
     html = template.render(
         verify_data=verify_data,
         accuracy=accuracy,
@@ -1314,6 +1334,7 @@ def generate_verify_page(env):
         total_good_all=total_good_all,
         result_date_str=result_date_str,
         predict_base=predict_base,
+        hypotheses=hypotheses,
     )
 
     output_path = OUTPUT_DIR / 'verify.html'
