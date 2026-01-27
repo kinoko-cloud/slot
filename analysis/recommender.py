@@ -2606,6 +2606,19 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
                 if _new_rot['has_pattern'] and _new_rot['next_high_chance']:
                     rec['reasons'].insert(1, f"🔄 ローテ傾向: {_new_rot['description']} → {_ndl}上げ期待")
 
+        # フォールバック後の連続不調判定（trendはフォールバック前なのでrec値で再判定）
+        _yp = rec.get('yesterday_prob', 0)
+        _dbp = rec.get('day_before_prob', 0)
+        _has_2day_bad = any('直近2日とも不調' in r for r in rec['reasons'])
+        if _yp >= 150 and _dbp >= 150 and not _has_2day_bad:
+            _hour = datetime.now().hour
+            _ndl = '本日' if _hour < 10 else '翌日'
+            _mk = machine_info.get('key', 'sbj') if machine_info else 'sbj'
+            _mr = get_machine_recovery_stats(_mk)
+            _rs = _mr.get(2, {})
+            _r_note = f"（SBJ全店舗実績: {_rs['recovered']}/{_rs['total']}回={_rs['rate']:.0%}で翌日回復）" if _rs.get('total', 0) >= 3 else ""
+            rec['reasons'].insert(1, f"🔄 直近2日とも不調（1/{_dbp:.0f}→1/{_yp:.0f}）→ {_ndl}設定変更期待大{_r_note}")
+
         recommendations.append(rec)
 
     # === 【改善3】相対評価によるランク付け ===
@@ -2680,11 +2693,27 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
                 warnings.append(f"確率1/{yp}（中央値1/{median_y_prob:.0f}）")
             if warnings:
                 good_rate = rec.get('historical_perf', {}).get('good_day_rate', 0) if isinstance(rec.get('historical_perf'), dict) else 0
-                # 好調率が高い台なら安心材料を添える
-                if good_rate >= 0.7:
-                    rec['reasons'].append(f"⚠ 前日は店舗内で弱め: {' / '.join(warnings)} → ただし好調率{good_rate:.0%}なので本日戻す期待あり")
+                yg = rec.get('yesterday_games', 0)
+                is_low_activity = rec.get('yesterday_low_activity', False)
+
+                # 原因推定: 低稼働 or 低設定
+                if is_low_activity and yp <= 150:
+                    # 稼働少ない＋確率はまあまあ → 高設定だが早退の可能性
+                    cause = f"低稼働({yg:,}G)で数字が伸びなかった可能性"
+                elif yp > 180:
+                    # 確率が明らかに悪い → 低設定
+                    cause = "前日は低設定の可能性が高い"
+                elif yp > 150:
+                    # 確率やや悪い
+                    cause = "前日は中〜低設定の可能性"
                 else:
-                    rec['reasons'].append(f"⚠ 前日は店舗内で弱め: {' / '.join(warnings)} → 前日は低設定の可能性")
+                    # 確率は悪くないがARTや連チャンが少ない
+                    cause = "確率は悪くないが爆発力が不足"
+
+                if good_rate >= 0.7:
+                    rec['reasons'].append(f"⚠ 前日は店舗内で控えめ: {' / '.join(warnings)} → {cause}（ただし好調率{good_rate:.0%}なので本日期待）")
+                else:
+                    rec['reasons'].append(f"⚠ 前日は店舗内で控えめ: {' / '.join(warnings)} → {cause}")
 
     return recommendations
 
