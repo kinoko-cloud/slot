@@ -2684,36 +2684,34 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
             ya = rec.get('yesterday_art', 0)
             ymr = rec.get('yesterday_max_rensa', 0)
             yp = rec.get('yesterday_prob', 0)
-            warnings = []
+            # 弱い指標の数をカウント
+            weak_count = 0
             if ya > 0 and ya < avg_y_art * 0.75:
-                warnings.append(f"ART{ya}回（平均{avg_y_art:.0f}回）")
+                weak_count += 1
             if ymr > 0 and avg_y_rensa > 0 and ymr < avg_y_rensa * 0.5:
-                warnings.append(f"最大{ymr}連（平均{avg_y_rensa:.0f}連）")
+                weak_count += 1
             if yp > 0 and median_y_prob > 0 and yp > median_y_prob * 1.5:
-                warnings.append(f"確率1/{yp}（中央値1/{median_y_prob:.0f}）")
-            if warnings:
+                weak_count += 1
+
+            if weak_count > 0:
                 good_rate = rec.get('historical_perf', {}).get('good_day_rate', 0) if isinstance(rec.get('historical_perf'), dict) else 0
                 yg = rec.get('yesterday_games', 0)
                 is_low_activity = rec.get('yesterday_low_activity', False)
 
-                # 原因推定: 低稼働 or 低設定
+                # 原因推定: 事実ベースでシンプルに
                 if is_low_activity and yp <= 150:
-                    # 稼働少ない＋確率はまあまあ → 高設定だが早退の可能性
-                    cause = f"低稼働({yg:,}G)で数字が伸びなかった可能性"
+                    msg = f"🚨 前日は{yg:,}G消化で低稼働 → 高設定でも数字が伸びにくい稼働量"
                 elif yp > 180:
-                    # 確率が明らかに悪い → 低設定
-                    cause = "前日は低設定の可能性が高い"
+                    msg = f"🚨 前日はART確率1/{yp:.0f}で低設定濃厚（全台中央値1/{median_y_prob:.0f}）"
                 elif yp > 150:
-                    # 確率やや悪い
-                    cause = "前日は中〜低設定の可能性"
+                    msg = f"🚨 前日はART確率1/{yp:.0f}でやや不調（全台中央値1/{median_y_prob:.0f}）"
                 else:
-                    # 確率は悪くないがARTや連チャンが少ない
-                    cause = "確率は悪くないが爆発力が不足"
+                    msg = f"🚨 前日はART確率1/{yp:.0f}と悪くないが、最大{ymr}連と爆発なし"
 
                 if good_rate >= 0.7:
-                    rec['reasons'].append(f"🚨 前日は店舗内で控えめ: {' / '.join(warnings)} → {cause}（ただし好調率{good_rate:.0%}なので本日期待）")
-                else:
-                    rec['reasons'].append(f"🚨 前日は店舗内で控えめ: {' / '.join(warnings)} → {cause}")
+                    msg += f"（この台は好調率{good_rate:.0%}のため本日期待）"
+
+                rec['reasons'].append(msg)
 
     return recommendations
 
