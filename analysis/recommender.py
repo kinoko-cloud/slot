@@ -1640,7 +1640,7 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
                 if wd_rate >= 0.7:
                     reasons.append(f"📅 この台の{today_weekday}曜好調率: {wd_good}/{wd_total}回({wd_rate:.0%}) → 期待大")
                 elif wd_rate <= 0.3:
-                    reasons.append(f"⚠ この台の{today_weekday}曜好調率: {wd_good}/{wd_total}回({wd_rate:.0%}) → 要注意")
+                    reasons.append(f"🚨 この台の{today_weekday}曜好調率: {wd_good}/{wd_total}回({wd_rate:.0%}) → 要注意")
 
         # 台個別の曜日別好調率（蓄積データから）
         unit_weekday = historical_perf.get('weekday_breakdown', {})
@@ -1651,7 +1651,7 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
                 if uwd_rate >= 0.8:
                     reasons.append(f"📅 この台の{today_weekday}曜実績: {uwd['good']}/{uwd['total']}回好調（{uwd_rate:.0%}）")
                 elif uwd_rate <= 0.2:
-                    reasons.append(f"⚠ この台の{today_weekday}曜実績: {uwd['good']}/{uwd['total']}回好調（{uwd_rate:.0%}）→ この曜日は弱い")
+                    reasons.append(f"🚨 この台の{today_weekday}曜実績: {uwd['good']}/{uwd['total']}回好調（{uwd_rate:.0%}）→ この曜日は弱い")
 
         # なぜ今日も好調と見るかの根拠を追加
         continuation_rate = historical_perf.get('continuation_rate', 0)
@@ -1765,7 +1765,7 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
     if activity_data:
         activity_desc = activity_data.get('description', '')
         if activity_data.get('is_hyena_target'):
-            reasons.append(f"⚠ {activity_desc}")
+            reasons.append(f"🚨 {activity_desc}")
         elif activity_data.get('abandonment_type') == 'good_abandoned':
             reasons.append(f"💡 {activity_desc}")
         elif activity_data.get('persistence_score', 0) >= 8:
@@ -1781,7 +1781,7 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
         elif art_prob > 0 and art_prob <= 130 and total_games >= 3000:
             reasons.append(f"🔥 本日1/{art_prob:.0f}で安定稼働中 ({total_games:,}G消化)")
         elif art_prob > 0 and art_prob >= 200:
-            reasons.append(f"⚠ 本日ART確率1/{art_prob:.0f} ({total_games:,}G消化) → 低設定域の挙動")
+            reasons.append(f"🚨 本日ART確率1/{art_prob:.0f} ({total_games:,}G消化) → 低設定域の挙動")
 
     # 本日の天井到達・連チャン判定（当日データのみ）
     if today_history and is_today_data:
@@ -1799,9 +1799,9 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
     # === 3.5 出玉バランス判定 ===
     medal_balance_penalty = kwargs.get('medal_balance_penalty', 0)
     if medal_balance_penalty <= -8:
-        reasons.append(f"⚠ 出玉バランス悪い: ART多いが最大枚数少ない（低設定の可能性）")
+        reasons.append(f"🚨 出玉バランス悪い: ART多いが最大枚数少ない（低設定の可能性）")
     elif medal_balance_penalty <= -5:
-        reasons.append(f"⚠ ART回数の割に出玉が伸びていない")
+        reasons.append(f"🚨 ART回数の割に出玉が伸びていない")
 
     # === 6. 店舗曜日傾向（補足情報） ===
     # 好調率の根拠で既に曜日情報を出してたら重複させない
@@ -1814,7 +1814,7 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
             reasons.append(f"📅 {store_name}は{today_weekday}曜が狙い目（店舗傾向: {best_info}）")
         elif today_rating <= 2:
             worst_info = weekday_info.get('worst_days', '')
-            reasons.append(f"⚠ {store_name}の{today_weekday}曜は弱い日（店舗傾向: {worst_info}）→ 回収傾向")
+            reasons.append(f"🚨 {store_name}の{today_weekday}曜は弱い日（店舗傾向: {worst_info}）→ 回収傾向")
 
     # === フォールバック ===
     if not reasons:
@@ -2711,9 +2711,9 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
                     cause = "確率は悪くないが爆発力が不足"
 
                 if good_rate >= 0.7:
-                    rec['reasons'].append(f"⚠ 前日は店舗内で控えめ: {' / '.join(warnings)} → {cause}（ただし好調率{good_rate:.0%}なので本日期待）")
+                    rec['reasons'].append(f"🚨 前日は店舗内で控えめ: {' / '.join(warnings)} → {cause}（ただし好調率{good_rate:.0%}なので本日期待）")
                 else:
-                    rec['reasons'].append(f"⚠ 前日は店舗内で控えめ: {' / '.join(warnings)} → {cause}")
+                    rec['reasons'].append(f"🚨 前日は店舗内で控えめ: {' / '.join(warnings)} → {cause}")
 
     return recommendations
 

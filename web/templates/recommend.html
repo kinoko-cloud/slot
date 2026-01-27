@@ -210,7 +210,7 @@
                         <div class="reason-line-top reason-today">{{ reason|safe }}</div>
                         {% elif '📅' in reason %}
                         <div class="reason-line-top reason-weekday">{{ reason|safe }}</div>
-                        {% elif '⚠' in reason %}
+                        {% elif '🚨' in reason %}
                         <div class="reason-line-top reason-warn">{{ reason|safe }}</div>
                         {% else %}
                         <div class="reason-line-top">{{ reason|safe }}</div>
@@ -279,7 +279,7 @@
                     {% if rec.reasons and is_open %}
                     <div class="reason-main">
                         {% for reason in rec.reasons[:2] %}
-                        <div class="reason-line {% if '⚠' in reason %}reason-warn{% elif '📊' in reason %}reason-rank{% elif '🔄' in reason %}reason-pattern{% elif '📅' in reason %}reason-weekday{% elif '📈' in reason %}reason-stats{% elif '💡' in reason %}reason-confidence{% endif %}">{{ reason|safe }}</div>
+                        <div class="reason-line {% if '🚨' in reason %}reason-warn{% elif '📊' in reason %}reason-rank{% elif '🔄' in reason %}reason-pattern{% elif '📅' in reason %}reason-weekday{% elif '📈' in reason %}reason-stats{% elif '💡' in reason %}reason-confidence{% endif %}">{{ reason|safe }}</div>
                         {% endfor %}
                     </div>
                     {% endif %}
