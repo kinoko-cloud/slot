@@ -793,22 +793,39 @@ footer {
     font-weight: 500;
 }
 
+/* 未稼働表示 */
+.no-today-data {
+    font-size: 0.9em;
+    color: #888;
+    font-style: italic;
+}
+
 /* 推奨理由プレビュー */
 .reasons-preview {
     display: flex;
     align-items: center;
     gap: 6px;
-    padding: 6px 0;
-    margin-top: 5px;
+    padding: 6px 8px;
+    margin-top: 6px;
+    background: rgba(255, 165, 2, 0.08);
+    border-radius: 6px;
 }
 
 .reason-icon {
     font-size: 0.9em;
+    flex-shrink: 0;
 }
 
 .reason-text {
-    font-size: 0.85em;
+    font-size: 0.8em;
     color: #ffa502;
+    flex: 1;
+}
+
+.reason-more {
+    font-size: 0.7em;
+    color: #888;
+    flex-shrink: 0;
 }
 
 /* 空き状態 */

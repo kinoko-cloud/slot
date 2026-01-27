@@ -21,7 +21,7 @@
             <div class="update-info">
                 
                 <span class="data-source">
-                    データ取得: <span id="update-time">14:42</span>
+                    データ取得: <span id="update-time">14:53</span>
                 </span>
                 <span class="cache-badge gas">GAS</span>
                 
@@ -30,8 +30,8 @@
             <!-- 空き状況サマリ -->
             
             <div class="availability-summary">
-                <span class="avail-empty" onclick="filterUnits('empty')">空き 3台</span>
-                <span class="avail-playing" onclick="filterUnits('playing')">遊技中 11台</span>
+                <span class="avail-empty" onclick="filterUnits('empty')">空き 4台</span>
+                <span class="avail-playing" onclick="filterUnits('playing')">遊技中 10台</span>
                 <span class="avail-all" onclick="filterUnits('all')">全て</span>
             </div>
             
@@ -75,7 +75,7 @@
             <section class="recommendations top">
                 <h2>推奨台</h2>
                 
-                <div class="unit-card rank-c avail-card-empty" data-availability="空き" onclick="toggleDetails(this)">
+                <div class="unit-card rank-b avail-card-empty" data-availability="空き" onclick="toggleDetails(this)">
 
                     <!-- メインヘッダー: 台番号 + 機種名 + 空き状況 + ランク -->
                     <div class="unit-main-header">
@@ -86,7 +86,7 @@
                             <span class="avail-badge-lg empty">空き</span>
                             
                         
-                        <span class="rank-badge-lg" style="background-color: #70a1ff">C</span>
+                        <span class="rank-badge-lg" style="background-color: #2ed573">B</span>
                         <span class="expand-icon">▼</span>
                     </div>
 
@@ -95,6 +95,10 @@
                         
                         <!-- 本日も昨日もデータなしの場合は過去データを表示 -->
                         
+                        <div class="data-cell">
+                            <span class="data-label">7日平均</span>
+                            <span class="data-value">25ART</span>
+                        </div>
                         <div class="no-data-inline">
                             
                             <span class="target-badge">空き</span>
@@ -109,11 +113,19 @@
                         
                         <span class="past-eval">
                             過去7日: <strong style="color: #70a1ff">C</strong>
-                            (平均0ART)
+                            (平均25.0ART)
                         </span>
                     </div>
 
                     <!-- 推奨理由（具体的に） -->
+                    
+                    <div class="reason-main">
+                        
+                        <div class="reason-line">昨日マイナス → 設定変更で天井短縮の可能性</div>
+                        
+                        <div class="reason-line">本日データで評価上昇（C→B）</div>
+                        
+                    </div>
                     
 
                     <!-- 詳細（クリックで展開） -->
@@ -127,9 +139,13 @@
                             </div>
                             <div class="detail-section">
                                 <div class="detail-title">過去7日間</div>
-                                <div class="detail-item">平均ART: 0回/日</div>
+                                <div class="detail-item">平均ART: 25.0回/日</div>
                                 
                                 
+                                <div class="detail-item minus">1日連続マイナス → 設定上げ期待</div>
+                                
+                                
+                                <div class="detail-item">昨日ART: 25回</div>
                                 
                             </div>
                         </div>
@@ -141,7 +157,7 @@
 
                     <!-- メインヘッダー: 台番号 + 機種名 + 空き状況 + ランク -->
                     <div class="unit-main-header">
-                        <a href="/history/island_akihabara_sbj_1027.html" class="unit-id-large unit-id-link">1027</a>
+                        <a href="/history/island_akihabara_sbj_1031.html" class="unit-id-large unit-id-link">1031</a>
                         <span class="machine-name-sm">スーパーブラックジャック</span>
                         
                             
@@ -157,6 +173,10 @@
                         
                         <!-- 本日も昨日もデータなしの場合は過去データを表示 -->
                         
+                        <div class="data-cell">
+                            <span class="data-label">7日平均</span>
+                            <span class="data-value">50ART</span>
+                        </div>
                         <div class="no-data-inline">
                             
                             <span class="target-badge">空き</span>
@@ -171,7 +191,7 @@
                         
                         <span class="past-eval">
                             過去7日: <strong style="color: #70a1ff">C</strong>
-                            (平均0ART)
+                            (平均50.0ART)
                         </span>
                     </div>
 
@@ -189,9 +209,13 @@
                             </div>
                             <div class="detail-section">
                                 <div class="detail-title">過去7日間</div>
-                                <div class="detail-item">平均ART: 0回/日</div>
+                                <div class="detail-item">平均ART: 50.0回/日</div>
                                 
                                 
+                                <div class="detail-item minus">1日連続マイナス → 設定上げ期待</div>
+                                
+                                
+                                <div class="detail-item">昨日ART: 50回</div>
                                 
                             </div>
                         </div>
@@ -203,7 +227,7 @@
 
                     <!-- メインヘッダー: 台番号 + 機種名 + 空き状況 + ランク -->
                     <div class="unit-main-header">
-                        <a href="/history/island_akihabara_sbj_1030.html" class="unit-id-large unit-id-link">1030</a>
+                        <a href="/history/island_akihabara_sbj_1023.html" class="unit-id-large unit-id-link">1023</a>
                         <span class="machine-name-sm">スーパーブラックジャック</span>
                         
                             
@@ -219,6 +243,10 @@
                         
                         <!-- 本日も昨日もデータなしの場合は過去データを表示 -->
                         
+                        <div class="data-cell">
+                            <span class="data-label">7日平均</span>
+                            <span class="data-value">87ART</span>
+                        </div>
                         <div class="no-data-inline">
                             
                             <span class="target-badge">空き</span>
@@ -233,7 +261,7 @@
                         
                         <span class="past-eval">
                             過去7日: <strong style="color: #70a1ff">C</strong>
-                            (平均0ART)
+                            (平均87.0ART)
                         </span>
                     </div>
 
@@ -251,9 +279,13 @@
                             </div>
                             <div class="detail-section">
                                 <div class="detail-title">過去7日間</div>
-                                <div class="detail-item">平均ART: 0回/日</div>
+                                <div class="detail-item">平均ART: 87.0回/日</div>
                                 
                                 
+                                <div class="detail-item plus">1日連続プラス → 据え置き期待</div>
+                                
+                                
+                                <div class="detail-item">昨日ART: 87回</div>
                                 
                             </div>
                         </div>
@@ -267,6 +299,58 @@
             <section class="recommendations other">
                 <h2>その他の台</h2>
                 
+                <div class="unit-card-compact rank-c avail-card-empty" data-availability="空き" onclick="toggleDetails(this)">
+                    <div class="compact-row">
+                        <span class="unit-id-sm">1030</span>
+                        
+                            
+                            <span class="avail-sm empty">空</span>
+                            
+                        
+                        <span class="rank-sm" style="background-color: #70a1ff">C</span>
+
+                        
+                        <span class="compact-art past"><span class="art-num">95</span><span class="art-lbl">ART/日</span></span>
+                        
+                        <span class="expand-icon small">▼</span>
+                    </div>
+
+                    <div class="unit-details hidden">
+                        <div class="compact-details">
+                            
+                            <div>過去7日: 平均95.0ART</div>
+                            
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="unit-card-compact rank-b avail-card-playing" data-availability="遊技中" onclick="toggleDetails(this)">
+                    <div class="compact-row">
+                        <span class="unit-id-sm">1027</span>
+                        
+                            
+                            <span class="avail-sm playing">稼</span>
+                            
+                        
+                        <span class="rank-sm" style="background-color: #2ed573">B</span>
+
+                        
+                        <span class="compact-art past"><span class="art-num">31</span><span class="art-lbl">ART/日</span></span>
+                        
+                        <span class="expand-icon small">▼</span>
+                    </div>
+
+                    <div class="unit-details hidden">
+                        <div class="compact-details">
+                            
+                            <div>過去7日: 平均31.0ART</div>
+                            
+                            <div class="compact-reason">昨日マイナス → 設定変更で天井短縮の可能性</div>
+                            
+                        </div>
+                    </div>
+                </div>
+                
                 <div class="unit-card-compact rank-c avail-card-playing" data-availability="遊技中" onclick="toggleDetails(this)">
                     <div class="compact-row">
                         <span class="unit-id-sm">1015</span>
@@ -278,7 +362,7 @@
                         <span class="rank-sm" style="background-color: #70a1ff">C</span>
 
                         
-                        <span class="compact-data no-data">データなし</span>
+                        <span class="compact-art past"><span class="art-num">43</span><span class="art-lbl">ART/日</span></span>
                         
                         <span class="expand-icon small">▼</span>
                     </div>
@@ -286,107 +370,7 @@
                     <div class="unit-details hidden">
                         <div class="compact-details">
                             
-                            <div>過去7日: 平均0ART</div>
-                            
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="unit-card-compact rank-c avail-card-playing" data-availability="遊技中" onclick="toggleDetails(this)">
-                    <div class="compact-row">
-                        <span class="unit-id-sm">1016</span>
-                        
-                            
-                            <span class="avail-sm playing">稼</span>
-                            
-                        
-                        <span class="rank-sm" style="background-color: #70a1ff">C</span>
-
-                        
-                        <span class="compact-data no-data">データなし</span>
-                        
-                        <span class="expand-icon small">▼</span>
-                    </div>
-
-                    <div class="unit-details hidden">
-                        <div class="compact-details">
-                            
-                            <div>過去7日: 平均0ART</div>
-                            
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="unit-card-compact rank-c avail-card-playing" data-availability="遊技中" onclick="toggleDetails(this)">
-                    <div class="compact-row">
-                        <span class="unit-id-sm">1017</span>
-                        
-                            
-                            <span class="avail-sm playing">稼</span>
-                            
-                        
-                        <span class="rank-sm" style="background-color: #70a1ff">C</span>
-
-                        
-                        <span class="compact-data no-data">データなし</span>
-                        
-                        <span class="expand-icon small">▼</span>
-                    </div>
-
-                    <div class="unit-details hidden">
-                        <div class="compact-details">
-                            
-                            <div>過去7日: 平均0ART</div>
-                            
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="unit-card-compact rank-c avail-card-playing" data-availability="遊技中" onclick="toggleDetails(this)">
-                    <div class="compact-row">
-                        <span class="unit-id-sm">1018</span>
-                        
-                            
-                            <span class="avail-sm playing">稼</span>
-                            
-                        
-                        <span class="rank-sm" style="background-color: #70a1ff">C</span>
-
-                        
-                        <span class="compact-data no-data">データなし</span>
-                        
-                        <span class="expand-icon small">▼</span>
-                    </div>
-
-                    <div class="unit-details hidden">
-                        <div class="compact-details">
-                            
-                            <div>過去7日: 平均0ART</div>
-                            
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="unit-card-compact rank-c avail-card-playing" data-availability="遊技中" onclick="toggleDetails(this)">
-                    <div class="compact-row">
-                        <span class="unit-id-sm">1020</span>
-                        
-                            
-                            <span class="avail-sm playing">稼</span>
-                            
-                        
-                        <span class="rank-sm" style="background-color: #70a1ff">C</span>
-
-                        
-                        <span class="compact-data no-data">データなし</span>
-                        
-                        <span class="expand-icon small">▼</span>
-                    </div>
-
-                    <div class="unit-details hidden">
-                        <div class="compact-details">
-                            
-                            <div>過去7日: 平均0ART</div>
+                            <div>過去7日: 平均43.0ART</div>
                             
                         </div>
                     </div>
@@ -403,7 +387,7 @@
                         <span class="rank-sm" style="background-color: #70a1ff">C</span>
 
                         
-                        <span class="compact-data no-data">データなし</span>
+                        <span class="compact-art past"><span class="art-num">47</span><span class="art-lbl">ART/日</span></span>
                         
                         <span class="expand-icon small">▼</span>
                     </div>
@@ -411,7 +395,107 @@
                     <div class="unit-details hidden">
                         <div class="compact-details">
                             
-                            <div>過去7日: 平均0ART</div>
+                            <div>過去7日: 平均47.0ART</div>
+                            
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="unit-card-compact rank-c avail-card-playing" data-availability="遊技中" onclick="toggleDetails(this)">
+                    <div class="compact-row">
+                        <span class="unit-id-sm">1016</span>
+                        
+                            
+                            <span class="avail-sm playing">稼</span>
+                            
+                        
+                        <span class="rank-sm" style="background-color: #70a1ff">C</span>
+
+                        
+                        <span class="compact-art past"><span class="art-num">76</span><span class="art-lbl">ART/日</span></span>
+                        
+                        <span class="expand-icon small">▼</span>
+                    </div>
+
+                    <div class="unit-details hidden">
+                        <div class="compact-details">
+                            
+                            <div>過去7日: 平均76.0ART</div>
+                            
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="unit-card-compact rank-c avail-card-playing" data-availability="遊技中" onclick="toggleDetails(this)">
+                    <div class="compact-row">
+                        <span class="unit-id-sm">1017</span>
+                        
+                            
+                            <span class="avail-sm playing">稼</span>
+                            
+                        
+                        <span class="rank-sm" style="background-color: #70a1ff">C</span>
+
+                        
+                        <span class="compact-art past"><span class="art-num">74</span><span class="art-lbl">ART/日</span></span>
+                        
+                        <span class="expand-icon small">▼</span>
+                    </div>
+
+                    <div class="unit-details hidden">
+                        <div class="compact-details">
+                            
+                            <div>過去7日: 平均74.0ART</div>
+                            
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="unit-card-compact rank-c avail-card-playing" data-availability="遊技中" onclick="toggleDetails(this)">
+                    <div class="compact-row">
+                        <span class="unit-id-sm">1018</span>
+                        
+                            
+                            <span class="avail-sm playing">稼</span>
+                            
+                        
+                        <span class="rank-sm" style="background-color: #70a1ff">C</span>
+
+                        
+                        <span class="compact-art past"><span class="art-num">73</span><span class="art-lbl">ART/日</span></span>
+                        
+                        <span class="expand-icon small">▼</span>
+                    </div>
+
+                    <div class="unit-details hidden">
+                        <div class="compact-details">
+                            
+                            <div>過去7日: 平均73.0ART</div>
+                            
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="unit-card-compact rank-c avail-card-playing" data-availability="遊技中" onclick="toggleDetails(this)">
+                    <div class="compact-row">
+                        <span class="unit-id-sm">1020</span>
+                        
+                            
+                            <span class="avail-sm playing">稼</span>
+                            
+                        
+                        <span class="rank-sm" style="background-color: #70a1ff">C</span>
+
+                        
+                        <span class="compact-art past"><span class="art-num">77</span><span class="art-lbl">ART/日</span></span>
+                        
+                        <span class="expand-icon small">▼</span>
+                    </div>
+
+                    <div class="unit-details hidden">
+                        <div class="compact-details">
+                            
+                            <div>過去7日: 平均77.0ART</div>
                             
                         </div>
                     </div>
@@ -428,7 +512,7 @@
                         <span class="rank-sm" style="background-color: #70a1ff">C</span>
 
                         
-                        <span class="compact-data no-data">データなし</span>
+                        <span class="compact-art past"><span class="art-num">71</span><span class="art-lbl">ART/日</span></span>
                         
                         <span class="expand-icon small">▼</span>
                     </div>
@@ -436,32 +520,7 @@
                     <div class="unit-details hidden">
                         <div class="compact-details">
                             
-                            <div>過去7日: 平均0ART</div>
-                            
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="unit-card-compact rank-c avail-card-playing" data-availability="遊技中" onclick="toggleDetails(this)">
-                    <div class="compact-row">
-                        <span class="unit-id-sm">1023</span>
-                        
-                            
-                            <span class="avail-sm playing">稼</span>
-                            
-                        
-                        <span class="rank-sm" style="background-color: #70a1ff">C</span>
-
-                        
-                        <span class="compact-data no-data">データなし</span>
-                        
-                        <span class="expand-icon small">▼</span>
-                    </div>
-
-                    <div class="unit-details hidden">
-                        <div class="compact-details">
-                            
-                            <div>過去7日: 平均0ART</div>
+                            <div>過去7日: 平均71.0ART</div>
                             
                         </div>
                     </div>
@@ -478,7 +537,7 @@
                         <span class="rank-sm" style="background-color: #70a1ff">C</span>
 
                         
-                        <span class="compact-data no-data">データなし</span>
+                        <span class="compact-art past"><span class="art-num">84</span><span class="art-lbl">ART/日</span></span>
                         
                         <span class="expand-icon small">▼</span>
                     </div>
@@ -486,7 +545,7 @@
                     <div class="unit-details hidden">
                         <div class="compact-details">
                             
-                            <div>過去7日: 平均0ART</div>
+                            <div>過去7日: 平均84.0ART</div>
                             
                         </div>
                     </div>
@@ -503,7 +562,7 @@
                         <span class="rank-sm" style="background-color: #70a1ff">C</span>
 
                         
-                        <span class="compact-data no-data">データなし</span>
+                        <span class="compact-art past"><span class="art-num">117</span><span class="art-lbl">ART/日</span></span>
                         
                         <span class="expand-icon small">▼</span>
                     </div>
@@ -511,32 +570,7 @@
                     <div class="unit-details hidden">
                         <div class="compact-details">
                             
-                            <div>過去7日: 平均0ART</div>
-                            
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="unit-card-compact rank-c avail-card-playing" data-availability="遊技中" onclick="toggleDetails(this)">
-                    <div class="compact-row">
-                        <span class="unit-id-sm">1031</span>
-                        
-                            
-                            <span class="avail-sm playing">稼</span>
-                            
-                        
-                        <span class="rank-sm" style="background-color: #70a1ff">C</span>
-
-                        
-                        <span class="compact-data no-data">データなし</span>
-                        
-                        <span class="expand-icon small">▼</span>
-                    </div>
-
-                    <div class="unit-details hidden">
-                        <div class="compact-details">
-                            
-                            <div>過去7日: 平均0ART</div>
+                            <div>過去7日: 平均117.0ART</div>
                             
                         </div>
                     </div>

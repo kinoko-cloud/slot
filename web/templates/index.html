@@ -69,8 +69,10 @@
                         {% if rec.art_count > 0 %}
                         <span class="art-main"><span class="art-num-big">{{ rec.art_count }}</span><span class="art-label">ART</span></span>
                         {% if rec.art_prob > 0 %}<span class="art-prob {% if rec.art_prob <= 100 %}excellent{% elif rec.art_prob <= 130 %}good{% elif rec.art_prob >= 200 %}bad{% endif %}" title="合成確率">1/{{ rec.art_prob|int }}</span>{% endif %}
+                        {% elif rec.avg_art_7days > 0 %}
+                        <span class="art-main past"><span class="art-num-big">{{ rec.avg_art_7days|round(1) }}</span><span class="art-label">回/日 (7日平均)</span></span>
                         {% else %}
-                        <span class="art-main past"><span class="art-num-big">{{ rec.avg_art_7days|round(0)|int }}</span><span class="art-label">ART(7日平均)</span></span>
+                        <span class="no-today-data">本日未稼働</span>
                         {% endif %}
                     </div>
                     <div class="top3-stats-sub">
@@ -78,12 +80,18 @@
                         {% if rec.total_games > 0 %}<span class="total-games">累計<span class="num">{{ '{:,}'.format(rec.total_games) }}</span>G</span>{% endif %}
                         {% if rec.max_medals and rec.max_medals > 0 %}{% set badge = medals_badge(rec.max_medals) %}<span class="max-medals-top {% if badge %}{{ badge.class }}{% endif %}">{% if badge %}<span class="medals-icon">{{ badge.icon }}</span>{% endif %}最大<span class="num">{{ '{:,}'.format(rec.max_medals) }}</span>枚</span>{% endif %}
                     </div>
-                    {% if rec.reasons %}
                     <div class="reasons-preview">
+                        {% if rec.reasons %}
                         <span class="reason-icon">💡</span>
-                        <span class="reason-text">{{ rec.reasons[0][:40] }}{% if rec.reasons[0]|length > 40 %}...{% endif %}</span>
+                        <span class="reason-text">{{ rec.reasons[0][:50] }}{% if rec.reasons[0]|length > 50 %}...{% endif %}</span>
+                        {% if rec.reasons|length > 1 %}
+                        <span class="reason-more">他{{ rec.reasons|length - 1 }}件</span>
+                        {% endif %}
+                        {% else %}
+                        <span class="reason-icon">💡</span>
+                        <span class="reason-text">過去データに基づくおすすめ台</span>
+                        {% endif %}
                     </div>
-                    {% endif %}
                 </a>
                 {% endfor %}
             </section>
