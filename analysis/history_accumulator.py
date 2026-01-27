@@ -1,0 +1,309 @@
+#!/usr/bin/env python3
+"""日次データ蓄積 — 毎日のdaily JSONから台ごとの履歴を蓄積する
+
+data/history/{store_key}/{unit_id}.json に追記していく。
+これにより、外部ソースの保持期間（7-14日）を超えた長期データが使える。
+"""
+import json
+import os
+from datetime import datetime
+from pathlib import Path
+
+HISTORY_DIR = Path(__file__).parent.parent / 'data' / 'history'
+
+
+def accumulate_from_daily(daily_data: dict, machine_key: str = 'sbj'):
+    """daily JSONデータから各台の履歴を蓄積する
+
+    Args:
+        daily_data: load_daily_data()の戻り値
+        machine_key: 機種キー
+
+    Returns:
+        {'new_entries': int, 'updated_units': int}
+    """
+    stores = daily_data.get('stores', {})
+    new_entries = 0
+    updated_units = 0
+
+    for store_key, store_data in stores.items():
+        units = store_data.get('units', [])
+        for unit_data in units:
+            unit_id = str(unit_data.get('unit_id', ''))
+            days = unit_data.get('days', [])
+            if not unit_id or not days:
+                continue
+
+            added = _accumulate_unit(store_key, unit_id, days, machine_key)
+            if added > 0:
+                updated_units += 1
+                new_entries += added
+
+    return {'new_entries': new_entries, 'updated_units': updated_units}
+
+
+def _accumulate_unit(store_key: str, unit_id: str, days: list, machine_key: str) -> int:
+    """1台分のデータを蓄積する"""
+    store_dir = HISTORY_DIR / store_key
+    store_dir.mkdir(parents=True, exist_ok=True)
+
+    file_path = store_dir / f'{unit_id}.json'
+
+    # 既存データ読み込み
+    existing = {'store_key': store_key, 'unit_id': unit_id, 'machine_key': machine_key, 'days': []}
+    if file_path.exists():
+        try:
+            with open(file_path, 'r', encoding='utf-8') as f:
+                existing = json.load(f)
+        except (json.JSONDecodeError, IOError):
+            pass
+
+    # 既存日付のセット
+    existing_dates = {d.get('date') for d in existing.get('days', [])}
+
+    # 新規日付のみ追加
+    added = 0
+    good_prob = 130 if machine_key == 'sbj' else 330
+
+    for day in days:
+        date = day.get('date', '')
+        if not date or date in existing_dates:
+            continue
+
+        art = day.get('art', 0)
+        games = day.get('total_start', 0)
+        prob = games / art if art > 0 and games > 0 else 0
+
+        entry = {
+            'date': date,
+            'art': art,
+            'rb': day.get('rb', 0),
+            'games': games,
+            'prob': round(prob, 1) if prob > 0 else 0,
+            'is_good': prob > 0 and prob <= good_prob,
+        }
+
+        # 当たり履歴があれば含める
+        history = day.get('history', [])
+        if history:
+            entry['history'] = history
+
+        existing['days'].append(entry)
+        existing_dates.add(date)
+        added += 1
+
+    if added > 0:
+        # 日付順ソート（古い順）
+        existing['days'].sort(key=lambda x: x.get('date', ''))
+        existing['last_updated'] = datetime.now().isoformat()
+
+        with open(file_path, 'w', encoding='utf-8') as f:
+            json.dump(existing, f, ensure_ascii=False, indent=1)
+
+    return added
+
+
+def load_unit_history(store_key: str, unit_id: str) -> dict:
+    """蓄積済みの台履歴を読み込む"""
+    file_path = HISTORY_DIR / store_key / f'{unit_id}.json'
+    if file_path.exists():
+        try:
+            with open(file_path, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except (json.JSONDecodeError, IOError):
+            pass
+    return {'store_key': store_key, 'unit_id': unit_id, 'days': []}
+
+
+def get_analysis_phase(unit_history: dict) -> int:
+    """蓄積日数に応じた分析フェーズを返す
+
+    Phase 1: 1-7日（基本分析）
+    Phase 2: 8-14日（設定変更周期・交互パターン）
+    Phase 3: 15-21日（週間パターン・据え置き率）
+    Phase 4: 22-30日（月間トレンド・回帰分析）
+    Phase 5: 31日+（完全統計）
+    """
+    days = len(unit_history.get('days', []))
+    if days >= 31:
+        return 5
+    if days >= 22:
+        return 4
+    if days >= 15:
+        return 3
+    if days >= 8:
+        return 2
+    return 1
+
+
+def analyze_setting_change_cycle(unit_history: dict, machine_key: str = 'sbj') -> dict:
+    """設定変更周期分析 — 不調N日後に好調になる確率
+
+    Returns:
+        {
+            'bad_to_good': {1: {'total': 5, 'good': 4, 'rate': 0.8}, 2: {...}, ...},
+            'good_to_good': {1: {'total': 6, 'good': 5, 'rate': 0.83}, ...},
+            'avg_cycle': 3.2,  # 好調→不調→好調の平均周期日数
+            'alternating_score': 0.7,  # 交互パターンスコア (0-1)
+        }
+    """
+    days = unit_history.get('days', [])
+    if len(days) < 3:
+        return {}
+
+    good_prob = 130 if machine_key == 'sbj' else 330
+
+    # 日付順（古い→新しい）にソート済みのはず
+    sorted_days = sorted(days, key=lambda x: x.get('date', ''))
+
+    # 好調/不調のシーケンスを作成
+    sequence = []
+    for d in sorted_days:
+        prob = d.get('prob', 0)
+        if prob > 0:
+            sequence.append(prob <= good_prob)  # True=好調, False=不調
+
+    if len(sequence) < 3:
+        return {}
+
+    # 不調N日連続後→翌日好調の確率
+    bad_to_good = {}
+    for max_streak in range(1, min(8, len(sequence))):
+        total = 0
+        good = 0
+        for i in range(max_streak, len(sequence)):
+            # i-max_streak ~ i-1 が全部不調か？
+            all_bad = all(not sequence[j] for j in range(i - max_streak, i))
+            # さらに、max_streak+1日前が好調か（連続不調の開始点）
+            if max_streak < i and not all(not sequence[j] for j in range(i - max_streak - 1, i)):
+                # ちょうどmax_streak日連続不調
+                pass
+            if all_bad:
+                # i-max_streak-1日目が好調（=ちょうどN日不調の開始）
+                if max_streak == i or (i > max_streak and sequence[i - max_streak - 1]):
+                    total += 1
+                    if sequence[i]:
+                        good += 1
+        if total > 0:
+            bad_to_good[max_streak] = {
+                'total': total, 'good': good,
+                'rate': round(good / total, 2)
+            }
+
+    # 好調N日連続後→翌日も好調の確率
+    good_to_good = {}
+    for max_streak in range(1, min(8, len(sequence))):
+        total = 0
+        good = 0
+        for i in range(max_streak, len(sequence)):
+            all_good = all(sequence[j] for j in range(i - max_streak, i))
+            if all_good:
+                if max_streak == i or (i > max_streak and not sequence[i - max_streak - 1]):
+                    total += 1
+                    if sequence[i]:
+                        good += 1
+        if total > 0:
+            good_to_good[max_streak] = {
+                'total': total, 'good': good,
+                'rate': round(good / total, 2)
+            }
+
+    # 交互パターンスコア
+    alternations = 0
+    for i in range(1, len(sequence)):
+        if sequence[i] != sequence[i - 1]:
+            alternations += 1
+    alternating_score = round(alternations / (len(sequence) - 1), 2) if len(sequence) > 1 else 0
+
+    # 好調→不調→好調の平均周期
+    good_indices = [i for i, s in enumerate(sequence) if s]
+    if len(good_indices) >= 2:
+        gaps = [good_indices[i+1] - good_indices[i] for i in range(len(good_indices)-1)]
+        avg_cycle = round(sum(gaps) / len(gaps), 1)
+    else:
+        avg_cycle = 0
+
+    return {
+        'bad_to_good': bad_to_good,
+        'good_to_good': good_to_good,
+        'alternating_score': alternating_score,
+        'avg_cycle': avg_cycle,
+        'total_days': len(sequence),
+        'good_days': sum(1 for s in sequence if s),
+        'phase': get_analysis_phase(unit_history),
+    }
+
+
+def analyze_weekday_pattern(unit_history: dict, machine_key: str = 'sbj') -> dict:
+    """曜日別好調率（Phase 3+）"""
+    days = unit_history.get('days', [])
+    good_prob = 130 if machine_key == 'sbj' else 330
+
+    weekday_stats = {i: {'total': 0, 'good': 0} for i in range(7)}
+
+    for d in days:
+        date_str = d.get('date', '')
+        prob = d.get('prob', 0)
+        if not date_str or prob <= 0:
+            continue
+        try:
+            dt = datetime.strptime(date_str, '%Y-%m-%d')
+            wd = dt.weekday()
+            weekday_stats[wd]['total'] += 1
+            if prob <= good_prob:
+                weekday_stats[wd]['good'] += 1
+        except ValueError:
+            continue
+
+    result = {}
+    weekday_names = ['月', '火', '水', '木', '金', '土', '日']
+    for wd, stats in weekday_stats.items():
+        if stats['total'] > 0:
+            result[weekday_names[wd]] = {
+                'total': stats['total'],
+                'good': stats['good'],
+                'rate': round(stats['good'] / stats['total'], 2),
+            }
+
+    return result
+
+
+if __name__ == '__main__':
+    """直接実行で蓄積処理を実行"""
+    import sys
+    sys.path.insert(0, str(Path(__file__).parent.parent))
+
+    from analysis.recommender import load_daily_data
+    from config.rankings import MACHINES
+
+    total_new = 0
+    total_units = 0
+
+    for machine_key in MACHINES:
+        daily = load_daily_data(machine_key=machine_key)
+        if daily:
+            result = accumulate_from_daily(daily, machine_key)
+            total_new += result['new_entries']
+            total_units += result['updated_units']
+            print(f"{machine_key}: {result['new_entries']}件追加 ({result['updated_units']}台)")
+
+    print(f"\n合計: {total_new}件追加 ({total_units}台)")
+
+    # サンプル分析
+    sample_dirs = list(HISTORY_DIR.iterdir())
+    if sample_dirs:
+        store_dir = sample_dirs[0]
+        files = list(store_dir.glob('*.json'))
+        if files:
+            hist = load_unit_history(store_dir.name, files[0].stem)
+            phase = get_analysis_phase(hist)
+            print(f"\nサンプル: {store_dir.name}/{files[0].stem}")
+            print(f"  蓄積日数: {len(hist.get('days', []))} → Phase {phase}")
+
+            cycle = analyze_setting_change_cycle(hist, 'sbj')
+            if cycle:
+                print(f"  交互スコア: {cycle.get('alternating_score', 0)}")
+                print(f"  平均周期: {cycle.get('avg_cycle', 0)}日")
+                btg = cycle.get('bad_to_good', {})
+                for n, stats in btg.items():
+                    print(f"  {n}日不調→翌日好調: {stats['good']}/{stats['total']}回 ({stats['rate']:.0%})")

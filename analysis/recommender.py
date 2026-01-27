@@ -417,7 +417,7 @@ def calculate_unit_historical_performance(days: List[dict], machine_key: str = '
     分析結果: 常に的中する台と常に外れる台で好調率に明確な差がある。
 
     Args:
-        days: 過去日のデータリスト
+        days: 過去日のデータリスト（total_start or games キーに対応）
         machine_key: 機種キー
 
     Returns:
@@ -430,6 +430,10 @@ def calculate_unit_historical_performance(days: List[dict], machine_key: str = '
             'consecutive_bad': int,     # 直近の連続不調日数
         }
     """
+    def _get_games(day):
+        """gamesフィールド取得 — 蓄積DB(games) or daily JSON(total_start)"""
+        return day.get('games', 0) or day.get('total_start', 0)
+
     # 機種別の好調判定閾値
     good_prob_threshold = 130 if machine_key == 'sbj' else 330  # ART確率がこれ以下なら好調
     bad_prob_threshold = 150 if machine_key == 'sbj' else 366   # ART確率がこれ以上なら不調
@@ -445,7 +449,7 @@ def calculate_unit_historical_performance(days: List[dict], machine_key: str = '
 
     for day in sorted_days:
         art = day.get('art', 0)
-        games = day.get('total_start', 0)
+        games = _get_games(day)
         if art > 0 and games > 0:
             prob = games / art
             probs.append(prob)
@@ -458,7 +462,7 @@ def calculate_unit_historical_performance(days: List[dict], machine_key: str = '
     # 直近の連続不調日数を計算
     for day in sorted_days:
         art = day.get('art', 0)
-        games = day.get('total_start', 0)
+        games = _get_games(day)
         if art > 0 and games > 0:
             prob = games / art
             if prob >= bad_prob_threshold:
@@ -478,9 +482,9 @@ def calculate_unit_historical_performance(days: List[dict], machine_key: str = '
         curr = sorted_days[i]
         nxt = sorted_days[i + 1]  # nxtは前日
         curr_art = curr.get('art', 0)
-        curr_games = curr.get('total_start', 0)
+        curr_games = _get_games(curr)
         nxt_art = nxt.get('art', 0)
-        nxt_games = nxt.get('total_start', 0)
+        nxt_games = _get_games(nxt)
         if nxt_art > 0 and nxt_games > 0:
             nxt_prob = nxt_games / nxt_art
             if nxt_prob <= good_prob_threshold:
@@ -1460,6 +1464,51 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
         if sub_parts:
             reasons.append(f"📈 {' / '.join(sub_parts)}")
 
+        # 設定変更周期情報（Phase 2+）
+        cycle_analysis = kwargs.get('cycle_analysis', {})
+        analysis_phase = kwargs.get('analysis_phase', 1)
+        if cycle_analysis and analysis_phase >= 2:
+            cycle_parts = []
+            # 現在の連続不調日数に基づく「次は好調」確率
+            if consecutive_minus > 0:
+                btg = cycle_analysis.get('bad_to_good', {})
+                key = min(consecutive_minus, max(btg.keys())) if btg else 0
+                if key and key in btg:
+                    rate = btg[key]
+                    if rate['total'] >= 2:
+                        cycle_parts.append(f"{key}日不調→翌日好調: {rate['good']}/{rate['total']}回({rate['rate']:.0%})")
+            # 連続好調中なら据え置き率
+            if consecutive_plus > 0:
+                gtg = cycle_analysis.get('good_to_good', {})
+                key = min(consecutive_plus, max(gtg.keys())) if gtg else 0
+                if key and key in gtg:
+                    rate = gtg[key]
+                    if rate['total'] >= 2:
+                        cycle_parts.append(f"{key}日連続好調→翌日も: {rate['good']}/{rate['total']}回({rate['rate']:.0%})")
+            # 交互パターン
+            alt_score = cycle_analysis.get('alternating_score', 0)
+            if alt_score >= 0.6 and cycle_analysis.get('total_days', 0) >= 7:
+                cycle_parts.append(f"交互パターン傾向あり({alt_score:.0%})")
+            # 平均周期
+            avg_cycle = cycle_analysis.get('avg_cycle', 0)
+            if avg_cycle > 0 and cycle_analysis.get('total_days', 0) >= 7:
+                cycle_parts.append(f"好調周期: 平均{avg_cycle:.1f}日間隔")
+            if cycle_parts:
+                reasons.append(f"🔁 {' / '.join(cycle_parts)}")
+
+        # 曜日パターン（Phase 3+）
+        weekday_pattern = kwargs.get('weekday_pattern', {})
+        if weekday_pattern and analysis_phase >= 3:
+            wd_data = weekday_pattern.get(today_weekday, {})
+            if wd_data.get('total', 0) >= 2:
+                wd_rate = wd_data['rate']
+                wd_total = wd_data['total']
+                wd_good = wd_data['good']
+                if wd_rate >= 0.7:
+                    reasons.append(f"📅 {today_weekday}曜の好調率: {wd_good}/{wd_total}回({wd_rate:.0%}) → 期待大")
+                elif wd_rate <= 0.3:
+                    reasons.append(f"⚠ {today_weekday}曜の好調率: {wd_good}/{wd_total}回({wd_rate:.0%}) → 要注意")
+
         # なぜ今日も好調と見るかの根拠を追加
         today_confidence_parts = []
         if today_rating >= 4:
@@ -1883,12 +1932,46 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
             trend_bonus += 3
 
         # === 【改善1】台番号ごとの的中率（過去実績）をスコアに反映 ===
+        # 蓄積DBがあればそちらを優先（長期データ）
+        from analysis.history_accumulator import (
+            load_unit_history as load_accumulated_history,
+            get_analysis_phase, analyze_setting_change_cycle,
+            analyze_weekday_pattern,
+        )
+        accumulated = load_accumulated_history(store_key, unit_id)
+        analysis_phase = get_analysis_phase(accumulated)
+        cycle_analysis = {}
+        weekday_pattern = {}
+
+        # 蓄積データがあれば、unit_historyのdaysをマージ
+        if accumulated.get('days') and unit_history:
+            # 蓄積DBの日付を優先、unit_historyで補完
+            acc_dates = {d['date'] for d in accumulated['days']}
+            for d in unit_history.get('days', []):
+                if d.get('date') and d['date'] not in acc_dates:
+                    accumulated['days'].append({
+                        'date': d['date'],
+                        'art': d.get('art', 0),
+                        'games': d.get('total_start', 0),
+                        'prob': d.get('total_start', 0) / d.get('art', 1) if d.get('art', 0) > 0 else 0,
+                        'is_good': (d.get('total_start', 0) / d.get('art', 1) if d.get('art', 0) > 0 else 999) <= (130 if machine_key == 'sbj' else 330),
+                    })
+            accumulated['days'].sort(key=lambda x: x.get('date', ''))
+            analysis_phase = get_analysis_phase(accumulated)
+
+        # Phase 2+: 設定変更周期分析
+        if analysis_phase >= 2:
+            cycle_analysis = analyze_setting_change_cycle(accumulated, machine_key)
+        # Phase 3+: 曜日別パターン
+        if analysis_phase >= 3:
+            weekday_pattern = analyze_weekday_pattern(accumulated, machine_key)
+
         # 過去の好調率が高い台にボーナス、低い台にペナルティ
         historical_bonus = 0
         historical_perf = {}
-        if unit_history:
-            unit_days_for_perf = unit_history.get('days', [])
-            historical_perf = calculate_unit_historical_performance(unit_days_for_perf, machine_key)
+        perf_days = accumulated.get('days', []) if accumulated.get('days') else (unit_history.get('days', []) if unit_history else [])
+        if perf_days:
+            historical_perf = calculate_unit_historical_performance(perf_days, machine_key)
             historical_bonus = historical_perf.get('score_bonus', 0)
 
         # === 【改善2】前日不調→翌日狙い目の重み付け強化 ===
@@ -2008,6 +2091,8 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
             historical_perf=historical_perf, activity_data=activity_data,
             medal_balance_penalty=medal_balance_penalty,
             data_date_label=data_date_label, prev_date_label=prev_date_label,
+            cycle_analysis=cycle_analysis, weekday_pattern=weekday_pattern,
+            analysis_phase=analysis_phase,
         )
 
         # リアルタイム空き状況がある場合は上書き

@@ -1243,6 +1243,18 @@ def main():
 
     # データ整合性チェック
     run_data_integrity_check()
+
+    # 日次データ蓄積（history DB更新）
+    try:
+        from analysis.history_accumulator import accumulate_from_daily
+        for mk in MACHINES:
+            daily = load_daily_data(machine_key=mk)
+            if daily:
+                result = accumulate_from_daily(daily, mk)
+                if result['new_entries'] > 0:
+                    print(f"  📦 {mk}: {result['new_entries']}件蓄積 ({result['updated_units']}台)")
+    except Exception as e:
+        print(f"  ⚠ 蓄積エラー: {e}")
     print()
 
     # 出力ディレクトリを作成
