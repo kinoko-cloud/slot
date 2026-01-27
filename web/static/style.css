@@ -2830,6 +2830,27 @@ strong.minus {
 .diff-medals-lg.plus { color: #2ed573; }
 .diff-medals-lg.minus { color: #ff6b6b; }
 
+.yesterday-card-inner {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.yesterday-card-left {
+    flex: 1;
+    min-width: 0;
+}
+
+.yesterday-card-right {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+}
+
+.sparkline {
+    display: block;
+}
+
 .yesterday-sub-stats {
     display: flex;
     flex-wrap: wrap;
@@ -2908,6 +2929,30 @@ strong.minus {
 
 .recent-games {
     color: #888;
+}
+
+/* 全おすすめリンク */
+.see-all-recs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid #333;
+}
+
+.see-all-link {
+    display: inline-block;
+    padding: 4px 10px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 12px;
+    color: #aaa;
+    text-decoration: none;
+    font-size: 0.8em;
+}
+
+.see-all-link:active {
+    background: rgba(255,255,255,0.12);
 }
 
 .recent-header {
@@ -4684,3 +4729,4 @@ strong.minus {
     background: rgba(255, 107, 107, 0.1);
     opacity: 0.75;
 }
+.build-time { font-size: 0.7em; color: #555; }

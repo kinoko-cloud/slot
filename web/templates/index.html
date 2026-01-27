@@ -118,6 +118,11 @@
                     </div>
                 </a>
                 {% endfor %}
+                <div class="see-all-recs">
+                    {% for link in recommend_links[:5] %}
+                    <a href="{{ url_for('recommend', store_key=link.store_key) }}" class="see-all-link">{{ link.icon }} {{ link.name }}</a>
+                    {% endfor %}
+                </div>
             </section>
             {% endif %}
 
@@ -150,6 +155,8 @@
                 <h2>{{ date_prefix }} {{ data_date_str }}の爆発台 TOP{{ yesterday_top10|length }}</h2>
                 {% for rec in yesterday_top10 %}
                 <a href="{{ url_for('recommend', store_key=rec.store_key) }}" class="yesterday-card">
+                    <div class="yesterday-card-inner">
+                    <div class="yesterday-card-left">
                     <div class="yesterday-header">
                         <span class="ranking-num-sm">#{{ loop.index }}</span>
                         <span class="machine-icon-sm">{{ rec.machine_icon }}</span>
@@ -199,6 +206,13 @@
                         {% endif %}
                     </div>
                     {% endif %}
+                    </div>{# /yesterday-card-left #}
+                    {% if rec.today_history and rec.today_history|length >= 3 %}
+                    <div class="yesterday-card-right">
+                        {{ sparkline(rec.today_history)|safe }}
+                    </div>
+                    {% endif %}
+                    </div>{# /yesterday-card-inner #}
                 </a>
                 {% endfor %}
             </section>
