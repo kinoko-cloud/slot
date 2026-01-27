@@ -424,7 +424,7 @@
             {% if all_stores %}
             <section class="store-directory">
                 <h2>🏢 {{ today_weekday }}曜日の店舗おすすめ度</h2>
-                <div class="store-directory-note">★が多いほど高設定が入りやすい曜日（過去データ分析）</div>
+                <div class="store-directory-note">店舗の曜日傾向（過去の出玉データから分析。台個別ではなく店舗全体の傾向）</div>
                 {% for store in all_stores %}
                 <div class="store-directory-card {% if store.today_rating >= 4 %}store-dir-good{% elif store.today_rating <= 2 %}store-dir-weak{% endif %}">
                     <div class="store-dir-header">
