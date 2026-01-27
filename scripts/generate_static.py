@@ -279,23 +279,29 @@ def generate_index(env):
                     if y_art and y_art > 0:
                         y_games = rec.get('yesterday_games', 0)
                         y_prob = y_games / y_art if y_art > 0 and y_games > 0 else 0
+                        # 差枚計算
+                        y_diff_medals = 0
+                        y_setting = ''
+                        y_setting_num = 0
+                        if y_art > 0 and y_games > 0:
+                            y_profit = calculate_expected_profit(y_games, y_art, key)
+                            y_diff_medals = y_profit.get('current_estimate', 0)
+                            y_si = y_profit.get('setting_info', {})
+                            y_setting = y_si.get('estimated_setting', '')
+                            y_setting_num = y_si.get('setting_num', 0)
                         yesterday_top10.append({
                             'unit_id': rec['unit_id'],
                             'store_name': rec['store_name'],
                             'store_key': store_key,
                             'machine_icon': machine['icon'],
                             'machine_name': machine.get('display_name', machine['short_name']),
-                            'yesterday_diff': rec.get('yesterday_diff', 0),
-                            'avg_art_7days': rec.get('avg_art_7days', 0),
                             'yesterday_art': y_art,
-                            'yesterday_rb': rec.get('yesterday_rb', 0),
                             'yesterday_games': y_games,
                             'yesterday_max_rensa': rec.get('yesterday_max_rensa', 0),
                             'yesterday_prob': y_prob,
-                            'yesterday_max_medals': rec.get('yesterday_max_medals', 0),
-                            'day_before_art': rec.get('day_before_art', 0),
-                            'max_medals': rec.get('max_medals', 0),
-                            'availability': rec.get('availability', ''),
+                            'diff_medals': y_diff_medals,
+                            'estimated_setting': y_setting,
+                            'setting_num': y_setting_num,
                         })
 
                 # 本日の爆発台（全台から収集、art_count > 0）
@@ -307,7 +313,7 @@ def generate_index(env):
                         # 差枚計算
                         diff_medals = 0
                         if t_art > 0 and t_games > 0:
-                            profit = calculate_expected_profit(t_games, t_art, machine_key)
+                            profit = calculate_expected_profit(t_games, t_art, key)
                             diff_medals = profit.get('current_estimate', 0)
                         today_top10.append({
                             'unit_id': rec['unit_id'],
@@ -340,8 +346,8 @@ def generate_index(env):
     top3_all.sort(key=top3_sort_key)
     top3 = top3_all[:3]
 
-    # 前日の爆発台: ART数でソート
-    yesterday_top10.sort(key=lambda x: -x['yesterday_art'])
+    # 前日の爆発台: 差枚でソート
+    yesterday_top10.sort(key=lambda x: (-x.get('diff_medals', 0), -x['yesterday_art']))
     yesterday_top10 = yesterday_top10[:10]
 
     # 本日の爆発台: 差枚でソート（推定差枚の多い順）
