@@ -1960,6 +1960,10 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
                 if unit.get('unit_id') == unit_id:
                     max_medals = unit.get('max_medals', 0)
                     final_start = unit.get('final_start', 0)
+                    # リアルタイムデータに当日履歴があればそちらを使う
+                    rt_history = unit.get('today_history')
+                    if rt_history and (not today_history or len(rt_history) > len(today_history)):
+                        today_history = rt_history
                     break
 
         # 現在のAT間G数を正しく計算（最終大当たりからのG数）
