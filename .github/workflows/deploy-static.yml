@@ -50,6 +50,7 @@ jobs:
           git config --local user.name "github-actions[bot]"
           git add docs/
           git diff --staged --quiet || git commit -m "chore: update static site $(date +'%Y-%m-%d %H:%M' -d '+9 hours')"
+          git pull --rebase origin main || true
           git push
 
   # GitHub Pages へのデプロイ（Cloudflare Pagesの代替/バックアップ）

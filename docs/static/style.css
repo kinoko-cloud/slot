@@ -142,6 +142,40 @@ header h1 {
     color: #ff6b6b;
 }
 
+.realtime-status.stale {
+    color: #ff6b6b;
+    font-weight: bold;
+}
+
+.realtime-status.warning {
+    color: #ffa502;
+}
+
+/* 古いデータ警告 */
+.stale-warning {
+    color: #ff6b6b;
+    font-size: 0.8em;
+    font-weight: bold;
+    margin-top: 4px;
+}
+
+.stale-notice {
+    color: #ffa502;
+    font-size: 0.8em;
+    margin-top: 4px;
+}
+
+.stale-warning-banner {
+    background: linear-gradient(135deg, #8b0000, #a00000);
+    color: #fff;
+    padding: 10px 15px;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 0.85em;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
 .refresh-btn {
     padding: 6px 12px;
     background: #3a3a5c;

@@ -67,19 +67,13 @@
                     </div>
                     {# === 本日のリアルタイムデータ === #}
                     <div class="top3-stats-main">
-                        {% if rec.art_count > 0 %}
                         <span class="art-main"><span class="art-num-big">{{ rec.art_count }}</span><span class="art-label">ART</span></span>
                         {% if rec.rb_count > 0 %}<span class="rb-badge-top">RB {{ rec.rb_count }}</span>{% endif %}
                         {% if rec.art_prob > 0 %}<span class="art-prob {% if rec.art_prob <= 100 %}excellent{% elif rec.art_prob <= 130 %}good{% elif rec.art_prob >= 200 %}bad{% endif %}" title="合成確率">合成1/{{ rec.art_prob|int }}</span>{% endif %}
-                        {% elif rec.total_games > 0 %}
-                        <span class="no-today-data">ART 0回（{{ '{:,}'.format(rec.total_games) }}G消化）</span>
-                        {% else %}
-                        <span class="no-today-data">本日未稼働</span>
-                        {% endif %}
                     </div>
                     {# === 現在スタート・累計G === #}
                     <div class="top3-stats-sub">
-                        {% if rec.current_hama and rec.current_hama > 0 %}<span class="current-hama">現在<span class="num">{{ rec.current_hama }}</span>Gスタート</span>{% endif %}
+                        <span class="current-hama">現在<span class="num">{{ rec.current_hama or 0 }}</span>Gスタート</span>
                         {% if rec.total_games > 0 %}<span class="total-games">累計<span class="num">{{ '{:,}'.format(rec.total_games) }}</span>G</span>{% endif %}
                         {% if rec.max_medals and rec.max_medals > 0 %}{% set badge = medals_badge(rec.max_medals) %}<span class="max-medals-top {% if badge %}{{ badge.class }}{% endif %}">{% if badge %}<span class="medals-icon">{{ badge.icon }}</span>{% endif %}最大<span class="num">{{ '{:,}'.format(rec.max_medals) }}</span>枚</span>{% endif %}
                     </div>

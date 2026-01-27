@@ -21,17 +21,18 @@
             <div class="update-info">
                 
                 <span class="data-source">
-                    データ取得: <span id="update-time">17:38</span>
+                    データ取得: <span id="update-time">17:53</span>
                 </span>
                 <span class="cache-badge gas">GAS</span>
+                
                 
             </div>
 
             <!-- 空き状況サマリ -->
             
             <div class="availability-summary">
-                <span class="avail-empty" onclick="filterUnits('empty')">空き 5台</span>
-                <span class="avail-playing" onclick="filterUnits('playing')">遊技中 9台</span>
+                <span class="avail-empty" onclick="filterUnits('empty')">空き 6台</span>
+                <span class="avail-playing" onclick="filterUnits('playing')">遊技中 8台</span>
                 <span class="avail-all" onclick="filterUnits('all')">全て</span>
             </div>
             
@@ -190,10 +191,10 @@
                                 <div class="detail-item plus">1日連続プラス推定 → 据え置き期待</div>
                                 
                                 
-                                <div class="detail-item plus">直近のART確率が改善傾向</div>
+                                <div class="detail-item">前日ART 24回 (5,884G)</div>
                                 
                                 
-                                <div class="detail-item minus">直近で天井到達1回 → 低設定の日があった</div>
+                                <div class="detail-item">前々日ART 122回 (8,420G)</div>
                                 
                             </div>
                         </div>
@@ -306,10 +307,10 @@
                                 <div class="detail-item plus">1日連続プラス推定 → 据え置き期待</div>
                                 
                                 
-                                <div class="detail-item minus">直近のART確率が悪化傾向</div>
+                                <div class="detail-item">前日ART 22回 (4,636G)</div>
                                 
                                 
-                                <div class="detail-item minus">直近で天井到達1回 → 低設定の日があった</div>
+                                <div class="detail-item">前々日ART 30回 (4,763G)</div>
                                 
                             </div>
                         </div>
@@ -323,6 +324,111 @@
                             
                             <div class="reason-item">ローテ傾向: 日替わりローテ傾向（交互に変動） → 本日上げ期待</div>
                             
+                        </div>
+                        
+                    </div>
+                </div>
+                
+                <div class="unit-card rank-s avail-card-empty" data-availability="空き" onclick="toggleDetails(this)">
+
+                    <!-- メインヘッダー: 台番号 + 機種名 + 空き状況 + ランク -->
+                    <div class="unit-main-header">
+                        <a href="/history/island_akihabara_sbj_1023.html" class="unit-id-large unit-id-link">1023</a>
+                        <span class="machine-name-sm">スーパーブラックジャック</span>
+                        
+                            
+                            <span class="avail-badge-lg empty">空き</span>
+                            
+                        
+                        <span class="rank-badge-lg" style="background-color: #ff6b6b">S</span>
+                        <span class="expand-icon">▼</span>
+                    </div>
+
+                    <!-- データ（常にART/RB/G数を表示、0でも表示） -->
+                    <div class="today-data-row">
+                        <!-- ART を最初に大きく -->
+                        <div class="data-cell highlight">
+                            <span class="data-value"><span class="art-num-lg">0</span></span>
+                            <span class="data-label">ART</span>
+                        </div>
+                        <!-- 確率 -->
+                        
+                        <!-- 最大枚数 -->
+                        
+                        <!-- RB -->
+                        <div class="data-cell">
+                            <span class="data-value"><span class="rb-num">0</span></span>
+                            <span class="data-label">RB</span>
+                        </div>
+                        <!-- 現在スタート -->
+                        <div class="data-cell ">
+                            <span class="data-value">0</span>
+                            <span class="data-label">現在G</span>
+                        </div>
+                        <!-- ハマり回数 -->
+                        
+                        <!-- 回転数を最後に -->
+                        <div class="data-cell">
+                            <span class="data-value">0</span>
+                            <span class="data-label">G数</span>
+                        </div>
+                    </div>
+
+                    
+                    
+                    <div class="rec-prev-days">
+                        
+                        <span class="prev-day-rec">前日: <span class="prev-art">ART 79</span> / RB 4 (6,468G)</span>
+                        
+                        
+                        <span class="prev-day-rec">前々日: <span class="prev-art">ART 125</span> / RB 3 (8,615G)</span>
+                        
+                    </div>
+                    
+
+                    
+                    <div class="estimation-row">
+                        
+                        <span class="past-eval">
+                            過去分析: <strong style="color: #ff6b6b">Sランク</strong>
+                            
+                            → 直近ART改善傾向
+                            
+                        </span>
+                    </div>
+
+                    <!-- 推奨理由（具体的に） -->
+                    
+                    <div class="reason-main">
+                        
+                        <div class="reason-line">過去データSランク: 高設定が頻繁に入る台</div>
+                        
+                        <div class="reason-line">前日ART 79回 (確率1/82, 6,468G) → 好調、据え置き期待</div>
+                        
+                    </div>
+                    
+
+                    <!-- 詳細（クリックで展開） -->
+                    <div class="unit-details hidden">
+                        <div class="detail-grid">
+                            <div class="detail-section">
+                                <div class="detail-title">本日詳細</div>
+                                
+                                <div class="detail-item">未稼働（狙い目の可能性）</div>
+                                
+                            </div>
+                            <div class="detail-section">
+                                <div class="detail-title">過去データ分析</div>
+                                
+                                <div class="detail-item plus">1日連続プラス推定 → 据え置き期待</div>
+                                
+                                
+                                <div class="detail-item">前日ART 79回 (6,468G)</div>
+                                
+                                
+                                <div class="detail-item">前々日ART 125回 (8,615G)</div>
+                                
+                            </div>
                         </div>
                         
                     </div>
@@ -422,10 +528,10 @@
                                 <div class="detail-item minus">2日連続マイナス → 設定上げ期待</div>
                                 
                                 
-                                <div class="detail-item plus">直近のART確率が改善傾向</div>
+                                <div class="detail-item">前日ART 35回 (4,729G)</div>
                                 
                                 
-                                <div class="detail-item minus">直近で天井到達2回 → 低設定の日があった</div>
+                                <div class="detail-item">前々日ART 61回 (7,548G)</div>
                                 
                             </div>
                         </div>
@@ -448,7 +554,7 @@
 
                     <!-- メインヘッダー: 台番号 + 機種名 + 空き状況 + ランク -->
                     <div class="unit-main-header">
-                        <a href="/history/island_akihabara_sbj_1030.html" class="unit-id-large unit-id-link">1030</a>
+                        <a href="/history/island_akihabara_sbj_1016.html" class="unit-id-large unit-id-link">1016</a>
                         <span class="machine-name-sm">スーパーブラックジャック</span>
                         
                             
@@ -493,10 +599,10 @@
                     
                     <div class="rec-prev-days">
                         
-                        <span class="prev-day-rec">前日: <span class="prev-art">ART 81</span> / RB 7 (6,640G)</span>
+                        <span class="prev-day-rec">前日: <span class="prev-art">ART 61</span> / RB 5 (6,362G)</span>
                         
                         
-                        <span class="prev-day-rec">前々日: <span class="prev-art">ART 64</span> / RB 5 (7,255G)</span>
+                        <span class="prev-day-rec">前々日: <span class="prev-art">ART 95</span> / RB 9 (8,424G)</span>
                         
                     </div>
                     
@@ -505,7 +611,9 @@
                     <div class="estimation-row">
                         
                         <span class="past-eval">
-                            過去分析: <strong style="color: #ff6b6b">Sランク</strong>
+                            過去分析: <strong style="color: #ffa502">Aランク</strong>
+                            
+                            → 直近ART改善傾向
                             
                         </span>
                     </div>
@@ -514,9 +622,9 @@
                     
                     <div class="reason-main">
                         
-                        <div class="reason-line">過去データSランク: 高設定が頻繁に入る台</div>
+                        <div class="reason-line">過去データAランク: 高設定が入りやすい台</div>
                         
-                        <div class="reason-line">前日ART 81回 (確率1/82, 6,640G) → 好調、据え置き期待</div>
+                        <div class="reason-line">前日ART 61回 (確率1/104, 6,362G) → 好調、据え置き期待</div>
                         
                     </div>
                     
@@ -533,11 +641,13 @@
                             <div class="detail-section">
                                 <div class="detail-title">過去データ分析</div>
                                 
-                                <div class="detail-item minus">1日連続マイナス → 設定上げ期待</div>
+                                <div class="detail-item plus">1日連続プラス推定 → 据え置き期待</div>
                                 
                                 
+                                <div class="detail-item">前日ART 61回 (6,362G)</div>
                                 
-                                <div class="detail-item minus">直近で天井到達3回 → 低設定の日があった</div>
+                                
+                                <div class="detail-item">前々日ART 95回 (8,424G)</div>
                                 
                             </div>
                         </div>
@@ -637,8 +747,10 @@
                                 <div class="detail-item minus">1日連続マイナス → 設定上げ期待</div>
                                 
                                 
+                                <div class="detail-item">前日ART 55回 (5,963G)</div>
                                 
-                                <div class="detail-item minus">直近で天井到達2回 → 低設定の日があった</div>
+                                
+                                <div class="detail-item">前々日ART 52回 (7,425G)</div>
                                 
                             </div>
                         </div>
@@ -651,43 +763,6 @@
 
             <section class="recommendations other">
                 <h2>その他の台</h2>
-                
-                <div class="unit-card-compact rank-s avail-card-playing" data-availability="遊技中" onclick="toggleDetails(this)">
-                    <div class="compact-row">
-                        <span class="unit-id-sm">1023</span>
-                        
-                            
-                            <span class="avail-sm playing">稼</span>
-                            
-                        
-                        <span class="rank-sm" style="background-color: #ff6b6b">S</span>
-
-                        <!-- ART数を常に表示（0でも） -->
-                        <span class="compact-art past"><span class="art-num">0</span><span class="art-lbl">ART</span></span>
-                        
-                        
-                        
-                        <span class="compact-games">0G</span>
-                        
-                        <span class="compact-art past"><span class="art-num">79</span><span class="art-lbl">(前日)</span></span>
-                        
-                        <span class="expand-icon small">▼</span>
-                    </div>
-
-                    <div class="unit-details hidden">
-                        <div class="compact-details">
-                            <div>本日: ART <span class="art-num">0</span>回 / RB 0回 / 0G</div>
-                            
-                            
-                            
-                            
-                            <div>過去分析: Sランク</div>
-                            
-                            <div class="compact-reason">過去データSランク: 高設定が頻繁に入る台</div>
-                            
-                        </div>
-                    </div>
-                </div>
                 
                 <div class="unit-card-compact rank-s avail-card-playing" data-availability="遊技中" onclick="toggleDetails(this)">
                     <div class="compact-row">
@@ -765,7 +840,7 @@
                 
                 <div class="unit-card-compact rank-a avail-card-playing" data-availability="遊技中" onclick="toggleDetails(this)">
                     <div class="compact-row">
-                        <span class="unit-id-sm">1016</span>
+                        <span class="unit-id-sm">1030</span>
                         
                             
                             <span class="avail-sm playing">稼</span>
@@ -780,7 +855,7 @@
                         
                         <span class="compact-games">0G</span>
                         
-                        <span class="compact-art past"><span class="art-num">61</span><span class="art-lbl">(前日)</span></span>
+                        <span class="compact-art past"><span class="art-num">81</span><span class="art-lbl">(前日)</span></span>
                         
                         <span class="expand-icon small">▼</span>
                     </div>
@@ -792,9 +867,9 @@
                             
                             
                             
-                            <div>過去分析: Aランク</div>
+                            <div>過去分析: Sランク</div>
                             
-                            <div class="compact-reason">過去データAランク: 高設定が入りやすい台</div>
+                            <div class="compact-reason">過去データSランク: 高設定が頻繁に入る台</div>
                             
                         </div>
                     </div>
@@ -992,7 +1067,7 @@
             <p>
                 <a href="/ranking/sbj.html" class="footer-link">総合ランキング</a>
                 |
-                <a href="#" class="api-link">JSON</a>
+                <a href="https://autogmail.pythonanywhere.com/api/status/island_akihabara_sbj" class="api-link">JSON</a>
             </p>
         </footer>
     </div>

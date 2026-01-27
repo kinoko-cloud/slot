@@ -21,17 +21,18 @@
             <div class="update-info">
                 
                 <span class="data-source">
-                    データ取得: <span id="update-time">21:25</span>
+                    データ取得: <span id="update-time">17:51</span>
                 </span>
                 <span class="cache-badge github">GITHUB</span>
+                
                 
             </div>
 
             <!-- 空き状況サマリ -->
             
             <div class="availability-summary">
-                <span class="avail-empty" onclick="filterUnits('empty')">空き 1台</span>
-                <span class="avail-playing" onclick="filterUnits('playing')">遊技中 2台</span>
+                <span class="avail-empty" onclick="filterUnits('empty')">空き 0台</span>
+                <span class="avail-playing" onclick="filterUnits('playing')">遊技中 3台</span>
                 <span class="avail-all" onclick="filterUnits('all')">全て</span>
             </div>
             
@@ -93,127 +94,9 @@
 
         <main>
             
-            <section class="recommendations top">
-                <h2>推奨台</h2>
-                
-                <div class="unit-card rank-a avail-card-empty" data-availability="空き" onclick="toggleDetails(this)">
-
-                    <!-- メインヘッダー: 台番号 + 機種名 + 空き状況 + ランク -->
-                    <div class="unit-main-header">
-                        <a href="/history/shibuya_espass_sbj_3011.html" class="unit-id-large unit-id-link">3011</a>
-                        <span class="machine-name-sm">スーパーブラックジャック</span>
-                        
-                            
-                            <span class="avail-badge-lg empty">空き</span>
-                            
-                        
-                        <span class="rank-badge-lg" style="background-color: #ffa502">A</span>
-                        <span class="expand-icon">▼</span>
-                    </div>
-
-                    <!-- データ（常にART/RB/G数を表示、0でも表示） -->
-                    <div class="today-data-row">
-                        <!-- ART を最初に大きく -->
-                        <div class="data-cell highlight">
-                            <span class="data-value"><span class="art-num-lg">0</span></span>
-                            <span class="data-label">ART</span>
-                        </div>
-                        <!-- 確率 -->
-                        
-                        <!-- 最大枚数 -->
-                        
-                        <!-- RB -->
-                        <div class="data-cell">
-                            <span class="data-value"><span class="rb-num">0</span></span>
-                            <span class="data-label">RB</span>
-                        </div>
-                        <!-- 現在スタート -->
-                        <div class="data-cell ">
-                            <span class="data-value">0</span>
-                            <span class="data-label">現在G</span>
-                        </div>
-                        <!-- ハマり回数 -->
-                        
-                        <!-- 回転数を最後に -->
-                        <div class="data-cell">
-                            <span class="data-value">0</span>
-                            <span class="data-label">G数</span>
-                        </div>
-                    </div>
-
-                    
-                    
-                    <div class="rec-prev-days">
-                        
-                        <span class="prev-day-rec">前日: <span class="prev-art">ART 9</span> / RB 2 (970G)</span>
-                        
-                        
-                        <span class="prev-day-rec">前々日: <span class="prev-art">ART 33</span> / RB 6 (3,630G)</span>
-                        
-                    </div>
-                    
-
-                    
-                    <div class="estimation-row">
-                        
-                        <span class="past-eval">
-                            過去分析: <strong style="color: #ffa502">Aランク</strong>
-                            
-                            → 2日連続好調、据え置き期待
-                            
-                        </span>
-                    </div>
-
-                    <!-- 推奨理由（具体的に） -->
-                    
-                    <div class="reason-main">
-                        
-                        <div class="reason-line">過去データAランク: 高設定が入りやすい台</div>
-                        
-                        <div class="reason-line">前日ART 9回 (確率1/108, 970G) → 好調、据え置き期待</div>
-                        
-                    </div>
-                    
-
-                    <!-- 詳細（クリックで展開） -->
-                    <div class="unit-details hidden">
-                        <div class="detail-grid">
-                            <div class="detail-section">
-                                <div class="detail-title">本日詳細</div>
-                                
-                                <div class="detail-item">未稼働（狙い目の可能性）</div>
-                                
-                            </div>
-                            <div class="detail-section">
-                                <div class="detail-title">過去データ分析</div>
-                                
-                                <div class="detail-item plus">2日連続プラス推定 → 据え置き期待</div>
-                                
-                                
-                                <div class="detail-item minus">直近のART確率が悪化傾向</div>
-                                
-                                
-                                <div class="detail-item minus">直近で天井到達2回 → 低設定の日があった</div>
-                                
-                            </div>
-                        </div>
-                        
-                        <div class="all-reasons">
-                            <div class="detail-title">全ての根拠</div>
-                            
-                            <div class="reason-item">過去データAランク: 高設定が入りやすい台</div>
-                            
-                            <div class="reason-item">前日ART 9回 (確率1/108, 970G) → 好調、据え置き期待</div>
-                            
-                            <div class="reason-item">2日連続好調 → 据え置きの可能性</div>
-                            
-                            <div class="reason-item">補足: エスパス渋谷新館は火曜が狙い目（★4）</div>
-                            
-                        </div>
-                        
-                    </div>
-                </div>
-                
+            <section class="no-recommendation">
+                <p>推奨台なし</p>
+                <p class="sub">全台稼働中または評価データなし</p>
             </section>
             
 
@@ -231,23 +114,35 @@
                         <span class="rank-sm" style="background-color: #ff6b6b">S</span>
 
                         <!-- ART数を常に表示（0でも） -->
-                        <span class="compact-art past"><span class="art-num">0</span><span class="art-lbl">ART</span></span>
+                        <span class="compact-art"><span class="art-num">31</span><span class="art-lbl">ART</span></span>
+                        
+                        <span class="compact-prob excellent">1/81</span>
+                        
+                        
+                        <span class="compact-rb">RB<span class="num">5</span></span>
                         
                         
                         
-                        <span class="compact-games">0G</span>
+                        <span class="compact-max medals-1k">
+                            <span class="medals-icon-sm">👍</span>
+                            最大<span class="num">1,510</span>
+                        </span>
                         
-                        <span class="compact-art past"><span class="art-num">16</span><span class="art-lbl">(前日)</span></span>
+                        <span class="compact-games">2,526G</span>
                         
                         <span class="expand-icon small">▼</span>
                     </div>
 
                     <div class="unit-details hidden">
                         <div class="compact-details">
-                            <div>本日: ART <span class="art-num">0</span>回 / RB 0回 / 0G</div>
+                            <div>本日: ART <span class="art-num">31</span>回 / RB 5回 / 2,526G</div>
+                            
+                            <div>最大: 1,510枚</div>
                             
                             
                             
+                            
+                            <div>推定: 設定6？ (122.7%)</div>
                             
                             <div>過去分析: Aランク</div>
                             
@@ -257,9 +152,58 @@
                     </div>
                 </div>
                 
-                <div class="unit-card-compact rank-a avail-card-playing" data-availability="遊技中" onclick="toggleDetails(this)">
+                <div class="unit-card-compact rank-s avail-card-playing" data-availability="遊技中" onclick="toggleDetails(this)">
                     <div class="compact-row">
                         <span class="unit-id-sm">3013</span>
+                        
+                            
+                            <span class="avail-sm playing">稼</span>
+                            
+                        
+                        <span class="rank-sm" style="background-color: #ff6b6b">S</span>
+
+                        <!-- ART数を常に表示（0でも） -->
+                        <span class="compact-art"><span class="art-num">7</span><span class="art-lbl">ART</span></span>
+                        
+                        <span class="compact-prob good">1/101</span>
+                        
+                        
+                        <span class="compact-rb">RB<span class="num">2</span></span>
+                        
+                        
+                        
+                        <span class="compact-max ">
+                            
+                            最大<span class="num">363</span>
+                        </span>
+                        
+                        <span class="compact-games">709G</span>
+                        
+                        <span class="expand-icon small">▼</span>
+                    </div>
+
+                    <div class="unit-details hidden">
+                        <div class="compact-details">
+                            <div>本日: ART <span class="art-num">7</span>回 / RB 2回 / 709G</div>
+                            
+                            <div>最大: 363枚</div>
+                            
+                            
+                            <div>現在: 137Gスタート</div>
+                            
+                            
+                            
+                            <div>過去分析: Bランク → 凹み3日、設定上げ期待</div>
+                            
+                            <div class="compact-reason">過去データBランク: 中間設定以上が多い台</div>
+                            
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="unit-card-compact rank-a avail-card-playing" data-availability="遊技中" onclick="toggleDetails(this)">
+                    <div class="compact-row">
+                        <span class="unit-id-sm">3011</span>
                         
                             
                             <span class="avail-sm playing">稼</span>
@@ -268,27 +212,39 @@
                         <span class="rank-sm" style="background-color: #ffa502">A</span>
 
                         <!-- ART数を常に表示（0でも） -->
-                        <span class="compact-art past"><span class="art-num">0</span><span class="art-lbl">ART</span></span>
+                        <span class="compact-art"><span class="art-num">27</span><span class="art-lbl">ART</span></span>
+                        
+                        <span class="compact-prob ">1/135</span>
+                        
+                        
+                        <span class="compact-rb">RB<span class="num">12</span></span>
                         
                         
                         
-                        <span class="compact-games">0G</span>
+                        <span class="compact-max medals-1k">
+                            <span class="medals-icon-sm">👍</span>
+                            最大<span class="num">1,279</span>
+                        </span>
                         
-                        <span class="compact-art past"><span class="art-num">50</span><span class="art-lbl">(前日)</span></span>
+                        <span class="compact-games">3,662G</span>
                         
                         <span class="expand-icon small">▼</span>
                     </div>
 
                     <div class="unit-details hidden">
                         <div class="compact-details">
-                            <div>本日: ART <span class="art-num">0</span>回 / RB 0回 / 0G</div>
+                            <div>本日: ART <span class="art-num">27</span>回 / RB 12回 / 3,662G</div>
+                            
+                            <div>最大: 1,279枚</div>
                             
                             
                             
                             
-                            <div>過去分析: Bランク → 凹み3日、設定上げ期待</div>
+                            <div>推定: 設定6 (117.3%)</div>
                             
-                            <div class="compact-reason">過去データBランク: 中間設定以上が多い台</div>
+                            <div>過去分析: Aランク → 2日好調、据え置き期待</div>
+                            
+                            <div class="compact-reason">過去データAランク: 高設定が入りやすい台</div>
                             
                         </div>
                     </div>
@@ -301,7 +257,7 @@
             <p>
                 <a href="/ranking/sbj.html" class="footer-link">総合ランキング</a>
                 |
-                <a href="#" class="api-link">JSON</a>
+                <a href="https://autogmail.pythonanywhere.com/api/status/shibuya_espass_sbj" class="api-link">JSON</a>
             </p>
         </footer>
     </div>
