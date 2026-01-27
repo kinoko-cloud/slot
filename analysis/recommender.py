@@ -20,7 +20,7 @@ from typing import Optional, List, Dict
 import sys
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
-from config.rankings import STORES, RANKINGS, get_rank, get_unit_ranking, MACHINES
+from config.rankings import STORES, RANKINGS, get_rank, get_unit_ranking, MACHINES, get_machine_threshold
 from analysis.analyzer import calculate_at_intervals, calculate_current_at_games, calculate_max_rensa
 
 # 機種別の設定情報
@@ -443,8 +443,8 @@ def calculate_unit_historical_performance(days: List[dict], machine_key: str = '
         return day.get('games', 0) or day.get('total_start', 0)
 
     # 機種別の好調判定閾値
-    good_prob_threshold = 130 if machine_key == 'sbj' else 330  # ART確率がこれ以下なら好調
-    bad_prob_threshold = 150 if machine_key == 'sbj' else 366   # ART確率がこれ以上なら不調
+    good_prob_threshold = get_machine_threshold(machine_key, 'good_prob')
+    bad_prob_threshold = get_machine_threshold(machine_key, 'bad_prob')
 
     good_days = 0
     bad_days = 0
@@ -1265,7 +1265,7 @@ def calc_recovery_stats(store_key: str, machine_key: str = 'sbj') -> dict:
     """
     import glob
     hist_dir = f'data/history/{store_key}'
-    good_threshold = 130 if machine_key == 'sbj' else 330
+    good_threshold = get_machine_threshold(machine_key, 'good_prob')
     results = {}
     for n in range(1, 6):
         results[n] = {'total': 0, 'recovered': 0, 'rate': 0.0}
@@ -1347,7 +1347,7 @@ def get_machine_recovery_stats(machine_key: str = 'sbj') -> dict:
     return total
 
 
-def analyze_rotation_pattern(days: List[dict]) -> dict:
+def analyze_rotation_pattern(days: List[dict], machine_key: str = 'sbj') -> dict:
     """ローテーションパターン分析
 
     Returns:
@@ -1371,9 +1371,11 @@ def analyze_rotation_pattern(days: List[dict]) -> dict:
         games = day.get('total_start', 0)
         if games > 0 and art > 0:
             prob = games / art
-            if prob <= 130:  # 高設定域
+            _good = get_machine_threshold(machine_key, 'good_prob')
+            _vbad = get_machine_threshold(machine_key, 'very_bad_prob')
+            if prob <= _good:
                 results.append(SYMBOL_GOOD)
-            elif prob >= 200:  # 低設定域
+            elif prob >= _vbad:
                 results.append(SYMBOL_BAD)
             else:
                 results.append(SYMBOL_MID)
@@ -1756,7 +1758,7 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
 
     # ローテーションパターン
     if days:
-        rotation = analyze_rotation_pattern(days)
+        rotation = analyze_rotation_pattern(days, machine_key=_mk)
         if rotation['has_pattern'] and rotation['next_high_chance']:
             reasons.append(f"🔄 ローテ傾向: {rotation['description']} → {next_day_label}上げ期待")
 
@@ -2193,7 +2195,7 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
         slump_bonus = 0
         yesterday_prob = trend_data.get('yesterday_prob', 0)
         day_before_prob = trend_data.get('day_before_prob', 0)
-        bad_prob_threshold = 150 if machine_key == 'sbj' else 366
+        bad_prob_threshold = get_machine_threshold(machine_key, 'bad_prob')
 
         if yesterday_prob >= bad_prob_threshold:
             slump_bonus += 5  # 前日不調 → 翌日設定変更期待
@@ -2597,7 +2599,7 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
                     if ud.get('date', '') not in _existing_dates:
                         _rot_days.append(ud)
             if len(_rot_days) >= 5:
-                _new_rot = analyze_rotation_pattern(_rot_days)
+                _new_rot = analyze_rotation_pattern(_rot_days, machine_key=machine_key)
                 # reasonsのローテ行を差し替え
                 _hour = datetime.now().hour
                 _ndl = '本日' if _hour < 10 else '翌日'
@@ -2661,8 +2663,14 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
                 rec['comparison_note'] = rec['comparison_note'].replace('本日', data_date_label)
 
     # === 稼働率の注記（低稼働日は確率のブレが大きい） ===
+    # 店舗×機種の平均G数で判定（台数が少ない場合は最低基準も適用）
     y_games_all = [r.get('yesterday_games', 0) for r in recommendations if r.get('yesterday_games', 0) > 0]
     avg_games = sum(y_games_all) / len(y_games_all) if y_games_all else 0
+    # 台数が少ない（5台未満）場合、機種の一般的な稼働基準も考慮
+    if len(y_games_all) < 5:
+        # SBJの一般的な1日平均は6000-7000G前後
+        machine_typical_avg = get_machine_threshold(machine_key, 'typical_daily_games')
+        avg_games = max(avg_games, machine_typical_avg * 0.8)
     low_games_threshold = avg_games * 0.6 if avg_games > 0 else 3000
     for rec in recommendations:
         rec['store_avg_games'] = int(avg_games)
