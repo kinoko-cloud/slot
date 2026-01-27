@@ -208,7 +208,63 @@ def fetch_unit_detail(page, hall_id: str, unit_id: str) -> dict:
         if max_match:
             data['max_medals'] = int(max_match.group(1).replace(',', ''))
 
-        print(f"    {unit_id}: ART={data.get('art', '?')}, G数={data.get('total_start', '?')}, 最大={data.get('max_medals', '?')}")
+        # 当日の全当たり履歴を取得（「詳細を見る」リンクから）
+        try:
+            detail_links = page.evaluate('''() => {
+                const links = [];
+                document.querySelectorAll('a').forEach(a => {
+                    if (a.innerText.includes('詳細を見る')) {
+                        links.push({ href: a.href, text: a.innerText.trim() });
+                    }
+                });
+                return links;
+            }''')
+
+            # 最初のリンクが当日データ
+            if detail_links:
+                page.goto(detail_links[0]['href'], wait_until='load', timeout=30000)
+                page.wait_for_timeout(2000)
+                detail_text = page.inner_text('body')
+
+                # 当たり履歴を抽出（時間 回転数 タイプの形式）
+                history = []
+                # daidataの履歴形式: "HH:MM 数値G タイプ" など
+                hits = re.findall(
+                    r'(\d{1,2}:\d{2})\s+(\d+)G?\s+(BB|RB|ART|AT|REG)',
+                    detail_text
+                )
+                if not hits:
+                    # 別パターン: テーブル形式
+                    hits = re.findall(
+                        r'(\d{1,2}:\d{2})\s+(\d+)\s+\d+\s+(BB|RB|ART|AT|REG)',
+                        detail_text
+                    )
+
+                for i, match in enumerate(hits):
+                    history.append({
+                        'hit_num': i + 1,
+                        'time': match[0],
+                        'start': int(match[1]),
+                        'type': match[2],
+                    })
+
+                if history:
+                    data['today_history'] = history
+                    # 最大連チャン数を計算（70G以内の連続当たり）
+                    max_rensa = 1
+                    current_rensa = 1
+                    for j in range(1, len(history)):
+                        if history[j]['start'] <= 70:
+                            current_rensa += 1
+                            max_rensa = max(max_rensa, current_rensa)
+                        else:
+                            current_rensa = 1
+                    data['today_max_rensa'] = max_rensa
+        except Exception as e:
+            print(f"    {unit_id}: 履歴取得エラー（スキップ）: {e}")
+
+        print(f"    {unit_id}: ART={data.get('art', '?')}, G数={data.get('total_start', '?')}, "
+              f"最大={data.get('max_medals', '?')}, 履歴={len(data.get('today_history', []))}件, 最大連={data.get('today_max_rensa', 0)}連")
         return data
 
     except Exception as e:
@@ -257,12 +313,24 @@ def fetch_papimo_availability(page, hall_id: str, machine_id: str, expected_unit
 
 
 def fetch_papimo_unit_detail(page, hall_id: str, unit_id: str) -> dict:
-    """papimo.jp: 台詳細ページから当日リアルタイムデータを取得"""
+    """papimo.jp: 台詳細ページから当日リアルタイムデータ+全当たり履歴を取得"""
     url = f"https://papimo.jp/h/{hall_id}/hit/view/{unit_id}"
 
     try:
         page.goto(url, timeout=20000, wait_until='domcontentloaded')
         page.wait_for_timeout(2000)
+
+        # 「もっと見る」ボタンをクリックして全当たり履歴を表示
+        for _ in range(50):  # 最大50回クリック（安全弁）
+            try:
+                more_btn = page.query_selector('text=もっと見る')
+                if more_btn and more_btn.is_visible():
+                    more_btn.click()
+                    page.wait_for_timeout(300)
+                else:
+                    break
+            except:
+                break
 
         text = page.inner_text('body')
 
@@ -303,8 +371,37 @@ def fetch_papimo_unit_detail(page, hall_id: str, unit_id: str) -> dict:
         if prob_match:
             data['combined_prob'] = parse_num(prob_match.group(1))
 
-        print(f"    {unit_id}: ART={data.get('art', '?')}, BB={data.get('bb', '?')}, RB={data.get('rb', '?')}, "
-              f"G数={data.get('total_start', '?')}, 最終={data.get('final_start', '?')}, 最大={data.get('max_medals', '?')}")
+        # 当日の全当たり履歴（時間、スタート、出メダル、タイプ）
+        history = []
+        history_pattern = re.findall(
+            r'(\d{1,2}:\d{2})\s+([\d,]+)\s+([\d,]+)\s*\n?\s*(ART|BB|RB|AT|REG)',
+            text,
+            re.MULTILINE
+        )
+        for i, match in enumerate(history_pattern):
+            history.append({
+                'hit_num': i + 1,
+                'time': match[0],
+                'start': parse_num(match[1]),
+                'medals': parse_num(match[2]),
+                'type': match[3],
+            })
+
+        if history:
+            data['today_history'] = history
+            # 最大連チャン数を計算（70G以内の連続当たり）
+            max_rensa = 1
+            current_rensa = 1
+            for j in range(1, len(history)):
+                if history[j]['start'] <= 70:
+                    current_rensa += 1
+                    max_rensa = max(max_rensa, current_rensa)
+                else:
+                    current_rensa = 1
+            data['today_max_rensa'] = max_rensa
+
+        print(f"    {unit_id}: ART={data.get('art', '?')}, G数={data.get('total_start', '?')}, "
+              f"最大={data.get('max_medals', '?')}, 履歴={len(history)}件, 最大連={data.get('today_max_rensa', 0)}連")
         return data
 
     except Exception as e:
