@@ -2,8 +2,8 @@ name: Fetch Availability
 
 on:
   schedule:
-    # 毎日 10:00-23:00 JST の間、10分ごとに実行
-    - cron: '*/10 1-14 * * *'  # UTC 1:00-14:00 = JST 10:00-23:00
+    # 毎日 10:00-23:00 JST の間、1時間ごとに実行
+    - cron: '0 1-14 * * *'  # UTC 1:00-14:00 = JST 10:00-23:00
   workflow_dispatch:  # 手動実行も可能
 
 jobs:
