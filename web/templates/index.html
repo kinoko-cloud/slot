@@ -245,7 +245,7 @@
 
             <!-- 店舗別曜日傾向（過去データ分析） -->
             <section class="store-schedule">
-                <h2>過去データ分析: 店舗別の曜日傾向</h2>
+                <h2>📅 {{ today_weekday }}曜日の店舗傾向</h2>
                 <div class="schedule-legend">
                     <span class="legend-item best">★5=最強</span>
                     <span class="legend-item good">★4=狙い目</span>
@@ -253,8 +253,11 @@
                     <span class="legend-item weak">★2以下=避ける</span>
                 </div>
                 {% for store in today_store_ranking %}
-                <div class="schedule-card-full">
-                    <div class="schedule-store-name">{{ store.short_name }}</div>
+                <div class="schedule-card-full {% if store.today_rating >= 4 %}schedule-recommended{% elif store.today_rating <= 2 %}schedule-avoid{% endif %}">
+                    <div class="schedule-store-header">
+                        <a href="{{ url_for('recommend', store_key=store.machine_links[0].store_key) }}" class="schedule-store-link">{{ store.short_name }}</a>
+                        <span class="schedule-today-rating {% if store.today_rating >= 4 %}good{% elif store.today_rating <= 2 %}weak{% endif %}">今日 {{ '★' * store.today_rating }}</span>
+                    </div>
                     <div class="schedule-week">
                         {% for day in ['月', '火', '水', '木', '金', '土', '日'] %}
                         {% set rating = store.day_ratings[day] %}
@@ -275,6 +278,30 @@
                 </div>
                 {% endfor %}
             </section>
+
+            <!-- 店舗一覧 -->
+            {% if all_stores %}
+            <section class="store-directory">
+                <h2>🏢 店舗一覧</h2>
+                <div class="store-directory-note">全{{ all_stores|length }}店舗</div>
+                {% for store in all_stores %}
+                <div class="store-directory-card {% if store.today_rating >= 4 %}store-dir-good{% elif store.today_rating <= 2 %}store-dir-weak{% endif %}">
+                    <div class="store-dir-header">
+                        <span class="store-dir-name">{{ store.short_name }}</span>
+                        <span class="store-dir-rating {% if store.today_rating >= 4 %}good{% elif store.today_rating <= 2 %}weak{% endif %}">{{ '★' * store.today_rating }}</span>
+                    </div>
+                    <div class="store-dir-machines">
+                        {% for link in store.machine_links %}
+                        <a href="{{ url_for('recommend', store_key=link.store_key) }}" class="store-dir-machine-link">
+                            <span class="store-dir-icon">{{ link.icon }}</span>
+                            <span class="store-dir-machine-name">{{ link.short_name }}</span>
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+            </section>
+            {% endif %}
 
             {# === 営業中: 前日の爆発台を最下部に表示 === #}
             {% if is_open and yesterday_top10 %}
@@ -327,26 +354,7 @@
             {% endif %}
         </main>
 
-        <!-- 本日の傾向（曜日別評価を簡潔に） -->
-        <section class="today-trend">
-            <h2>{{ today_weekday }}曜日の傾向</h2>
-            {% if today_recommended_stores %}
-            <div class="trend-item good">
-                <span class="trend-label">狙い目店舗:</span>
-                {% for store in today_recommended_stores %}
-                <span class="trend-store-name">{{ store.short_name }}</span>{% if not loop.last %}、{% endif %}
-                {% endfor %}
-            </div>
-            {% endif %}
-            {% if today_avoid_stores %}
-            <div class="trend-item bad">
-                <span class="trend-label">避けるべき:</span>
-                {% for store in today_avoid_stores %}
-                <span class="trend-store-name">{{ store.short_name }}</span>{% if not loop.last %}、{% endif %}
-                {% endfor %}
-            </div>
-            {% endif %}
-        </section>
+        <!-- 「曜日の傾向」セクションは「店舗別曜日傾向」テーブルに統合済み -->
 
         <footer>
             <p><a href="{{ url_for('verify') }}" class="footer-link">答え合わせ（予測 vs 実績）</a></p>
