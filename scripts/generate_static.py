@@ -118,19 +118,35 @@ def setup_jinja():
     env.globals['pad_id'] = pad_unit_id
     env.globals['build_time'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
-    def generate_sparkline(history, width=120, height=40):
-        """当たり履歴から差枚推移のSVGスパークラインを生成"""
+    def generate_sparkline(history, width=120, height=40, diff_medals=None):
+        """当たり履歴から差枚推移のSVGスパークラインを生成
+
+        Args:
+            history: 当たり履歴リスト
+            diff_medals: 既知の最終差枚（正規化に使用）
+        """
         if not history or len(history) < 2:
             return ''
-        sorted_hist = sorted(history, key=lambda x: x.get('time', '00:00'))
-        # 累積差枚を計算（各当たり: +medals, 各スタート: -start*3）
+        # hit_num降順（大きい=古い）でソート
+        sorted_hist = sorted(history, key=lambda x: (-x.get('hit_num', 0), x.get('time', '00:00')))
+        # 各当たりのメダル獲得数で相対推移を計算
+        # medals: ボーナス/AT獲得枚数、start: 当たり間の消化G数
         cumulative = [0]
         total = 0
         for h in sorted_hist:
-            start = h.get('start', 0)
             medals = h.get('medals', 0)
-            total += medals - (start * 3)  # メダル獲得 - 投入(3枚掛け)
+            start = h.get('start', 0)
+            total -= start * 3  # 当たり間の投入
+            total += medals      # 獲得
             cumulative.append(total)
+
+        # 既知の差枚があれば正規化（推移の形は保ち、最終値を合わせる）
+        if diff_medals is not None and total != 0:
+            scale = diff_medals / total
+            cumulative = [v * scale for v in cumulative]
+        elif diff_medals is not None and total == 0:
+            # 累積0だが差枚がある場合、推移が描けないのでスキップ
+            pass
         if len(cumulative) < 2:
             return ''
         min_v = min(cumulative)
@@ -145,8 +161,9 @@ def setup_jinja():
         polyline = ' '.join(points)
         # ゼロライン
         zero_y = height - ((0 - min_v) / v_range * (height - 4)) - 2
-        # 色: 最終値がプラスなら緑、マイナスなら赤
-        color = '#2ed573' if total >= 0 else '#ff6b6b'
+        # 色: 最終値がプラスなら緑、マイナスなら赤（正規化後の値で判定）
+        final_val = cumulative[-1] if cumulative else total
+        color = '#2ed573' if final_val >= 0 else '#ff6b6b'
         return f'<svg class="sparkline" width="{width}" height="{height}" viewBox="0 0 {width} {height}"><line x1="0" y1="{zero_y:.1f}" x2="{width}" y2="{zero_y:.1f}" stroke="#555" stroke-width="0.5" stroke-dasharray="2,2"/><polyline points="{polyline}" fill="none" stroke="{color}" stroke-width="1.5"/></svg>'
     env.globals['sparkline'] = generate_sparkline
 
@@ -389,6 +406,7 @@ def generate_index(env):
                             'diff_medals': y_diff_medals,
                             'estimated_setting': y_setting,
                             'setting_num': y_setting_num,
+                            'yesterday_history': rec.get('yesterday_history', []),
                             'today_history': rec.get('today_history', []),
                         })
 
@@ -420,6 +438,7 @@ def generate_index(env):
                             'payout_estimate': rec.get('payout_estimate', ''),
                             'today_max_rensa': rec.get('today_max_rensa', 0),
                             'diff_medals': diff_medals,
+                            'today_history': rec.get('today_history', []),
                         })
             except Exception as e:
                 print(f"Error processing {store_key}: {e}")

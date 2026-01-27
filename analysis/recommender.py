@@ -815,6 +815,7 @@ def analyze_trend(days: List[dict]) -> dict:
         yesterday_history = yesterday_day.get('history', [])
         if yesterday_history:
             result['yesterday_max_rensa'] = calculate_max_rensa(yesterday_history)
+            result['yesterday_history'] = yesterday_history
 
     # 前々日の結果
     if len(daily_results) >= 2:
@@ -2537,9 +2538,13 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
                         rec['yesterday_max_rensa'] = ad.get('max_rensa', 0)
                     if not rec.get('yesterday_max_medals'):
                         rec['yesterday_max_medals'] = ad.get('max_medals', 0)
+                    if not rec.get('yesterday_history') and ad.get('history'):
+                        rec['yesterday_history'] = ad['history']
                 elif d == db_date:
                     rec['day_before_max_rensa'] = ad.get('max_rensa', 0)
                     rec['day_before_max_medals'] = ad.get('max_medals', 0)
+                    if ad.get('history'):
+                        rec['day_before_history'] = ad['history']
                 elif d and d < (db_date or y_date or '9999') and not rec.get('three_days_ago_date'):
                     rec['three_days_ago_art'] = ad.get('art', 0)
                     rec['three_days_ago_rb'] = ad.get('rb', 0)
@@ -2547,6 +2552,8 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
                     rec['three_days_ago_date'] = d
                     rec['three_days_ago_max_rensa'] = ad.get('max_rensa', 0)
                     rec['three_days_ago_max_medals'] = ad.get('max_medals', 0)
+                    if ad.get('history'):
+                        rec['three_days_ago_history'] = ad['history']
                     _3d_art = ad.get('art', 0)
                     _3d_games = ad.get('games', 0)
                     rec['three_days_ago_prob'] = round(_3d_games / _3d_art) if _3d_art > 0 and _3d_games > 0 else 0
