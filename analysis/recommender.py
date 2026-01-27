@@ -1401,52 +1401,51 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
     day_before_games = trend.get('day_before_games', 0)
 
     # === 1. この台の過去ランク + 過去実績（なぜこの台を選んだのか） ===
-    # 【改善1】好調率データがあれば使う
     historical_perf = kwargs.get('historical_perf', {})
     good_day_rate = historical_perf.get('good_day_rate', 0)
     good_days = historical_perf.get('good_days', 0)
     total_perf_days = historical_perf.get('total_days', 0)
     if total_perf_days > 0 and good_day_rate >= 0.7:
-        reasons.append(f"好調率{good_day_rate:.0%}（{good_days}/{total_perf_days}日好調）→ 高設定が入りやすい台")
+        reasons.append(f"📊 {total_perf_days}日間中{good_days}日好調（好調率{good_day_rate:.0%}）→ 高設定が入りやすい台")
     elif total_perf_days > 0 and good_day_rate <= 0.4:
-        reasons.append(f"好調率{good_day_rate:.0%}（{good_days}/{total_perf_days}日好調）→ 低設定が入りやすい台")
+        reasons.append(f"📊 {total_perf_days}日間中{good_days}日好調（好調率{good_day_rate:.0%}）→ 低設定が入りやすい台")
     elif base_rank == 'S':
-        reasons.append(f"過去データSランク: 高設定が頻繁に入る台")
+        reasons.append(f"📊 過去データSランク: 高設定が頻繁に入る台")
     elif base_rank == 'A':
-        reasons.append(f"過去データAランク: 高設定が入りやすい台")
+        reasons.append(f"📊 過去データAランク: 高設定が入りやすい台")
     elif base_rank == 'B':
-        reasons.append(f"過去データBランク: 中間設定以上が多い台")
+        reasons.append(f"📊 過去データBランク: 中間設定以上が多い台")
 
-    # === 2. 前日の実績分析（翌日予測の根拠） ===
-    if yesterday_art and yesterday_games:
-        prob = yesterday_games / yesterday_art if yesterday_art > 0 else 999
-        if prob <= 130:
-            reasons.append(f"前日ART {yesterday_art}回 (確率1/{prob:.0f}) → 好調、据え置き期待")
-        elif prob <= 200:
-            reasons.append(f"前日ART {yesterday_art}回 (確率1/{prob:.0f}) → 中間設定域")
+    # === 2. 連続パターン・傾向（設定変更サイクルの読み） ===
+    # これが翌日予測の核心 — 前日単体の成績ではなく「流れ」
+    if consecutive_minus >= 4:
+        reasons.append(f"🔄 {consecutive_minus}日連続不調 → 設定変更の可能性大")
+    elif consecutive_minus >= 3:
+        reasons.append(f"🔄 {consecutive_minus}日連続不調 → そろそろ設定上げ期待")
+    elif consecutive_minus == 2:
+        if today_rating >= 4:
+            reasons.append(f"🔄 2日連続不調 + {today_weekday}曜★{today_rating} → リセット期待")
         else:
-            reasons.append(f"前日ART {yesterday_art}回 (確率1/{prob:.0f}) → 低設定域、リセット期待")
-    elif yesterday_art:
-        reasons.append(f"前日ART {yesterday_art}回")
+            reasons.append(f"🔄 2日連続不調 → リセット期待")
 
-    # 前々日→前日の変化（設定変更の手がかり）
-    if yesterday_art and day_before_art and yesterday_games and day_before_games:
-        yesterday_prob = yesterday_games / yesterday_art if yesterday_art > 0 else 999
-        day_before_prob = day_before_games / day_before_art if day_before_art > 0 else 999
-        if yesterday_prob > day_before_prob * 1.5 and yesterday_prob > 150:
-            reasons.append(f"前々日ART {day_before_art}回(1/{day_before_prob:.0f}) → 前日{yesterday_art}回(1/{yesterday_prob:.0f})に悪化 → リセット期待")
-        elif yesterday_prob < day_before_prob * 0.7 and yesterday_prob <= 150:
-            reasons.append(f"前日のART確率が前々日から大幅改善 → 設定が上がった可能性")
+    if consecutive_plus >= 3:
+        reasons.append(f"🔄 {consecutive_plus}日連続好調 → 据え置き期待（下げ警戒も）")
+    elif consecutive_plus == 2:
+        reasons.append(f"🔄 2日連続好調 → 据え置きの可能性")
 
-    # === 2.5 【改善2】前日不調→翌日狙い目パターン ===
+    # 2日連続不調→翌日リセット期待
     yesterday_prob_val = trend.get('yesterday_prob', 0)
     day_before_prob_val = trend.get('day_before_prob', 0)
     if yesterday_prob_val >= 150 and day_before_prob_val >= 150:
-        reasons.append(f"2日連続不調（前々日1/{day_before_prob_val:.0f}、前日1/{yesterday_prob_val:.0f}）→ 設定変更期待大")
-    elif yesterday_prob_val >= 150:
-        reasons.append(f"前日不調（1/{yesterday_prob_val:.0f}）→ 設定変更期待")
+        reasons.append(f"🔄 直近2日とも不調（1/{day_before_prob_val:.0f}→1/{yesterday_prob_val:.0f}）→ 設定変更期待大")
 
-    # === 2.6 【改善4+5】稼働パターン分析 ===
+    # ローテーションパターン
+    if days:
+        rotation = analyze_rotation_pattern(days)
+        if rotation['has_pattern'] and rotation['next_high_chance']:
+            reasons.append(f"🔄 ローテ傾向: {rotation['description']} → 次回上げ期待")
+
+    # === 2.5 稼働パターン分析 ===
     activity_data = kwargs.get('activity_data', {})
     if activity_data:
         activity_desc = activity_data.get('description', '')
@@ -1457,38 +1456,17 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
         elif activity_data.get('persistence_score', 0) >= 8:
             reasons.append(f"📊 {activity_desc}")
 
-    # === 3. 連続パターン（設定変更サイクルの読み） ===
-    if consecutive_minus >= 4:
-        reasons.append(f"{consecutive_minus}日連続マイナス推定 → この店の傾向的に設定変更の可能性大")
-    elif consecutive_minus >= 3:
-        reasons.append(f"{consecutive_minus}日連続マイナス推定 → そろそろ設定上げ期待")
-    elif consecutive_minus == 2:
-        if today_rating >= 4:
-            reasons.append(f"2日連続マイナス + {today_weekday}曜★{today_rating} → リセット期待")
-        else:
-            reasons.append(f"2日連続マイナス推定 → リセット期待")
-
-    if consecutive_plus >= 3:
-        reasons.append(f"{consecutive_plus}日連続好調 → 据え置き期待（下げ警戒も）")
-    elif consecutive_plus == 2:
-        reasons.append(f"2日連続好調 → 据え置きの可能性")
-
-    # ローテーションパターン
-    if days:
-        rotation = analyze_rotation_pattern(days)
-        if rotation['has_pattern'] and rotation['next_high_chance']:
-            reasons.append(f"ローテ傾向: {rotation['description']} → 次回上げ期待")
-
-    # === 4. 本日のデータ（稼働中の場合） ===
-    if total_games > 0:
+    # === 3. 当日のリアルタイムデータ（営業中のみ有用） ===
+    # 閉店後は「当日の結果」として表示（翌日予測の根拠にはしない）
+    if total_games > 0 and is_today_data:
         if art_prob > 0 and art_prob <= 80:
-            reasons.append(f"本日ART確率1/{art_prob:.0f} ({total_games:,}G消化) → 設定6域の挙動")
+            reasons.append(f"🔥 本日ART確率1/{art_prob:.0f} ({total_games:,}G消化) → 設定6域の挙動")
         elif art_prob > 0 and art_prob <= 100:
-            reasons.append(f"本日ART確率1/{art_prob:.0f} ({total_games:,}G消化) → 高設定濃厚")
+            reasons.append(f"🔥 本日ART確率1/{art_prob:.0f} ({total_games:,}G消化) → 高設定濃厚")
         elif art_prob > 0 and art_prob <= 130 and total_games >= 3000:
-            reasons.append(f"本日1/{art_prob:.0f}で安定稼働中 ({total_games:,}G消化)")
+            reasons.append(f"🔥 本日1/{art_prob:.0f}で安定稼働中 ({total_games:,}G消化)")
         elif art_prob > 0 and art_prob >= 200:
-            reasons.append(f"本日ART確率1/{art_prob:.0f} ({total_games:,}G消化) → 低設定域の挙動")
+            reasons.append(f"⚠ 本日ART確率1/{art_prob:.0f} ({total_games:,}G消化) → 低設定域の挙動")
 
     # 本日の天井到達・連チャン判定（当日データのみ）
     if today_history and is_today_data:
@@ -1496,27 +1474,19 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
         today_at_intervals = calculate_at_intervals(today_history)
         today_ceiling = sum(1 for g in today_at_intervals if g >= 999)
         if today_ceiling > 0:
-            reasons.append(f"本日天井到達{today_ceiling}回 → 低設定の可能性に注意")
+            reasons.append(f"🔥 本日天井到達{today_ceiling}回 → 低設定の可能性に注意")
         if today_graph.get('has_explosion'):
-            reasons.append(f"本日{today_graph['max_rensa']}連の爆発あり")
+            reasons.append(f"🔥 本日{today_graph['max_rensa']}連の爆発あり")
         elif today_graph.get('is_on_fire'):
-            # 連チャン中と言うなら現在のハマりが浅いことを確認
             if current_at_games <= 100:
-                reasons.append("連チャン中 → 高設定継続の期待")
-            # 100G超えてたら連チャン終了してるので表示しない
+                reasons.append("🔥 連チャン中 → 高設定継続の期待")
 
-    # === 4.5 出玉バランス判定 ===
+    # === 3.5 出玉バランス判定 ===
     medal_balance_penalty = kwargs.get('medal_balance_penalty', 0)
     if medal_balance_penalty <= -8:
         reasons.append(f"⚠ 出玉バランス悪い: ART多いが最大枚数少ない（低設定の可能性）")
     elif medal_balance_penalty <= -5:
-        reasons.append(f"注意: ART回数の割に出玉が伸びていない")
-
-    # === 5. 他台との比較 ===
-    if comparison.get('is_top_performer'):
-        reasons.append("本日この店舗でトップの出玉")
-    elif comparison.get('rank_in_store', 99) <= 2 and comparison.get('total_units', 0) > 3:
-        reasons.append(f"本日{comparison['rank_in_store']}位/{comparison['total_units']}台中")
+        reasons.append(f"⚠ ART回数の割に出玉が伸びていない")
 
     # === 6. 店舗曜日傾向（補足情報） ===
     if store_name and today_weekday:
