@@ -52,7 +52,7 @@
             </a>
             {% endif %}
 
-            {# === 閉店後: 前日の爆発台を最上部に表示 === #}
+            {# === 閉店後: 当日の爆発台を最上部に表示 === #}
             {% if display_mode in ('result', 'collecting') and yesterday_top10 %}
             <section class="today-hot-section">
                 <h2>{{ data_date_str }}の爆発台 TOP{{ yesterday_top10|length }}</h2>
@@ -67,35 +67,30 @@
                     <div class="yesterday-sub-header">
                         <span class="store-name-sm">{{ rec.store_name }}</span>
                         <span class="unit-id-sm">{{ rec.unit_id }}番</span>
-                        {% if rec.availability == '空き' %}
-                        <span class="avail-sm empty">空</span>
-                        {% elif rec.availability == '遊技中' %}
-                        <span class="avail-sm playing">稼</span>
-                        {% endif %}
                     </div>
-                    <div class="yesterday-stats prev-day-stats">
-                        <span class="day-label">前日:</span>
-                        <span class="art-badge prev"><span class="art-lbl-prev">ART</span> <span class="art-num-prev">{{ rec.yesterday_art }}</span></span>
-                        {% if rec.yesterday_rb and rec.yesterday_rb > 0 %}
-                        <span class="rb-badge-sm">RB <span class="num">{{ rec.yesterday_rb }}</span></span>
+                    <div class="yesterday-stats">
+                        {% if rec.diff_medals is defined and rec.diff_medals != 0 %}
+                        <span class="diff-medals {% if rec.diff_medals > 0 %}plus{% else %}minus{% endif %}">
+                            {{ '{:+,}'.format(rec.diff_medals) }}枚
+                        </span>
                         {% endif %}
-                        {% if rec.yesterday_max_medals and rec.yesterday_max_medals > 0 %}
-                        <span class="max-medals">最大<span class="num">{{ '{:,}'.format(rec.yesterday_max_medals) }}</span>枚</span>
+                        {% if rec.yesterday_art and rec.yesterday_art > 0 %}
+                        <span class="art-badge">ART <span class="art-num">{{ rec.yesterday_art }}</span></span>
+                        {% endif %}
+                        {% if rec.yesterday_max_rensa and rec.yesterday_max_rensa >= 3 %}
+                        <span class="rensa-badge">最大<span class="num">{{ rec.yesterday_max_rensa }}</span>連</span>
                         {% endif %}
                         {% if rec.yesterday_games and rec.yesterday_games > 0 %}
-                        <span class="total-games-label">累計 <span class="num">{{ '{:,}'.format(rec.yesterday_games) }}</span>G</span>
+                        <span class="total-games-label">{{ '{:,}'.format(rec.yesterday_games) }}G</span>
                         {% endif %}
                     </div>
                     {% if rec.yesterday_prob and rec.yesterday_prob > 0 %}
                     <div class="yesterday-prob-line">
-                        <span class="art-prob-sm {% if rec.yesterday_prob <= 100 %}excellent{% elif rec.yesterday_prob <= 130 %}good{% elif rec.yesterday_prob >= 200 %}bad{% endif %}">ART 1/{{ rec.yesterday_prob|int }}</span>
-                        {% if rec.yesterday_max_rensa and rec.yesterday_max_rensa >= 3 %}
-                        <span class="rensa-badge">最大<span class="num">{{ rec.yesterday_max_rensa }}</span>連</span>
+                        <span class="art-prob-sm {% if rec.yesterday_prob <= 100 %}excellent{% elif rec.yesterday_prob <= 130 %}good{% elif rec.yesterday_prob >= 200 %}bad{% endif %}">ART確率 1/{{ rec.yesterday_prob|int }}</span>
+                        {% if rec.estimated_setting %}
+                        <span class="setting-badge-sm setting-{{ rec.setting_num|default(0) }}">設定{{ rec.setting_num }}</span>
                         {% endif %}
                     </div>
-                    {% endif %}
-                    {% if rec.day_before_art %}
-                    <div class="prev-day-sub">前々日: ART {{ rec.day_before_art }}{% if rec.day_before_rb %} / RB {{ rec.day_before_rb }}{% endif %}{% if rec.day_before_games %} ({{ '{:,}'.format(rec.day_before_games) }}G){% endif %}</div>
                     {% endif %}
                 </a>
                 {% endfor %}
