@@ -1978,8 +1978,9 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
     if not store:
         return []
 
-    # 機種キーを取得
+    store_name = store.get('short_name', store.get('name', ''))
     machine_key = get_machine_from_store_key(store_key)
+    machine_info = MACHINES.get(machine_key, {})
 
     # JSONデータ内の店舗キーを取得
     data_store_key = STORE_KEY_MAPPING.get(store_key, store_key)
@@ -2326,6 +2327,9 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
 
         rec = {
             'unit_id': unit_id,
+            'store_key': store_key,
+            'store_name': store_name,
+            'machine_name': machine_info.get('short_name', ''),
             'base_rank': base_rank,
             'base_score': base_score,
             'final_rank': final_rank,

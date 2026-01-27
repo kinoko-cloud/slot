@@ -7,6 +7,7 @@
     <div class="v2-header">
         <span class="v2-rank-num">#{{ loop_index }}</span>
         <a href="{{ url_for('unit_history', store_key=(rec.store_key or store_key), unit_id=rec.unit_id) }}" class="v2-unit-id" onclick="event.stopPropagation()">{{ rec.unit_id|pad_id }}番台</a>
+        {% if rec.machine_name %}<span class="v2-machine">{{ rec.machine_name }}</span>{% endif %}
         {% if show_store %}
         <a href="{{ url_for('recommend', store_key=(rec.store_key or store_key)) }}" class="v2-store" onclick="event.stopPropagation()">{{ rec.store_name }}</a>
         {% endif %}
