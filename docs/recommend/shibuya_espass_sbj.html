@@ -26,7 +26,7 @@
                 </span>
                 <span class="cache-badge github">GITHUB</span>
                 
-                <div class="stale-warning">データが9時間33分前のものです</div>
+                <div class="stale-warning">データが9時間37分前のものです</div>
                 
                 
             </div>
@@ -479,10 +479,12 @@
             progressFill.style.width = progress + '%';
         }
 
-        // APIベースURL（静的サイトからはPythonAnywhereを呼ぶ）
-        const API_BASE = window.location.hostname.includes('pages.dev')
-            ? 'https://autogmail.pythonanywhere.com'
-            : '';
+        // APIベースURL（realtime.jsで未定義の場合のみ定義）
+        if (typeof API_BASE === 'undefined') {
+            var API_BASE = window.location.hostname.includes('pages.dev')
+                ? 'https://autogmail.pythonanywhere.com'
+                : '';
+        }
 
         function startScraping() {
             showLoading();
