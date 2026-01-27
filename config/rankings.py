@@ -26,10 +26,10 @@ MACHINES = {
         'short_name': '北斗の拳 転生の章2',
         'display_name': '北斗転生2',
         'icon': '👊',
-        'good_prob': 330,
-        'bad_prob': 366,
-        'very_bad_prob': 500,
-        'typical_daily_games': 4000,
+        'good_prob': 120,       # ART確率1/120以下なら好調（実データ70%タイル）
+        'bad_prob': 150,        # ART確率1/150以上なら不調（実データ88%タイル）
+        'very_bad_prob': 200,   # 明確に低設定
+        'typical_daily_games': 7000,  # 北斗は消化速度が速い
         # 天井パラメータ
         'normal_ceiling': 1500,       # 通常天井（スマスロ系で天井が深い）
         'reset_ceiling': 600,         # リセット時天井（朝イチ天井）
