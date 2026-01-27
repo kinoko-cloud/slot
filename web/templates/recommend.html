@@ -156,7 +156,7 @@
                         {% if rec.art_prob > 0 %}
                         <div class="data-cell {% if rec.art_prob <= 100 %}excellent{% elif rec.art_prob <= 130 %}good{% elif rec.art_prob >= 200 %}bad{% endif %}">
                             <span class="data-value">1/{{ rec.art_prob|int }}</span>
-                            <span class="data-label">合成確率</span>
+                            <span class="data-label">ART確率</span>
                         </div>
                         {% endif %}
                         <!-- 最大枚数 -->
@@ -279,6 +279,40 @@
                                 <div class="detail-item">未稼働（狙い目の可能性）</div>
                                 {% endif %}
                             </div>
+
+                            {# === 波グラフ（テキスト） === #}
+                            {% if rec.today_history %}
+                            <div class="detail-section">
+                                <div class="detail-title">{% if rec.history_date and rec.history_date != today_str %}{{ rec.history_date }}{% else %}本日{% endif %}の波</div>
+                                <div class="wave-graph">
+                                    {% for h in rec.today_history %}
+                                    <span class="wave-bar {% if h.start >= 500 %}deep{% elif h.start >= 300 %}mid{% elif h.start <= 70 %}rensa{% endif %}" title="{{ h.time }} {{ h.start }}G {{ h.type }}">
+                                        {% if h.start >= 500 %}&#x2587;{% elif h.start >= 300 %}&#x2585;{% elif h.start >= 200 %}&#x2584;{% elif h.start >= 100 %}&#x2583;{% elif h.start >= 70 %}&#x2582;{% else %}&#x2581;{% endif %}
+                                    </span>
+                                    {% endfor %}
+                                </div>
+                                <div class="wave-legend">
+                                    <span class="wave-leg rensa">&#x2581;連チャン</span>
+                                    <span class="wave-leg">&#x2583;100G</span>
+                                    <span class="wave-leg mid">&#x2585;300G</span>
+                                    <span class="wave-leg deep">&#x2587;500G+</span>
+                                </div>
+                            </div>
+                            {# === 当たり履歴テーブル === #}
+                            <div class="detail-section">
+                                <div class="detail-title">当たり履歴</div>
+                                <div class="hit-history-table">
+                                    {% for h in rec.today_history %}
+                                    <div class="hit-row {% if h.start >= 500 %}deep{% elif h.start <= 70 %}rensa{% endif %}">
+                                        <span class="hit-time">{{ h.time }}</span>
+                                        <span class="hit-type">{{ h.type }}</span>
+                                        <span class="hit-games {% if h.start >= 500 %}bad{% elif h.start <= 70 %}good{% endif %}">{{ h.start }}G</span>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% endif %}
+
                             <div class="detail-section">
                                 <div class="detail-title">過去データ分析</div>
                                 {% if rec.consecutive_plus > 0 %}
