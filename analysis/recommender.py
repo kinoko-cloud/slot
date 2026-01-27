@@ -1291,8 +1291,20 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
         # 当日データ分析
         today_analysis = {'status': '-', 'today_score_bonus': 0, 'today_reasons': []}
 
-        # リアルタイムデータがあれば使用
+        # リアルタイムデータの日付検証（今日のデータのみ使用）
+        realtime_is_today = False
         if realtime_data:
+            fetched_at = realtime_data.get('fetched_at', '')
+            if fetched_at:
+                try:
+                    fetch_date = datetime.fromisoformat(fetched_at).strftime('%Y-%m-%d')
+                    today_str_check = datetime.now().strftime('%Y-%m-%d')
+                    realtime_is_today = (fetch_date == today_str_check)
+                except:
+                    pass
+
+        # リアルタイムデータがあり、かつ今日のデータの場合のみ使用
+        if realtime_data and realtime_is_today:
             units_list = None
             if 'units' in realtime_data:
                 units_list = realtime_data.get('units', [])
@@ -1392,10 +1404,10 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
         data_date = today_analysis.get('data_date', '')
         is_today_data = data_date == datetime.now().strftime('%Y-%m-%d') if data_date else False
 
-        # max_medals, final_start をリアルタイムデータから取得
+        # max_medals, final_start をリアルタイムデータから取得（今日のデータのみ）
         max_medals = 0
         final_start = 0
-        if realtime_data:
+        if realtime_data and realtime_is_today:
             units_list = realtime_data.get('units', [])
             for unit in units_list:
                 if unit.get('unit_id') == unit_id:
@@ -1469,6 +1481,26 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
             'setting_num': profit_info['setting_info'].get('setting_num', 0),
             'payout_estimate': profit_info['setting_info']['payout_estimate'],
         }
+
+        # リアルタイムデータが昨日のものだった場合、前日データとして補完
+        if realtime_data and not realtime_is_today and not rec['yesterday_art']:
+            fetched_at = realtime_data.get('fetched_at', '')
+            if fetched_at:
+                try:
+                    fetch_date_str = datetime.fromisoformat(fetched_at).strftime('%Y-%m-%d')
+                    yesterday_check = (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d')
+                    if fetch_date_str == yesterday_check:
+                        # 昨日のリアルタイムデータを前日データとして使用
+                        units_list = realtime_data.get('units', [])
+                        for unit in units_list:
+                            if unit.get('unit_id') == unit_id:
+                                rec['yesterday_art'] = unit.get('art', 0)
+                                rec['yesterday_rb'] = unit.get('rb', 0)
+                                rec['yesterday_games'] = unit.get('total_start', 0)
+                                rec['yesterday_date'] = fetch_date_str
+                                break
+                except:
+                    pass
 
         recommendations.append(rec)
 

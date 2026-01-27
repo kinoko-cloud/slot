@@ -75,7 +75,7 @@
             <section class="recommendations top">
                 <h2>推奨台</h2>
                 
-                <div class="unit-card rank-c avail-card-empty" data-availability="空き" onclick="toggleDetails(this)">
+                <div class="unit-card rank-b avail-card-empty" data-availability="空き" onclick="toggleDetails(this)">
 
                     <!-- メインヘッダー: 台番号 + 機種名 + 空き状況 + ランク -->
                     <div class="unit-main-header">
@@ -86,45 +86,25 @@
                             <span class="avail-badge-lg empty">空き</span>
                             
                         
-                        <span class="rank-badge-lg" style="background-color: #70a1ff">C</span>
+                        <span class="rank-badge-lg" style="background-color: #2ed573">B</span>
                         <span class="expand-icon">▼</span>
                     </div>
 
                     <!-- データ（本日 or 昨日） -->
                     <div class="today-data-row">
                         
-                        <!-- データ日付を表示 -->
+                        <!-- 本日も昨日もデータなしの場合は過去データを表示 -->
                         
-                        <!-- ART を最初に大きく -->
-                        <div class="data-cell highlight">
-                            <span class="data-value"><span class="art-num-lg">2</span></span>
-                            <span class="data-label">ART</span>
-                        </div>
-                        <!-- 確率 -->
-                        
-                        <div class="data-cell bad">
-                            <span class="data-value">1/207</span>
-                            <span class="data-label">合成確率</span>
-                        </div>
-                        
-                        <!-- 最大枚数 -->
-                        
-                        <!-- RB -->
-                        
-                        <!-- 現在スタート -->
-                        
-                        <div class="data-cell ">
-                            <span class="data-value">156</span>
-                            <span class="data-label">現在G</span>
-                        </div>
-                        
-                        <!-- ハマり回数 -->
-                        
-                        <!-- 回転数を最後に -->
                         <div class="data-cell">
-                            <span class="data-value">415</span>
-                            <span class="data-label">G数</span>
+                            <span class="data-label">7日平均</span>
+                            <span class="data-value">28ART</span>
                         </div>
+                        <div class="no-data-inline">
+                            
+                            <span class="target-badge">空き</span>
+                            
+                        </div>
+                        
                         
                     </div>
 
@@ -132,20 +112,16 @@
                     
                     <div class="rec-prev-days">
                         
-                        <span class="prev-day-rec">前日: ART 9 / RB 2 (970G)</span>
+                        <span class="prev-day-rec">前日: <span class="prev-art">ART 9</span> / RB 2 (970G)</span>
                         
                         
-                        <span class="prev-day-rec">前々日: ART 33 / RB 6 (3,630G)</span>
+                        <span class="prev-day-rec">前々日: <span class="prev-art">ART 33</span> / RB 6 (3,630G)</span>
                         
                     </div>
                     
 
                     
                     <div class="estimation-row">
-                        
-                        <span class="setting-estimate tentative-weak">
-                            判別困難 <span class="payout">(415G)</span>
-                        </span>
                         
                         <span class="past-eval">
                             過去分析: <strong style="color: #70a1ff">Cランク</strong>
@@ -172,13 +148,7 @@
                             <div class="detail-section">
                                 <div class="detail-title">本日詳細</div>
                                 
-                                
-                                
-                                <div class="detail-item">現在のスタート: <strong>156G</strong>（最終大当たり後）</div>
-                                
-                                
-                                
-                                
+                                <div class="detail-item">未稼働（狙い目の可能性）</div>
                                 
                             </div>
                             <div class="detail-section">
@@ -218,55 +188,6 @@
             <section class="recommendations other">
                 <h2>その他の台</h2>
                 
-                <div class="unit-card-compact rank-a avail-card-playing" data-availability="遊技中" onclick="toggleDetails(this)">
-                    <div class="compact-row">
-                        <span class="unit-id-sm">3012</span>
-                        
-                            
-                            <span class="avail-sm playing">稼</span>
-                            
-                        
-                        <span class="rank-sm" style="background-color: #ffa502">A</span>
-
-                        
-                        <!-- ART数を大きく目立たせる -->
-                        <span class="compact-art"><span class="art-num">72</span><span class="art-lbl">ART</span></span>
-                        
-                        <span class="compact-prob excellent">1/28</span>
-                        
-                        <!-- RB回数 -->
-                        
-                        <span class="compact-rb">RB<span class="num">4</span></span>
-                        
-                        <!-- 最大枚数 -->
-                        
-                        <!-- 回転数は最後に小さく -->
-                        <span class="compact-games">2,019G</span>
-                        
-                        <span class="expand-icon small">▼</span>
-                    </div>
-
-                    <div class="unit-details hidden">
-                        <div class="compact-details">
-                            
-                            <div>本日: ART <span class="art-num">72</span>回 / RB 4回 / 2,019G</div>
-                            
-                            
-                            <div>現在: 213Gスタート</div>
-                            
-                            
-                            
-                            <div>推定: 設定6？ (128.0%)</div>
-                            
-                            
-                            <div>過去分析: Cランク (平均1/91 → 高設定域)</div>
-                            
-                            <div class="compact-reason">エスパス渋谷新館は火曜が狙い目（★4）</div>
-                            
-                        </div>
-                    </div>
-                </div>
-                
                 <div class="unit-card-compact rank-b avail-card-playing" data-availability="遊技中" onclick="toggleDetails(this)">
                     <div class="compact-row">
                         <span class="unit-id-sm">3013</span>
@@ -278,19 +199,7 @@
                         <span class="rank-sm" style="background-color: #2ed573">B</span>
 
                         
-                        <!-- ART数を大きく目立たせる -->
-                        <span class="compact-art"><span class="art-num">8</span><span class="art-lbl">ART</span></span>
-                        
-                        <span class="compact-prob ">1/191</span>
-                        
-                        <!-- RB回数 -->
-                        
-                        <span class="compact-rb">RB<span class="num">3</span></span>
-                        
-                        <!-- 最大枚数 -->
-                        
-                        <!-- 回転数は最後に小さく -->
-                        <span class="compact-games">1,528G</span>
+                        <span class="compact-art past"><span class="art-num">27</span><span class="art-lbl">ART/日</span></span>
                         
                         <span class="expand-icon small">▼</span>
                     </div>
@@ -298,17 +207,34 @@
                     <div class="unit-details hidden">
                         <div class="compact-details">
                             
-                            <div>本日: ART <span class="art-num">8</span>回 / RB 3回 / 1,528G</div>
-                            
-                            
-                            <div>現在: 171Gスタート</div>
-                            
-                            
-                            
-                            <div>推定: 設定5？ (110.3%)</div>
-                            
-                            
                             <div>過去分析: Cランク (平均1/172 → 設定不明)</div>
+                            
+                            <div class="compact-reason">エスパス渋谷新館は火曜が狙い目（★4）</div>
+                            
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="unit-card-compact rank-b avail-card-playing" data-availability="遊技中" onclick="toggleDetails(this)">
+                    <div class="compact-row">
+                        <span class="unit-id-sm">3012</span>
+                        
+                            
+                            <span class="avail-sm playing">稼</span>
+                            
+                        
+                        <span class="rank-sm" style="background-color: #2ed573">B</span>
+
+                        
+                        <span class="compact-art past"><span class="art-num">30</span><span class="art-lbl">ART/日</span></span>
+                        
+                        <span class="expand-icon small">▼</span>
+                    </div>
+
+                    <div class="unit-details hidden">
+                        <div class="compact-details">
+                            
+                            <div>過去分析: Cランク (平均1/91 → 高設定域)</div>
                             
                             <div class="compact-reason">エスパス渋谷新館は火曜が狙い目（★4）</div>
                             

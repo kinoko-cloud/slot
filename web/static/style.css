@@ -828,6 +828,25 @@ footer {
     flex-shrink: 0;
 }
 
+/* TOP3: 理由全件表示 */
+.reasons-full {
+    margin-top: 6px;
+    padding: 6px 8px;
+    background: rgba(255, 165, 2, 0.08);
+    border-radius: 6px;
+}
+
+.reason-line-top {
+    font-size: 0.8em;
+    color: #ffa502;
+    padding: 2px 0;
+}
+
+.reason-line-top .reason-icon {
+    font-size: 0.85em;
+    margin-right: 4px;
+}
+
 /* 空き状態 */
 .status.available {
     color: #2ed573;
@@ -2268,8 +2287,14 @@ strong.minus {
 }
 
 .prev-day {
-    font-size: 0.7em;
-    color: #666;
+    font-size: 0.75em;
+    color: #999;
+}
+
+.prev-art {
+    color: #ff9f7f;
+    font-weight: 700;
+    font-size: 1.05em;
 }
 
 /* 推奨台カード内の前日・前々日 */
@@ -2283,8 +2308,13 @@ strong.minus {
 }
 
 .prev-day-rec {
-    font-size: 0.72em;
-    color: #666;
+    font-size: 0.75em;
+    color: #999;
+}
+
+.prev-day-rec .prev-art {
+    color: #ff9f7f;
+    font-weight: 700;
 }
 
 .today-data-row {
