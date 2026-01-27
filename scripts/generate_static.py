@@ -118,6 +118,38 @@ def setup_jinja():
     env.globals['pad_id'] = pad_unit_id
     env.globals['build_time'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
+    def generate_sparkline(history, width=120, height=40):
+        """当たり履歴から差枚推移のSVGスパークラインを生成"""
+        if not history or len(history) < 2:
+            return ''
+        sorted_hist = sorted(history, key=lambda x: x.get('time', '00:00'))
+        # 累積差枚を計算（各当たり: +medals, 各スタート: -start*3）
+        cumulative = [0]
+        total = 0
+        for h in sorted_hist:
+            start = h.get('start', 0)
+            medals = h.get('medals', 0)
+            total += medals - (start * 3)  # メダル獲得 - 投入(3枚掛け)
+            cumulative.append(total)
+        if len(cumulative) < 2:
+            return ''
+        min_v = min(cumulative)
+        max_v = max(cumulative)
+        v_range = max_v - min_v if max_v != min_v else 1
+        # SVGポイント生成
+        points = []
+        for i, v in enumerate(cumulative):
+            x = i / (len(cumulative) - 1) * width
+            y = height - ((v - min_v) / v_range * (height - 4)) - 2
+            points.append(f'{x:.1f},{y:.1f}')
+        polyline = ' '.join(points)
+        # ゼロライン
+        zero_y = height - ((0 - min_v) / v_range * (height - 4)) - 2
+        # 色: 最終値がプラスなら緑、マイナスなら赤
+        color = '#2ed573' if total >= 0 else '#ff6b6b'
+        return f'<svg class="sparkline" width="{width}" height="{height}" viewBox="0 0 {width} {height}"><line x1="0" y1="{zero_y:.1f}" x2="{width}" y2="{zero_y:.1f}" stroke="#555" stroke-width="0.5" stroke-dasharray="2,2"/><polyline points="{polyline}" fill="none" stroke="{color}" stroke-width="1.5"/></svg>'
+    env.globals['sparkline'] = generate_sparkline
+
     def format_short_date(date_str):
         """'2026-01-26' → '1/26(月)'"""
         if not date_str:
@@ -372,6 +404,7 @@ def generate_index(env):
                             'diff_medals': y_diff_medals,
                             'estimated_setting': y_setting,
                             'setting_num': y_setting_num,
+                            'today_history': rec.get('today_history', []),
                         })
 
                 # 本日の爆発台（全台から収集、art_count > 0）
@@ -490,6 +523,22 @@ def generate_index(env):
     # 今日の評価順でソート
     all_stores.sort(key=lambda x: (-x['today_rating'], -x['overall_rating']))
 
+    # 全店舗おすすめリンク
+    recommend_links = []
+    for store_key, info in store_day_ratings.items():
+        for ml in info.get('machine_links', []):
+            recommend_links.append({
+                'store_key': ml.get('store_key', store_key),
+                'name': info['short_name'],
+                'icon': ml.get('icon', ''),
+            })
+    # 今日の評価順
+    recommend_links.sort(key=lambda x: next(
+        (-s['today_rating'] for s in all_stores if any(
+            ml.get('store_key') == x['store_key'] for ml in s.get('machine_links', [])
+        )), 0
+    ))
+
     night_mode = is_night_mode()
     tomorrow = now + timedelta(days=1)
     tomorrow_str = format_date_with_weekday(tomorrow)
@@ -598,6 +647,7 @@ def generate_index(env):
         date_prefix=date_prefix,
         next_day_prefix=next_day_prefix,
         next_day_str=next_day_str,
+        recommend_links=recommend_links,
     )
 
     output_path = OUTPUT_DIR / 'index.html'
