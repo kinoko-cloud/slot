@@ -2235,6 +2235,29 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
             accumulated['days'].sort(key=lambda x: x.get('date', ''))
             analysis_phase = get_analysis_phase(accumulated)
 
+        # 蓄積DBの方がdaily JSONより新しいデータを持っている場合、
+        # trend_dataを蓄積DBのdaysで再計算する
+        if accumulated.get('days'):
+            acc_days_for_trend = []
+            for d in accumulated['days']:
+                acc_days_for_trend.append({
+                    'date': d.get('date', ''),
+                    'art': d.get('art', 0),
+                    'total_start': d.get('games', 0),
+                    'games': d.get('games', 0),
+                    'rb': d.get('rb', 0),
+                    'prob': d.get('prob', 0),
+                    'history': d.get('history', []),
+                    'max_rensa': d.get('max_rensa', 0),
+                    'max_medals': d.get('max_medals', 0),
+                })
+            trend_from_acc = analyze_trend(acc_days_for_trend)
+            # 蓄積DBの方が新しいデータがあれば、trend_dataを上書き
+            acc_latest = max(d.get('date', '') for d in accumulated['days']) if accumulated['days'] else ''
+            trend_latest = trend_data.get('yesterday_date', '')
+            if acc_latest > trend_latest:
+                trend_data = trend_from_acc
+
         # Phase 2+: 設定変更周期分析
         if analysis_phase >= 2:
             cycle_analysis = analyze_setting_change_cycle(accumulated, machine_key)
