@@ -32,7 +32,7 @@
             {# === 閉店後/集計中: 的中率ヒーロー表示 === #}
             {% if display_mode in ('result', 'collecting') and accuracy_hero %}
             <section class="accuracy-hero">
-                <div class="hero-title">{{ data_date_str }}の予測的中率</div>
+                <div class="hero-title">昨日の的中率 ({{ data_date_str }})</div>
                 <div class="hero-rates">
                     {% for hero in accuracy_hero %}
                     <div class="hero-rate-card">
