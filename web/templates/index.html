@@ -217,6 +217,27 @@
                     </div>
                     {% endif %}
                     </div>{# /yesterday-card-inner #}
+                    {% set hit_history = rec.yesterday_history if rec.yesterday_history and rec.yesterday_history|length > 0 else rec.today_history if rec.today_history and rec.today_history|length > 0 else [] %}
+                    {% if hit_history|length > 0 %}
+                    <div class="yh-toggle" onclick="toggleYesterdayHistory(event, this)">
+                        当たり履歴 ({{ hit_history|length }}件) <span class="yh-toggle-arrow">▼</span>
+                    </div>
+                    <div class="yh-panel hidden" onclick="event.preventDefault(); event.stopPropagation();">
+                        <div class="yh-list">
+                            {% for hit in hit_history|sort(attribute='time') %}
+                            {% set is_art = hit.type in ['ART', 'AT', 'BIG'] %}
+                            {% set is_chain = hit.start is defined and hit.start <= 5 and not loop.first %}
+                            <div class="yh-row {% if is_art %}yh-art{% else %}yh-rb{% endif %}{% if is_chain %} yh-chain{% endif %}">
+                                {% if is_chain %}<span class="yh-chain-marker">🔗</span>{% endif %}
+                                <span class="yh-time">{{ hit.time or '-' }}</span>
+                                <span class="yh-start {% if hit.start is defined and hit.start >= 500 %}deep{% elif hit.start is defined and hit.start <= 10 and not loop.first %}shallow{% endif %}">{{ hit.start|default(0) }}G</span>
+                                <span class="yh-type">{{ hit.type|default('?') }}</span>
+                                <span class="yh-medals">{% if hit.medals is defined and hit.medals > 0 %}{{ '{:,}'.format(hit.medals) }}枚{% else %}-{% endif %}</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
                 </a>
                 {% endfor %}
             </section>
@@ -493,6 +514,27 @@
                     {% if rec.day_before_art %}
                     <div class="prev-day-sub">前々日: ART {{ rec.day_before_art }}{% if rec.day_before_rb %} / RB {{ rec.day_before_rb }}{% endif %}{% if rec.day_before_games %} ({{ '{:,}'.format(rec.day_before_games) }}G){% endif %}</div>
                     {% endif %}
+                    {% set hit_history2 = rec.yesterday_history if rec.yesterday_history and rec.yesterday_history|length > 0 else rec.today_history if rec.today_history and rec.today_history|length > 0 else [] %}
+                    {% if hit_history2|length > 0 %}
+                    <div class="yh-toggle" onclick="toggleYesterdayHistory(event, this)">
+                        当たり履歴 ({{ hit_history2|length }}件) <span class="yh-toggle-arrow">▼</span>
+                    </div>
+                    <div class="yh-panel hidden" onclick="event.preventDefault(); event.stopPropagation();">
+                        <div class="yh-list">
+                            {% for hit in hit_history2|sort(attribute='time') %}
+                            {% set is_art = hit.type in ['ART', 'AT', 'BIG'] %}
+                            {% set is_chain = hit.start is defined and hit.start <= 5 and not loop.first %}
+                            <div class="yh-row {% if is_art %}yh-art{% else %}yh-rb{% endif %}{% if is_chain %} yh-chain{% endif %}">
+                                {% if is_chain %}<span class="yh-chain-marker">🔗</span>{% endif %}
+                                <span class="yh-time">{{ hit.time or '-' }}</span>
+                                <span class="yh-start {% if hit.start is defined and hit.start >= 500 %}deep{% elif hit.start is defined and hit.start <= 10 and not loop.first %}shallow{% endif %}">{{ hit.start|default(0) }}G</span>
+                                <span class="yh-type">{{ hit.type|default('?') }}</span>
+                                <span class="yh-medals">{% if hit.medals is defined and hit.medals > 0 %}{{ '{:,}'.format(hit.medals) }}枚{% else %}-{% endif %}</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
                 </a>
                 {% endfor %}
             </section>
@@ -544,5 +586,24 @@
         </footer>
     </div>
     <script src="{{ url_for('static', filename='realtime.js') }}"></script>
+    <script>
+    function toggleYesterdayHistory(e, el) {
+        e.preventDefault();
+        e.stopPropagation();
+        var panel = el.nextElementSibling;
+        if (!panel) return;
+        var arrow = el.querySelector('.yh-toggle-arrow');
+        var isHidden = panel.classList.contains('hidden');
+        if (isHidden) {
+            panel.classList.remove('hidden');
+            if (arrow) arrow.textContent = '▲';
+            el.classList.add('active');
+        } else {
+            panel.classList.add('hidden');
+            if (arrow) arrow.textContent = '▼';
+            el.classList.remove('active');
+        }
+    }
+    </script>
 </body>
 </html>

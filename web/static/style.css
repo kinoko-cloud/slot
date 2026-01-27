@@ -5223,3 +5223,193 @@ strong.minus {
         font-size: 1em;
     }
 }
+
+/* ===================================
+   フィルターバー
+   =================================== */
+
+.filter-bar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.filter-select {
+    flex: 1;
+    padding: 8px 12px;
+    background: #1a2332;
+    color: #ddd;
+    border: 1px solid #2a3a5c;
+    border-radius: 6px;
+    font-size: 0.85em;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 30px;
+    min-width: 0;
+}
+
+.filter-select:focus {
+    outline: none;
+    border-color: #70a1ff;
+}
+
+.filter-machine,
+.filter-store {
+    /* JS hook classes — inherit from .filter-select */
+}
+
+.filter-bar-links {
+    width: 100%;
+    flex-basis: 100%;
+    margin-bottom: 8px;
+}
+
+/* ===================================
+   爆発台カード - 当たり履歴展開
+   =================================== */
+
+/* トグルボタン */
+.yh-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px;
+    margin-top: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+    color: #888;
+    font-size: 0.8em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.yh-toggle:active {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.yh-toggle.active {
+    color: #70a1ff;
+    background: rgba(112, 161, 255, 0.1);
+}
+
+.yh-toggle-arrow {
+    font-size: 0.85em;
+    display: inline-block;
+    transition: transform 0.2s;
+}
+
+.yh-toggle.active .yh-toggle-arrow {
+    transform: rotate(180deg);
+}
+
+/* 展開パネル */
+.yh-panel {
+    margin-top: 6px;
+    padding: 8px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 6px;
+    max-height: 400px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.yh-panel.hidden {
+    display: none;
+}
+
+/* 履歴リスト */
+.yh-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+/* 履歴行 */
+.yh-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 8px;
+    border-radius: 4px;
+    font-size: 0.82em;
+}
+
+/* ART/AT/BIG → 緑系 */
+.yh-row.yh-art {
+    background: rgba(46, 213, 115, 0.08);
+    border-left: 2px solid #2ed573;
+}
+
+/* RB/REG → 青系 */
+.yh-row.yh-rb {
+    background: rgba(112, 161, 255, 0.08);
+    border-left: 2px solid #70a1ff;
+}
+
+/* 連チャン行 → オレンジ系 */
+.yh-row.yh-chain {
+    background: rgba(255, 165, 2, 0.12);
+    border-left: 2px solid #ffa502;
+}
+
+/* 連チャンマーカー */
+.yh-chain-marker {
+    font-size: 0.8em;
+    flex-shrink: 0;
+}
+
+/* 時刻 */
+.yh-time {
+    color: #70a1ff;
+    min-width: 40px;
+    font-size: 0.95em;
+}
+
+/* 開始G数 */
+.yh-start {
+    color: #ccc;
+    min-width: 45px;
+    font-weight: 600;
+}
+
+.yh-start.deep {
+    color: #ff6b6b;
+}
+
+.yh-start.shallow {
+    color: #2ed573;
+}
+
+/* タイプ表示 */
+.yh-type {
+    font-weight: 700;
+    min-width: 32px;
+}
+
+.yh-row.yh-art .yh-type {
+    color: #2ed573;
+}
+
+.yh-row.yh-rb .yh-type {
+    color: #70a1ff;
+}
+
+/* 連チャン行のタイプも緑で */
+.yh-row.yh-chain .yh-type {
+    color: #ffa502;
+}
+
+/* 獲得枚数 */
+.yh-medals {
+    color: #aaa;
+    margin-left: auto;
+    font-weight: 600;
+}

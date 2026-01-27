@@ -549,10 +549,14 @@ def generate_index(env):
     recommend_links = []
     for store_key, info in store_day_ratings.items():
         for ml in info.get('machine_links', []):
+            link_store_key = ml.get('store_key', store_key)
+            _mk = STORES.get(link_store_key, {}).get('machine', 'sbj')
+            _machine_display = MACHINES.get(_mk, {}).get('display_name', ml.get('short_name', ''))
             recommend_links.append({
-                'store_key': ml.get('store_key', store_key),
+                'store_key': link_store_key,
                 'name': info['short_name'],
                 'icon': ml.get('icon', ''),
+                'machine_name': _machine_display,
             })
     # 今日の評価順
     recommend_links.sort(key=lambda x: next(
