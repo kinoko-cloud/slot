@@ -4879,3 +4879,323 @@ strong.minus {
 }
 
 .build-time { font-size: 0.7em; color: #555; }
+
+
+/* ===================================
+   台履歴ページ (unit_history.html)
+   =================================== */
+
+/* メタ情報 */
+.uh-meta {
+    font-size: 0.8em;
+    color: #888;
+    margin-top: 4px;
+}
+.uh-meta-range {
+    color: #666;
+}
+
+/* 全期間サマリー */
+.uh-total-summary {
+    background: linear-gradient(135deg, #1a1a3e 0%, #151530 100%);
+    border: 1px solid #2a3a5c;
+    border-radius: 10px;
+    padding: 14px;
+    margin-bottom: 16px;
+}
+.uh-total-title {
+    font-size: 0.8em;
+    color: #888;
+    margin-bottom: 10px;
+    text-align: center;
+}
+.uh-total-grid {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.uh-total-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px 12px;
+    background: rgba(0, 0, 0, 0.25);
+    border-radius: 6px;
+    min-width: 60px;
+}
+.uh-total-value {
+    font-size: 1.2em;
+    font-weight: 800;
+    color: #fff;
+}
+.uh-total-label {
+    font-size: 0.65em;
+    color: #888;
+    margin-top: 2px;
+}
+.uh-total-item.excellent .uh-total-value { color: #2ed573; }
+.uh-total-item.good .uh-total-value { color: #70a1ff; }
+.uh-total-item.bad .uh-total-value { color: #ff6b6b; }
+.uh-total-item.plus .uh-total-value { color: #2ed573; }
+.uh-total-item.minus .uh-total-value { color: #ff6b6b; }
+
+/* 日別アコーディオン */
+.uh-days {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.uh-day-card {
+    background: #252541;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #333;
+    transition: border-color 0.2s;
+}
+.uh-day-card.open {
+    border-color: #4a5aac;
+}
+
+/* 日付ヘッダー */
+.uh-day-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 14px;
+    cursor: pointer;
+    user-select: none;
+    flex-wrap: wrap;
+}
+.uh-day-header:active {
+    background: rgba(255,255,255,0.03);
+}
+.uh-day-date {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.uh-date-text {
+    font-weight: 700;
+    font-size: 0.95em;
+    color: #ddd;
+}
+.uh-day-badge {
+    font-size: 0.65em;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-weight: 700;
+}
+.uh-day-badge.good {
+    background: rgba(46, 213, 115, 0.2);
+    color: #2ed573;
+}
+.uh-day-badge.bad {
+    background: rgba(255, 107, 107, 0.2);
+    color: #ff6b6b;
+}
+.uh-day-quick {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8em;
+    color: #aaa;
+    flex: 1;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+}
+.uh-q-art strong {
+    color: #fff;
+    font-size: 1.1em;
+}
+.uh-q-rb {
+    color: #70a1ff;
+}
+.uh-q-prob {
+    font-weight: 600;
+}
+.uh-q-prob.excellent { color: #2ed573; }
+.uh-q-prob.good { color: #70a1ff; }
+.uh-q-prob.bad { color: #ff6b6b; }
+.uh-q-diff {
+    font-weight: 700;
+    font-size: 0.9em;
+}
+.uh-q-diff.plus { color: #2ed573; }
+.uh-q-diff.minus { color: #ff6b6b; }
+.uh-day-toggle {
+    color: #666;
+    font-size: 0.8em;
+    min-width: 16px;
+    text-align: center;
+}
+
+/* 展開ボディ */
+.uh-day-body {
+    padding: 0 14px 14px;
+}
+
+/* 日サマリーグリッド */
+.uh-day-summary {
+    margin-bottom: 12px;
+}
+.uh-ds-grid {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+.uh-ds-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 6px 10px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    min-width: 55px;
+}
+.uh-ds-val {
+    font-size: 1em;
+    font-weight: 700;
+    color: #fff;
+}
+.uh-ds-lbl {
+    font-size: 0.6em;
+    color: #777;
+    margin-top: 1px;
+}
+.uh-ds-item.excellent .uh-ds-val { color: #2ed573; }
+.uh-ds-item.good .uh-ds-val { color: #70a1ff; }
+.uh-ds-item.bad .uh-ds-val { color: #ff6b6b; }
+.uh-ds-item.plus .uh-ds-val { color: #2ed573; }
+.uh-ds-item.minus .uh-ds-val { color: #ff6b6b; }
+.uh-ds-item.highlight {
+    background: rgba(255, 215, 0, 0.1);
+}
+.uh-ds-item.highlight .uh-ds-val {
+    color: #ffd700;
+}
+
+/* 当たり履歴テーブル */
+.uh-hit-table {
+    margin-top: 8px;
+}
+.uh-hit-title {
+    font-size: 0.8em;
+    color: #888;
+    margin-bottom: 6px;
+}
+.uh-hit-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+.uh-hit-wrapper table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82em;
+}
+.uh-hit-wrapper th {
+    background: #1a1a2e;
+    color: #888;
+    padding: 6px 5px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.9em;
+    position: sticky;
+    top: 0;
+}
+.uh-hit-wrapper td {
+    padding: 6px 5px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.uh-hit-wrapper tr:nth-child(even) {
+    background: rgba(0, 0, 0, 0.1);
+}
+.uh-hit-wrapper tr.tenjou {
+    background: rgba(255, 107, 107, 0.15);
+}
+.uh-hit-wrapper tr.deep {
+    background: rgba(255, 107, 107, 0.08);
+}
+.uh-hit-wrapper tr.rensa {
+    background: rgba(46, 213, 115, 0.08);
+}
+.uh-hit-wrapper .num {
+    color: #555;
+    font-size: 0.85em;
+}
+.uh-hit-wrapper .time {
+    color: #70a1ff;
+    white-space: nowrap;
+}
+.uh-hit-wrapper .games {
+    font-weight: 600;
+}
+.uh-hit-wrapper .games.deep {
+    color: #ff6b6b;
+}
+.uh-hit-wrapper .games.shallow {
+    color: #2ed573;
+}
+.uh-hit-wrapper .type {
+    font-weight: 600;
+}
+.uh-hit-wrapper .type.art,
+.uh-hit-wrapper .type.at,
+.uh-hit-wrapper .type.big {
+    color: #ff6b6b;
+}
+.uh-hit-wrapper .type.reg,
+.uh-hit-wrapper .type.rb {
+    color: #70a1ff;
+}
+.uh-hit-wrapper .medals {
+    color: #bbb;
+}
+
+/* 履歴なし */
+.uh-no-hist {
+    font-size: 0.8em;
+    color: #666;
+    text-align: center;
+    padding: 12px 0;
+}
+.uh-no-data {
+    text-align: center;
+    padding: 40px 20px;
+    background: #252541;
+    border-radius: 8px;
+    color: #888;
+}
+
+/* スマホ最適化 */
+@media (max-width: 480px) {
+    .uh-day-header {
+        padding: 10px 10px;
+        gap: 6px;
+    }
+    .uh-day-body {
+        padding: 0 10px 12px;
+    }
+    .uh-ds-item {
+        padding: 5px 7px;
+        min-width: 48px;
+    }
+    .uh-ds-val {
+        font-size: 0.9em;
+    }
+    .uh-hit-wrapper table {
+        font-size: 0.78em;
+    }
+    .uh-hit-wrapper th,
+    .uh-hit-wrapper td {
+        padding: 5px 3px;
+    }
+    .uh-total-item {
+        padding: 6px 8px;
+        min-width: 50px;
+    }
+    .uh-total-value {
+        font-size: 1em;
+    }
+}

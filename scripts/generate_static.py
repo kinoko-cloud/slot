@@ -1234,6 +1234,146 @@ def generate_verify_page(env):
     print(f"  -> {output_path}")
 
 
+def generate_history_pages(env):
+    """各台の詳細履歴ページを生成"""
+    print("Generating history pages...")
+
+    template = env.get_template('unit_history.html')
+    output_subdir = OUTPUT_DIR / 'history'
+    output_subdir.mkdir(parents=True, exist_ok=True)
+
+    from analysis.history_accumulator import load_unit_history
+
+    old_keys = {'island_akihabara', 'shibuya_espass', 'shinjuku_espass'}
+    page_count = 0
+
+    for store_key, store in STORES.items():
+        if store_key in old_keys:
+            continue
+
+        machine_key = store.get('machine', 'sbj')
+        machine = get_machine_info(machine_key)
+        units = store.get('units', [])
+
+        for unit_id in units:
+            unit_id_str = str(unit_id)
+
+            # 蓄積データ読み込み
+            acc_hist = load_unit_history(store_key, unit_id_str)
+            acc_days = acc_hist.get('days', [])
+
+            if not acc_days:
+                # データが無い台もページだけは作成（空表示）
+                html = template.render(
+                    store=store,
+                    store_key=store_key,
+                    unit_id=unit_id_str,
+                    machine=machine,
+                    machine_key=machine_key,
+                    days=[],
+                    total_summary=None,
+                )
+                output_path = output_subdir / f'{store_key}_{unit_id_str}.html'
+                output_path.write_text(html, encoding='utf-8')
+                page_count += 1
+                continue
+
+            # 日付を新しい順にソート
+            sorted_days = sorted(acc_days, key=lambda x: x.get('date', ''), reverse=True)
+
+            # 各日にデータを整形
+            template_days = []
+            total_art = 0
+            total_games = 0
+            good_count = 0
+            total_diff = 0
+
+            for d in sorted_days:
+                date_str = d.get('date', '')
+                art = d.get('art', 0) or 0
+                rb = d.get('rb', 0) or 0
+                games = d.get('games', 0) or 0
+                prob = d.get('prob', 0) or 0
+                is_good = d.get('is_good', False)
+                max_rensa = d.get('max_rensa', 0) or 0
+                max_medals = d.get('max_medals', 0) or 0
+                history = d.get('history', [])
+
+                # 差枚計算
+                diff_medals = 0
+                if art > 0 and games > 0:
+                    try:
+                        profit = calculate_expected_profit(games, art, machine_key)
+                        diff_medals = profit.get('current_estimate', 0)
+                    except Exception:
+                        pass
+
+                # 日付表示フォーマット
+                date_display = date_str
+                try:
+                    dt = datetime.strptime(date_str, '%Y-%m-%d')
+                    wd = WEEKDAY_NAMES[dt.weekday()]
+                    date_display = f"{dt.month}/{dt.day}({wd})"
+                except Exception:
+                    pass
+
+                # 当たり履歴を時刻順にソート（古い時刻→新しい時刻）
+                history_sorted = []
+                if history:
+                    history_sorted = sorted(history, key=lambda x: x.get('time', '00:00'))
+
+                template_days.append({
+                    'date': date_str,
+                    'date_display': date_display,
+                    'art': art,
+                    'rb': rb,
+                    'games': games,
+                    'prob': prob,
+                    'is_good': is_good,
+                    'max_rensa': max_rensa,
+                    'max_medals': max_medals,
+                    'diff_medals': diff_medals,
+                    'history': history,
+                    'history_sorted': history_sorted,
+                })
+
+                # 全期間サマリー用
+                total_art += art
+                total_games += games
+                if is_good:
+                    good_count += 1
+                total_diff += diff_medals
+
+            # 全期間サマリー
+            total_days = len(sorted_days)
+            avg_prob = total_games / total_art if total_art > 0 else 0
+            good_rate = round(good_count / total_days * 100) if total_days > 0 else 0
+
+            total_summary = {
+                'total_days': total_days,
+                'good_days': good_count,
+                'good_rate': good_rate,
+                'avg_prob': round(avg_prob, 1) if avg_prob > 0 else 0,
+                'total_diff_medals': total_diff,
+            }
+
+            html = template.render(
+                store=store,
+                store_key=store_key,
+                unit_id=unit_id_str,
+                machine=machine,
+                machine_key=machine_key,
+                days=template_days,
+                total_summary=total_summary,
+            )
+
+            output_path = output_subdir / f'{store_key}_{unit_id_str}.html'
+            output_path.write_text(html, encoding='utf-8')
+            page_count += 1
+
+    print(f"  -> {output_subdir}/ ({page_count} pages)")
+
+
 def copy_static_files():
     """静的ファイルをコピー"""
     print("Copying static files...")
@@ -1338,6 +1478,7 @@ def main():
     generate_ranking_pages(env)
     generate_recommend_pages(env)
     generate_verify_page(env)
+    generate_history_pages(env)
     copy_static_files()
     generate_metadata()
 
