@@ -407,6 +407,27 @@
                             {% if rec.reasons %}
                             <div class="compact-reason">{{ rec.reasons[0] }}</div>
                             {% endif %}
+
+                            {# === 波グラフ（コンパクト展開内） === #}
+                            {% if rec.today_history %}
+                            <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #333;">
+                                <div class="detail-title">{% if rec.history_date %}{{ rec.history_date }} {% endif %}波</div>
+                                <div class="wave-graph">
+                                    {% for h in rec.today_history %}
+                                    <span class="wave-bar {% if h.start >= 500 %}deep{% elif h.start >= 300 %}mid{% elif h.start <= 70 %}rensa{% endif %}" title="{{ h.time }} {{ h.start }}G {{ h.type }}">{% if h.start >= 500 %}&#x2587;{% elif h.start >= 300 %}&#x2585;{% elif h.start >= 200 %}&#x2584;{% elif h.start >= 100 %}&#x2583;{% elif h.start >= 70 %}&#x2582;{% else %}&#x2581;{% endif %}</span>
+                                    {% endfor %}
+                                </div>
+                                <div class="hit-history-table" style="margin-top: 6px;">
+                                    {% for h in rec.today_history %}
+                                    <div class="hit-row {% if h.start >= 500 %}deep{% elif h.start <= 70 %}rensa{% endif %}">
+                                        <span class="hit-time">{{ h.time }}</span>
+                                        <span class="hit-type">{{ h.type }}</span>
+                                        <span class="hit-games {% if h.start >= 500 %}bad{% elif h.start <= 70 %}good{% endif %}">{{ h.start }}G</span>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
