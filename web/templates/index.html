@@ -31,46 +31,7 @@
         </header>
 
         <main>
-            <!-- 今日の曜日の店舗評価 -->
-            <section class="today-stores">
-                <h2>{{ today_weekday }}曜日の店舗評価</h2>
-                {% if today_recommended_stores %}
-                <div class="day-section good">
-                    <div class="day-section-label">狙い目</div>
-                    {% for store in today_recommended_stores %}
-                    <a href="{{ url_for('recommend', store_key=store.store_key) }}" class="store-day-card good">
-                        <span class="store-name">{{ store.short_name }}</span>
-                        <span class="day-rating">
-                            {% for i in range(5) %}{% if i < store.today_rating %}★{% else %}<span class="empty">☆</span>{% endif %}{% endfor %}
-                        </span>
-                        <span class="store-note">{{ store.best_note }}</span>
-                    </a>
-                    {% endfor %}
-                </div>
-                {% endif %}
-                {% if today_avoid_stores %}
-                <div class="day-section bad">
-                    <div class="day-section-label">避けるべき</div>
-                    {% for store in today_avoid_stores %}
-                    <a href="{{ url_for('recommend', store_key=store.store_key) }}" class="store-day-card bad">
-                        <span class="store-name">{{ store.short_name }}</span>
-                        <span class="day-rating dim">
-                            {% for i in range(5) %}{% if i < store.today_rating %}★{% else %}<span class="empty">☆</span>{% endif %}{% endfor %}
-                        </span>
-                        <span class="store-note">{{ store.worst_note }}</span>
-                    </a>
-                    {% endfor %}
-                </div>
-                {% endif %}
-                {% if not today_recommended_stores and not today_avoid_stores %}
-                <div class="day-section neutral">
-                    <div class="day-section-label">本日は特に傾向なし</div>
-                    <p class="neutral-note">全店舗で普通の傾向です</p>
-                </div>
-                {% endif %}
-            </section>
-
-            <!-- 狙い目 / 結果 TOP5 -->
+            <!-- 狙い目 / 結果 TOP3 -->
             {% if top3 %}
             <section class="recommendations top" id="top3-section">
                 {% if display_mode == 'result' %}
@@ -80,8 +41,8 @@
                 <h2>{{ result_date_str }}の速報</h2>
                 <div class="top5-note">※データ集計中...</div>
                 {% else %}
-                <h2>いま狙い目の台 TOP5</h2>
-                <div class="top5-note">※過去傾向 + 当日稼働から評価、空き台優先</div>
+                <h2>いま狙い目の台</h2>
+                <div class="top5-note">※機種 / 店名 / 台番号</div>
                 {% endif %}
                 {% for rec in top3 %}
                 <a href="{{ url_for('recommend', store_key=rec.store_key) }}" class="unit-card rank-{{ rec.final_rank|lower }}" style="text-decoration: none;">
@@ -228,10 +189,28 @@
             {% endif %}
         </main>
 
+        <!-- 本日の傾向（曜日別評価を簡潔に） -->
+        <section class="today-trend">
+            <h2>{{ today_weekday }}曜日の傾向</h2>
+            {% if today_recommended_stores %}
+            <div class="trend-item good">
+                <span class="trend-label">狙い目店舗:</span>
+                {% for store in today_recommended_stores %}
+                <a href="{{ url_for('recommend', store_key=store.store_key) }}" class="trend-store">{{ store.short_name }}</a>{% if not loop.last %}、{% endif %}
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% if today_avoid_stores %}
+            <div class="trend-item bad">
+                <span class="trend-label">避けるべき:</span>
+                {% for store in today_avoid_stores %}
+                <a href="{{ url_for('recommend', store_key=store.store_key) }}" class="trend-store">{{ store.short_name }}</a>{% if not loop.last %}、{% endif %}
+                {% endfor %}
+            </div>
+            {% endif %}
+        </section>
+
         <footer>
-            <p class="footer-links">
-                <a href="{{ url_for('rules') }}" class="footer-link">法則コーナー</a>
-            </p>
         </footer>
     </div>
     <script src="{{ url_for('static', filename='realtime.js') }}"></script>

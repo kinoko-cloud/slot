@@ -23,41 +23,7 @@
         </header>
 
         <main>
-            <!-- 今日の曜日の店舗評価 -->
-            <section class="today-stores">
-                <h2>火曜日の店舗評価</h2>
-                
-                <div class="day-section good">
-                    <div class="day-section-label">狙い目</div>
-                    
-                    <a href="/recommend/shibuya_espass_sbj.html" class="store-day-card good">
-                        <span class="store-name">エスパス渋谷新館</span>
-                        <span class="day-rating">
-                            ★★★★<span class="empty">☆</span>
-                        </span>
-                        <span class="store-note">木曜が最強、火水も狙い目</span>
-                    </a>
-                    
-                </div>
-                
-                
-                <div class="day-section bad">
-                    <div class="day-section-label">避けるべき</div>
-                    
-                    <a href="/recommend/seibu_shinjuku_espass_sbj.html" class="store-day-card bad">
-                        <span class="store-name">エスパス西武新宿</span>
-                        <span class="day-rating dim">
-                            ★★<span class="empty">☆</span><span class="empty">☆</span><span class="empty">☆</span>
-                        </span>
-                        <span class="store-note">月火は控えめ</span>
-                    </a>
-                    
-                </div>
-                
-                
-            </section>
-
-            <!-- 狙い目 / 結果 TOP5 -->
+            <!-- 狙い目 / 結果 TOP3 -->
             
 
             <!-- 機種から探す -->
@@ -360,10 +326,28 @@
             
         </main>
 
+        <!-- 本日の傾向（曜日別評価を簡潔に） -->
+        <section class="today-trend">
+            <h2>火曜日の傾向</h2>
+            
+            <div class="trend-item good">
+                <span class="trend-label">狙い目店舗:</span>
+                
+                <a href="/recommend/shibuya_espass_sbj.html" class="trend-store">エスパス渋谷新館</a>
+                
+            </div>
+            
+            
+            <div class="trend-item bad">
+                <span class="trend-label">避けるべき:</span>
+                
+                <a href="/recommend/seibu_shinjuku_espass_sbj.html" class="trend-store">エスパス西武新宿</a>
+                
+            </div>
+            
+        </section>
+
         <footer>
-            <p class="footer-links">
-                <a href="/rules.html" class="footer-link">法則コーナー</a>
-            </p>
         </footer>
     </div>
     <script src="/static/realtime.js"></script>

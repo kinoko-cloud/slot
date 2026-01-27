@@ -249,7 +249,7 @@ def generate_index(env):
         return -score
 
     top3_all.sort(key=top3_sort_key)
-    top3 = top3_all[:5]
+    top3 = top3_all[:3]
 
     yesterday_top10.sort(key=lambda x: -x['max_medals'])
     yesterday_top10 = yesterday_top10[:10]
