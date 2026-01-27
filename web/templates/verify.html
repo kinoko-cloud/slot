@@ -72,7 +72,14 @@
 
                 {% for store in machine_data.stores %}
                 <div class="verify-store">
-                    <h3 class="verify-store-name">{{ store.name }}</h3>
+                    <div class="verify-store-header">
+                        <h3 class="verify-store-name">{{ store.name }}</h3>
+                        {% if store.sa_total > 0 %}
+                        <span class="store-acc {% if store.sa_rate >= 80 %}good{% elif store.sa_rate >= 50 %}ok{% else %}bad{% endif %}">
+                            的中{{ store.sa_rate|int }}% ({{ store.sa_hit }}/{{ store.sa_total }})
+                        </span>
+                        {% endif %}
+                    </div>
                     <div class="verify-table">
                         <div class="verify-header-row">
                             <span class="vh-unit">台番</span>
