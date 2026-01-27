@@ -852,9 +852,16 @@ def generate_verify_page(env):
                 })
 
             if units_data:
+                # 店舗別的中率
+                store_sa_total = sum(1 for u in units_data if u['predicted_rank'] in ('S', 'A'))
+                store_sa_hit = sum(1 for u in units_data if u['predicted_rank'] in ('S', 'A') and u.get('actual_prob', 0) > 0 and u['actual_prob'] <= 130)
+                store_sa_rate = (store_sa_hit / store_sa_total * 100) if store_sa_total > 0 else 0
                 stores_data.append({
                     'name': store.get('name', store_key),
                     'units': units_data,
+                    'sa_total': store_sa_total,
+                    'sa_hit': store_sa_hit,
+                    'sa_rate': store_sa_rate,
                 })
 
         if stores_data:
