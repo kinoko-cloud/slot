@@ -373,6 +373,13 @@ def generate_index(env):
     night_mode = is_night_mode()
     tomorrow = now + timedelta(days=1)
     tomorrow_str = format_date_with_weekday(tomorrow)
+    yesterday = now - timedelta(days=1)
+    yesterday_str = format_date_with_weekday(yesterday)
+
+    # 「本日」「前日」を日付付きに（24時すぎたら前日扱い）
+    # データの日付は常にavailability.jsonのfetched_atに基づく
+    data_date_str = format_date_with_weekday(now)  # 今日のデータ
+    prev_date_str = format_date_with_weekday(yesterday)  # 昨日のデータ
 
     html = template.render(
         machines=machines,
@@ -395,6 +402,9 @@ def generate_index(env):
         all_stores=all_stores,
         night_mode=night_mode,
         tomorrow_str=tomorrow_str,
+        yesterday_str=yesterday_str,
+        data_date_str=data_date_str,
+        prev_date_str=prev_date_str,
     )
 
     output_path = OUTPUT_DIR / 'index.html'
@@ -490,6 +500,8 @@ def generate_ranking_pages(env):
             total_count=len(all_recommendations),
             night_mode=night_mode,
             tomorrow_str=tomorrow_str,
+            data_date_str=data_date_str,
+            prev_date_str=prev_date_str,
             now_short=now.strftime('%m%d_%H:%M'),
         )
 
