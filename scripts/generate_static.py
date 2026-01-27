@@ -355,6 +355,21 @@ def generate_index(env):
             result_date = now - timedelta(days=1)
         result_date_str = format_date_with_weekday(result_date)
 
+    # 全店舗一覧（店舗導線用）
+    all_stores = []
+    for store_key, info in store_day_ratings.items():
+        today_rating = info['day_ratings'].get(today_weekday, 3)
+        all_stores.append({
+            'store_key': store_key,
+            'name': info['name'],
+            'short_name': info['short_name'],
+            'today_rating': today_rating,
+            'overall_rating': info['overall_rating'],
+            'machine_links': info.get('machine_links', []),
+        })
+    # 今日の評価順でソート
+    all_stores.sort(key=lambda x: (-x['today_rating'], -x['overall_rating']))
+
     html = template.render(
         machines=machines,
         top3=top3,
@@ -373,6 +388,7 @@ def generate_index(env):
         display_mode=display_mode,
         result_date_str=result_date_str,
         is_open=is_open,
+        all_stores=all_stores,
     )
 
     output_path = OUTPUT_DIR / 'index.html'
