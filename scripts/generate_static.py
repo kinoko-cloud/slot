@@ -739,14 +739,16 @@ def generate_verify_page(env):
             if store_key in old_keys:
                 continue
 
-            # 予測（過去データのみでスコア算出）
+            # 予測（過去データのみでスコア算出）+ 当日リアルタイムデータ
             availability = {}
+            realtime = None
             try:
                 availability = get_availability(store_key)
+                realtime = get_realtime_data(store_key)
             except:
                 pass
 
-            recommendations = recommend_units(store_key, availability=availability)
+            recommendations = recommend_units(store_key, realtime_data=realtime, availability=availability)
             units_data = []
 
             # この店舗の日別データからユニットマップを作成
