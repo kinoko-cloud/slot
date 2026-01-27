@@ -34,6 +34,18 @@ header h1 {
     color: #fff;
 }
 
+/* タイトルの「本日」を大きく、日付を小さく */
+.title-main {
+    font-size: 1.2em;
+    font-weight: 700;
+}
+
+.title-date {
+    font-size: 0.85em;
+    color: #888;
+    margin-top: 2px;
+}
+
 .back-link {
     display: inline-block;
     color: #70a1ff;
@@ -75,6 +87,17 @@ header h1 {
 .mode-badge.result {
     background: #4a3f70;
     color: #c9b8ff;
+}
+
+.mode-badge.collecting {
+    background: #5a4a20;
+    color: #ffd700;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
 }
 
 .mode-badge.realtime {
@@ -451,6 +474,57 @@ footer {
     font-size: 0.75em;
     font-weight: 600;
     margin-left: 8px;
+}
+
+.data-source {
+    color: #888;
+    font-size: 0.85em;
+}
+
+.data-source.no-realtime {
+    color: #ff6b6b;
+    font-size: 0.75em;
+}
+
+.data-age {
+    font-size: 0.85em;
+    color: #666;
+}
+
+.data-age.stale {
+    color: #ff6b6b;
+}
+
+/* ソース別バッジカラー */
+.cache-badge.github {
+    background: #2ed573;
+    color: #000;
+}
+
+.cache-badge.gas {
+    background: #70a1ff;
+    color: #000;
+}
+
+.cache-badge.unknown {
+    background: #666;
+    color: #fff;
+}
+
+/* ボタンヒント */
+.button-hint {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 5px;
+    font-size: 0.7em;
+    color: #666;
+}
+
+.hint-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
 }
 
 /* アクションボタン */
@@ -1136,6 +1210,16 @@ strong.minus {
     min-width: 70px;
 }
 
+.unit-id-link {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    color: #fff;
+}
+
+.unit-id-link:hover {
+    color: #70a1ff;
+}
+
 .avail-badge-lg {
     padding: 4px 12px;
     border-radius: 6px;
@@ -1151,6 +1235,22 @@ strong.minus {
 .avail-badge-lg.playing {
     background: #ff6b6b;
     color: #fff;
+}
+
+.avail-badge-lg.closed {
+    background: #444;
+    color: #888;
+}
+
+/* 営業時間外通知 */
+.closed-notice {
+    text-align: center;
+    padding: 8px;
+    background: #333;
+    border-radius: 6px;
+    color: #888;
+    font-size: 0.85em;
+    margin-top: 8px;
 }
 
 .rank-badge-lg {
@@ -1330,6 +1430,30 @@ strong.minus {
     border: 1px solid rgba(200, 200, 200, 0.3);
 }
 
+/* 暫定的な設定推測（参考程度） */
+.setting-estimate.tentative {
+    opacity: 0.8;
+}
+
+.setting-estimate.tentative .payout {
+    font-size: 0.75em;
+}
+
+.setting-estimate.tentative-weak {
+    background: rgba(100, 100, 100, 0.2);
+    color: #888;
+    border: 1px solid rgba(100, 100, 100, 0.3);
+    font-size: 0.9em;
+}
+
+/* 詳細セクション強調 */
+.detail-item.highlight {
+    background: rgba(255, 215, 0, 0.1);
+    padding: 4px 6px;
+    border-radius: 4px;
+    margin: 2px 0;
+}
+
 /* 単位を小さく */
 .unit-small {
     font-size: 0.7em;
@@ -1350,6 +1474,78 @@ strong.minus {
 
 .max-medals-top .num {
     font-size: 1.1em;
+}
+
+/* ===== 最大枚数バッジ ===== */
+.medals-icon {
+    margin-right: 2px;
+}
+
+.medals-icon-sm {
+    font-size: 0.9em;
+    margin-right: 1px;
+}
+
+.medals-10k {
+    color: #ff4757 !important;
+    text-shadow: 0 0 8px rgba(255, 71, 87, 0.5);
+}
+
+.medals-10k .num {
+    color: #ff4757;
+}
+
+.medals-5k {
+    color: #ffa502 !important;
+}
+
+.medals-5k .num {
+    color: #ffa502;
+}
+
+.medals-3k {
+    color: #ffd700 !important;
+}
+
+.medals-3k .num {
+    color: #ffd700;
+}
+
+.medals-2k {
+    color: #70a1ff !important;
+}
+
+.medals-2k .num {
+    color: #70a1ff;
+}
+
+.medals-1k {
+    color: #2ed573 !important;
+}
+
+.medals-1k .num {
+    color: #2ed573;
+}
+
+/* data-cell 内のバッジ */
+.data-cell.medals-10k {
+    background: rgba(255, 71, 87, 0.2);
+}
+
+.data-cell.medals-5k {
+    background: rgba(255, 165, 2, 0.2);
+}
+
+.data-cell.medals-3k {
+    background: rgba(255, 215, 0, 0.15);
+}
+
+.data-cell.medals-2k {
+    background: rgba(112, 161, 255, 0.15);
+}
+
+.data-cell.medals-1k {
+    background: rgba(46, 213, 115, 0.15);
 }
 
 /* トップ5の注釈 */
@@ -1435,6 +1631,7 @@ strong.minus {
     display: flex;
     align-items: center;
     gap: 8px;
+    flex-wrap: wrap;
 }
 
 .unit-id-sm {
@@ -1840,11 +2037,23 @@ strong.minus {
 /* ===== 店舗リンク ===== */
 .store-link {
     color: #70a1ff;
-    text-decoration: none;
+    text-decoration: underline;
+    text-underline-offset: 2px;
 }
 
 .store-link:hover {
+    color: #9ab8ff;
+}
+
+/* ===== 機種リンク ===== */
+.machine-link {
+    color: #ffa502;
     text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.machine-link:hover {
+    color: #ffb833;
 }
 
 /* ===== 空き状況バッジ（トップ用） ===== */
@@ -1865,6 +2074,11 @@ strong.minus {
 .top3-avail.playing {
     background: #ff6b6b;
     color: #fff;
+}
+
+.top3-avail.closed {
+    background: #555;
+    color: #999;
 }
 
 /* ===== データ日付バッジ ===== */
@@ -2277,4 +2491,466 @@ strong.minus {
 
 .note-best {
     color: #4ade80;
+}
+
+/* ===================================
+   法則コーナー (rules.html)
+   =================================== */
+
+.rules-section {
+    margin-bottom: 25px;
+}
+
+.rules-section h2 {
+    font-size: 1.1em;
+    color: #ffa502;
+    margin-bottom: 12px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #333;
+}
+
+.rule-card {
+    background: #252541;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 12px;
+}
+
+.rule-card.machine {
+    border-left: 4px solid #ffa502;
+}
+
+.rule-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.rule-store-name,
+.rule-machine-name {
+    font-weight: 700;
+    font-size: 1.1em;
+    color: #fff;
+}
+
+.rule-rating {
+    font-size: 0.85em;
+    color: #ffd700;
+    margin-left: auto;
+}
+
+.rule-weekday {
+    margin: 10px 0;
+}
+
+.weekday-grid {
+    display: flex;
+    gap: 4px;
+}
+
+.weekday-cell {
+    flex: 1;
+    text-align: center;
+    padding: 8px 4px;
+    background: #1a1a2e;
+    border-radius: 4px;
+}
+
+.weekday-cell .day {
+    display: block;
+    font-size: 0.75em;
+    color: #888;
+    margin-bottom: 2px;
+}
+
+.weekday-cell .stars {
+    font-size: 0.5em;
+    color: #666;
+}
+
+.weekday-cell.best {
+    background: #3b2a00;
+}
+
+.weekday-cell.best .stars {
+    color: #ffd700;
+}
+
+.weekday-cell.good {
+    background: #1e3a1e;
+}
+
+.weekday-cell.good .stars {
+    color: #4ade80;
+}
+
+.weekday-cell.weak {
+    background: #3a2020;
+}
+
+.weekday-cell.weak .stars {
+    color: #f87171;
+}
+
+.rule-tips {
+    margin: 10px 0;
+}
+
+.rule-tips .tip {
+    font-size: 0.85em;
+    padding: 4px 8px;
+    margin: 4px 0;
+    border-radius: 4px;
+}
+
+.rule-tips .tip.good {
+    background: rgba(74, 222, 128, 0.1);
+    color: #4ade80;
+}
+
+.rule-tips .tip.bad {
+    background: rgba(248, 113, 113, 0.1);
+    color: #f87171;
+}
+
+.rule-patterns {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #333;
+}
+
+.patterns-title {
+    font-size: 0.8em;
+    color: #888;
+    margin-bottom: 6px;
+}
+
+.pattern-item {
+    font-size: 0.85em;
+    color: #ccc;
+    padding: 3px 0;
+    padding-left: 12px;
+    border-left: 2px solid #70a1ff;
+    margin: 4px 0;
+}
+
+/* 機種スペック */
+.machine-specs {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+    padding: 10px;
+    margin: 10px 0;
+}
+
+.spec-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 3px 0;
+    font-size: 0.85em;
+}
+
+.spec-label {
+    color: #888;
+}
+
+.spec-value {
+    color: #fff;
+    font-weight: 600;
+}
+
+.machine-tips {
+    margin: 10px 0;
+}
+
+.tips-title {
+    font-size: 0.8em;
+    color: #ffa502;
+    margin-bottom: 6px;
+}
+
+.tip-item {
+    font-size: 0.85em;
+    color: #ccc;
+    padding: 4px 0;
+    padding-left: 12px;
+    border-left: 2px solid #ffa502;
+    margin: 4px 0;
+}
+
+.reset-info {
+    margin-top: 10px;
+    padding: 10px;
+    background: rgba(255, 165, 2, 0.1);
+    border-radius: 6px;
+}
+
+.reset-title {
+    font-size: 0.8em;
+    color: #ffa502;
+    margin-bottom: 4px;
+}
+
+.reset-content {
+    font-size: 0.85em;
+    color: #ffd700;
+}
+
+/* 一般的なTips */
+.general-tips {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.general-tip-card {
+    display: flex;
+    gap: 12px;
+    background: #252541;
+    border-radius: 8px;
+    padding: 12px;
+}
+
+.tip-number {
+    width: 30px;
+    height: 30px;
+    background: #ffa502;
+    color: #000;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.tip-content {
+    flex: 1;
+}
+
+.tip-title {
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.tip-text {
+    font-size: 0.85em;
+    color: #aaa;
+}
+
+.disclaimer {
+    font-size: 0.75em;
+    color: #666;
+    text-align: center;
+    padding: 15px;
+}
+
+/* ===================================
+   当たり履歴 (history.html)
+   =================================== */
+
+.history-summary {
+    background: #252541;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.summary-grid {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.summary-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px 15px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+    min-width: 70px;
+}
+
+.summary-item .summary-value {
+    font-size: 1.4em;
+    font-weight: 800;
+    color: #fff;
+}
+
+.summary-item .summary-label {
+    font-size: 0.7em;
+    color: #888;
+}
+
+.summary-item.excellent .summary-value {
+    color: #2ed573;
+}
+
+.summary-item.good .summary-value {
+    color: #70a1ff;
+}
+
+.summary-item.bad .summary-value {
+    color: #ff6b6b;
+}
+
+.summary-item.highlight {
+    background: rgba(255, 215, 0, 0.1);
+}
+
+.summary-item.highlight .summary-value {
+    color: #ffd700;
+}
+
+.summary-extra {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 10px;
+    font-size: 0.85em;
+    color: #aaa;
+    flex-wrap: wrap;
+}
+
+.summary-extra strong {
+    color: #fff;
+}
+
+.summary-extra .warning {
+    color: #ff6b6b;
+}
+
+/* 履歴テーブル */
+.history-table-section h2 {
+    font-size: 1em;
+    color: #888;
+    margin-bottom: 10px;
+}
+
+.history-table-wrapper {
+    overflow-x: auto;
+}
+
+.history-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85em;
+}
+
+.history-table th {
+    background: #1a1a2e;
+    color: #888;
+    padding: 8px 6px;
+    text-align: center;
+    font-weight: 600;
+}
+
+.history-table td {
+    padding: 8px 6px;
+    text-align: center;
+    border-bottom: 1px solid #333;
+}
+
+.history-table tr:nth-child(even) {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.history-table tr.tenjou {
+    background: rgba(255, 107, 107, 0.1);
+}
+
+.history-table tr.hot {
+    background: rgba(255, 165, 2, 0.1);
+}
+
+.history-table .num {
+    color: #666;
+    font-size: 0.85em;
+}
+
+.history-table .time {
+    color: #70a1ff;
+}
+
+.history-table .games {
+    font-weight: 600;
+}
+
+.history-table .games.deep {
+    color: #ff6b6b;
+}
+
+.history-table .games.shallow {
+    color: #2ed573;
+}
+
+.history-table .type {
+    font-weight: 600;
+}
+
+.history-table .type.art {
+    color: #ff6b6b;
+}
+
+.history-table .type.bb {
+    color: #ffd700;
+}
+
+.history-table .type.rb {
+    color: #70a1ff;
+}
+
+.history-table .rensa.hot {
+    color: #ffa502;
+    font-weight: 700;
+}
+
+.history-table .medals {
+    color: #aaa;
+}
+
+.no-history {
+    text-align: center;
+    padding: 30px;
+    background: #252541;
+    border-radius: 8px;
+    color: #888;
+}
+
+/* グラフ分析 */
+.history-analysis h2 {
+    font-size: 1em;
+    color: #888;
+    margin-bottom: 10px;
+}
+
+.analysis-card {
+    background: #252541;
+    border-radius: 8px;
+    padding: 15px;
+    border-left: 4px solid #ffa502;
+}
+
+.analysis-pattern {
+    font-size: 1.1em;
+    font-weight: 700;
+    color: #ffa502;
+    margin-bottom: 6px;
+}
+
+.analysis-desc {
+    font-size: 0.9em;
+    color: #ccc;
+    margin-bottom: 8px;
+}
+
+.analysis-rec {
+    font-size: 0.85em;
+    color: #2ed573;
+    padding: 8px;
+    background: rgba(46, 213, 115, 0.1);
+    border-radius: 4px;
 }

@@ -182,36 +182,69 @@ def get_all_availability() -> Dict[str, Dict[str, str]]:
 
 def get_realtime_data(store_key: str) -> Dict:
     """
-    GitHub JSONからリアルタイムデータ(ART, スタート数等)を取得
+    リアルタイムデータ(ART, スタート数等)を取得
 
     Returns:
         {
             'store_name': str,
-            'fetched_at': str,
+            'fetched_at': str,  # ISO形式のJST時刻
             'units': [
                 {'unit_id': str, 'art': int, 'bb': int, 'rb': int, 'total_start': int, ...},
                 ...
-            ]
+            ],
+            'source': str,  # 'github' or 'gas'
         }
     """
-    if store_key not in GITHUB_STORES:
-        return {}
+    # GitHub対応店舗（daidata）
+    if store_key in GITHUB_STORES:
+        try:
+            data = get_daidata_availability()
+            store_data = data.get('stores', {}).get(store_key, {})
 
-    try:
-        data = get_daidata_availability()
-        store_data = data.get('stores', {}).get(store_key, {})
+            if not store_data:
+                return {}
 
-        if not store_data:
+            return {
+                'store_name': store_data.get('name', ''),
+                'fetched_at': data.get('fetched_at', ''),
+                'units': store_data.get('units', []),
+                'source': 'github',
+            }
+        except Exception as e:
+            print(f"Error getting realtime data from GitHub: {e}")
             return {}
 
-        return {
-            'store_name': store_data.get('name', ''),
-            'fetched_at': data.get('fetched_at', ''),
-            'units': store_data.get('units', []),
-        }
-    except Exception as e:
-        print(f"Error getting realtime data: {e}")
-        return {}
+    # GAS対応店舗（papimo.jp）
+    if store_key in GAS_STORES:
+        try:
+            data = get_availability_from_gas()
+            store_data = data.get(store_key, {})
+
+            if not store_data:
+                return {}
+
+            # GASからのデータを整形
+            units = []
+            for u in store_data.get('empty', []):
+                units.append({'unit_id': u, 'availability': '空き'})
+            for u in store_data.get('playing', []):
+                units.append({'unit_id': u, 'availability': '遊技中'})
+
+            # GASからの詳細データがあれば使用
+            if 'units' in store_data:
+                units = store_data['units']
+
+            return {
+                'store_name': store_data.get('name', ''),
+                'fetched_at': data.get('fetched_at', datetime.now(JST).isoformat()),
+                'units': units,
+                'source': 'gas',
+            }
+        except Exception as e:
+            print(f"Error getting realtime data from GAS: {e}")
+            return {}
+
+    return {}
 
 
 def get_all_realtime_data() -> Dict[str, Dict]:

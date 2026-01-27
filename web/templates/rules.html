@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+    <meta name="googlebot" content="noindex, nofollow">
+    <title>店舗・機種の法則</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="{{ url_for('index') }}" class="back-link">&lt; トップ</a>
+            <h1>店舗・機種の法則</h1>
+            <div class="subtitle">過去データから見える傾向と攻略ポイント</div>
+        </header>
+
+        <main>
+            <!-- 店舗別傾向 -->
+            <section class="rules-section">
+                <h2>店舗別の傾向</h2>
+
+                {% for store_key, info in store_rules.items() %}
+                <div class="rule-card">
+                    <div class="rule-header">
+                        <span class="rule-store-name">{{ info.name }}</span>
+                        <span class="rule-rating">総合評価: {{ '★' * info.overall_rating }}{{ '☆' * (5 - info.overall_rating) }}</span>
+                    </div>
+
+                    <div class="rule-weekday">
+                        <div class="weekday-grid">
+                            {% for day in ['月', '火', '水', '木', '金', '土', '日'] %}
+                            {% set rating = info.day_ratings[day] %}
+                            <div class="weekday-cell {% if rating >= 5 %}best{% elif rating >= 4 %}good{% elif rating <= 2 %}weak{% endif %}">
+                                <span class="day">{{ day }}</span>
+                                <span class="stars">{{ '★' * rating }}</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="rule-tips">
+                        <div class="tip good">{{ info.best_note }}</div>
+                        <div class="tip bad">{{ info.worst_note }}</div>
+                    </div>
+
+                    {% if info.patterns %}
+                    <div class="rule-patterns">
+                        <div class="patterns-title">傾向・法則</div>
+                        {% for pattern in info.patterns %}
+                        <div class="pattern-item">{{ pattern }}</div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </section>
+
+            <!-- 機種別攻略 -->
+            <section class="rules-section">
+                <h2>機種別の攻略ポイント</h2>
+
+                {% for machine_key, machine in machine_rules.items() %}
+                <div class="rule-card machine">
+                    <div class="rule-header">
+                        <span class="machine-icon">{{ machine.icon }}</span>
+                        <span class="rule-machine-name">{{ machine.name }}</span>
+                    </div>
+
+                    <div class="machine-specs">
+                        <div class="spec-row">
+                            <span class="spec-label">設定6確率</span>
+                            <span class="spec-value">1/{{ machine.setting6_prob }}</span>
+                        </div>
+                        <div class="spec-row">
+                            <span class="spec-label">設定1確率</span>
+                            <span class="spec-value">1/{{ machine.setting1_prob }}</span>
+                        </div>
+                        <div class="spec-row">
+                            <span class="spec-label">天井</span>
+                            <span class="spec-value">{{ machine.tenjou }}</span>
+                        </div>
+                    </div>
+
+                    <div class="machine-tips">
+                        <div class="tips-title">攻略ポイント</div>
+                        {% for tip in machine.tips %}
+                        <div class="tip-item">{{ tip }}</div>
+                        {% endfor %}
+                    </div>
+
+                    {% if machine.reset_info %}
+                    <div class="reset-info">
+                        <div class="reset-title">リセット恩恵</div>
+                        <div class="reset-content">{{ machine.reset_info }}</div>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </section>
+
+            <!-- 一般的な立ち回り -->
+            <section class="rules-section">
+                <h2>立ち回りの基本</h2>
+
+                <div class="general-tips">
+                    {% for tip in general_tips %}
+                    <div class="general-tip-card">
+                        <div class="tip-number">{{ loop.index }}</div>
+                        <div class="tip-content">
+                            <div class="tip-title">{{ tip.title }}</div>
+                            <div class="tip-text">{{ tip.text }}</div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p class="disclaimer">※これらは過去データに基づく傾向であり、勝利を保証するものではありません</p>
+        </footer>
+    </div>
+</body>
+</html>

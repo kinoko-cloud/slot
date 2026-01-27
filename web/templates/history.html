@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+    <meta name="googlebot" content="noindex, nofollow">
+    <title>{{ store.name }} {{ unit_id }}番 - 当たり履歴</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="{{ url_for('recommend', store_key=store_key) }}" class="back-link">&lt; {{ store.name }}</a>
+            <h1>{{ unit_id }}番 当たり履歴</h1>
+            <div class="machine-label">{{ machine.icon }} {{ machine.short_name }}</div>
+            {% if history_date %}
+            <div class="subtitle">{{ history_date }}のデータ</div>
+            {% endif %}
+        </header>
+
+        <main>
+            <!-- サマリー -->
+            {% if summary %}
+            <section class="history-summary">
+                <div class="summary-grid">
+                    <div class="summary-item">
+                        <span class="summary-value">{{ summary.total_art }}</span>
+                        <span class="summary-label">ART</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-value">{{ '{:,}'.format(summary.total_games) }}</span>
+                        <span class="summary-label">総G数</span>
+                    </div>
+                    {% if summary.art_prob > 0 %}
+                    <div class="summary-item {% if summary.art_prob <= 100 %}excellent{% elif summary.art_prob <= 130 %}good{% elif summary.art_prob >= 200 %}bad{% endif %}">
+                        <span class="summary-value">1/{{ summary.art_prob|int }}</span>
+                        <span class="summary-label">合成確率</span>
+                    </div>
+                    {% endif %}
+                    {% if summary.max_medals > 0 %}
+                    <div class="summary-item highlight">
+                        <span class="summary-value">{{ '{:,}'.format(summary.max_medals) }}</span>
+                        <span class="summary-label">最大枚数</span>
+                    </div>
+                    {% endif %}
+                </div>
+
+                {% if summary.max_rensa > 0 %}
+                <div class="summary-extra">
+                    <span>最大連チャン: <strong>{{ summary.max_rensa }}連</strong></span>
+                    {% if summary.tenjou_count > 0 %}
+                    <span class="warning">天井到達: {{ summary.tenjou_count }}回</span>
+                    {% endif %}
+                    <span>平均ハマり: {{ summary.avg_valley|int }}G</span>
+                </div>
+                {% endif %}
+            </section>
+            {% endif %}
+
+            <!-- 当たり履歴テーブル -->
+            {% if history %}
+            <section class="history-table-section">
+                <h2>全{{ history|length }}回の当たり履歴</h2>
+                <div class="history-table-wrapper">
+                    <table class="history-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>時刻</th>
+                                <th>G数</th>
+                                <th>種類</th>
+                                <th>連</th>
+                                <th>枚数</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for hit in history %}
+                            <tr class="{% if hit.is_tenjou %}tenjou{% elif hit.rensa >= 5 %}hot{% endif %}">
+                                <td class="num">{{ loop.index }}</td>
+                                <td class="time">{{ hit.time or '-' }}</td>
+                                <td class="games {% if hit.start >= 500 %}deep{% elif hit.start <= 50 %}shallow{% endif %}">
+                                    {{ hit.start or '-' }}G
+                                </td>
+                                <td class="type {{ hit.type|lower }}">{{ hit.type or 'ART' }}</td>
+                                <td class="rensa {% if hit.rensa >= 5 %}hot{% endif %}">
+                                    {% if hit.rensa > 1 %}{{ hit.rensa }}連{% else %}-{% endif %}
+                                </td>
+                                <td class="medals">
+                                    {% if hit.medals > 0 %}{{ '{:,}'.format(hit.medals) }}{% else %}-{% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            {% else %}
+            <section class="no-history">
+                <p>当たり履歴データがありません</p>
+            </section>
+            {% endif %}
+
+            <!-- グラフパターン分析 -->
+            {% if analysis %}
+            <section class="history-analysis">
+                <h2>グラフ分析</h2>
+                <div class="analysis-card">
+                    <div class="analysis-pattern">{{ analysis.pattern_name }}</div>
+                    <div class="analysis-desc">{{ analysis.description }}</div>
+                    {% if analysis.recommendation %}
+                    <div class="analysis-rec">{{ analysis.recommendation }}</div>
+                    {% endif %}
+                </div>
+            </section>
+            {% endif %}
+        </main>
+
+        <footer>
+            <p>
+                <a href="{{ url_for('recommend', store_key=store_key) }}" class="footer-link">台一覧に戻る</a>
+            </p>
+        </footer>
+    </div>
+</body>
+</html>
