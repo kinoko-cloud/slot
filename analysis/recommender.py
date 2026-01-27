@@ -1368,6 +1368,8 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
                      base_rank: str, final_rank: str, days: List[dict] = None,
                      today_history: List[dict] = None,
                      store_key: str = None,
+                     is_today_data: bool = False,
+                     current_at_games: int = 0,
                      **kwargs) -> List[str]:
     """推奨理由を生成（台固有の根拠を最優先）
 
@@ -1486,8 +1488,8 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
         elif art_prob > 0 and art_prob >= 200:
             reasons.append(f"本日ART確率1/{art_prob:.0f} ({total_games:,}G消化) → 低設定域の挙動")
 
-    # 本日の天井到達（当日データのみ有用）
-    if today_history:
+    # 本日の天井到達・連チャン判定（当日データのみ）
+    if today_history and is_today_data:
         today_graph = analyze_today_graph(today_history)
         today_at_intervals = calculate_at_intervals(today_history)
         today_ceiling = sum(1 for g in today_at_intervals if g >= 999)
@@ -1496,7 +1498,10 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
         if today_graph.get('has_explosion'):
             reasons.append(f"本日{today_graph['max_rensa']}連の爆発あり")
         elif today_graph.get('is_on_fire'):
-            reasons.append("連チャン中 → 高設定継続の期待")
+            # 連チャン中と言うなら現在のハマりが浅いことを確認
+            if current_at_games <= 100:
+                reasons.append("連チャン中 → 高設定継続の期待")
+            # 100G超えてたら連チャン終了してるので表示しない
 
     # === 5. 他台との比較 ===
     if comparison.get('is_top_performer'):
@@ -1870,9 +1875,27 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
                         history_date = day.get('date', '')
                         break
 
+        # データ日付を取得（今日 or 昨日）
+        data_date = today_analysis.get('data_date', '')
+        is_today_data = data_date == datetime.now().strftime('%Y-%m-%d') if data_date else False
+
+        # 現在のハマりG数（generate_reasonsで連チャン中判定に必要）
+        _final_start = 0
+        if realtime_data and realtime_is_today:
+            for _u in (realtime_data.get('units', [])):
+                if _u.get('unit_id') == unit_id:
+                    _final_start = _u.get('final_start', 0)
+                    break
+        current_at_games = 0
+        if today_history and _final_start > 0:
+            current_at_games = calculate_current_at_games(today_history, _final_start)
+        elif _final_start > 0:
+            current_at_games = _final_start
+
         reasons = generate_reasons(
             unit_id, trend_data, today_analysis, comparison, base_rank, final_rank,
             days=unit_days, today_history=today_history, store_key=store_key,
+            is_today_data=is_today_data, current_at_games=current_at_games,
             historical_perf=historical_perf, activity_data=activity_data,
         )
 
@@ -1896,10 +1919,6 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
         total_games = today_analysis.get('total_games', 0)
         art_count = today_analysis.get('art_count', 0)
         profit_info = calculate_expected_profit(total_games, art_count, machine_key)
-
-        # データ日付を取得（今日 or 昨日）
-        data_date = today_analysis.get('data_date', '')
-        is_today_data = data_date == datetime.now().strftime('%Y-%m-%d') if data_date else False
 
         # max_medals, final_start をリアルタイムデータから取得（今日のデータのみ）
         max_medals = 0
