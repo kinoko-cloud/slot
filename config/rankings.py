@@ -11,14 +11,37 @@ MACHINES = {
         'short_name': 'スーパーブラックジャック',
         'display_name': 'スーパーブラックジャック',
         'icon': '🃏',
+        # 分析閾値（新機種追加時はここを設定するだけで全ロジックに反映）
+        'good_prob': 130,      # ART確率がこれ以下なら好調
+        'bad_prob': 150,       # ART確率がこれ以上なら不調判定
+        'very_bad_prob': 200,  # 明確に低設定
+        'typical_daily_games': 6500,  # 1日あたりの一般的な消化G数
     },
     'hokuto_tensei2': {
         'name': 'L北斗の拳 転生の章2',
         'short_name': '北斗の拳 転生の章2',
         'display_name': '北斗転生2',
         'icon': '👊',
+        'good_prob': 330,
+        'bad_prob': 366,
+        'very_bad_prob': 500,
+        'typical_daily_games': 4000,
     },
 }
+
+# 新機種追加時のデフォルト閾値
+MACHINE_DEFAULTS = {
+    'good_prob': 200,
+    'bad_prob': 250,
+    'very_bad_prob': 350,
+    'typical_daily_games': 5000,
+}
+
+
+def get_machine_threshold(machine_key: str, key: str):
+    """機種の閾値を取得（未設定の場合はデフォルト）"""
+    m = MACHINES.get(machine_key, {})
+    return m.get(key, MACHINE_DEFAULTS.get(key, 0))
 
 # 店舗設定（機種ごと）
 STORES = {
