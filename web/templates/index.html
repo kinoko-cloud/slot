@@ -237,10 +237,10 @@
                     </div>
                     <div class="yh-panel hidden" onclick="event.preventDefault(); event.stopPropagation();">
                         <div class="yh-list">
-                            {% for hit in hit_history|sort(attribute='time') %}
+                            {% for hit in hit_history|sort(attribute='time', reverse=true) %}
                             {% set is_art = hit.type in ['ART', 'AT', 'BIG'] %}
-                            {% set is_chain = hit.start is defined and hit.start <= 70 and not loop.first %}
                             {% set is_first_hit = hit.is_first_hit is defined and hit.is_first_hit %}
+                            {% set is_chain = hit.start is defined and hit.start <= 70 and not is_first_hit %}
                             <div class="yh-row {% if is_art %}yh-art{% else %}yh-rb{% endif %}{% if is_chain %} yh-chain{% endif %}{% if is_first_hit %} yh-first-hit{% endif %}">
                                 <span class="yh-chain-marker">{% if is_first_hit %}⭐{% elif is_chain %}🔗{% endif %}</span>
                                 <span class="yh-time">{{ hit.time or '-' }}</span>
@@ -548,10 +548,10 @@
                     </div>
                     <div class="yh-panel hidden" onclick="event.preventDefault(); event.stopPropagation();">
                         <div class="yh-list">
-                            {% for hit in hit_history2|sort(attribute='time') %}
+                            {% for hit in hit_history2|sort(attribute='time', reverse=true) %}
                             {% set is_art = hit.type in ['ART', 'AT', 'BIG'] %}
-                            {% set is_chain = hit.start is defined and hit.start <= 70 and not loop.first %}
                             {% set is_first_hit = hit.is_first_hit is defined and hit.is_first_hit %}
+                            {% set is_chain = hit.start is defined and hit.start <= 70 and not is_first_hit %}
                             <div class="yh-row {% if is_art %}yh-art{% else %}yh-rb{% endif %}{% if is_chain %} yh-chain{% endif %}{% if is_first_hit %} yh-first-hit{% endif %}">
                                 <span class="yh-chain-marker">{% if is_first_hit %}⭐{% elif is_chain %}🔗{% endif %}</span>
                                 <span class="yh-time">{{ hit.time or '-' }}</span>
