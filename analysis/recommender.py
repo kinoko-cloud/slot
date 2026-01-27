@@ -469,6 +469,32 @@ def calculate_unit_historical_performance(days: List[dict], machine_key: str = '
     good_day_rate = good_days / total_days if total_days > 0 else 0.5
     avg_prob = sum(probs) / len(probs) if probs else 0
 
+    # 好調翌日→翌日も好調だった率（据え置き率の目安）
+    good_after_good = 0
+    good_after_good_total = 0
+    # sorted_daysは新しい順なので、i番目の翌日はi+1番目
+    # ただし日付連続を確認
+    for i in range(len(sorted_days) - 1):
+        curr = sorted_days[i]
+        nxt = sorted_days[i + 1]  # nxtは前日
+        curr_art = curr.get('art', 0)
+        curr_games = curr.get('total_start', 0)
+        nxt_art = nxt.get('art', 0)
+        nxt_games = nxt.get('total_start', 0)
+        if nxt_art > 0 and nxt_games > 0:
+            nxt_prob = nxt_games / nxt_art
+            if nxt_prob <= good_prob_threshold:
+                # 前日が好調だった場合、翌日(curr)も好調か？
+                good_after_good_total += 1
+                if curr_art > 0 and curr_games > 0:
+                    curr_prob = curr_games / curr_art
+                    if curr_prob <= good_prob_threshold:
+                        good_after_good += 1
+    continuation_rate = good_after_good / good_after_good_total if good_after_good_total > 0 else 0
+
+    # 直近3日のART確率推移
+    recent_probs = probs[:3]  # 新しい順
+
     # スコアボーナス計算
     # 好調率が高い台にボーナス、低い台にペナルティ（最大±10点）
     if good_day_rate >= 0.8:
@@ -493,6 +519,10 @@ def calculate_unit_historical_performance(days: List[dict], machine_key: str = '
         'score_bonus': score_bonus,
         'avg_prob': avg_prob,
         'consecutive_bad': consecutive_bad,
+        'continuation_rate': continuation_rate,         # 好調翌日も好調だった率
+        'continuation_total': good_after_good_total,    # サンプル数
+        'continuation_good': good_after_good,           # 翌日も好調だった回数
+        'recent_probs': recent_probs,                   # 直近3日のART確率（新→古）
     }
 
 
@@ -1409,6 +1439,27 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
 
     if total_perf_days > 0 and good_day_rate >= 0.7:
         reasons.append(f"📊 {total_perf_days}日間中{good_days}日好調（好調率{good_day_rate:.0%}）→ 高設定が入りやすい台")
+
+        # 補足: 平均ART確率 + 好調翌日継続率
+        sub_parts = []
+        hp_avg_prob = historical_perf.get('avg_prob', 0)
+        if hp_avg_prob > 0:
+            sub_parts.append(f"平均ART確率 1/{hp_avg_prob:.0f}")
+        continuation_rate = historical_perf.get('continuation_rate', 0)
+        continuation_total = historical_perf.get('continuation_total', 0)
+        continuation_good = historical_perf.get('continuation_good', 0)
+        if continuation_total >= 2:
+            sub_parts.append(f"好調翌日も好調: {continuation_good}/{continuation_total}回({continuation_rate:.0%})")
+        elif continuation_total == 1:
+            sub_parts.append(f"好調翌日も好調: {continuation_good}/{continuation_total}回")
+        # 直近3日の確率推移
+        recent_probs = historical_perf.get('recent_probs', [])
+        if len(recent_probs) >= 2:
+            prob_strs = [f"1/{int(p)}" for p in recent_probs]
+            sub_parts.append(f"直近: {' → '.join(reversed(prob_strs))}")
+        if sub_parts:
+            reasons.append(f"📈 {' / '.join(sub_parts)}")
+
         # なぜ今日も好調と見るかの根拠を追加
         today_confidence_parts = []
         if today_rating >= 4:
