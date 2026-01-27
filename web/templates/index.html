@@ -73,8 +73,6 @@
                         {% if rec.art_prob > 0 %}<span class="art-prob {% if rec.art_prob <= 100 %}excellent{% elif rec.art_prob <= 130 %}good{% elif rec.art_prob >= 200 %}bad{% endif %}" title="合成確率">合成1/{{ rec.art_prob|int }}</span>{% endif %}
                         {% elif rec.total_games > 0 %}
                         <span class="no-today-data">ART 0回（{{ '{:,}'.format(rec.total_games) }}G消化）</span>
-                        {% elif rec.trend and rec.trend.get('avg_art_prob', 0) > 0 %}
-                        <span class="no-today-data">未稼働（7日平均 1/{{ rec.trend.get('avg_art_prob', 0)|round(0)|int }}）</span>
                         {% else %}
                         <span class="no-today-data">本日未稼働</span>
                         {% endif %}

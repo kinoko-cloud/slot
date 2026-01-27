@@ -25,7 +25,7 @@
                 </span>
                 <span class="cache-badge {{ cache_info.source }}">{{ cache_info.source|upper }}</span>
                 {% else %}
-                <span class="data-source no-realtime">リアルタイムデータなし（過去7日間のデータで評価）</span>
+                <span class="data-source no-realtime">リアルタイムデータなし（過去の傾向で評価）</span>
                 {% endif %}
             </div>
 
@@ -155,30 +155,14 @@
                             <span class="data-label">G数</span>
                         </div>
                         {% else %}
-                        <!-- 本日も昨日もデータなしの場合は過去データを表示 -->
-                        {% if rec.avg_art_7days > 0 %}
-                        <div class="data-cell">
-                            <span class="data-label">7日平均</span>
-                            <span class="data-value">{{ rec.avg_art_7days|round(0)|int }}ART</span>
-                        </div>
                         <div class="no-data-inline">
+                            本日未稼働
                             {% if rec.availability == '空き' %}
                             <span class="target-badge">空き</span>
                             {% elif rec.availability == '遊技中' %}
                             <span class="playing-badge">遊技中</span>
                             {% endif %}
                         </div>
-                        {% else %}
-                        <div class="no-data-inline">
-                            {% if rec.availability == '空き' %}
-                            <span class="target-badge">空き</span>
-                            {% elif rec.availability == '遊技中' %}
-                            <span class="playing-badge">遊技中</span>
-                            {% else %}
-                            データなし
-                            {% endif %}
-                        </div>
-                        {% endif %}
                         {% endif %}
                     </div>
 
@@ -257,19 +241,18 @@
                             </div>
                             <div class="detail-section">
                                 <div class="detail-title">過去データ分析</div>
-                                {% if rec.trend and rec.trend.get('avg_art_prob', 0) > 0 %}
-                                <div class="detail-item">平均ART確率 1/{{ rec.trend.get('avg_art_prob', 0)|round(0)|int }} → {% if rec.trend.get('avg_art_prob', 999) <= 100 %}高設定域{% elif rec.trend.get('avg_art_prob', 999) <= 130 %}中間以上{% else %}設定不明{% endif %}</div>
-                                {% endif %}
-                                {% if rec.trend and rec.trend.get('avg_at_interval', 0) > 0 %}
-                                <div class="detail-item">平均AT間 {{ rec.trend.get('avg_at_interval', 0)|round(0)|int }}G{% if rec.trend.get('ceiling_count', 0) > 0 %} / 天井到達{{ rec.trend.get('ceiling_count', 0) }}回{% endif %}</div>
-                                {% endif %}
                                 {% if rec.consecutive_plus > 0 %}
                                 <div class="detail-item plus">{{ rec.consecutive_plus }}日連続プラス推定 → 据え置き期待</div>
                                 {% elif rec.consecutive_minus > 0 %}
                                 <div class="detail-item minus">{{ rec.consecutive_minus }}日連続マイナス → 設定上げ期待</div>
                                 {% endif %}
-                                {% if rec.trend and rec.trend.get('max_art_day') and rec.trend.get('max_art_day').art > 0 %}
-                                <div class="detail-item">最高: {{ rec.trend.get('max_art_day').art }}ART（{{ rec.trend.get('max_art_day').date[-5:] }}）</div>
+                                {% if rec.trend and rec.trend.get('art_trend') == 'improving' %}
+                                <div class="detail-item plus">直近のART確率が改善傾向</div>
+                                {% elif rec.trend and rec.trend.get('art_trend') == 'declining' %}
+                                <div class="detail-item minus">直近のART確率が悪化傾向</div>
+                                {% endif %}
+                                {% if rec.trend and rec.trend.get('ceiling_count', 0) > 0 %}
+                                <div class="detail-item minus">直近で天井到達{{ rec.trend.get('ceiling_count', 0) }}回 → 低設定の日があった</div>
                                 {% endif %}
                             </div>
                         </div>
@@ -327,8 +310,8 @@
                         {% endif %}
                         <!-- 回転数は最後に小さく -->
                         <span class="compact-games">{{ '{:,}'.format(rec.total_games) }}G</span>
-                        {% elif rec.avg_art_7days > 0 %}
-                        <span class="compact-art past"><span class="art-num">{{ rec.avg_art_7days|round(0)|int }}</span><span class="art-lbl">ART/日</span></span>
+                        {% elif rec.yesterday_art > 0 %}
+                        <span class="compact-art past"><span class="art-num">{{ rec.yesterday_art }}</span><span class="art-lbl">ART(前日)</span></span>
                         {% else %}
                         <span class="compact-data no-data">データなし</span>
                         {% endif %}
@@ -352,7 +335,7 @@
                             <div>推定: {{ rec.estimated_setting }}{% if rec.total_games < 3000 %}？{% endif %} ({{ rec.payout_estimate }}%)</div>
                             {% endif %}
                             {% endif %}
-                            <div>過去分析: {{ rec.base_rank }}ランク{% if rec.trend and rec.trend.get('avg_art_prob', 0) > 0 %} (平均1/{{ rec.trend.get('avg_art_prob', 0)|round(0)|int }} → {% if rec.trend.get('avg_art_prob', 999) <= 100 %}高設定域{% elif rec.trend.get('avg_art_prob', 999) <= 130 %}中間以上{% else %}設定不明{% endif %}){% endif %}</div>
+                            <div>過去分析: {{ rec.base_rank }}ランク{% if rec.consecutive_minus >= 2 %} → 凹み{{ rec.consecutive_minus }}日、設定上げ期待{% elif rec.consecutive_plus >= 2 %} → {{ rec.consecutive_plus }}日好調、据え置き期待{% endif %}</div>
                             {% if rec.reasons %}
                             <div class="compact-reason">{{ rec.reasons[0] }}</div>
                             {% endif %}
