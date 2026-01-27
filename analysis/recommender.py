@@ -2313,6 +2313,19 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
         _today_rating = weekday_info.get('today_rating', 3)
         weekday_bonus = (_today_rating - 3) * 3  # rating3=0, rating5=+6, rating1=-6
 
+        # === 前日差枚ボーナス ===
+        # 前日に大爆発した台 = 高設定が入ってた = 翌日据え置き期待
+        yesterday_diff_bonus = 0
+        _yd = trend_data.get('yesterday_diff', 0)
+        if _yd >= 5000:
+            yesterday_diff_bonus = 8
+        elif _yd >= 3000:
+            yesterday_diff_bonus = 5
+        elif _yd >= 1000:
+            yesterday_diff_bonus = 3
+        elif _yd <= -3000:
+            yesterday_diff_bonus = 3  # 大負け翌日は設定変更期待
+
         # === 最終スコア計算 ===
         raw_score = (base_score
                      + today_analysis.get('today_score_bonus', 0)
@@ -2322,6 +2335,7 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
                      + activity_bonus     # 【改善4+5】稼働パターン+ハイエナ
                      + medal_balance_penalty  # 出玉バランスペナルティ
                      + weekday_bonus      # 曜日ボーナス
+                     + yesterday_diff_bonus  # 前日差枚ボーナス
                      )
         final_score = raw_score
         # 【改善3】ランクは後でまとめて相対評価で決定するため、ここでは仮ランク

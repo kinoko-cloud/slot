@@ -444,14 +444,32 @@ def generate_index(env):
                 print(f"Error processing {store_key}: {e}")
 
     # ソート
-    def top3_sort_key(r):
-        score = r['final_score']
-        if r.get('availability') == '空き':
-            score += 10
-        return -score
+    # TOP3: 各機種の最強台を1台ずつ + 残り枠は差枚順
+    # 機種関係なく「前日最も稼いだS/A台」= 高設定の据え置き期待
+    top3_candidates = [r for r in top3_all if r.get('final_rank') in ('S', 'A')]
+    top3_candidates.sort(key=lambda r: -(r.get('yesterday_diff_medals', 0) or 0))
 
-    top3_all.sort(key=top3_sort_key)
-    top3 = top3_all[:3]
+    # 各機種から1台ずつ確保
+    top3 = []
+    seen_machines = set()
+    for r in top3_candidates:
+        mk = r.get('machine_key', '')
+        if mk not in seen_machines:
+            top3.append(r)
+            seen_machines.add(mk)
+        if len(top3) >= len(MACHINES):
+            break
+    # 残り枠を差枚順で埋める
+    for r in top3_candidates:
+        if r not in top3:
+            top3.append(r)
+        if len(top3) >= 3:
+            break
+    # 前日差枚がない場合はスコア順にフォールバック
+    if not top3:
+        top3_candidates = [r for r in top3_all if r.get('final_rank') in ('S', 'A')]
+        top3_candidates.sort(key=lambda r: -r['final_score'])
+        top3 = top3_candidates[:3]
 
     # 前日の爆発台: 差枚でソート
     yesterday_top10.sort(key=lambda x: (-x.get('diff_medals', 0), -x['yesterday_art']))
