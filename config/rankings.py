@@ -55,7 +55,7 @@ STORES = {
         'short_name': 'エスパス西武新宿',
         'hall_id': '100950',
         'machine': 'sbj',
-        'units': ['3185', '3186', '3187', '4109', '4118', '4125', '4168'],
+        'units': ['3185', '3186', '3187'],  # 4000番台は全て低貸のため除外
         'data_source': 'daidata',
     },
     'akihabara_espass_sbj': {

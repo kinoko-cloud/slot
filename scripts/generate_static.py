@@ -370,6 +370,10 @@ def generate_index(env):
     # 今日の評価順でソート
     all_stores.sort(key=lambda x: (-x['today_rating'], -x['overall_rating']))
 
+    night_mode = is_night_mode()
+    tomorrow = now + timedelta(days=1)
+    tomorrow_str = format_date_with_weekday(tomorrow)
+
     html = template.render(
         machines=machines,
         top3=top3,
@@ -389,6 +393,8 @@ def generate_index(env):
         result_date_str=result_date_str,
         is_open=is_open,
         all_stores=all_stores,
+        night_mode=night_mode,
+        tomorrow_str=tomorrow_str,
     )
 
     output_path = OUTPUT_DIR / 'index.html'
@@ -422,6 +428,12 @@ def generate_machine_pages(env):
         print(f"  -> {output_path}")
 
 
+def is_night_mode():
+    """22:45以降は翌日予想モードに切り替え"""
+    now = datetime.now(JST)
+    return now.hour > 22 or (now.hour == 22 and now.minute >= 45)
+
+
 def generate_ranking_pages(env):
     """機種別総合ランキングページを生成"""
     print("Generating ranking pages...")
@@ -429,6 +441,11 @@ def generate_ranking_pages(env):
     template = env.get_template('ranking.html')
     output_subdir = OUTPUT_DIR / 'ranking'
     output_subdir.mkdir(parents=True, exist_ok=True)
+
+    night_mode = is_night_mode()
+    now = datetime.now(JST)
+    tomorrow = now + timedelta(days=1)
+    tomorrow_str = format_date_with_weekday(tomorrow)
 
     for machine_key, machine in MACHINES.items():
         stores = get_stores_by_machine(machine_key)
@@ -441,9 +458,16 @@ def generate_ranking_pages(env):
             except:
                 pass
 
-            recommendations = recommend_units(store_key, availability=availability)
+            # リアルタイムデータも取得（設定推測やmax_medals等に必要）
+            realtime = None
+            try:
+                realtime = get_realtime_data(store_key)
+            except:
+                pass
+
+            recommendations = recommend_units(store_key, realtime_data=realtime, availability=availability)
             for rec in recommendations:
-                rec['store_name'] = store['name']
+                rec['store_name'] = store.get('short_name', store['name'])
                 rec['store_key'] = store_key
                 all_recommendations.append(rec)
 
@@ -464,6 +488,9 @@ def generate_ranking_pages(env):
             top_recs=top_recs,
             other_recs=other_recs,
             total_count=len(all_recommendations),
+            night_mode=night_mode,
+            tomorrow_str=tomorrow_str,
+            now_short=now.strftime('%m%d_%H:%M'),
         )
 
         output_path = output_subdir / f'{machine_key}.html'
