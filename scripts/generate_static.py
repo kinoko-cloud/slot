@@ -18,7 +18,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 from jinja2 import Environment, FileSystemLoader
 from config.rankings import STORES, MACHINES, get_stores_by_machine, get_machine_info
-from analysis.recommender import recommend_units, load_daily_data
+from analysis.recommender import recommend_units, load_daily_data, generate_store_analysis
 from scrapers.availability_checker import get_availability, get_realtime_data
 
 JST = timezone(timedelta(hours=9))
@@ -380,6 +380,10 @@ def generate_recommend_pages(env):
                 'playing_count': sum(1 for v in availability.values() if v == '遊技中'),
             }
 
+        # 店舗分析
+        daily_data = load_daily_data(machine_key=machine_key)
+        store_analysis = generate_store_analysis(store_key, daily_data)
+
         html = template.render(
             store=store,
             store_key=store_key,
@@ -392,6 +396,7 @@ def generate_recommend_pages(env):
             availability_info=availability_info,
             is_open=is_open,
             display_mode=display_mode,
+            store_analysis=store_analysis,
         )
 
         output_path = output_subdir / f'{store_key}.html'

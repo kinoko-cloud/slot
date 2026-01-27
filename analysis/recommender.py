@@ -341,8 +341,11 @@ def load_daily_data(date_str: str = None, machine_key: str = None) -> dict:
                     if machine_key:
                         machines = data.get('machines', [])
                         if machine_key in machines or not machines:
+                            # rawデータからIsland等のデータを補完
+                            data = _merge_raw_data(data, fallback_date)
                             return data
                     else:
+                        data = _merge_raw_data(data, fallback_date)
                         return data
         # ワイルドカードでも探す
         for wp in [f'daily_*_{fallback_date}.json', f'*_daily_{fallback_date}.json']:
@@ -350,9 +353,61 @@ def load_daily_data(date_str: str = None, machine_key: str = None) -> dict:
             if matches:
                 latest = max(matches, key=lambda p: p.stat().st_mtime)
                 with open(latest, 'r', encoding='utf-8') as f:
-                    return json.load(f)
+                    data = json.load(f)
+                    data = _merge_raw_data(data, fallback_date)
+                    return data
 
     return {}
+
+
+def _merge_raw_data(daily_data: dict, date_str: str) -> dict:
+    """rawディレクトリのpapimo等のデータをdaily_dataに補完する
+
+    papimo rawデータ（リスト形式）を日別データの形式に変換してマージ
+    """
+    raw_dir = Path(__file__).parent.parent / 'data' / 'raw'
+    if not raw_dir.exists():
+        return daily_data
+
+    stores = daily_data.get('stores', {})
+
+    # papimo rawデータを検索
+    papimo_files = sorted(raw_dir.glob(f'papimo_island_sbj_{date_str}_*.json'), reverse=True)
+    if papimo_files:
+        try:
+            with open(papimo_files[0], 'r', encoding='utf-8') as f:
+                raw_units = json.load(f)
+
+            if isinstance(raw_units, list) and raw_units:
+                # island_akihabara_sbjのデータが既にあれば日数を確認
+                existing = stores.get('island_akihabara_sbj', {})
+                existing_units = existing.get('units', [])
+
+                # 既存データの日数が少ない場合にrawデータで上書き
+                existing_days = 0
+                if existing_units:
+                    existing_days = len(existing_units[0].get('days', []))
+
+                raw_days = len(raw_units[0].get('days', []))
+
+                if raw_days > existing_days:
+                    # rawデータを日別形式に変換
+                    converted_units = []
+                    for raw_unit in raw_units:
+                        converted_units.append({
+                            'unit_id': str(raw_unit.get('unit_id', '')),
+                            'days': raw_unit.get('days', []),
+                        })
+
+                    stores['island_akihabara_sbj'] = {
+                        'units': converted_units,
+                        'data_source': 'papimo_raw',
+                    }
+                    daily_data['stores'] = stores
+        except Exception as e:
+            pass  # rawデータ読み込み失敗は無視
+
+    return daily_data
 
 
 def analyze_trend(days: List[dict]) -> dict:
@@ -1067,152 +1122,252 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
                      base_rank: str, final_rank: str, days: List[dict] = None,
                      today_history: List[dict] = None,
                      store_key: str = None) -> List[str]:
-    """推奨理由を生成（店舗傾向・具体的根拠付き）"""
+    """推奨理由を生成（台固有の根拠を最優先）
+
+    優先順位:
+    1. この台の過去ランク（なぜこの台なのか）
+    2. 前日の実績分析（翌日予測の根拠）
+    3. 連続パターン（設定変更サイクルの読み）
+    4. 本日データ（稼働中の場合のみ）
+    5. 店舗曜日傾向（補足情報）
+    """
     reasons = []
 
-    # --- 店舗の曜日傾向情報を取得 ---
     weekday_info = get_store_weekday_info(store_key) if store_key else {}
     store_name = weekday_info.get('short_name', '')
     today_weekday = weekday_info.get('today_weekday', '')
     today_rating = weekday_info.get('today_rating', 3)
 
-    # 1. 曜日傾向 × 連続マイナス/プラスの組み合わせ（最重要）
+    total_games = today.get('total_games', 0)
+    art_prob = today.get('art_prob', 0)
+
     consecutive_plus = trend.get('consecutive_plus', 0)
     consecutive_minus = trend.get('consecutive_minus', 0)
-    yesterday = trend.get('yesterday_result', 'unknown')
-    yesterday_diff = trend.get('yesterday_diff', 0)
+    yesterday_art = trend.get('yesterday_art', 0)
+    yesterday_rb = trend.get('yesterday_rb', 0)
+    yesterday_games = trend.get('yesterday_games', 0)
+    day_before_art = trend.get('day_before_art', 0)
+    day_before_games = trend.get('day_before_games', 0)
 
-    if today_rating >= 5:
-        reasons.append(f"{store_name}は{today_weekday}曜が最強日（★5） → 高設定投入の期待大")
-    elif today_rating >= 4:
-        reasons.append(f"{store_name}は{today_weekday}曜が狙い目（★4）")
+    # === 1. この台の過去ランク（なぜこの台を選んだのか） ===
+    if base_rank == 'S':
+        reasons.append(f"過去データSランク: 高設定が頻繁に入る台")
+    elif base_rank == 'A':
+        reasons.append(f"過去データAランク: 高設定が入りやすい台")
+    elif base_rank == 'B':
+        reasons.append(f"過去データBランク: 中間設定以上が多い台")
 
-    if consecutive_minus >= 4:
-        reasons.append(f"{consecutive_minus}日連続マイナス → この店の投入サイクル的に上げ濃厚")
-    elif consecutive_minus >= 3:
-        if today_rating >= 4:
-            reasons.append(f"{consecutive_minus}日マイナス + {today_weekday}曜★{today_rating} → 設定上げの好条件が揃っている")
+    # === 2. 前日の実績分析（翌日予測の根拠） ===
+    if yesterday_art and yesterday_games:
+        prob = yesterday_games / yesterday_art if yesterday_art > 0 else 999
+        if prob <= 130:
+            reasons.append(f"前日ART {yesterday_art}回 (確率1/{prob:.0f}, {yesterday_games:,}G) → 好調、据え置き期待")
+        elif prob <= 200:
+            reasons.append(f"前日ART {yesterday_art}回 ({yesterday_games:,}G) → 中間設定域")
         else:
-            reasons.append(f"{consecutive_minus}日マイナス継続 → そろそろ上げる可能性")
+            reasons.append(f"前日ART {yesterday_art}回 (確率1/{prob:.0f}, {yesterday_games:,}G) → 低設定域、リセット期待")
+    elif yesterday_art:
+        reasons.append(f"前日ART {yesterday_art}回")
+
+    # 前々日→前日の変化（設定変更の手がかり）
+    if yesterday_art and day_before_art and yesterday_games and day_before_games:
+        yesterday_prob = yesterday_games / yesterday_art if yesterday_art > 0 else 999
+        day_before_prob = day_before_games / day_before_art if day_before_art > 0 else 999
+        if yesterday_prob > day_before_prob * 1.5 and yesterday_prob > 150:
+            reasons.append(f"前々日ART {day_before_art}回(1/{day_before_prob:.0f}) → 前日{yesterday_art}回(1/{yesterday_prob:.0f})に悪化 → リセット期待")
+        elif yesterday_prob < day_before_prob * 0.7 and yesterday_prob <= 150:
+            reasons.append(f"前日のART確率が前々日から大幅改善 → 設定が上がった可能性")
+
+    # === 3. 連続パターン（設定変更サイクルの読み） ===
+    if consecutive_minus >= 4:
+        reasons.append(f"{consecutive_minus}日連続マイナス推定 → この店の傾向的に設定変更の可能性大")
+    elif consecutive_minus >= 3:
+        reasons.append(f"{consecutive_minus}日連続マイナス推定 → そろそろ設定上げ期待")
     elif consecutive_minus == 2:
         if today_rating >= 4:
-            reasons.append(f"2日マイナス + {today_weekday}曜★{today_rating} → リセット期待")
-
-    if consecutive_plus >= 4:
-        reasons.append(f"{consecutive_plus}日連続プラス → 高設定据え置き中（ただし下げ警戒も）")
-    elif consecutive_plus >= 3:
-        reasons.append(f"{consecutive_plus}日連続プラス → 据え置き期待だが、そろそろ下げる店もある")
-
-    # 2. 昨日の結果 + 背景根拠
-    if yesterday == 'big_minus' and yesterday_diff < -2000:
-        if today_rating >= 4:
-            reasons.append(f"昨日推定-{abs(yesterday_diff):,}枚 + {today_weekday}曜★{today_rating} → リセット狙い目（天井666Gに短縮）")
-        elif consecutive_minus >= 2:
-            reasons.append(f"昨日推定-{abs(yesterday_diff):,}枚（{consecutive_minus}日連続凹み）→ リセット期待（天井666G短縮）")
+            reasons.append(f"2日連続マイナス + {today_weekday}曜★{today_rating} → リセット期待")
         else:
-            reasons.append(f"昨日推定-{abs(yesterday_diff):,}枚 → リセットなら天井666Gに短縮")
-    elif yesterday == 'big_minus':
-        if consecutive_minus >= 2:
-            reasons.append(f"昨日マイナス（{consecutive_minus}日連続）→ 店の傾向的に設定変更の可能性")
-        elif today_rating >= 4:
-            reasons.append(f"昨日マイナス + {today_weekday}曜★{today_rating} → 設定変更期待")
-    elif yesterday == 'big_plus' and yesterday_diff > 3000:
-        reasons.append(f"昨日推定+{yesterday_diff:,}枚 → 据え置きなら引き続き狙い目")
+            reasons.append(f"2日連続マイナス推定 → リセット期待")
 
-    # 3. ローテーションパターン分析
+    if consecutive_plus >= 3:
+        reasons.append(f"{consecutive_plus}日連続好調 → 据え置き期待（下げ警戒も）")
+    elif consecutive_plus == 2:
+        reasons.append(f"2日連続好調 → 据え置きの可能性")
+
+    # ローテーションパターン
     if days:
         rotation = analyze_rotation_pattern(days)
-        if rotation['has_pattern']:
-            if rotation['next_high_chance']:
-                reasons.append(f"ローテ傾向: {rotation['description']} → 本日上げ期待")
+        if rotation['has_pattern'] and rotation['next_high_chance']:
+            reasons.append(f"ローテ傾向: {rotation['description']} → 本日上げ期待")
 
-    # 4. 当日のART確率（打つべきか判断する核心データ）
-    art_prob = today.get('art_prob', 0)
-    total_games = today.get('total_games', 0)
-
+    # === 4. 本日のデータ（稼働中の場合） ===
     if total_games > 0:
         if art_prob > 0 and art_prob <= 80:
-            reasons.append(f"本日ART確率1/{art_prob:.0f}（{total_games:,}G消化）→ 設定6域の挙動")
+            reasons.append(f"本日ART確率1/{art_prob:.0f} ({total_games:,}G消化) → 設定6域の挙動")
         elif art_prob > 0 and art_prob <= 100:
-            reasons.append(f"本日ART確率1/{art_prob:.0f}（{total_games:,}G消化）→ 高設定濃厚")
-        elif art_prob > 0 and art_prob <= 130:
-            if total_games >= 5000:
-                reasons.append(f"本日1/{art_prob:.0f}で{total_games:,}G消化 → 中間以上の設定で安定稼働中")
+            reasons.append(f"本日ART確率1/{art_prob:.0f} ({total_games:,}G消化) → 高設定濃厚")
+        elif art_prob > 0 and art_prob <= 130 and total_games >= 3000:
+            reasons.append(f"本日1/{art_prob:.0f}で安定稼働中 ({total_games:,}G消化)")
+        elif art_prob > 0 and art_prob >= 200:
+            reasons.append(f"本日ART確率1/{art_prob:.0f} ({total_games:,}G消化) → 低設定域の挙動")
 
-    # 5. 直近の傾向パターン分析（パターンベース、平均ではない）
-    ceiling_count = trend.get('ceiling_count', 0)
-    if ceiling_count > 0:
-        reasons.append(f"直近で天井到達{ceiling_count}回あり → 低設定の日があった")
-
-    art_trend = trend.get('art_trend', 'flat')
-    if art_trend == 'improving':
-        reasons.append("直近3日のART確率が改善傾向 → 設定が上がっている可能性")
-    elif art_trend == 'declining':
-        reasons.append("直近3日のART確率が悪化傾向 → 設定が下がった可能性に注意")
-
-    # 6. グラフパターン分析
-    if days:
-        graph = analyze_graph_pattern(days)
-        if graph.get('likely_to_rise') and not graph.get('has_big_rensa'):
-            if graph['pattern'] in ('mimizu', 'momimomi'):
-                reasons.append("直近の出玉が横ばいで大連荘なし → 爆発のタイミングが近い可能性")
-
-    # 7. 本日のグラフ分析
+    # 本日の天井到達（当日データのみ有用）
     if today_history:
         today_graph = analyze_today_graph(today_history)
-        if today_graph['description']:
-            reasons.append(today_graph['description'])
+        today_at_intervals = calculate_at_intervals(today_history)
+        today_ceiling = sum(1 for g in today_at_intervals if g >= 999)
+        if today_ceiling > 0:
+            reasons.append(f"本日天井到達{today_ceiling}回 → 低設定の可能性に注意")
+        if today_graph.get('has_explosion'):
+            reasons.append(f"本日{today_graph['max_rensa']}連の爆発あり")
+        elif today_graph.get('is_on_fire'):
+            reasons.append("連チャン中 → 高設定継続の期待")
 
-    # 8. 他台との比較
+    # === 5. 他台との比較 ===
     if comparison.get('is_top_performer'):
         reasons.append("本日この店舗でトップの出玉")
     elif comparison.get('rank_in_store', 99) <= 2 and comparison.get('total_units', 0) > 3:
         reasons.append(f"本日{comparison['rank_in_store']}位/{comparison['total_units']}台中")
 
-    # 9. 曜日が弱い日の警告
-    if today_rating <= 2 and store_name:
-        reasons.append(f"注意: {store_name}は{today_weekday}曜★{today_rating}（弱い日）→ 回収傾向")
+    # === 6. 店舗曜日傾向（補足情報） ===
+    if store_name and today_weekday:
+        if today_rating >= 5:
+            reasons.append(f"補足: {store_name}の{today_weekday}曜は最強日（★5）→ 高設定投入期待大")
+        elif today_rating >= 4:
+            reasons.append(f"補足: {store_name}は{today_weekday}曜が狙い目（★4）")
+        elif today_rating <= 2:
+            reasons.append(f"注意: {store_name}は{today_weekday}曜★{today_rating}（弱い日）→ 回収傾向")
 
-    # 10. 未稼働台の分析
-    if total_games == 0:
-        if consecutive_minus >= 2 and today_rating >= 4:
-            reasons.append(f"未稼働 + {consecutive_minus}日凹み + {today_weekday}曜★{today_rating} → リセット台狙い目")
-        elif consecutive_minus >= 2:
-            reasons.append(f"未稼働 + {consecutive_minus}日連続マイナス → リセット台の可能性")
-
-    # reasonsが空の台にデフォルト理由を追加（具体的な根拠を示す）
+    # === フォールバック ===
     if not reasons:
-        if total_games > 0 and art_prob > 0:
-            if art_prob <= 100:
-                reasons.append(f"本日ART確率1/{art_prob:.0f}（{total_games:,}G消化）→ 高設定域の挙動")
-            elif art_prob <= 180:
-                reasons.append(f"本日ART確率1/{art_prob:.0f}（{total_games:,}G消化）")
-            else:
-                reasons.append(f"本日ART確率1/{art_prob:.0f} → 低設定域の挙動（{total_games:,}G消化）")
-        # 曜日情報（弱い日の警告も、普通の日の情報も出す）
+        if base_rank in ('S', 'A', 'B'):
+            reasons.append(f"過去データ{base_rank}ランク")
         if store_name and today_weekday:
-            if today_rating >= 4:
-                reasons.append(f"{store_name}は{today_weekday}曜が狙い目（★{today_rating}）")
-            elif today_rating <= 2:
-                reasons.append(f"{store_name}は{today_weekday}曜★{today_rating}（弱い日）→ 回収傾向に注意")
-            else:
-                best_info = weekday_info.get('best_days', '')
-                reasons.append(f"{store_name}の{today_weekday}曜は★{today_rating}（普通）{'、' + best_info if best_info else ''}")
-        # ランキング根拠
-        if base_rank in ('S', 'A'):
-            reasons.append(f"過去の稼働パターンから{base_rank}ランク → 高設定が入りやすい台")
-        elif base_rank == 'B':
-            reasons.append(f"過去の稼働パターンからBランク → 中間設定以上が多い台")
+            best_info = weekday_info.get('best_days', '')
+            reasons.append(f"{store_name}の{today_weekday}曜は★{today_rating}{'（' + best_info + '）' if best_info else ''}")
 
-    # 重複を除去して上位5つに絞る
+    # 重複除去、上位5つ
     seen = set()
-    unique_reasons = []
+    unique = []
     for r in reasons:
         if r not in seen:
             seen.add(r)
-            unique_reasons.append(r)
+            unique.append(r)
 
-    return unique_reasons[:5]
+    return unique[:5]
+
+
+def generate_store_analysis(store_key: str, daily_data: dict = None) -> dict:
+    """店舗の機種全体分析を生成
+
+    Returns:
+        {
+            'store_name': str,
+            'machine_name': str,
+            'total_units': int,
+            'rank_dist': str,         # "S:4台 / A:7台 / B:3台"
+            'high_count': int,
+            'high_ratio': float,
+            'overall': str,           # 全体評価テキスト
+            'weekday_info': dict,
+            'daily_summary': str,
+        }
+    """
+    store = STORES.get(store_key)
+    if not store:
+        return {}
+
+    store_name = store.get('short_name', store.get('name', ''))
+    machine_key = store.get('machine', 'sbj')
+    machine_info = MACHINES.get(machine_key, {})
+    units = store.get('units', [])
+    total_units = len(units)
+
+    # ランク分布（キーのミスマッチを考慮）
+    rankings = RANKINGS.get(store_key, {})
+    if not rankings:
+        for suffix in ['_sbj', '_hokuto', '_hokuto_tensei2']:
+            if store_key.endswith(suffix):
+                alt_key = store_key[:-len(suffix)]
+                rankings = RANKINGS.get(alt_key, {})
+                if rankings:
+                    break
+
+    rank_counts = {'S': 0, 'A': 0, 'B': 0, 'C': 0, 'D': 0}
+    scores = []
+    for uid in units:
+        rank_data = rankings.get(uid, {'rank': 'C', 'score': 50})
+        rank = rank_data.get('rank', 'C')
+        rank_counts[rank] = rank_counts.get(rank, 0) + 1
+        scores.append(rank_data.get('score', 50))
+
+    avg_score = sum(scores) / len(scores) if scores else 0
+    high_count = rank_counts.get('S', 0) + rank_counts.get('A', 0)
+    high_ratio = high_count / total_units * 100 if total_units > 0 else 0
+
+    # ランク分布テキスト
+    rank_parts = []
+    for rank in ['S', 'A', 'B', 'C', 'D']:
+        count = rank_counts.get(rank, 0)
+        if count > 0:
+            rank_parts.append(f"{rank}:{count}台")
+    rank_dist_text = " / ".join(rank_parts)
+
+    # 全体評価
+    if high_ratio >= 70:
+        overall = f"高設定台が非常に多い（全{total_units}台中{high_count}台がA以上）"
+    elif high_ratio >= 50:
+        overall = f"高設定台が多め（全{total_units}台中{high_count}台がA以上）"
+    elif high_ratio >= 30:
+        overall = f"高設定台あり（全{total_units}台中{high_count}台がA以上、台選びが重要）"
+    else:
+        overall = f"高設定台が少ない（全{total_units}台中{high_count}台がA以上）"
+
+    # 曜日傾向
+    weekday_info = get_store_weekday_info(store_key)
+
+    # 日別データからの分析
+    daily_summary = ""
+    if daily_data:
+        data_store_key = STORE_KEY_MAPPING.get(store_key, store_key)
+        store_data = None
+        for key in [data_store_key, store_key]:
+            store_data = daily_data.get('stores', {}).get(key, {})
+            if store_data:
+                break
+
+        if store_data and store_data.get('units'):
+            total_art_all = 0
+            total_games_all = 0
+            total_days = 0
+            for unit in store_data['units']:
+                for day in unit.get('days', []):
+                    art = day.get('art', 0)
+                    games = day.get('total_start', 0)
+                    if games > 0:
+                        total_art_all += art
+                        total_games_all += games
+                        total_days += 1
+
+            if total_days > 0:
+                avg_art_per_unit_day = total_art_all / total_days
+                if total_art_all > 0:
+                    overall_prob = total_games_all / total_art_all
+                    daily_summary = f"全台平均ART {avg_art_per_unit_day:.0f}回/日（確率1/{overall_prob:.0f}）"
+
+    return {
+        'store_name': store_name,
+        'machine_name': machine_info.get('short_name', ''),
+        'total_units': total_units,
+        'rank_dist': rank_dist_text,
+        'rank_counts': rank_counts,
+        'high_count': high_count,
+        'high_ratio': high_ratio,
+        'overall': overall,
+        'avg_score': avg_score,
+        'weekday_info': weekday_info,
+        'daily_summary': daily_summary,
+    }
 
 
 def recommend_units(store_key: str, realtime_data: dict = None, availability: dict = None) -> list:
