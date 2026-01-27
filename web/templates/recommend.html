@@ -267,15 +267,28 @@
                     </div>
                     {% endif %}
 
-                    {# === 前日・前々日データ === #}
-                    {% if rec.yesterday_art or rec.day_before_art %}
+                    {# === 直近3日間データ === #}
+                    {% if rec.yesterday_art or rec.day_before_art or rec.three_days_ago_art %}
                     <div class="rec-prev-days">
                         {% if rec.yesterday_art %}
-                        <span class="prev-day-rec">前日: <span class="prev-art">ART {{ rec.yesterday_art }}</span>{% if rec.yesterday_rb %} / RB {{ rec.yesterday_rb }}{% endif %}{% if rec.yesterday_games %} ({{ '{:,}'.format(rec.yesterday_games) }}G){% endif %}</span>
+                        <span class="prev-day-rec">{{ short_date(rec.yesterday_date) or '前日' }}: <span class="prev-art">ART {{ rec.yesterday_art }}</span>{% if rec.yesterday_rb %} / RB {{ rec.yesterday_rb }}{% endif %}{% if rec.yesterday_prob %} <span class="prev-prob {% if rec.yesterday_prob <= 100 %}excellent{% elif rec.yesterday_prob <= 130 %}good{% elif rec.yesterday_prob >= 200 %}bad{% endif %}">1/{{ rec.yesterday_prob|int }}</span>{% endif %}{% if rec.yesterday_diff_medals is defined and rec.yesterday_diff_medals != 0 %} <span class="diff-medals-sm {% if rec.yesterday_diff_medals > 0 %}plus{% else %}minus{% endif %}">{{ '{:+,}'.format(rec.yesterday_diff_medals) }}枚</span>{% endif %}{% if rec.yesterday_max_rensa and rec.yesterday_max_rensa >= 3 %} <span class="rensa-sm">{{ rec.yesterday_max_rensa }}連</span>{% endif %}</span>
+                        {% else %}
+                        <span class="prev-day-rec no-data">前日: データなし</span>
                         {% endif %}
                         {% if rec.day_before_art %}
-                        <span class="prev-day-rec">前々日: <span class="prev-art">ART {{ rec.day_before_art }}</span>{% if rec.day_before_rb %} / RB {{ rec.day_before_rb }}{% endif %}{% if rec.day_before_games %} ({{ '{:,}'.format(rec.day_before_games) }}G){% endif %}</span>
+                        <span class="prev-day-rec">{{ short_date(rec.day_before_date) or '前々日' }}: <span class="prev-art">ART {{ rec.day_before_art }}</span>{% if rec.day_before_rb %} / RB {{ rec.day_before_rb }}{% endif %}{% if rec.day_before_diff_medals is defined and rec.day_before_diff_medals != 0 %} <span class="diff-medals-sm {% if rec.day_before_diff_medals > 0 %}plus{% else %}minus{% endif %}">{{ '{:+,}'.format(rec.day_before_diff_medals) }}枚</span>{% endif %}{% if rec.day_before_max_rensa and rec.day_before_max_rensa >= 3 %} <span class="rensa-sm">{{ rec.day_before_max_rensa }}連</span>{% endif %}</span>
+                        {% else %}
+                        <span class="prev-day-rec no-data">前々日: データなし</span>
                         {% endif %}
+                        {% if rec.three_days_ago_art %}
+                        <span class="prev-day-rec">{{ short_date(rec.three_days_ago_date) or '3日前' }}: <span class="prev-art">ART {{ rec.three_days_ago_art }}</span>{% if rec.three_days_ago_rb %} / RB {{ rec.three_days_ago_rb }}{% endif %}{% if rec.three_days_ago_diff_medals is defined and rec.three_days_ago_diff_medals != 0 %} <span class="diff-medals-sm {% if rec.three_days_ago_diff_medals > 0 %}plus{% else %}minus{% endif %}">{{ '{:+,}'.format(rec.three_days_ago_diff_medals) }}枚</span>{% endif %}{% if rec.three_days_ago_max_rensa and rec.three_days_ago_max_rensa >= 3 %} <span class="rensa-sm">{{ rec.three_days_ago_max_rensa }}連</span>{% endif %}</span>
+                        {% else %}
+                        <span class="prev-day-rec no-data">3日前: データなし</span>
+                        {% endif %}
+                    </div>
+                    {% else %}
+                    <div class="rec-prev-days">
+                        <span class="prev-day-rec no-data">過去データなし（新台 or 台移動の可能性）</span>
                     </div>
                     {% endif %}
 
@@ -295,7 +308,7 @@
                         </span>
                         {% endif %}
                         <span class="past-eval">
-                            過去分析: <strong style="color: {{ rank_color(rec.base_rank) }}">{{ rec.base_rank }}ランク</strong>
+                            蓄積傾向: <strong style="color: {{ rank_color(rec.base_rank) }}">{{ rec.base_rank }}ランク</strong>
                             {% if rec.consecutive_minus >= 2 %}
                             → 凹み{{ rec.consecutive_minus }}日、設定上げ期待
                             {% elif rec.consecutive_plus >= 2 %}
@@ -479,7 +492,7 @@
                             {% if rec.total_games >= 1000 and rec.estimated_setting %}
                             <div>推定: {{ rec.estimated_setting }}{% if rec.total_games < 3000 %}？{% endif %} ({{ rec.payout_estimate }}%)</div>
                             {% endif %}
-                            <div>過去分析: {{ rec.base_rank }}ランク{% if rec.consecutive_minus >= 2 %} → 凹み{{ rec.consecutive_minus }}日、設定上げ期待{% elif rec.consecutive_plus >= 2 %} → {{ rec.consecutive_plus }}日好調、据え置き期待{% endif %}</div>
+                            <div>蓄積傾向: {{ rec.base_rank }}ランク{% if rec.consecutive_minus >= 2 %} → 凹み{{ rec.consecutive_minus }}日、設定上げ期待{% elif rec.consecutive_plus >= 2 %} → {{ rec.consecutive_plus }}日好調、据え置き期待{% endif %}</div>
                             {% if rec.reasons %}
                             <div class="compact-reason">{{ rec.reasons[0] }}</div>
                             {% endif %}

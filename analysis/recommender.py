@@ -2268,13 +2268,14 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
                     rec['three_days_ago_max_rensa'] = ad.get('max_rensa', 0)
                     rec['three_days_ago_max_medals'] = ad.get('max_medals', 0)
 
-        # 閉店後: availabilityのtoday_historyを前日データとして補完
-        if not realtime_is_today and realtime_data and not rec.get('yesterday_max_rensa'):
+        # 閉店後: availabilityのデータを前日データとして補完
+        if not realtime_is_today and realtime_data:
             units_list = realtime_data.get('units', [])
             for _unit in units_list:
                 if _unit.get('unit_id') == unit_id:
+                    # 連チャン・最大枚数
                     rt_hist = _unit.get('today_history', [])
-                    if rt_hist:
+                    if rt_hist and not rec.get('yesterday_max_rensa'):
                         from analysis.history_accumulator import _calc_history_stats
                         calc_rensa, calc_medals = _calc_history_stats(rt_hist)
                         if calc_rensa > 0:
@@ -2285,6 +2286,22 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
                         elif calc_medals > 0:
                             rec['yesterday_max_medals'] = calc_medals
                         rec['today_history'] = rt_hist
+                    # ART確率
+                    if not rec.get('yesterday_prob'):
+                        _rt_art = _unit.get('art', 0)
+                        _rt_total = _unit.get('total_start', 0)
+                        if _rt_art > 0 and _rt_total > 0:
+                            rec['yesterday_prob'] = round(_rt_total / _rt_art)
+                    # 差枚（履歴から概算: メダル獲得 - 投入3枚掛け）
+                    if not rec.get('yesterday_diff_medals') and rt_hist:
+                        _diff = sum(h.get('medals', 0) - h.get('start', 0) * 3 for h in rt_hist)
+                        if _diff != 0:
+                            rec['yesterday_diff_medals'] = _diff
+                    # RB
+                    if not rec.get('yesterday_rb'):
+                        _rt_rb = _unit.get('rb', 0)
+                        if _rt_rb > 0:
+                            rec['yesterday_rb'] = _rt_rb
                     break
 
         recommendations.append(rec)
