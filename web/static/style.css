@@ -2041,6 +2041,36 @@ strong.minus {
     color: #a0a0a0;
 }
 
+.reason-line.reason-warn {
+    color: #ff6348;
+    font-weight: 600;
+}
+
+/* ローテ傾向の記号色分け */
+.rot-good {
+    color: #2ed573;
+    font-weight: 700;
+    font-size: 1.1em;
+}
+.rot-bad {
+    color: #ff4757;
+    font-weight: 700;
+    font-size: 1.1em;
+}
+.rot-mid {
+    color: #ffa502;
+    font-weight: 700;
+    font-size: 1.1em;
+}
+
+.reason-line.reason-stats {
+    color: #7bed9f;
+}
+
+.reason-line.reason-confidence {
+    color: #2ed573;
+}
+
 /* 詳細グリッド */
 .detail-grid {
     display: grid;

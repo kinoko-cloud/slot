@@ -199,21 +199,21 @@
                         {% if rec.reasons %}
                         {% for reason in rec.reasons %}
                         {% if '📊' in reason %}
-                        <div class="reason-line-top reason-rank">{{ reason }}</div>
+                        <div class="reason-line-top reason-rank">{{ reason|safe }}</div>
                         {% elif '📈' in reason %}
-                        <div class="reason-line-top reason-stats">{{ reason }}</div>
+                        <div class="reason-line-top reason-stats">{{ reason|safe }}</div>
                         {% elif '🔁' in reason %}
-                        <div class="reason-line-top reason-cycle">{{ reason }}</div>
+                        <div class="reason-line-top reason-cycle">{{ reason|safe }}</div>
                         {% elif '🔄' in reason %}
-                        <div class="reason-line-top reason-pattern">{{ reason }}</div>
+                        <div class="reason-line-top reason-pattern">{{ reason|safe }}</div>
                         {% elif '💡' in reason %}
-                        <div class="reason-line-top reason-today">{{ reason }}</div>
+                        <div class="reason-line-top reason-today">{{ reason|safe }}</div>
                         {% elif '📅' in reason %}
-                        <div class="reason-line-top reason-weekday">{{ reason }}</div>
+                        <div class="reason-line-top reason-weekday">{{ reason|safe }}</div>
                         {% elif '⚠' in reason %}
-                        <div class="reason-line-top reason-warn">{{ reason }}</div>
+                        <div class="reason-line-top reason-warn">{{ reason|safe }}</div>
                         {% else %}
-                        <div class="reason-line-top">{{ reason }}</div>
+                        <div class="reason-line-top">{{ reason|safe }}</div>
                         {% endif %}
                         {% endfor %}
                         {% endif %}
@@ -229,12 +229,12 @@
                         <span class="prev-day-rec no-data">前日: データなし</span>
                         {% endif %}
                         {% if rec.day_before_art %}
-                        <span class="prev-day-rec">{{ short_date(rec.day_before_date) or '前々日' }}: <span class="prev-art">ART {{ rec.day_before_art }}</span>{% if rec.day_before_rb %} / RB {{ rec.day_before_rb }}{% endif %}{% if rec.day_before_diff_medals is defined and rec.day_before_diff_medals and rec.day_before_diff_medals != 0 %} <span class="diff-medals-sm {% if rec.day_before_diff_medals > 0 %}plus{% else %}minus{% endif %}">{{ '{:+,}'.format(rec.day_before_diff_medals) }}枚</span>{% endif %}{% if rec.day_before_max_rensa and rec.day_before_max_rensa >= 3 %} <span class="rensa-sm">{{ rec.day_before_max_rensa }}連</span>{% endif %}{% if rec.day_before_low_activity %} <span class="low-activity">※低稼働</span>{% endif %}</span>
+                        <span class="prev-day-rec">{{ short_date(rec.day_before_date) or '前々日' }}: <span class="prev-art">ART {{ rec.day_before_art }}</span>{% if rec.day_before_rb %} / RB {{ rec.day_before_rb }}{% endif %}{% if rec.day_before_prob %} <span class="prev-prob {% if rec.day_before_prob <= 100 %}excellent{% elif rec.day_before_prob <= 130 %}good{% elif rec.day_before_prob >= 200 %}bad{% endif %}">1/{{ rec.day_before_prob|int }}</span>{% endif %}{% if rec.day_before_diff_medals is defined and rec.day_before_diff_medals and rec.day_before_diff_medals != 0 %} <span class="diff-medals-sm {% if rec.day_before_diff_medals > 0 %}plus{% else %}minus{% endif %}">{{ '{:+,}'.format(rec.day_before_diff_medals) }}枚</span>{% endif %}{% if rec.day_before_max_rensa and rec.day_before_max_rensa >= 3 %} <span class="rensa-sm">{{ rec.day_before_max_rensa }}連</span>{% endif %}{% if rec.day_before_low_activity %} <span class="low-activity">※低稼働</span>{% endif %}</span>
                         {% else %}
                         <span class="prev-day-rec no-data">前々日: データなし</span>
                         {% endif %}
                         {% if rec.three_days_ago_art %}
-                        <span class="prev-day-rec">{{ short_date(rec.three_days_ago_date) or '3日前' }}: <span class="prev-art">ART {{ rec.three_days_ago_art }}</span>{% if rec.three_days_ago_rb %} / RB {{ rec.three_days_ago_rb }}{% endif %}{% if rec.three_days_ago_diff_medals is defined and rec.three_days_ago_diff_medals and rec.three_days_ago_diff_medals != 0 %} <span class="diff-medals-sm {% if rec.three_days_ago_diff_medals > 0 %}plus{% else %}minus{% endif %}">{{ '{:+,}'.format(rec.three_days_ago_diff_medals) }}枚</span>{% endif %}{% if rec.three_days_ago_max_rensa and rec.three_days_ago_max_rensa >= 3 %} <span class="rensa-sm">{{ rec.three_days_ago_max_rensa }}連</span>{% endif %}{% if rec.three_days_ago_low_activity %} <span class="low-activity">※低稼働</span>{% endif %}</span>
+                        <span class="prev-day-rec">{{ short_date(rec.three_days_ago_date) or '3日前' }}: <span class="prev-art">ART {{ rec.three_days_ago_art }}</span>{% if rec.three_days_ago_rb %} / RB {{ rec.three_days_ago_rb }}{% endif %}{% if rec.three_days_ago_prob %} <span class="prev-prob {% if rec.three_days_ago_prob <= 100 %}excellent{% elif rec.three_days_ago_prob <= 130 %}good{% elif rec.three_days_ago_prob >= 200 %}bad{% endif %}">1/{{ rec.three_days_ago_prob|int }}</span>{% endif %}{% if rec.three_days_ago_diff_medals is defined and rec.three_days_ago_diff_medals and rec.three_days_ago_diff_medals != 0 %} <span class="diff-medals-sm {% if rec.three_days_ago_diff_medals > 0 %}plus{% else %}minus{% endif %}">{{ '{:+,}'.format(rec.three_days_ago_diff_medals) }}枚</span>{% endif %}{% if rec.three_days_ago_max_rensa and rec.three_days_ago_max_rensa >= 3 %} <span class="rensa-sm">{{ rec.three_days_ago_max_rensa }}連</span>{% endif %}{% if rec.three_days_ago_low_activity %} <span class="low-activity">※低稼働</span>{% endif %}</span>
                         {% else %}
                         <span class="prev-day-rec no-data">3日前: データなし</span>
                         {% endif %}
@@ -279,19 +279,7 @@
                     {% if rec.reasons and is_open %}
                     <div class="reason-main">
                         {% for reason in rec.reasons[:2] %}
-                        {% if '過去データ' in reason and 'ランク' in reason %}
-                        <div class="reason-line reason-rank">📊 {{ reason }}</div>
-                        {% elif '前日' in reason or '前々日' in reason %}
-                        <div class="reason-line reason-prev">📅 {{ reason }}</div>
-                        {% elif '連続' in reason or 'リセット' in reason or 'ローテ' in reason %}
-                        <div class="reason-line reason-pattern">🔄 {{ reason }}</div>
-                        {% elif '本日' in reason %}
-                        <div class="reason-line reason-today">🔥 {{ reason }}</div>
-                        {% elif '補足' in reason or '曜' in reason %}
-                        <div class="reason-line reason-weekday">📌 {{ reason }}</div>
-                        {% else %}
-                        <div class="reason-line">💡 {{ reason }}</div>
-                        {% endif %}
+                        <div class="reason-line {% if '⚠' in reason %}reason-warn{% elif '📊' in reason %}reason-rank{% elif '🔄' in reason %}reason-pattern{% elif '📅' in reason %}reason-weekday{% elif '📈' in reason %}reason-stats{% elif '💡' in reason %}reason-confidence{% endif %}">{{ reason|safe }}</div>
                         {% endfor %}
                     </div>
                     {% endif %}
@@ -374,7 +362,7 @@
                         <div class="all-reasons">
                             <div class="detail-title">全ての根拠</div>
                             {% for reason in rec.reasons %}
-                            <div class="reason-item">{{ reason }}</div>
+                            <div class="reason-item">{{ reason|safe }}</div>
                             {% endfor %}
                         </div>
                         {% endif %}
