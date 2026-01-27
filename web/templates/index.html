@@ -399,42 +399,6 @@
                 {% endfor %}
             </section>
 
-            <!-- 店舗別曜日傾向（過去データ分析） -->
-            <section class="store-schedule">
-                <h2>📅 {{ today_weekday }}曜日の店舗傾向</h2>
-                <div class="schedule-legend">
-                    <span class="legend-item best">★5=最強</span>
-                    <span class="legend-item good">★4=狙い目</span>
-                    <span class="legend-item normal">★3=普通</span>
-                    <span class="legend-item weak">★2以下=避ける</span>
-                </div>
-                {% for store in today_store_ranking %}
-                <div class="schedule-card-full {% if store.today_rating >= 4 %}schedule-recommended{% elif store.today_rating <= 2 %}schedule-avoid{% endif %}">
-                    <div class="schedule-store-header">
-                        <a href="{{ url_for('recommend', store_key=store.machine_links[0].store_key) }}" class="schedule-store-link">{{ store.short_name }}</a>
-                        <span class="schedule-today-rating {% if store.today_rating >= 4 %}good{% elif store.today_rating <= 2 %}weak{% endif %}">今日 {{ '★' * store.today_rating }}</span>
-                    </div>
-                    <div class="schedule-week">
-                        {% for day in ['月', '火', '水', '木', '金', '土', '日'] %}
-                        {% set rating = store.day_ratings[day] %}
-                        <span class="day-cell {% if rating >= 5 %}best{% elif rating >= 4 %}good{% elif rating <= 2 %}weak{% else %}normal{% endif %} {% if day == today_weekday %}today{% endif %}">
-                            <span class="day-name">{{ day }}</span>
-                            <span class="day-stars">{{ '★' * rating }}</span>
-                        </span>
-                        {% endfor %}
-                    </div>
-                    <div class="schedule-notes">
-                        <span class="note-best">{{ store.best_note }}</span>
-                    </div>
-                    <div class="schedule-links">
-                        {% for link in store.machine_links %}
-                        <a href="{{ url_for('recommend', store_key=link.store_key) }}" class="schedule-machine-link">{{ link.icon }} {{ link.short_name }}</a>
-                        {% endfor %}
-                    </div>
-                </div>
-                {% endfor %}
-            </section>
-
             <!-- 店舗一覧 -->
             {% if all_stores %}
             <section class="store-directory">
@@ -508,6 +472,43 @@
                 {% endfor %}
             </section>
             {% endif %}
+
+            <!-- 店舗別曜日傾向（過去データ分析） -->
+            <section class="store-schedule">
+                <h2>📅 {{ today_weekday }}曜日の店舗傾向</h2>
+                <div class="schedule-legend">
+                    <span class="legend-item best">★5=最強</span>
+                    <span class="legend-item good">★4=狙い目</span>
+                    <span class="legend-item normal">★3=普通</span>
+                    <span class="legend-item weak">★2以下=避ける</span>
+                </div>
+                {% for store in today_store_ranking %}
+                <div class="schedule-card-full {% if store.today_rating >= 4 %}schedule-recommended{% elif store.today_rating <= 2 %}schedule-avoid{% endif %}">
+                    <div class="schedule-store-header">
+                        <a href="{{ url_for('recommend', store_key=store.machine_links[0].store_key) }}" class="schedule-store-link">{{ store.short_name }}</a>
+                        <span class="schedule-today-rating {% if store.today_rating >= 4 %}good{% elif store.today_rating <= 2 %}weak{% endif %}">今日 {{ '★' * store.today_rating }}</span>
+                    </div>
+                    <div class="schedule-week">
+                        {% for day in ['月', '火', '水', '木', '金', '土', '日'] %}
+                        {% set rating = store.day_ratings[day] %}
+                        <span class="day-cell {% if rating >= 5 %}best{% elif rating >= 4 %}good{% elif rating <= 2 %}weak{% else %}normal{% endif %} {% if day == today_weekday %}today{% endif %}">
+                            <span class="day-name">{{ day }}</span>
+                            <span class="day-stars">{{ '★' * rating }}</span>
+                        </span>
+                        {% endfor %}
+                    </div>
+                    <div class="schedule-notes">
+                        <span class="note-best">{{ store.best_note }}</span>
+                    </div>
+                    <div class="schedule-links">
+                        {% for link in store.machine_links %}
+                        <a href="{{ url_for('recommend', store_key=link.store_key) }}" class="schedule-machine-link">{{ link.icon }} {{ link.short_name }}</a>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+            </section>
+
         </main>
 
         <!-- 「曜日の傾向」セクションは「店舗別曜日傾向」テーブルに統合済み -->
