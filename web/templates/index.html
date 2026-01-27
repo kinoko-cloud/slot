@@ -48,21 +48,23 @@
                         {% if rec.reasons %}
                         {% for reason in rec.reasons %}
                         {% if '📊' in reason %}
-                        <div class="reason-line-top reason-rank"><span class="reason-icon">📊</span> {{ reason }}</div>
+                        <div class="reason-line-top reason-rank">{{ reason }}</div>
+                        {% elif '📈' in reason %}
+                        <div class="reason-line-top reason-stats">{{ reason }}</div>
                         {% elif '🔄' in reason %}
-                        <div class="reason-line-top reason-pattern"><span class="reason-icon">🔄</span> {{ reason }}</div>
+                        <div class="reason-line-top reason-pattern">{{ reason }}</div>
                         {% elif '💡' in reason %}
-                        <div class="reason-line-top reason-today"><span class="reason-icon">💡</span> {{ reason }}</div>
+                        <div class="reason-line-top reason-today">{{ reason }}</div>
                         {% elif '📅' in reason %}
-                        <div class="reason-line-top reason-weekday"><span class="reason-icon">📅</span> {{ reason }}</div>
+                        <div class="reason-line-top reason-weekday">{{ reason }}</div>
                         {% elif '⚠' in reason %}
-                        <div class="reason-line-top reason-warn"><span class="reason-icon">⚠</span> {{ reason }}</div>
+                        <div class="reason-line-top reason-warn">{{ reason }}</div>
                         {% else %}
-                        <div class="reason-line-top"><span class="reason-icon">💡</span> {{ reason }}</div>
+                        <div class="reason-line-top">{{ reason }}</div>
                         {% endif %}
                         {% endfor %}
                         {% else %}
-                        <div class="reason-line-top"><span class="reason-icon">💡</span> 過去データに基づくおすすめ台</div>
+                        <div class="reason-line-top">💡 過去データに基づくおすすめ台</div>
                         {% endif %}
                     </div>
                     {# === 2. 直近3日間データ（等しく表示） === #}
@@ -299,18 +301,22 @@
                     <div class="reasons-full">
                         {% if rec.reasons %}
                         {% for reason in rec.reasons %}
-                        {% if '過去データ' in reason and 'ランク' in reason %}
-                        <div class="reason-line-top reason-rank"><span class="reason-icon">📊</span> {{ reason }}</div>
-                        {% elif '前日' in reason or '前々日' in reason %}
-                        <div class="reason-line-top reason-prev"><span class="reason-icon">📅</span> {{ reason }}</div>
-                        {% elif '連続' in reason or 'リセット' in reason or 'ローテ' in reason %}
-                        <div class="reason-line-top reason-pattern"><span class="reason-icon">🔄</span> {{ reason }}</div>
-                        {% elif '本日' in reason %}
-                        <div class="reason-line-top reason-today"><span class="reason-icon">🔥</span> {{ reason }}</div>
-                        {% elif '補足' in reason or '曜' in reason %}
-                        <div class="reason-line-top reason-weekday"><span class="reason-icon">📌</span> {{ reason }}</div>
+                        {% if '📊' in reason %}
+                        <div class="reason-line-top reason-rank">{{ reason }}</div>
+                        {% elif '📈' in reason %}
+                        <div class="reason-line-top reason-stats">{{ reason }}</div>
+                        {% elif '🔄' in reason %}
+                        <div class="reason-line-top reason-pattern">{{ reason }}</div>
+                        {% elif '💡' in reason %}
+                        <div class="reason-line-top reason-today">{{ reason }}</div>
+                        {% elif '📅' in reason %}
+                        <div class="reason-line-top reason-weekday">{{ reason }}</div>
+                        {% elif '🔥' in reason %}
+                        <div class="reason-line-top reason-today">{{ reason }}</div>
+                        {% elif '⚠' in reason %}
+                        <div class="reason-line-top reason-warn">{{ reason }}</div>
                         {% else %}
-                        <div class="reason-line-top"><span class="reason-icon">💡</span> {{ reason }}</div>
+                        <div class="reason-line-top">{{ reason }}</div>
                         {% endif %}
                         {% endfor %}
                         {% else %}
