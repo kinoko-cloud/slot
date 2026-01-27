@@ -2246,23 +2246,30 @@ strong.minus {
     font-weight: 700;
 }
 
-.data-date-badge-sm {
+/* === RBバッジ（TOP3用） === */
+.rb-badge-top {
     display: inline-block;
-    background: #ffa502;
-    color: #000;
+    background: #5352ed;
+    color: #fff;
     padding: 1px 6px;
     border-radius: 3px;
-    font-size: 0.65em;
+    font-size: 0.8em;
     font-weight: 700;
-    margin-left: 4px;
 }
 
-.art-main.past {
-    opacity: 0.7;
+/* === 前日・前々日データ行 === */
+.top3-prev-days {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-top: 4px;
+    padding-top: 4px;
+    border-top: 1px solid #333;
 }
 
-.art-prob.past {
-    opacity: 0.7;
+.prev-day {
+    font-size: 0.7em;
+    color: #666;
 }
 
 .today-data-row {
@@ -2390,6 +2397,36 @@ strong.minus {
 .art-badge .art-num {
     font-size: 1.3em;
     font-weight: 800;
+}
+
+/* RBバッジ（小） */
+.rb-badge-sm {
+    display: inline-block;
+    background: #5352ed;
+    color: #fff;
+    padding: 0 5px;
+    border-radius: 3px;
+    font-size: 0.75em;
+    font-weight: 700;
+}
+
+/* 連チャンバッジ */
+.rensa-badge {
+    display: inline-block;
+    background: #ff6348;
+    color: #fff;
+    padding: 0 5px;
+    border-radius: 3px;
+    font-size: 0.75em;
+    font-weight: 700;
+}
+
+/* 前々日情報（爆発台セクション内） */
+.yesterday-prev {
+    font-size: 0.65em;
+    color: #666;
+    margin-top: 2px;
+    padding-left: 28px;
 }
 
 /* コンパクトカード: ART強調 */
