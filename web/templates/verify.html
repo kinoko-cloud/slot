@@ -29,7 +29,7 @@
                 <div class="verify-accuracy">
                     <div class="accuracy-circle {% if accuracy >= 60 %}good{% elif accuracy >= 40 %}ok{% else %}bad{% endif %}">
                         <span class="accuracy-num">{{ accuracy|int }}%</span>
-                        <span class="accuracy-label">的中率</span>
+                        <span class="accuracy-label">総合的中率</span>
                     </div>
                     <div class="accuracy-detail">
                         <div class="accuracy-row">
@@ -46,6 +46,23 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- 機種別の的中率 -->
+                {% if machine_accuracy %}
+                <div class="machine-accuracy-breakdown">
+                    {% for ma in machine_accuracy %}
+                    <div class="machine-acc-row">
+                        <span class="ma-icon">{{ ma.icon }}</span>
+                        <span class="ma-name">{{ ma.name }}</span>
+                        <span class="ma-rate {% if ma.rate >= 60 %}good{% elif ma.rate >= 40 %}ok{% else %}bad{% endif %}">{{ ma.rate|int }}%</span>
+                        <span class="ma-detail">{{ ma.hit }}/{{ ma.total }} 的中</span>
+                        {% if ma.surprise > 0 %}
+                        <span class="ma-surprise">+{{ ma.surprise }}台発掘</span>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
             </section>
 
             <!-- 予測 vs 実績テーブル -->

@@ -3701,6 +3701,35 @@ strong.minus {
 .acc-value.hit { color: #2ed573; }
 .acc-value.surprise { color: #ffd700; }
 
+/* 機種別的中率 */
+.machine-accuracy-breakdown {
+    margin-top: 15px;
+    padding-top: 12px;
+    border-top: 1px solid #2a3a5c;
+}
+
+.machine-acc-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 0;
+    font-size: 0.85em;
+}
+
+.ma-icon { font-size: 1.1em; }
+.ma-name { color: #ccc; flex: 1; }
+.ma-rate {
+    font-weight: 700;
+    font-size: 1em;
+    min-width: 40px;
+    text-align: right;
+}
+.ma-rate.good { color: #2ed573; }
+.ma-rate.ok { color: #ffa502; }
+.ma-rate.bad { color: #ff6b6b; }
+.ma-detail { color: #888; font-size: 0.85em; }
+.ma-surprise { color: #ffd700; font-size: 0.8em; }
+
 .verify-section {
     margin: 20px 0;
 }

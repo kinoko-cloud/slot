@@ -869,12 +869,40 @@ def generate_verify_page(env):
     if total_predicted_good > 0:
         accuracy = (total_actual_good / total_predicted_good) * 100
 
+    # 機種別の的中率
+    machine_accuracy = []
+    for machine_key, machine_data in verify_data.items():
+        m_predicted = 0
+        m_actual = 0
+        m_surprise = 0
+        for store in machine_data.get('stores', []):
+            for unit in store.get('units', []):
+                is_sa = unit['predicted_rank'] in ('S', 'A')
+                prob = unit.get('actual_prob', 0)
+                is_good = prob > 0 and prob <= 130
+                if is_sa:
+                    m_predicted += 1
+                    if is_good:
+                        m_actual += 1
+                elif not is_sa and is_good:
+                    m_surprise += 1
+        rate = (m_actual / m_predicted * 100) if m_predicted > 0 else 0
+        machine_accuracy.append({
+            'name': machine_data['name'],
+            'icon': machine_data['icon'],
+            'total': m_predicted,
+            'hit': m_actual,
+            'rate': rate,
+            'surprise': m_surprise,
+        })
+
     html = template.render(
         verify_data=verify_data,
         accuracy=accuracy,
         predicted_good=total_predicted_good,
         actual_good=total_actual_good,
         surprise_good=total_surprise,
+        machine_accuracy=machine_accuracy,
     )
 
     output_path = OUTPUT_DIR / 'verify.html'
