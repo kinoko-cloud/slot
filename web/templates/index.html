@@ -64,19 +64,25 @@
                         {% else %}
                             <span class="top3-avail closed">営業外</span>
                         {% endif %}
+                        {% if rec.data_date and not rec.is_today_data %}
+                        <span class="data-date-badge-sm">{{ rec.data_date[-5:] }}のデータ</span>
+                        {% endif %}
                     </div>
                     <div class="top3-stats-main">
-                        {% if rec.art_count > 0 %}
+                        {% if rec.is_today_data and rec.art_count > 0 %}
                         <span class="art-main"><span class="art-num-big">{{ rec.art_count }}</span><span class="art-label">ART</span></span>
                         {% if rec.art_prob > 0 %}<span class="art-prob {% if rec.art_prob <= 100 %}excellent{% elif rec.art_prob <= 130 %}good{% elif rec.art_prob >= 200 %}bad{% endif %}" title="合成確率">1/{{ rec.art_prob|int }}</span>{% endif %}
+                        {% elif not rec.is_today_data and rec.art_count > 0 %}
+                        <span class="art-main past"><span class="art-num-big">{{ rec.art_count }}</span><span class="art-label">ART ({{ rec.data_date[-5:] }})</span></span>
+                        {% if rec.art_prob > 0 %}<span class="art-prob past {% if rec.art_prob <= 100 %}excellent{% elif rec.art_prob <= 130 %}good{% elif rec.art_prob >= 200 %}bad{% endif %}">1/{{ rec.art_prob|int }}</span>{% endif %}
                         {% elif rec.trend and rec.trend.get('avg_art_prob', 0) > 0 %}
-                        <span class="art-main past"><span class="art-num-big">1/{{ rec.trend.get('avg_art_prob', 0)|round(0)|int }}</span><span class="art-label">ART確率(7日)</span></span>
+                        <span class="art-main past"><span class="art-num-big">1/{{ rec.trend.get('avg_art_prob', 0)|round(0)|int }}</span><span class="art-label">ART確率(7日平均)</span></span>
                         {% else %}
                         <span class="no-today-data">本日未稼働</span>
                         {% endif %}
                     </div>
                     <div class="top3-stats-sub">
-                        {% if rec.closing_estimate and rec.closing_estimate > 0 %}<span class="current-hama">AT間<span class="num">{{ rec.closing_estimate }}</span>G</span>{% endif %}
+                        {% if rec.current_hama and rec.current_hama > 0 %}<span class="current-hama">現在<span class="num">{{ rec.current_hama }}</span>Gスタート</span>{% endif %}
                         {% if rec.total_games > 0 %}<span class="total-games">累計<span class="num">{{ '{:,}'.format(rec.total_games) }}</span>G</span>{% endif %}
                         {% if rec.max_medals and rec.max_medals > 0 %}{% set badge = medals_badge(rec.max_medals) %}<span class="max-medals-top {% if badge %}{{ badge.class }}{% endif %}">{% if badge %}<span class="medals-icon">{{ badge.icon }}</span>{% endif %}最大<span class="num">{{ '{:,}'.format(rec.max_medals) }}</span>枚</span>{% endif %}
                     </div>
