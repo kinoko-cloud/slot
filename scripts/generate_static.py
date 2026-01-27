@@ -147,6 +147,9 @@ def generate_index(env):
     today_date = now.strftime('%Y/%m/%d')
     today_date_formatted = format_date_with_weekday(now)
 
+    # 理由文の日付ラベル
+    reason_data_label, reason_prev_label = get_reason_date_labels()
+
     # 店舗曜日傾向（物理店舗ベース）
     store_day_ratings = {
         'island_akihabara': {
@@ -243,7 +246,8 @@ def generate_index(env):
                 except:
                     pass
 
-                recs = recommend_units(store_key, realtime_data=realtime, availability=availability)
+                recs = recommend_units(store_key, realtime_data=realtime, availability=availability,
+                                      data_date_label=reason_data_label, prev_date_label=reason_prev_label)
 
                 # 全recsにメタデータを付与
                 for rec in recs:
@@ -515,6 +519,25 @@ def generate_machine_pages(env):
         print(f"  -> {output_path}")
 
 
+def get_reason_date_labels():
+    """理由文の日付ラベルを取得（閉店後のみ日付に置換）"""
+    if is_business_hours():
+        return None, None
+    try:
+        from scrapers.availability_checker import get_daidata_availability
+        avail_data = get_daidata_availability()
+        fetched_at = avail_data.get('fetched_at', '')
+        if fetched_at:
+            data_dt = datetime.fromisoformat(fetched_at)
+            data_label = f"{data_dt.month}/{data_dt.day}({WEEKDAY_NAMES[data_dt.weekday()]})"
+            prev_dt = data_dt - timedelta(days=1)
+            prev_label = f"{prev_dt.month}/{prev_dt.day}({WEEKDAY_NAMES[prev_dt.weekday()]})"
+            return data_label, prev_label
+    except:
+        pass
+    return None, None
+
+
 def is_night_mode():
     """22:45以降は翌日予想モードに切り替え"""
     now = datetime.now(JST)
@@ -536,6 +559,7 @@ def generate_ranking_pages(env):
     yesterday = now - timedelta(days=1)
     data_date_str = format_date_with_weekday(now)
     prev_date_str = format_date_with_weekday(yesterday)
+    reason_data_label, reason_prev_label = get_reason_date_labels()
 
     for machine_key, machine in MACHINES.items():
         stores = get_stores_by_machine(machine_key)
@@ -555,7 +579,8 @@ def generate_ranking_pages(env):
             except:
                 pass
 
-            recommendations = recommend_units(store_key, realtime_data=realtime, availability=availability)
+            recommendations = recommend_units(store_key, realtime_data=realtime, availability=availability,
+                                              data_date_label=reason_data_label, prev_date_label=reason_prev_label)
             for rec in recommendations:
                 rec['store_name'] = store.get('short_name', store['name'])
                 rec['store_key'] = store_key
@@ -600,6 +625,7 @@ def generate_recommend_pages(env):
 
     is_open = is_business_hours()
     display_mode = get_display_mode()
+    reason_data_label, reason_prev_label = get_reason_date_labels()
 
     # 旧形式キーをスキップ
     old_keys = {'island_akihabara', 'shibuya_espass', 'shinjuku_espass'}
@@ -642,7 +668,8 @@ def generate_recommend_pages(env):
         except:
             pass
 
-        recommendations = recommend_units(store_key, realtime_data, availability)
+        recommendations = recommend_units(store_key, realtime_data, availability,
+                                          data_date_label=reason_data_label, prev_date_label=reason_prev_label)
 
         # 分類
         sa_recs = [r for r in recommendations if r['final_rank'] in ('S', 'A') and not r['is_running']]
