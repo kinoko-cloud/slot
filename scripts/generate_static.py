@@ -542,9 +542,34 @@ def generate_recommend_pages(env):
                 'playing_count': sum(1 for v in availability.values() if v == '遊技中'),
             }
 
-        # 店舗分析
+        # 店舗分析（recommend_unitsの計算結果からランク分布を生成）
         daily_data = load_daily_data(machine_key=machine_key)
         store_analysis = generate_store_analysis(store_key, daily_data)
+
+        # ランク分布をrecommend_unitsの結果で上書き（相対評価の結果を正確に反映）
+        all_recs_for_analysis = top_recs + other_recs
+        if all_recs_for_analysis:
+            from collections import Counter
+            rank_counts = Counter(r['final_rank'] for r in all_recs_for_analysis)
+            rank_parts = []
+            for rank in ['S', 'A', 'B', 'C', 'D']:
+                count = rank_counts.get(rank, 0)
+                if count > 0:
+                    rank_parts.append(f"{rank}:{count}台")
+            store_analysis['rank_dist'] = " / ".join(rank_parts)
+            high_count = rank_counts.get('S', 0) + rank_counts.get('A', 0)
+            total = len(all_recs_for_analysis)
+            store_analysis['high_count'] = high_count
+            store_analysis['total_units'] = total
+            high_ratio = high_count / total * 100 if total > 0 else 0
+            if high_ratio >= 70:
+                store_analysis['overall'] = f"高設定台が非常に多い（全{total}台中{high_count}台がA以上）"
+            elif high_ratio >= 50:
+                store_analysis['overall'] = f"高設定台が多い（全{total}台中{high_count}台がA以上）"
+            elif high_ratio >= 30:
+                store_analysis['overall'] = f"高設定台あり（全{total}台中{high_count}台がA以上）"
+            else:
+                store_analysis['overall'] = f"高設定台が少ない（全{total}台中{high_count}台がA以上）"
 
         # 台番号アラート
         store_alerts = [a for a in get_active_alerts() if a.get('store_key') == store_key]
