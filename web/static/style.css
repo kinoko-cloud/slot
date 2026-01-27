@@ -4138,3 +4138,146 @@ strong.minus {
 .vd-medals {
     color: #aaa;
 }
+
+/* ===================================
+   店舗別曜日傾向: 改善スタイル
+   =================================== */
+
+/* 店舗名リンク */
+.schedule-store-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.schedule-store-link {
+    font-weight: 600;
+    font-size: 0.95em;
+    color: #70a1ff;
+    text-decoration: none;
+}
+
+.schedule-store-link:active {
+    color: #9ab8ff;
+}
+
+/* 今日の評価ラベル */
+.schedule-today-rating {
+    font-size: 0.7em;
+    color: #ffd700;
+    font-weight: 600;
+}
+
+.schedule-today-rating.good {
+    color: #4ade80;
+}
+
+.schedule-today-rating.weak {
+    color: #f87171;
+}
+
+/* 推奨/回避のカード装飾 */
+.schedule-card-full.schedule-recommended {
+    border-left: 3px solid #4ade80;
+}
+
+.schedule-card-full.schedule-avoid {
+    border-left: 3px solid #f87171;
+    opacity: 0.85;
+}
+
+/* ===================================
+   店舗一覧（ディレクトリ）
+   =================================== */
+
+.store-directory {
+    margin-bottom: 20px;
+}
+
+.store-directory h2 {
+    font-size: 1em;
+    color: #888;
+    margin-bottom: 8px;
+}
+
+.store-directory-note {
+    font-size: 0.8em;
+    color: #666;
+    margin-bottom: 12px;
+}
+
+.store-directory-card {
+    background: #252541;
+    border-radius: 8px;
+    padding: 12px 15px;
+    margin-bottom: 8px;
+}
+
+.store-directory-card.store-dir-good {
+    border-left: 3px solid #4ade80;
+}
+
+.store-directory-card.store-dir-weak {
+    border-left: 3px solid #f87171;
+    opacity: 0.85;
+}
+
+.store-dir-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.store-dir-name {
+    font-weight: 600;
+    font-size: 0.95em;
+    color: #fff;
+}
+
+.store-dir-rating {
+    font-size: 0.75em;
+    color: #ffd700;
+}
+
+.store-dir-rating.good {
+    color: #4ade80;
+}
+
+.store-dir-rating.weak {
+    color: #f87171;
+}
+
+.store-dir-machines {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.store-dir-machine-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 12px;
+    background: rgba(112, 161, 255, 0.12);
+    border: 1px solid rgba(112, 161, 255, 0.25);
+    border-radius: 6px;
+    color: #70a1ff;
+    font-size: 0.85em;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.store-dir-machine-link:active {
+    background: rgba(112, 161, 255, 0.3);
+}
+
+.store-dir-icon {
+    font-size: 1.1em;
+}
+
+.store-dir-machine-name {
+    font-size: 0.9em;
+}
