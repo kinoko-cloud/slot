@@ -22,11 +22,14 @@ GITHUB_JSON_URL = "https://raw.githubusercontent.com/kinoko-cloud/slot/main/data
 # ローカルJSONパス
 LOCAL_JSON_PATH = Path(__file__).parent.parent / 'data' / 'availability.json'
 
-# GASでサポートしている店舗 (papimo.jp)
+# GASでサポートしている店舗 (papimo.jp) - GAS fallback用
 GAS_STORES = ['island_akihabara_sbj']
 
-# GitHubでサポートしている店舗 (daidata)
-GITHUB_STORES = ['shibuya_espass_sbj', 'shinjuku_espass_sbj', 'akihabara_espass_sbj', 'seibu_shinjuku_espass_sbj']
+# GitHubでサポートしている店舗 (availability.json経由 = daidata + papimo)
+GITHUB_STORES = [
+    'shibuya_espass_sbj', 'shinjuku_espass_sbj', 'akihabara_espass_sbj',
+    'seibu_shinjuku_espass_sbj', 'island_akihabara_sbj',
+]
 
 
 def get_availability_from_gas() -> Dict[str, Dict]:
@@ -117,21 +120,21 @@ def get_availability(store_key: str) -> Dict[str, str]:
     """
     store_data = {}
 
-    # GAS (papimo.jp) から取得
-    if store_key in GAS_STORES:
+    # availability.json（ローカル優先、GitHub fallback）から取得
+    if store_key in GITHUB_STORES:
+        try:
+            data = get_daidata_availability()
+            store_data = data.get('stores', {}).get(store_key, {})
+        except Exception as e:
+            print(f"Error getting availability from JSON: {e}")
+
+    # GAS fallback（JSONにデータがない場合）
+    if not store_data and store_key in GAS_STORES:
         try:
             data = get_availability_from_gas()
             store_data = data.get(store_key, {})
         except Exception as e:
             print(f"Error getting from GAS: {e}")
-
-    # daidata (ローカル優先、GitHub fallback) から取得
-    elif store_key in GITHUB_STORES:
-        try:
-            data = get_daidata_availability()
-            store_data = data.get('stores', {}).get(store_key, {})
-        except Exception as e:
-            print(f"Error getting daidata availability: {e}")
 
     if not store_data:
         return {}
@@ -195,26 +198,23 @@ def get_realtime_data(store_key: str) -> Dict:
             'source': str,  # 'github' or 'gas'
         }
     """
-    # GitHub対応店舗（daidata）
+    # availability.json対応店舗（daidata + papimo）
     if store_key in GITHUB_STORES:
         try:
             data = get_daidata_availability()
             store_data = data.get('stores', {}).get(store_key, {})
 
-            if not store_data:
-                return {}
-
-            return {
-                'store_name': store_data.get('name', ''),
-                'fetched_at': data.get('fetched_at', ''),
-                'units': store_data.get('units', []),
-                'source': 'github',
-            }
+            if store_data and store_data.get('units'):
+                return {
+                    'store_name': store_data.get('name', ''),
+                    'fetched_at': data.get('fetched_at', ''),
+                    'units': store_data.get('units', []),
+                    'source': 'github',
+                }
         except Exception as e:
-            print(f"Error getting realtime data from GitHub: {e}")
-            return {}
+            print(f"Error getting realtime data from availability.json: {e}")
 
-    # GAS対応店舗（papimo.jp）
+    # GAS fallback（availability.jsonにデータがない場合）
     if store_key in GAS_STORES:
         try:
             data = get_availability_from_gas()
@@ -242,7 +242,6 @@ def get_realtime_data(store_key: str) -> Dict:
             }
         except Exception as e:
             print(f"Error getting realtime data from GAS: {e}")
-            return {}
 
     return {}
 
