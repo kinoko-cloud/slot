@@ -335,17 +335,194 @@ def print_report(alerts: list):
     print()
 
 
+def verify_data_integrity(availability_data: dict) -> list:
+    """availability.jsonのデータ品質を検証する
+
+    チェック項目:
+    - 全期待店舗がデータに含まれているか
+    - 各台のART/total_startが0でないか（スクレイピング失敗検知）
+    - 必須フィールドが欠損していないか
+    - データの鮮度
+
+    Returns:
+        問題のリスト
+    """
+    issues = []
+    checked_at = datetime.now(JST).isoformat()
+
+    stores_data = availability_data.get('stores', {})
+
+    # 期待される店舗キー（availability.jsonに含まれるべき）
+    EXPECTED_STORES = {
+        'island_akihabara_sbj': {'name': 'アイランド秋葉原', 'min_units': 14},
+        'shibuya_espass_sbj': {'name': '渋谷エスパス新館', 'min_units': 3},
+        'shinjuku_espass_sbj': {'name': '新宿エスパス歌舞伎町', 'min_units': 4},
+        'akihabara_espass_sbj': {'name': '秋葉原エスパス駅前', 'min_units': 4},
+        'seibu_shinjuku_espass_sbj': {'name': '西武新宿駅前エスパス', 'min_units': 7},
+    }
+
+    # 1. 店舗の存在チェック
+    for store_key, expected in EXPECTED_STORES.items():
+        if store_key not in stores_data:
+            issues.append({
+                'type': 'store_missing',
+                'severity': 'critical',
+                'store_key': store_key,
+                'store_name': expected['name'],
+                'message': f'{expected["name"]}: availability.jsonにデータなし',
+                'checked_at': checked_at,
+            })
+            continue
+
+        store = stores_data[store_key]
+        units = store.get('units', [])
+
+        # 2. 台数チェック
+        if len(units) < expected['min_units']:
+            issues.append({
+                'type': 'units_insufficient',
+                'severity': 'warning',
+                'store_key': store_key,
+                'store_name': expected['name'],
+                'expected': expected['min_units'],
+                'actual': len(units),
+                'message': f'{expected["name"]}: 台数不足（期待{expected["min_units"]}台、実際{len(units)}台）',
+                'checked_at': checked_at,
+            })
+
+        # 3. 全台ART=0チェック（スクレイピング失敗の兆候）
+        art_values = [u.get('art', 0) for u in units]
+        total_start_values = [u.get('total_start', 0) for u in units]
+
+        # 営業中で全台ART=0は異常（閉店後は正常）
+        now = datetime.now(JST)
+        is_business_hours = 10 <= now.hour < 23
+
+        if is_business_hours and now.hour >= 12:
+            # 12時以降で全台ART 0は異常
+            if units and all(a == 0 for a in art_values):
+                issues.append({
+                    'type': 'all_art_zero',
+                    'severity': 'critical',
+                    'store_key': store_key,
+                    'store_name': expected['name'],
+                    'unit_count': len(units),
+                    'message': f'{expected["name"]}: 全{len(units)}台のART=0（データ取得失敗の可能性）',
+                    'checked_at': checked_at,
+                })
+
+        # 4. 必須フィールド欠損チェック
+        required_fields = ['unit_id', 'art']
+        for unit in units:
+            missing_fields = [f for f in required_fields if f not in unit]
+            if missing_fields:
+                issues.append({
+                    'type': 'field_missing',
+                    'severity': 'warning',
+                    'store_key': store_key,
+                    'store_name': expected['name'],
+                    'unit_id': unit.get('unit_id', '?'),
+                    'missing_fields': missing_fields,
+                    'message': f'{expected["name"]} {unit.get("unit_id", "?")}番: フィールド欠損 {", ".join(missing_fields)}',
+                    'checked_at': checked_at,
+                })
+
+        # 5. 個別台のデータ異常チェック
+        for unit in units:
+            uid = unit.get('unit_id', '?')
+            art = unit.get('art', 0)
+            total = unit.get('total_start', 0)
+
+            # total_startが大きいのにART=0は異常
+            if total > 2000 and art == 0:
+                issues.append({
+                    'type': 'art_zero_with_games',
+                    'severity': 'warning',
+                    'store_key': store_key,
+                    'store_name': expected['name'],
+                    'unit_id': uid,
+                    'total_start': total,
+                    'message': f'{expected["name"]} {uid}番: {total:,}G消化済みなのにART=0',
+                    'checked_at': checked_at,
+                })
+
+    # 6. データ鮮度チェック
+    fetched_at = availability_data.get('fetched_at', '')
+    if fetched_at:
+        try:
+            fetch_time = datetime.fromisoformat(fetched_at)
+            now = datetime.now(JST)
+            age_minutes = (now - fetch_time).total_seconds() / 60
+
+            if age_minutes > 60:
+                issues.append({
+                    'type': 'data_stale',
+                    'severity': 'warning',
+                    'age_minutes': int(age_minutes),
+                    'fetched_at': fetched_at,
+                    'message': f'データが{int(age_minutes)}分前のもの（60分超過）',
+                    'checked_at': checked_at,
+                })
+        except Exception:
+            pass
+
+    return issues
+
+
+def print_integrity_report(issues: list):
+    """データ整合性レポートをコンソール出力"""
+    if not issues:
+        print('✓ データ整合性: 問題なし')
+        return
+
+    critical = [i for i in issues if i.get('severity') == 'critical']
+    warnings = [i for i in issues if i.get('severity') == 'warning']
+
+    print(f'\n{"="*50}')
+    print(f'データ整合性チェック: {len(issues)}件の問題')
+    if critical:
+        print(f'  🔴 重大: {len(critical)}件')
+    if warnings:
+        print(f'  🟡 警告: {len(warnings)}件')
+    print(f'{"="*50}')
+
+    for issue in issues:
+        severity = issue.get('severity', 'info')
+        icon = '🔴' if severity == 'critical' else '🟡' if severity == 'warning' else '🔵'
+        print(f'{icon} [{issue["type"]}] {issue["message"]}')
+
+    print()
+    return len(critical) > 0
+
+
 def main():
     """スタンドアロン実行: availability.jsonから検証"""
     import argparse
     parser = argparse.ArgumentParser(description='台番号検証')
-    parser.add_argument('--source', choices=['availability', 'daily'], default='availability',
+    parser.add_argument('--source', choices=['availability', 'daily', 'integrity'], default='availability',
                         help='検証データソース')
     parser.add_argument('--daily-file', type=str, help='デイリーファイルパス（--source daily時）')
     args = parser.parse_args()
 
+    avail_path = PROJECT_ROOT / 'data' / 'availability.json'
+
+    if args.source == 'integrity':
+        if not avail_path.exists():
+            print('availability.json が見つかりません')
+            return
+
+        with open(avail_path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+
+        issues = verify_data_integrity(data)
+        has_critical = print_integrity_report(issues)
+
+        if has_critical:
+            print('⚠ 重大な問題が見つかりました')
+            sys.exit(1)
+        return
+
     if args.source == 'availability':
-        avail_path = PROJECT_ROOT / 'data' / 'availability.json'
         if not avail_path.exists():
             print('availability.json が見つかりません')
             return

@@ -461,6 +461,23 @@ def run_unit_verification():
         print(f"  Verification error: {e}")
 
 
+def run_data_integrity_check():
+    """データ整合性チェック（全店舗のART/フィールド欠損等）"""
+    print("Running data integrity check...")
+    try:
+        from scripts.verify_units import verify_data_integrity, print_integrity_report
+        avail_path = PROJECT_ROOT / 'data' / 'availability.json'
+        if avail_path.exists():
+            with open(avail_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            issues = verify_data_integrity(data)
+            print_integrity_report(issues)
+        else:
+            print("  availability.json not found, skipping")
+    except Exception as e:
+        print(f"  Integrity check error: {e}")
+
+
 def main():
     print("=" * 50)
     print("静的サイト生成開始")
@@ -470,6 +487,9 @@ def main():
 
     # 台番号検証（アラート生成）
     run_unit_verification()
+
+    # データ整合性チェック
+    run_data_integrity_check()
     print()
 
     # 出力ディレクトリを作成

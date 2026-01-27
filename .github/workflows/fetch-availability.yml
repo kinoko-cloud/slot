@@ -48,6 +48,10 @@ jobs:
             exit 1
           fi
 
+      - name: Verify data integrity
+        run: |
+          python scripts/verify_units.py --source integrity || echo "Integrity issues found (non-blocking)"
+
       - name: Commit and push
         run: |
           git config user.name "GitHub Actions"
