@@ -2315,39 +2315,91 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
                     rec['three_days_ago_max_rensa'] = ad.get('max_rensa', 0)
                     rec['three_days_ago_max_medals'] = ad.get('max_medals', 0)
 
-        # 閉店後: availabilityのデータを前日データとして補完
+        # 閉店後: availabilityのデータを補完
+        # 注意: availabilityのtoday_historyの日付と蓄積DBのyesterday_dateが異なる場合がある
+        # availability=1/27, yesterday_date=1/26 → availabilityは「前日」でなく「最新日」
         if not realtime_is_today and realtime_data:
+            # availabilityのデータ日付を取得
+            rt_fetched = realtime_data.get('fetched_at', '')
+            rt_date = ''
+            if rt_fetched:
+                try:
+                    rt_date = datetime.fromisoformat(rt_fetched.replace('Z', '+00:00')).strftime('%Y-%m-%d')
+                except:
+                    pass
+
+            y_date = rec.get('yesterday_date', '')
+            # availabilityのデータがyesterday_dateより新しい場合、
+            # yesterdayフィールドを上にずらして、availabilityデータをyesterdayに入れる
+            is_newer = rt_date and y_date and rt_date > y_date
+
             units_list = realtime_data.get('units', [])
             for _unit in units_list:
                 if _unit.get('unit_id') == unit_id:
-                    # 連チャン・最大枚数
                     rt_hist = _unit.get('today_history', [])
-                    if rt_hist and not rec.get('yesterday_max_rensa'):
-                        from analysis.history_accumulator import _calc_history_stats
-                        calc_rensa, calc_medals = _calc_history_stats(rt_hist)
-                        if calc_rensa > 0:
-                            rec['yesterday_max_rensa'] = calc_rensa
-                        rt_max = _unit.get('max_medals', 0)
-                        if rt_max > 0:
-                            rec['yesterday_max_medals'] = rt_max
-                        elif calc_medals > 0:
-                            rec['yesterday_max_medals'] = calc_medals
+                    _rt_art = _unit.get('art', 0)
+                    _rt_total = _unit.get('total_start', 0)
+                    _rt_rb = _unit.get('rb', 0)
+                    rt_max = _unit.get('max_medals', 0)
+
+                    if is_newer and _rt_art > 0:
+                        # availabilityが最新日 → 全データを1日ずつずらす
+                        if rec.get('yesterday_art'):
+                            # day_before → three_days_ago
+                            rec['three_days_ago_art'] = rec.get('day_before_art', 0)
+                            rec['three_days_ago_rb'] = rec.get('day_before_rb', 0)
+                            rec['three_days_ago_games'] = rec.get('day_before_games', 0)
+                            rec['three_days_ago_date'] = rec.get('day_before_date', '')
+                            rec['three_days_ago_diff_medals'] = rec.get('day_before_diff_medals')
+                            rec['three_days_ago_max_rensa'] = rec.get('day_before_max_rensa', 0)
+                            rec['three_days_ago_max_medals'] = rec.get('day_before_max_medals', 0)
+
+                            # yesterday → day_before
+                            rec['day_before_art'] = rec.get('yesterday_art', 0)
+                            rec['day_before_rb'] = rec.get('yesterday_rb', 0)
+                            rec['day_before_games'] = rec.get('yesterday_games', 0)
+                            rec['day_before_date'] = rec.get('yesterday_date', '')
+                            rec['day_before_diff_medals'] = rec.get('yesterday_diff_medals')
+                            rec['day_before_max_rensa'] = rec.get('yesterday_max_rensa', 0)
+                            rec['day_before_max_medals'] = rec.get('yesterday_max_medals', 0)
+
+                        # availabilityデータをyesterdayに設定
+                        rec['yesterday_art'] = _rt_art
+                        rec['yesterday_rb'] = _rt_rb
+                        rec['yesterday_games'] = _rt_total
+                        rec['yesterday_date'] = rt_date
+                        rec['yesterday_prob'] = round(_rt_total / _rt_art) if _rt_art > 0 else 0
                         rec['today_history'] = rt_hist
-                    # ART確率
-                    if not rec.get('yesterday_prob'):
-                        _rt_art = _unit.get('art', 0)
-                        _rt_total = _unit.get('total_start', 0)
-                        if _rt_art > 0 and _rt_total > 0:
+
+                        # 連チャン・最大枚数
+                        if rt_hist:
+                            from analysis.history_accumulator import _calc_history_stats
+                            calc_rensa, calc_medals = _calc_history_stats(rt_hist)
+                            rec['yesterday_max_rensa'] = calc_rensa
+                            rec['yesterday_max_medals'] = rt_max if rt_max > 0 else calc_medals
+                        else:
+                            rec['yesterday_max_rensa'] = 0
+                            rec['yesterday_max_medals'] = rt_max
+
+                        # 差枚はgenerate_static.pyのcalculate_expected_profitで計算する
+                        # today_historyからの計算は不正確（medalsはART中払い出しのみ）
+                        rec['yesterday_diff_medals'] = None
+                    else:
+                        # 同じ日付 or 日付不明 → 既存yesterdayを補完するだけ
+                        if rt_hist and not rec.get('yesterday_max_rensa'):
+                            from analysis.history_accumulator import _calc_history_stats
+                            calc_rensa, calc_medals = _calc_history_stats(rt_hist)
+                            if calc_rensa > 0:
+                                rec['yesterday_max_rensa'] = calc_rensa
+                            if rt_max > 0:
+                                rec['yesterday_max_medals'] = rt_max
+                            elif calc_medals > 0:
+                                rec['yesterday_max_medals'] = calc_medals
+                            rec['today_history'] = rt_hist
+                        if not rec.get('yesterday_prob') and _rt_art > 0 and _rt_total > 0:
                             rec['yesterday_prob'] = round(_rt_total / _rt_art)
-                    # 差枚（履歴から概算: メダル獲得 - 投入3枚掛け）
-                    if not rec.get('yesterday_diff_medals') and rt_hist:
-                        _diff = sum(h.get('medals', 0) - h.get('start', 0) * 3 for h in rt_hist)
-                        if _diff != 0:
-                            rec['yesterday_diff_medals'] = _diff
-                    # RB
-                    if not rec.get('yesterday_rb'):
-                        _rt_rb = _unit.get('rb', 0)
-                        if _rt_rb > 0:
+                        # 差枚はgenerate_static.pyで計算（history計算は不正確）
+                        if not rec.get('yesterday_rb') and _rt_rb > 0:
                             rec['yesterday_rb'] = _rt_rb
                     break
 
