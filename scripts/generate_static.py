@@ -287,6 +287,7 @@ def generate_index(env):
         today_weekday=today_weekday,
         today_date=today_date,
         today_date_formatted=today_date_formatted,
+        now_time=now.strftime('%H:%M'),
         store_recommendations={},
         today_recommended_stores=today_recommended_stores,
         today_store_ranking=today_store_ranking,

@@ -347,6 +347,7 @@ def index():
                            today_weekday=today_weekday,
                            today_date=today_date,
                            today_date_formatted=format_date_with_weekday(now),
+                           now_time=now.strftime('%H:%M'),
                            store_recommendations=store_recommendations,
                            today_recommended_stores=today_recommended_stores,
                            today_store_ranking=today_store_ranking,
