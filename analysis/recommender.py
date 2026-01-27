@@ -13,6 +13,7 @@
 """
 
 import json
+import os
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Optional, List, Dict
@@ -1256,6 +1257,69 @@ def analyze_graph_pattern(days: List[dict]) -> dict:
     }
 
 
+def calc_recovery_stats(store_key: str, machine_key: str = 'sbj') -> dict:
+    """蓄積データから連続不調→翌日回復率を計算
+
+    Returns:
+        {1: {'total': N, 'recovered': N, 'rate': float}, ...}
+    """
+    import glob
+    hist_dir = f'data/history/{store_key}'
+    good_threshold = 130 if machine_key == 'sbj' else 330
+    results = {}
+    for n in range(1, 6):
+        results[n] = {'total': 0, 'recovered': 0, 'rate': 0.0}
+
+    if not os.path.isdir(hist_dir):
+        return results
+
+    for f in glob.glob(os.path.join(hist_dir, '*.json')):
+        try:
+            with open(f) as fp:
+                data = json.load(fp)
+        except:
+            continue
+        days = sorted(data.get('days', []), key=lambda d: d.get('date', ''))
+        probs = []
+        for d in days:
+            art = d.get('art', 0)
+            games = d.get('total_start', 0) or d.get('games', 0)
+            if art > 0 and games > 0:
+                probs.append(games / art)
+            else:
+                probs.append(None)
+
+        for i in range(1, len(probs)):
+            if probs[i] is None:
+                continue
+            is_good = probs[i] <= good_threshold
+            streak = 0
+            for j in range(i-1, -1, -1):
+                if probs[j] is None or probs[j] <= good_threshold:
+                    break
+                streak += 1
+            for n in range(1, min(streak+1, 6)):
+                results[n]['total'] += 1
+                if is_good:
+                    results[n]['recovered'] += 1
+
+    for n in results:
+        t = results[n]['total']
+        results[n]['rate'] = results[n]['recovered'] / t if t > 0 else 0.0
+
+    return results
+
+
+# 回復率キャッシュ
+_recovery_cache = {}
+
+def get_recovery_stats(store_key: str, machine_key: str = 'sbj') -> dict:
+    cache_key = f'{store_key}_{machine_key}'
+    if cache_key not in _recovery_cache:
+        _recovery_cache[cache_key] = calc_recovery_stats(store_key, machine_key)
+    return _recovery_cache[cache_key]
+
+
 def analyze_rotation_pattern(days: List[dict]) -> dict:
     """ローテーションパターン分析
 
@@ -1601,8 +1665,11 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
         else:
             reasons.append(f"📊 過去データSランク: 高設定が頻繁に入る台")
     elif base_rank == 'A':
+        consecutive_bad = historical_perf.get('consecutive_bad', 0)
         if total_perf_days > 0 and good_day_rate < 0.5:
             reasons.append(f"📊 過去データAランク（ただし直近{total_perf_days}日は好調{good_days}日のみ={good_day_rate:.0%}）")
+        elif consecutive_bad >= 2:
+            reasons.append(f"📊 過去データAランク（好調率{good_day_rate:.0%}だが直近{consecutive_bad}日連続不調中）")
         else:
             reasons.append(f"📊 過去データAランク: 高設定が入りやすい台")
     elif base_rank == 'B':
@@ -1610,15 +1677,24 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
 
     # === 2. 連続パターン・傾向（設定変更サイクルの読み） ===
     # これが翌日予測の核心 — 前日単体の成績ではなく「流れ」
+    # 蓄積データからの回復率統計を取得
+    _recovery = get_recovery_stats(store_key or '', kwargs.get('machine_key', 'sbj')) if store_key else {}
+
     if consecutive_minus >= 4:
-        reasons.append(f"🔄 {consecutive_minus}日連続不調 → {next_day_label}設定変更の可能性大")
+        _rs = _recovery.get(4, {})
+        _r_note = f"（過去実績: {_rs['recovered']}/{_rs['total']}回={_rs['rate']:.0%}で翌日回復）" if _rs.get('total', 0) >= 2 else ""
+        reasons.append(f"🔄 {consecutive_minus}日連続不調 → {next_day_label}設定変更の可能性大{_r_note}")
     elif consecutive_minus >= 3:
-        reasons.append(f"🔄 {consecutive_minus}日連続不調 → そろそろ{next_day_label}設定上げ期待")
+        _rs = _recovery.get(3, {})
+        _r_note = f"（過去実績: {_rs['recovered']}/{_rs['total']}回={_rs['rate']:.0%}で翌日回復）" if _rs.get('total', 0) >= 2 else ""
+        reasons.append(f"🔄 {consecutive_minus}日連続不調 → そろそろ{next_day_label}設定上げ期待{_r_note}")
     elif consecutive_minus == 2:
+        _rs = _recovery.get(2, {})
+        _r_note = f"（過去実績: {_rs['recovered']}/{_rs['total']}回={_rs['rate']:.0%}で翌日回復）" if _rs.get('total', 0) >= 2 else ""
         if today_rating >= 4:
-            reasons.append(f"🔄 2日連続不調 + {store_name}の{today_weekday}曜は狙い目 → {next_day_label}リセット期待")
+            reasons.append(f"🔄 2日連続不調 + {store_name}の{today_weekday}曜は狙い目 → {next_day_label}リセット期待{_r_note}")
         else:
-            reasons.append(f"🔄 2日連続不調 → {next_day_label}リセット期待")
+            reasons.append(f"🔄 2日連続不調 → {next_day_label}リセット期待{_r_note}")
 
     if consecutive_plus >= 3:
         if today_rating >= 4:
@@ -1639,7 +1715,10 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
     yesterday_prob_val = trend.get('yesterday_prob', 0)
     day_before_prob_val = trend.get('day_before_prob', 0)
     if yesterday_prob_val >= 150 and day_before_prob_val >= 150:
-        reasons.append(f"🔄 直近2日とも不調（1/{day_before_prob_val:.0f}→1/{yesterday_prob_val:.0f}）→ {next_day_label}設定変更期待大")
+        # 蓄積データからの回復率統計
+        _rs2 = _recovery.get(2, {})
+        _r_note2 = f"（過去実績: {_rs2['recovered']}/{_rs2['total']}回={_rs2['rate']:.0%}で翌日回復）" if _rs2.get('total', 0) >= 2 else ""
+        reasons.append(f"🔄 直近2日とも不調（1/{day_before_prob_val:.0f}→1/{yesterday_prob_val:.0f}）→ {next_day_label}設定変更期待大{_r_note2}")
 
     # ローテーションパターン
     if days:
@@ -2495,6 +2574,17 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
                 rec['today_reasons'] = [r.replace('本日', data_date_label) for r in rec['today_reasons']]
             if rec.get('comparison_note'):
                 rec['comparison_note'] = rec['comparison_note'].replace('本日', data_date_label)
+
+    # === 稼働率の注記（低稼働日は確率のブレが大きい） ===
+    y_games_all = [r.get('yesterday_games', 0) for r in recommendations if r.get('yesterday_games', 0) > 0]
+    avg_games = sum(y_games_all) / len(y_games_all) if y_games_all else 0
+    low_games_threshold = avg_games * 0.6 if avg_games > 0 else 3000
+    for rec in recommendations:
+        rec['store_avg_games'] = int(avg_games)
+        for prefix in ['yesterday', 'day_before', 'three_days_ago']:
+            g = rec.get(f'{prefix}_games', 0)
+            if g > 0 and g < low_games_threshold:
+                rec[f'{prefix}_low_activity'] = True
 
     # === 前日データの相対評価（店舗内比較） ===
     # 前日の成績が店舗平均より弱い場合は注意を追加
