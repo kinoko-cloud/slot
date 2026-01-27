@@ -2807,6 +2807,48 @@ strong.minus {
     min-width: 3.5em;
 }
 
+/* 直近3日間データ */
+.recent-days {
+    margin-top: 8px;
+    padding: 8px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 6px;
+    border-left: 3px solid #444;
+}
+
+.recent-day-row {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    flex-wrap: wrap;
+    font-size: 0.8em;
+    color: #bbb;
+    padding: 2px 0;
+}
+
+.recent-label {
+    color: #888;
+    font-weight: 600;
+    min-width: 4em;
+    font-size: 0.9em;
+}
+
+.recent-art {
+    color: #ff6b6b;
+    font-weight: 700;
+}
+
+.recent-prob {
+    font-weight: 600;
+}
+.recent-prob.excellent { color: #2ed573; }
+.recent-prob.good { color: #ffa502; }
+.recent-prob.bad { color: #ff4757; }
+
+.recent-games {
+    color: #888;
+}
+
 /* 天井バッジ */
 .ceiling-badge {
     display: inline-flex;
