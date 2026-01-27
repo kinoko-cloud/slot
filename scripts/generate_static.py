@@ -381,6 +381,42 @@ def generate_index(env):
     data_date_str = format_date_with_weekday(now)  # 今日のデータ
     prev_date_str = format_date_with_weekday(yesterday)  # 昨日のデータ
 
+    # 機種別的中率（ヒーロー表示用: 高い順に2つ）
+    accuracy_hero = []
+    for machine_key, machine in MACHINES.items():
+        stores = get_stores_by_machine(machine_key)
+        m_total = 0
+        m_hit = 0
+        for store_key in stores:
+            try:
+                pre_recs = recommend_units(store_key)  # 過去データのみ
+                rt = get_realtime_data(store_key)
+                rt_recs = recommend_units(store_key, realtime_data=rt)
+                rt_map = {}
+                for r in rt_recs:
+                    rt_map[str(r.get('unit_id', ''))] = r
+                for r in pre_recs:
+                    uid = str(r.get('unit_id', ''))
+                    if r.get('final_rank', 'C') in ('S', 'A'):
+                        m_total += 1
+                        rt_r = rt_map.get(uid, {})
+                        art = rt_r.get('art_count', 0)
+                        games = rt_r.get('total_games', 0)
+                        if art > 0 and games / art <= 130:
+                            m_hit += 1
+            except:
+                pass
+        rate = (m_hit / m_total * 100) if m_total > 0 else 0
+        accuracy_hero.append({
+            'name': machine['short_name'],
+            'icon': machine['icon'],
+            'rate': rate,
+            'hit': m_hit,
+            'total': m_total,
+        })
+    # 高い順にソート
+    accuracy_hero.sort(key=lambda x: -x['rate'])
+
     html = template.render(
         machines=machines,
         top3=top3,
@@ -405,6 +441,7 @@ def generate_index(env):
         yesterday_str=yesterday_str,
         data_date_str=data_date_str,
         prev_date_str=prev_date_str,
+        accuracy_hero=accuracy_hero,
     )
 
     output_path = OUTPUT_DIR / 'index.html'

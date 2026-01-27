@@ -14,6 +14,65 @@ body {
     min-height: 100vh;
 }
 
+/* === 的中率ヒーロー表示 === */
+.accuracy-hero {
+    background: linear-gradient(135deg, #1a1a3e 0%, #0a0a2e 100%);
+    border: 1px solid #2a3a5c;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+.hero-title {
+    font-size: 0.85em;
+    color: #888;
+    margin-bottom: 12px;
+}
+
+.hero-rates {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+.hero-rate-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    padding: 10px 8px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 10px;
+}
+
+.hero-icon {
+    font-size: 1.6em;
+    margin-bottom: 4px;
+}
+
+.hero-name {
+    font-size: 0.7em;
+    color: #aaa;
+    margin-bottom: 6px;
+    white-space: nowrap;
+}
+
+.hero-pct {
+    font-size: 2.2em;
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 4px;
+}
+.hero-pct.excellent { color: #2ed573; }
+.hero-pct.good { color: #ffa502; }
+.hero-pct.normal { color: #ccc; }
+
+.hero-detail {
+    font-size: 0.7em;
+    color: #888;
+}
+
 .container {
     max-width: 480px;
     margin: 0 auto;
