@@ -1215,11 +1215,13 @@ def generate_verify_page(env):
     # 機種別の的中率（開店前予測ベース）
     machine_accuracy = []
     for machine_key, machine_data in verify_data.items():
+        m_all = 0
         m_predicted = 0
         m_actual = 0
         m_surprise = 0
         for store in machine_data.get('stores', []):
             for unit in store.get('units', []):
+                m_all += 1
                 is_sa = unit['pre_open_rank'] in ('S', 'A')
                 prob = unit.get('actual_prob', 0)
                 is_good = prob > 0 and prob <= 130
@@ -1233,11 +1235,33 @@ def generate_verify_page(env):
         machine_accuracy.append({
             'name': machine_data['name'],
             'icon': machine_data['icon'],
+            'all_units': m_all,
             'total': m_predicted,
             'hit': m_actual,
             'rate': rate,
             'surprise': m_surprise,
+            'total_good': m_actual + m_surprise,
         })
+
+    # 全台数を計算
+    total_all_units = 0
+    for mk, md in verify_data.items():
+        for s in md.get('stores', []):
+            total_all_units += len(s.get('units', []))
+
+    # 全台中の好調台数
+    total_good_all = total_actual_good + total_surprise
+
+    # 日付情報
+    now = datetime.now(JST)
+    reason_data_label, reason_prev_label = get_reason_date_labels()
+    # 実績データの日付（閉店後は前日、営業中は当日）
+    if is_business_hours():
+        result_date_str = format_date_with_weekday(now)
+        predict_base = format_date_with_weekday(now - timedelta(days=1))
+    else:
+        result_date_str = format_date_with_weekday(now - timedelta(days=1))
+        predict_base = format_date_with_weekday(now - timedelta(days=2))
 
     html = template.render(
         verify_data=verify_data,
@@ -1246,6 +1270,10 @@ def generate_verify_page(env):
         actual_good=total_actual_good,
         surprise_good=total_surprise,
         machine_accuracy=machine_accuracy,
+        total_all_units=total_all_units,
+        total_good_all=total_good_all,
+        result_date_str=result_date_str,
+        predict_base=predict_base,
     )
 
     output_path = OUTPUT_DIR / 'verify.html'

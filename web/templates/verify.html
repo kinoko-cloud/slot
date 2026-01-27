@@ -13,7 +13,10 @@
         <header>
             <a href="{{ url_for('index') }}" class="back-link">&lt; トップに戻る</a>
             <h1>答え合わせ</h1>
-            <div class="update-info">開店前の予測（過去データのみ）で当日の好調台を当てられたか？</div>
+            <div class="update-info">
+                {{ result_date_str }}の実績で答え合わせ<br>
+                <small>予測データ: {{ predict_base }}までの蓄積データで予測</small>
+            </div>
         </header>
 
         <main>
@@ -33,16 +36,16 @@
                     </div>
                     <div class="accuracy-detail">
                         <div class="accuracy-row">
-                            <span class="acc-label">予測S/A台</span>
-                            <span class="acc-value">{{ predicted_good }}台</span>
+                            <span class="acc-label">全{{ total_all_units }}台中の好調台</span>
+                            <span class="acc-value">{{ total_good_all }}台</span>
                         </div>
                         <div class="accuracy-row">
-                            <span class="acc-label">実際に好調</span>
-                            <span class="acc-value hit">{{ actual_good }}台</span>
+                            <span class="acc-label">　うちS/A予測 → 好調</span>
+                            <span class="acc-value hit">{{ actual_good }}/{{ predicted_good }}台</span>
                         </div>
                         <div class="accuracy-row">
-                            <span class="acc-label">予測外の好調</span>
-                            <span class="acc-value surprise">{{ surprise_good }}台</span>
+                            <span class="acc-label">　うちB以下予測 → 好調</span>
+                            <span class="acc-value surprise">{{ surprise_good }}台（予測外）</span>
                         </div>
                     </div>
                 </div>
@@ -55,10 +58,7 @@
                         <span class="ma-icon">{{ ma.icon }}</span>
                         <span class="ma-name">{{ ma.name }}</span>
                         <span class="ma-rate {% if ma.rate >= 60 %}good{% elif ma.rate >= 40 %}ok{% else %}bad{% endif %}">{{ ma.rate|int }}%</span>
-                        <span class="ma-detail">{{ ma.hit }}/{{ ma.total }} 的中</span>
-                        {% if ma.surprise > 0 %}
-                        <span class="ma-surprise">+{{ ma.surprise }}台想定外</span>
-                        {% endif %}
+                        <span class="ma-detail">S/A予測{{ ma.hit }}/{{ ma.total }}台的中（全{{ ma.all_units }}台中好調{{ ma.total_good }}台）</span>
                     </div>
                     {% endfor %}
                 </div>
