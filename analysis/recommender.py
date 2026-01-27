@@ -1139,28 +1139,23 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
             if total_games >= 5000:
                 reasons.append(f"本日1/{art_prob:.0f}で{total_games:,}G消化 → 中間以上の設定で安定稼働中")
 
-    # 5. ART確率 + AT間（過去7日）
-    avg_art_prob = trend.get('avg_art_prob', 0)
-    if avg_art_prob > 0:
-        if avg_art_prob <= 100:
-            reasons.append(f"7日間のART確率 平均1/{avg_art_prob:.0f} → 高設定域が続いている台")
-        elif avg_art_prob <= 130:
-            reasons.append(f"7日間のART確率 平均1/{avg_art_prob:.0f} → 中間設定以上の台")
-
-    # AT間の分析（履歴ベースの正確な計算）
-    avg_at_interval = trend.get('avg_at_interval', 0)
+    # 5. 直近の傾向パターン分析（パターンベース、平均ではない）
     ceiling_count = trend.get('ceiling_count', 0)
     if ceiling_count > 0:
-        reasons.append(f"7日間で天井到達{ceiling_count}回 → 低設定の可能性に注意")
-    elif avg_at_interval > 0 and avg_at_interval <= 150:
-        reasons.append(f"AT間平均{avg_at_interval:.0f}G → 軽い台（高設定域）")
+        reasons.append(f"直近で天井到達{ceiling_count}回あり → 低設定の日があった")
+
+    art_trend = trend.get('art_trend', 'flat')
+    if art_trend == 'improving':
+        reasons.append("直近3日のART確率が改善傾向 → 設定が上がっている可能性")
+    elif art_trend == 'declining':
+        reasons.append("直近3日のART確率が悪化傾向 → 設定が下がった可能性に注意")
 
     # 6. グラフパターン分析
     if days:
         graph = analyze_graph_pattern(days)
         if graph.get('likely_to_rise') and not graph.get('has_big_rensa'):
             if graph['pattern'] in ('mimizu', 'momimomi'):
-                reasons.append("過去7日モミモミで大連荘なし → 爆発のタイミングが近い可能性")
+                reasons.append("直近の出玉が横ばいで大連荘なし → 爆発のタイミングが近い可能性")
 
     # 7. 本日のグラフ分析
     if today_history:
@@ -1185,21 +1180,29 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
         elif consecutive_minus >= 2:
             reasons.append(f"未稼働 + {consecutive_minus}日連続マイナス → リセット台の可能性")
 
-    # 本日と7日の確率が同じ場合、7日の方を削除（1日分データしかない場合）
-    if art_prob > 0 and avg_art_prob > 0 and abs(art_prob - avg_art_prob) < 5:
-        reasons = [r for r in reasons if '7日間のART確率' not in r]
-
-    # reasonsが空の台にデフォルト理由を追加
+    # reasonsが空の台にデフォルト理由を追加（具体的な根拠を示す）
     if not reasons:
         if total_games > 0 and art_prob > 0:
-            if art_prob <= 180:
-                reasons.append(f"ART確率1/{art_prob:.0f}（{total_games:,}G消化）")
+            if art_prob <= 100:
+                reasons.append(f"本日ART確率1/{art_prob:.0f}（{total_games:,}G消化）→ 高設定域の挙動")
+            elif art_prob <= 180:
+                reasons.append(f"本日ART確率1/{art_prob:.0f}（{total_games:,}G消化）")
             else:
-                reasons.append(f"ART確率1/{art_prob:.0f} → 低設定域（{total_games:,}G消化）")
-        elif today_rating >= 4:
-            reasons.append(f"{store_name}は{today_weekday}曜★{today_rating}")
-        elif today_rating <= 2:
-            reasons.append(f"{store_name}は{today_weekday}曜★{today_rating}（弱い日）")
+                reasons.append(f"本日ART確率1/{art_prob:.0f} → 低設定域の挙動（{total_games:,}G消化）")
+        # 曜日情報（弱い日の警告も、普通の日の情報も出す）
+        if store_name and today_weekday:
+            if today_rating >= 4:
+                reasons.append(f"{store_name}は{today_weekday}曜が狙い目（★{today_rating}）")
+            elif today_rating <= 2:
+                reasons.append(f"{store_name}は{today_weekday}曜★{today_rating}（弱い日）→ 回収傾向に注意")
+            else:
+                best_info = weekday_info.get('best_days', '')
+                reasons.append(f"{store_name}の{today_weekday}曜は★{today_rating}（普通）{'、' + best_info if best_info else ''}")
+        # ランキング根拠
+        if base_rank in ('S', 'A'):
+            reasons.append(f"過去の稼働パターンから{base_rank}ランク → 高設定が入りやすい台")
+        elif base_rank == 'B':
+            reasons.append(f"過去の稼働パターンからBランク → 中間設定以上が多い台")
 
     # 重複を除去して上位5つに絞る
     seen = set()
