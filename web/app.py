@@ -42,28 +42,42 @@ REALTIME_CACHE = {}
 SCRAPING_STATUS = {}
 
 # バージョン確認用
-APP_VERSION = '2026-01-26-v10-dayratings'
+APP_VERSION = '2026-01-27-v12-time-fix-medals-badge'
 
 # 営業時間設定
-OPEN_HOUR = 10   # 開店時刻
-CLOSE_HOUR = 23  # 閉店時刻（22:45には閉店）
+OPEN_HOUR = 10    # 開店時刻
+CLOSE_HOUR = 23   # 閉店時刻
+CLOSE_MINUTE = 50 # 集計開始時刻（22:50から集計中モード）
+
+# 曜日名（日本語）
+WEEKDAY_NAMES = ['月', '火', '水', '木', '金', '土', '日']
 
 
 def get_display_mode():
-    """現在時刻から表示モードを決定"""
+    """現在時刻から表示モードを決定
+
+    Returns:
+        'realtime': 営業中モード（10:00〜22:49）
+        'collecting': 集計中モード（22:50〜22:59）
+        'result': 閉店後モード（23:00〜翌9:59）
+    """
     now = datetime.now(JST)
     hour = now.hour
+    minute = now.minute
 
-    if CLOSE_HOUR <= hour or hour < OPEN_HOUR:
-        # 閉店後〜開店前: 結果モード
+    if hour >= CLOSE_HOUR or hour < OPEN_HOUR:
+        # 23:00〜翌9:59: 閉店後モード
         return 'result'
+    elif hour == (CLOSE_HOUR - 1) and minute >= CLOSE_MINUTE:
+        # 22:50〜22:59: 集計中モード
+        return 'collecting'
     else:
-        # 営業中: リアルタイム予測モード
+        # 10:00〜22:49: 営業中モード
         return 'realtime'
 
 
 def get_result_date():
-    """結果モード時に表示する日付を取得（23時以降は当日、0時以降は前日）"""
+    """結果モード時に表示する日付を取得"""
     now = datetime.now(JST)
     if now.hour >= CLOSE_HOUR:
         # 23時以降は当日の結果
@@ -71,6 +85,18 @@ def get_result_date():
     else:
         # 0時〜10時は前日の結果
         return now - timedelta(days=1)
+
+
+def format_date_with_weekday(dt):
+    """日付を曜日付きでフォーマット（例: 1月27日(月)）"""
+    weekday = WEEKDAY_NAMES[dt.weekday()]
+    return f"{dt.month}月{dt.day}日({weekday})"
+
+
+def is_business_hours():
+    """現在営業時間内かどうか"""
+    mode = get_display_mode()
+    return mode == 'realtime'
 
 @app.route('/version')
 def version():
@@ -303,9 +329,12 @@ def index():
     # 結果モードの場合、対象日付を取得
     result_date = None
     result_date_str = None
-    if display_mode == 'result':
+    if display_mode in ('result', 'collecting'):
         result_date = get_result_date()
-        result_date_str = result_date.strftime('%m月%d日')
+        result_date_str = format_date_with_weekday(result_date)
+
+    # 営業時間内かどうか
+    is_open = is_business_hours()
 
     return render_template('index.html',
                            machines=machines,
@@ -313,13 +342,15 @@ def index():
                            yesterday_top10=yesterday_top10,
                            today_weekday=today_weekday,
                            today_date=today_date,
+                           today_date_formatted=format_date_with_weekday(now),
                            store_recommendations=store_recommendations,
                            today_recommended_stores=today_recommended_stores,
                            today_store_ranking=today_store_ranking,
                            today_avoid_stores=today_avoid_stores,
                            store_day_ratings=store_day_ratings,
                            display_mode=display_mode,
-                           result_date_str=result_date_str)
+                           result_date_str=result_date_str,
+                           is_open=is_open)
 
 
 @app.route('/machine/<machine_key>')
@@ -396,32 +427,52 @@ def recommend(store_key: str):
     # キャッシュがあれば使用
     realtime_data = None
     cache_info = None
+    now_jst = datetime.now(JST)
+
     if store_key in REALTIME_CACHE:
         cache = REALTIME_CACHE[store_key]
-        cache_age = (datetime.now() - cache['fetched_at']).total_seconds()
+        # キャッシュの時刻をJSTに変換して比較
+        cache_time = cache['fetched_at']
+        if cache_time.tzinfo is None:
+            cache_time = cache_time.replace(tzinfo=JST)
+        cache_age = (now_jst - cache_time).total_seconds()
         if cache_age < 600:  # 10分以内はキャッシュ使用
             realtime_data = cache['data']
             cache_info = {
-                'fetched_at': cache['fetched_at'].strftime('%H:%M'),
+                'fetched_at': cache_time.strftime('%H:%M'),
                 'age_seconds': int(cache_age),
                 'source': cache.get('source', 'unknown'),
             }
 
-    # キャッシュがない場合はGitHubからリアルタイムデータを試す
+    # キャッシュがない場合はリアルタイムデータを取得（GitHub or GAS）
     if not realtime_data:
-        github_data = get_realtime_data(store_key)
-        if github_data and github_data.get('units'):
-            realtime_data = github_data
+        rt_data = get_realtime_data(store_key)
+        if rt_data and (rt_data.get('units') or rt_data.get('source')):
+            realtime_data = rt_data
+            # fetched_atをパース
+            fetched_at_str = rt_data.get('fetched_at', '')
+            source = rt_data.get('source', 'unknown')
+
+            if fetched_at_str:
+                try:
+                    # ISO形式の文字列をパース
+                    fetched_time = datetime.fromisoformat(fetched_at_str.replace('Z', '+00:00'))
+                    fetched_time_jst = fetched_time.astimezone(JST)
+                except:
+                    fetched_time_jst = now_jst
+            else:
+                fetched_time_jst = now_jst
+
             # キャッシュに保存
             REALTIME_CACHE[store_key] = {
-                'data': github_data,
-                'fetched_at': datetime.now(),
-                'source': 'github',
+                'data': rt_data,
+                'fetched_at': fetched_time_jst,
+                'source': source,
             }
             cache_info = {
-                'fetched_at': datetime.now(JST).strftime('%H:%M'),
-                'age_seconds': 0,
-                'source': 'github',
+                'fetched_at': fetched_time_jst.strftime('%H:%M'),
+                'age_seconds': int((now_jst - fetched_time_jst).total_seconds()),
+                'source': source,
             }
 
     # リアルタイム空き状況を取得
@@ -452,6 +503,10 @@ def recommend(store_key: str):
 
     updated_at = cache_info['fetched_at'] if cache_info else datetime.now(JST).strftime('%H:%M')
 
+    # 営業時間内かどうか
+    is_open = is_business_hours()
+    display_mode = get_display_mode()
+
     return render_template('recommend.html',
                            store=store,
                            store_key=store_key,
@@ -461,7 +516,261 @@ def recommend(store_key: str):
                            other_recs=other_recs,
                            updated_at=updated_at,
                            cache_info=cache_info,
-                           availability_info=availability_info)
+                           availability_info=availability_info,
+                           is_open=is_open,
+                           display_mode=display_mode)
+
+
+@app.route('/rules')
+def rules():
+    """法則コーナー - 店舗・機種の傾向と攻略情報"""
+    # 店舗別ルール
+    store_rules = {
+        'island_akihabara_sbj': {
+            'name': 'アイランド秋葉原',
+            'day_ratings': {'月': 4, '火': 3, '水': 5, '木': 3, '金': 3, '土': 1, '日': 4},
+            'best_note': '水曜が最強日、日月も狙い目',
+            'worst_note': '土曜は避けるべき',
+            'overall_rating': 4,
+            'patterns': [
+                '水曜に高設定投入の傾向が強い',
+                '2日連続マイナス後の上げパターンあり',
+                '角台（1015, 1031）は据え置き傾向',
+            ],
+        },
+        'shibuya_espass_sbj': {
+            'name': 'エスパス渋谷新館',
+            'day_ratings': {'月': 3, '火': 4, '水': 4, '木': 5, '金': 3, '土': 3, '日': 1},
+            'best_note': '木曜が最強日、火水も狙い目',
+            'worst_note': '日曜は避けるべき',
+            'overall_rating': 3,
+            'patterns': [
+                '木曜の設定投入が顕著',
+                '3台中1台は高設定の傾向',
+                '連日プラスの台は据え置き率高い',
+            ],
+        },
+        'shinjuku_espass_sbj': {
+            'name': 'エスパス歌舞伎町',
+            'day_ratings': {'月': 2, '火': 3, '水': 3, '木': 3, '金': 4, '土': 5, '日': 3},
+            'best_note': '土曜が最強日、金曜も狙い目',
+            'worst_note': '月曜は控えめ',
+            'overall_rating': 3,
+            'patterns': [
+                '週末型の設定投入パターン',
+                '平日は控えめな傾向',
+            ],
+        },
+        'akihabara_espass_sbj': {
+            'name': 'エスパス秋葉原駅前',
+            'day_ratings': {'月': 2, '火': 3, '水': 3, '木': 3, '金': 4, '土': 5, '日': 4},
+            'best_note': '土日が狙い目、金曜も可',
+            'worst_note': '月曜は控えめ',
+            'overall_rating': 3,
+            'patterns': [
+                '週末重視の傾向',
+                '土日は複数台に期待',
+            ],
+        },
+        'seibu_shinjuku_espass_sbj': {
+            'name': 'エスパス西武新宿',
+            'day_ratings': {'月': 2, '火': 2, '水': 3, '木': 3, '金': 4, '土': 4, '日': 3},
+            'best_note': '金土が狙い目',
+            'worst_note': '月火は控えめ',
+            'overall_rating': 2,
+            'patterns': [
+                '週末型だが控えめ',
+                '平日は低設定傾向',
+            ],
+        },
+    }
+
+    # 機種別ルール
+    machine_rules = {
+        'sbj': {
+            'name': 'スーパーブラックジャック',
+            'icon': '🃏',
+            'setting6_prob': 181.3,
+            'setting1_prob': 241.7,
+            'tenjou': '999G+α（リセット時666G）',
+            'tips': [
+                'ART確率1/100以下なら高設定濃厚',
+                '10連以上の爆発があれば信頼度UP',
+                'ミミズ展開（平坦）からの爆発に期待',
+                '天井直撃が2回以上あれば低設定警戒',
+            ],
+            'reset_info': '天井999G→666Gに短縮、スイカ天井も優遇（30%で30回以下）',
+        },
+        'hokuto_tensei2': {
+            'name': '北斗の拳 転生の章2',
+            'icon': '👊',
+            'setting6_prob': 273.1,
+            'setting1_prob': 366.0,
+            'tenjou': 'モード依存（A:1536/B:896/C:576あべし）',
+            'tips': [
+                'AT確率1/290以下なら高設定域',
+                '天撃失敗後は天国モード濃厚→即やめ厳禁',
+                'あべしUI赤色も天国濃厚',
+                '193〜256あべしは全モード共通チャンスゾーン',
+            ],
+            'reset_info': 'リセット時は最大1280あべしに短縮',
+        },
+    }
+
+    # 一般的な立ち回りTips
+    general_tips = [
+        {
+            'title': '朝イチの狙い方',
+            'text': '前日凹み台（連続マイナス）はリセット狙い。天井短縮の恩恵がある機種は特に有効。',
+        },
+        {
+            'title': '夕方からの立ち回り',
+            'text': '当日好調台を確認。ART確率が良く、まだ伸びしろがある台を狙う。',
+        },
+        {
+            'title': '設定判別のタイミング',
+            'text': '3000G以上回ってから判断。それ以下は引き次第でブレる。',
+        },
+        {
+            'title': 'やめどき',
+            'text': '天井到達後、または連チャン終了後の100G以内に判断。ダラダラ打たない。',
+        },
+        {
+            'title': 'モミモミ台の扱い',
+            'text': '大連荘なく淡々と当たる台は、爆発前の溜め期間の可能性。粘る価値あり。',
+        },
+    ]
+
+    return render_template('rules.html',
+                           store_rules=store_rules,
+                           machine_rules=machine_rules,
+                           general_tips=general_tips)
+
+
+@app.route('/history/<store_key>/<unit_id>')
+def unit_history(store_key: str, unit_id: str):
+    """台別の当たり履歴を表示"""
+    store = STORES.get(store_key)
+    if not store:
+        return "店舗が見つかりません", 404
+
+    machine_key = store.get('machine', 'sbj')
+    machine = get_machine_info(machine_key)
+
+    # 日別データを読み込み
+    daily_data = load_daily_data(machine_key=machine_key)
+
+    history = []
+    summary = None
+    analysis = None
+    history_date = None
+
+    if daily_data:
+        # データ内の店舗キーで検索
+        store_data = None
+        for key_to_try in [store_key, f'{store_key}_sbj']:
+            store_data = daily_data.get('stores', {}).get(key_to_try, {})
+            if store_data:
+                break
+
+        if store_data:
+            for unit in store_data.get('units', []):
+                if unit.get('unit_id') == unit_id:
+                    # 最新日のデータを取得
+                    days = unit.get('days', [])
+                    if days:
+                        # 日付順でソート（新しい順）
+                        sorted_days = sorted(days, key=lambda x: x.get('date', ''), reverse=True)
+                        latest_day = sorted_days[0]
+                        history_date = latest_day.get('date', '')
+
+                        # 履歴データを整形
+                        raw_history = latest_day.get('history', [])
+                        tenjou_count = 0
+                        max_rensa = 0
+                        valleys = []
+
+                        for i, h in enumerate(raw_history):
+                            start = h.get('start', 0) or h.get('games_between', 0)
+                            rensa = h.get('rensa', 1)
+                            is_tenjou = start >= 999
+
+                            if is_tenjou:
+                                tenjou_count += 1
+                            if rensa > max_rensa:
+                                max_rensa = rensa
+                            if start > 0:
+                                valleys.append(start)
+
+                            history.append({
+                                'time': h.get('time', ''),
+                                'start': start,
+                                'type': h.get('type', 'ART'),
+                                'rensa': rensa,
+                                'medals': h.get('medals', 0) or h.get('diff', 0),
+                                'is_tenjou': is_tenjou,
+                            })
+
+                        # サマリー計算
+                        total_art = latest_day.get('art', 0)
+                        total_games = latest_day.get('total_start', 0)
+                        max_medals = latest_day.get('max_medals', 0)
+                        art_prob = total_games / total_art if total_art > 0 else 0
+                        avg_valley = sum(valleys) / len(valleys) if valleys else 0
+
+                        summary = {
+                            'total_art': total_art,
+                            'total_games': total_games,
+                            'art_prob': art_prob,
+                            'max_medals': max_medals,
+                            'max_rensa': max_rensa,
+                            'tenjou_count': tenjou_count,
+                            'avg_valley': avg_valley,
+                        }
+
+                        # グラフ分析
+                        if total_art >= 10:
+                            if tenjou_count == 0 and avg_valley < 100:
+                                analysis = {
+                                    'pattern_name': '超安定型',
+                                    'description': '天井到達なし、平均ハマりも浅い。高設定濃厚。',
+                                    'recommendation': '継続推奨。閉店まで打ち切りたい。',
+                                }
+                            elif max_rensa >= 10:
+                                analysis = {
+                                    'pattern_name': '爆発型',
+                                    'description': f'{max_rensa}連の大爆発あり。出玉感のある台。',
+                                    'recommendation': '高設定でも低設定でもありえる。他の指標と合わせて判断。',
+                                }
+                            elif tenjou_count >= 2:
+                                analysis = {
+                                    'pattern_name': '天井依存型',
+                                    'description': f'天井到達{tenjou_count}回。引きが悪いか低設定。',
+                                    'recommendation': '様子見推奨。他に空き台があれば移動検討。',
+                                }
+                            elif avg_valley > 150:
+                                analysis = {
+                                    'pattern_name': '重い展開',
+                                    'description': f'平均{avg_valley:.0f}Gと重め。苦しい展開。',
+                                    'recommendation': '低設定の可能性。撤退も視野に。',
+                                }
+                            else:
+                                analysis = {
+                                    'pattern_name': '標準型',
+                                    'description': '特に際立った特徴なし。',
+                                    'recommendation': 'ART確率で判断。1/130以下なら継続。',
+                                }
+                    break
+
+    return render_template('history.html',
+                           store=store,
+                           store_key=store_key,
+                           unit_id=unit_id,
+                           machine=machine,
+                           history=history,
+                           summary=summary,
+                           analysis=analysis,
+                           history_date=history_date)
 
 
 @app.route('/api/status/<store_key>')
@@ -681,7 +990,26 @@ def utility_processor():
         except (ValueError, TypeError):
             return str(value)
 
-    return dict(rank_color=rank_color, rank_stars=rank_stars, signed_number=signed_number)
+    def medals_badge(value):
+        """最大獲得枚数に応じたバッジを返す"""
+        try:
+            num = int(value)
+            if num >= 10000:
+                return {'class': 'medals-10k', 'icon': '🔥', 'label': '1万枚OVER'}
+            elif num >= 5000:
+                return {'class': 'medals-5k', 'icon': '💰', 'label': '5千枚OVER'}
+            elif num >= 3000:
+                return {'class': 'medals-3k', 'icon': '✨', 'label': '3千枚OVER'}
+            elif num >= 2000:
+                return {'class': 'medals-2k', 'icon': '⭐', 'label': '2千枚OVER'}
+            elif num >= 1000:
+                return {'class': 'medals-1k', 'icon': '👍', 'label': '1千枚OVER'}
+            else:
+                return None
+        except (ValueError, TypeError):
+            return None
+
+    return dict(rank_color=rank_color, rank_stars=rank_stars, signed_number=signed_number, medals_badge=medals_badge)
 
 
 if __name__ == '__main__':

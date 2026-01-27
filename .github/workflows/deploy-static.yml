@@ -1,0 +1,71 @@
+name: Deploy Static Site
+
+on:
+  # 手動実行
+  workflow_dispatch:
+
+  # availability.jsonが更新されたら実行
+  push:
+    branches:
+      - main
+    paths:
+      - 'data/availability.json'
+      - 'data/daily/**'
+
+  # 定期実行（毎日10:00, 14:00, 18:00, 22:00 JST）
+  schedule:
+    - cron: '0 1,5,9,13 * * *'  # UTC
+
+jobs:
+  generate-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install flask jinja2 requests
+
+      - name: Generate static site
+        run: |
+          python scripts/generate_static.py
+
+      - name: Upload artifact for Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+
+      - name: Commit generated files
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add docs/
+          git diff --staged --quiet || git commit -m "chore: update static site $(date +'%Y-%m-%d %H:%M' -d '+9 hours')"
+          git push
+
+  # GitHub Pages へのデプロイ（Cloudflare Pagesの代替/バックアップ）
+  deploy-github-pages:
+    needs: generate-and-deploy
+    runs-on: ubuntu-latest
+
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+    <meta name="googlebot" content="noindex, nofollow">
+    <title>エスパス日拓新宿歌舞伎町店</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="machine/sbj.html" class="back-link">&lt; スーパーブラックジャック</a>
+            <h1>エスパス日拓新宿歌舞伎町店</h1>
+            <div class="machine-label">🃏 スーパーブラックジャック</div>
+            <div class="update-info">
+                
+                <span class="data-source">
+                    データ取得: <span id="update-time">21:17</span>
+                    
+                    <span class="data-age stale">（946分前）</span>
+                    
+                </span>
+                <span class="cache-badge github">GITHUB</span>
+                
+            </div>
+
+            <!-- 空き状況サマリ -->
+            
+            <div class="availability-summary">
+                <span class="avail-empty" onclick="filterUnits('empty')">空き 0台</span>
+                <span class="avail-playing" onclick="filterUnits('playing')">遊技中 4台</span>
+                <span class="avail-all" onclick="filterUnits('all')">全て</span>
+            </div>
+            
+
+            <div class="action-buttons">
+                <button onclick="location.reload()" class="refresh-btn" title="ページを再読み込み">🔄 再読込</button>
+                <button onclick="startScraping()" class="scrape-btn" id="scrape-btn" title="リアルタイムデータを新規取得">📡 最新データ取得</button>
+            </div>
+            <div class="button-hint">
+                <span class="hint-item">再読込: キャッシュを使用</span>
+                <span class="hint-item">最新データ取得: サイトから再収集</span>
+            </div>
+        </header>
+
+        <!-- ランク説明 -->
+        <div class="rank-legend">
+            <span class="legend-item"><span class="rank-dot" style="background:#ff6b6b"></span>S 高設定濃厚</span>
+            <span class="legend-item"><span class="rank-dot" style="background:#ffa502"></span>A 高設定域</span>
+            <span class="legend-item"><span class="rank-dot" style="background:#2ed573"></span>B 中間以上</span>
+            <span class="legend-item"><span class="rank-dot" style="background:#70a1ff"></span>C 普通</span>
+            <span class="legend-item"><span class="rank-dot" style="background:#747d8c"></span>D 低設定疑い</span>
+        </div>
+
+        <!-- ローディングオーバーレイ -->
+        <div id="loading-overlay" class="loading-overlay hidden">
+            <div class="loading-content">
+                <div class="loading-spinner"></div>
+                <div class="loading-text">データ取得中</div>
+                <div class="loading-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill"></div>
+                    </div>
+                    <div class="progress-time" id="progress-time">0秒</div>
+                </div>
+                <div class="loading-hint">通常10-30秒かかります</div>
+            </div>
+        </div>
+
+        <main>
+            
+            <section class="no-recommendation">
+                <p>推奨台なし</p>
+                <p class="sub">全台稼働中または評価データなし</p>
+            </section>
+            
+
+            <section class="recommendations other">
+                <h2>その他の台</h2>
+                
+                <div class="unit-card-compact rank-a avail-card-playing" data-availability="遊技中" onclick="toggleDetails(this)">
+                    <div class="compact-row">
+                        <span class="unit-id-sm">682</span>
+                        
+                            
+                            <span class="avail-sm playing">稼</span>
+                            
+                        
+                        <span class="rank-sm" style="background-color: #ffa502">A</span>
+
+                        
+                        <!-- ART数を大きく目立たせる -->
+                        <span class="compact-art"><span class="art-num">37</span><span class="art-lbl">ART</span></span>
+                        
+                        <span class="compact-prob excellent">1/93</span>
+                        
+                        <!-- 最大枚数 -->
+                        
+                        <!-- 回転数は最後に小さく -->
+                        <span class="compact-games">3,470G</span>
+                        
+                        <span class="expand-icon small">▼</span>
+                    </div>
+
+                    <div class="unit-details hidden">
+                        <div class="compact-details">
+                            
+                            <div>本日: ART <span class="art-num">37</span>回 / 3,470G</div>
+                            
+                            
+                            <div>推定: 設定6 (121.5%)</div>
+                            
+                            
+                            <div>過去7日: 平均0ART</div>
+                            
+                            <div class="compact-reason">本日ART確率1/94 → 高設定濃厚</div>
+                            
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="unit-card-compact rank-c avail-card-playing" data-availability="遊技中" onclick="toggleDetails(this)">
+                    <div class="compact-row">
+                        <span class="unit-id-sm">685</span>
+                        
+                            
+                            <span class="avail-sm playing">稼</span>
+                            
+                        
+                        <span class="rank-sm" style="background-color: #70a1ff">C</span>
+
+                        
+                        <!-- ART数を大きく目立たせる -->
+                        <span class="compact-art"><span class="art-num">27</span><span class="art-lbl">ART</span></span>
+                        
+                        <span class="compact-prob ">1/191</span>
+                        
+                        <!-- 最大枚数 -->
+                        
+                        <!-- 回転数は最後に小さく -->
+                        <span class="compact-games">5,182G</span>
+                        
+                        <span class="expand-icon small">▼</span>
+                    </div>
+
+                    <div class="unit-details hidden">
+                        <div class="compact-details">
+                            
+                            <div>本日: ART <span class="art-num">27</span>回 / 5,182G</div>
+                            
+                            
+                            <div>推定: 設定5 (110.1%)</div>
+                            
+                            
+                            <div>過去7日: 平均0ART</div>
+                            
+                            <div class="compact-reason">本日2位/4台中 → 上位台</div>
+                            
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="unit-card-compact rank-d avail-card-playing" data-availability="遊技中" onclick="toggleDetails(this)">
+                    <div class="compact-row">
+                        <span class="unit-id-sm">683</span>
+                        
+                            
+                            <span class="avail-sm playing">稼</span>
+                            
+                        
+                        <span class="rank-sm" style="background-color: #747d8c">D</span>
+
+                        
+                        <!-- ART数を大きく目立たせる -->
+                        <span class="compact-art"><span class="art-num">7</span><span class="art-lbl">ART</span></span>
+                        
+                        <span class="compact-prob bad">1/331</span>
+                        
+                        <!-- 最大枚数 -->
+                        
+                        <!-- 回転数は最後に小さく -->
+                        <span class="compact-games">2,320G</span>
+                        
+                        <span class="expand-icon small">▼</span>
+                    </div>
+
+                    <div class="unit-details hidden">
+                        <div class="compact-details">
+                            
+                            <div>本日: ART <span class="art-num">7</span>回 / 2,320G</div>
+                            
+                            
+                            <div>推定: 設定1？ (93.3%)</div>
+                            
+                            
+                            <div>過去7日: 平均0ART</div>
+                            
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="unit-card-compact rank-d avail-card-playing" data-availability="遊技中" onclick="toggleDetails(this)">
+                    <div class="compact-row">
+                        <span class="unit-id-sm">684</span>
+                        
+                            
+                            <span class="avail-sm playing">稼</span>
+                            
+                        
+                        <span class="rank-sm" style="background-color: #747d8c">D</span>
+
+                        
+                        <!-- ART数を大きく目立たせる -->
+                        <span class="compact-art"><span class="art-num">16</span><span class="art-lbl">ART</span></span>
+                        
+                        <span class="compact-prob bad">1/254</span>
+                        
+                        <!-- 最大枚数 -->
+                        
+                        <!-- 回転数は最後に小さく -->
+                        <span class="compact-games">4,077G</span>
+                        
+                        <span class="expand-icon small">▼</span>
+                    </div>
+
+                    <div class="unit-details hidden">
+                        <div class="compact-details">
+                            
+                            <div>本日: ART <span class="art-num">16</span>回 / 4,077G</div>
+                            
+                            
+                            <div>推定: 設定1 (97.1%)</div>
+                            
+                            
+                            <div>過去7日: 平均0ART</div>
+                            
+                        </div>
+                    </div>
+                </div>
+                
+            </section>
+        </main>
+
+        <footer>
+            <p>
+                <a href="ranking/sbj.html" class="footer-link">総合ランキング</a>
+                |
+                <a href="#" class="api-link">JSON</a>
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        const storeKey = 'shinjuku_espass_sbj';
+        let scrapingTimer = null;
+        let elapsedSeconds = 0;
+        let currentFilter = 'all';
+
+        function toggleDetails(card) {
+            const details = card.querySelector('.unit-details');
+            const icon = card.querySelector('.expand-icon');
+            if (details) {
+                details.classList.toggle('hidden');
+                if (icon) {
+                    icon.textContent = details.classList.contains('hidden') ? '▼' : '▲';
+                }
+            }
+        }
+
+        function filterUnits(filter) {
+            currentFilter = filter;
+            const cards = document.querySelectorAll('[data-availability]');
+            cards.forEach(card => {
+                const avail = card.dataset.availability;
+                if (filter === 'all') {
+                    card.style.display = '';
+                } else if (filter === 'empty') {
+                    card.style.display = avail === '空き' ? '' : 'none';
+                } else if (filter === 'playing') {
+                    card.style.display = avail === '遊技中' ? '' : 'none';
+                }
+            });
+
+            // ハイライト
+            document.querySelectorAll('.availability-summary span').forEach(el => {
+                el.classList.remove('active');
+            });
+            document.querySelector('.avail-' + filter)?.classList.add('active');
+        }
+
+        function showLoading() {
+            document.getElementById('loading-overlay').classList.remove('hidden');
+            document.getElementById('scrape-btn').disabled = true;
+            elapsedSeconds = 0;
+            updateProgress();
+            scrapingTimer = setInterval(updateProgress, 1000);
+        }
+
+        function hideLoading() {
+            document.getElementById('loading-overlay').classList.add('hidden');
+            document.getElementById('scrape-btn').disabled = false;
+            if (scrapingTimer) {
+                clearInterval(scrapingTimer);
+                scrapingTimer = null;
+            }
+        }
+
+        function updateProgress() {
+            elapsedSeconds++;
+            const timeText = document.getElementById('progress-time');
+            const progressFill = document.getElementById('progress-fill');
+
+            timeText.textContent = elapsedSeconds + '秒';
+            const progress = Math.min((elapsedSeconds / 30) * 100, 95);
+            progressFill.style.width = progress + '%';
+        }
+
+        function startScraping() {
+            showLoading();
+            fetch('/api/scrape/' + storeKey)
+                .then(r => r.json())
+                .then(data => {
+                    console.log('Scraping started:', data);
+                    checkScrapingStatus();
+                })
+                .catch(err => {
+                    console.error('Error starting scraping:', err);
+                    hideLoading();
+                    alert('エラーが発生しました');
+                });
+        }
+
+        function checkScrapingStatus() {
+            fetch('/api/scrape_status/' + storeKey)
+                .then(r => r.json())
+                .then(data => {
+                    if (data.status === 'completed') {
+                        hideLoading();
+                        location.reload();
+                    } else if (data.status === 'error') {
+                        hideLoading();
+                        alert('取得エラー: ' + (data.error || '不明なエラー'));
+                    } else if (data.status === 'running') {
+                        setTimeout(checkScrapingStatus, 1000);
+                    } else {
+                        setTimeout(checkScrapingStatus, 500);
+                    }
+                })
+                .catch(err => {
+                    console.error('Error checking status:', err);
+                    hideLoading();
+                    alert('ステータス確認エラー');
+                });
+        }
+
+        // 自動更新（5分ごと）
+        setTimeout(function() {
+            location.reload();
+        }, 5 * 60 * 1000);
+
+        // ページ読み込み時に自動でリアルタイムデータ取得
+        
+    </script>
+</body>
+</html>
