@@ -766,6 +766,9 @@ def analyze_trend(days: List[dict]) -> dict:
             else:
                 estimated_diff = -games * 0.2
             daily_results.append((day.get('date'), estimated_diff, art, games))
+        elif art > 0:
+            # gamesが0でもartがあれば記録（PAPIMO等のデータ）
+            daily_results.append((day.get('date'), 0, art, games))
 
     if art_counts:
         result['avg_art_7days'] = sum(art_counts) / len(art_counts)
