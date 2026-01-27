@@ -507,10 +507,10 @@ def generate_index(env):
             date_prefix = '本日'
         elif now.hour < 10:
             result_date = now - timedelta(days=1)
-            date_prefix = '昨日'
+            date_prefix = ''  # 日付だけで十分（「昨日」は冗長）
         else:
             result_date = now - timedelta(days=1)
-            date_prefix = '昨日'
+            date_prefix = ''
         result_date_str = format_date_with_weekday(result_date)
     elif is_open:
         date_prefix = '本日'

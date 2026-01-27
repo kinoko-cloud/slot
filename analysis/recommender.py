@@ -918,6 +918,24 @@ def analyze_trend(days: List[dict]) -> dict:
             'games': max_art_day.get('total_start', 0),
         }
 
+    # 直近7日分のサマリ配列（テンプレート表示用）
+    recent_days = []
+    for d in sorted_days[:7]:
+        art = d.get('art', 0)
+        games = d.get('games', 0) or d.get('total_start', 0)
+        prob = games / art if art > 0 and games > 0 else 0
+        recent_days.append({
+            'date': d.get('date', ''),
+            'art': art,
+            'rb': d.get('rb', 0),
+            'games': games,
+            'prob': round(prob, 1) if prob > 0 else 0,
+            'max_rensa': d.get('max_rensa', 0),
+            'max_medals': d.get('max_medals', 0),
+            'history': d.get('history', []),
+        })
+    result['recent_days'] = recent_days
+
     return result
 
 
@@ -2534,6 +2552,7 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
             'consecutive_plus': trend_data.get('consecutive_plus', 0),
             'consecutive_minus': trend_data.get('consecutive_minus', 0),
             'avg_art_7days': trend_data.get('avg_art_7days', 0),
+            'recent_days': trend_data.get('recent_days', []),
             # 現在のスタート（最終大当たり後のG数、RBを跨いで正確に計算）
             'current_hama': current_at_games,
             # 本日のAT間分析
