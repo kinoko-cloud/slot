@@ -38,6 +38,25 @@ DAIDATA_STORES = {
         'model_encoded': 'L%EF%BD%BD%EF%BD%B0%EF%BE%8A%EF%BE%9F%EF%BD%B0%EF%BE%8C%EF%BE%9E%EF%BE%97%EF%BD%AF%EF%BD%B8%EF%BD%BC%EF%BE%9E%EF%BD%AC%EF%BD%AF%EF%BD%B8',
         'units': ['3185', '3186', '3187', '4109', '4118', '4125', '4168'],
     },
+    # === 北斗転生2 (detail page only, model_encoded不要) ===
+    'shibuya_espass_hokuto': {
+        'hall_id': '100860',
+        'name': 'エスパス渋谷新館(北斗)',
+        'model_encoded': None,  # detail pageのみで取得
+        'units': [str(i) for i in range(2046, 2068)] + [str(i) for i in range(2233, 2241)],
+    },
+    'shinjuku_espass_hokuto': {
+        'hall_id': '100949',
+        'name': 'エスパス歌舞伎町(北斗)',
+        'model_encoded': None,
+        'units': [str(i) for i in range(1, 38)] + [str(i) for i in range(125, 129)],
+    },
+    'akihabara_espass_hokuto': {
+        'hall_id': '100928',
+        'name': 'エスパス秋葉原(北斗)',
+        'model_encoded': None,
+        'units': [str(i) for i in range(2011, 2020)] + [str(i) for i in range(2056, 2069)],
+    },
 }
 
 # papimo.jp店舗設定
@@ -50,6 +69,12 @@ PAPIMO_STORES = {
             '1015', '1016', '1017', '1018', '1020', '1021', '1022', '1023',
             '1025', '1026', '1027', '1028', '1030', '1031',
         ],
+    },
+    'island_akihabara_hokuto': {
+        'hall_id': '00031715',
+        'name': 'アイランド秋葉原(北斗)',
+        'machine_id': '225110007',
+        'units': [f'{i:04d}' for i in range(731, 739)] + [f'{i:04d}' for i in range(750, 758)],
     },
 }
 
@@ -322,24 +347,39 @@ def main():
         for store_key, config in DAIDATA_STORES.items():
             print(f"\n[daidata] Fetching {config['name']}...")
 
-            # 空き状況を取得
-            avail_data = fetch_store_availability(
-                page,
-                config['hall_id'],
-                config['model_encoded'],
-                config['units']
-            )
+            # model_encodedがある場合のみ一覧ページで空き状況を取得
+            if config.get('model_encoded'):
+                avail_data = fetch_store_availability(
+                    page,
+                    config['hall_id'],
+                    config['model_encoded'],
+                    config['units']
+                )
+            else:
+                # detail pageのみモード（北斗等）: 空き状況は各detail pageから判定
+                avail_data = {
+                    'playing': [],
+                    'empty': list(config['units']),
+                    'total': len(config['units']),
+                }
 
             # 各台の詳細データを取得
             units_data = []
             print(f"  Fetching unit details...")
             for unit_id in config['units']:
                 unit_data = fetch_unit_detail(page, config['hall_id'], unit_id)
-                # 空き状況を追加
-                if unit_id in avail_data.get('playing', []):
-                    unit_data['availability'] = '遊技中'
+                # model_encoded無しの場合、稼働データから空き判定
+                if not config.get('model_encoded'):
+                    if unit_data.get('total_start', 0) > 0 or unit_data.get('art', 0) > 0:
+                        # データがあれば遊技中の可能性（detail pageでは正確に判定不可）
+                        unit_data['availability'] = '不明'
+                    else:
+                        unit_data['availability'] = '空き'
                 else:
-                    unit_data['availability'] = '空き'
+                    if unit_id in avail_data.get('playing', []):
+                        unit_data['availability'] = '遊技中'
+                    else:
+                        unit_data['availability'] = '空き'
                 units_data.append(unit_data)
 
             result['stores'][store_key] = {

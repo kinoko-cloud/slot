@@ -29,6 +29,9 @@ GAS_STORES = ['island_akihabara_sbj']
 GITHUB_STORES = [
     'shibuya_espass_sbj', 'shinjuku_espass_sbj', 'akihabara_espass_sbj',
     'seibu_shinjuku_espass_sbj', 'island_akihabara_sbj',
+    # 北斗転生2
+    'shibuya_espass_hokuto', 'shinjuku_espass_hokuto', 'akihabara_espass_hokuto',
+    'island_akihabara_hokuto',
 ]
 
 

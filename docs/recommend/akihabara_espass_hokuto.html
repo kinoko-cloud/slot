@@ -49,6 +49,8 @@
             </div>
             <div class="analysis-overall">高設定台が少ない（全22台中0台がA以上）</div>
             
+            <div class="analysis-daily">全台平均ART 56回/日（確率1/111）</div>
+            
             
         </div>
         
@@ -82,7 +84,7 @@
             <section class="recommendations top">
                 <h2>推奨台</h2>
                 
-                <div class="unit-card rank-c " data-availability="unknown" onclick="toggleDetails(this)">
+                <div class="unit-card rank-b " data-availability="unknown" onclick="toggleDetails(this)">
 
                     <!-- メインヘッダー: 台番号 + 機種名 + 空き状況 + ランク -->
                     <div class="unit-main-header">
@@ -91,7 +93,7 @@
                         
                             
                         
-                        <span class="rank-badge-lg" style="background-color: #70a1ff">C</span>
+                        <span class="rank-badge-lg" style="background-color: #2ed573">B</span>
                         <span class="expand-icon">▼</span>
                     </div>
 
@@ -107,7 +109,7 @@
                         <!-- 最大枚数 -->
                         
                         <!-- RB -->
-                        <div class="data-cell">
+                        <div class="data-cell data-cell-minor">
                             <span class="data-value"><span class="rb-num">0</span></span>
                             <span class="data-label">RB</span>
                         </div>
@@ -119,13 +121,22 @@
                         <!-- ハマり回数 -->
                         
                         <!-- 回転数を最後に -->
-                        <div class="data-cell">
+                        <div class="data-cell data-cell-minor">
                             <span class="data-value">0</span>
-                            <span class="data-label">G数</span>
+                            <span class="data-label">累計G</span>
                         </div>
                     </div>
 
                     
+                    
+                    <div class="rec-prev-days">
+                        
+                        <span class="prev-day-rec">前日: <span class="prev-art">ART 68</span> / RB 15 (5,519G)</span>
+                        
+                        
+                        <span class="prev-day-rec">前々日: <span class="prev-art">ART 72</span> / RB 16 (6,477G)</span>
+                        
+                    </div>
                     
 
                     
@@ -134,10 +145,24 @@
                         <span class="past-eval">
                             過去分析: <strong style="color: #70a1ff">Cランク</strong>
                             
+                            → 凹み2日、設定上げ期待
+                            
                         </span>
                     </div>
 
                     <!-- 推奨理由（具体的に・カテゴリ色分け） -->
+                    
+                    <div class="reason-main">
+                        
+                        
+                        <div class="reason-line reason-prev">📅 前日ART 68回 (確率1/81) → 好調、据え置き期待</div>
+                        
+                        
+                        
+                        <div class="reason-line reason-pattern">🔄 2日連続マイナス推定 → リセット期待</div>
+                        
+                        
+                    </div>
                     
 
                     <!-- 詳細（クリックで展開） -->
@@ -152,7 +177,13 @@
                             <div class="detail-section">
                                 <div class="detail-title">過去データ分析</div>
                                 
+                                <div class="detail-item minus">2日連続マイナス → 設定上げ期待</div>
                                 
+                                
+                                <div class="detail-item">前日ART 68回 (5,519G)</div>
+                                
+                                
+                                <div class="detail-item">前々日ART 72回 (6,477G)</div>
                                 
                             </div>
                         </div>
@@ -185,7 +216,7 @@
                         <!-- 最大枚数 -->
                         
                         <!-- RB -->
-                        <div class="data-cell">
+                        <div class="data-cell data-cell-minor">
                             <span class="data-value"><span class="rb-num">0</span></span>
                             <span class="data-label">RB</span>
                         </div>
@@ -197,9 +228,9 @@
                         <!-- ハマり回数 -->
                         
                         <!-- 回転数を最後に -->
-                        <div class="data-cell">
+                        <div class="data-cell data-cell-minor">
                             <span class="data-value">0</span>
-                            <span class="data-label">G数</span>
+                            <span class="data-label">累計G</span>
                         </div>
                     </div>
 
@@ -263,7 +294,7 @@
                         <!-- 最大枚数 -->
                         
                         <!-- RB -->
-                        <div class="data-cell">
+                        <div class="data-cell data-cell-minor">
                             <span class="data-value"><span class="rb-num">0</span></span>
                             <span class="data-label">RB</span>
                         </div>
@@ -275,9 +306,9 @@
                         <!-- ハマり回数 -->
                         
                         <!-- 回転数を最後に -->
-                        <div class="data-cell">
+                        <div class="data-cell data-cell-minor">
                             <span class="data-value">0</span>
-                            <span class="data-label">G数</span>
+                            <span class="data-label">累計G</span>
                         </div>
                     </div>
 
@@ -324,6 +355,7 @@
                 
                 <div class="unit-card-compact rank-c " data-availability="unknown" onclick="toggleDetails(this)">
                     <div class="compact-row">
+                        <span class="compact-rank-num">#4</span>
                         <span class="unit-id-sm">2014</span>
                         
                             
@@ -335,6 +367,7 @@
                         
                         
                         
+                        
                         <span class="compact-games">0G</span>
                         
                         <span class="expand-icon small">▼</span>
@@ -355,6 +388,7 @@
                 
                 <div class="unit-card-compact rank-c " data-availability="unknown" onclick="toggleDetails(this)">
                     <div class="compact-row">
+                        <span class="compact-rank-num">#5</span>
                         <span class="unit-id-sm">2015</span>
                         
                             
@@ -366,6 +400,7 @@
                         
                         
                         
+                        
                         <span class="compact-games">0G</span>
                         
                         <span class="expand-icon small">▼</span>
@@ -386,6 +421,7 @@
                 
                 <div class="unit-card-compact rank-c " data-availability="unknown" onclick="toggleDetails(this)">
                     <div class="compact-row">
+                        <span class="compact-rank-num">#6</span>
                         <span class="unit-id-sm">2016</span>
                         
                             
@@ -397,6 +433,7 @@
                         
                         
                         
+                        
                         <span class="compact-games">0G</span>
                         
                         <span class="expand-icon small">▼</span>
@@ -417,6 +454,7 @@
                 
                 <div class="unit-card-compact rank-c " data-availability="unknown" onclick="toggleDetails(this)">
                     <div class="compact-row">
+                        <span class="compact-rank-num">#7</span>
                         <span class="unit-id-sm">2017</span>
                         
                             
@@ -428,6 +466,7 @@
                         
                         
                         
+                        
                         <span class="compact-games">0G</span>
                         
                         <span class="expand-icon small">▼</span>
@@ -448,6 +487,7 @@
                 
                 <div class="unit-card-compact rank-c " data-availability="unknown" onclick="toggleDetails(this)">
                     <div class="compact-row">
+                        <span class="compact-rank-num">#8</span>
                         <span class="unit-id-sm">2018</span>
                         
                             
@@ -459,6 +499,7 @@
                         
                         
                         
+                        
                         <span class="compact-games">0G</span>
                         
                         <span class="expand-icon small">▼</span>
@@ -479,6 +520,7 @@
                 
                 <div class="unit-card-compact rank-c " data-availability="unknown" onclick="toggleDetails(this)">
                     <div class="compact-row">
+                        <span class="compact-rank-num">#9</span>
                         <span class="unit-id-sm">2019</span>
                         
                             
@@ -490,6 +532,7 @@
                         
                         
                         
+                        
                         <span class="compact-games">0G</span>
                         
                         <span class="expand-icon small">▼</span>
@@ -510,6 +553,7 @@
                 
                 <div class="unit-card-compact rank-c " data-availability="unknown" onclick="toggleDetails(this)">
                     <div class="compact-row">
+                        <span class="compact-rank-num">#10</span>
                         <span class="unit-id-sm">2056</span>
                         
                             
@@ -521,6 +565,7 @@
                         
                         
                         
+                        
                         <span class="compact-games">0G</span>
                         
                         <span class="expand-icon small">▼</span>
@@ -541,6 +586,7 @@
                 
                 <div class="unit-card-compact rank-c " data-availability="unknown" onclick="toggleDetails(this)">
                     <div class="compact-row">
+                        <span class="compact-rank-num">#11</span>
                         <span class="unit-id-sm">2057</span>
                         
                             
@@ -552,6 +598,7 @@
                         
                         
                         
+                        
                         <span class="compact-games">0G</span>
                         
                         <span class="expand-icon small">▼</span>
@@ -572,6 +619,7 @@
                 
                 <div class="unit-card-compact rank-c " data-availability="unknown" onclick="toggleDetails(this)">
                     <div class="compact-row">
+                        <span class="compact-rank-num">#12</span>
                         <span class="unit-id-sm">2058</span>
                         
                             
@@ -583,6 +631,7 @@
                         
                         
                         
+                        
                         <span class="compact-games">0G</span>
                         
                         <span class="expand-icon small">▼</span>
@@ -603,6 +652,7 @@
                 
                 <div class="unit-card-compact rank-c " data-availability="unknown" onclick="toggleDetails(this)">
                     <div class="compact-row">
+                        <span class="compact-rank-num">#13</span>
                         <span class="unit-id-sm">2059</span>
                         
                             
@@ -614,6 +664,7 @@
                         
                         
                         
+                        
                         <span class="compact-games">0G</span>
                         
                         <span class="expand-icon small">▼</span>
@@ -634,6 +685,7 @@
                 
                 <div class="unit-card-compact rank-c " data-availability="unknown" onclick="toggleDetails(this)">
                     <div class="compact-row">
+                        <span class="compact-rank-num">#14</span>
                         <span class="unit-id-sm">2060</span>
                         
                             
@@ -645,6 +697,7 @@
                         
                         
                         
+                        
                         <span class="compact-games">0G</span>
                         
                         <span class="expand-icon small">▼</span>
@@ -665,6 +718,7 @@
                 
                 <div class="unit-card-compact rank-c " data-availability="unknown" onclick="toggleDetails(this)">
                     <div class="compact-row">
+                        <span class="compact-rank-num">#15</span>
                         <span class="unit-id-sm">2061</span>
                         
                             
@@ -676,6 +730,7 @@
                         
                         
                         
+                        
                         <span class="compact-games">0G</span>
                         
                         <span class="expand-icon small">▼</span>
@@ -696,6 +751,7 @@
                 
                 <div class="unit-card-compact rank-c " data-availability="unknown" onclick="toggleDetails(this)">
                     <div class="compact-row">
+                        <span class="compact-rank-num">#16</span>
                         <span class="unit-id-sm">2062</span>
                         
                             
@@ -707,6 +763,7 @@
                         
                         
                         
+                        
                         <span class="compact-games">0G</span>
                         
                         <span class="expand-icon small">▼</span>
@@ -727,6 +784,7 @@
                 
                 <div class="unit-card-compact rank-c " data-availability="unknown" onclick="toggleDetails(this)">
                     <div class="compact-row">
+                        <span class="compact-rank-num">#17</span>
                         <span class="unit-id-sm">2063</span>
                         
                             
@@ -738,6 +796,7 @@
                         
                         
                         
+                        
                         <span class="compact-games">0G</span>
                         
                         <span class="expand-icon small">▼</span>
@@ -758,6 +817,7 @@
                 
                 <div class="unit-card-compact rank-c " data-availability="unknown" onclick="toggleDetails(this)">
                     <div class="compact-row">
+                        <span class="compact-rank-num">#18</span>
                         <span class="unit-id-sm">2064</span>
                         
                             
@@ -769,6 +829,7 @@
                         
                         
                         
+                        
                         <span class="compact-games">0G</span>
                         
                         <span class="expand-icon small">▼</span>
@@ -789,6 +850,7 @@
                 
                 <div class="unit-card-compact rank-c " data-availability="unknown" onclick="toggleDetails(this)">
                     <div class="compact-row">
+                        <span class="compact-rank-num">#19</span>
                         <span class="unit-id-sm">2065</span>
                         
                             
@@ -800,6 +862,7 @@
                         
                         
                         
+                        
                         <span class="compact-games">0G</span>
                         
                         <span class="expand-icon small">▼</span>
@@ -820,6 +883,7 @@
                 
                 <div class="unit-card-compact rank-c " data-availability="unknown" onclick="toggleDetails(this)">
                     <div class="compact-row">
+                        <span class="compact-rank-num">#20</span>
                         <span class="unit-id-sm">2066</span>
                         
                             
@@ -831,6 +895,7 @@
                         
                         
                         
+                        
                         <span class="compact-games">0G</span>
                         
                         <span class="expand-icon small">▼</span>
@@ -851,6 +916,7 @@
                 
                 <div class="unit-card-compact rank-c " data-availability="unknown" onclick="toggleDetails(this)">
                     <div class="compact-row">
+                        <span class="compact-rank-num">#21</span>
                         <span class="unit-id-sm">2067</span>
                         
                             
@@ -862,6 +928,7 @@
                         
                         
                         
+                        
                         <span class="compact-games">0G</span>
                         
                         <span class="expand-icon small">▼</span>
@@ -882,6 +949,7 @@
                 
                 <div class="unit-card-compact rank-c " data-availability="unknown" onclick="toggleDetails(this)">
                     <div class="compact-row">
+                        <span class="compact-rank-num">#22</span>
                         <span class="unit-id-sm">2068</span>
                         
                             
@@ -890,6 +958,7 @@
 
                         <!-- ART数を常に表示（0でも） -->
                         <span class="compact-art past"><span class="art-num">0</span><span class="art-lbl">ART</span></span>
+                        
                         
                         
                         

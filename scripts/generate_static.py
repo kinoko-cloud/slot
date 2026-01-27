@@ -145,47 +145,66 @@ def generate_index(env):
     today_date = now.strftime('%Y/%m/%d')
     today_date_formatted = format_date_with_weekday(now)
 
-    # 店舗曜日傾向
+    # 店舗曜日傾向（物理店舗ベース）
     store_day_ratings = {
-        'island_akihabara_sbj': {
+        'island_akihabara': {
             'name': 'アイランド秋葉原',
             'short_name': 'アイランド秋葉原',
             'day_ratings': {'月': 4, '火': 3, '水': 5, '木': 3, '金': 3, '土': 1, '日': 4},
             'best_note': '水曜が最強、日月も狙い目',
             'worst_note': '土曜は避けるべき',
             'overall_rating': 4,
+            'machine_links': [
+                {'store_key': 'island_akihabara_sbj', 'icon': '🃏', 'short_name': 'SBJ'},
+                {'store_key': 'island_akihabara_hokuto', 'icon': '👊', 'short_name': '北斗転生2'},
+            ],
         },
-        'shibuya_espass_sbj': {
+        'shibuya_espass': {
             'name': 'エスパス日拓渋谷新館',
             'short_name': 'エスパス渋谷新館',
             'day_ratings': {'月': 3, '火': 4, '水': 4, '木': 5, '金': 3, '土': 3, '日': 1},
             'best_note': '木曜が最強、火水も狙い目',
             'worst_note': '日曜は避けるべき',
             'overall_rating': 3,
+            'machine_links': [
+                {'store_key': 'shibuya_espass_sbj', 'icon': '🃏', 'short_name': 'SBJ'},
+                {'store_key': 'shibuya_espass_hokuto', 'icon': '👊', 'short_name': '北斗転生2'},
+            ],
         },
-        'shinjuku_espass_sbj': {
+        'shinjuku_espass': {
             'name': 'エスパス日拓新宿歌舞伎町店',
             'short_name': 'エスパス歌舞伎町',
             'day_ratings': {'月': 2, '火': 3, '水': 3, '木': 3, '金': 4, '土': 5, '日': 3},
             'best_note': '土曜が最強、金曜も狙い目',
             'worst_note': '月曜は控えめ',
             'overall_rating': 3,
+            'machine_links': [
+                {'store_key': 'shinjuku_espass_sbj', 'icon': '🃏', 'short_name': 'SBJ'},
+                {'store_key': 'shinjuku_espass_hokuto', 'icon': '👊', 'short_name': '北斗転生2'},
+            ],
         },
-        'akihabara_espass_sbj': {
+        'akihabara_espass': {
             'name': 'エスパス日拓秋葉原駅前店',
             'short_name': 'エスパス秋葉原',
             'day_ratings': {'月': 2, '火': 3, '水': 3, '木': 3, '金': 4, '土': 5, '日': 4},
             'best_note': '土日が狙い目、金曜も可',
             'worst_note': '月曜は控えめ',
             'overall_rating': 3,
+            'machine_links': [
+                {'store_key': 'akihabara_espass_sbj', 'icon': '🃏', 'short_name': 'SBJ'},
+                {'store_key': 'akihabara_espass_hokuto', 'icon': '👊', 'short_name': '北斗転生2'},
+            ],
         },
-        'seibu_shinjuku_espass_sbj': {
+        'seibu_shinjuku_espass': {
             'name': 'エスパス日拓西武新宿駅前店',
             'short_name': 'エスパス西武新宿',
             'day_ratings': {'月': 2, '火': 2, '水': 3, '木': 3, '金': 4, '土': 4, '日': 3},
             'best_note': '金土が狙い目',
             'worst_note': '月火は控えめ',
             'overall_rating': 2,
+            'machine_links': [
+                {'store_key': 'seibu_shinjuku_espass_sbj', 'icon': '🃏', 'short_name': 'SBJ'},
+            ],
         },
     }
 
@@ -276,6 +295,9 @@ def generate_index(env):
                             'max_medals': t_medals,
                             'art_prob': rec.get('art_prob', 0),
                             'availability': rec.get('availability', ''),
+                            'estimated_setting': rec.get('estimated_setting', ''),
+                            'setting_num': rec.get('setting_num', 0),
+                            'payout_estimate': rec.get('payout_estimate', ''),
                         })
             except Exception as e:
                 print(f"Error processing {store_key}: {e}")
@@ -311,6 +333,7 @@ def generate_index(env):
             'worst_note': info['worst_note'],
             'overall_rating': info['overall_rating'],
             'day_ratings': info['day_ratings'],
+            'machine_links': info.get('machine_links', []),
         })
     today_store_ranking.sort(key=lambda x: -x['today_rating'])
 
@@ -350,6 +373,81 @@ def generate_index(env):
     print(f"  -> {output_path}")
 
 
+def generate_machine_pages(env):
+    """機種別店舗一覧ページを生成"""
+    print("Generating machine pages...")
+
+    template = env.get_template('stores.html')
+    output_subdir = OUTPUT_DIR / 'machine'
+    output_subdir.mkdir(parents=True, exist_ok=True)
+
+    for machine_key, machine in MACHINES.items():
+        stores = get_stores_by_machine(machine_key)
+        store_list = [
+            {'key': key, 'name': store['name'], 'unit_count': len(store['units'])}
+            for key, store in stores.items()
+        ]
+
+        html = template.render(
+            machine=machine,
+            machine_key=machine_key,
+            stores=store_list,
+        )
+
+        output_path = output_subdir / f'{machine_key}.html'
+        output_path.write_text(html, encoding='utf-8')
+        print(f"  -> {output_path}")
+
+
+def generate_ranking_pages(env):
+    """機種別総合ランキングページを生成"""
+    print("Generating ranking pages...")
+
+    template = env.get_template('ranking.html')
+    output_subdir = OUTPUT_DIR / 'ranking'
+    output_subdir.mkdir(parents=True, exist_ok=True)
+
+    for machine_key, machine in MACHINES.items():
+        stores = get_stores_by_machine(machine_key)
+        all_recommendations = []
+
+        for store_key, store in stores.items():
+            availability = {}
+            try:
+                availability = get_availability(store_key)
+            except:
+                pass
+
+            recommendations = recommend_units(store_key, availability=availability)
+            for rec in recommendations:
+                rec['store_name'] = store['name']
+                rec['store_key'] = store_key
+                all_recommendations.append(rec)
+
+        # スコア順でソート
+        def sort_key(r):
+            score = r['final_score']
+            if r['is_running']:
+                score -= 30
+            return -score
+
+        all_recommendations.sort(key=sort_key)
+        top_recs = [r for r in all_recommendations if r['final_rank'] in ('S', 'A') and not r['is_running']][:10]
+        other_recs = [r for r in all_recommendations if r not in top_recs][:20]
+
+        html = template.render(
+            machine=machine,
+            machine_key=machine_key,
+            top_recs=top_recs,
+            other_recs=other_recs,
+            total_count=len(all_recommendations),
+        )
+
+        output_path = output_subdir / f'{machine_key}.html'
+        output_path.write_text(html, encoding='utf-8')
+        print(f"  -> {output_path}")
+
+
 def generate_recommend_pages(env):
     """各店舗の推奨ページを生成"""
     print("Generating recommend pages...")
@@ -361,7 +459,12 @@ def generate_recommend_pages(env):
     is_open = is_business_hours()
     display_mode = get_display_mode()
 
+    # 旧形式キーをスキップ
+    old_keys = {'island_akihabara', 'shibuya_espass', 'shinjuku_espass'}
+
     for store_key, store in STORES.items():
+        if store_key in old_keys:
+            continue
         print(f"  Processing {store_key}...")
 
         machine_key = store.get('machine', 'sbj')
@@ -533,6 +636,8 @@ def main():
 
     # 各ページを生成
     generate_index(env)
+    generate_machine_pages(env)
+    generate_ranking_pages(env)
     generate_recommend_pages(env)
     copy_static_files()
     generate_metadata()
