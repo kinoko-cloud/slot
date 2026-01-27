@@ -775,7 +775,7 @@ def analyze_trend(days: List[dict]) -> dict:
     if game_counts:
         result['avg_games_7days'] = sum(game_counts) / len(game_counts)
 
-    # 連続プラス/マイナス判定
+    # 連続プラス/マイナス判定（diff=0はデータ不足のためスキップ）
     consecutive_plus = 0
     consecutive_minus = 0
     for date, diff, art, games in daily_results:
@@ -785,6 +785,9 @@ def analyze_trend(days: List[dict]) -> dict:
         elif diff < 0:
             consecutive_minus += 1
             consecutive_plus = 0
+        elif games == 0 and art > 0:
+            # G数不明（PAPIMO等）→ スキップして次の日を見る
+            continue
         else:
             break
 
@@ -1748,15 +1751,20 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
             today_confidence_parts.append(f"{store_name}の{today_weekday}曜は{rating_label}（店舗傾向）")
         if consecutive_plus >= 2:
             today_confidence_parts.append(f"現在{consecutive_plus}日連続好調中")
-        elif consecutive_minus >= 2:
-            today_confidence_parts.append(f"{consecutive_minus}日不調→反転期待")
 
-        # 台の好調実績
-        if total_perf_days >= 3:
-            today_confidence_parts.append(f"この台の好調率: {good_days}/{total_perf_days}日（{good_day_rate:.0%}）")
+        # 台の好調実績（不調中は不調日数を除いた表現にする）
+        if total_perf_days >= 3 and good_days > 0:
+            if consecutive_minus >= 2:
+                # 不調中の台は「直近X日不調だが、それ以前はY日中Z日好調」
+                prior_good = good_days - min(consecutive_minus, good_days)
+                prior_total = total_perf_days - consecutive_minus
+                if prior_total > 0 and prior_good > 0:
+                    today_confidence_parts.append(f"直近{consecutive_minus}日は不調だが、それ以前{prior_total}日中{prior_good}日好調")
+            else:
+                today_confidence_parts.append(f"過去{total_perf_days}日中{good_days}日好調（{good_day_rate:.0%}）")
 
         if today_confidence_parts:
-            reasons.append(f"💡 期待できる根拠: {' / '.join(today_confidence_parts)}")
+            reasons.append(f"💡 {' / '.join(today_confidence_parts)}")
 
         # 据え置き率（安心材料）
         if continuation_total >= 3 and continuation_rate >= 0.5:
