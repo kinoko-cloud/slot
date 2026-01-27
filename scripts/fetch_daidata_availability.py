@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-GitHub Actions用: daidataから空き状況とリアルタイムデータを取得してJSONに保存
+GitHub Actions用: daidata + papimo.jpから空き状況とリアルタイムデータを取得してJSONに保存
 """
 
 import json
@@ -40,9 +40,22 @@ DAIDATA_STORES = {
     },
 }
 
+# papimo.jp店舗設定
+PAPIMO_STORES = {
+    'island_akihabara_sbj': {
+        'hall_id': '00031715',
+        'name': 'アイランド秋葉原',
+        'machine_id': '225010000',
+        'units': [
+            '1015', '1016', '1017', '1018', '1020', '1021', '1022', '1023',
+            '1025', '1026', '1027', '1028', '1030', '1031',
+        ],
+    },
+}
+
 
 def fetch_store_availability(page, hall_id: str, model_encoded: str, expected_units: list) -> dict:
-    """店舗の台一覧ページから空き状況を取得"""
+    """daidata: 店舗の台一覧ページから空き状況を取得"""
 
     url = f"https://daidata.goraggio.com/{hall_id}/unit_list?model={model_encoded}&ballPrice=21.70&ps=S"
     print(f"  URL: {url}")
@@ -112,7 +125,7 @@ def fetch_store_availability(page, hall_id: str, model_encoded: str, expected_un
 
 
 def fetch_unit_detail(page, hall_id: str, unit_id: str) -> dict:
-    """台詳細ページからリアルタイムデータを取得"""
+    """daidata: 台詳細ページからリアルタイムデータを取得"""
     url = f"https://daidata.goraggio.com/{hall_id}/detail?unit={unit_id}"
 
     try:
@@ -178,6 +191,102 @@ def fetch_unit_detail(page, hall_id: str, unit_id: str) -> dict:
         return {'unit_id': unit_id, 'error': str(e)}
 
 
+# ===== papimo.jp対応 =====
+
+def fetch_papimo_availability(page, hall_id: str, machine_id: str, expected_units: list) -> dict:
+    """papimo.jp: 台一覧ページから空き状況を取得"""
+    url = f"https://papimo.jp/h/{hall_id}/hit/index_sort/{machine_id}/1-20-1274324"
+    print(f"  URL: {url}")
+
+    try:
+        page.goto(url, timeout=20000, wait_until='domcontentloaded')
+        page.wait_for_timeout(2000)
+
+        html = page.content()
+
+        # 遊技中の台を検出: <span class="badge-work">遊技中</span> の直後に台番号
+        playing_matches = re.findall(r'badge-work[^>]*>遊技中</span>\s*(\d{4})', html)
+        playing = [u for u in playing_matches if u in expected_units]
+
+        # 空き = 全台 - 遊技中
+        empty = [u for u in expected_units if u not in playing]
+
+        for u in expected_units:
+            status = '遊技中' if u in playing else '空き'
+            print(f"    {u}: {status}")
+
+        return {
+            'playing': sorted(playing),
+            'empty': sorted(empty),
+            'total': len(expected_units),
+        }
+
+    except Exception as e:
+        print(f"  Error: {e}")
+        return {
+            'playing': [],
+            'empty': expected_units,
+            'total': len(expected_units),
+            'error': str(e)
+        }
+
+
+def fetch_papimo_unit_detail(page, hall_id: str, unit_id: str) -> dict:
+    """papimo.jp: 台詳細ページから当日リアルタイムデータを取得"""
+    url = f"https://papimo.jp/h/{hall_id}/hit/view/{unit_id}"
+
+    try:
+        page.goto(url, timeout=20000, wait_until='domcontentloaded')
+        page.wait_for_timeout(2000)
+
+        text = page.inner_text('body')
+
+        data = {'unit_id': unit_id}
+
+        def parse_num(s):
+            return int(s.replace(',', ''))
+
+        # BB/RB/ART回数
+        bb_match = re.search(r'BB回数\s*(\d+)', text)
+        rb_match = re.search(r'RB回数\s*(\d+)', text)
+        art_match = re.search(r'ART回数\s*(\d+)', text)
+
+        if bb_match:
+            data['bb'] = int(bb_match.group(1))
+        if rb_match:
+            data['rb'] = int(rb_match.group(1))
+        if art_match:
+            data['art'] = int(art_match.group(1))
+
+        # 総スタート
+        total_match = re.search(r'総スタート\s*([\d,]+)', text)
+        if total_match:
+            data['total_start'] = parse_num(total_match.group(1))
+
+        # 最終スタート（= 現在のハマりG数）
+        final_match = re.search(r'最終スタート\s*([\d,]+)', text)
+        if final_match:
+            data['final_start'] = parse_num(final_match.group(1))
+
+        # 最大出メダル
+        max_match = re.search(r'最大出メダル\s*([\d,]+)', text)
+        if max_match:
+            data['max_medals'] = parse_num(max_match.group(1))
+
+        # 合成確率
+        prob_match = re.search(r'合成確率\s*1/([\d,.]+)', text)
+        if prob_match:
+            data['combined_prob'] = parse_num(prob_match.group(1))
+
+        print(f"    {unit_id}: ART={data.get('art', '?')}, BB={data.get('bb', '?')}, RB={data.get('rb', '?')}, "
+              f"G数={data.get('total_start', '?')}, 最終={data.get('final_start', '?')}, 最大={data.get('max_medals', '?')}")
+        return data
+
+    except Exception as e:
+        print(f"    {unit_id}: Error - {e}")
+        return {'unit_id': unit_id, 'error': str(e)}
+
+
 def main():
     result = {
         'stores': {},
@@ -209,8 +318,9 @@ def main():
         page.route("**/geniee*", lambda route: route.abort())
         page.route("**/doubleclick*", lambda route: route.abort())
 
+        # ===== daidata店舗 =====
         for store_key, config in DAIDATA_STORES.items():
-            print(f"\nFetching {config['name']}...")
+            print(f"\n[daidata] Fetching {config['name']}...")
 
             # 空き状況を取得
             avail_data = fetch_store_availability(
@@ -243,6 +353,41 @@ def main():
 
             print(f"  Done - Playing: {avail_data.get('playing', [])}, Empty: {avail_data.get('empty', [])}")
 
+        # ===== papimo.jp店舗 =====
+        for store_key, config in PAPIMO_STORES.items():
+            print(f"\n[papimo] Fetching {config['name']}...")
+
+            # 空き状況を取得
+            avail_data = fetch_papimo_availability(
+                page,
+                config['hall_id'],
+                config['machine_id'],
+                config['units']
+            )
+
+            # 各台の詳細データを取得
+            units_data = []
+            print(f"  Fetching unit details...")
+            for unit_id in config['units']:
+                unit_data = fetch_papimo_unit_detail(page, config['hall_id'], unit_id)
+                # 空き状況を追加
+                if unit_id in avail_data.get('playing', []):
+                    unit_data['availability'] = '遊技中'
+                else:
+                    unit_data['availability'] = '空き'
+                units_data.append(unit_data)
+
+            result['stores'][store_key] = {
+                'name': config['name'],
+                'hall_id': config['hall_id'],
+                'playing': avail_data.get('playing', []),
+                'empty': avail_data.get('empty', []),
+                'total': avail_data.get('total', len(config['units'])),
+                'units': units_data,
+            }
+
+            print(f"  Done - Playing: {avail_data.get('playing', [])}, Empty: {avail_data.get('empty', [])}")
+
         try:
             browser.close()
         except Exception as e:
@@ -256,6 +401,9 @@ def main():
         json.dump(result, f, ensure_ascii=False, indent=2)
 
     print(f"\nSaved to {output_path}")
+    print(f"Total stores: {len(result['stores'])}")
+    for sk, sd in result['stores'].items():
+        print(f"  {sk}: {len(sd.get('units', []))} units")
 
 
 if __name__ == '__main__':
