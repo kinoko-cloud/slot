@@ -123,6 +123,7 @@ def setup_jinja():
     env.filters['pad_id'] = pad_unit_id
     env.globals['pad_id'] = pad_unit_id
     env.globals['build_time'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    env.globals['cache_bust'] = datetime.now().strftime('%Y%m%d%H%M%S')
 
     def generate_sparkline(history, width=120, height=40, diff_medals=None):
         """当たり履歴から差枚推移のSVGスパークラインを生成
