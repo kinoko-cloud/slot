@@ -6032,3 +6032,96 @@ a.perfect-card:hover { background: rgba(255,215,0,0.18); }
     transition: background 0.15s;
 }
 .hamburger-menu a:hover { background: rgba(255,255,255,0.06); }
+
+/* verify テーブル改善 */
+.vt-medals { color: #ffa502; font-size: 0.85em; }
+.verify-table { font-size: 0.9em !important; }
+@media (max-width: 600px) {
+    .verify-table { font-size: 0.8em !important; }
+    .vt-games { display: none; }
+    .verify-table thead th:nth-child(4) { display: none; }
+}
+
+/* 答え合わせバナー（大きい版） */
+.verify-banner-lg {
+    display: block;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+    background: linear-gradient(135deg, rgba(255,215,0,0.15), rgba(255,107,107,0.1));
+    border: 1px solid rgba(255,215,0,0.35);
+    border-radius: 12px;
+    text-decoration: none;
+    color: #fff;
+    transition: background 0.15s;
+}
+.verify-banner-lg:hover { background: rgba(255,215,0,0.22); }
+.vb-lg-top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+.vb-icon-lg { font-size: 1.6em; }
+.vb-title-lg { font-weight: bold; font-size: 1em; }
+.vb-lg-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.vb-rate-lg {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #ffd700;
+}
+.vb-detail-lg {
+    color: #aaa;
+    font-size: 0.85em;
+}
+
+/* ナビ プルダウン */
+.nav-dropdowns {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 14px;
+}
+.nav-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    color: #ccc;
+    text-decoration: none;
+    font-size: 0.8em;
+    white-space: nowrap;
+    cursor: pointer;
+}
+.nav-pill:hover { background: rgba(255,255,255,0.12); }
+.nav-dropdown { position: relative; }
+.dropdown-toggle { font-family: inherit; }
+.dropdown-content {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 100;
+    background: #1a1a2e;
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 8px;
+    padding: 4px;
+    min-width: 180px;
+    margin-top: 4px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+.nav-dropdown.open .dropdown-content { display: block; }
+.dropdown-content a {
+    display: block;
+    padding: 8px 12px;
+    color: #ddd;
+    text-decoration: none;
+    font-size: 0.85em;
+    border-radius: 4px;
+}
+.dropdown-content a:hover { background: rgba(255,255,255,0.06); }

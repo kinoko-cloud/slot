@@ -112,20 +112,15 @@
                     </div>
                     <table class="verify-table">
                         <thead>
-                            <tr class="vt-group-row">
-                                <th colspan="4" class="vt-group-header">実績データ</th>
-                                <th class="vt-group-header vt-group-pred">予想</th>
-                                <th class="vt-group-header vt-group-result">結果</th>
-                                <th class="vt-group-header">判定</th>
-                            </tr>
                             <tr>
                                 <th>台番</th>
                                 <th>ART</th>
                                 <th>確率</th>
                                 <th>G数</th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
+                                <th>最大枚</th>
+                                <th class="vt-group-pred">予想</th>
+                                <th class="vt-group-result">結果</th>
+                                <th>判定</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -141,6 +136,7 @@
                             <td class="vt-art">{{ unit.actual_art if unit.actual_prob > 0 else '-' }}</td>
                             <td class="vt-prob {% if unit.actual_is_good and unit.actual_prob <= 100 %}excellent{% elif unit.actual_is_good %}good{% elif unit.actual_prob >= 200 %}bad{% endif %}">{% if unit.actual_prob > 0 %}1/{{ unit.actual_prob|int }}{% else %}-{% endif %}</td>
                             <td class="vt-games">{% if unit.actual_games and unit.actual_games > 0 %}{{ '{:,}'.format(unit.actual_games|int) }}{% else %}-{% endif %}</td>
+                            <td class="vt-medals">{% if unit.max_medals and unit.max_medals > 0 %}{{ '{:,}'.format(unit.max_medals|int) }}{% else %}-{% endif %}</td>
                             <td class="vt-pred">
                                 {% if pred_excellent %}<span class="vr-mark excellent">◎</span>
                                 {% elif pred_good %}<span class="vr-mark good">◯</span>
@@ -183,7 +179,7 @@
                             {# 展開可能な当たり履歴セクション #}
                             {% if unit.history %}
                             <tr class="verify-detail-row hidden">
-                            <td colspan="7">
+                            <td colspan="8">
                             <div class="verify-detail">
                                 {# サマリ統計 #}
                                 {% if unit.history_summary %}
