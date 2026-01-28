@@ -29,19 +29,28 @@
         </header>
 
         <main>
-            {# === 答え合わせバナー === #}
+            {# === ナビゲーション（店舗リンク集） === #}
+            {% if recommend_links %}
+            <nav class="top-nav">
+                <a href="{{ url_for('verify') }}" class="top-nav-link verify-link">🏆 答え合わせ</a>
+                {% for link in recommend_links %}
+                <a href="{{ url_for('recommend', store_key=link.store_key) }}" class="top-nav-link">{{ link.icon }} {{ link.name }}</a>
+                {% endfor %}
+            </nav>
+            {% else %}
             <a href="{{ url_for('verify') }}" class="verify-banner">
                 <span class="vb-icon">🏆</span>
                 <span class="vb-text">答え合わせ — 予測はどれだけ当たった？</span>
                 <span class="vb-arrow">›</span>
             </a>
+            {% endif %}
 
             {# === 閉店後: おすすめ台を最上部に === #}
             {% if display_mode in ('before_open', 'after_close') and top3 %}
             <section class="recommendations top" id="top3-section">
-                <h2>{{ next_day_prefix }} {{ next_day_str }}のおすすめ台 TOP{{ top3|length }}</h2>
+                <h2>{{ next_day_prefix }} {{ next_day_str }}のおすすめ台 TOP{{ [top3|length, 10]|min }}</h2>
                 <div class="top5-note">{{ date_prefix }}の結果＋過去傾向から分析</div>
-                {% for rec in top3 %}
+                {% for rec in top3[:10] %}
                 <a href="{{ url_for('recommend', store_key=rec.store_key) }}" class="unit-card rank-{{ rec.final_rank|lower }}" style="text-decoration: none; color: inherit;">
                     <div class="unit-header">
                         <span class="ranking-num">#{{ loop.index }}</span>
@@ -128,11 +137,35 @@
                     </div>
                 </a>
                 {% endfor %}
-                <div class="see-all-recs">
-                    {% for link in recommend_links[:5] %}
-                    <a href="{{ url_for('recommend', store_key=link.store_key) }}" class="see-all-link">{{ link.icon }} {{ link.name }}</a>
-                    {% endfor %}
+                {# === もっと見る（TOP11〜30） === #}
+                {% if top3|length > 10 %}
+                <div class="more-recs-toggle" onclick="document.getElementById('more-recs').classList.toggle('hidden'); this.querySelector('.toggle-text').textContent = document.getElementById('more-recs').classList.contains('hidden') ? 'もっと見る（{{ top3|length - 10 }}台）' : '閉じる'">
+                    <span class="toggle-text">もっと見る（{{ top3|length - 10 }}台）</span>
                 </div>
+                <div id="more-recs" class="hidden">
+                {% for rec in top3[10:] %}
+                <a href="{{ url_for('recommend', store_key=rec.store_key) }}" class="unit-card rank-{{ rec.final_rank|lower }} compact-card" style="text-decoration: none; color: inherit;">
+                    <div class="unit-header">
+                        <span class="ranking-num">#{{ loop.index + 10 }}</span>
+                        <span class="machine-icon">{{ rec.machine_icon }}</span>
+                        <span class="machine-name-top">{{ rec.machine_name }}</span>
+                        <span class="rank-badge" style="background-color: {{ rank_color(rec.final_rank) }}">{{ rec.final_rank }}</span>
+                    </div>
+                    <div class="unit-store">
+                        <span class="unit-id-sub"><span class="unit-id-num-lg">{{ rec.unit_id|pad_id }}</span><span class="unit-id-ban">番</span></span>
+                        <span class="store-link-right">{{ rec.store_name }}</span>
+                    </div>
+                    <div class="reasons-full">
+                        {% if rec.reasons %}
+                        {% for reason in rec.reasons[:2] %}
+                        <div class="reason-line-top">{{ reason }}</div>
+                        {% endfor %}
+                        {% endif %}
+                    </div>
+                </a>
+                {% endfor %}
+                </div>
+                {% endif %}
             </section>
             {% endif %}
 
@@ -287,17 +320,17 @@
             </section>
             {% endif %}
 
-            <!-- 狙い目 / 結果 TOP3 (営業中のみ — 閉店後は上で表示済み) -->
+            <!-- 狙い目 / 結果 TOP10 (営業中のみ — 閉店後は上で表示済み) -->
             {% if top3 and display_mode not in ('before_open', 'after_close') %}
             <section class="recommendations top" id="top3-section">
                 {% if night_mode %}
-                <h2>🌙 {{ tomorrow_str }}のおすすめ予想台 TOP{{ top3|length }}</h2>
+                <h2>🌙 {{ tomorrow_str }}のおすすめ予想台 TOP{{ [top3|length, 10]|min }}</h2>
                 <div class="top5-note">{{ tomorrow_str }}の狙い目予想 ※今日の結果＋過去傾向から分析</div>
                 {% else %}
-                <h2>いま狙い目の台</h2>
+                <h2>いま狙い目の台 TOP{{ [top3|length, 10]|min }}</h2>
                 <div class="top5-note">※機種 / 店名 / 台番号</div>
                 {% endif %}
-                {% for rec in top3 %}
+                {% for rec in top3[:10] %}
                 <a href="{{ url_for('recommend', store_key=rec.store_key) }}" class="unit-card rank-{{ rec.final_rank|lower }}" style="text-decoration: none; color: inherit;">
                     <div class="unit-header">
                         <span class="ranking-num">#{{ loop.index }}</span>
@@ -467,6 +500,31 @@
                     </div>
                 </a>
                 {% endfor %}
+
+                {# === もっと見る（TOP11〜30）=== #}
+                {% if top3|length > 10 %}
+                <div class="more-recs-toggle" onclick="document.getElementById('more-recs-rt').classList.toggle('hidden'); this.querySelector('.toggle-text').textContent = document.getElementById('more-recs-rt').classList.contains('hidden') ? 'もっと見る（{{ top3|length - 10 }}台）' : '閉じる'">
+                    <span class="toggle-text">もっと見る（{{ top3|length - 10 }}台）</span>
+                </div>
+                <div id="more-recs-rt" class="hidden">
+                {% for rec in top3[10:] %}
+                <a href="{{ url_for('recommend', store_key=rec.store_key) }}" class="unit-card rank-{{ rec.final_rank|lower }} compact-card" style="text-decoration: none; color: inherit;">
+                    <div class="unit-header">
+                        <span class="ranking-num">#{{ loop.index + 10 }}</span>
+                        <span class="machine-icon">{{ rec.machine_icon }}</span>
+                        <span class="machine-name-top">{{ rec.machine_name }}</span>
+                        <span class="rank-badge" style="background-color: {{ rank_color(rec.final_rank) }}">{{ rec.final_rank }}</span>
+                    </div>
+                    <div class="unit-store">
+                        <span class="store-link">{{ rec.store_name }}</span> / <span class="unit-id-sub"><span class="unit-id-num">{{ rec.unit_id|pad_id }}</span><span class="unit-id-ban">番</span></span>
+                    </div>
+                    <div class="reasons-full">
+                        {% if rec.reasons %}{% for reason in rec.reasons[:2] %}<div class="reason-line-top">{{ reason }}</div>{% endfor %}{% endif %}
+                    </div>
+                </a>
+                {% endfor %}
+                </div>
+                {% endif %}
 
                 {# === 店別・機種別フィルター + その他のS/A台 === #}
                 {% if all_sa_recs %}
