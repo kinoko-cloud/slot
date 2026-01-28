@@ -518,28 +518,31 @@ def generate_index(env):
     # TOP3: 各機種の最強台を1台ずつ + 残り枠は差枚順
     # 機種関係なく「前日最も稼いだS/A台」= 高設定の据え置き期待
     top3_candidates = [r for r in top3_all if r.get('final_rank') in ('S', 'A')]
-    top3_candidates.sort(key=lambda r: -(r.get('yesterday_diff_medals', 0) or 0))
+    # スコア順（信頼度・試行回数を考慮した総合スコア）
+    top3_candidates.sort(key=lambda r: -r.get('final_score', 0))
 
-    # 各機種から1台ずつ確保
+    # 各機種から1台ずつ確保 + 重複台排除
     top3 = []
     seen_machines = set()
+    seen_units = set()  # 同じ台番の重複排除
     for r in top3_candidates:
         mk = r.get('machine_key', '')
-        if mk not in seen_machines:
+        uid = str(r.get('unit_id', ''))
+        if mk not in seen_machines and uid not in seen_units:
             top3.append(r)
             seen_machines.add(mk)
+            seen_units.add(uid)
         if len(top3) >= len(MACHINES):
             break
-    # 残り枠を差枚順で埋める
+    # 残り枠をスコア順で埋める
     for r in top3_candidates:
-        if r not in top3:
+        uid = str(r.get('unit_id', ''))
+        if uid not in seen_units:
             top3.append(r)
+            seen_units.add(uid)
         if len(top3) >= 3:
             break
-    # 前日差枚がない場合はスコア順にフォールバック
     if not top3:
-        top3_candidates = [r for r in top3_all if r.get('final_rank') in ('S', 'A')]
-        top3_candidates.sort(key=lambda r: -r['final_score'])
         top3 = top3_candidates[:3]
 
     # 前日の爆発台: 差枚でソート

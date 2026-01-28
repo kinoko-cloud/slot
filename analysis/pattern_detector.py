@@ -241,7 +241,8 @@ def record_from_history(store_key: str, machine_key: str):
             art = day.get('art', 0)
             games = day.get('games', 0)
             prob = day.get('prob', 0)
-            is_good = prob > 0 and prob <= good_prob
+            min_art = 20 if machine_key == 'sbj' else 10
+            is_good = prob > 0 and prob <= good_prob and art >= min_art
 
             by_date[date].append({
                 'unit_id': unit_id,

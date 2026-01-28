@@ -2401,7 +2401,7 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
                         'art': d.get('art', 0),
                         'games': d.get('total_start', 0),
                         'prob': d.get('total_start', 0) / d.get('art', 1) if d.get('art', 0) > 0 else 0,
-                        'is_good': (d.get('total_start', 0) / d.get('art', 1) if d.get('art', 0) > 0 else 999) <= (130 if machine_key == 'sbj' else 330),
+                        'is_good': (d.get('total_start', 0) / d.get('art', 1) if d.get('art', 0) > 0 else 999) <= (130 if machine_key == 'sbj' else 330) and d.get('art', 0) >= (20 if machine_key == 'sbj' else 10),
                     })
             accumulated['days'].sort(key=lambda x: x.get('date', ''))
             analysis_phase = get_analysis_phase(accumulated)
