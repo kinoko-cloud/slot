@@ -1,0 +1,70 @@
+name: Daily Verify & Rebuild
+
+on:
+  schedule:
+    # 毎日 JST 23:30 = UTC 14:30 に実行（閉店後）
+    - cron: '30 14 * * *'
+  workflow_dispatch:
+    inputs:
+      date:
+        description: '検証対象日（YYYY-MM-DD）省略時は当日'
+        required: false
+
+jobs:
+  verify-and-rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install playwright jinja2
+          playwright install chromium
+          playwright install-deps chromium
+
+      - name: Fetch latest availability data
+        timeout-minutes: 15
+        run: |
+          python scripts/fetch_daidata_availability.py || echo "Fetch failed (using existing data)"
+
+      - name: Generate verify results
+        run: |
+          TARGET_DATE="${{ github.event.inputs.date }}"
+          if [ -z "$TARGET_DATE" ]; then
+            TARGET_DATE=$(TZ='Asia/Tokyo' date +'%Y-%m-%d')
+          fi
+          echo "Verifying: $TARGET_DATE"
+          python scripts/generate_verify.py --date "$TARGET_DATE"
+
+      - name: Generate static site
+        run: |
+          python scripts/generate_static.py
+
+      - name: Commit and push
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add -A
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          git commit -m "daily: verify + rebuild $(TZ='Asia/Tokyo' date +'%Y-%m-%d %H:%M') JST"
+          max_push=3
+          for i in $(seq 1 $max_push); do
+            if git push origin main; then
+              echo "Push succeeded"
+              exit 0
+            fi
+            echo "Push failed (attempt $i/$max_push), rebasing..."
+            git pull --rebase origin main
+          done
+          echo "Push failed after $max_push attempts"
+          exit 1
