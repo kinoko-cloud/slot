@@ -1415,18 +1415,25 @@ def _generate_verify_from_backtest(env, results):
                 'verdict_class': verdict_class,
             })
         
-        # nodata台を除外して的中率を再計算
-        sa_valid = [u for u in formatted_units if u['verdict_class'] != 'nodata' and u['predicted_rank'] in ('S', 'A')]
-        sa_total_recalc = len(sa_valid)
-        sa_hit_recalc = sum(1 for u in sa_valid if u['verdict_class'] in ('perfect', 'hit'))
-        sa_rate_recalc = (sa_hit_recalc / sa_total_recalc * 100) if sa_total_recalc > 0 else 0
+        # 全台ベースの的中率（予測と結果が一致した割合）
+        # 的中 = S/A予測→好調 + B以下予測→不調
+        # ハズレ = S/A予測→不調 + B以下予測→好調
+        valid_units = [u for u in formatted_units if u['verdict_class'] != 'nodata']
+        correct = 0
+        for u in valid_units:
+            is_sa = u['predicted_rank'] in ('S', 'A')
+            is_good = u.get('actual_is_good', False)
+            if (is_sa and is_good) or (not is_sa and not is_good):
+                correct += 1
+        total_valid = len(valid_units)
+        accuracy_rate = (correct / total_valid * 100) if total_valid > 0 else 0
         
         machine_groups[mk]['stores'].append({
             'name': store_data.get('name', store_key),
             'units': formatted_units,
-            'sa_total': sa_total_recalc,
-            'sa_hit': sa_hit_recalc,
-            'sa_rate': sa_rate_recalc,
+            'sa_total': total_valid,
+            'sa_hit': correct,
+            'sa_rate': accuracy_rate,
         })
     
     verify_data = {}
