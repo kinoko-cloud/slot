@@ -6,6 +6,7 @@ Cloudflare Pages用に静的HTMLを生成する
 GitHub Actionsで定期実行し、生成したHTMLをデプロイ
 """
 
+import glob
 import json
 import os
 import sys
@@ -834,6 +835,8 @@ def generate_index(env):
         data_date_str=data_date_str,
         prev_date_str=prev_date_str,
         accuracy_hero=accuracy_hero,
+        verify_date_str=_get_verify_date_str(),
+        verify_accuracy=_get_verify_accuracy(),
         date_prefix=date_prefix,
         next_day_prefix=next_day_prefix,
         next_day_str=next_day_str,
@@ -1266,6 +1269,42 @@ def _try_load_backtest_results():
     except:
         pass
     return None
+
+
+def _get_verify_date_str():
+    """バックテスト結果の日付を取得"""
+    files = sorted(glob.glob('data/verify/verify_*_results.json'), reverse=True)
+    if files:
+        try:
+            data = json.load(open(files[0]))
+            d = data.get('date', '')
+            if d:
+                dt = datetime.strptime(d, '%Y-%m-%d')
+                weekdays = ['月','火','水','木','金','土','日']
+                return f'{dt.month}/{dt.day}({weekdays[dt.weekday()]})'
+        except:
+            pass
+    return ''
+
+def _get_verify_accuracy():
+    """バックテスト結果からS/A的中率を取得"""
+    files = sorted(glob.glob('data/verify/verify_*_results.json'), reverse=True)
+    if files:
+        try:
+            data = json.load(open(files[0]))
+            total_sa = 0
+            total_hit = 0
+            for sk, units in data.get('units', {}).items():
+                for u in units:
+                    if u.get('predicted_rank') in ('S', 'A'):
+                        total_sa += 1
+                        if u.get('actual_is_good', False):
+                            total_hit += 1
+            if total_sa > 0:
+                return int(total_hit / total_sa * 100)
+        except:
+            pass
+    return 0
 
 
 def _is_unit_hit(u):
