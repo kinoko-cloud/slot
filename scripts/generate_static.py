@@ -1395,7 +1395,7 @@ def _generate_verify_from_backtest(env, results):
             total = len(valid_units)
             rate = hit_count / total * 100 if total > 0 else 0
             store_id = f"store-{mk}-{si}"
-            if rate >= 60 and total >= 3:
+            if rate >= 80 and total >= 3:
                 perfect_stores.append({
                     'store_name': sd.get('store_name', sd.get('name', '')),
                     'machine_name': md['name'],
@@ -1405,8 +1405,9 @@ def _generate_verify_from_backtest(env, results):
                     'rate': rate,
                     'store_id': store_id,
                 })
-    # 的中率→台数順にソート
+    # 的中率降順→台数順、最大5件
     perfect_stores.sort(key=lambda x: (-x['rate'], -x['total_units']))
+    perfect_stores = perfect_stores[:5]
 
     hypotheses = []
     for mk, md in verify_data.items():
@@ -1745,7 +1746,7 @@ def generate_verify_page(env):
             total = len(valid_units)
             rate = hit_count / total * 100 if total > 0 else 0
             store_id = f"store-{mk}-{si}"
-            if rate >= 60 and total >= 3:
+            if rate >= 80 and total >= 3:
                 perfect_stores.append({
                     'store_name': sd.get('store_name', sd.get('name', '')),
                     'machine_name': md['name'],
@@ -1756,6 +1757,7 @@ def generate_verify_page(env):
                     'store_id': store_id,
                 })
     perfect_stores.sort(key=lambda x: (-x['rate'], -x['total_units']))
+    perfect_stores = perfect_stores[:5]
 
     html = template.render(
         verify_data=verify_data,
