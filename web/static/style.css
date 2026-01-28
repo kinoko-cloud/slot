@@ -5688,3 +5688,49 @@ strong.minus {
 /* 凡例グループ */
 .legend-group { margin-bottom: 10px; }
 .legend-title { font-size: 0.85em; color: #aaa; margin-bottom: 4px; font-weight: bold; }
+
+/* verify カード型レイアウト */
+.verify-list { display: flex; flex-direction: column; gap: 4px; }
+.verify-card {
+    padding: 8px 10px;
+    background: var(--card-bg, #1a1a2e);
+    border-radius: 6px;
+    border-left: 3px solid transparent;
+    cursor: pointer;
+}
+.verify-card.verdict-perfect { border-left-color: #ff6b6b; }
+.verify-card.verdict-hit { border-left-color: #4ecdc4; }
+.verify-card.verdict-miss { border-left-color: #666; }
+.verify-card.verdict-surprise { border-left-color: #ffa502; }
+.vc-data-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+.vc-unit { font-weight: bold; font-size: 0.9em; min-width: 50px; }
+.vc-art { color: #4ecdc4; font-size: 0.85em; font-weight: bold; }
+.vc-prob { font-size: 0.85em; font-weight: bold; }
+.vc-prob.excellent { color: #ff6b6b; }
+.vc-prob.good { color: #4ecdc4; }
+.vc-prob.bad { color: #888; }
+.vc-games { font-size: 0.75em; color: #777; }
+.vc-verdict-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85em;
+}
+.vc-pred-mark, .vc-result-mark {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+.vc-arrow { color: #555; font-size: 0.8em; }
+.vc-label { font-weight: bold; font-size: 0.9em; }
+.verdict-label-perfect { color: #ff6b6b; }
+.verdict-label-hit { color: #4ecdc4; }
+.verdict-label-miss { color: #888; }
+.verdict-label-surprise { color: #ffa502; }
+.verdict-label-neutral { color: #666; }
+.verdict-label-nodata { color: #555; }

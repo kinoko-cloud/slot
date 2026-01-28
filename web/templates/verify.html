@@ -107,41 +107,58 @@
                         </span>
                         {% endif %}
                     </div>
-                    <div class="verify-table">
-                        <div class="verify-header-row">
-                            <span class="vh-unit">台番</span>
-                            <span class="vh-pred">予想</span>
-                            <span class="vh-result">結果</span>
-                        </div>
+                    <div class="verify-list">
                         {% for unit in store.units %}
-                        <div class="verify-row-wrapper">
-                            <div class="verify-row verdict-{{ unit.verdict_class }}{% if unit.history %} has-detail{% endif %}" onclick="toggleDetail(this)">
-                                <span class="vr-unit">{{ unit.unit_id|pad_id }}</span>
-                                <span class="vr-pred">
-                                    {% if unit.pre_open_rank in ('S', 'A') %}
-                                    <span class="vr-mark good">◯</span>
-                                    {% else %}
-                                    <span class="vr-mark neutral">—</span>
-                                    {% endif %}
-                                    <span class="rank-badge-xs" style="background-color: {{ rank_color(unit.pre_open_rank) }}">{{ unit.pre_open_rank }}</span>
-                                </span>
-                                <span class="vr-result-cell">
-                                    {% if unit.actual_prob > 0 and unit.actual_prob <= 100 %}
-                                    <span class="vr-mark excellent">◎</span>
-                                    {% elif unit.actual_prob > 0 and unit.actual_prob <= 130 %}
-                                    <span class="vr-mark good">◯</span>
-                                    {% elif unit.actual_prob >= 200 %}
-                                    <span class="vr-mark bad">✕</span>
-                                    {% elif unit.actual_prob > 0 %}
-                                    <span class="vr-mark neutral">△</span>
-                                    {% else %}
-                                    <span class="vr-mark nodata">-</span>
-                                    {% endif %}
+                        <div class="verify-card-wrapper">
+                            <div class="verify-card verdict-{{ unit.verdict_class }}{% if unit.history %} has-detail{% endif %}" onclick="toggleDetail(this)">
+                                {# 上段: 台番 + 実績データ #}
+                                <div class="vc-data-row">
+                                    <span class="vc-unit">{{ unit.unit_id|pad_id }}番</span>
                                     {% if unit.actual_prob > 0 %}
-                                    <span class="vr-prob-num {% if unit.actual_prob <= 100 %}excellent{% elif unit.actual_prob <= 130 %}good{% elif unit.actual_prob >= 200 %}bad{% endif %}">1/{{ unit.actual_prob|int }}</span>
+                                    <span class="vc-art">ART {{ unit.actual_art }}</span>
+                                    <span class="vc-prob {% if unit.actual_prob <= 100 %}excellent{% elif unit.actual_prob <= 130 %}good{% elif unit.actual_prob >= 200 %}bad{% endif %}">1/{{ unit.actual_prob|int }}</span>
+                                    {% endif %}
+                                    {% if unit.actual_games and unit.actual_games > 0 %}
+                                    <span class="vc-games">{{ '{:,}'.format(unit.actual_games|int) }}G</span>
                                     {% endif %}
                                     {% if unit.history %}<span class="vr-expand-icon">▼</span>{% endif %}
-                                </span>
+                                </div>
+                                {# 下段: 予想 → 結果 → 判定 #}
+                                <div class="vc-verdict-row">
+                                    <span class="vc-pred-mark">
+                                        {% if unit.pre_open_rank in ('S', 'A') %}
+                                        <span class="vr-mark good">◯</span><span class="rank-badge-xs" style="background-color: {{ rank_color(unit.pre_open_rank) }}">{{ unit.pre_open_rank }}</span>
+                                        {% else %}
+                                        <span class="vr-mark neutral">—</span><span class="rank-badge-xs" style="background-color: {{ rank_color(unit.pre_open_rank) }}">{{ unit.pre_open_rank }}</span>
+                                        {% endif %}
+                                    </span>
+                                    <span class="vc-arrow">→</span>
+                                    <span class="vc-result-mark">
+                                        {% if unit.actual_prob > 0 and unit.actual_prob <= 100 %}
+                                        <span class="vr-mark excellent">◎</span>
+                                        {% elif unit.actual_prob > 0 and unit.actual_prob <= 130 %}
+                                        <span class="vr-mark good">◯</span>
+                                        {% elif unit.actual_prob >= 200 %}
+                                        <span class="vr-mark bad">✕</span>
+                                        {% elif unit.actual_prob > 0 %}
+                                        <span class="vr-mark neutral">△</span>
+                                        {% else %}
+                                        <span class="vr-mark nodata">-</span>
+                                        {% endif %}
+                                    </span>
+                                    <span class="vc-arrow">→</span>
+                                    <span class="vc-label verdict-label-{{ unit.verdict_class }}">
+                                        {% if unit.verdict_class == 'perfect' %}的中！
+                                        {% elif unit.verdict_class == 'hit' %}的中
+                                        {% elif unit.verdict_class == 'miss' %}ハズレ
+                                        {% elif unit.verdict_class == 'surprise' %}見逃し
+                                        {% elif unit.verdict_class == 'neutral' and unit.pre_open_rank in ('S', 'A') %}おしい
+                                        {% elif unit.verdict_class == 'neutral' %}—
+                                        {% elif unit.verdict_class == 'nodata' %}データ不足
+                                        {% else %}—
+                                        {% endif %}
+                                    </span>
+                                </div>
                             </div>
 
                             {# 展開可能な当たり履歴セクション #}
