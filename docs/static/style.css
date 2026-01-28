@@ -6091,3 +6091,70 @@ a.perfect-card:hover { background: rgba(255,215,0,0.18); }
 .verdict-label-nodata { color: #444; }
 .verify-detail-row td { padding: 0; }
 .verify-detail-inner { padding: 8px; background: rgba(0,0,0,0.2); }
+
+/* 本日の当たり履歴 */
+.v2-today-history {
+    margin-top: 12px;
+    padding: 10px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 8px;
+}
+.v2-today-history .history-header {
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #ffd700;
+}
+.v2-today-history .history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 0.85em;
+}
+.v2-today-history .history-item {
+    display: flex;
+    gap: 8px;
+    padding: 4px 8px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 4px;
+}
+.v2-today-history .history-item.big-hit {
+    background: rgba(255, 215, 0, 0.2);
+    border-left: 3px solid #ffd700;
+}
+.v2-today-history .history-item.medium-hit {
+    background: rgba(100, 200, 100, 0.15);
+    border-left: 3px solid #64c864;
+}
+.v2-today-history .hit-num {
+    color: #888;
+    min-width: 30px;
+}
+.v2-today-history .hit-time {
+    color: #aaa;
+    min-width: 45px;
+}
+.v2-today-history .hit-start {
+    color: #888;
+    min-width: 50px;
+}
+.v2-today-history .hit-medals {
+    color: #4fc3f7;
+    min-width: 55px;
+    text-align: right;
+}
+.v2-today-history .hit-medals.big {
+    color: #ffd700;
+    font-weight: bold;
+}
+.v2-today-history .hit-medals.medium {
+    color: #81c784;
+}
+.v2-today-history .hit-rensa {
+    color: #ff9800;
+}
+.v2-today-history .history-more {
+    color: #888;
+    font-size: 0.9em;
+    text-align: center;
+    padding: 4px;
+}
