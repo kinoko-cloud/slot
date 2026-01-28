@@ -12,7 +12,10 @@
     <div class="container">
         {# === トップバー === #}
         <div class="top-bar">
-            <span class="version-info">{{ now_short }} Ver.</span>
+            <div class="top-bar-left">
+                <img src="{{ url_for('static', filename='logo.svg') }}" alt="スロプロMAX" class="site-logo">
+                <span class="version-info">{{ now_short }}</span>
+            </div>
             <button class="hamburger-btn" onclick="document.getElementById('hamburger-menu').classList.toggle('hidden')" aria-label="メニュー">☰</button>
         </div>
         {# === ハンバーガーメニュー === #}
