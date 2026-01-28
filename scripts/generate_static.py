@@ -1369,7 +1369,7 @@ def _get_verify_highlights():
                        for u in units 
                        if u.get('predicted_rank') in ('S', 'A') and u.get('actual_is_good', False))
         if total_hit > 0:
-            highlights.append(f"📊 S/A予測 {total_hit}台が的中")
+            highlights.append(f"📊 おすすめ台 {total_hit}台が的中")
         
         # 全店舗的中などがあれば追加
         if not highlights and normal_hits:
