@@ -110,7 +110,7 @@
         <!-- 店舗分析 -->
         {% if store_analysis %}
         <div class="store-analysis">
-            <div class="analysis-title">{{ store_analysis.store_name }}の{{ store_analysis.machine_name }}分析</div>
+            <div class="analysis-title"><span class="analysis-store">{{ store_analysis.store_name }}</span> <span class="analysis-machine">{{ store_analysis.machine_name }}</span> 分析</div>
             <div class="analysis-rank-dist">
                 全{{ store_analysis.total_units }}台: {{ store_analysis.rank_dist }}
             </div>
