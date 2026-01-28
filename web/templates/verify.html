@@ -62,18 +62,19 @@
                 <h2>🏆 的中ハイライト</h2>
                 <div class="perfect-list">
                     {% for ps in perfect_stores %}
-                    <div class="perfect-card">
+                    <a class="perfect-card" href="#{{ ps.store_id }}">
                         <span class="perfect-icon">{{ ps.machine_icon }}</span>
                         <div class="perfect-info">
                             <span class="perfect-store">{{ ps.store_name }}</span>
                             <span class="perfect-machine">{{ ps.machine_name }}</span>
                         </div>
                         <span class="perfect-badge">
-                            {% if ps.sa_total == ps.total_units %}全{{ ps.total_units }}台的中！
-                            {% else %}予測{{ ps.sa_total }}台中{{ ps.sa_hit }}台的中（全{{ ps.total_units }}台）
+                            {% if ps.rate >= 100 %}全{{ ps.total_units }}台的中！
+                            {% else %}{{ ps.total_units }}台中{{ ps.hit_count }}台的中（{{ ps.rate|int }}%）
                             {% endif %}
                         </span>
-                    </div>
+                        <span class="perfect-arrow">›</span>
+                    </a>
                     {% endfor %}
                 </div>
             </section>
@@ -100,7 +101,7 @@
                 <h2>{{ machine_data.icon }} {{ machine_data.name }}</h2>
 
                 {% for store in machine_data.stores %}
-                <div class="verify-store">
+                <div class="verify-store" id="store-{{ machine_name }}-{{ loop.index0 }}">
                     <div class="verify-store-header">
                         <h3 class="verify-store-name">{{ store.name }}</h3>
                         {% if store.sa_total > 0 %}
