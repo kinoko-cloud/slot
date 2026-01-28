@@ -5,6 +5,24 @@
 
 const API_BASE = 'https://autogmail.pythonanywhere.com';
 
+// タイムアウト付きfetch（PythonAnywhereが遅い場合のリトライ対応）
+async function fetchWithRetry(url, retries = 2, timeoutMs = 15000) {
+    for (let i = 0; i <= retries; i++) {
+        try {
+            const controller = new AbortController();
+            const timeout = setTimeout(() => controller.abort(), timeoutMs);
+            const response = await fetch(url, { signal: controller.signal });
+            clearTimeout(timeout);
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            return response;
+        } catch (e) {
+            if (i === retries) throw e;
+            console.log(`API retry ${i + 1}/${retries}...`);
+            await new Promise(r => setTimeout(r, 2000));
+        }
+    }
+}
+
 // ランク色
 const RANK_COLORS = {
     'S': '#ff6b6b',
@@ -43,8 +61,8 @@ async function updateIndexPage() {
     }
 
     try {
-        const response = await fetch(`${API_BASE}/api/v2/index`);
-        if (!response.ok) throw new Error('API error');
+        const response = await fetchWithRetry(`${API_BASE}/api/v2/index`);
+
         const data = await response.json();
 
         // 更新時刻を表示
@@ -139,7 +157,7 @@ async function updateRecommendPage(storeKey) {
     }
 
     try {
-        const response = await fetch(`${API_BASE}/api/v2/recommend/${storeKey}`);
+        const response = await fetchWithRetry(`${API_BASE}/api/v2/recommend/${storeKey}`);
         if (!response.ok) throw new Error('API error');
         const data = await response.json();
 
