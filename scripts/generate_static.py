@@ -564,8 +564,8 @@ def generate_index(env):
     if not top3:
         top3 = top3_candidates[:3]
 
-    # TOP3 + 爆発台の過去3日分の当たり履歴を加工
-    for rec in top3 + yesterday_top10 + today_top10:
+    # TOP3 + 全S/A候補 + 爆発台の過去3日分の当たり履歴を加工
+    for rec in top3 + top3_candidates + yesterday_top10 + today_top10:
         for hist_key in ('yesterday_history', 'day_before_history', 'three_days_ago_history'):
             raw_hist = rec.get(hist_key, [])
             proc_key = f'{hist_key}_processed'
@@ -755,9 +755,45 @@ def generate_index(env):
     # 高い順にソート
     accuracy_hero.sort(key=lambda x: -x['rate'])
 
+    # フィルター用: S/A台をスコア順で最大20台（TOP3以外も含む）
+    all_sa_recs = []
+    seen_sa = set()
+    for r in top3:
+        key = f"{r.get('store_key')}_{r.get('unit_id')}"
+        seen_sa.add(key)
+    for r in top3_candidates:
+        key = f"{r.get('store_key')}_{r.get('unit_id')}"
+        if key not in seen_sa:
+            all_sa_recs.append(r)
+            seen_sa.add(key)
+        if len(all_sa_recs) >= 17:  # TOP3 + 17 = 20台
+            break
+
+    # フィルター用の機種・店舗リスト
+    filter_machines = []
+    filter_machine_keys = set()
+    filter_stores_by_name = {}  # 表示名でグルーピング（同じ店舗のSBJ/北斗を1つに）
+    for r in top3 + all_sa_recs:
+        mk = r.get('machine_key', '')
+        mn = r.get('machine_name', '')
+        sk = r.get('store_key', '')
+        sn = r.get('store_name', '')
+        if mk and mk not in filter_machine_keys:
+            filter_machines.append({'key': mk, 'name': mn, 'icon': r.get('machine_icon', '🎰')})
+            filter_machine_keys.add(mk)
+        if sn and sn not in filter_stores_by_name:
+            filter_stores_by_name[sn] = []
+        if sn and sk:
+            if sk not in [x['key'] for x in filter_stores_by_name.get(sn, [])]:
+                filter_stores_by_name[sn].append({'key': sk, 'name': sn})
+    filter_stores = [{'name': name, 'store_keys': [x['key'] for x in stores]} for name, stores in filter_stores_by_name.items()]
+
     html = template.render(
         machines=machines,
         top3=top3,
+        all_sa_recs=all_sa_recs,
+        filter_stores=filter_stores,
+        filter_machines=filter_machines,
         yesterday_top10=yesterday_top10,
         today_top10=today_top10,
         today_weekday=today_weekday,

@@ -456,6 +456,46 @@
                     </div>
                 </a>
                 {% endfor %}
+
+                {# === 店別・機種別フィルター + その他のS/A台 === #}
+                {% if all_sa_recs %}
+                <div class="sa-filter-section">
+                    <h3>その他の狙い目台</h3>
+                    <div class="sa-filters">
+                        <button class="sa-filter-btn active" onclick="filterSA('all')">全て</button>
+                        {% for m in filter_machines %}
+                        <button class="sa-filter-btn" onclick="filterSA('machine', '{{ m.key }}')">{{ m.icon }} {{ m.name }}</button>
+                        {% endfor %}
+                        {% for s in filter_stores %}
+                        <button class="sa-filter-btn" onclick="filterSA('store', '{{ s.store_keys|join(',') }}')">{{ s.name }}</button>
+                        {% endfor %}
+                    </div>
+                    <div class="sa-recs-list">
+                        {% for rec in all_sa_recs %}
+                        <a href="{{ url_for('recommend', store_key=rec.store_key) }}" class="sa-rec-card rank-{{ rec.final_rank|lower }}" data-machine="{{ rec.machine_key }}" data-store="{{ rec.store_key }}" style="text-decoration: none; color: inherit;">
+                            <div class="sa-rec-header">
+                                <span class="machine-icon-sm">{{ rec.machine_icon }}</span>
+                                <span class="sa-rec-store">{{ rec.store_name }}</span>
+                                <span class="sa-rec-unit">{{ rec.unit_id|pad_id }}番</span>
+                                <span class="rank-badge-xs" style="background-color: {{ rank_color(rec.final_rank) }}">{{ rec.final_rank }}</span>
+                            </div>
+                            <div class="sa-rec-data">
+                                {% if is_open and rec.art_count > 0 %}
+                                <span class="sa-art">ART {{ rec.art_count }}</span>
+                                {% if rec.art_prob > 0 %}<span class="sa-prob {% if rec.art_prob <= 100 %}excellent{% elif rec.art_prob <= 130 %}good{% elif rec.art_prob >= 200 %}bad{% endif %}">1/{{ rec.art_prob|int }}</span>{% endif %}
+                                {% endif %}
+                                {% if rec.yesterday_art %}
+                                <span class="sa-prev">{{ short_date(rec.yesterday_date) or '前日' }}: ART {{ rec.yesterday_art }}{% if rec.yesterday_diff_medals is defined and rec.yesterday_diff_medals != 0 %} <span class="{% if rec.yesterday_diff_medals > 0 %}plus{% else %}minus{% endif %}">{{ '{:+,}'.format(rec.yesterday_diff_medals) }}枚</span>{% endif %}</span>
+                                {% endif %}
+                            </div>
+                            {% if rec.reasons %}
+                            <div class="sa-rec-reason">{{ rec.reasons[0] }}</div>
+                            {% endif %}
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
             </section>
             {% endif %}
 
@@ -662,6 +702,22 @@
     </div>
     <script src="{{ url_for('static', filename='realtime.js') }}"></script>
     <script>
+    function filterSA(type, value) {
+        var cards = document.querySelectorAll('.sa-rec-card');
+        var btns = document.querySelectorAll('.sa-filter-btn');
+        btns.forEach(function(b) { b.classList.remove('active'); });
+        event.target.classList.add('active');
+        var storeKeys = value ? value.split(',') : [];
+        cards.forEach(function(c) {
+            if (type === 'all') {
+                c.style.display = '';
+            } else if (type === 'machine') {
+                c.style.display = c.dataset.machine === value ? '' : 'none';
+            } else if (type === 'store') {
+                c.style.display = storeKeys.indexOf(c.dataset.store) >= 0 ? '' : 'none';
+            }
+        });
+    }
     function toggleHitDetail(e, el) {
         e.preventDefault();
         e.stopPropagation();
