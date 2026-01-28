@@ -4180,10 +4180,8 @@ strong.minus {
 }
 
 .vh-unit, .vr-unit { width: 50px; }
-.vh-pred, .vr-pred { width: 80px; }
-.vh-art, .vr-art { width: 40px; text-align: center; }
-.vh-prob, .vr-prob { width: 60px; text-align: center; }
-.vh-result, .vr-verdict { width: 35px; text-align: center; }
+.vh-pred, .vr-pred { width: 70px; }
+.vh-result, .vr-result-cell { flex: 1; }
 
 .vr-unit {
     font-weight: 700;
@@ -5669,3 +5667,24 @@ strong.minus {
     color: #888;
     margin-top: 1px;
 }
+
+/* verify: 予想/結果の◯✕マーク */
+.vr-mark {
+    font-size: 1.1em;
+    font-weight: bold;
+    margin-right: 3px;
+}
+.vr-mark.excellent { color: #ff6b6b; }
+.vr-mark.good { color: #4ecdc4; }
+.vr-mark.neutral { color: #666; }
+.vr-mark.bad { color: #aaa; }
+.vr-mark.nodata { color: #555; }
+.vr-result-cell {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.vr-prob-num { font-size: 0.85em; }
+/* 凡例グループ */
+.legend-group { margin-bottom: 10px; }
+.legend-title { font-size: 0.85em; color: #aaa; margin-bottom: 4px; font-weight: bold; }
