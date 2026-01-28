@@ -687,12 +687,27 @@ def generate_index(env):
                 'icon': ml.get('icon', ''),
                 'machine_name': _machine_display,
             })
-    # 今日の評価順
     recommend_links.sort(key=lambda x: next(
         (-s['today_rating'] for s in all_stores if any(
             ml.get('store_key') == x['store_key'] for ml in s.get('machine_links', [])
         )), 0
     ))
+
+    # 店舗ナビ（店名で重複排除、最初の機種リンクを使う）
+    seen_stores = set()
+    store_nav_links = []
+    for info in sorted(store_day_ratings.values(), key=lambda x: -x.get('today_rating', 0)):
+        sname = info['short_name']
+        if sname in seen_stores:
+            continue
+        seen_stores.add(sname)
+        mls = info.get('machine_links', [])
+        if mls:
+            store_nav_links.append({
+                'name': sname,
+                'store_key': mls[0].get('store_key', ''),
+                'machine_links': [{'store_key': ml.get('store_key', ''), 'icon': ml.get('icon', ''), 'machine_name': MACHINES.get(STORES.get(ml.get('store_key', ''), {}).get('machine', 'sbj'), {}).get('short_name', '')} for ml in mls],
+            })
 
     night_mode = is_night_mode()
     tomorrow = now + timedelta(days=1)
@@ -841,6 +856,7 @@ def generate_index(env):
         next_day_prefix=next_day_prefix,
         next_day_str=next_day_str,
         recommend_links=recommend_links,
+        store_nav_links=store_nav_links,
     )
 
     output_path = OUTPUT_DIR / 'index.html'

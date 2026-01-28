@@ -23,8 +23,15 @@
             <a href="#top3-section">📊 おすすめ台</a>
             <a href="#yesterday-section">💥 爆発台ランキング</a>
             <a href="{{ url_for('verify') }}">🏆 答え合わせ</a>
-            {% for link in recommend_links %}
-            <a href="{{ url_for('recommend', store_key=link.store_key) }}">{{ link.icon }} {{ link.name }}</a>
+            <div class="hm-divider"></div>
+            <div class="hm-label">🏪 店舗別</div>
+            {% for store in store_nav_links %}
+            <div class="hm-store">
+                <span class="hm-store-name">{{ store.name }}</span>
+                {% for ml in store.machine_links %}
+                <a href="{{ url_for('recommend', store_key=ml.store_key) }}" class="hm-machine">{{ ml.icon }} {{ ml.machine_name }}</a>
+                {% endfor %}
+            </div>
             {% endfor %}
         </nav>
         <header>
@@ -35,7 +42,7 @@
             <h1><span class="title-main">{{ next_day_prefix }} {{ next_day_str }}のおすすめ台</span></h1>
             <div class="mode-badge after-close">🔒 閉店後</div>
             {% else %}
-            <h1><span class="title-main">{{ date_prefix }} {{ data_date_str }}のおすすめ台</span></h1>
+            <h1><span class="title-main">{{ next_day_prefix }} {{ next_day_str }}のおすすめ台</span></h1>
             <div class="mode-badge realtime">🟢 営業中</div>
             {% endif %}
             <div class="realtime-bar">
@@ -66,8 +73,15 @@
                 <div class="nav-dropdown">
                     <button class="nav-pill dropdown-toggle" onclick="this.parentElement.classList.toggle('open')">🏪 店舗別 ▾</button>
                     <div class="dropdown-content">
-                        {% for link in recommend_links %}
-                        <a href="{{ url_for('recommend', store_key=link.store_key) }}">{{ link.icon }} {{ link.name }}</a>
+                        {% for store in store_nav_links %}
+                        <div class="dd-store">
+                            <span class="dd-store-name">{{ store.name }}</span>
+                            <div class="dd-machines">
+                                {% for ml in store.machine_links %}
+                                <a href="{{ url_for('recommend', store_key=ml.store_key) }}">{{ ml.icon }} {{ ml.machine_name }}</a>
+                                {% endfor %}
+                            </div>
+                        </div>
                         {% endfor %}
                     </div>
                 </div>
