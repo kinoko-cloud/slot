@@ -126,11 +126,16 @@
                                 {# 下段: 予想 → 結果 → 判定 #}
                                 <div class="vc-verdict-row">
                                     <span class="vc-pred-mark">
-                                        {% if unit.pre_open_rank in ('S', 'A') %}
-                                        <span class="vr-mark good">◯</span><span class="rank-badge-xs" style="background-color: {{ rank_color(unit.pre_open_rank) }}">{{ unit.pre_open_rank }}</span>
+                                        {% if unit.pre_open_rank == 'S' and unit.pre_open_score >= 75 %}
+                                        <span class="vr-mark excellent">◎</span>
+                                        {% elif unit.pre_open_rank in ('S', 'A') %}
+                                        <span class="vr-mark good">◯</span>
+                                        {% elif unit.pre_open_rank == 'B' %}
+                                        <span class="vr-mark neutral">△</span>
                                         {% else %}
-                                        <span class="vr-mark neutral">—</span><span class="rank-badge-xs" style="background-color: {{ rank_color(unit.pre_open_rank) }}">{{ unit.pre_open_rank }}</span>
+                                        <span class="vr-mark bad">✕</span>
                                         {% endif %}
+                                        <span class="rank-badge-xs" style="background-color: {{ rank_color(unit.pre_open_rank) }}">{{ unit.pre_open_rank }}</span>
                                     </span>
                                     <span class="vc-arrow">→</span>
                                     <span class="vc-result-mark">
@@ -147,16 +152,35 @@
                                         {% endif %}
                                     </span>
                                     <span class="vc-arrow">→</span>
-                                    <span class="vc-label verdict-label-{{ unit.verdict_class }}">
-                                        {% if unit.verdict_class == 'perfect' %}的中！
-                                        {% elif unit.verdict_class == 'hit' %}的中
-                                        {% elif unit.verdict_class == 'miss' and unit.actual_prob < 200 %}おしい
-                                        {% elif unit.verdict_class == 'miss' %}ハズレ
-                                        {% elif unit.verdict_class == 'surprise' %}見逃し
-                                        {% elif unit.verdict_class == 'neutral' and unit.pre_open_rank in ('S', 'A') %}おしい
-                                        {% elif unit.verdict_class == 'neutral' and unit.actual_is_good %}見逃し
-                                        {% elif unit.verdict_class == 'neutral' %}—
-                                        {% elif unit.verdict_class == 'nodata' %}データ不足
+                                    {# 判定: 予想と結果の組み合わせ #}
+                                    {% set pred_good = unit.pre_open_rank in ('S', 'A') %}
+                                    {% set result_good = unit.actual_is_good is defined and unit.actual_is_good %}
+                                    {% set result_excellent = result_good and unit.actual_prob <= 100 %}
+                                    {% set pred_excellent = unit.pre_open_rank == 'S' and unit.pre_open_score >= 75 %}
+                                    {% set result_bad = unit.actual_prob >= 200 %}
+                                    {% set pred_bad = unit.pre_open_rank in ('C', 'D') %}
+                                    <span class="vc-label
+                                        {%- if unit.verdict_class == 'nodata' %} verdict-label-nodata
+                                        {%- elif pred_good and result_excellent %} verdict-label-perfect
+                                        {%- elif pred_good and result_good %} verdict-label-hit
+                                        {%- elif pred_good and result_bad %} verdict-label-miss
+                                        {%- elif pred_good %} verdict-label-neutral
+                                        {%- elif pred_bad and result_good %} verdict-label-miss
+                                        {%- elif pred_bad and not result_good %} verdict-label-hit
+                                        {%- else %} verdict-label-neutral
+                                        {%- endif %}">
+                                        {% if unit.verdict_class == 'nodata' %}データ不足
+                                        {% elif pred_excellent and result_excellent %}大的中！
+                                        {% elif pred_good and result_excellent %}的中！
+                                        {% elif pred_good and result_good %}的中
+                                        {% elif pred_good and result_bad %}ハズレ
+                                        {% elif pred_good %}おしい
+                                        {% elif pred_bad and result_excellent %}大ハズレ
+                                        {% elif pred_bad and result_good %}ハズレ
+                                        {% elif pred_bad and result_bad %}的中
+                                        {% elif pred_bad %}的中
+                                        {% elif result_good %}ハズレ
+                                        {% elif result_bad %}的中
                                         {% else %}—
                                         {% endif %}
                                     </span>
@@ -242,22 +266,18 @@
                 <h3>見方</h3>
                 <div class="legend-items">
                     <div class="legend-group">
-                        <div class="legend-title">予想欄</div>
-                        <div class="legend-row"><span class="vr-mark good">◯</span> 好調予想（S/Aランク）</div>
-                        <div class="legend-row"><span class="vr-mark neutral">—</span> 通常（B以下）</div>
+                        <div class="legend-title">予想</div>
+                        <div class="legend-row"><span class="vr-mark excellent">◎</span> 鉄板（S高スコア）</div>
+                        <div class="legend-row"><span class="vr-mark good">◯</span> 好調予想（S/A）</div>
+                        <div class="legend-row"><span class="vr-mark neutral">△</span> 微妙（B）</div>
+                        <div class="legend-row"><span class="vr-mark bad">✕</span> ダメ予想（C/D）</div>
                     </div>
                     <div class="legend-group">
-                        <div class="legend-title">結果欄</div>
-                        <div class="legend-row"><span class="vr-mark excellent">◎</span> 絶好調（確率1/100以下）</div>
-                        <div class="legend-row"><span class="vr-mark good">◯</span> 好調（確率1/130以下）</div>
-                        <div class="legend-row"><span class="vr-mark neutral">△</span> 普通（1/130〜1/200）</div>
-                        <div class="legend-row"><span class="vr-mark bad">✕</span> 不調（確率1/200以上）</div>
-                    </div>
-                    <div class="legend-group">
-                        <div class="legend-title">読み方の例</div>
-                        <div class="legend-row">予想<span class="vr-mark good">◯</span> → 結果<span class="vr-mark good">◯</span> ＝ 的中</div>
-                        <div class="legend-row">予想<span class="vr-mark good">◯</span> → 結果<span class="vr-mark bad">✕</span> ＝ 外れ</div>
-                        <div class="legend-row">予想<span class="vr-mark neutral">—</span> → 結果<span class="vr-mark excellent">◎</span> ＝ 見逃し</div>
+                        <div class="legend-title">結果</div>
+                        <div class="legend-row"><span class="vr-mark excellent">◎</span> 絶好調</div>
+                        <div class="legend-row"><span class="vr-mark good">◯</span> 好調</div>
+                        <div class="legend-row"><span class="vr-mark neutral">△</span> 普通</div>
+                        <div class="legend-row"><span class="vr-mark bad">✕</span> 不調</div>
                     </div>
                 </div>
             </section>
