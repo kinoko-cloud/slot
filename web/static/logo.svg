@@ -1,12 +1,17 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 48">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 52">
   <defs>
-    <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+    <linearGradient id="g1" x1="0" y1="0" x2="1" y2="0.5">
+      <stop offset="0%" stop-color="#fff"/>
+      <stop offset="100%" stop-color="#e0e0e0"/>
+    </linearGradient>
+    <linearGradient id="g2" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%" stop-color="#ffd700"/>
+      <stop offset="50%" stop-color="#ffaa00"/>
       <stop offset="100%" stop-color="#ff6b6b"/>
     </linearGradient>
   </defs>
-  <text x="4" y="36" font-family="'Hiragino Sans','Noto Sans JP',sans-serif" font-weight="900" font-size="32" fill="url(#g1)">スロプロ</text>
-  <text x="152" y="36" font-family="'Impact','Arial Black',sans-serif" font-weight="900" font-size="36" fill="#ffd700" letter-spacing="-1">MAX</text>
-  <rect x="268" y="8" width="44" height="22" rx="4" fill="#ff6b6b"/>
-  <text x="272" y="24" font-family="sans-serif" font-weight="bold" font-size="12" fill="#fff">β版</text>
+  <!-- スロプロ（上段） -->
+  <text x="2" y="30" font-family="'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif" font-weight="900" font-size="30" fill="url(#g1)" letter-spacing="2">スロプロ</text>
+  <!-- MAX（大きく、「プ」の下1/5あたりから被る） -->
+  <text x="82" y="50" font-family="'Impact','Arial Black','Helvetica Neue',sans-serif" font-weight="900" font-size="42" fill="url(#g2)" letter-spacing="-2" opacity="0.95">MAX</text>
 </svg>
