@@ -1141,9 +1141,162 @@ def _process_history_for_verify(history):
     return processed, summary
 
 
+def _try_load_backtest_results():
+    """最新のバックテスト結果を読み込む"""
+    import glob
+    results_files = sorted(glob.glob(str(PROJECT_ROOT / 'data' / 'verify' / 'verify_*_results.json')))
+    if not results_files:
+        return None
+    latest = results_files[-1]
+    try:
+        data = json.loads(Path(latest).read_text())
+        if data.get('total_sa', 0) > 0:
+            print(f"  バックテスト結果を使用: {Path(latest).name}")
+            return data
+    except:
+        pass
+    return None
+
+
+def _generate_verify_from_backtest(env, results):
+    """バックテスト結果からverifyページを生成"""
+    from analysis.feedback import analyze_prediction_errors
+    
+    STORE_TO_MACHINE = {}
+    for sk, sv in STORES.items():
+        STORE_TO_MACHINE[sk] = sv.get('machine_key', 'sbj')
+    
+    machine_groups = {}
+    for store_key, store_data in results.get('stores', {}).items():
+        mk = STORE_TO_MACHINE.get(store_key, 'sbj')
+        if mk not in machine_groups:
+            machine_groups[mk] = {'stores': []}
+        
+        units = results.get('units', {}).get(store_key, [])
+        formatted_units = []
+        for u in sorted(units, key=lambda x: -x.get('predicted_score', 0)):
+            rank = u.get('predicted_rank', 'C')
+            is_sa = rank in ('S', 'A')
+            is_good = u.get('actual_is_good', False)
+            prob = u.get('actual_prob', 0)
+            games = u.get('actual_games', 0)
+            
+            if is_sa and is_good and prob > 0 and prob <= 100:
+                verdict, verdict_class = '◎', 'perfect'
+            elif is_sa and is_good:
+                verdict, verdict_class = '○', 'hit'
+            elif is_sa and not is_good:
+                verdict, verdict_class = '✕', 'miss'
+            elif not is_sa and is_good:
+                verdict, verdict_class = '★', 'surprise'
+            elif games < 500:
+                verdict, verdict_class = '-', 'nodata'
+            else:
+                verdict, verdict_class = '△', 'neutral'
+            
+            formatted_units.append({
+                'unit_id': u.get('unit_id', ''),
+                'pre_open_rank': rank,
+                'pre_open_score': u.get('predicted_score', 50),
+                'predicted_rank': rank,
+                'predicted_score': u.get('predicted_score', 50),
+                'actual_art': u.get('actual_art', 0),
+                'actual_prob': prob,
+                'actual_games': games,
+                'verdict': verdict,
+                'verdict_class': verdict_class,
+            })
+        
+        machine_groups[mk]['stores'].append({
+            'name': store_data.get('name', store_key),
+            'units': formatted_units,
+            'sa_total': store_data.get('sa_total', 0),
+            'sa_hit': store_data.get('sa_hit', 0),
+            'sa_rate': store_data.get('rate', 0),
+        })
+    
+    verify_data = {}
+    for mk, mg in machine_groups.items():
+        m = MACHINES.get(mk, {})
+        verify_data[mk] = {
+            'name': m.get('short_name', mk),
+            'icon': m.get('icon', '🎰'),
+            'stores': mg['stores'],
+        }
+    
+    accuracy = results.get('overall_rate', 0)
+    total_sa = results.get('total_sa', 0)
+    total_hit = results.get('total_hit', 0)
+    total_surprise = results.get('total_surprise', 0)
+    
+    machine_accuracy = []
+    for mk, md in verify_data.items():
+        m_predicted = sum(s['sa_total'] for s in md['stores'])
+        m_actual = sum(s['sa_hit'] for s in md['stores'])
+        m_surprise = sum(sum(1 for u in s['units'] if u['verdict_class'] == 'surprise') for s in md['stores'])
+        m_all = sum(len(s['units']) for s in md['stores'])
+        m_rate = (m_actual / m_predicted * 100) if m_predicted > 0 else 0
+        machine_accuracy.append({
+            'name': md['name'], 'icon': md['icon'],
+            'total': m_predicted, 'hit': m_actual,
+            'surprise': m_surprise, 'all_units': m_all,
+            'total_good': m_actual + m_surprise, 'rate': m_rate,
+        })
+    
+    hypotheses = []
+    for mk, md in verify_data.items():
+        for sd in md['stores']:
+            try:
+                analysis = analyze_prediction_errors(sd['units'], '', mk)
+                if analysis.get('hypotheses'):
+                    hypotheses.extend(analysis['hypotheses'])
+            except:
+                pass
+    
+    # 日付情報（読みやすいフォーマット）
+    weekdays = ['月','火','水','木','金','土','日']
+    def _fmt_date(date_str):
+        try:
+            dt = datetime.strptime(date_str, '%Y-%m-%d')
+            return f'{dt.month}/{dt.day}({weekdays[dt.weekday()]})'
+        except:
+            return date_str
+    
+    pred_date = results.get('prediction_date', '')
+    actual_date = results.get('date', '')
+    
+    template = env.get_template('verify.html')
+    html = template.render(
+        verify_data=verify_data,
+        accuracy=accuracy,
+        total_predicted_good=total_sa,
+        total_actual_good=total_hit,
+        total_surprise=total_surprise,
+        machine_accuracy=machine_accuracy,
+        hypotheses=hypotheses[:6],
+        version=f'backtest_{actual_date}',
+        result_date_str=f'{_fmt_date(actual_date)}の実績',
+        predict_base=f'{_fmt_date(pred_date)}までの蓄積データ + 推移パターンロジック',
+    )
+    
+    output_path = OUTPUT_DIR / 'verify.html'
+    output_path.write_text(html, encoding='utf-8')
+    print(f"  -> {output_path} (バックテスト: 的中率{accuracy:.0f}%)")
+
+
 def generate_verify_page(env):
-    """答え合わせページを生成 - 予測 vs 実績の比較"""
+    """答え合わせページを生成 - 予測 vs 実績の比較
+    
+    バックテスト結果(data/verify/verify_*_results.json)があれば
+    最新のものを使って生成する。なければ通常の予測vs前日実績で生成。
+    """
     print("Generating verify page...")
+    
+    # バックテスト結果があればそちらを使う
+    backtest_result = _try_load_backtest_results()
+    if backtest_result:
+        _generate_verify_from_backtest(env, backtest_result)
+        return
 
     template = env.get_template('verify.html')
     old_keys = {'island_akihabara', 'shibuya_espass', 'shinjuku_espass'}
