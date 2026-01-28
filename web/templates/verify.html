@@ -107,89 +107,75 @@
                         </span>
                         {% endif %}
                     </div>
-                    <div class="verify-list">
+                    <table class="verify-table">
+                        <thead>
+                            <tr>
+                                <th>台番</th>
+                                <th>ART</th>
+                                <th>確率</th>
+                                <th>G数</th>
+                                <th>予想</th>
+                                <th>結果</th>
+                                <th>判定</th>
+                            </tr>
+                        </thead>
+                        <tbody>
                         {% for unit in store.units %}
-                        <div class="verify-card-wrapper">
-                            <div class="verify-card verdict-{{ unit.verdict_class }}{% if unit.history %} has-detail{% endif %}" onclick="toggleDetail(this)">
-                                {# 上段: 台番 + 実績データ #}
-                                <div class="vc-data-row">
-                                    <span class="vc-unit">{{ unit.unit_id|pad_id }}番</span>
-                                    {% if unit.actual_prob > 0 %}
-                                    <span class="vc-art">ART {{ unit.actual_art }}</span>
-                                    <span class="vc-prob {% if unit.actual_is_good and unit.actual_prob <= 100 %}excellent{% elif unit.actual_is_good %}good{% elif unit.actual_prob >= 200 %}bad{% endif %}">1/{{ unit.actual_prob|int }}</span>
-                                    {% endif %}
-                                    {% if unit.actual_games and unit.actual_games > 0 %}
-                                    <span class="vc-games">{{ '{:,}'.format(unit.actual_games|int) }}G</span>
-                                    {% endif %}
-                                    {% if unit.history %}<span class="vr-expand-icon">▼</span>{% endif %}
-                                </div>
-                                {# 下段: 予想 → 結果 → 判定 #}
-                                <div class="vc-verdict-row">
-                                    <span class="vc-pred-mark">
-                                        {% if unit.pre_open_rank == 'S' and unit.pre_open_score >= 75 %}
-                                        <span class="vr-mark excellent">◎</span>
-                                        {% elif unit.pre_open_rank in ('S', 'A') %}
-                                        <span class="vr-mark good">◯</span>
-                                        {% elif unit.pre_open_rank == 'B' %}
-                                        <span class="vr-mark neutral">△</span>
-                                        {% else %}
-                                        <span class="vr-mark bad">✕</span>
-                                        {% endif %}
-                                        <span class="rank-badge-xs" style="background-color: {{ rank_color(unit.pre_open_rank) }}">{{ unit.pre_open_rank }}</span>
-                                    </span>
-                                    <span class="vc-arrow">→</span>
-                                    <span class="vc-result-mark">
-                                        {% if unit.verdict_class == 'perfect' or (unit.actual_is_good and unit.actual_prob > 0 and unit.actual_prob <= 100) %}
-                                        <span class="vr-mark excellent">◎</span>
-                                        {% elif unit.verdict_class in ('hit', 'surprise') or unit.actual_is_good %}
-                                        <span class="vr-mark good">◯</span>
-                                        {% elif unit.actual_prob >= 200 %}
-                                        <span class="vr-mark bad">✕</span>
-                                        {% elif unit.actual_prob > 0 %}
-                                        <span class="vr-mark neutral">△</span>
-                                        {% else %}
-                                        <span class="vr-mark nodata">-</span>
-                                        {% endif %}
-                                    </span>
-                                    <span class="vc-arrow">→</span>
-                                    {# 判定: 予想と結果の組み合わせ #}
-                                    {% set pred_good = unit.pre_open_rank in ('S', 'A') %}
-                                    {% set result_good = unit.actual_is_good is defined and unit.actual_is_good %}
-                                    {% set result_excellent = result_good and unit.actual_prob <= 100 %}
-                                    {% set pred_excellent = unit.pre_open_rank == 'S' and unit.pre_open_score >= 75 %}
-                                    {% set result_bad = unit.actual_prob >= 200 %}
-                                    {% set pred_bad = unit.pre_open_rank in ('C', 'D') %}
-                                    <span class="vc-label
-                                        {%- if unit.verdict_class == 'nodata' %} verdict-label-nodata
-                                        {%- elif pred_good and result_excellent %} verdict-label-perfect
-                                        {%- elif pred_good and result_good %} verdict-label-hit
-                                        {%- elif pred_good and result_bad %} verdict-label-miss
-                                        {%- elif pred_good %} verdict-label-neutral
-                                        {%- elif pred_bad and result_good %} verdict-label-miss
-                                        {%- elif pred_bad and not result_good %} verdict-label-hit
-                                        {%- else %} verdict-label-neutral
-                                        {%- endif %}">
-                                        {% if unit.verdict_class == 'nodata' %}データ不足
-                                        {% elif pred_excellent and result_excellent %}大的中！
-                                        {% elif pred_good and result_excellent %}的中！
-                                        {% elif pred_good and result_good %}的中
-                                        {% elif pred_good and result_bad %}ハズレ
-                                        {% elif pred_good %}おしい
-                                        {% elif pred_bad and result_excellent %}大ハズレ
-                                        {% elif pred_bad and result_good %}ハズレ
-                                        {% elif pred_bad and result_bad %}的中
-                                        {% elif pred_bad %}的中
-                                        {% elif result_good %}ハズレ
-                                        {% elif result_bad %}的中
-                                        {% else %}—
-                                        {% endif %}
-                                    </span>
-                                </div>
-                            </div>
+                        {% set pred_good = unit.pre_open_rank in ('S', 'A') %}
+                        {% set result_good = unit.actual_is_good is defined and unit.actual_is_good %}
+                        {% set result_excellent = result_good and unit.actual_prob <= 100 %}
+                        {% set pred_excellent = unit.pre_open_rank == 'S' and unit.pre_open_score >= 75 %}
+                        {% set result_bad = unit.actual_prob >= 200 %}
+                        {% set pred_bad = unit.pre_open_rank in ('C', 'D') %}
+                        <tr class="verify-row verdict-{{ unit.verdict_class }}{% if unit.history %} has-detail{% endif %}" onclick="toggleDetail(this)">
+                            <td class="vt-unit">{{ unit.unit_id|pad_id }}</td>
+                            <td class="vt-art">{{ unit.actual_art if unit.actual_prob > 0 else '-' }}</td>
+                            <td class="vt-prob {% if unit.actual_is_good and unit.actual_prob <= 100 %}excellent{% elif unit.actual_is_good %}good{% elif unit.actual_prob >= 200 %}bad{% endif %}">{% if unit.actual_prob > 0 %}1/{{ unit.actual_prob|int }}{% else %}-{% endif %}</td>
+                            <td class="vt-games">{% if unit.actual_games and unit.actual_games > 0 %}{{ '{:,}'.format(unit.actual_games|int) }}{% else %}-{% endif %}</td>
+                            <td class="vt-pred">
+                                {% if pred_excellent %}<span class="vr-mark excellent">◎</span>
+                                {% elif pred_good %}<span class="vr-mark good">◯</span>
+                                {% elif unit.pre_open_rank == 'B' %}<span class="vr-mark neutral">△</span>
+                                {% else %}<span class="vr-mark bad">✕</span>{% endif %}<span class="rank-badge-xs" style="background-color: {{ rank_color(unit.pre_open_rank) }}">{{ unit.pre_open_rank }}</span>
+                            </td>
+                            <td class="vt-result">
+                                {% if unit.verdict_class == 'perfect' or (result_good and unit.actual_prob <= 100) %}<span class="vr-mark excellent">◎</span>
+                                {% elif result_good %}<span class="vr-mark good">◯</span>
+                                {% elif unit.actual_prob >= 200 %}<span class="vr-mark bad">✕</span>
+                                {% elif unit.actual_prob > 0 %}<span class="vr-mark neutral">△</span>
+                                {% else %}<span class="vr-mark nodata">-</span>{% endif %}
+                            </td>
+                            <td class="vt-label
+                                {%- if unit.verdict_class == 'nodata' %} verdict-label-nodata
+                                {%- elif pred_good and result_excellent %} verdict-label-perfect
+                                {%- elif pred_good and result_good %} verdict-label-hit
+                                {%- elif pred_good and result_bad %} verdict-label-miss
+                                {%- elif pred_good %} verdict-label-neutral
+                                {%- elif pred_bad and result_good %} verdict-label-miss
+                                {%- elif pred_bad and not result_good %} verdict-label-hit
+                                {%- else %} verdict-label-neutral
+                                {%- endif %}">
+                                {% if unit.verdict_class == 'nodata' %}データ不足
+                                {% elif pred_excellent and result_excellent %}大的中！
+                                {% elif pred_good and result_excellent %}的中！
+                                {% elif pred_good and result_good %}的中
+                                {% elif pred_good and result_bad %}ハズレ
+                                {% elif pred_good %}おしい
+                                {% elif pred_bad and result_excellent %}大ハズレ
+                                {% elif pred_bad and result_good %}ハズレ
+                                {% elif pred_bad and result_bad %}的中
+                                {% elif pred_bad %}的中
+                                {% elif result_good %}ハズレ
+                                {% elif result_bad %}的中
+                                {% else %}—{% endif %}
+                            </td>
+                        </tr>
 
                             {# 展開可能な当たり履歴セクション #}
                             {% if unit.history %}
-                            <div class="verify-detail hidden">
+                            <tr class="verify-detail-row hidden">
+                            <td colspan="7">
+                            <div class="verify-detail">
                                 {# サマリ統計 #}
                                 {% if unit.history_summary %}
                                 <div class="vd-summary">
@@ -252,10 +238,12 @@
                                     </table>
                                 </div>
                             </div>
+                            </td>
+                            </tr>
                             {% endif %}
-                        </div>
                         {% endfor %}
-                    </div>
+                        </tbody>
+                    </table>
                 </div>
                 {% endfor %}
             </section>
@@ -292,25 +280,24 @@
 
     <script>
     function toggleDetail(rowEl) {
-        var wrapper = rowEl.closest('.verify-row-wrapper');
-        if (!wrapper) return;
-        var detail = wrapper.querySelector('.verify-detail');
-        if (!detail) return;
+        // テーブル行の次のtr.verify-detail-rowを探す
+        var detailRow = rowEl.nextElementSibling;
+        if (!detailRow || !detailRow.classList.contains('verify-detail-row')) return;
 
-        var isHidden = detail.classList.contains('hidden');
-        // Close all others in the same store
-        var store = wrapper.closest('.verify-table');
-        if (store) {
-            store.querySelectorAll('.verify-detail').forEach(function(d) {
+        var isHidden = detailRow.classList.contains('hidden');
+        // Close all others in the same table
+        var table = rowEl.closest('.verify-table');
+        if (table) {
+            table.querySelectorAll('.verify-detail-row').forEach(function(d) {
                 d.classList.add('hidden');
             });
-            store.querySelectorAll('.verify-row').forEach(function(r) {
+            table.querySelectorAll('.verify-row').forEach(function(r) {
                 r.classList.remove('expanded');
             });
         }
 
         if (isHidden) {
-            detail.classList.remove('hidden');
+            detailRow.classList.remove('hidden');
             rowEl.classList.add('expanded');
         }
     }
