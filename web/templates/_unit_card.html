@@ -89,6 +89,26 @@
             {% if rec.max_medals and rec.max_medals > 0 %} / 最大{{ '{:,}'.format(rec.max_medals) }}枚{% endif %}
         </div>
         {% endif %}
+        {# 本日の当たり履歴（営業中） #}
+        {% if rec.today_history and rec.today_history|length > 0 %}
+        <div class="v2-today-history">
+            <div class="history-header">📊 本日の当たり履歴</div>
+            <div class="history-list">
+                {% for h in rec.today_history[:20] %}
+                <div class="history-item {% if h.medals >= 1000 %}big-hit{% elif h.medals >= 500 %}medium-hit{% endif %}">
+                    <span class="hit-num">#{{ h.hit_num }}</span>
+                    <span class="hit-time">{{ h.time }}</span>
+                    <span class="hit-start">{{ h.start }}G</span>
+                    <span class="hit-medals {% if h.medals >= 1000 %}big{% elif h.medals >= 500 %}medium{% endif %}">{{ h.medals }}枚</span>
+                    {% if h.rensa %}<span class="hit-rensa">{{ h.rensa }}連</span>{% endif %}
+                </div>
+                {% endfor %}
+                {% if rec.today_history|length > 20 %}
+                <div class="history-more">...他{{ rec.today_history|length - 20 }}件</div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
         <div class="v2-detail-trend">
             {% if rec.consecutive_minus >= 2 %}
             {{ rec.consecutive_minus }}日連続不調 → 設定上げの可能性あり
