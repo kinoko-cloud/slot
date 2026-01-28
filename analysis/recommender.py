@@ -1855,7 +1855,7 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
             
             if recent_non_big >= 2 and big_days >= 1:
                 # 中/小が2日以上続いてる → 大爆発予測
-                reasons.append(f"🔥 直近の推移: {trend_str}（低めが{recent_non_big}日続いた → そろそろ大爆発が来やすい）")
+                reasons.append(f"🔥 直近の推移: {trend_str}（ART80回以上の大爆発がなく{recent_non_big}日経過。過去の傾向では中/小の後に大が来やすい）")
             elif consec_big >= 2:
                 # 大爆発が2日以上連続
                 reasons.append(f"🔥 直近の推移: {trend_str}（大爆発{consec_big}日連続 → 高設定据え置きの証拠）")
@@ -1874,11 +1874,13 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
         continuation_rate = historical_perf.get('continuation_rate', 0)
         continuation_total = historical_perf.get('continuation_total', 0)
         continuation_good = historical_perf.get('continuation_good', 0)
-        if continuation_total >= 2:
-            if continuation_rate >= 0.6:
-                reasons.append(f"📊 この台は好調が続きやすい（好調→翌日も好調: {continuation_good}/{continuation_total}回 = {continuation_rate:.0%}）")
+        if continuation_total >= 3:
+            if continuation_rate >= 0.8:
+                reasons.append(f"📊 この台は好調が続きやすい（過去{continuation_total}回中{continuation_good}回 = {continuation_rate:.0%}で翌日も好調）")
+            elif continuation_rate >= 0.6:
+                reasons.append(f"📊 好調→翌日も好調の実績: {continuation_good}/{continuation_total}回（{continuation_rate:.0%}）※やや期待できる程度")
             elif continuation_rate < 0.4:
-                reasons.append(f"⚠️ この台は好調が続きにくい（好調→翌日も好調: {continuation_good}/{continuation_total}回 = {continuation_rate:.0%}）")
+                reasons.append(f"⚠️ この台は好調が長続きしにくい（{continuation_good}/{continuation_total}回 = {continuation_rate:.0%}）")
 
         # --- 連続好調の実績 ---
         max_streak = historical_perf.get('max_consecutive_good', 0)
@@ -1903,14 +1905,14 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
                     rate = btg[key]
                     if rate['total'] >= 2:
                         cycle_parts.append(f"{key}日不調が続いた後→好調に切り替わる率{rate['rate']:.0%}（{rate['good']}/{rate['total']}回）")
-            # 連続好調中なら据え置き率
-            if consecutive_plus > 0:
+            # 連続好調中なら据え置き率（2日以上のみ）
+            if consecutive_plus >= 2:
                 gtg = cycle_analysis.get('good_to_good', {})
                 key = min(consecutive_plus, max(gtg.keys())) if gtg else 0
                 if key and key in gtg:
                     rate = gtg[key]
-                    if rate['total'] >= 2:
-                        cycle_parts.append(f"{key}日好調が続いた後→翌日も好調率{rate['rate']:.0%}（{rate['good']}/{rate['total']}回）")
+                    if rate['total'] >= 3 and rate['rate'] >= 0.7:
+                        cycle_parts.append(f"{key}日連続好調の翌日も好調率{rate['rate']:.0%}（{rate['good']}/{rate['total']}回）")
             # 交互パターン
             alt_score = cycle_analysis.get('alternating_score', 0)
             if alt_score >= 0.6 and cycle_analysis.get('total_days', 0) >= 7:
