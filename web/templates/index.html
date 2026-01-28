@@ -29,21 +29,21 @@
         </header>
 
         <main>
-            {# === ナビゲーション（店舗リンク集） === #}
-            {% if recommend_links %}
+            {# === 答え合わせバナー（日付+的中率） === #}
+            <a href="{{ url_for('verify') }}" class="verify-banner">
+                <span class="vb-icon">🏆</span>
+                <span class="vb-text">{% if verify_date_str %}{{ verify_date_str }}の前日予測の結果は？{% else %}前日予測の結果は？{% endif %}{% if verify_accuracy %} <span class="vb-rate">的中{{ verify_accuracy }}%</span>{% endif %}</span>
+                <span class="vb-arrow">›</span>
+            </a>
+
+            {# === ナビゲーション === #}
             <nav class="top-nav">
-                <a href="{{ url_for('verify') }}" class="top-nav-link verify-link">🏆 答え合わせ</a>
+                <a href="#top3-section" class="top-nav-link">📊 おすすめ台</a>
+                <a href="#yesterday-section" class="top-nav-link">💥 爆発台</a>
                 {% for link in recommend_links %}
                 <a href="{{ url_for('recommend', store_key=link.store_key) }}" class="top-nav-link">{{ link.icon }} {{ link.name }}</a>
                 {% endfor %}
             </nav>
-            {% else %}
-            <a href="{{ url_for('verify') }}" class="verify-banner">
-                <span class="vb-icon">🏆</span>
-                <span class="vb-text">答え合わせ — 予測はどれだけ当たった？</span>
-                <span class="vb-arrow">›</span>
-            </a>
-            {% endif %}
 
             {# === 閉店後: おすすめ台を最上部に === #}
             {% if display_mode in ('before_open', 'after_close') and top3 %}
@@ -194,7 +194,7 @@
 
             {# === 閉店後: 当日の爆発台 === #}
             {% if display_mode in ('before_open', 'after_close') and yesterday_top10 %}
-            <section class="today-hot-section">
+            <section class="today-hot-section" id="yesterday-section">
                 <h2>{{ date_prefix }} {{ data_date_str }}の爆発台 TOP{{ yesterday_top10|length }}</h2>
                 {% for rec in yesterday_top10 %}
                 <a href="{{ url_for('recommend', store_key=rec.store_key) }}" class="yesterday-card">
@@ -570,7 +570,7 @@
 
             {# === 営業中: 本日の爆発台（TOP3の直後） === #}
             {% if is_open and today_top10 %}
-            <section class="today-hot-section">
+            <section class="today-hot-section" id="yesterday-section">
                 <h2>{{ data_date_str }}の爆発台 TOP{{ today_top10|length }}</h2>
                 <div class="today-hot-note">出玉上位</div>
                 {% for rec in today_top10 %}
