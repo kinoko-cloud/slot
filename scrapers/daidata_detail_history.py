@@ -200,6 +200,18 @@ def extract_day_history(text: str, unit_id: str) -> dict:
             data['avg_art_start'] = sum(art_starts) / len(art_starts)
             data['max_art_start'] = max(art_starts)
 
+    # --- prob/is_good を必ず計算 ---
+    art = data.get('art', 0)
+    total_start = data.get('total_start', 0)
+    if art > 0 and total_start > 0:
+        data['prob'] = round(total_start / art, 1)
+        data['is_good_sbj'] = data['prob'] <= 130
+        data['is_good_hokuto'] = data['prob'] <= 330
+    else:
+        data['prob'] = 0
+        data['is_good_sbj'] = False
+        data['is_good_hokuto'] = False
+
     return data
 
 
