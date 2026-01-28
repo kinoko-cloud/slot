@@ -116,7 +116,13 @@ def collect_daily_data(machine_keys: list = None, max_units_per_store: int = Non
                     for unit_id in units:
                         print(f'  台{unit_id}...')
                         # 当日分（23:00実行時点のリアルタイムデータ）+ 前日分を取得
-                        result = get_unit_history(page, hall_id, unit_id, days_back=14)
+                        # 差分更新: historyに既存データがあれば2日分（当日+前日）
+                        # 新規台はフルバックフィル（14日分）
+                        from pathlib import Path as _P
+                        _hist_dir = _P(f'data/history/{store_key}_{machine_key}')
+                        _hist_file = _hist_dir / f'{unit_id}.json'
+                        _days_back = 2 if _hist_file.exists() else 14
+                        result = get_unit_history(page, hall_id, unit_id, days_back=_days_back)
                         result['hall_name'] = hall_name
                         result['machine_key'] = machine_key
                         result['machine_name'] = machine_name
