@@ -55,9 +55,64 @@ WEIGHT_WEEKDAY = 1.5         # 曜日ボーナス重み（既存weekday_bonusと
 WEIGHT_ISLAND_WAVE = 2.0     # 島の波ボーナス重み
 WEIGHT_DIGIT = 1.0           # 台番末尾ボーナス重み
 WEIGHT_GOOD_STREAK = 2.0     # 好調連続からの下降期待
+WEIGHT_SETTING6_CARRY = 3.5  # 設定6据え置き期待
+WEIGHT_SPREAD_PROMO = 2.5    # spread型の不調→投入期待加算
+WEIGHT_TIGHT_PENALTY = -2.0  # tight店の全体ペナルティ
 
 # confidence の最小サンプル数
 MIN_SAMPLES_FOR_FULL_CONFIDENCE = 14  # 14日分あれば信頼度1.0
+
+# =============================================================================
+# 設定段階推定
+# =============================================================================
+
+# 機種別の設定域閾値（ART確率 = games / art）
+# prob が閾値以下なら該当段階
+SETTING_TIERS = {
+    'sbj': {
+        6: 90,    # 設定6域: 1/90以下
+        5: 110,   # 設定5域: 1/90〜1/110
+        4: 140,   # 設定4域: 1/110〜1/140
+        # 3以下: 1/140以上
+    },
+    'hokuto_tensei2': {
+        6: 60,    # 設定6域: 1/60以下
+        5: 80,    # 設定5域: 1/60〜1/80
+        4: 110,   # 設定4域: 1/80〜1/110
+        # 3以下: 1/110以上
+    },
+}
+
+# デフォルト閾値（新機種用）
+SETTING_TIERS_DEFAULT = {6: 100, 5: 130, 4: 170}
+
+
+def _estimate_setting_tier(day: dict, machine_key: str) -> int:
+    """日のデータから設定段階を推定する
+
+    Returns:
+        6, 5, 4, 3 のいずれか（3 = 設定3以下）
+        0 = データ不足で判定不能
+    """
+    art = day.get('art', 0)
+    games = day.get('games', 0) or day.get('total_start', 0)
+
+    # 最低試行回数チェック
+    min_art = 15 if machine_key == 'sbj' else 8
+    if art < min_art or games < 300:
+        return 0  # データ不足
+
+    prob = games / art
+    tiers = SETTING_TIERS.get(machine_key, SETTING_TIERS_DEFAULT)
+
+    if prob <= tiers[6]:
+        return 6
+    elif prob <= tiers[5]:
+        return 5
+    elif prob <= tiers[4]:
+        return 4
+    else:
+        return 3
 
 
 # =============================================================================
@@ -344,6 +399,161 @@ def _analyze_island_wave(all_histories: List[dict], machine_key: str) -> dict:
 
 
 # =============================================================================
+# パターン分析: 設定段階分析
+# =============================================================================
+
+def _analyze_setting_grade(all_histories: List[dict], machine_key: str) -> dict:
+    """設定段階の分布・スタイルを分析する
+
+    好調/不調の二値ではなく設定6/5/4/3以下の段階で分析し、
+    店舗の設定投入スタイルを判定する。
+
+    Returns:
+        {
+            'setting_distribution': {date: {6: n, 5: n, 4: n, 3: n, 'total': n}},
+            'uses_setting_6': bool,
+            'setting_6_frequency': float,        # 設定6が出る日の割合
+            'setting_6_per_day': float,           # 設定6が出る日の平均台数
+            'typical_high_count': {               # 設定4以上の台数統計
+                'avg': float, 'min': int, 'max': int, 'samples': int
+            },
+            'setting_style': str,                 # "heavy_hitter"|"spread"|"mixed"|"tight"
+            'style_confidence': float,
+        }
+    """
+    # 日別の設定段階分布を集計
+    # {date: {6: count, 5: count, 4: count, 3: count, 'total': count}}
+    date_tier_counts: Dict[str, Dict] = {}
+
+    for hist in all_histories:
+        days = hist.get('days', [])
+        for day in days:
+            date_str = day.get('date', '')
+            if not date_str:
+                continue
+            if not _is_active_day(day, machine_key):
+                continue
+
+            tier = _estimate_setting_tier(day, machine_key)
+            if tier == 0:
+                continue  # データ不足はスキップ
+
+            if date_str not in date_tier_counts:
+                date_tier_counts[date_str] = {6: 0, 5: 0, 4: 0, 3: 0, 'total': 0}
+
+            date_tier_counts[date_str][tier] += 1
+            date_tier_counts[date_str]['total'] += 1
+
+    if not date_tier_counts:
+        return {
+            'setting_distribution': {},
+            'uses_setting_6': False,
+            'setting_6_frequency': 0.0,
+            'setting_6_per_day': 0.0,
+            'typical_high_count': {'avg': 0, 'min': 0, 'max': 0, 'samples': 0},
+            'setting_style': 'tight',
+            'style_confidence': 0.0,
+        }
+
+    n_days = len(date_tier_counts)
+
+    # --- uses_setting_6: 設定6域が定期的に出るか ---
+    days_with_6 = sum(1 for d in date_tier_counts.values() if d[6] > 0)
+    setting_6_frequency = days_with_6 / n_days if n_days > 0 else 0.0
+    # 「定期的」= 30%以上の日で6域が出る
+    uses_setting_6 = setting_6_frequency >= 0.3
+
+    # 6域が出る日の平均台数
+    count_6_on_6days = [d[6] for d in date_tier_counts.values() if d[6] > 0]
+    setting_6_per_day = sum(count_6_on_6days) / len(count_6_on_6days) if count_6_on_6days else 0.0
+
+    # --- typical_high_count: 日別の設定4以上台数 ---
+    daily_high_counts = []
+    for d in date_tier_counts.values():
+        high = d[6] + d[5] + d[4]
+        daily_high_counts.append(high)
+
+    avg_high = sum(daily_high_counts) / len(daily_high_counts) if daily_high_counts else 0
+    min_high = min(daily_high_counts) if daily_high_counts else 0
+    max_high = max(daily_high_counts) if daily_high_counts else 0
+
+    # --- setting_style 判定 ---
+    #
+    # heavy_hitter: 6を1-2台入れて目立たせる
+    #   → 6域が頻繁に出る AND 6域の台数が少ない(1-2) AND 5域が少ない
+    #
+    # spread: 4-5を複数台に分散
+    #   → 6域が少ないor無い AND 設定4以上が台数の30%以上に分散
+    #
+    # mixed: 両方やる
+    #   → 6域も出つつ、4-5も複数台に入る
+    #
+    # tight: 4以上が少ない（渋い店）
+    #   → 設定4以上が少ない
+
+    # 島の総台数（最頻の total を使用）
+    total_counts = [d['total'] for d in date_tier_counts.values()]
+    typical_total = max(set(total_counts), key=total_counts.count) if total_counts else 1
+
+    # 各日の設定分布パターンを統計
+    has_heavy_days = 0    # 6が1-2台入り、5以下は控えめな日
+    has_spread_days = 0   # 4以上が30%以上に分散している日
+    tight_days = 0        # 4以上が少ない日
+
+    for d in date_tier_counts.values():
+        total = d['total']
+        if total == 0:
+            continue
+
+        high_count = d[6] + d[5] + d[4]
+        high_ratio = high_count / total
+
+        if d[6] >= 1 and d[6] <= 2 and d[5] <= 2:
+            has_heavy_days += 1
+        if high_ratio >= 0.3 and high_count >= 3 and d[6] <= 1:
+            has_spread_days += 1
+        if high_ratio < 0.15:
+            tight_days += 1
+
+    heavy_ratio = has_heavy_days / n_days if n_days > 0 else 0
+    spread_ratio = has_spread_days / n_days if n_days > 0 else 0
+    tight_ratio = tight_days / n_days if n_days > 0 else 0
+
+    style_confidence = _confidence(n_days, 7)
+
+    if tight_ratio >= 0.5:
+        setting_style = 'tight'
+    elif heavy_ratio >= 0.3 and spread_ratio >= 0.3:
+        setting_style = 'mixed'
+    elif heavy_ratio >= 0.3:
+        setting_style = 'heavy_hitter'
+    elif spread_ratio >= 0.3:
+        setting_style = 'spread'
+    elif avg_high / typical_total >= 0.25 if typical_total > 0 else False:
+        setting_style = 'spread'
+    else:
+        setting_style = 'tight'
+
+    return {
+        'setting_distribution': {
+            date: {str(k): v for k, v in counts.items()}
+            for date, counts in sorted(date_tier_counts.items())
+        },
+        'uses_setting_6': uses_setting_6,
+        'setting_6_frequency': round(setting_6_frequency, 3),
+        'setting_6_per_day': round(setting_6_per_day, 2),
+        'typical_high_count': {
+            'avg': round(avg_high, 1),
+            'min': min_high,
+            'max': max_high,
+            'samples': n_days,
+        },
+        'setting_style': setting_style,
+        'style_confidence': round(style_confidence, 2),
+    }
+
+
+# =============================================================================
 # パターン分析: 日程パターン
 # =============================================================================
 
@@ -578,6 +788,7 @@ def analyze_store_patterns(store_key: str, machine_key: str) -> dict:
             'island_wave': { inverse_correlation, ... },
             'date_patterns': { weekday_rates, special_day_rates, month_position_rates, ... },
             'unit_number_patterns': { digit_rates, position_rates },
+            'setting_grade': { setting_distribution, uses_setting_6, setting_style, ... },
             'meta': { store_key, machine_key, total_units, total_days }
         }
     """
@@ -595,6 +806,7 @@ def analyze_store_patterns(store_key: str, machine_key: str) -> dict:
     island_wave = _analyze_island_wave(all_histories, machine_key)
     date_patterns = _analyze_date_patterns(all_histories, machine_key)
     unit_number_patterns = _analyze_unit_number_patterns(all_histories, machine_key)
+    setting_grade = _analyze_setting_grade(all_histories, machine_key)
 
     # メタデータ
     total_units = len(all_histories)
@@ -605,6 +817,7 @@ def analyze_store_patterns(store_key: str, machine_key: str) -> dict:
         'island_wave': island_wave,
         'date_patterns': date_patterns,
         'unit_number_patterns': unit_number_patterns,
+        'setting_grade': setting_grade,
         'meta': {
             'store_key': store_key,
             'machine_key': machine_key,
@@ -632,6 +845,12 @@ def _empty_patterns(store_key: str, machine_key: str) -> dict:
             'month_position_rates': {}, 'baseline_rate': 0, 'total_samples': 0,
         },
         'unit_number_patterns': {'digit_rates': {}, 'position_rates': {}},
+        'setting_grade': {
+            'setting_distribution': {}, 'uses_setting_6': False,
+            'setting_6_frequency': 0, 'setting_6_per_day': 0,
+            'typical_high_count': {'avg': 0, 'min': 0, 'max': 0, 'samples': 0},
+            'setting_style': 'tight', 'style_confidence': 0,
+        },
         'meta': {'store_key': store_key, 'machine_key': machine_key, 'total_units': 0, 'total_days': 0},
     }
 
@@ -685,6 +904,9 @@ def calculate_pattern_bonus(store_key: str, machine_key: str,
 
     # --- 6. 月内位置ボーナス ---
     bonus += _calc_month_position_bonus(patterns, target_dt)
+
+    # --- 7. 設定段階ボーナス ---
+    bonus += _calc_setting_grade_bonus(patterns, store_key, machine_key, unit_id_str, target_dt)
 
     # クリップ -15 〜 +15
     return round(max(-15.0, min(15.0, bonus)), 1)
@@ -952,6 +1174,96 @@ def _calc_month_position_bonus(patterns: dict, target_dt: datetime) -> float:
     return sign * factor * 1.0 * conf  # 重み 1.0
 
 
+def _calc_setting_grade_bonus(patterns: dict, store_key: str, machine_key: str,
+                              unit_id_str: str, target_dt: datetime) -> float:
+    """設定段階に基づくボーナス
+
+    - 「6を使う店」で前日6域だった台 → 据え置き期待（6は目玉だから連日使う）
+    - 「spread型の店」→ 前日不調台への投入期待が高い（分散で毎日違う台に入れる）
+    - 「tight店」→ 全体的にスコアを控えめに
+    """
+    sg = patterns.get('setting_grade', {})
+    style = sg.get('setting_style', 'tight')
+    style_conf = sg.get('style_confidence', 0)
+
+    if style_conf == 0:
+        return 0.0
+
+    bonus = 0.0
+
+    # 台の直近履歴を取得
+    unit_hist = _load_unit_history(store_key, unit_id_str)
+    prev_date_str = (target_dt - timedelta(days=1)).strftime('%Y-%m-%d')
+
+    prev_tier = 0
+    prev_bad = False
+    if unit_hist:
+        days = sorted(unit_hist.get('days', []), key=lambda d: d.get('date', ''))
+        recent_days = [d for d in days if d.get('date', '') <= prev_date_str]
+        if recent_days:
+            latest_day = recent_days[-1]
+            latest_date = latest_day.get('date', '')
+            try:
+                gap = (target_dt - datetime.strptime(latest_date, '%Y-%m-%d')).days
+            except ValueError:
+                gap = 99
+            if gap <= 3:
+                prev_tier = _estimate_setting_tier(latest_day, machine_key)
+                prev_bad = _is_bad_day(latest_day, machine_key)
+
+    uses_6 = sg.get('uses_setting_6', False)
+
+    # --- スタイル別ボーナス ---
+    # 各スタイルが設定6据え置き・投入期待を自前で処理する（二重計算回避）
+
+    if style == 'heavy_hitter':
+        # heavy_hitter: 6を目玉にする → 6の据え置き期待が最も強い
+        if prev_tier == 6:
+            bonus += 1.2 * WEIGHT_SETTING6_CARRY * style_conf
+        elif prev_tier == 5:
+            bonus += 0.4 * WEIGHT_SETTING6_CARRY * style_conf
+
+    elif style == 'spread':
+        # spread: 4-5を分散投入、6もたまに
+        # 前日6域は据え置き期待あり（ただし heavy_hitter ほど強くない）
+        if uses_6 and prev_tier == 6:
+            freq_factor = min(sg.get('setting_6_frequency', 0) / 0.5, 1.0)
+            bonus += 0.7 * freq_factor * WEIGHT_SETTING6_CARRY * style_conf
+        elif uses_6 and prev_tier == 5:
+            bonus += 0.3 * WEIGHT_SETTING6_CARRY * style_conf
+
+        # 分散型の店は前日不調台への投入期待が高い
+        if prev_bad:
+            avg_high = sg.get('typical_high_count', {}).get('avg', 0)
+            total_units = patterns.get('meta', {}).get('total_units', 1)
+            high_ratio = avg_high / total_units if total_units > 0 else 0
+            spread_factor = min(high_ratio / 0.4, 1.0)  # 40%で最大
+            bonus += spread_factor * WEIGHT_SPREAD_PROMO * style_conf
+
+    elif style == 'mixed':
+        # mixed: 6の据え置き + spread の両方を少し加味
+        if uses_6 and prev_tier == 6:
+            bonus += 0.8 * WEIGHT_SETTING6_CARRY * style_conf
+        elif uses_6 and prev_tier == 5:
+            bonus += 0.3 * WEIGHT_SETTING6_CARRY * style_conf
+
+        if prev_bad:
+            avg_high = sg.get('typical_high_count', {}).get('avg', 0)
+            total_units = patterns.get('meta', {}).get('total_units', 1)
+            high_ratio = avg_high / total_units if total_units > 0 else 0
+            spread_factor = min(high_ratio / 0.4, 1.0)
+            bonus += 0.5 * spread_factor * WEIGHT_SPREAD_PROMO * style_conf
+
+    elif style == 'tight':
+        # tight: 渋い店 → 全体的にスコアを控えめに
+        bonus += WEIGHT_TIGHT_PENALTY * style_conf
+        # それでも6域が出ていた場合は少しだけ期待
+        if uses_6 and prev_tier == 6:
+            bonus += 0.4 * WEIGHT_SETTING6_CARRY * style_conf
+
+    return bonus
+
+
 def clear_cache():
     """パターンキャッシュをクリア（テスト用）"""
     _pattern_cache.clear()
@@ -982,6 +1294,7 @@ if __name__ == '__main__':
         meta = patterns['meta']
         sm = patterns['setting_movement']
         dp = patterns['date_patterns']
+        sg = patterns['setting_grade']
         print(f'  台数: {meta["total_units"]}, データ日数: {meta["total_days"]}')
         print(f'  据え置き率: {sm["carry_over_rate"]} (n={sm["carry_over_samples"]})')
         print(f'  不調→投入率: {sm["promotion_rate"]} (n={sm["promotion_samples"]})')
@@ -992,6 +1305,19 @@ if __name__ == '__main__':
         print(f'  曜日別好調率:')
         for wd_name, info in dp.get('weekday_rates', {}).items():
             print(f'    {wd_name}: {info["rate"]:.3f} (n={info["samples"]}, vs={info["vs_baseline"]:+.3f})')
+        # 設定段階分析
+        print(f'  --- 設定段階分析 ---')
+        print(f'  設定6使用: {sg["uses_setting_6"]} (頻度: {sg["setting_6_frequency"]:.1%}, 出現日平均: {sg["setting_6_per_day"]:.1f}台)')
+        thc = sg['typical_high_count']
+        print(f'  設定4以上台数: 平均{thc["avg"]:.1f}台 (最小{thc["min"]}, 最大{thc["max"]}, {thc["samples"]}日)')
+        print(f'  設定スタイル: {sg["setting_style"]} (信頼度: {sg["style_confidence"]})')
+        # 日別分布サマリ
+        dist = sg.get('setting_distribution', {})
+        if dist:
+            print(f'  日別設定分布 (直近):')
+            for date_str in sorted(dist.keys())[-5:]:
+                d = dist[date_str]
+                print(f'    {date_str}: 6域={d.get("6",0)} 5域={d.get("5",0)} 4域={d.get("4",0)} 3以下={d.get("3",0)} (計{d.get("total",0)})')
 
     # ボーナス計算テスト
     print('\n' + '=' * 60)
