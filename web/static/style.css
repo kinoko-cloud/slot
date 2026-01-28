@@ -5600,3 +5600,64 @@ strong.minus {
     margin-left: 4px;
     opacity: 0.6;
 }
+
+/* S/Aフィルターセクション（トップページ） */
+.sa-filter-section { margin-top: 16px; }
+.sa-filter-section h3 { font-size: 0.95em; color: #aaa; margin-bottom: 8px; }
+.sa-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 10px;
+}
+.sa-filter-btn {
+    padding: 4px 10px;
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 16px;
+    background: transparent;
+    color: #ccc;
+    font-size: 0.8em;
+    cursor: pointer;
+    white-space: nowrap;
+}
+.sa-filter-btn.active {
+    background: rgba(100,200,255,0.2);
+    border-color: rgba(100,200,255,0.5);
+    color: #fff;
+}
+.sa-recs-list { display: flex; flex-direction: column; gap: 8px; }
+.sa-rec-card {
+    display: block;
+    padding: 10px 12px;
+    background: var(--card-bg, #1a1a2e);
+    border-radius: 8px;
+    border-left: 3px solid rgba(255,255,255,0.1);
+}
+.sa-rec-card.rank-s { border-left-color: #ff6b6b; }
+.sa-rec-card.rank-a { border-left-color: #ffa502; }
+.sa-rec-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+}
+.sa-rec-store { font-size: 0.85em; color: #ccc; }
+.sa-rec-unit { font-size: 0.85em; font-weight: bold; color: #fff; }
+.sa-rec-data {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: 0.8em;
+    color: #aaa;
+}
+.sa-art { color: #4ecdc4; font-weight: bold; }
+.sa-prob { font-size: 0.9em; }
+.sa-prev { color: #888; }
+.sa-rec-reason {
+    margin-top: 4px;
+    font-size: 0.75em;
+    color: #777;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
