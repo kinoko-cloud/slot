@@ -1268,6 +1268,25 @@ def _try_load_backtest_results():
     return None
 
 
+def _is_unit_hit(u):
+    """予想と結果が一致=的中"""
+    rank = u.get('pre_open_rank', u.get('predicted_rank', 'C'))
+    is_good = u.get('actual_is_good', False)
+    prob = u.get('actual_prob', 0)
+    pred_good = rank in ('S', 'A')
+    pred_bad = rank in ('C', 'D')
+    result_bad = prob >= 200
+    if pred_good and is_good:
+        return True  # 好調予想→好調
+    if pred_bad and result_bad:
+        return True  # ダメ予想→不調
+    if pred_bad and not is_good:
+        return True  # ダメ予想→好調じゃない
+    if rank == 'B' and not is_good and not result_bad:
+        return True  # 微妙予想→微妙
+    return False
+
+
 def _generate_verify_from_backtest(env, results):
     """バックテスト結果からverifyページを生成"""
     from analysis.feedback import analyze_prediction_errors
@@ -1365,24 +1384,29 @@ def _generate_verify_from_backtest(env, results):
             'total_good': m_actual + m_surprise, 'rate': m_rate,
         })
     
-    # 的中ハイライト（100%的中 or 高的中率で3台以上）
     perfect_stores = []
     for mk, md in verify_data.items():
-        for sd in md['stores']:
-            sa_total = sd.get('sa_total', 0)
-            sa_hit = sd.get('sa_hit', 0)
-            total_units = len(sd.get('units', []))
-            if sa_total >= 1 and sa_hit == sa_total:
+        for si, sd in enumerate(md['stores']):
+            units = sd.get('units', [])
+            valid_units = [u for u in units if u.get('actual_prob', 0) > 0 and u.get('actual_games', 0) >= 500]
+            if not valid_units:
+                continue
+            hit_count = sum(1 for u in valid_units if _is_unit_hit(u))
+            total = len(valid_units)
+            rate = hit_count / total * 100 if total > 0 else 0
+            store_id = f"store-{mk}-{si}"
+            if rate >= 60 and total >= 3:
                 perfect_stores.append({
                     'store_name': sd.get('store_name', sd.get('name', '')),
                     'machine_name': md['name'],
                     'machine_icon': md['icon'],
-                    'sa_total': sa_total,
-                    'sa_hit': sa_hit,
-                    'total_units': total_units,
+                    'hit_count': hit_count,
+                    'total_units': total,
+                    'rate': rate,
+                    'store_id': store_id,
                 })
-    # 台数多い順にソート
-    perfect_stores.sort(key=lambda x: -x['sa_total'])
+    # 的中率→台数順にソート
+    perfect_stores.sort(key=lambda x: (-x['rate'], -x['total_units']))
 
     hypotheses = []
     for mk, md in verify_data.items():
@@ -1709,23 +1733,29 @@ def generate_verify_page(env):
     except Exception as e:
         print(f"  ⚠ 仮説生成エラー: {e}")
 
-    # 的中ハイライト（100%的中）
+    # 的中ハイライト（全台ベース）
     perfect_stores = []
     for mk, md in verify_data.items():
-        for sd in md['stores']:
-            sa_total = sd.get('sa_total', 0)
-            sa_hit = sd.get('sa_hit', 0)
-            total_units = len(sd.get('units', []))
-            if sa_total >= 1 and sa_hit == sa_total:
+        for si, sd in enumerate(md['stores']):
+            units = sd.get('units', [])
+            valid_units = [u for u in units if u.get('actual_prob', 0) > 0 and u.get('actual_games', 0) >= 500]
+            if not valid_units:
+                continue
+            hit_count = sum(1 for u in valid_units if _is_unit_hit(u))
+            total = len(valid_units)
+            rate = hit_count / total * 100 if total > 0 else 0
+            store_id = f"store-{mk}-{si}"
+            if rate >= 60 and total >= 3:
                 perfect_stores.append({
                     'store_name': sd.get('store_name', sd.get('name', '')),
                     'machine_name': md['name'],
                     'machine_icon': md['icon'],
-                    'sa_total': sa_total,
-                    'sa_hit': sa_hit,
-                    'total_units': total_units,
+                    'hit_count': hit_count,
+                    'total_units': total,
+                    'rate': rate,
+                    'store_id': store_id,
                 })
-    perfect_stores.sort(key=lambda x: -x['sa_total'])
+    perfect_stores.sort(key=lambda x: (-x['rate'], -x['total_units']))
 
     html = template.render(
         verify_data=verify_data,
