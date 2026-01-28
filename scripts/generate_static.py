@@ -1516,66 +1516,44 @@ def _generate_verify_from_backtest(env, results):
                 parts = []
                 art = u.get('actual_art', 0)
                 if art > 0:
-                    parts.append(f'ART {art}回')
+                    parts.append(f'<span class="td-art">ART {art}回</span>')
                 prob = u.get('actual_prob', 0)
                 if prob > 0:
-                    parts.append(f'1/{prob:.0f}')
+                    parts.append(f'<span class="td-prob">1/{prob:.0f}</span>')
                 diff = u.get('diff_medals', 0)
                 if diff:
-                    parts.append(f'差枚{diff:+,}')
+                    cls = 'plus' if diff > 0 else 'minus'
+                    parts.append(f'<span class="td-diff {cls}">差枚{diff:+,}</span>')
                 mx = u.get('max_medals', 0)
                 if mx > 0:
-                    parts.append(f'最大{mx:,}枚')
+                    parts.append(f'<span class="td-max">最大{mx:,}枚</span>')
                 return ' / '.join(parts)
             
-            # 1. 爆発台（確率1/80以下）
+            # 1. 爆発台の的中（S/A予測 × 確率1/80以下）
             explosions = sorted([u for u in valid if u.get('actual_prob', 0) <= 80], key=lambda x: x.get('actual_prob', 999))
             for u in explosions:
                 rank = u.get('pre_open_rank', u.get('predicted_rank', 'C'))
-                was_predicted = rank in ('S', 'A')
-                topics.append({
-                    'icon': '💥',
-                    'type': 'explosion',
-                    'title': f'{"予想的中！" if was_predicted else "予想外の爆発！"}{store_name} {u["unit_id"]}番',
-                    'detail': f'{machine_name} — {_unit_stats(u)}',
-                    'score': 100 + (80 - u.get('actual_prob', 80)),
-                })
+                if rank in ('S', 'A'):
+                    topics.append({
+                        'icon': '💥',
+                        'type': 'explosion',
+                        'machine': machine_name,
+                        'title': f'大的中！{store_name} {u["unit_id"]}番',
+                        'detail': _unit_stats(u),
+                        'score': 100 + (80 - u.get('actual_prob', 80)),
+                    })
             
-            # 2. S/A予測の的中（好調台）
+            # 2. S/A予測の的中（好調台）— 爆発と重複しない台
             sa_units = [u for u in valid if u.get('pre_open_rank', u.get('predicted_rank', 'C')) in ('S', 'A')]
-            sa_good = [u for u in sa_units if u.get('actual_is_good', False)]
-            if sa_good:
-                best = max(sa_good, key=lambda x: x.get('diff_medals', 0))
+            sa_good = [u for u in sa_units if u.get('actual_is_good', False) and u.get('actual_prob', 999) > 80]
+            for u in sorted(sa_good, key=lambda x: x.get('actual_prob', 999)):
                 topics.append({
                     'icon': '🎯',
                     'type': 'hit',
-                    'title': f'予想的中！{store_name} {best["unit_id"]}番が好調',
-                    'detail': f'{machine_name} — {_unit_stats(best)}',
-                    'score': 88 + len(sa_good),
-                })
-            
-            # 3. S/A予測が全滅した店舗
-            if len(sa_units) >= 3 and len(sa_good) == 0:
-                worst = min(sa_units, key=lambda x: -x.get('actual_prob', 0))
-                topics.append({
-                    'icon': '😱',
-                    'type': 'miss',
-                    'title': f'{store_name}の{machine_name}で予測全滅…',
-                    'detail': f'S/A予測{len(sa_units)}台が全て不調',
-                    'score': 90,
-                })
-            
-            # 4. B以下から好調（予想外）
-            low_units = [u for u in valid if u.get('pre_open_rank', u.get('predicted_rank', 'C')) in ('C', 'D')]
-            low_good = [u for u in low_units if u.get('actual_is_good', False)]
-            if len(low_good) >= 2:
-                best_low = max(low_good, key=lambda x: x.get('diff_medals', 0))
-                topics.append({
-                    'icon': '🔥',
-                    'type': 'surprise',
-                    'title': f'予想外！{store_name} {best_low["unit_id"]}番が好調',
-                    'detail': f'{machine_name} — {_unit_stats(best_low)}（C/D予測{len(low_units)}台中{len(low_good)}台が好調）',
-                    'score': 85,
+                    'machine': machine_name,
+                    'title': f'的中！{store_name} {u["unit_id"]}番',
+                    'detail': _unit_stats(u),
+                    'score': 88 + (150 - min(u.get('actual_prob', 150), 150)),
                 })
     
     # スコア順、最大10件

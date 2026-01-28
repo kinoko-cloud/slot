@@ -92,7 +92,7 @@
                     <span class="topic-icon">{{ t.icon }}</span>
                     <div class="topic-body">
                         <div class="topic-title">{{ t.title }}</div>
-                        <div class="topic-detail">{{ t.detail }}</div>
+                        <div class="topic-detail"><span class="td-machine">{{ t.machine }}</span> — {{ t.detail|safe }}</div>
                     </div>
                 </div>
                 {% endfor %}

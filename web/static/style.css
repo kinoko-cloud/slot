@@ -6033,13 +6033,20 @@ a.perfect-card:hover { background: rgba(255,215,0,0.18); }
     border-radius: 8px;
     border-left: 3px solid #444;
 }
-.topic-explosion { border-left-color: #ff6b6b; }
-.topic-miss { border-left-color: #888; }
-.topic-surprise { border-left-color: #ffa502; }
-.topic-perfect { border-left-color: #2ed573; }
-.topic-icon { font-size: 1.3em; flex-shrink: 0; }
-.topic-title { font-weight: bold; font-size: 0.95em; color: #fff; }
-.topic-detail { font-size: 0.8em; color: #aaa; margin-top: 2px; }
+.topic-explosion { border-left-color: #ff6b6b; background: rgba(255,107,107,0.06); }
+.topic-hit { border-left-color: #2ed573; background: rgba(46,213,115,0.06); }
+.topic-icon { font-size: 1.4em; flex-shrink: 0; }
+.topic-title { font-weight: bold; font-size: 0.95em; }
+.topic-explosion .topic-title { color: #ff6b6b; }
+.topic-hit .topic-title { color: #2ed573; }
+.topic-detail { font-size: 0.82em; color: #ccc; margin-top: 3px; line-height: 1.4; }
+.topic-detail .td-machine { color: #70a1ff; }
+.topic-detail .td-art { color: #ffa502; }
+.topic-detail .td-prob { color: #ff6b6b; font-weight: bold; }
+.topic-detail .td-diff { font-weight: bold; }
+.topic-detail .td-diff.plus { color: #2ed573; }
+.topic-detail .td-diff.minus { color: #ff4757; }
+.topic-detail .td-max { color: #dfe6e9; }
 
 /* verify テーブル */
 .verify-table-wrap {
