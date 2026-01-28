@@ -63,6 +63,15 @@ SITE777_STORES = {
             'hokuto_tensei2': '120343',
         },
     },
+    'shibuya_honkan': {
+        'name': 'エスパス渋谷本館',
+        'pmc': '13031018',
+        'urt': '-1',
+        'machines': {
+            'sbj': '120273',
+            'hokuto_tensei2': '120343',
+        },
+    },
 }
 
 
