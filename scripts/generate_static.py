@@ -1606,21 +1606,25 @@ def _generate_verify_from_backtest(env, results):
             sa_units = [u for u in valid if u.get('pre_open_rank', u.get('predicted_rank', 'C')) in ('S', 'A')]
             
             # 1. 大的中（S/A予測 × 確率1/100以下 × 差枚+3,000以上）
-            for u in sorted(sa_units, key=lambda x: x.get('actual_prob', 999)):
-                if u.get('actual_prob', 999) <= 100 and u.get('diff_medals', 0) >= 3000:
+            for u in sa_units:
+                diff = u.get('diff_medals', 0)
+                mx = u.get('max_medals', 0)
+                if u.get('actual_prob', 999) <= 100 and diff >= 3000:
                     topics.append({
                         'icon': '💥',
                         'type': 'explosion',
                         'machine': machine_name,
                         'title': f'大的中！{store_name} {u["unit_id"]}番',
                         'detail': _unit_stats(u),
-                        'score': 200 + (100 - u.get('actual_prob', 100)),
+                        'sort_diff': diff,
+                        'sort_max': mx,
                     })
             
             # 2. 的中（S/A予測 × 差枚+5,000以上）— 大的中と重複しない台
             explosion_ids = {u.get('unit_id') for u in sa_units if u.get('actual_prob', 999) <= 100 and u.get('diff_medals', 0) >= 3000}
-            for u in sorted(sa_units, key=lambda x: -x.get('diff_medals', 0)):
+            for u in sa_units:
                 diff = u.get('diff_medals', 0)
+                mx = u.get('max_medals', 0)
                 uid = u.get('unit_id')
                 if diff >= 5000 and uid not in explosion_ids:
                     topics.append({
@@ -1629,11 +1633,12 @@ def _generate_verify_from_backtest(env, results):
                         'machine': machine_name,
                         'title': f'的中！{store_name} {u["unit_id"]}番',
                         'detail': _unit_stats(u),
-                        'score': 100 + diff // 1000,
+                        'sort_diff': diff,
+                        'sort_max': mx,
                     })
     
-    # スコア順、最大10件
-    topics.sort(key=lambda x: -x.get('score', 0))
+    # 差枚順 → 最大枚数順でソート、最大10件
+    topics.sort(key=lambda x: (-x.get('sort_diff', 0), -x.get('sort_max', 0)))
     topics = topics[:10]
     
     # 日付情報（読みやすいフォーマット）
