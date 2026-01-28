@@ -1958,13 +1958,8 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
         continuation_total = historical_perf.get('continuation_total', 0)
         continuation_good = historical_perf.get('continuation_good', 0)
 
-        # 💡店舗傾向（🔄に曜日が含まれない場合のみ）
-        # consecutive_plus >= 3 の場合、🔄に「N日連続好調 + 曜日狙い目」が入るのでスキップ
-        if today_rating >= 4 and consecutive_plus < 3 and consecutive_minus < 2:
-            rating_label = '高設定投入日' if today_rating >= 5 else '狙い目の曜日'
-            reasons.append(f"💡 {store_name}の{today_weekday}曜は{rating_label}（店舗傾向）")
-        elif today_rating >= 3 and consecutive_plus < 3 and consecutive_minus < 2:
-            reasons.append(f"💡 {store_name}の{today_weekday}曜は過去実績から普通〜やや期待できる日")
+        # 店舗傾向は台の推奨理由としては表示しない（台固有データのみ）
+        # 店舗傾向は店舗分析セクションで別途表示
     elif total_perf_days > 0 and good_day_rate <= 0.4:
         reasons.append(f"📊 {total_perf_days}日間中{good_days}日好調（好調率{good_day_rate:.0%}）→ 低設定が入りやすい台")
     elif base_rank == 'S':
@@ -2087,15 +2082,12 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
     # === 6. 店舗曜日傾向（補足情報） ===
     # 好調率の根拠で既に曜日情報を出してたら重複させない
     has_weekday_in_confidence = any('今日も期待できる根拠' in r and today_weekday in r for r in reasons)
+    # 店舗の曜日傾向は台の推奨理由には含めない（店舗分析セクションで表示）
+    # ただし弱い日の警告だけは残す
     if store_name and today_weekday and not has_weekday_in_confidence:
-        best_info = weekday_info.get('best_days', '')
-        if today_rating >= 5:
-            reasons.append(f"📅 {store_name}の{today_weekday}曜は高設定投入日（店舗傾向: {best_info}）")
-        elif today_rating >= 4:
-            reasons.append(f"📅 {store_name}は{today_weekday}曜が狙い目（店舗傾向: {best_info}）")
-        elif today_rating <= 2:
+        if today_rating <= 2:
             worst_info = weekday_info.get('worst_days', '')
-            reasons.append(f"🚨 {store_name}の{today_weekday}曜は弱い日（店舗傾向: {worst_info}）→ 回収傾向")
+            reasons.append(f"⚠️ {store_name}の{today_weekday}曜は出玉が少ない傾向（注意）")
 
     # === フォールバック ===
     if not reasons:
