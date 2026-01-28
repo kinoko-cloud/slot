@@ -1215,7 +1215,7 @@ def _generate_verify_from_backtest(env, results):
     
     STORE_TO_MACHINE = {}
     for sk, sv in STORES.items():
-        STORE_TO_MACHINE[sk] = sv.get('machine_key', 'sbj')
+        STORE_TO_MACHINE[sk] = sv.get('machine', sv.get('machine_key', 'sbj'))
     
     machine_groups = {}
     for store_key, store_data in results.get('stores', {}).items():
@@ -1232,7 +1232,10 @@ def _generate_verify_from_backtest(env, results):
             prob = u.get('actual_prob', 0)
             games = u.get('actual_games', 0)
             
-            if is_sa and is_good and prob > 0 and prob <= 100:
+            if games < 500 or prob <= 0:
+                # データ不足（未稼働・games取得失敗）→ 判定不能
+                verdict, verdict_class = '-', 'nodata'
+            elif is_sa and is_good and prob <= 100:
                 verdict, verdict_class = '◎', 'perfect'
             elif is_sa and is_good:
                 verdict, verdict_class = '○', 'hit'
@@ -1240,8 +1243,6 @@ def _generate_verify_from_backtest(env, results):
                 verdict, verdict_class = '✕', 'miss'
             elif not is_sa and is_good:
                 verdict, verdict_class = '★', 'surprise'
-            elif games < 500:
-                verdict, verdict_class = '-', 'nodata'
             else:
                 verdict, verdict_class = '△', 'neutral'
             
@@ -1258,12 +1259,18 @@ def _generate_verify_from_backtest(env, results):
                 'verdict_class': verdict_class,
             })
         
+        # nodata台を除外して的中率を再計算
+        sa_valid = [u for u in formatted_units if u['verdict_class'] != 'nodata' and u['predicted_rank'] in ('S', 'A')]
+        sa_total_recalc = len(sa_valid)
+        sa_hit_recalc = sum(1 for u in sa_valid if u['verdict_class'] in ('perfect', 'hit'))
+        sa_rate_recalc = (sa_hit_recalc / sa_total_recalc * 100) if sa_total_recalc > 0 else 0
+        
         machine_groups[mk]['stores'].append({
             'name': store_data.get('name', store_key),
             'units': formatted_units,
-            'sa_total': store_data.get('sa_total', 0),
-            'sa_hit': store_data.get('sa_hit', 0),
-            'sa_rate': store_data.get('rate', 0),
+            'sa_total': sa_total_recalc,
+            'sa_hit': sa_hit_recalc,
+            'sa_rate': sa_rate_recalc,
         })
     
     verify_data = {}
@@ -1275,10 +1282,14 @@ def _generate_verify_from_backtest(env, results):
             'stores': mg['stores'],
         }
     
-    accuracy = results.get('overall_rate', 0)
-    total_sa = results.get('total_sa', 0)
-    total_hit = results.get('total_hit', 0)
-    total_surprise = results.get('total_surprise', 0)
+    # nodata台を除外した正確な的中率を再計算
+    total_sa = sum(s['sa_total'] for mg in machine_groups.values() for s in mg['stores'])
+    total_hit = sum(s['sa_hit'] for mg in machine_groups.values() for s in mg['stores'])
+    total_surprise = sum(
+        sum(1 for u in s['units'] if u['verdict_class'] == 'surprise')
+        for mg in machine_groups.values() for s in mg['stores']
+    )
+    accuracy = (total_hit / total_sa * 100) if total_sa > 0 else 0
     
     machine_accuracy = []
     for mk, md in verify_data.items():
