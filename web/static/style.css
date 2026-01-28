@@ -5734,3 +5734,23 @@ strong.minus {
 .verdict-label-surprise { color: #ffa502; }
 .verdict-label-neutral { color: #666; }
 .verdict-label-nodata { color: #555; }
+
+/* 予想→結果バッジ（爆発台TOP10用） */
+.pred-result-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    font-size: 0.75em;
+    background: rgba(255,255,255,0.05);
+    padding: 2px 6px;
+    border-radius: 10px;
+    margin-left: 4px;
+}
+.pr-pred, .pr-result { font-weight: bold; }
+.pr-pred.good { color: #4ecdc4; }
+.pr-pred.bad { color: #888; }
+.pr-result.good { color: #ff6b6b; }
+.pr-result.bad { color: #888; }
+.pr-label { font-weight: bold; margin-left: 2px; }
+.pr-label.hit { color: #4ecdc4; }
+.pr-label.miss { color: #ff6b6b; }
