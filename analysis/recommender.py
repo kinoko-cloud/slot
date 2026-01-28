@@ -2572,6 +2572,18 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
         elif _yd <= -3000:
             yesterday_diff_bonus = 3  # 大負け翌日は設定変更期待
 
+        # === 店舗設定投入パターンボーナス ===
+        # 店舗固有の設定投入癖（据え置き率、特定日傾向、台番傾向等）を補正
+        # 既存の weekday_bonus / slump_bonus は一般的な傾向、
+        # pattern_bonus は店舗固有のデータ実績ベース
+        pattern_bonus = 0
+        try:
+            from analysis.store_pattern import calculate_pattern_bonus
+            _target_date = datetime.now().strftime('%Y-%m-%d')
+            pattern_bonus = calculate_pattern_bonus(store_key, machine_key, unit_id, _target_date)
+        except Exception:
+            pass
+
         # === 最終スコア計算 ===
         raw_score = (base_score
                      + today_analysis.get('today_score_bonus', 0)
@@ -2582,6 +2594,7 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
                      + medal_balance_penalty  # 出玉バランスペナルティ
                      + weekday_bonus      # 曜日ボーナス
                      + yesterday_diff_bonus  # 前日差枚ボーナス
+                     + pattern_bonus      # 店舗設定投入パターンボーナス
                      )
 
         # === フィードバック補正 ===
