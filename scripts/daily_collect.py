@@ -68,9 +68,18 @@ def collect_daily_data(machine_keys: list = None, max_units_per_store: int = Non
 
             try:
                 collected = []
+                _machine_keywords = {
+                    'sbj': 'ブラックジャック',
+                    'hokuto_tensei2': '北斗',
+                }
+                _expected = _machine_keywords.get(machine_key)
                 for unit_id in units:
                     print(f'  台{unit_id}...')
-                    result = get_all_history(hall_id=hall_id, unit_id=unit_id, hall_name=hall_name)
+                    result = get_all_history(hall_id=hall_id, unit_id=unit_id, hall_name=hall_name,
+                                             expected_machine=_expected)
+                    if result and result.get('machine_mismatch'):
+                        print(f"    ⚠️ 台{unit_id}は別機種に変更された可能性。収集スキップ。")
+                        continue
                     if result:
                         result['machine_key'] = machine_key
                         result['machine_name'] = machine_name
