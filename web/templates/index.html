@@ -20,6 +20,7 @@
         </div>
         {# === ハンバーガーメニュー === #}
         <nav id="hamburger-menu" class="hamburger-menu hidden">
+            <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});document.getElementById('hamburger-menu').classList.add('hidden');return false;">🏠 トップ</a>
             <a href="#top3-section">📊 おすすめ台</a>
             <a href="#explosion-section">💥 爆発台ランキング</a>
             <a href="{{ url_for('verify') }}">🏆 答え合わせ</a>
