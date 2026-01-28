@@ -6029,8 +6029,22 @@ a.perfect-card:hover { background: rgba(255,215,0,0.18); }
     flex-direction: column;
     gap: 2px;
 }
-.vb-title-lg { font-weight: bold; font-size: 0.95em; color: #fff; }
-.vb-detail-lg { color: #aaa; font-size: 0.8em; }
+.vb-title-lg { font-weight: bold; font-size: 1.1em; color: #fff; display: block; }
+.vb-detail-lg {
+    color: #fff;
+    font-size: 0.9em;
+    background: linear-gradient(135deg, #ffd700 0%, #ffa500 100%);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: bold;
+    margin-top: 6px;
+    display: inline-block;
+    transition: all 0.2s ease;
+}
+.verify-banner-lg:hover .vb-detail-lg {
+    transform: scale(1.05);
+    box-shadow: 0 2px 8px rgba(255,215,0,0.4);
+}
 
 /* トピック */
 .topics-section { margin-bottom: 20px; }
