@@ -68,6 +68,11 @@ def get_all_history(hall_id: str = "100860", unit_id: str = "3011", hall_name: s
                 result['machine_name'] = machine_match.group(1)
                 print(f"機種: {result['machine_name']}")
 
+            # 0. 概要ページから日別サマリー（最大持ち玉・累計スタート）をパース
+            overview_by_date = _parse_overview_summary(text)
+            if overview_by_date:
+                print(f"概要データ: {len(overview_by_date)}日分")
+
             # 1. 「詳細を見る」リンクを全て取得
             print("\n【詳細を見るリンクを探す】")
             detail_links = page.evaluate('''() => {
@@ -100,8 +105,16 @@ def get_all_history(hall_id: str = "100860", unit_id: str = "3011", hall_name: s
                 day_data = extract_day_history(text, unit_id)
 
                 if day_data:
+                    # 概要ページの最大持ち玉・累計スタートをマージ
+                    date_key = day_data.get('date', '')
+                    if date_key in overview_by_date:
+                        ov = overview_by_date[date_key]
+                        if ov.get('max_medals_day') and not day_data.get('max_medals_day'):
+                            day_data['max_medals_day'] = ov['max_medals_day']
+                        if ov.get('total_start') and not day_data.get('total_start'):
+                            day_data['total_start'] = ov['total_start']
                     result['days'].append(day_data)
-                    print(f"  日付: {day_data.get('date')}")
+                    print(f"  日付: {day_data.get('date')} 最大持玉={day_data.get('max_medals_day', '-')}")
                     print(f"  サマリー: BB={day_data.get('bb', 0)}, RB={day_data.get('rb', 0)}, ART={day_data.get('art', 0)}")
                     print(f"  履歴件数: {len(day_data.get('history', []))}")
 
@@ -130,6 +143,60 @@ def get_all_history(hall_id: str = "100860", unit_id: str = "3011", hall_name: s
 
         finally:
             browser.close()
+
+
+def _parse_overview_summary(text: str) -> dict:
+    """概要ページのテキストから日別サマリーをパース
+    
+    テキスト例:
+      1月27日 （詳細を見る） 最終更新時間 2026.01.27 23:43
+      BB	RB	ART	スタート回数
+      0	23	129	0
+      最大持ち玉	15785	累計スタート	4612
+    
+    Returns:
+        {date_str: {'max_medals_day': int, 'total_start': int, 'bb': int, 'rb': int, 'art': int}}
+    """
+    result = {}
+    year = datetime.now().year
+    
+    # 日付セクションごとに分割
+    # パターン: X月Y日 （詳細を見る）
+    sections = re.split(r'(\d{1,2})月(\d{1,2})日\s*(?:（詳細を見る）)?', text)
+    
+    for i in range(1, len(sections) - 2, 3):
+        month = int(sections[i])
+        day = int(sections[i + 1])
+        section_text = sections[i + 2]
+        
+        # 前年判定
+        current_month = datetime.now().month
+        y = year if month <= current_month else year - 1
+        date_str = f"{y}-{month:02d}-{day:02d}"
+        
+        entry = {}
+        
+        # 最大持ち玉
+        max_match = re.search(r'最大持ち玉\s*(\d+)', section_text)
+        if max_match:
+            entry['max_medals_day'] = int(max_match.group(1))
+        
+        # 累計スタート
+        total_match = re.search(r'累計スタート\s*(\d+)', section_text)
+        if total_match:
+            entry['total_start'] = int(total_match.group(1))
+        
+        # BB/RB/ART/スタート回数
+        summary_match = re.search(r'BB\s+RB\s+ART\s+スタート回数\s*(\d+)\s+(\d+)\s+(\d+)\s+(\d+)', section_text)
+        if summary_match:
+            entry['bb'] = int(summary_match.group(1))
+            entry['rb'] = int(summary_match.group(2))
+            entry['art'] = int(summary_match.group(3))
+        
+        if entry:
+            result[date_str] = entry
+    
+    return result
 
 
 def extract_day_history(text: str, unit_id: str) -> dict:
