@@ -1225,15 +1225,17 @@ def analyze_today_data(unit_data: dict, current_hour: int = None, machine_key: s
             result['today_score_bonus'] = int(12 * games_multiplier)
             result['today_reasons'].append(f'本日ART確率 1/{result["art_prob"]:.0f} (中間設定域)')
         elif result['art_prob'] <= thresholds['low_at_prob']:
-            result['today_score_bonus'] = int(-5 * games_multiplier)
-            result['today_reasons'].append(f'本日ART確率 1/{result["art_prob"]:.0f} (低設定寄り)')
+            # 130-180: 低設定寄り → 強めのペナルティ
+            result['today_score_bonus'] = int(-20 * games_multiplier)
+            result['today_reasons'].append(f'🚨 本日ART確率 1/{result["art_prob"]:.0f} (低設定寄り)')
         elif result['art_prob'] >= thresholds['very_low_at_prob']:
-            result['today_score_bonus'] = int(-15 * games_multiplier)
-            result['today_reasons'].append(f'本日ART確率 1/{result["art_prob"]:.0f} (低設定域)')
+            # 250以上: 完全に低設定 → 最大ペナルティ
+            result['today_score_bonus'] = int(-30 * games_multiplier)
+            result['today_reasons'].append(f'🚨 本日ART確率 1/{result["art_prob"]:.0f} (低設定域)')
         else:
-            # mid_at_prob < art_prob < very_low_at_prob（微妙ゾーン）
-            result['today_score_bonus'] = int(-8 * games_multiplier)
-            result['today_reasons'].append(f'本日ART確率 1/{result["art_prob"]:.0f} (設定不明域)')
+            # 180-250: 低設定濃厚 → 強ペナルティ
+            result['today_score_bonus'] = int(-25 * games_multiplier)
+            result['today_reasons'].append(f'🚨 本日ART確率 1/{result["art_prob"]:.0f} (低設定濃厚)')
 
     # 時間帯に対する稼働量の評価
     if current_hour >= 10:
