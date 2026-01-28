@@ -1398,13 +1398,19 @@ def _generate_verify_from_backtest(env, results):
     else:
         predict_time_info = f'{_fmt_date(pred_date)}までの蓄積データで予測'
     
+    # 全台数計算
+    _total_all_units = sum(len(s['units']) for mg in machine_groups.values() for s in mg['stores'])
+    _total_good_all = total_hit + total_surprise
+
     template = env.get_template('verify.html')
     html = template.render(
         verify_data=verify_data,
         accuracy=accuracy,
-        total_predicted_good=total_sa,
-        total_actual_good=total_hit,
-        total_surprise=total_surprise,
+        predicted_good=total_sa,
+        actual_good=total_hit,
+        surprise_good=total_surprise,
+        total_all_units=_total_all_units,
+        total_good_all=_total_good_all,
         machine_accuracy=machine_accuracy,
         hypotheses=hypotheses[:6],
         version=f'backtest_{actual_date}',
