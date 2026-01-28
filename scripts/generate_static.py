@@ -2025,8 +2025,6 @@ def generate_history_pages(env):
                 rb = d.get('rb', 0) or 0
                 games = d.get('games', 0) or 0
                 prob = d.get('prob', 0) or 0
-                _day_rl = get_result_level(prob, d.get('diff_medals', 0), machine_key, max_medals=max_medals)
-                is_good = _day_rl in ('excellent', 'good')
                 max_rensa = d.get('max_rensa', 0) or 0
                 history = d.get('history', [])
                 # 最大枚数: historyがあれば連チャン区間累計で再計算
@@ -2035,6 +2033,8 @@ def generate_history_pages(env):
                     max_medals = calculate_max_chain_medals(history)
                 else:
                     max_medals = d.get('max_medals', 0) or 0
+                _day_rl = get_result_level(prob, d.get('diff_medals', 0), machine_key, max_medals=max_medals)
+                is_good = _day_rl in ('excellent', 'good')
 
                 # 差枚計算
                 diff_medals = 0
