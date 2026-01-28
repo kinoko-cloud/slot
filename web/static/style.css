@@ -5847,3 +5847,29 @@ strong.minus {
     border-radius: 12px;
     white-space: nowrap;
 }
+
+/* verify テーブル モバイル対応 */
+.verify-table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+.verify-table thead,
+.verify-table tbody,
+.verify-table tr,
+.verify-table th,
+.verify-table td {
+    /* テーブルレイアウトを維持 */
+}
+@media (max-width: 600px) {
+    .verify-table { font-size: 0.75em; }
+    .verify-table td, .verify-table th { padding: 5px 3px; }
+    .vt-unit { min-width: 36px; }
+    .vt-art { min-width: 24px; }
+    .vt-prob { min-width: 40px; }
+    .vt-games { min-width: 42px; }
+    .vt-pred, .vt-result { min-width: 22px; }
+    .vt-label { min-width: 46px; font-size: 0.85em; }
+    .vt-group-header { font-size: 0.6em; padding: 3px 2px; }
+    .rank-badge-xs { display: none; }
+}
