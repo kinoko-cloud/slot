@@ -853,6 +853,7 @@ def generate_index(env):
         accuracy_hero=accuracy_hero,
         verify_date_str=_get_verify_date_str(),
         verify_accuracy=_get_verify_accuracy(),
+        verify_highlights=_get_verify_highlights(),
         date_prefix=date_prefix,
         next_day_prefix=next_day_prefix,
         next_day_str=next_day_str,
@@ -1324,6 +1325,61 @@ def _get_verify_accuracy():
         except:
             pass
     return 0
+
+
+def _get_verify_highlights():
+    """バックテスト結果から特筆事項を取得（最大2件）"""
+    highlights = []
+    files = sorted(glob.glob('data/verify/verify_*_results.json'), reverse=True)
+    if not files:
+        return highlights
+    try:
+        data = json.load(open(files[0]))
+        
+        # 大的中（S/A予測 × 確率1/100以下 × 差枚+3000以上）を探す
+        big_hits = []
+        normal_hits = []
+        for sk, units in data.get('units', {}).items():
+            for u in units:
+                rank = u.get('predicted_rank', 'C')
+                prob = u.get('actual_prob', 999)
+                diff = u.get('diff_medals', 0)
+                if rank in ('S', 'A') and u.get('actual_is_good', False):
+                    if prob <= 100 and diff >= 3000:
+                        big_hits.append({
+                            'unit_id': u.get('unit_id'),
+                            'prob': prob,
+                            'diff': diff,
+                            'store': sk
+                        })
+                    elif diff >= 5000:
+                        normal_hits.append({
+                            'unit_id': u.get('unit_id'),
+                            'diff': diff,
+                            'store': sk
+                        })
+        
+        # 大的中があれば最優先
+        if big_hits:
+            best = max(big_hits, key=lambda x: x['diff'])
+            highlights.append(f"🎯 大的中！差枚+{best['diff']:,}枚")
+        
+        # 的中台数
+        total_hit = sum(1 for sk, units in data.get('units', {}).items() 
+                       for u in units 
+                       if u.get('predicted_rank') in ('S', 'A') and u.get('actual_is_good', False))
+        if total_hit > 0:
+            highlights.append(f"📊 S/A予測 {total_hit}台が的中")
+        
+        # 全店舗的中などがあれば追加
+        if not highlights and normal_hits:
+            best = max(normal_hits, key=lambda x: x['diff'])
+            highlights.append(f"✨ 差枚+{best['diff']:,}枚の台を予測")
+            
+    except Exception as e:
+        pass
+    
+    return highlights[:2]  # 最大2件
 
 
 def _is_unit_hit(u):
