@@ -6056,7 +6056,6 @@ a.perfect-card:hover { background: rgba(255,215,0,0.18); }
     width: 100%;
     border-collapse: collapse;
     font-size: 0.82em;
-    table-layout: fixed;
 }
 .verify-table th {
     padding: 4px 3px;
@@ -6074,15 +6073,12 @@ a.perfect-card:hover { background: rgba(255,215,0,0.18); }
     overflow: hidden;
     text-overflow: ellipsis;
 }
-/* 列幅指定 */
-.vt-unit  { width: 48px; font-weight: bold; text-align: left; }
-.vt-pred  { width: 28px; }
-.vt-result { width: 28px; }
-.vt-label { width: 52px; font-size: 0.85em; }
-.vt-art   { width: 32px; }
-.vt-prob  { width: 46px; }
-.vt-diff  { width: 58px; }
-.vt-games { width: 48px; }
+.vt-unit  { font-weight: bold; text-align: left; }
+.vt-pred, .vt-result { text-align: center; }
+.vt-label { font-size: 0.85em; }
+.vt-art   { text-align: center; }
+.vt-prob  { text-align: center; }
+.vt-diff  { text-align: right; }
 .verify-row { cursor: pointer; transition: background 0.15s; }
 .verify-row:hover { background: rgba(255,255,255,0.04); }
 .vt-diff.plus { color: #2ed573; font-weight: bold; }
@@ -6094,10 +6090,3 @@ a.perfect-card:hover { background: rgba(255,215,0,0.18); }
 .verdict-label-nodata { color: #444; }
 .verify-detail-row td { padding: 0; }
 .verify-detail-inner { padding: 8px; background: rgba(0,0,0,0.2); }
-@media (max-width: 480px) {
-    .verify-table { font-size: 0.75em; }
-    .verify-table td, .verify-table th { padding: 4px 2px; }
-    .vt-label { font-size: 0.8em; width: 46px; }
-    .vt-games { display: none; }
-    th.vt-games { display: none; }
-}

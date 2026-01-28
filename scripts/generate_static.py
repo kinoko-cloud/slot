@@ -1496,57 +1496,75 @@ def _generate_verify_from_backtest(env, results):
             if not valid:
                 continue
             
+            def _unit_stats(u):
+                parts = []
+                art = u.get('actual_art', 0)
+                if art > 0:
+                    parts.append(f'ART {art}回')
+                prob = u.get('actual_prob', 0)
+                if prob > 0:
+                    parts.append(f'1/{prob:.0f}')
+                diff = u.get('diff_medals', 0)
+                if diff:
+                    parts.append(f'差枚{diff:+,}')
+                mx = u.get('max_medals', 0)
+                if mx > 0:
+                    parts.append(f'最大{mx:,}枚')
+                return ' / '.join(parts)
+            
             # 1. 爆発台（確率1/80以下）
-            explosions = [u for u in valid if u.get('actual_prob', 0) <= 80]
+            explosions = sorted([u for u in valid if u.get('actual_prob', 0) <= 80], key=lambda x: x.get('actual_prob', 999))
             for u in explosions:
                 rank = u.get('pre_open_rank', u.get('predicted_rank', 'C'))
                 was_predicted = rank in ('S', 'A')
                 topics.append({
                     'icon': '💥',
                     'type': 'explosion',
-                    'title': f'{store_name} {u["unit_id"]}番が大爆発！（1/{u["actual_prob"]:.0f}）',
-                    'detail': f'{machine_name} — ART {u.get("actual_art", 0)}回 / {"予測的中" if was_predicted else "予想外の爆発"}',
-                    'score': 100,
+                    'title': f'{"予想的中！" if was_predicted else "予想外の爆発！"}{store_name} {u["unit_id"]}番',
+                    'detail': f'{machine_name} — {_unit_stats(u)}',
+                    'score': 100 + (80 - u.get('actual_prob', 80)),
                 })
             
-            # 2. S/A予測が全滅した店舗
+            # 2. S/A予測の的中（好調台）
             sa_units = [u for u in valid if u.get('pre_open_rank', u.get('predicted_rank', 'C')) in ('S', 'A')]
             sa_good = [u for u in sa_units if u.get('actual_is_good', False)]
+            if sa_good:
+                best = max(sa_good, key=lambda x: x.get('diff_medals', 0))
+                topics.append({
+                    'icon': '🎯',
+                    'type': 'hit',
+                    'title': f'予想的中！{store_name} {best["unit_id"]}番が好調',
+                    'detail': f'{machine_name} — {_unit_stats(best)}',
+                    'score': 88 + len(sa_good),
+                })
+            
+            # 3. S/A予測が全滅した店舗
             if len(sa_units) >= 3 and len(sa_good) == 0:
+                worst = min(sa_units, key=lambda x: -x.get('actual_prob', 0))
                 topics.append({
                     'icon': '😱',
                     'type': 'miss',
-                    'title': f'{store_name}の{machine_name}で予測全滅',
+                    'title': f'{store_name}の{machine_name}で予測全滅…',
                     'detail': f'S/A予測{len(sa_units)}台が全て不調',
                     'score': 90,
                 })
             
-            # 3. B以下から大量好調（予想外の店舗）
+            # 4. B以下から好調（予想外）
             low_units = [u for u in valid if u.get('pre_open_rank', u.get('predicted_rank', 'C')) in ('C', 'D')]
             low_good = [u for u in low_units if u.get('actual_is_good', False)]
-            if len(low_good) >= 3:
+            if len(low_good) >= 2:
+                best_low = max(low_good, key=lambda x: x.get('diff_medals', 0))
                 topics.append({
                     'icon': '🔥',
                     'type': 'surprise',
-                    'title': f'{store_name}の{machine_name}でダメ予想台{len(low_good)}台が好調',
-                    'detail': f'C/D予測{len(low_units)}台中{len(low_good)}台が好調 — 読みにくい店舗',
+                    'title': f'予想外！{store_name} {best_low["unit_id"]}番が好調',
+                    'detail': f'{machine_name} — {_unit_stats(best_low)}（C/D予測{len(low_units)}台中{len(low_good)}台が好調）',
                     'score': 85,
                 })
-            
-            # 4. 完全的中
-            hit_count = sum(1 for u in valid if _is_unit_hit(u))
-            if hit_count == len(valid) and len(valid) >= 3:
-                topics.append({
-                    'icon': '🎯',
-                    'type': 'perfect',
-                    'title': f'{store_name}の{machine_name}で全{len(valid)}台的中！',
-                    'detail': f'予測が完全に一致',
-                    'score': 95,
-                })
     
-    # スコア順、最大8件
+    # スコア順、最大10件
     topics.sort(key=lambda x: -x.get('score', 0))
-    topics = topics[:8]
+    topics = topics[:10]
     
     # 日付情報（読みやすいフォーマット）
     weekdays = ['月','火','水','木','金','土','日']
