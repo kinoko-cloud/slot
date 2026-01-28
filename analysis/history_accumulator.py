@@ -103,13 +103,14 @@ def _accumulate_unit(store_key: str, unit_id: str, days: list, machine_key: str)
             continue
 
         art = day.get('art', 0)
-        games = day.get('total_start', 0)
+        games = day.get('total_start', 0) or day.get('games', 0)
         prob = games / art if art > 0 and games > 0 else 0
 
         entry = {
             'date': date,
             'art': art,
             'rb': day.get('rb', 0),
+            'total_start': games,
             'games': games,
             'prob': round(prob, 1) if prob > 0 else 0,
             # 試行回数が少ない日は信頼性が低いため好調判定しない

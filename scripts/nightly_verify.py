@@ -77,18 +77,13 @@ def run_verification():
     fetched_at = availability.get('fetched_at', '')
     
     # SBJ店舗のみ対象（ランキングデータがあるもの）
-    sbj_stores = [
-        'island_akihabara_sbj',
-        'shibuya_espass_sbj',
-        'shinjuku_espass_sbj',
-        'akiba_espass_sbj',
-        'seibu_shinjuku_espass_sbj',
-    ]
+    # 全ストアを対象に（SBJ + 北斗）
+    target_stores = [sk for sk in STORES if sk not in ('island_akihabara', 'shibuya_espass', 'shinjuku_espass')]
     
     all_results = []
     store_summaries = []
     
-    for store_key in sbj_stores:
+    for store_key in target_stores:
         store = STORES.get(store_key)
         if not store:
             continue
