@@ -6238,3 +6238,20 @@ a.perfect-card:hover { background: rgba(255,215,0,0.18); }
 .v2-header-row2 {
     margin-top: 4px;
 }
+
+/* details/summary展開 */
+details.unit-card {
+    cursor: pointer;
+}
+details.unit-card > summary {
+    list-style: none;
+}
+details.unit-card > summary::-webkit-details-marker {
+    display: none;
+}
+details.unit-card[open] .expand-icon {
+    transform: rotate(180deg);
+}
+details.unit-card .unit-details {
+    display: block;
+}
