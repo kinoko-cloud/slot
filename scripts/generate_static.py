@@ -1288,6 +1288,18 @@ def _generate_verify_from_backtest(env, results):
     
     pred_date = results.get('prediction_date', '')
     actual_date = results.get('date', '')
+    generated_at = results.get('generated_at', '')
+    
+    # 予測生成時刻（バックテスト結果に含まれていれば使用）
+    if generated_at:
+        try:
+            gen_dt = datetime.fromisoformat(generated_at)
+            gen_time_str = gen_dt.strftime('%H:%M')
+            predict_time_info = f'{_fmt_date(pred_date)} {gen_time_str}時点のデータで予測'
+        except:
+            predict_time_info = f'{_fmt_date(pred_date)}までの蓄積データで予測'
+    else:
+        predict_time_info = f'{_fmt_date(pred_date)}までの蓄積データで予測'
     
     template = env.get_template('verify.html')
     html = template.render(
@@ -1300,7 +1312,7 @@ def _generate_verify_from_backtest(env, results):
         hypotheses=hypotheses[:6],
         version=f'backtest_{actual_date}',
         result_date_str=f'{_fmt_date(actual_date)}の実績',
-        predict_base=f'{_fmt_date(pred_date)}までの蓄積データ + 推移パターンロジック',
+        predict_base=predict_time_info,
     )
     
     output_path = OUTPUT_DIR / 'verify.html'
@@ -1543,13 +1555,14 @@ def generate_verify_page(env):
     # 日付情報
     now = datetime.now(JST)
     reason_data_label, reason_prev_label = get_reason_date_labels()
+    generated_time = now.strftime('%Y/%m/%d %H:%M')
     # 実績データの日付（閉店後は前日、営業中は当日）
     if is_business_hours():
-        result_date_str = format_date_with_weekday(now)
-        predict_base = format_date_with_weekday(now - timedelta(days=1))
+        result_date_str = format_date_with_weekday(now) + 'の実績'
+        predict_base = f'{format_date_with_weekday(now - timedelta(days=1))}までのデータで予測（{generated_time}生成）'
     else:
-        result_date_str = format_date_with_weekday(now - timedelta(days=1))
-        predict_base = format_date_with_weekday(now - timedelta(days=2))
+        result_date_str = format_date_with_weekday(now - timedelta(days=1)) + 'の実績'
+        predict_base = f'{format_date_with_weekday(now - timedelta(days=2))}までのデータで予測（{generated_time}生成）'
 
     # 仮説生成
     hypotheses = []
