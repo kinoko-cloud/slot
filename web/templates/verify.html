@@ -125,6 +125,7 @@
                                 <th class="vt-art">ART</th>
                                 <th class="vt-prob">確率</th>
                                 <th class="vt-diff">差枚</th>
+                                <th class="vt-max">最大</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -157,10 +158,11 @@
                             <td class="vt-art">{{ unit.actual_art if unit.actual_prob > 0 else '-' }}</td>
                             <td class="vt-prob {% if unit.actual_is_good and unit.actual_prob <= 100 %}excellent{% elif unit.actual_is_good %}good{% elif unit.actual_prob >= 200 %}bad{% endif %}">{% if unit.actual_prob > 0 %}1/{{ unit.actual_prob|int }}{% else %}-{% endif %}</td>
                             <td class="vt-diff {% if unit.diff_medals > 0 %}plus{% elif unit.diff_medals < 0 %}minus{% endif %}">{% if unit.diff_medals %}{{ '{:+,}'.format(unit.diff_medals|int) }}{% else %}-{% endif %}</td>
+                            <td class="vt-max">{% if unit.max_medals %}{{ '{:,}'.format(unit.max_medals|int) }}{% else %}-{% endif %}</td>
                         </tr>
                             {# 展開可能な当たり履歴セクション #}
                             {% if unit.history %}
-                            <tr class="verify-detail-row hidden"><td colspan="7">
+                            <tr class="verify-detail-row hidden"><td colspan="8">
                             <div class="verify-detail-inner">
                                 {# サマリ統計 #}
                                 {% if unit.history_summary %}
