@@ -116,7 +116,7 @@ def collect_daily_data(machine_keys: list = None, max_units_per_store: int = Non
                     for unit_id in units:
                         print(f'  台{unit_id}...')
                         # 当日分（23:00実行時点のリアルタイムデータ）+ 前日分を取得
-                        result = get_unit_history(page, hall_id, unit_id, days_back=2)
+                        result = get_unit_history(page, hall_id, unit_id, days_back=14)
                         result['hall_name'] = hall_name
                         result['machine_key'] = machine_key
                         result['machine_name'] = machine_name
