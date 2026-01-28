@@ -2433,11 +2433,12 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
         if accumulated.get('days'):
             acc_days_for_trend = []
             for d in accumulated['days']:
+                _games = d.get('total_start', 0) or d.get('games', 0)
                 acc_days_for_trend.append({
                     'date': d.get('date', ''),
                     'art': d.get('art', 0),
-                    'total_start': d.get('games', 0),
-                    'games': d.get('games', 0),
+                    'total_start': _games,
+                    'games': _games,
                     'rb': d.get('rb', 0),
                     'prob': d.get('prob', 0),
                     'history': d.get('history', []),
