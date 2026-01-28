@@ -33,28 +33,55 @@ for _sk, _dk in STORE_KEY_MAPPING.items():
 
 
 def load_all_daily_data():
-    """全ての日別データファイルを読み込んで統合する"""
-    data_dir = PROJECT_ROOT / 'data' / 'daily'
+    """全ての日別データファイルを読み込んで統合する
+
+    data/history/（蓄積DB）を優先で読み、data/daily/で補完する。
+    """
     all_data = {}  # {store_key: {unit_id: {date: day_data}}}
 
-    for json_file in sorted(data_dir.glob('*.json')):
-        try:
-            with open(json_file, 'r', encoding='utf-8') as f:
-                data = json.load(f)
-        except Exception:
-            continue
-
-        for store_key, store_data in data.get('stores', {}).items():
+    # 1. 蓄積DB（data/history/）を最優先で読む
+    hist_dir = PROJECT_ROOT / 'data' / 'history'
+    if hist_dir.is_dir():
+        for store_dir in sorted(hist_dir.iterdir()):
+            if not store_dir.is_dir():
+                continue
+            store_key = store_dir.name
             if store_key not in all_data:
                 all_data[store_key] = {}
-            for unit in store_data.get('units', []):
-                uid = str(unit.get('unit_id', ''))
+            for json_file in sorted(store_dir.glob('*.json')):
+                try:
+                    with open(json_file, 'r', encoding='utf-8') as f:
+                        data = json.load(f)
+                except Exception:
+                    continue
+                uid = str(data.get('unit_id', json_file.stem))
                 if uid not in all_data[store_key]:
                     all_data[store_key][uid] = {}
-                for day in unit.get('days', []):
+                for day in data.get('days', []):
                     date = day.get('date', '')
                     if date:
                         all_data[store_key][uid][date] = day
+
+    # 2. data/daily/で補完（蓄積DBにない日付のみ追加）
+    data_dir = PROJECT_ROOT / 'data' / 'daily'
+    if data_dir.is_dir():
+        for json_file in sorted(data_dir.glob('*.json')):
+            try:
+                with open(json_file, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+            except Exception:
+                continue
+            for store_key, store_data in data.get('stores', {}).items():
+                if store_key not in all_data:
+                    all_data[store_key] = {}
+                for unit in store_data.get('units', []):
+                    uid = str(unit.get('unit_id', ''))
+                    if uid not in all_data[store_key]:
+                        all_data[store_key][uid] = {}
+                    for day in unit.get('days', []):
+                        date = day.get('date', '')
+                        if date and date not in all_data[store_key][uid]:
+                            all_data[store_key][uid][date] = day
 
     return all_data
 
