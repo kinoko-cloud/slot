@@ -37,11 +37,13 @@ def evaluate_prediction(predicted_rank, actual_prob, machine_key='sbj'):
     - C/D予測 → 実際のART確率が1/180以上（SBJ）or 1/366以上（北斗）= 低設定域
     """
     if machine_key == 'sbj':
-        high_threshold = 130  # これ以下なら高設定
-        mid_threshold = 180   # これ以上なら低設定
+        high_threshold = 145  # これ以下なら高設定（設定4-5域を含む）
+        mid_threshold = 200   # これ以上なら低設定
     else:
-        high_threshold = 330
-        mid_threshold = 366
+        # 北斗転生2: データサイトのART回数は連チャン込み全ART
+        # AT初当たり（設定6: 1/273）とは異なる。全ARTベースで1/100が高設定域
+        high_threshold = 100
+        mid_threshold = 150
     
     if actual_prob <= 0:
         return 'no_data'
@@ -123,6 +125,7 @@ def run_verification():
                 'unit_id': uid,
                 'store_key': store_key,
                 'store_name': store_name,
+                'machine_key': machine_key,
                 'pred_rank': pred_rank,
                 'pred_score': pred_score,
                 'art': art,
@@ -181,36 +184,64 @@ def run_verification():
     # 外れた台の分析
     missed_units = [r for r in all_results if r['result'] == 'miss']
     missed_sa = [r for r in missed_units if r['pred_rank'] in ('S', 'A')]
-    
+
+    # カバー率の計算
+    # 各台の機種に応じた閾値で高設定判定
+    all_good = []
+    for r in all_results:
+        if r['actual_prob'] <= 0:
+            continue
+        mk = r.get('machine_key', 'sbj')
+        ht = 145 if mk == 'sbj' else 100
+        if r['actual_prob'] <= ht:
+            all_good.append(r)
+    sa_predicted_good = [r for r in all_good if r['pred_rank'] in ('S', 'A')]
+    total_good_machines = len(all_good)
+    captured_good = len(sa_predicted_good)
+    coverage_rate = captured_good / total_good_machines * 100 if total_good_machines > 0 else 0
+    precision = overall_sa_rate  # S/A予測的中率
+    f1_score = 2 * precision * coverage_rate / (precision + coverage_rate) if (precision + coverage_rate) > 0 else 0
+
+    coverage_stats = {
+        'coverage_rate': round(coverage_rate, 1),
+        'total_good_machines': total_good_machines,
+        'captured_good': captured_good,
+        'precision': round(precision, 1),
+        'f1_score': round(f1_score, 1),
+    }
+
     # レポート生成
     report = generate_report(
         fetched_at, store_summaries, all_results,
         total_hits, total_partials, total_misses, total_judged,
         total_sa, total_sa_hits, overall_hit_rate, overall_sa_rate,
-        missed_sa
+        missed_sa, coverage_stats
     )
-    
+
     return report
 
 
 def generate_report(fetched_at, store_summaries, all_results,
                     total_hits, total_partials, total_misses, total_judged,
                     total_sa, total_sa_hits, overall_hit_rate, overall_sa_rate,
-                    missed_sa):
+                    missed_sa, coverage_stats=None):
     """WhatsApp向けレポート生成"""
-    
+
     now = datetime.now(JST)
     date_str = now.strftime('%m/%d(%a)')
-    
+
     lines = []
     lines.append(f"🎰 {date_str} 答え合わせ")
     lines.append("")
-    
+
     # 全体サマリー
     lines.append(f"📊 *全体結果*")
     lines.append(f"的中: {total_hits}/{total_judged} ({overall_hit_rate:.0f}%)")
     lines.append(f"S/A予測的中: {total_sa_hits}/{total_sa} ({overall_sa_rate:.0f}%)")
     lines.append(f"惜しい: {total_partials} / 外れ: {total_misses}")
+    if coverage_stats:
+        lines.append(f"カバー率: {coverage_stats['captured_good']}/{coverage_stats['total_good_machines']} ({coverage_stats['coverage_rate']:.0f}%)")
+        lines.append(f"F1スコア: {coverage_stats['f1_score']:.1f}")
     lines.append("")
     
     # 店舗別
@@ -234,7 +265,10 @@ def generate_report(fetched_at, store_summaries, all_results,
                 lines.append(f"  {mark} {u['unit_id']}番 [{u['pred_rank']}] → {prob_str} (ART{u['art']}回/{u['total_start']}G)")
         
         # B以下で実は高設定だった台（サプライズ）
-        surprises = [u for u in other_units if u['actual_prob'] > 0 and u['actual_prob'] <= 130]
+        # 機種に応じた閾値
+        mk = s.get('machine_key', 'sbj') if 'machine_key' in s else ('sbj' if 'sbj' in s.get('store_key', '') else 'hokuto_tensei2')
+        _surprise_th = 145 if 'sbj' in s.get('store_key', '') else 100
+        surprises = [u for u in other_units if u['actual_prob'] > 0 and u['actual_prob'] <= _surprise_th]
         if surprises:
             for u in surprises:
                 lines.append(f"  💡 {u['unit_id']}番 [{u['pred_rank']}] → 1/{u['actual_prob']:.0f} (予想外の高設定)")

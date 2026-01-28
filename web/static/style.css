@@ -148,20 +148,6 @@ header h1 {
     margin-top: 5px;
 }
 
-.refresh-btn {
-    background: #333;
-    color: #fff;
-    border: none;
-    padding: 5px 12px;
-    border-radius: 4px;
-    margin-left: 10px;
-    cursor: pointer;
-}
-
-.refresh-btn:active {
-    background: #444;
-}
-
 /* モードバッジ（営業中/閉店後） */
 .mode-badge {
     display: inline-block;
@@ -1690,6 +1676,7 @@ strong.minus {
     background: rgba(0, 0, 0, 0.2);
     border-radius: 8px;
     margin-bottom: 8px;
+    position: relative;
 }
 
 /* 1段目: ART + 確率 + 連チャン */
@@ -1924,12 +1911,6 @@ strong.minus {
     color: #fff;
 }
 
-.machine-name-sm {
-    font-size: 0.85em;
-    color: #aaa;
-    margin-left: 3px;
-}
-
 /* トップページ: 最大枚数 */
 .max-medals-top {
     color: #ffd700;
@@ -2154,13 +2135,6 @@ strong.minus {
     flex-wrap: wrap;
 }
 
-.unit-id-sm {
-    font-size: 1.1em;
-    font-weight: 700;
-    min-width: 50px;
-    color: #fff;
-}
-
 .avail-sm {
     padding: 2px 6px;
     border-radius: 3px;
@@ -2298,12 +2272,6 @@ strong.minus {
 
 .today-stores {
     margin-bottom: 20px;
-}
-
-.today-stores h2 {
-    font-size: 1em;
-    color: #2ed573;
-    margin-bottom: 10px;
 }
 
 .store-recommend-card {
@@ -2548,12 +2516,6 @@ strong.minus {
     margin-bottom: 20px;
 }
 
-.store-schedule h2 {
-    font-size: 1em;
-    color: #888;
-    margin-bottom: 10px;
-}
-
 .schedule-card {
     background: #252541;
     border-radius: 8px;
@@ -2732,10 +2694,6 @@ strong.minus {
 .prev-day-rec .prev-art {
     color: #ffa502;
     font-weight: 700;
-}
-
-.today-data-row {
-    position: relative;
 }
 
 /* ===== 遊技中バッジ ===== */
@@ -5664,10 +5622,6 @@ strong.minus {
 .pr-label.hit { color: #4ecdc4; }
 .pr-label.miss { color: #ff6b6b; }
 
-/* (verify テーブルは下部で定義) */
-.vt-pred { background: rgba(78, 205, 196, 0.05); }
-.vt-result { background: rgba(255, 107, 107, 0.05); }
-
 /* 🏆 全台的中ハイライト */
 .perfect-highlight {
     margin-bottom: 20px;
@@ -5873,42 +5827,6 @@ a.perfect-card:hover { background: rgba(255,215,0,0.18); }
     .verify-table { font-size: 0.8em !important; }
     .vt-games { display: none; }
     .verify-table thead th:nth-child(4) { display: none; }
-}
-
-/* 答え合わせバナー（大きい版） */
-.verify-banner-lg {
-    display: block;
-    padding: 14px 16px;
-    margin-bottom: 12px;
-    background: linear-gradient(135deg, rgba(255,215,0,0.15), rgba(255,107,107,0.1));
-    border: 1px solid rgba(255,215,0,0.35);
-    border-radius: 12px;
-    text-decoration: none;
-    color: #fff;
-    transition: background 0.15s;
-}
-.verify-banner-lg:hover { background: rgba(255,215,0,0.22); }
-.vb-lg-top {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 6px;
-}
-.vb-icon-lg { font-size: 1.6em; }
-.vb-title-lg { font-weight: bold; font-size: 1em; }
-.vb-lg-bottom {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-.vb-rate-lg {
-    font-size: 1.5em;
-    font-weight: bold;
-    color: #ffd700;
-}
-.vb-detail-lg {
-    color: #aaa;
-    font-size: 0.85em;
 }
 
 /* ナビ プルダウン */

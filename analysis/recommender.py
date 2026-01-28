@@ -20,7 +20,7 @@ from typing import Optional, List, Dict
 import sys
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
-from config.rankings import STORES, RANKINGS, get_rank, get_unit_ranking, MACHINES, get_machine_threshold
+from config.rankings import STORES, RANKINGS, get_rank, get_unit_ranking, MACHINES, get_machine_threshold, rank_up, rank_down
 from analysis.analyzer import calculate_at_intervals, calculate_current_at_games, calculate_max_rensa
 
 # 機種別の設定情報
@@ -2308,6 +2308,7 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
         base_score = ranking.get('score', 50)
         base_rank = ranking.get('rank', 'C')
         note = ranking.get('note', '')
+        has_static_ranking = note != '未評価'
 
         # 過去データからトレンド分析
         trend_data = {'reasons': []}
@@ -2329,6 +2330,34 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
                         days = unit.get('days', [])
                         trend_data = analyze_trend(days, machine_key)
                         break
+
+        # ランキングデータが無い場合、日別データからbase_scoreを動的計算
+        if not has_static_ranking and unit_history:
+            _days = unit_history.get('days', [])
+            # 有効データがある日のみ使用
+            _day_probs = []
+            for _d in _days:
+                _a = _d.get('art', 0)
+                _g = _d.get('total_start', 0)
+                if _a > 0 and _g > 500:
+                    _day_probs.append(_g / _a)
+            if len(_day_probs) >= 2:
+                _good = get_machine_threshold(machine_key, 'good_prob')
+                _bad = get_machine_threshold(machine_key, 'bad_prob')
+                _avg = sum(_day_probs) / len(_day_probs)
+                _worst = max(_day_probs)  # 最悪日（確率が高い=悪い）
+                # 安定性: 最悪日もgood域なら高評価、そうでなければ保守的に
+                # データ蓄積が少ない段階では控えめに評価（過信防止）
+                _data_confidence = min(len(_day_probs) / 5.0, 1.0)  # 5日以上で信頼度MAX
+                if _avg <= _good * 0.65 and _worst <= _good and len(_day_probs) >= 4:
+                    base_score = 75  # 安定して好調（A域）
+                elif _avg <= _good * 0.85 and _worst <= _bad:
+                    base_score = 65  # 好調だが振れあり（B-A境界）
+                elif _avg <= _bad:
+                    base_score = 55  # まずまず（B域）
+                else:
+                    base_score = 45  # 不調
+                base_rank = get_rank(base_score)
 
         # 当日データ分析
         today_analysis = {'status': '-', 'today_score_bonus': 0, 'today_reasons': []}
@@ -2699,6 +2728,7 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
             'last_hit_time': today_analysis.get('last_hit_time'),
             'first_hit_time': today_analysis.get('first_hit_time'),
             'note': note,
+            'has_static_ranking': has_static_ranking,
             # データ日付情報
             'data_date': data_date,
             'is_today_data': is_today_data,
@@ -2949,27 +2979,35 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
 
         recommendations.append(rec)
 
-    # === 【改善3】相対評価によるランク付け ===
-    # 全台がS/Aにならないよう、スコアの分布に基づいてランクを再割り当て
-    # 上位20%=S, 次20%=A, 次30%=B, 次20%=C, 残り=D
+    # === 【改善3】ハイブリッド評価（絶対スコア + 相対位置補正）===
+    # まず絶対スコアでランクを決定し、相対位置で±1段階だけ補正
     if len(recommendations) >= 3:
-        # スコア降順でソート
         sorted_by_score = sorted(recommendations, key=lambda r: -r['final_score'])
         n = len(sorted_by_score)
 
-        # パーセンタイルでランク割り当て
         for i, rec in enumerate(sorted_by_score):
+            # 1. 絶対スコアでランク決定
+            absolute_rank = get_rank(rec['final_score'])
+
+            # 2. 相対位置で±1段階補正
             percentile = i / n  # 0.0 = トップ, 1.0 = 最下位
-            if percentile < 0.20:
-                rec['final_rank'] = 'S'
-            elif percentile < 0.40:
-                rec['final_rank'] = 'A'
-            elif percentile < 0.70:
-                rec['final_rank'] = 'B'
-            elif percentile < 0.90:
-                rec['final_rank'] = 'C'
-            else:
-                rec['final_rank'] = 'D'
+            has_ranking = rec.get('has_static_ranking', False)
+            if percentile < 0.15 and absolute_rank != 'S':
+                # 店舗内TOP15%: 1段階アップ
+                # ランキングデータありの場合: スコア60以上でOK
+                # ランキングデータなしの場合: スコア70以上（より厳しく）
+                min_score = 60 if has_ranking else 70
+                if rec['final_score'] >= min_score:
+                    absolute_rank = rank_up(absolute_rank)
+            elif percentile > 0.85 and absolute_rank not in ('C', 'D'):
+                # 店舗内ワースト15%: 1段階ダウン
+                absolute_rank = rank_down(absolute_rank)
+
+            # 3. ランキングデータが無い台はS予測を制限（データ不足時の過信防止）
+            if not has_ranking and absolute_rank == 'S':
+                absolute_rank = 'A'
+
+            rec['final_rank'] = absolute_rank
 
     # スコア順にソート（稼働中の台は少し下げる）
     def sort_key(r):
