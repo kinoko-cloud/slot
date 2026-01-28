@@ -2118,19 +2118,20 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
 
     reasons.sort(key=_reason_priority)
 
-    # 重複除去 + 同カテゴリ重複排除、上位4つ
+    # 重複除去 + 同カテゴリ重複排除
+    # 「好調が続いてる」系は全部同じ話 → 最も具体的な1つだけ残す
     seen = set()
     seen_categories = set()
     unique = []
     for r in reasons:
         if r in seen:
             continue
-        # 同カテゴリの重複を排除（店舗傾向が2回出るのを防ぐ等）
+        # カテゴリ判定（同カテゴリは1つだけ表示）
         category = None
         if '店舗傾向' in r:
             category = 'store_weekday'
-        elif '好調翌日' in r:
-            category = 'continuation'
+        elif any(k in r for k in ['好調が続き', '翌日も好調', '据え置き', '連続好調', '毎日好調']):
+            category = 'streak_continuation'  # 好調継続系は全部まとめる
         elif '好調率' in r and '台' in r:
             category = 'unit_rate'
         elif '平均ART' in r:
