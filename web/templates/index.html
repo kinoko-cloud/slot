@@ -202,7 +202,7 @@
                 </div>
                 <div id="more-recs" class="hidden">
                 {% for rec in top3[10:] %}
-                <a href="{{ url_for('recommend', store_key=rec.store_key) }}" class="unit-card rank-{{ rec.final_rank|lower }} compact-card" style="text-decoration: none; color: inherit;">
+                <a href="{{ url_for('recommend', store_key=rec.store_key) }}" class="unit-card rank-{{ rec.final_rank|lower }}" style="text-decoration: none; color: inherit;">
                     <div class="unit-header">
                         <span class="ranking-num">#{{ loop.index + 10 }}</span>
                         <span class="machine-icon">{{ rec.machine_icon }}</span>
@@ -215,11 +215,79 @@
                     </div>
                     <div class="reasons-full">
                         {% if rec.reasons %}
-                        {% for reason in rec.reasons[:2] %}
+                        {% for reason in rec.reasons %}
+                        {% if '📊' in reason %}
+                        <div class="reason-line-top reason-rank">{{ reason }}</div>
+                        {% elif '📈' in reason %}
+                        <div class="reason-line-top reason-stats">{{ reason }}</div>
+                        {% elif '🔁' in reason %}
+                        <div class="reason-line-top reason-cycle">{{ reason }}</div>
+                        {% elif '🔄' in reason %}
+                        <div class="reason-line-top reason-pattern">{{ reason }}</div>
+                        {% elif '💡' in reason %}
+                        <div class="reason-line-top reason-today">{{ reason }}</div>
+                        {% elif '📅' in reason %}
+                        <div class="reason-line-top reason-weekday">{{ reason }}</div>
+                        {% elif '⚠' in reason %}
+                        <div class="reason-line-top reason-warn">{{ reason }}</div>
+                        {% else %}
                         <div class="reason-line-top">{{ reason }}</div>
+                        {% endif %}
                         {% endfor %}
                         {% endif %}
                     </div>
+                    <div class="recent-days">
+                        <div class="recent-header">直近データ</div>
+                        {% set y_art = rec.yesterday_art or 0 %}
+                        {% set y_games = rec.yesterday_games or 0 %}
+                        {% set y_prob = (y_games / y_art)|int if y_art > 0 and y_games > 0 else 0 %}
+                        {% set db_art = rec.day_before_art or 0 %}
+                        {% set db_games = rec.day_before_games or 0 %}
+                        {% set db_prob = (db_games / db_art)|int if db_art > 0 and db_games > 0 else 0 %}
+                        {% if y_art > 0 %}
+                        <div class="recent-day-row">
+                            <span class="recent-label">{{ short_date(rec.yesterday_date) or '前日' }}</span>
+                            <span class="recent-art">ART {{ y_art }}</span>
+                            {% if y_prob > 0 %}<span class="recent-prob {% if y_prob <= 100 %}excellent{% elif y_prob <= 130 %}good{% elif y_prob >= 200 %}bad{% endif %}">1/{{ y_prob }}</span>{% endif %}
+                            {% if rec.yesterday_diff_medals is defined and rec.yesterday_diff_medals != 0 %}
+                            <span class="diff-medals-sm {% if rec.yesterday_diff_medals > 0 %}plus{% else %}minus{% endif %}">{{ '{:+,}'.format(rec.yesterday_diff_medals) }}枚</span>
+                            {% endif %}
+                            {% if rec.yesterday_max_rensa and rec.yesterday_max_rensa >= 3 %}<span class="rensa-sm">{{ rec.yesterday_max_rensa }}連</span>{% endif %}
+                            {% if rec.yesterday_max_medals and rec.yesterday_max_medals > 0 %}<span class="max-medals-sm">最大{{ '{:,}'.format(rec.yesterday_max_medals) }}枚</span>{% endif %}
+                        </div>
+                        {% endif %}
+                        {% if db_art > 0 %}
+                        <div class="recent-day-row">
+                            <span class="recent-label">{{ short_date(rec.day_before_date) or '前々日' }}</span>
+                            <span class="recent-art">ART {{ db_art }}</span>
+                            {% if db_prob > 0 %}<span class="recent-prob {% if db_prob <= 100 %}excellent{% elif db_prob <= 130 %}good{% elif db_prob >= 200 %}bad{% endif %}">1/{{ db_prob }}</span>{% endif %}
+                            {% if rec.day_before_diff_medals is defined and rec.day_before_diff_medals != 0 %}
+                            <span class="diff-medals-sm {% if rec.day_before_diff_medals > 0 %}plus{% else %}minus{% endif %}">{{ '{:+,}'.format(rec.day_before_diff_medals) }}枚</span>
+                            {% endif %}
+                            {% if rec.day_before_max_rensa is defined and rec.day_before_max_rensa >= 3 %}<span class="rensa-sm">{{ rec.day_before_max_rensa }}連</span>{% endif %}
+                            {% if rec.day_before_max_medals is defined and rec.day_before_max_medals > 0 %}<span class="max-medals-sm">最大{{ '{:,}'.format(rec.day_before_max_medals) }}枚</span>{% endif %}
+                        </div>
+                        {% endif %}
+                        {% if rec.three_days_ago_art is defined and rec.three_days_ago_art > 0 %}
+                        <div class="recent-day-row">
+                            <span class="recent-label">{{ short_date(rec.three_days_ago_date) or '3日前' }}</span>
+                            <span class="recent-art">ART {{ rec.three_days_ago_art }}</span>
+                            {% set td_prob = (rec.three_days_ago_games / rec.three_days_ago_art)|int if rec.three_days_ago_art > 0 and rec.three_days_ago_games > 0 else 0 %}
+                            {% if td_prob > 0 %}<span class="recent-prob {% if td_prob <= 100 %}excellent{% elif td_prob <= 130 %}good{% elif td_prob >= 200 %}bad{% endif %}">1/{{ td_prob }}</span>{% endif %}
+                            {% if rec.three_days_ago_diff_medals is defined and rec.three_days_ago_diff_medals != 0 %}
+                            <span class="diff-medals-sm {% if rec.three_days_ago_diff_medals > 0 %}plus{% else %}minus{% endif %}">{{ '{:+,}'.format(rec.three_days_ago_diff_medals) }}枚</span>
+                            {% endif %}
+                            {% if rec.three_days_ago_max_rensa is defined and rec.three_days_ago_max_rensa >= 3 %}<span class="rensa-sm">{{ rec.three_days_ago_max_rensa }}連</span>{% endif %}
+                            {% if rec.three_days_ago_max_medals is defined and rec.three_days_ago_max_medals > 0 %}<span class="max-medals-sm">最大{{ '{:,}'.format(rec.three_days_ago_max_medals) }}枚</span>{% endif %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% if rec.today_history and rec.today_history|length >= 2 %}
+                    <div class="wave-section">
+                        <div class="wave-label">{% if rec.history_date %}{{ rec.history_date }}{% else %}{{ date_prefix }}{% endif %} グラフ</div>
+                        {{ sparkline(rec.today_history, width=200, height=40) | safe }}
+                    </div>
+                    {% endif %}
                 </a>
                 {% endfor %}
                 </div>
