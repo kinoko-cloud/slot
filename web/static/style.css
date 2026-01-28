@@ -6125,3 +6125,80 @@ a.perfect-card:hover { background: rgba(255,215,0,0.18); }
     border-radius: 4px;
 }
 .dropdown-content a:hover { background: rgba(255,255,255,0.06); }
+
+/* 汎用hidden */
+.hidden { display: none !important; }
+
+/* verify グリッド（カード型） */
+.verify-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+.vg-row {
+    padding: 8px 10px;
+    background: rgba(255,255,255,0.02);
+    border-radius: 6px;
+    border-left: 3px solid transparent;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+.vg-row:hover { background: rgba(255,255,255,0.05); }
+.verdict-border-perfect { border-left-color: #ff6b6b; }
+.verdict-border-hit { border-left-color: #4ecdc4; }
+.verdict-border-miss { border-left-color: #666; }
+.verdict-border-neutral { border-left-color: #444; }
+.verdict-border-nodata { border-left-color: #333; }
+
+.vg-top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+.vg-unit {
+    font-weight: bold;
+    font-size: 1em;
+    min-width: 45px;
+}
+.vg-verdict {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    font-weight: bold;
+    font-size: 0.95em;
+}
+.vg-verdict-perfect, .vg-verdict-hit { color: #4ecdc4; }
+.vg-verdict-miss { color: #ff6b6b; }
+.vg-verdict-neutral { color: #777; }
+.vg-expand { margin-left: auto; color: #555; font-size: 0.7em; }
+
+.vg-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 12px;
+    font-size: 0.9em;
+}
+.vg-art { color: #4ecdc4; font-weight: bold; }
+.vg-prob { font-weight: bold; }
+.vg-prob.excellent { color: #ff6b6b; }
+.vg-prob.good { color: #4ecdc4; }
+.vg-prob.bad { color: #888; }
+.vg-games { color: #888; }
+.vg-medals { color: #ffa502; }
+
+.verify-detail { margin-top: 8px; }
+.verify-detail-inner { padding: 8px; background: rgba(0,0,0,0.2); border-radius: 6px; }
+
+/* サイトロゴ */
+.site-logo { height: 28px; }
+.top-bar-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.top-bar-left .version-info {
+    font-size: 0.65em;
+    color: #555;
+    position: static;
+}

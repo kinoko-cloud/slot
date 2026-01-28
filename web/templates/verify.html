@@ -11,7 +11,10 @@
 <body>
     <div class="container">
         <header>
-            <a href="{{ url_for('index') }}" class="back-link">&lt; トップに戻る</a>
+            <div class="top-bar">
+                <a href="{{ url_for('index') }}" class="back-link">&lt; トップ</a>
+                <img src="{{ url_for('static', filename='logo.svg') }}" alt="スロプロMAX" class="site-logo">
+            </div>
             <h1>答え合わせ</h1>
             <div class="update-info">
                 {% if result_date_str %}
@@ -110,20 +113,7 @@
                         </span>
                         {% endif %}
                     </div>
-                    <table class="verify-table">
-                        <thead>
-                            <tr>
-                                <th>台番</th>
-                                <th>ART</th>
-                                <th>確率</th>
-                                <th>G数</th>
-                                <th>最大枚</th>
-                                <th class="vt-group-pred">予想</th>
-                                <th class="vt-group-result">結果</th>
-                                <th>判定</th>
-                            </tr>
-                        </thead>
-                        <tbody>
+                    <div class="verify-grid">
                         {% for unit in store.units %}
                         {% set pred_good = unit.pre_open_rank in ('S', 'A') %}
                         {% set result_good = unit.actual_is_good is defined and unit.actual_is_good %}
@@ -131,56 +121,29 @@
                         {% set pred_excellent = unit.pre_open_rank == 'S' and unit.pre_open_score >= 75 %}
                         {% set result_bad = unit.actual_prob >= 200 %}
                         {% set pred_bad = unit.pre_open_rank in ('C', 'D') %}
-                        <tr class="verify-row verdict-{{ unit.verdict_class }}{% if unit.history %} has-detail{% endif %}" onclick="toggleDetail(this)">
-                            <td class="vt-unit">{{ unit.unit_id|pad_id }}</td>
-                            <td class="vt-art">{{ unit.actual_art if unit.actual_prob > 0 else '-' }}</td>
-                            <td class="vt-prob {% if unit.actual_is_good and unit.actual_prob <= 100 %}excellent{% elif unit.actual_is_good %}good{% elif unit.actual_prob >= 200 %}bad{% endif %}">{% if unit.actual_prob > 0 %}1/{{ unit.actual_prob|int }}{% else %}-{% endif %}</td>
-                            <td class="vt-games">{% if unit.actual_games and unit.actual_games > 0 %}{{ '{:,}'.format(unit.actual_games|int) }}{% else %}-{% endif %}</td>
-                            <td class="vt-medals">{% if unit.max_medals and unit.max_medals > 0 %}{{ '{:,}'.format(unit.max_medals|int) }}{% else %}-{% endif %}</td>
-                            <td class="vt-pred">
-                                {% if pred_excellent %}<span class="vr-mark excellent">◎</span>
-                                {% elif pred_good %}<span class="vr-mark good">◯</span>
-                                {% elif unit.pre_open_rank == 'B' %}<span class="vr-mark neutral">△</span>
-                                {% else %}<span class="vr-mark bad">✕</span>{% endif %}
-                            </td>
-                            <td class="vt-result">
-                                {% if unit.verdict_class == 'perfect' or (result_good and unit.actual_prob <= 100) %}<span class="vr-mark excellent">◎</span>
-                                {% elif result_good %}<span class="vr-mark good">◯</span>
-                                {% elif unit.actual_prob >= 200 %}<span class="vr-mark bad">✕</span>
-                                {% elif unit.actual_prob > 0 %}<span class="vr-mark neutral">△</span>
-                                {% else %}<span class="vr-mark nodata">-</span>{% endif %}
-                            </td>
-                            <td class="vt-label
-                                {%- if unit.verdict_class == 'nodata' %} verdict-label-nodata
-                                {%- elif pred_good and result_excellent %} verdict-label-perfect
-                                {%- elif pred_good and result_good %} verdict-label-hit
-                                {%- elif pred_good and result_bad %} verdict-label-miss
-                                {%- elif pred_good %} verdict-label-neutral
-                                {%- elif pred_bad and result_good %} verdict-label-miss
-                                {%- elif pred_bad and not result_good %} verdict-label-hit
-                                {%- else %} verdict-label-neutral
-                                {%- endif %}">
-                                {% if unit.verdict_class == 'nodata' %}データ不足
-                                {% elif pred_excellent and result_excellent %}大的中！
-                                {% elif pred_good and result_excellent %}的中！
-                                {% elif pred_good and result_good %}的中
-                                {% elif pred_good and result_bad %}ハズレ
-                                {% elif pred_good %}おしい
-                                {% elif pred_bad and result_excellent %}大ハズレ
-                                {% elif pred_bad and result_good %}ハズレ
-                                {% elif pred_bad and result_bad %}的中
-                                {% elif pred_bad %}的中
-                                {% elif result_good %}ハズレ
-                                {% elif result_bad %}的中
-                                {% else %}—{% endif %}
-                            </td>
-                        </tr>
-
+                        {% set label_class %}{% if unit.verdict_class == 'nodata' %}nodata{% elif pred_good and result_excellent %}perfect{% elif pred_good and result_good %}hit{% elif pred_good and result_bad %}miss{% elif pred_good %}neutral{% elif pred_bad and result_good %}miss{% elif pred_bad and not result_good %}hit{% else %}neutral{% endif %}{% endset %}
+                        <div class="vg-row verdict-border-{{ label_class }}{% if unit.history %} has-detail{% endif %}" onclick="toggleDetail(this)">
+                            <div class="vg-top">
+                                <span class="vg-unit">{{ unit.unit_id|pad_id }}</span>
+                                <span class="vg-verdict vg-verdict-{{ label_class }}">
+                                    {% if pred_excellent %}<span class="vr-mark excellent">◎</span>{% elif pred_good %}<span class="vr-mark good">◯</span>{% elif unit.pre_open_rank == 'B' %}<span class="vr-mark neutral">△</span>{% else %}<span class="vr-mark bad">✕</span>{% endif %}→{% if unit.verdict_class == 'perfect' or (result_good and unit.actual_prob <= 100) %}<span class="vr-mark excellent">◎</span>{% elif result_good %}<span class="vr-mark good">◯</span>{% elif unit.actual_prob >= 200 %}<span class="vr-mark bad">✕</span>{% elif unit.actual_prob > 0 %}<span class="vr-mark neutral">△</span>{% else %}<span class="vr-mark nodata">-</span>{% endif %}
+                                    {% if unit.verdict_class == 'nodata' %}データ不足{% elif pred_excellent and result_excellent %}大的中！{% elif pred_good and result_excellent %}的中！{% elif pred_good and result_good %}的中{% elif pred_good and result_bad %}ハズレ{% elif pred_good %}おしい{% elif pred_bad and result_excellent %}大ハズレ{% elif pred_bad and result_good %}ハズレ{% elif pred_bad and result_bad %}的中{% elif pred_bad %}的中{% elif result_good %}ハズレ{% elif result_bad %}的中{% else %}—{% endif %}
+                                </span>
+                                {% if unit.history %}<span class="vg-expand">▼</span>{% endif %}
+                            </div>
+                            <div class="vg-stats">
+                                {% if unit.actual_prob > 0 %}
+                                <span class="vg-art">ART {{ unit.actual_art }}</span>
+                                <span class="vg-prob {% if unit.actual_is_good and unit.actual_prob <= 100 %}excellent{% elif unit.actual_is_good %}good{% elif unit.actual_prob >= 200 %}bad{% endif %}">1/{{ unit.actual_prob|int }}</span>
+                                {% endif %}
+                                {% if unit.actual_games and unit.actual_games > 0 %}<span class="vg-games">{{ '{:,}'.format(unit.actual_games|int) }}G</span>{% endif %}
+                                {% if unit.max_medals and unit.max_medals > 0 %}<span class="vg-medals">最大{{ '{:,}'.format(unit.max_medals|int) }}枚</span>{% endif %}
+                            </div>
+                        </div>
                             {# 展開可能な当たり履歴セクション #}
                             {% if unit.history %}
-                            <tr class="verify-detail-row hidden">
-                            <td colspan="8">
-                            <div class="verify-detail">
+                            <div class="verify-detail hidden">
+                            <div class="verify-detail-inner">
                                 {# サマリ統計 #}
                                 {% if unit.history_summary %}
                                 <div class="vd-summary">
@@ -243,12 +206,10 @@
                                     </table>
                                 </div>
                             </div>
-                            </td>
-                            </tr>
+                            </div>
                             {% endif %}
                         {% endfor %}
-                        </tbody>
-                    </table>
+                    </div>
                 </div>
                 {% endfor %}
             </section>
@@ -285,24 +246,19 @@
 
     <script>
     function toggleDetail(rowEl) {
-        // テーブル行の次のtr.verify-detail-rowを探す
-        var detailRow = rowEl.nextElementSibling;
-        if (!detailRow || !detailRow.classList.contains('verify-detail-row')) return;
+        var detail = rowEl.querySelector('.verify-detail');
+        if (!detail) return;
 
-        var isHidden = detailRow.classList.contains('hidden');
-        // Close all others in the same table
-        var table = rowEl.closest('.verify-table');
-        if (table) {
-            table.querySelectorAll('.verify-detail-row').forEach(function(d) {
-                d.classList.add('hidden');
-            });
-            table.querySelectorAll('.verify-row').forEach(function(r) {
-                r.classList.remove('expanded');
-            });
+        var isHidden = detail.classList.contains('hidden');
+        // Close all others
+        var grid = rowEl.closest('.verify-grid');
+        if (grid) {
+            grid.querySelectorAll('.verify-detail').forEach(function(d) { d.classList.add('hidden'); });
+            grid.querySelectorAll('.vg-row').forEach(function(r) { r.classList.remove('expanded'); });
         }
 
         if (isHidden) {
-            detailRow.classList.remove('hidden');
+            detail.classList.remove('hidden');
             rowEl.classList.add('expanded');
         }
     }
