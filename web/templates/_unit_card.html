@@ -1,6 +1,6 @@
 {# === 台カード共通マクロ === #}
 
-{% macro unit_compact(rec, loop_index, show_store=false, store_key='') %}
+{% macro unit_compact(rec, loop_index, show_store=true, store_key='') %}
 {# コンパクトな台カード（3日間データ + 根拠） #}
 <div class="unit-card-v2 rank-{{ rec.final_rank|lower }}" onclick="toggleDetails(this)">
     {# ヘッダー: 台番号 + 店舗 + ランク #}
