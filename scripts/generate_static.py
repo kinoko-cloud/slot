@@ -1309,7 +1309,7 @@ def _get_verify_date_str():
     return ''
 
 def _get_verify_accuracy():
-    """バックテスト結果からS/A的中率を取得"""
+    """バックテスト結果からS/A的中率を取得（nodata除外、verifyページと同じ計算）"""
     files = sorted(glob.glob('data/verify/verify_*_results.json'), reverse=True)
     if files:
         try:
@@ -1318,6 +1318,9 @@ def _get_verify_accuracy():
             total_hit = 0
             for sk, units in data.get('units', {}).items():
                 for u in units:
+                    # nodata台を除外（verifyページと同じ）
+                    if u.get('actual_prob', 0) == 0 and u.get('diff_medals', 0) == 0:
+                        continue
                     if u.get('predicted_rank') in ('S', 'A'):
                         total_sa += 1
                         if u.get('actual_is_good', False):
