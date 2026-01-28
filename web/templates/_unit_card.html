@@ -3,16 +3,20 @@
 {% macro unit_compact(rec, loop_index, show_store=true, store_key='') %}
 {# コンパクトな台カード（3日間データ + 根拠） #}
 <div class="unit-card-v2 rank-{{ rec.final_rank|lower }}" onclick="toggleDetails(this)">
-    {# ヘッダー: 台番号 + 店舗 + ランク #}
+    {# ヘッダー: 2行構成 #}
     <div class="v2-header">
-        <span class="v2-rank-num">#{{ loop_index }}</span>
-        <a href="{{ url_for('unit_history', store_key=(rec.store_key or store_key), unit_id=rec.unit_id) }}" class="v2-unit-id" onclick="event.stopPropagation()">{{ rec.unit_id|pad_id }}番台</a>
-        {% if rec.machine_name %}<span class="v2-machine">{{ rec.machine_name }}</span>{% endif %}
-        {% if show_store %}
-        <a href="{{ url_for('recommend', store_key=(rec.store_key or store_key)) }}" class="v2-store" onclick="event.stopPropagation()">{{ rec.store_name }}</a>
-        {% endif %}
-        <span class="v2-rank" style="background-color: {{ rank_color(rec.final_rank) }}">{{ rec.final_rank }}</span>
-        <span class="expand-icon small">▼</span>
+        <div class="v2-header-row1">
+            <span class="v2-rank-num">#{{ loop_index }}</span>
+            <a href="{{ url_for('unit_history', store_key=(rec.store_key or store_key), unit_id=rec.unit_id) }}" class="v2-unit-id" onclick="event.stopPropagation()">{{ rec.unit_id|pad_id }}番台</a>
+            {% if show_store %}
+            <a href="{{ url_for('recommend', store_key=(rec.store_key or store_key)) }}" class="v2-store" onclick="event.stopPropagation()">{{ rec.store_name }}</a>
+            {% endif %}
+            <span class="v2-rank" style="background-color: {{ rank_color(rec.final_rank) }}">{{ rec.final_rank }}</span>
+            <span class="expand-icon small">▼</span>
+        </div>
+        <div class="v2-header-row2">
+            {% if rec.machine_name %}<span class="v2-machine">{{ rec.machine_name }}</span>{% endif %}
+        </div>
     </div>
 
     {# 根拠（一番目立つ位置） #}
