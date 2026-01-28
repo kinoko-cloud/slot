@@ -1700,27 +1700,38 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
     miss_days = total_perf_days - good_days if total_perf_days > 0 else 0
 
     if total_perf_days > 0 and good_day_rate >= 0.7:
-        reasons.append(f"📊 {total_perf_days}日間中{good_days}日好調（好調率{good_day_rate:.0%}）→ 高設定が入りやすい台")
+        # 好調率は🔄に連続好調が含まれる場合は省略（重複回避）
+        # 連続好調3日以上なら🔄で「N日連続好調 + 曜日」が出るので好調率は冗長
+        if consecutive_plus < 3:
+            reasons.append(f"📊 {total_perf_days}日間中{good_days}日好調（好調率{good_day_rate:.0%}）→ 高設定が入りやすい台")
 
-        # 補足: 平均ART確率 + 好調翌日継続率
-        sub_parts = []
+        # 平均ART確率（台の実力を示す独立情報）
         hp_avg_prob = historical_perf.get('avg_prob', 0)
         if hp_avg_prob > 0:
-            sub_parts.append(f"平均ART確率 1/{hp_avg_prob:.0f}")
+            prob_label = '高設定域' if hp_avg_prob <= 100 else '中間以上' if hp_avg_prob <= 130 else ''
+            reasons.append(f"📈 平均ART確率 1/{hp_avg_prob:.0f}{f'（{prob_label}）' if prob_label else ''}")
+
+        # 据え置き率（設定据え置きの実績）
         continuation_rate = historical_perf.get('continuation_rate', 0)
         continuation_total = historical_perf.get('continuation_total', 0)
         continuation_good = historical_perf.get('continuation_good', 0)
         if continuation_total >= 2:
-            sub_parts.append(f"好調翌日も好調: {continuation_good}/{continuation_total}回({continuation_rate:.0%})")
-        elif continuation_total == 1:
-            sub_parts.append(f"好調翌日も好調: {continuation_good}/{continuation_total}回")
-        # 直近3日の確率推移
+            if continuation_rate >= 0.6:
+                reasons.append(f"📊 好調翌日も好調: {continuation_good}/{continuation_total}回（{continuation_rate:.0%}）→ 据え置き傾向")
+            elif continuation_rate < 0.4:
+                reasons.append(f"⚠️ 好調翌日も好調: {continuation_good}/{continuation_total}回（{continuation_rate:.0%}）→ 下げ注意")
+
+        # 直近3日の確率推移（トレンド方向を示す）
         recent_probs = historical_perf.get('recent_probs', [])
-        if len(recent_probs) >= 2:
-            prob_strs = [f"1/{int(p)}" for p in recent_probs]
-            sub_parts.append(f"直近: {' → '.join(reversed(prob_strs))}")
-        if sub_parts:
-            reasons.append(f"📈 {' / '.join(sub_parts)}")
+        if len(recent_probs) >= 3:
+            prob_strs = [f"1/{int(p)}" for p in reversed(recent_probs)]
+            # 改善傾向か悪化傾向か
+            if recent_probs[0] < recent_probs[-1]:
+                reasons.append(f"📈 ART確率推移: {' → '.join(prob_strs)}（改善傾向）")
+            elif recent_probs[0] > recent_probs[-1] * 1.2:
+                reasons.append(f"📉 ART確率推移: {' → '.join(prob_strs)}（悪化傾向）")
+            else:
+                reasons.append(f"📈 ART確率推移: {' → '.join(prob_strs)}")
 
         # 設定変更周期情報（Phase 2+）
         cycle_analysis = kwargs.get('cycle_analysis', {})
@@ -1783,48 +1794,12 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
         continuation_total = historical_perf.get('continuation_total', 0)
         continuation_good = historical_perf.get('continuation_good', 0)
 
-        today_confidence_parts = []
-        if today_rating >= 4:
+        # 💡店舗傾向（🔄に曜日が含まれない場合のみ）
+        # consecutive_plus >= 3 の場合、🔄に「N日連続好調 + 曜日狙い目」が入るのでスキップ
+        if today_rating >= 4 and consecutive_plus < 3 and consecutive_minus < 2:
             rating_label = '高設定投入日' if today_rating >= 5 else '狙い目の曜日'
-            today_confidence_parts.append(f"{store_name}の{today_weekday}曜は{rating_label}（店舗傾向）")
-        if consecutive_plus >= 2:
-            today_confidence_parts.append(f"現在{consecutive_plus}日連続好調中")
-
-        # 台の好調実績（不調中は不調日数を除いた表現にする）
-        if total_perf_days >= 3 and good_days > 0:
-            if consecutive_minus >= 2:
-                # 不調中の台は「直近X日不調だが、それ以前はY日中Z日好調」
-                prior_good = good_days - min(consecutive_minus, good_days)
-                prior_total = total_perf_days - consecutive_minus
-                if prior_total > 0 and prior_good > 0:
-                    today_confidence_parts.append(f"直近{consecutive_minus}日は不調だが、それ以前{prior_total}日中{prior_good}日好調")
-            else:
-                today_confidence_parts.append(f"過去{total_perf_days}日中{good_days}日好調（{good_day_rate:.0%}）")
-
-        if today_confidence_parts:
-            # 好調率が既に📊で出てる場合は💡から省略（重複回避）
-            filtered_parts = []
-            for part in today_confidence_parts:
-                # 「過去X日中Y日好調（Z%）」は📊の好調率と重複するので省略
-                if '日中' in part and '日好調' in part and good_day_rate >= 0.5:
-                    continue
-                # 「X日連続好調中」は🔄の連続好調と重複するので省略
-                # （🔄は後で追加されるため、consecutive_plus >= 2で判定）
-                if '連続好調中' in part and consecutive_plus >= 2:
-                    continue
-                filtered_parts.append(part)
-            if filtered_parts:
-                reasons.append(f"💡 {' / '.join(filtered_parts)}")
-
-        # 据え置き率（安心材料）
-        if continuation_total >= 3 and continuation_rate >= 0.5:
-            reasons.append(f"📊 好調翌日も好調だった率: {continuation_good}/{continuation_total}回（{continuation_rate:.0%}）→ 据え置き傾向あり")
-        elif continuation_total >= 3 and continuation_rate < 0.5:
-            reasons.append(f"📊 好調翌日も好調だった率: {continuation_good}/{continuation_total}回（{continuation_rate:.0%}）→ 据え置き少なめ、下げ注意")
-        elif total_perf_days >= 5 and good_day_rate >= 0.7:
-            reasons.append(f"📊 高好調率の台（{good_days}/{total_perf_days}日好調）→ 高設定が入りやすい台番号")
-
-        if not today_confidence_parts and today_rating >= 3:
+            reasons.append(f"💡 {store_name}の{today_weekday}曜は{rating_label}（店舗傾向）")
+        elif today_rating >= 3 and consecutive_plus < 3 and consecutive_minus < 2:
             reasons.append(f"💡 {store_name}の{today_weekday}曜は過去実績から普通〜やや期待できる日")
     elif total_perf_days > 0 and good_day_rate <= 0.4:
         reasons.append(f"📊 {total_perf_days}日間中{good_days}日好調（好調率{good_day_rate:.0%}）→ 低設定が入りやすい台")
