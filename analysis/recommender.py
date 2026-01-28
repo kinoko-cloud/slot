@@ -3107,6 +3107,18 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
 
             rec['final_rank'] = absolute_rank
 
+        # 4. S/A台数の上限制限（全台Sにならないようにする）
+        # 島の50%以上がS/Aになるのは非現実的
+        max_sa_ratio = 0.5  # S+Aは最大50%
+        max_sa_count = max(3, int(n * max_sa_ratio))  # 最低3台は許可
+        sa_count = 0
+        for rec in sorted_by_score:
+            if rec['final_rank'] in ('S', 'A'):
+                sa_count += 1
+                if sa_count > max_sa_count:
+                    # 上限超過分はBに降格
+                    rec['final_rank'] = 'B'
+
     # スコア順にソート（稼働中の台は少し下げる）
     def sort_key(r):
         score = r['final_score']
