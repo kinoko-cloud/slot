@@ -6242,3 +6242,35 @@ a.perfect-card:hover { background: rgba(255,215,0,0.18); }
     font-size: 0.85em;
 }
 .hm-machine:hover { color: #ddd; background: rgba(255,255,255,0.04); }
+
+/* バナー内サークル */
+.verify-banner-lg {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+.vb-circle {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid #555;
+    flex-shrink: 0;
+}
+.vb-circle.good { border-color: #2ed573; }
+.vb-circle.ok { border-color: #ffa502; }
+.vb-circle.bad { border-color: #ff6b6b; }
+.vb-circle-num {
+    font-size: 1.4em;
+    font-weight: 900;
+    color: #fff;
+}
+.vb-lg-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.vb-title-lg { font-weight: bold; font-size: 0.95em; color: #fff; }
+.vb-detail-lg { color: #aaa; font-size: 0.8em; }
