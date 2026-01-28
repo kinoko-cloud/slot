@@ -777,25 +777,33 @@ def analyze_trend(days: List[dict]) -> dict:
         art_counts.append(art)
         game_counts.append(games)
 
-        # 差枚推定（簡易計算：ART1回あたり+50枚、1G消費3枚）
+        # 差枚推定（historyのmedalsがあれば正確に計算、なければ確率ベース）
         if games > 0:
-            estimated_diff = (art * 50) - (games * 3 / 50)  # 超簡易推定
-            # より正確な推定：ART確率で判定
-            if art > 0:
+            estimated_diff = 0
+            hist = day.get('history', [])
+            if hist:
+                # historyがあれば実medalsベースで差枚推定
+                try:
+                    from analysis.diff_medals_estimator import estimate_diff_medals
+                    medals_total = sum(h.get('medals', 0) for h in hist)
+                    estimated_diff = estimate_diff_medals(medals_total, games, machine_key)
+                except Exception:
+                    pass
+            if estimated_diff == 0 and art > 0:
+                # フォールバック: 確率ベース推定
                 art_prob = games / art
                 if art_prob <= 80:
-                    estimated_diff = games * 0.3  # 高設定域
+                    estimated_diff = games * 0.3
                 elif art_prob <= 120:
                     estimated_diff = games * 0.1
                 elif art_prob <= 180:
                     estimated_diff = -games * 0.05
                 else:
                     estimated_diff = -games * 0.15
-            else:
+            elif estimated_diff == 0:
                 estimated_diff = -games * 0.2
             daily_results.append((day.get('date'), estimated_diff, art, games))
         elif art > 0:
-            # gamesが0でもartがあれば記録（PAPIMO等のデータ）
             daily_results.append((day.get('date'), 0, art, games))
 
     if art_counts:
@@ -803,10 +811,15 @@ def analyze_trend(days: List[dict]) -> dict:
     if game_counts:
         result['avg_games_7days'] = sum(game_counts) / len(game_counts)
 
-    # 連続プラス/マイナス判定（diff=0はデータ不足のためスキップ）
+    # 連続プラス/マイナス判定
+    # 低稼働（2000G未満）はスキップ（確率がブレすぎて信頼できない）
+    MIN_GAMES_FOR_STREAK = 2000
     consecutive_plus = 0
     consecutive_minus = 0
     for date, diff, art, games in daily_results:
+        if games < MIN_GAMES_FOR_STREAK and games > 0:
+            # 低稼働日はスキップ（連続を途切れさせない）
+            continue
         if diff > 0:
             consecutive_plus += 1
             consecutive_minus = 0
@@ -814,7 +827,6 @@ def analyze_trend(days: List[dict]) -> dict:
             consecutive_minus += 1
             consecutive_plus = 0
         elif games == 0 and art > 0:
-            # G数不明（PAPIMO等）→ スキップして次の日を見る
             continue
         else:
             break
