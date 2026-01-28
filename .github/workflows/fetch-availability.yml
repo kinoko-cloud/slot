@@ -57,7 +57,27 @@ jobs:
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
           git add data/availability.json
-          git diff --staged --quiet || git commit -m "update: availability $(TZ='Asia/Tokyo' date +'%Y-%m-%d %H:%M') JST"
-          # リモートが先に進んでいる場合に対応（手動pushとの競合回避）
-          git pull --rebase origin main || git pull --rebase origin $(git branch --show-current)
-          git push
+          # 変更がなければスキップ
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          git commit -m "update: availability $(TZ='Asia/Tokyo' date +'%Y-%m-%d %H:%M') JST"
+          # リトライ付きpush（リモートが先に進んでいる場合の競合回避）
+          max_push=3
+          for i in $(seq 1 $max_push); do
+            if git push origin main; then
+              echo "Push succeeded"
+              exit 0
+            fi
+            echo "Push failed (attempt $i/$max_push), rebasing..."
+            git pull --rebase origin main
+            # rebaseコンフリクト時はavailability.jsonを常にローカル優先
+            if [ -f .git/rebase-merge/done ] || [ -d .git/rebase-apply ]; then
+              git checkout --theirs data/availability.json
+              git add data/availability.json
+              git rebase --continue || true
+            fi
+          done
+          echo "Push failed after $max_push attempts"
+          exit 1
