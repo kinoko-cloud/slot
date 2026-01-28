@@ -454,7 +454,8 @@ def generate_index(env):
                         was_predicted_good = predicted_rank in ('S', 'A')
                         # 的中判定（verdict.py共通ロジック）
                         _y_diff = rec.get('yesterday_diff_medals', rec.get('diff_medals', 0))
-                        _y_rl = get_result_level(y_prob, _y_diff, key)
+                        _y_max = rec.get('yesterday_max_medals', rec.get('max_medals', 0))
+                        _y_rl = get_result_level(y_prob, _y_diff, key, max_medals=_y_max)
                         _y_vtext, _y_vcls = get_verdict(predicted_rank, _y_rl)
                         if v_is_hit(predicted_rank, _y_rl):
                             prediction_result = 'hit'
@@ -1463,7 +1464,7 @@ def _generate_verify_from_backtest(env, results):
                 result_mark, result_mark_class = '-', 'nodata'
                 verdict_text, verdict_class = '—', 'nodata'
             else:
-                result_level = get_result_level(prob, diff_medals, mk)
+                result_level = get_result_level(prob, diff_medals, mk, max_medals=max_medals)
                 result_mark, result_mark_class = RESULT_MARKS.get(result_level, ('-', 'nodata'))
                 verdict_text, verdict_class = get_verdict(rank, result_level)
             
@@ -1754,7 +1755,8 @@ def generate_verify_page(env):
                 # 結果判定（verdict.py共通ロジック）
                 is_predicted_good = predicted_rank in ('S', 'A')
                 diff_medals = rec.get('diff_medals', 0)
-                result_level = get_result_level(actual_prob, diff_medals, machine_key)
+                max_medals_val = rec.get('max_medals', 0)
+                result_level = get_result_level(actual_prob, diff_medals, machine_key, max_medals=max_medals_val)
                 result_mark, result_mark_class = RESULT_MARKS.get(result_level, ('-', 'nodata'))
                 verdict_text, verdict_class = get_verdict(pre_open_rank, result_level)
                 
@@ -2023,7 +2025,7 @@ def generate_history_pages(env):
                 rb = d.get('rb', 0) or 0
                 games = d.get('games', 0) or 0
                 prob = d.get('prob', 0) or 0
-                _day_rl = get_result_level(prob, d.get('diff_medals', 0), machine_key)
+                _day_rl = get_result_level(prob, d.get('diff_medals', 0), machine_key, max_medals=max_medals)
                 is_good = _day_rl in ('excellent', 'good')
                 max_rensa = d.get('max_rensa', 0) or 0
                 history = d.get('history', [])
