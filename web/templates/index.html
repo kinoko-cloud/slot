@@ -186,11 +186,20 @@
                         </div>
                         {% endif %}
                     </div>
-                    {# === 波グラフ（線グラフ） === #}
-                    {% if rec.today_history and rec.today_history|length >= 2 %}
-                    <div class="wave-section">
-                        <div class="wave-label">{% if rec.history_date %}{{ rec.history_date }}{% else %}{{ date_prefix }}{% endif %} グラフ</div>
-                        {{ sparkline(rec.today_history, width=200, height=40) | safe }}
+                    {# === ART確率推移（直近日別） === #}
+                    {% if rec.recent_days and rec.recent_days|length >= 2 %}
+                    {% set rdays = rec.recent_days|reverse|list %}
+                    <div class="sparkline-section">
+                        <div class="sparkline-label">ART確率推移（{{ rdays|length }}日間）</div>
+                        <svg class="sparkline-chart" viewBox="0 0 220 50">
+                            {% set ns = namespace(points='', min_p=9999, max_p=0) %}
+                            {% for d in rdays %}{% if d.prob and d.prob > 0 %}{% if d.prob < ns.min_p %}{% set ns.min_p = d.prob %}{% endif %}{% if d.prob > ns.max_p %}{% set ns.max_p = d.prob %}{% endif %}{% endif %}{% endfor %}
+                            {% set p_range = ns.max_p - ns.min_p if ns.max_p > ns.min_p else 1 %}
+                            {% for d in rdays %}{% if d.prob and d.prob > 0 %}{% set x = (loop.index0 / (rdays|length - 1) * 200 + 10) if rdays|length > 1 else 110 %}{% set y = ((d.prob - ns.min_p) / p_range * 35 + 5) %}{% set ns.points = ns.points ~ x|round(1)|string ~ ',' ~ y|round(1)|string ~ ' ' %}{% endif %}{% endfor %}
+                            <polyline points="{{ ns.points }}" fill="none" stroke="#70a1ff" stroke-width="1.5" stroke-linejoin="round"/>
+                            {% for d in rdays %}{% if d.prob and d.prob > 0 %}{% set x = (loop.index0 / (rdays|length - 1) * 200 + 10) if rdays|length > 1 else 110 %}{% set y = ((d.prob - ns.min_p) / p_range * 35 + 5) %}{% set color = '#2ed573' if d.prob <= 100 else '#ffa502' if d.prob <= 145 else '#ff6b6b' %}
+                            <circle cx="{{ x|round(1) }}" cy="{{ y|round(1) }}" r="2.5" fill="{{ color }}"/>{% endif %}{% endfor %}
+                        </svg>
                     </div>
                     {% endif %}
                 </a>
@@ -282,10 +291,19 @@
                         </div>
                         {% endif %}
                     </div>
-                    {% if rec.today_history and rec.today_history|length >= 2 %}
-                    <div class="wave-section">
-                        <div class="wave-label">{% if rec.history_date %}{{ rec.history_date }}{% else %}{{ date_prefix }}{% endif %} グラフ</div>
-                        {{ sparkline(rec.today_history, width=200, height=40) | safe }}
+                    {% if rec.recent_days and rec.recent_days|length >= 2 %}
+                    {% set rdays2 = rec.recent_days|reverse|list %}
+                    <div class="sparkline-section">
+                        <div class="sparkline-label">ART確率推移（{{ rdays2|length }}日間）</div>
+                        <svg class="sparkline-chart" viewBox="0 0 220 50">
+                            {% set ns2 = namespace(points='', min_p=9999, max_p=0) %}
+                            {% for d in rdays2 %}{% if d.prob and d.prob > 0 %}{% if d.prob < ns2.min_p %}{% set ns2.min_p = d.prob %}{% endif %}{% if d.prob > ns2.max_p %}{% set ns2.max_p = d.prob %}{% endif %}{% endif %}{% endfor %}
+                            {% set p_range2 = ns2.max_p - ns2.min_p if ns2.max_p > ns2.min_p else 1 %}
+                            {% for d in rdays2 %}{% if d.prob and d.prob > 0 %}{% set x = (loop.index0 / (rdays2|length - 1) * 200 + 10) if rdays2|length > 1 else 110 %}{% set y = ((d.prob - ns2.min_p) / p_range2 * 35 + 5) %}{% set ns2.points = ns2.points ~ x|round(1)|string ~ ',' ~ y|round(1)|string ~ ' ' %}{% endif %}{% endfor %}
+                            <polyline points="{{ ns2.points }}" fill="none" stroke="#70a1ff" stroke-width="1.5" stroke-linejoin="round"/>
+                            {% for d in rdays2 %}{% if d.prob and d.prob > 0 %}{% set x = (loop.index0 / (rdays2|length - 1) * 200 + 10) if rdays2|length > 1 else 110 %}{% set y = ((d.prob - ns2.min_p) / p_range2 * 35 + 5) %}{% set color = '#2ed573' if d.prob <= 100 else '#ffa502' if d.prob <= 145 else '#ff6b6b' %}
+                            <circle cx="{{ x|round(1) }}" cy="{{ y|round(1) }}" r="2.5" fill="{{ color }}"/>{% endif %}{% endfor %}
+                        </svg>
                     </div>
                     {% endif %}
                 </a>
