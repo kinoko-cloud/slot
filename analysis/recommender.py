@@ -596,6 +596,14 @@ def calculate_unit_historical_performance(days: List[dict], machine_key: str = '
         else:
             current_streak = 0
 
+    # 好調日の平均ART回数・平均確率
+    avg_good_art = 0
+    avg_good_prob = 0
+    if good_day_details:
+        avg_good_art = sum(d['art'] for d in good_day_details) / len(good_day_details)
+        valid_probs = [d['prob'] for d in good_day_details if d['prob'] > 0]
+        avg_good_prob = sum(valid_probs) / len(valid_probs) if valid_probs else 0
+
     return {
         'good_day_rate': good_day_rate,
         'good_days': good_days,
@@ -609,6 +617,8 @@ def calculate_unit_historical_performance(days: List[dict], machine_key: str = '
         'recent_probs': recent_probs,                   # 直近3日のART確率（新→古）
         'good_day_details': good_day_details,           # 好調日の詳細リスト
         'max_consecutive_good': max_consecutive_good,   # 最長連続好調記録
+        'avg_good_art': avg_good_art,                   # 好調日の平均ART回数
+        'avg_good_prob': avg_good_prob,                 # 好調日の平均ART確率
         'weekday_breakdown': _calc_weekday_breakdown(days, good_prob_threshold),  # 曜日別好調率
     }
 
@@ -1807,6 +1817,12 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
         # 連続好調3日以上なら🔄で「N日連続好調 + 曜日」が出るので好調率は冗長
         if consecutive_plus < 3:
             reasons.append(f"📊 {total_perf_days}日間中{good_days}日好調（好調率{good_day_rate:.0%}）→ 高設定が入りやすい台")
+
+        # --- この台を打つメリット（好調日の具体的な出玉実績）---
+        avg_good_art = historical_perf.get('avg_good_art', 0)
+        avg_good_prob = historical_perf.get('avg_good_prob', 0)
+        if avg_good_art >= 30 and good_days >= 3:
+            reasons.append(f"💰 好調日の平均ART {avg_good_art:.0f}回（1/{avg_good_prob:.0f}）→ 打てば出やすい台")
 
         # --- 好調の中身分析（ART回数・最大連チャンで好調レベルを可視化）---
         good_day_details = historical_perf.get('good_day_details', [])
