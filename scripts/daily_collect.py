@@ -68,11 +68,7 @@ def collect_daily_data(machine_keys: list = None, max_units_per_store: int = Non
 
             try:
                 collected = []
-                _machine_keywords = {
-                    'sbj': 'ブラックジャック',
-                    'hokuto_tensei2': '北斗',
-                }
-                _expected = _machine_keywords.get(machine_key)
+                _expected = MACHINES.get(machine_key, {}).get('verify_keywords')
                 for unit_id in units:
                     print(f'  台{unit_id}...')
                     result = get_all_history(hall_id=hall_id, unit_id=unit_id, hall_name=hall_name,
@@ -131,12 +127,7 @@ def collect_daily_data(machine_keys: list = None, max_units_per_store: int = Non
                         _hist_dir = _P(f'data/history/{store_key}_{machine_key}')
                         _hist_file = _hist_dir / f'{unit_id}.json'
                         _days_back = 2 if _hist_file.exists() else 14
-                        # 機種名キーワード（台番号の機種不一致検出用）
-                        _machine_keywords = {
-                            'sbj': 'ブラックジャック',
-                            'hokuto_tensei2': '北斗',
-                        }
-                        _expected = _machine_keywords.get(machine_key)
+                        _expected = MACHINES.get(machine_key, {}).get('verify_keywords')
                         result = get_unit_history(page, hall_id, unit_id, days_back=_days_back,
                                                   expected_machine=_expected)
                         if result.get('machine_mismatch'):
