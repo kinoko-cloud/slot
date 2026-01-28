@@ -340,26 +340,34 @@
                                 <div class="detail-item">稼働時間: {{ rec.first_hit_time }} 〜 {{ rec.last_hit_time or '-' }}</div>
                                 {% endif %}
                                 {% else %}
-                                <div class="detail-item">未稼働（狙い目の可能性）</div>
+                                <div class="detail-item">まだ本日のデータなし</div>
                                 {% endif %}
                             </div>
 
-                            {# === 波グラフ（テキスト） === #}
+                            {# === 当たりG数推移（線グラフ） === #}
                             {% if rec.today_history %}
                             <div class="detail-section">
-                                <div class="detail-title">{% if rec.history_date %}{{ rec.history_date }}{% else %}本日{% endif %}の波</div>
-                                <div class="wave-graph">
-                                    {% for h in rec.today_history %}
-                                    <span class="wave-bar {% if h.start >= 500 %}deep{% elif h.start >= 300 %}mid{% elif h.start <= 70 %}rensa{% endif %}" title="{{ h.time }} {{ h.start }}G {{ h.type }}">
-                                        {% if h.start >= 500 %}&#x2587;{% elif h.start >= 300 %}&#x2585;{% elif h.start >= 200 %}&#x2584;{% elif h.start >= 100 %}&#x2583;{% elif h.start >= 70 %}&#x2582;{% else %}&#x2581;{% endif %}
-                                    </span>
-                                    {% endfor %}
-                                </div>
-                                <div class="wave-legend">
-                                    <span class="wave-leg rensa">&#x2581;連チャン</span>
-                                    <span class="wave-leg">&#x2583;100G</span>
-                                    <span class="wave-leg mid">&#x2585;300G</span>
-                                    <span class="wave-leg deep">&#x2587;500G+</span>
+                                <div class="detail-title">{% if rec.history_date %}{{ rec.history_date }}{% else %}本日{% endif %} 当たりG数推移</div>
+                                <div class="line-chart-container">
+                                    <svg class="line-chart" viewBox="0 0 300 120" preserveAspectRatio="none">
+                                        {# 背景ライン #}
+                                        <line x1="0" y1="30" x2="300" y2="30" stroke="#333" stroke-width="0.5" stroke-dasharray="4"/>
+                                        <line x1="0" y1="60" x2="300" y2="60" stroke="#333" stroke-width="0.5" stroke-dasharray="4"/>
+                                        <line x1="0" y1="90" x2="300" y2="90" stroke="#333" stroke-width="0.5" stroke-dasharray="4"/>
+                                        {# データポイント #}
+                                        {% set ns = namespace(points='', max_g=500) %}
+                                        {% for h in rec.today_history %}
+                                            {% set x = (loop.index0 / (rec.today_history|length - 1) * 290 + 5) if rec.today_history|length > 1 else 150 %}
+                                            {% set g = h.start if h.start <= ns.max_g else ns.max_g %}
+                                            {% set y = (110 - g / ns.max_g * 100) %}
+                                            {% set ns.points = ns.points ~ x|round(1)|string ~ ',' ~ y|round(1)|string ~ ' ' %}
+                                        {% endfor %}
+                                        <polyline points="{{ ns.points }}" fill="none" stroke="#2ed573" stroke-width="1.5" stroke-linejoin="round"/>
+                                        {# 100Gラインのラベル #}
+                                        <text x="2" y="88" fill="#666" font-size="8">100G</text>
+                                        <text x="2" y="58" fill="#666" font-size="8">200G</text>
+                                        <text x="2" y="28" fill="#666" font-size="8">300G</text>
+                                    </svg>
                                 </div>
                             </div>
                             {# === 当たり履歴テーブル === #}

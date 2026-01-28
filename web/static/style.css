@@ -4121,58 +4121,14 @@ strong.minus {
    波グラフ・当たり履歴（recommend詳細内）
    =================================== */
 
-.wave-graph {
-    display: flex;
-    align-items: flex-end;
-    gap: 1px;
-    padding: 8px 4px;
+.line-chart-container {
     background: rgba(0, 0, 0, 0.3);
     border-radius: 6px;
-    min-height: 40px;
-    flex-wrap: wrap;
+    padding: 8px 4px;
 }
-
-.wave-bar {
-    font-size: 1.4em;
-    line-height: 1;
-    color: #70a1ff;
-    cursor: default;
-}
-
-.wave-bar.deep {
-    color: #ff6b6b;
-}
-
-.wave-bar.mid {
-    color: #ffa502;
-}
-
-.wave-bar.rensa {
-    color: #2ed573;
-}
-
-.wave-legend {
-    display: flex;
-    gap: 10px;
-    margin-top: 4px;
-    font-size: 0.7em;
-    color: #888;
-}
-
-.wave-leg {
-    color: #70a1ff;
-}
-
-.wave-leg.rensa {
-    color: #2ed573;
-}
-
-.wave-leg.mid {
-    color: #ffa502;
-}
-
-.wave-leg.deep {
-    color: #ff6b6b;
+.line-chart {
+    width: 100%;
+    height: 100px;
 }
 
 /* 当たり履歴テーブル */
