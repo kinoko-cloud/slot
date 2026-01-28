@@ -524,6 +524,32 @@ def calculate_unit_historical_performance(days: List[dict], machine_key: str = '
     else:
         score_bonus = -8  # 30%未満好調 → 低設定が入りやすい台
 
+    # 好調日の詳細（爆発レベル分析用）
+    good_day_details = []
+    for d in sorted_days:
+        art = d.get('art', 0)
+        games = d.get('games', d.get('total_games', 0))
+        if art > 0 and games > 0 and (games / art) <= good_prob_threshold:
+            good_day_details.append({
+                'date': d.get('date', ''),
+                'art': art,
+                'prob': games / art if art > 0 else 0,
+                'max_rensa': d.get('max_rensa', 0),
+                'max_medals': d.get('max_medals', 0),
+            })
+
+    # 最長連続好調記録
+    max_consecutive_good = 0
+    current_streak = 0
+    for d in reversed(sorted_days):  # 古い順で走査
+        art = d.get('art', 0)
+        games = d.get('games', d.get('total_games', 0))
+        if art > 0 and games > 0 and (games / art) <= good_prob_threshold:
+            current_streak += 1
+            max_consecutive_good = max(max_consecutive_good, current_streak)
+        else:
+            current_streak = 0
+
     return {
         'good_day_rate': good_day_rate,
         'good_days': good_days,
@@ -535,6 +561,8 @@ def calculate_unit_historical_performance(days: List[dict], machine_key: str = '
         'continuation_total': good_after_good_total,    # サンプル数
         'continuation_good': good_after_good,           # 翌日も好調だった回数
         'recent_probs': recent_probs,                   # 直近3日のART確率（新→古）
+        'good_day_details': good_day_details,           # 好調日の詳細リスト
+        'max_consecutive_good': max_consecutive_good,   # 最長連続好調記録
         'weekday_breakdown': _calc_weekday_breakdown(days, good_prob_threshold),  # 曜日別好調率
     }
 
@@ -1705,13 +1733,28 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
         if consecutive_plus < 3:
             reasons.append(f"📊 {total_perf_days}日間中{good_days}日好調（好調率{good_day_rate:.0%}）→ 高設定が入りやすい台")
 
-        # 平均ART確率（台の実力を示す独立情報）
-        hp_avg_prob = historical_perf.get('avg_prob', 0)
-        if hp_avg_prob > 0:
-            prob_label = '高設定域' if hp_avg_prob <= 100 else '中間以上' if hp_avg_prob <= 130 else ''
-            reasons.append(f"📈 平均ART確率 1/{hp_avg_prob:.0f}{f'（{prob_label}）' if prob_label else ''}")
+        # --- 好調の中身分析（ART回数・最大連チャンで好調レベルを可視化）---
+        good_day_details = historical_perf.get('good_day_details', [])
+        if good_day_details and len(good_day_details) >= 3:
+            # ART回数で爆発レベル分類
+            big_days = sum(1 for d in good_day_details if d.get('art', 0) >= 80)
+            mid_days = sum(1 for d in good_day_details if 50 <= d.get('art', 0) < 80)
+            small_days = sum(1 for d in good_day_details if 0 < d.get('art', 0) < 50)
+            total_good = big_days + mid_days + small_days
+            if total_good >= 3:
+                parts = []
+                if big_days > 0:
+                    parts.append(f"大爆発(ART80↑){big_days}日")
+                if mid_days > 0:
+                    parts.append(f"中爆発(ART50〜80){mid_days}日")
+                if small_days > 0:
+                    parts.append(f"小当たり(ART50未満){small_days}日")
+                # 最大連チャンの最高記録
+                max_rensa_all = max((d.get('max_rensa', 0) for d in good_day_details), default=0)
+                avg_art = sum(d.get('art', 0) for d in good_day_details) / len(good_day_details)
+                reasons.append(f"🔥 好調{total_good}日の内訳: {' / '.join(parts)}（平均ART {avg_art:.0f}回、最大{max_rensa_all}連）")
 
-        # 据え置き率（設定据え置きの実績）
+        # --- 据え置き率（好調翌日も好調の実績）---
         continuation_rate = historical_perf.get('continuation_rate', 0)
         continuation_total = historical_perf.get('continuation_total', 0)
         continuation_good = historical_perf.get('continuation_good', 0)
@@ -1721,17 +1764,17 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
             elif continuation_rate < 0.4:
                 reasons.append(f"⚠️ 好調翌日も好調: {continuation_good}/{continuation_total}回（{continuation_rate:.0%}）→ 下げ注意")
 
-        # 直近3日の確率推移（トレンド方向を示す）
-        recent_probs = historical_perf.get('recent_probs', [])
-        if len(recent_probs) >= 3:
-            prob_strs = [f"1/{int(p)}" for p in reversed(recent_probs)]
-            # 改善傾向か悪化傾向か
-            if recent_probs[0] < recent_probs[-1]:
-                reasons.append(f"📈 ART確率推移: {' → '.join(prob_strs)}（改善傾向）")
-            elif recent_probs[0] > recent_probs[-1] * 1.2:
-                reasons.append(f"📉 ART確率推移: {' → '.join(prob_strs)}（悪化傾向）")
+        # --- 連続好調記録（この台の最長記録との比較）---
+        max_streak = historical_perf.get('max_consecutive_good', 0)
+        if consecutive_plus >= 3 and max_streak > 0:
+            if consecutive_plus >= max_streak and continuation_rate >= 0.6:
+                reasons.append(f"📊 {consecutive_plus}日連続好調 = 最長記録更新中 + 据え置き率{continuation_rate:.0%} → 店が推してる台")
+            elif consecutive_plus >= max_streak:
+                reasons.append(f"📊 {consecutive_plus}日連続好調 = 最長記録更新中（据え置き率{continuation_rate:.0%}）")
+            elif consecutive_plus >= max_streak - 1:
+                reasons.append(f"📊 {consecutive_plus}日連続好調（過去最長{max_streak}日）→ 記録更新が近い")
             else:
-                reasons.append(f"📈 ART確率推移: {' → '.join(prob_strs)}")
+                reasons.append(f"📊 {consecutive_plus}日連続好調（過去最長{max_streak}日）→ まだ伸びる余地あり")
 
         # 設定変更周期情報（Phase 2+）
         cycle_analysis = kwargs.get('cycle_analysis', {})
@@ -1973,7 +2016,7 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
         category = None
         if '店舗傾向' in r:
             category = 'store_weekday'
-        elif '好調翌日' in r or '据え置き' in r:
+        elif '好調翌日' in r:
             category = 'continuation'
         elif '好調率' in r and '台' in r:
             category = 'unit_rate'
