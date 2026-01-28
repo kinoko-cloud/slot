@@ -56,17 +56,23 @@
 
             </section>
 
-            <!-- 🏆 全台的中ハイライト -->
+            <!-- 🏆 的中ハイライト -->
             {% if perfect_stores %}
             <section class="perfect-highlight">
-                <h2>🏆 全台的中！</h2>
+                <h2>🏆 的中ハイライト</h2>
                 <div class="perfect-list">
                     {% for ps in perfect_stores %}
                     <div class="perfect-card">
                         <span class="perfect-icon">{{ ps.machine_icon }}</span>
-                        <span class="perfect-store">{{ ps.store_name }}</span>
-                        <span class="perfect-machine">{{ ps.machine_name }}</span>
-                        <span class="perfect-badge">{{ ps.sa_hit }}/{{ ps.sa_total }}台 全的中！</span>
+                        <div class="perfect-info">
+                            <span class="perfect-store">{{ ps.store_name }}</span>
+                            <span class="perfect-machine">{{ ps.machine_name }}</span>
+                        </div>
+                        <span class="perfect-badge">
+                            {% if ps.sa_total == ps.total_units %}全{{ ps.total_units }}台的中！
+                            {% else %}予測{{ ps.sa_total }}台中{{ ps.sa_hit }}台的中（全{{ ps.total_units }}台）
+                            {% endif %}
+                        </span>
                     </div>
                     {% endfor %}
                 </div>

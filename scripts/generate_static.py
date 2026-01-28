@@ -1365,12 +1365,13 @@ def _generate_verify_from_backtest(env, results):
             'total_good': m_actual + m_surprise, 'rate': m_rate,
         })
     
-    # 100%的中の店舗×機種を抽出
+    # 的中ハイライト（100%的中 or 高的中率で3台以上）
     perfect_stores = []
     for mk, md in verify_data.items():
         for sd in md['stores']:
             sa_total = sd.get('sa_total', 0)
             sa_hit = sd.get('sa_hit', 0)
+            total_units = len(sd.get('units', []))
             if sa_total >= 1 and sa_hit == sa_total:
                 perfect_stores.append({
                     'store_name': sd.get('store_name', sd.get('name', '')),
@@ -1378,7 +1379,10 @@ def _generate_verify_from_backtest(env, results):
                     'machine_icon': md['icon'],
                     'sa_total': sa_total,
                     'sa_hit': sa_hit,
+                    'total_units': total_units,
                 })
+    # 台数多い順にソート
+    perfect_stores.sort(key=lambda x: -x['sa_total'])
 
     hypotheses = []
     for mk, md in verify_data.items():
@@ -1705,12 +1709,13 @@ def generate_verify_page(env):
     except Exception as e:
         print(f"  ⚠ 仮説生成エラー: {e}")
 
-    # 100%的中の店舗×機種を抽出
+    # 的中ハイライト（100%的中）
     perfect_stores = []
     for mk, md in verify_data.items():
         for sd in md['stores']:
             sa_total = sd.get('sa_total', 0)
             sa_hit = sd.get('sa_hit', 0)
+            total_units = len(sd.get('units', []))
             if sa_total >= 1 and sa_hit == sa_total:
                 perfect_stores.append({
                     'store_name': sd.get('store_name', sd.get('name', '')),
@@ -1718,7 +1723,9 @@ def generate_verify_page(env):
                     'machine_icon': md['icon'],
                     'sa_total': sa_total,
                     'sa_hit': sa_hit,
+                    'total_units': total_units,
                 })
+    perfect_stores.sort(key=lambda x: -x['sa_total'])
 
     html = template.render(
         verify_data=verify_data,
