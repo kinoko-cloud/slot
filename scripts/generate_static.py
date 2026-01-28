@@ -1292,7 +1292,7 @@ def _try_load_backtest_results():
 
 
 def _get_verify_date_str():
-    """バックテスト結果の日付を取得（結果日=予測日+1日）"""
+    """バックテスト結果の実績日を取得"""
     files = sorted(glob.glob('data/verify/verify_*_results.json'), reverse=True)
     if files:
         try:
@@ -1300,10 +1300,8 @@ def _get_verify_date_str():
             d = data.get('date', '')
             if d:
                 dt = datetime.strptime(d, '%Y-%m-%d')
-                # 予測日の翌日が結果日（営業日）
-                result_dt = dt + timedelta(days=1)
                 weekdays = ['月','火','水','木','金','土','日']
-                return f'{result_dt.month}/{result_dt.day}({weekdays[result_dt.weekday()]})'
+                return f'{dt.month}/{dt.day}({weekdays[dt.weekday()]})'
         except:
             pass
     return ''
@@ -1771,7 +1769,7 @@ def generate_verify_page(env):
                 pre_open_score = pre_open.get('score', 50)
 
                 # 判定（機種ごとの閾値を使用）
-                _good_th = 145 if machine_key == 'sbj' else 100
+                _good_th = machine.get('good_prob', 130)
                 is_predicted_good = predicted_rank in ('S', 'A')
                 is_actual_good = actual_prob > 0 and actual_prob <= _good_th
                 is_actual_excellent = actual_prob > 0 and actual_prob <= 100
