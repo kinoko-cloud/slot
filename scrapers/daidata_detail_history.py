@@ -17,7 +17,8 @@ REMOVE_ADS_SCRIPT = """
 """
 
 
-def get_all_history(hall_id: str = "100860", unit_id: str = "3011", hall_name: str = "渋谷エスパス新館"):
+def get_all_history(hall_id: str = "100860", unit_id: str = "3011", hall_name: str = "渋谷エスパス新館",
+                    expected_machine: str = None):
     """全日の詳細履歴を取得"""
     print(f"=" * 70)
     print(f"台{unit_id}（{hall_name}）全履歴取得")
@@ -61,12 +62,19 @@ def get_all_history(hall_id: str = "100860", unit_id: str = "3011", hall_name: s
                 'days': []
             }
 
-            # 機種名取得
+            # 機種名取得＋バリデーション
             text = page.inner_text('body')
             machine_match = re.search(r'(L[ｱ-ﾝァ-ヶー\w]+)\s*\(', text)
             if machine_match:
                 result['machine_name'] = machine_match.group(1)
                 print(f"機種: {result['machine_name']}")
+                # 期待する機種名と照合
+                if expected_machine and expected_machine not in result['machine_name']:
+                    print(f"  ⚠️ 機種不一致! 台{unit_id}: 期待={expected_machine}, 実際={result['machine_name']}")
+                    print(f"  → 台番号が別機種に変わった可能性。スキップします。")
+                    result['machine_mismatch'] = True
+                    browser.close()
+                    return result
 
             # 0. 概要ページから日別サマリー（最大持ち玉・累計スタート）をパース
             overview_by_date = _parse_overview_summary(text)
