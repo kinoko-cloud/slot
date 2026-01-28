@@ -116,7 +116,7 @@
                                     <span class="vc-unit">{{ unit.unit_id|pad_id }}番</span>
                                     {% if unit.actual_prob > 0 %}
                                     <span class="vc-art">ART {{ unit.actual_art }}</span>
-                                    <span class="vc-prob {% if unit.actual_prob <= 100 %}excellent{% elif unit.actual_prob <= 130 %}good{% elif unit.actual_prob >= 200 %}bad{% endif %}">1/{{ unit.actual_prob|int }}</span>
+                                    <span class="vc-prob {% if unit.actual_is_good and unit.actual_prob <= 100 %}excellent{% elif unit.actual_is_good %}good{% elif unit.actual_prob >= 200 %}bad{% endif %}">1/{{ unit.actual_prob|int }}</span>
                                     {% endif %}
                                     {% if unit.actual_games and unit.actual_games > 0 %}
                                     <span class="vc-games">{{ '{:,}'.format(unit.actual_games|int) }}G</span>
@@ -134,9 +134,9 @@
                                     </span>
                                     <span class="vc-arrow">→</span>
                                     <span class="vc-result-mark">
-                                        {% if unit.actual_prob > 0 and unit.actual_prob <= 100 %}
+                                        {% if unit.verdict_class == 'perfect' or (unit.actual_is_good and unit.actual_prob > 0 and unit.actual_prob <= 100) %}
                                         <span class="vr-mark excellent">◎</span>
-                                        {% elif unit.actual_prob > 0 and unit.actual_prob <= 130 %}
+                                        {% elif unit.verdict_class in ('hit', 'surprise') or unit.actual_is_good %}
                                         <span class="vr-mark good">◯</span>
                                         {% elif unit.actual_prob >= 200 %}
                                         <span class="vr-mark bad">✕</span>
@@ -150,9 +150,11 @@
                                     <span class="vc-label verdict-label-{{ unit.verdict_class }}">
                                         {% if unit.verdict_class == 'perfect' %}的中！
                                         {% elif unit.verdict_class == 'hit' %}的中
+                                        {% elif unit.verdict_class == 'miss' and unit.actual_prob < 200 %}おしい
                                         {% elif unit.verdict_class == 'miss' %}ハズレ
                                         {% elif unit.verdict_class == 'surprise' %}見逃し
                                         {% elif unit.verdict_class == 'neutral' and unit.pre_open_rank in ('S', 'A') %}おしい
+                                        {% elif unit.verdict_class == 'neutral' and unit.actual_is_good %}見逃し
                                         {% elif unit.verdict_class == 'neutral' %}—
                                         {% elif unit.verdict_class == 'nodata' %}データ不足
                                         {% else %}—
