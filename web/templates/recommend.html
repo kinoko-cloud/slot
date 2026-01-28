@@ -344,46 +344,12 @@
                                 {% endif %}
                             </div>
 
-                            {# === 日別ART確率推移（線グラフ） === #}
-                            {% if rec.recent_days and rec.recent_days|length >= 2 %}
-                            {% set rdays = rec.recent_days|reverse|list %}
+                            {# === 差枚推移グラフ === #}
+                            {% if rec.today_history and rec.today_history|length >= 2 %}
                             <div class="detail-section">
-                                <div class="detail-title">ART確率推移（直近{{ rdays|length }}日）</div>
+                                <div class="detail-title">{% if rec.history_date %}{{ rec.history_date }}{% endif %} 差枚推移</div>
                                 <div class="line-chart-container">
-                                    <svg class="line-chart" viewBox="0 0 300 140" preserveAspectRatio="xMidYMid meet">
-                                        {# 好調ライン（1/100） #}
-                                        {% set chart_min = 30 %}
-                                        {% set chart_max = 300 %}
-                                        {% set good_y = (100 - chart_min) / (chart_max - chart_min) * 110 + 10 %}
-                                        <line x1="30" y1="{{ good_y|round(1) }}" x2="290" y2="{{ good_y|round(1) }}" stroke="#2ed573" stroke-width="0.5" stroke-dasharray="4" opacity="0.5"/>
-                                        <text x="2" y="{{ (good_y + 3)|round(1) }}" fill="#2ed573" font-size="7" opacity="0.7">1/100</text>
-                                        {# 不調ライン（1/200） #}
-                                        {% set bad_y = (200 - chart_min) / (chart_max - chart_min) * 110 + 10 %}
-                                        <line x1="30" y1="{{ bad_y|round(1) }}" x2="290" y2="{{ bad_y|round(1) }}" stroke="#ff6b6b" stroke-width="0.5" stroke-dasharray="4" opacity="0.5"/>
-                                        <text x="2" y="{{ (bad_y + 3)|round(1) }}" fill="#ff6b6b" font-size="7" opacity="0.7">1/200</text>
-                                        {# データポイント + ライン #}
-                                        {% set ns = namespace(points='', dots='') %}
-                                        {% for d in rdays %}
-                                            {% if d.prob and d.prob > 0 %}
-                                                {% set x = (loop.index0 / (rdays|length - 1) * 260 + 30) if rdays|length > 1 else 160 %}
-                                                {% set prob_val = d.prob if d.prob <= chart_max else chart_max %}
-                                                {% set prob_val2 = prob_val if prob_val >= chart_min else chart_min %}
-                                                {% set y = ((prob_val2 - chart_min) / (chart_max - chart_min) * 110 + 10) %}
-                                                {% set ns.points = ns.points ~ x|round(1)|string ~ ',' ~ y|round(1)|string ~ ' ' %}
-                                                {% set color = '#2ed573' if d.prob <= 100 else '#ffa502' if d.prob <= 145 else '#ff6b6b' %}
-                                                {% set ns.dots = ns.dots ~ '<circle cx="' ~ x|round(1)|string ~ '" cy="' ~ y|round(1)|string ~ '" r="3" fill="' ~ color ~ '"/>' %}
-                                            {% endif %}
-                                        {% endfor %}
-                                        <polyline points="{{ ns.points }}" fill="none" stroke="#70a1ff" stroke-width="1.5" stroke-linejoin="round"/>
-                                        {{ ns.dots|safe }}
-                                        {# 日付ラベル #}
-                                        {% for d in rdays %}
-                                            {% if d.prob and d.prob > 0 %}
-                                            {% set x = (loop.index0 / (rdays|length - 1) * 260 + 30) if rdays|length > 1 else 160 %}
-                                            <text x="{{ x|round(1) }}" y="136" fill="#888" font-size="6.5" text-anchor="middle">{{ d.date[5:] }}</text>
-                                            {% endif %}
-                                        {% endfor %}
-                                    </svg>
+                                    {{ sparkline(rec.today_history, width=300, height=100, diff_medals=rec.diff_medals)|safe }}
                                 </div>
                             </div>
                             {# === 当たり履歴テーブル === #}
