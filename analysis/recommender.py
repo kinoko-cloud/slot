@@ -464,6 +464,28 @@ def _merge_raw_data(daily_data: dict, date_str: str) -> dict:
     return daily_data
 
 
+def _is_quality_good(day: dict, prob: float, good_threshold: float,
+                     deep_hama_limit: int = 3, min_max_medals: int = 500) -> bool:
+    """好調判定: ART確率 + 出玉品質（ハマリ・最大獲得）
+
+    確率だけでなく、ハマリが多い日や最大獲得が低い日は好調から除外。
+    """
+    if prob <= 0 or prob > good_threshold:
+        return False
+    hist = day.get('history', [])
+    deep_hama = sum(1 for h in hist if h.get('start', 0) >= 500) if hist else 0
+    max_medals = day.get('max_medals', 0)
+    if not max_medals and hist:
+        max_medals = max((h.get('medals', 0) for h in hist), default=0)
+    # ハマリが多すぎる
+    if hist and deep_hama >= deep_hama_limit:
+        return False
+    # 最大獲得が少なすぎる（爆発してない）
+    if max_medals > 0 and max_medals < min_max_medals:
+        return False
+    return True
+
+
 def calculate_unit_historical_performance(days: List[dict], machine_key: str = 'sbj') -> dict:
     """【改善1】台番号ごとの過去実績（好調率）を計算
 
@@ -501,6 +523,13 @@ def calculate_unit_historical_performance(days: List[dict], machine_key: str = '
     # 日付順にソート（新しい順）
     sorted_days = sorted(days, key=lambda x: x.get('date', ''), reverse=True)
 
+    # 好調判定の出玉品質チェック用閾値
+    # ハマリ500G超が多い or 最大獲得枚数が低い → 確率が良くても好調ではない
+    deep_hama_limit = 3  # これ以上ハマりがあると好調除外
+    min_max_medals_sbj = 500   # SBJ: 最大獲得枚数がこれ未満→好調除外
+    min_max_medals_hokuto = 1000  # 北斗: 最大獲得枚数がこれ未満→好調除外
+    min_max_medals = min_max_medals_hokuto if machine_key == 'hokuto_tensei2' else min_max_medals_sbj
+
     for day in sorted_days:
         art = day.get('art', 0)
         games = _get_games(day)
@@ -508,7 +537,24 @@ def calculate_unit_historical_performance(days: List[dict], machine_key: str = '
             prob = games / art
             probs.append(prob)
             total_days += 1
-            if prob <= good_prob_threshold:
+
+            is_good_prob = prob <= good_prob_threshold
+
+            # 出玉品質チェック（ハマリ回数 + 最大獲得枚数）
+            hist = day.get('history', [])
+            deep_hama = sum(1 for h in hist if h.get('start', 0) >= 500) if hist else 0
+            max_medals = day.get('max_medals', 0)
+            if not max_medals and hist:
+                max_medals = max((h.get('medals', 0) for h in hist), default=0)
+
+            # 好調判定: 確率OK + 出玉品質OK
+            quality_ok = True
+            if hist and deep_hama >= deep_hama_limit:
+                quality_ok = False  # ハマりが多すぎる
+            if max_medals > 0 and max_medals < min_max_medals:
+                quality_ok = False  # 最大獲得が少なすぎる（爆発してない）
+
+            if is_good_prob and quality_ok:
                 good_days += 1
             if prob >= bad_prob_threshold:
                 bad_days += 1
@@ -541,12 +587,14 @@ def calculate_unit_historical_performance(days: List[dict], machine_key: str = '
         nxt_games = _get_games(nxt)
         if nxt_art > 0 and nxt_games > 0:
             nxt_prob = nxt_games / nxt_art
-            if nxt_prob <= good_prob_threshold:
+            nxt_qual = _is_quality_good(nxt, nxt_prob, good_prob_threshold, deep_hama_limit, min_max_medals)
+            if nxt_qual:
                 # 前日が好調だった場合、翌日(curr)も好調か？
                 good_after_good_total += 1
                 if curr_art > 0 and curr_games > 0:
                     curr_prob = curr_games / curr_art
-                    if curr_prob <= good_prob_threshold:
+                    curr_qual = _is_quality_good(curr, curr_prob, good_prob_threshold, deep_hama_limit, min_max_medals)
+                    if curr_qual:
                         good_after_good += 1
     continuation_rate = good_after_good / good_after_good_total if good_after_good_total > 0 else 0
 
@@ -570,29 +618,35 @@ def calculate_unit_historical_performance(days: List[dict], machine_key: str = '
     else:
         score_bonus = -8  # 30%未満好調 → 低設定が入りやすい台
 
-    # 好調日の詳細（爆発レベル分析用）
+    # 好調日の詳細（爆発レベル分析用） — 品質チェック付き
     good_day_details = []
     for d in sorted_days:
         art = d.get('art', 0)
-        games = d.get('games', d.get('total_games', 0))
-        if art > 0 and games > 0 and (games / art) <= good_prob_threshold:
-            good_day_details.append({
-                'date': d.get('date', ''),
-                'art': art,
-                'prob': games / art if art > 0 else 0,
-                'max_rensa': d.get('max_rensa', 0),
-                'max_medals': d.get('max_medals', 0),
-            })
+        games = d.get('games', d.get('total_games', 0)) or _get_games(d)
+        if art > 0 and games > 0:
+            prob = games / art
+            if _is_quality_good(d, prob, good_prob_threshold, deep_hama_limit, min_max_medals):
+                good_day_details.append({
+                    'date': d.get('date', ''),
+                    'art': art,
+                    'prob': prob,
+                    'max_rensa': d.get('max_rensa', 0),
+                    'max_medals': d.get('max_medals', 0),
+                })
 
-    # 最長連続好調記録
+    # 最長連続好調記録 — 品質チェック付き
     max_consecutive_good = 0
     current_streak = 0
     for d in reversed(sorted_days):  # 古い順で走査
         art = d.get('art', 0)
-        games = d.get('games', d.get('total_games', 0))
-        if art > 0 and games > 0 and (games / art) <= good_prob_threshold:
-            current_streak += 1
-            max_consecutive_good = max(max_consecutive_good, current_streak)
+        games = d.get('games', d.get('total_games', 0)) or _get_games(d)
+        if art > 0 and games > 0:
+            prob = games / art
+            if _is_quality_good(d, prob, good_prob_threshold, deep_hama_limit, min_max_medals):
+                current_streak += 1
+                max_consecutive_good = max(max_consecutive_good, current_streak)
+            else:
+                current_streak = 0
         else:
             current_streak = 0
 
