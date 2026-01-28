@@ -6274,3 +6274,24 @@ a.perfect-card:hover { background: rgba(255,215,0,0.18); }
 }
 .vb-title-lg { font-weight: bold; font-size: 0.95em; color: #fff; }
 .vb-detail-lg { color: #aaa; font-size: 0.8em; }
+
+/* トピック */
+.topics-section { margin-bottom: 20px; }
+.topics-section h2 { margin-bottom: 10px; }
+.topic-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 12px;
+    margin-bottom: 6px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 8px;
+    border-left: 3px solid #444;
+}
+.topic-explosion { border-left-color: #ff6b6b; }
+.topic-miss { border-left-color: #888; }
+.topic-surprise { border-left-color: #ffa502; }
+.topic-perfect { border-left-color: #2ed573; }
+.topic-icon { font-size: 1.3em; flex-shrink: 0; }
+.topic-title { font-weight: bold; font-size: 0.95em; color: #fff; }
+.topic-detail { font-size: 0.8em; color: #aaa; margin-top: 2px; }
