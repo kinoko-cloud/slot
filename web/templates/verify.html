@@ -110,9 +110,8 @@
                     <div class="verify-table">
                         <div class="verify-header-row">
                             <span class="vh-unit">台番</span>
-                            <span class="vh-pred">朝予測</span>
-                            <span class="vh-art">ART</span>
-                            <span class="vh-prob">ART確率</span>
+                            <span class="vh-pred">予想</span>
+                            <span class="vh-prob">結果</span>
                             <span class="vh-result">判定</span>
                         </div>
                         {% for unit in store.units %}
@@ -121,11 +120,12 @@
                                 <span class="vr-unit">{{ unit.unit_id|pad_id }}</span>
                                 <span class="vr-pred">
                                     <span class="rank-badge-xs" style="background-color: {{ rank_color(unit.pre_open_rank) }}">{{ unit.pre_open_rank }}</span>
-                                    <span class="vr-score">{{ unit.pre_open_score|int }}pt</span>
                                 </span>
-                                <span class="vr-art">{{ unit.actual_art }}</span>
                                 <span class="vr-prob {% if unit.actual_prob > 0 and unit.actual_prob <= 100 %}excellent{% elif unit.actual_prob > 0 and unit.actual_prob <= 130 %}good{% elif unit.actual_prob >= 200 %}bad{% endif %}">
-                                    {% if unit.actual_prob > 0 %}1/{{ unit.actual_prob|int }}{% else %}-{% endif %}
+                                    {% if unit.actual_prob > 0 %}
+                                    1/{{ unit.actual_prob|int }}
+                                    <span class="vr-art-sub">ART{{ unit.actual_art }}</span>
+                                    {% else %}-{% endif %}
                                 </span>
                                 <span class="vr-verdict">{{ unit.verdict }}{% if unit.history %}<span class="vr-expand-icon">▼</span>{% endif %}</span>
                             </div>
@@ -206,13 +206,14 @@
 
             <!-- 判定基準 -->
             <section class="verify-legend">
-                <h3>判定基準</h3>
+                <h3>判定の見方</h3>
                 <div class="legend-items">
-                    <div class="legend-row"><span class="verdict-icon">&#x25CE;</span> 完璧: 予測S/A → 実際に合成1/100以下</div>
-                    <div class="legend-row"><span class="verdict-icon">&#x25CB;</span> 的中: 予測S/A → 実際に合成1/130以下</div>
-                    <div class="legend-row"><span class="verdict-icon">&#x25B3;</span> 普通: 予測通りの平凡な結果</div>
-                    <div class="legend-row"><span class="verdict-icon">&#x2715;</span> 外れ: 予測S/A → 実際に合成1/200以上</div>
-                    <div class="legend-row"><span class="verdict-icon">&#x2605;</span> 想定外: 予測B以下だったが実際は好調（想定外の好台）</div>
+                    <div class="legend-row"><span class="verdict-icon">◎</span> <strong>予想S/A → 結果◎</strong>（確率1/100以下）</div>
+                    <div class="legend-row"><span class="verdict-icon">○</span> <strong>予想S/A → 結果○</strong>（確率1/130以下）</div>
+                    <div class="legend-row"><span class="verdict-icon">✕</span> <strong>予想S/A → 結果✕</strong>（確率1/200以上）</div>
+                    <div class="legend-row"><span class="verdict-icon">△</span> <strong>どちらとも言えない</strong>（中間域）</div>
+                    <div class="legend-row"><span class="verdict-icon">★</span> <strong>予想B以下 → 結果は好調</strong>（見逃し）</div>
+                    <div class="legend-row"><span class="verdict-icon">-</span> <strong>データ不足</strong>（稼働少or未稼働）</div>
                 </div>
             </section>
 
