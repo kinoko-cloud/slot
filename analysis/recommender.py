@@ -2665,8 +2665,8 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
             pass
 
         # === 最終スコア計算 ===
-        total_bonus = (today_analysis.get('today_score_bonus', 0)
-                       + trend_bonus
+        today_bonus = today_analysis.get('today_score_bonus', 0)
+        prediction_bonus = (trend_bonus
                        + historical_bonus   # 【改善1】過去実績ボーナス
                        + slump_bonus        # 【改善2】不調翌日ボーナス
                        + activity_bonus     # 【改善4+5】稼働パターン+ハイエナ
@@ -2675,11 +2675,12 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
                        + yesterday_diff_bonus  # 前日差枚ボーナス
                        + pattern_bonus      # 店舗設定投入パターンボーナス
                        )
-        # ボーナス合計にキャップ: base_scoreからの変動を±20に制限
-        # base=50 → 最大70(A), base=55 → 最大75(S境界), base=65 → 最大85(S)
-        # base=45 → 最大65(A境界)。ボーナスだけでSにはなりにくい
-        total_bonus = max(-20, min(20, total_bonus))
-        raw_score = base_score + total_bonus
+        # 前日予想ボーナスは±20にキャップ
+        prediction_bonus = max(-20, min(20, prediction_bonus))
+
+        # 営業中の当日データはキャップ外（信頼できるリアルタイムデータは重い）
+        # 閉店後はtoday_bonus=0なので影響なし
+        raw_score = base_score + prediction_bonus + today_bonus
 
         # === フィードバック補正 ===
         # 過去の答え合わせ結果から台・曜日の補正を適用
