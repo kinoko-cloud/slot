@@ -168,13 +168,17 @@
                     <div class="yesterday-sub-header">
                         <span class="store-name-sm">{{ rec.store_name }}</span>
                         <span class="unit-id-sm">{{ rec.unit_id|pad_id }}番</span>
-                        {# 予想→結果バッジ #}
                         {% set pred_good = rec.predicted_rank in ('S', 'A') %}
                         {% set result_good = rec.prediction_result in ('hit', 'missed') %}
-                        <span class="pred-result-badge">
-                            {% if pred_good %}<span class="pr-pred good">◯{{ rec.predicted_rank }}</span>{% else %}<span class="pr-pred bad">✕{{ rec.predicted_rank }}</span>{% endif %}→{% if result_good %}<span class="pr-result good">◎</span>{% else %}<span class="pr-result bad">✕</span>{% endif %}
-                            {% if pred_good and result_good %}<span class="pr-label hit">的中</span>{% elif pred_good and not result_good %}<span class="pr-label miss">ハズレ</span>{% elif not pred_good and result_good %}<span class="pr-label miss">ハズレ</span>{% else %}<span class="pr-label hit">的中</span>{% endif %}
-                        </span>
+                        {% if pred_good and result_good %}
+                        <span class="prediction-badge hit">前日予測的中</span>
+                        {% elif pred_good and not result_good %}
+                        <span class="prediction-badge miss">前日予測ハズレ</span>
+                        {% elif not pred_good and result_good %}
+                        <span class="prediction-badge miss">前日予測ハズレ</span>
+                        {% else %}
+                        <span class="prediction-badge hit">前日予測的中</span>
+                        {% endif %}
                     </div>
                     {# === 差枚（目立たせる） === #}
                     {% if rec.diff_medals is defined and rec.diff_medals != 0 %}
@@ -598,13 +602,17 @@
                     <div class="yesterday-sub-header">
                         <span class="store-name-sm">{{ rec.store_name }}</span>
                         <span class="unit-id-sm">{{ rec.unit_id|pad_id }}番</span>
-                        {# 予想→結果バッジ #}
                         {% set pred_good = rec.predicted_rank in ('S', 'A') %}
                         {% set result_good = rec.prediction_result in ('hit', 'missed') %}
-                        <span class="pred-result-badge">
-                            {% if pred_good %}<span class="pr-pred good">◯{{ rec.predicted_rank }}</span>{% else %}<span class="pr-pred bad">✕{{ rec.predicted_rank }}</span>{% endif %}→{% if result_good %}<span class="pr-result good">◎</span>{% else %}<span class="pr-result bad">✕</span>{% endif %}
-                            {% if pred_good and result_good %}<span class="pr-label hit">的中</span>{% elif pred_good and not result_good %}<span class="pr-label miss">ハズレ</span>{% elif not pred_good and result_good %}<span class="pr-label miss">ハズレ</span>{% else %}<span class="pr-label hit">的中</span>{% endif %}
-                        </span>
+                        {% if pred_good and result_good %}
+                        <span class="prediction-badge hit">前日予測的中</span>
+                        {% elif pred_good and not result_good %}
+                        <span class="prediction-badge miss">前日予測ハズレ</span>
+                        {% elif not pred_good and result_good %}
+                        <span class="prediction-badge miss">前日予測ハズレ</span>
+                        {% else %}
+                        <span class="prediction-badge hit">前日予測的中</span>
+                        {% endif %}
                         {% if rec.availability == '空き' %}
                         <span class="avail-sm empty">空</span>
                         {% elif rec.availability == '遊技中' %}
