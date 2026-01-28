@@ -42,21 +42,33 @@
         </header>
 
         <main>
-            {# === 答え合わせバナー（日付+的中率） === #}
-            <a href="{{ url_for('verify') }}" class="verify-banner">
-                <span class="vb-icon">🏆</span>
-                <span class="vb-text">{% if verify_date_str %}{{ verify_date_str }}の前日予測の結果は？{% else %}前日予測の結果は？{% endif %}{% if verify_accuracy %} <span class="vb-rate">的中{{ verify_accuracy }}%</span>{% endif %}</span>
-                <span class="vb-arrow">›</span>
+            {# === 答え合わせバナー（大きく） === #}
+            <a href="{{ url_for('verify') }}" class="verify-banner-lg">
+                <div class="vb-lg-top">
+                    <span class="vb-icon-lg">🏆</span>
+                    <span class="vb-title-lg">{% if verify_date_str %}{{ verify_date_str }}の前日予測の結果は？{% else %}前日予測の結果は？{% endif %}</span>
+                </div>
+                {% if verify_accuracy %}
+                <div class="vb-lg-bottom">
+                    <span class="vb-rate-lg">的中{{ verify_accuracy }}%</span>
+                    <span class="vb-detail-lg">詳細を見る ›</span>
+                </div>
+                {% endif %}
             </a>
 
-            {# === ナビゲーション === #}
-            <nav class="top-nav">
-                <a href="#top3-section" class="top-nav-link">📊 おすすめ台</a>
-                <a href="#yesterday-section" class="top-nav-link">💥 爆発台</a>
-                {% for link in recommend_links %}
-                <a href="{{ url_for('recommend', store_key=link.store_key) }}" class="top-nav-link">{{ link.icon }} {{ link.name }}</a>
-                {% endfor %}
-            </nav>
+            {# === ナビゲーション（プルダウン） === #}
+            <div class="nav-dropdowns">
+                <a href="#top3-section" class="nav-pill">📊 おすすめ台</a>
+                <a href="#yesterday-section" class="nav-pill">💥 爆発台</a>
+                <div class="nav-dropdown">
+                    <button class="nav-pill dropdown-toggle" onclick="this.parentElement.classList.toggle('open')">🏪 店舗別 ▾</button>
+                    <div class="dropdown-content">
+                        {% for link in recommend_links %}
+                        <a href="{{ url_for('recommend', store_key=link.store_key) }}">{{ link.icon }} {{ link.name }}</a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
 
             {# === 閉店後: おすすめ台を最上部に === #}
             {% if display_mode in ('before_open', 'after_close') and top3 %}

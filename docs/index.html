@@ -12,7 +12,7 @@
     <div class="container">
         
         <div class="top-bar">
-            <span class="version-info">0128_13:53 Ver.</span>
+            <span class="version-info">0128_13:56 Ver.</span>
             <button class="hamburger-btn" onclick="document.getElementById('hamburger-menu').classList.toggle('hidden')" aria-label="メニュー">☰</button>
         </div>
         
@@ -53,36 +53,48 @@
 
         <main>
             
-            <a href="/verify.html" class="verify-banner">
-                <span class="vb-icon">🏆</span>
-                <span class="vb-text">1/27(火)の前日予測の結果は？ <span class="vb-rate">的中79%</span></span>
-                <span class="vb-arrow">›</span>
+            <a href="/verify.html" class="verify-banner-lg">
+                <div class="vb-lg-top">
+                    <span class="vb-icon-lg">🏆</span>
+                    <span class="vb-title-lg">1/27(火)の前日予測の結果は？</span>
+                </div>
+                
+                <div class="vb-lg-bottom">
+                    <span class="vb-rate-lg">的中79%</span>
+                    <span class="vb-detail-lg">詳細を見る ›</span>
+                </div>
+                
             </a>
 
             
-            <nav class="top-nav">
-                <a href="#top3-section" class="top-nav-link">📊 おすすめ台</a>
-                <a href="#yesterday-section" class="top-nav-link">💥 爆発台</a>
-                
-                <a href="/recommend/island_akihabara_sbj.html" class="top-nav-link">🃏 アイランド秋葉原</a>
-                
-                <a href="/recommend/island_akihabara_hokuto.html" class="top-nav-link">👊 アイランド秋葉原</a>
-                
-                <a href="/recommend/shibuya_espass_sbj.html" class="top-nav-link">🃏 エスパス渋谷新館</a>
-                
-                <a href="/recommend/shibuya_espass_hokuto.html" class="top-nav-link">👊 エスパス渋谷新館</a>
-                
-                <a href="/recommend/shinjuku_espass_sbj.html" class="top-nav-link">🃏 エスパス歌舞伎町</a>
-                
-                <a href="/recommend/shinjuku_espass_hokuto.html" class="top-nav-link">👊 エスパス歌舞伎町</a>
-                
-                <a href="/recommend/akiba_espass_sbj.html" class="top-nav-link">🃏 エスパス秋葉原</a>
-                
-                <a href="/recommend/akiba_espass_hokuto.html" class="top-nav-link">👊 エスパス秋葉原</a>
-                
-                <a href="/recommend/seibu_shinjuku_espass_sbj.html" class="top-nav-link">🃏 エスパス西武新宿</a>
-                
-            </nav>
+            <div class="nav-dropdowns">
+                <a href="#top3-section" class="nav-pill">📊 おすすめ台</a>
+                <a href="#yesterday-section" class="nav-pill">💥 爆発台</a>
+                <div class="nav-dropdown">
+                    <button class="nav-pill dropdown-toggle" onclick="this.parentElement.classList.toggle('open')">🏪 店舗別 ▾</button>
+                    <div class="dropdown-content">
+                        
+                        <a href="/recommend/island_akihabara_sbj.html">🃏 アイランド秋葉原</a>
+                        
+                        <a href="/recommend/island_akihabara_hokuto.html">👊 アイランド秋葉原</a>
+                        
+                        <a href="/recommend/shibuya_espass_sbj.html">🃏 エスパス渋谷新館</a>
+                        
+                        <a href="/recommend/shibuya_espass_hokuto.html">👊 エスパス渋谷新館</a>
+                        
+                        <a href="/recommend/shinjuku_espass_sbj.html">🃏 エスパス歌舞伎町</a>
+                        
+                        <a href="/recommend/shinjuku_espass_hokuto.html">👊 エスパス歌舞伎町</a>
+                        
+                        <a href="/recommend/akiba_espass_sbj.html">🃏 エスパス秋葉原</a>
+                        
+                        <a href="/recommend/akiba_espass_hokuto.html">👊 エスパス秋葉原</a>
+                        
+                        <a href="/recommend/seibu_shinjuku_espass_sbj.html">🃏 エスパス西武新宿</a>
+                        
+                    </div>
+                </div>
+            </div>
 
             
             
@@ -15060,7 +15072,7 @@
 
         <footer>
             <p><a href="/verify.html" class="footer-link">答え合わせ（予測 vs 実績）</a></p>
-            <p class="build-time">ビルド: 2026-01-28 13:53:55</p>
+            <p class="build-time">ビルド: 2026-01-28 13:56:57</p>
         </footer>
     </div>
     <script src="/static/realtime.js"></script>

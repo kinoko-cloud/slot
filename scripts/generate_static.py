@@ -1330,6 +1330,19 @@ def _generate_verify_from_backtest(env, results):
     """バックテスト結果からverifyページを生成"""
     from analysis.feedback import analyze_prediction_errors
     
+    # availability.jsonからmax_medals/diff_medalsを補完
+    avail_lookup = {}
+    try:
+        avail_data = json.load(open('data/availability.json'))
+        for sk, sv in avail_data.get('stores', {}).items():
+            for u in sv.get('units', []):
+                uid = str(u.get('unit_id', ''))
+                avail_lookup[(sk, uid)] = {
+                    'max_medals': u.get('max_medals', 0),
+                }
+    except:
+        pass
+    
     STORE_TO_MACHINE = {}
     for sk, sv in STORES.items():
         STORE_TO_MACHINE[sk] = sv.get('machine', sv.get('machine_key', 'sbj'))
@@ -1363,6 +1376,10 @@ def _generate_verify_from_backtest(env, results):
             else:
                 verdict, verdict_class = '△', 'neutral'
             
+            uid = str(u.get('unit_id', ''))
+            avail_info = avail_lookup.get((store_key, uid), {})
+            max_medals = avail_info.get('max_medals', 0)
+            
             formatted_units.append({
                 'unit_id': u.get('unit_id', ''),
                 'pre_open_rank': rank,
@@ -1373,6 +1390,7 @@ def _generate_verify_from_backtest(env, results):
                 'actual_prob': prob,
                 'actual_games': games,
                 'actual_is_good': is_good,
+                'max_medals': max_medals,
                 'verdict': verdict,
                 'verdict_class': verdict_class,
             })
