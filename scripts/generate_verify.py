@@ -40,6 +40,19 @@ def generate_verify(predict_date: str) -> dict:
     
     recommender.load_daily_data = patched_load
     orig_dt = analysis.recommender.datetime
+
+    # 蓄積DB(load_unit_history)も未来データをフィルタする
+    from analysis import history_accumulator
+    original_load_unit = history_accumulator.load_unit_history
+    
+    def patched_load_unit(store_key, unit_id):
+        data = original_load_unit(store_key, unit_id)
+        if data and data.get('days'):
+            data = dict(data)
+            data['days'] = [d for d in data['days'] if d.get('date', '9999') < predict_date]
+        return data
+    
+    history_accumulator.load_unit_history = patched_load_unit
     
     class MockDT(datetime):
         @classmethod
@@ -75,6 +88,7 @@ def generate_verify(predict_date: str) -> dict:
     finally:
         recommender.load_daily_data = original_load
         analysis.recommender.datetime = orig_dt
+        history_accumulator.load_unit_history = original_load_unit
     
     # verify形式に変換
     v = {
