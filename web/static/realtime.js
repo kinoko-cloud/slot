@@ -123,6 +123,8 @@ function updateModeBadge(mode, isOpen) {
         badge.textContent = '営業中';
     } else if (mode === 'collecting') {
         badge.textContent = '集計中';
+    } else if (mode === 'before_open') {
+        badge.textContent = '営業前';
     } else {
         badge.textContent = '閉店後';
     }
