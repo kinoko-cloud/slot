@@ -6188,14 +6188,15 @@ a.perfect-card:hover { background: rgba(255,215,0,0.18); }
 }
 
 /* 特筆事項 */
-.vb-highlights {
+.vb-highlights-row {
     display: flex;
-    flex-direction: column;
-    gap: 4px;
-    margin: 6px 0;
+    align-items: center;
+    gap: 8px;
+    margin-top: 4px;
+    flex-wrap: wrap;
 }
 .vb-highlight {
-    font-size: 0.85em;
+    font-size: 0.8em;
     color: #ffd700;
     line-height: 1.3;
 }

@@ -63,13 +63,15 @@
                 <div class="vb-lg-info">
                     <span class="vb-title-lg">{% if verify_date_str %}{{ verify_date_str }}{% else %}昨日{% endif %}の的中率</span>
                     {% if verify_highlights %}
-                    <div class="vb-highlights">
+                    <div class="vb-highlights-row">
                         {% for h in verify_highlights %}
                         <span class="vb-highlight">{{ h }}</span>
                         {% endfor %}
+                        <span class="vb-detail-lg">詳しく見る →</span>
                     </div>
-                    {% endif %}
+                    {% else %}
                     <span class="vb-detail-lg">詳しく見る →</span>
+                    {% endif %}
                 </div>
             </a>
 
