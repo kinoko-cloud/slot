@@ -1366,10 +1366,13 @@ def _generate_verify_from_backtest(env, results):
                 games = u.get('total_start', 0)
                 max_medals = u.get('max_medals', 0)
                 diff = estimate_diff_medals(medals_total, games, mk) if games > 0 else 0
-                avail_lookup[(sk, uid)] = {
-                    'max_medals': max_medals,
-                    'diff_medals': diff,
-                }
+                info = {'max_medals': max_medals, 'diff_medals': diff}
+                avail_lookup[(sk, uid)] = info
+                # エイリアス: akihabara↔akiba の差異対応
+                if 'akihabara' in sk:
+                    avail_lookup[(sk.replace('akihabara', 'akiba'), uid)] = info
+                elif 'akiba' in sk:
+                    avail_lookup[(sk.replace('akiba', 'akihabara'), uid)] = info
     except Exception as e:
         print(f"  ⚠ availability.json読み込みエラー: {e}")
     
