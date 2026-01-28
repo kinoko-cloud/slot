@@ -1482,15 +1482,68 @@ def _generate_verify_from_backtest(env, results):
     perfect_stores.sort(key=lambda x: (-x['rate'], -x['total_units']))
     perfect_stores = perfect_stores[:5]
 
-    hypotheses = []
+    # トピック自動生成
+    topics = []
     for mk, md in verify_data.items():
+        machine_name = md['name']
         for sd in md['stores']:
-            try:
-                analysis = analyze_prediction_errors(sd['units'], '', mk)
-                if analysis.get('hypotheses'):
-                    hypotheses.extend(analysis['hypotheses'])
-            except:
-                pass
+            store_name = sd.get('store_name', sd.get('name', ''))
+            units = sd.get('units', [])
+            valid = [u for u in units if u.get('actual_prob', 0) > 0 and u.get('actual_games', 0) >= 500]
+            if not valid:
+                continue
+            
+            # 1. 爆発台（確率1/80以下）
+            explosions = [u for u in valid if u.get('actual_prob', 0) <= 80]
+            for u in explosions:
+                rank = u.get('pre_open_rank', u.get('predicted_rank', 'C'))
+                was_predicted = rank in ('S', 'A')
+                topics.append({
+                    'icon': '💥',
+                    'type': 'explosion',
+                    'title': f'{store_name} {u["unit_id"]}番が大爆発！（1/{u["actual_prob"]:.0f}）',
+                    'detail': f'{machine_name} — ART {u.get("actual_art", 0)}回 / {"予測的中" if was_predicted else "予想外の爆発"}',
+                    'score': 100,
+                })
+            
+            # 2. S/A予測が全滅した店舗
+            sa_units = [u for u in valid if u.get('pre_open_rank', u.get('predicted_rank', 'C')) in ('S', 'A')]
+            sa_good = [u for u in sa_units if u.get('actual_is_good', False)]
+            if len(sa_units) >= 3 and len(sa_good) == 0:
+                topics.append({
+                    'icon': '😱',
+                    'type': 'miss',
+                    'title': f'{store_name}の{machine_name}で予測全滅',
+                    'detail': f'S/A予測{len(sa_units)}台が全て不調',
+                    'score': 90,
+                })
+            
+            # 3. B以下から大量好調（予想外の店舗）
+            low_units = [u for u in valid if u.get('pre_open_rank', u.get('predicted_rank', 'C')) in ('C', 'D')]
+            low_good = [u for u in low_units if u.get('actual_is_good', False)]
+            if len(low_good) >= 3:
+                topics.append({
+                    'icon': '🔥',
+                    'type': 'surprise',
+                    'title': f'{store_name}の{machine_name}でダメ予想台{len(low_good)}台が好調',
+                    'detail': f'C/D予測{len(low_units)}台中{len(low_good)}台が好調 — 読みにくい店舗',
+                    'score': 85,
+                })
+            
+            # 4. 完全的中
+            hit_count = sum(1 for u in valid if _is_unit_hit(u))
+            if hit_count == len(valid) and len(valid) >= 3:
+                topics.append({
+                    'icon': '🎯',
+                    'type': 'perfect',
+                    'title': f'{store_name}の{machine_name}で全{len(valid)}台的中！',
+                    'detail': f'予測が完全に一致',
+                    'score': 95,
+                })
+    
+    # スコア順、最大8件
+    topics.sort(key=lambda x: -x.get('score', 0))
+    topics = topics[:8]
     
     # 日付情報（読みやすいフォーマット）
     weekdays = ['月','火','水','木','金','土','日']
@@ -1530,7 +1583,7 @@ def _generate_verify_from_backtest(env, results):
         total_all_units=_total_all_units,
         total_good_all=_total_good_all,
         machine_accuracy=machine_accuracy,
-        hypotheses=hypotheses[:6],
+        topics=topics,
         perfect_stores=perfect_stores,
         version=f'backtest_{actual_date}',
         result_date_str=f'{_fmt_date(actual_date)}の実績',
@@ -1843,7 +1896,7 @@ def generate_verify_page(env):
         total_good_all=total_good_all,
         result_date_str=result_date_str,
         predict_base=predict_base,
-        hypotheses=hypotheses,
+        topics=[],
         perfect_stores=perfect_stores,
     )
 

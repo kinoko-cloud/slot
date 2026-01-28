@@ -83,16 +83,17 @@
             </section>
             {% endif %}
 
-            <!-- 分析・仮説セクション -->
-            {% if hypotheses %}
-            <section class="hypotheses-section">
-                <h2>🔍 なぜ外した？分析と仮説</h2>
-                {% for h in hypotheses %}
-                <div class="hypothesis-card">
-                    <div class="hyp-title">💡 {{ h.hypothesis }}</div>
-                    <div class="hyp-evidence">📊 根拠: {{ h.evidence }}</div>
-                    <div class="hyp-action">🔧 改善案: {{ h.action }}</div>
-                    <div class="hyp-confidence">信頼度: {{ h.confidence }}</div>
+            <!-- トピック -->
+            {% if topics %}
+            <section class="topics-section">
+                <h2>📋 トピック</h2>
+                {% for t in topics %}
+                <div class="topic-card topic-{{ t.type }}">
+                    <span class="topic-icon">{{ t.icon }}</span>
+                    <div class="topic-body">
+                        <div class="topic-title">{{ t.title }}</div>
+                        <div class="topic-detail">{{ t.detail }}</div>
+                    </div>
                 </div>
                 {% endfor %}
             </section>
