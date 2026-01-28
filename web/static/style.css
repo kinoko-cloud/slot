@@ -4156,98 +4156,7 @@ strong.minus {
 .store-acc.ok { background: rgba(255,165,2,0.2); color: #ffa502; }
 .store-acc.bad { background: rgba(255,107,107,0.2); color: #ff6b6b; }
 
-.verify-table {
-    background: #16213e;
-    border-radius: 8px;
-    overflow: hidden;
-}
-
-.verify-header-row {
-    display: flex;
-    padding: 8px 10px;
-    background: #0f3460;
-    font-size: 0.75em;
-    color: #aaa;
-    font-weight: 700;
-}
-
-.verify-row {
-    display: flex;
-    padding: 6px 10px;
-    border-bottom: 1px solid #1a1a2e;
-    font-size: 0.85em;
-    align-items: center;
-}
-
-.vh-unit, .vr-unit { width: 50px; }
-.vh-pred, .vr-pred { width: 70px; }
-.vh-result, .vr-result-cell { flex: 1; }
-
-.vr-unit {
-    font-weight: 700;
-    color: #fff;
-}
-
-.vr-score {
-    font-size: 0.8em;
-    color: #888;
-    margin-left: 3px;
-}
-
-.vr-art {
-    font-weight: 700;
-    color: #4ecdc4;
-}
-
-.rank-badge-xs {
-    display: inline-block;
-    padding: 1px 5px;
-    border-radius: 3px;
-    font-size: 0.75em;
-    font-weight: 700;
-    color: #fff;
-}
-
-.vr-verdict {
-    font-size: 1.1em;
-}
-
-.verdict-perfect .vr-verdict { color: #ffd700; }
-.verdict-hit .vr-verdict { color: #2ed573; }
-.verdict-miss .vr-verdict { color: #ff6b6b; }
-.verdict-surprise .vr-verdict { color: #ffd700; }
-.verdict-neutral .vr-verdict { color: #888; }
-.verdict-nodata .vr-verdict { color: #555; }
-
-.verdict-perfect { background: rgba(255, 215, 0, 0.05); }
-.verdict-hit { background: rgba(46, 213, 115, 0.05); }
-.verdict-miss { background: rgba(255, 107, 107, 0.08); }
-.verdict-surprise { background: rgba(255, 215, 0, 0.08); }
-
-.verify-legend {
-    margin: 20px 0;
-    padding: 12px;
-    background: #16213e;
-    border-radius: 8px;
-}
-
-.verify-legend h3 {
-    font-size: 0.85em;
-    color: #aaa;
-    margin-bottom: 8px;
-}
-
-.legend-row {
-    font-size: 0.8em;
-    color: #ccc;
-    padding: 2px 0;
-}
-
-.verdict-icon {
-    display: inline-block;
-    width: 18px;
-    text-align: center;
-}
+/* (旧verifyレイアウト — 統合済み) */
 
 /* ===================================
    波グラフ・当たり履歴（recommend詳細内）
@@ -5755,59 +5664,7 @@ strong.minus {
 .pr-label.hit { color: #4ecdc4; }
 .pr-label.miss { color: #ff6b6b; }
 
-/* verify テーブル型レイアウト */
-.verify-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.85em;
-}
-.verify-table thead th {
-    padding: 6px 4px;
-    border-bottom: 2px solid #444;
-    text-align: center;
-    color: #aaa;
-    font-size: 0.8em;
-    font-weight: normal;
-    white-space: nowrap;
-}
-.verify-table tbody tr.verify-row {
-    border-bottom: 1px solid #2a2a3e;
-    cursor: pointer;
-    transition: background 0.15s;
-}
-.verify-table tbody tr.verify-row:hover {
-    background: rgba(255,255,255,0.03);
-}
-.verify-table td {
-    padding: 6px 4px;
-    text-align: center;
-    white-space: nowrap;
-}
-.vt-unit { font-weight: bold; text-align: left; }
-.vt-art { color: #4ecdc4; }
-.vt-prob { font-weight: bold; }
-.vt-prob.excellent { color: #ff6b6b; }
-.vt-prob.good { color: #4ecdc4; }
-.vt-prob.bad { color: #888; }
-.vt-games { color: #777; font-size: 0.9em; }
-.vt-pred, .vt-result { white-space: nowrap; }
-.vt-label { font-weight: bold; font-size: 0.9em; }
-.verify-detail-row { background: rgba(0,0,0,0.2); }
-.verify-detail-row td { padding: 0; }
-.verify-detail-row.hidden { display: none; }
-
-/* verify テーブル 2段ヘッダー */
-.vt-group-row { border-bottom: 1px solid #333; }
-.vt-group-header {
-    padding: 4px 4px 2px;
-    font-size: 0.7em;
-    font-weight: bold;
-    color: #888;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-.vt-group-pred { background: rgba(78, 205, 196, 0.08); }
-.vt-group-result { background: rgba(255, 107, 107, 0.08); }
+/* (verify テーブルは下部で定義) */
 .vt-pred { background: rgba(78, 205, 196, 0.05); }
 .vt-result { background: rgba(255, 107, 107, 0.05); }
 
@@ -5848,31 +5705,7 @@ strong.minus {
     white-space: nowrap;
 }
 
-/* verify テーブル モバイル対応 */
-.verify-table {
-    display: block;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-}
-.verify-table thead,
-.verify-table tbody,
-.verify-table tr,
-.verify-table th,
-.verify-table td {
-    /* テーブルレイアウトを維持 */
-}
-@media (max-width: 600px) {
-    .verify-table { font-size: 0.75em; }
-    .verify-table td, .verify-table th { padding: 5px 3px; }
-    .vt-unit { min-width: 36px; }
-    .vt-art { min-width: 24px; }
-    .vt-prob { min-width: 40px; }
-    .vt-games { min-width: 42px; }
-    .vt-pred, .vt-result { min-width: 22px; }
-    .vt-label { min-width: 46px; font-size: 0.85em; }
-    .vt-group-header { font-size: 0.6em; padding: 3px 2px; }
-    .rank-badge-xs { display: none; }
-}
+/* (古いverifyモバイル定義 — 下部で統合済み) */
 
 /* perfect-card をリンク化 */
 a.perfect-card {
@@ -6304,28 +6137,36 @@ a.perfect-card:hover { background: rgba(255,215,0,0.18); }
 .verify-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.85em;
-    min-width: 500px;
+    font-size: 0.82em;
+    table-layout: fixed;
 }
 .verify-table th {
-    padding: 6px 8px;
+    padding: 4px 3px;
     text-align: center;
     color: #888;
-    font-size: 0.8em;
+    font-size: 0.75em;
     border-bottom: 1px solid #333;
     white-space: nowrap;
 }
 .verify-table td {
-    padding: 5px 6px;
+    padding: 5px 3px;
     text-align: center;
     border-bottom: 1px solid rgba(255,255,255,0.04);
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
+/* 列幅指定 */
+.vt-unit  { width: 48px; font-weight: bold; text-align: left; }
+.vt-pred  { width: 28px; }
+.vt-result { width: 28px; }
+.vt-label { width: 52px; font-size: 0.85em; }
+.vt-art   { width: 32px; }
+.vt-prob  { width: 46px; }
+.vt-diff  { width: 58px; }
+.vt-games { width: 48px; }
 .verify-row { cursor: pointer; transition: background 0.15s; }
 .verify-row:hover { background: rgba(255,255,255,0.04); }
-.verify-row.has-detail .vt-unit::after { content: ' ▸'; color: #555; font-size: 0.7em; }
-.verify-row.expanded .vt-unit::after { content: ' ▾'; }
-.vt-unit { font-weight: bold; text-align: left; }
 .vt-diff.plus { color: #2ed573; font-weight: bold; }
 .vt-diff.minus { color: #ff6b6b; }
 .verdict-label-perfect { color: #ff6b6b; font-weight: bold; }
@@ -6335,3 +6176,10 @@ a.perfect-card:hover { background: rgba(255,215,0,0.18); }
 .verdict-label-nodata { color: #444; }
 .verify-detail-row td { padding: 0; }
 .verify-detail-inner { padding: 8px; background: rgba(0,0,0,0.2); }
+@media (max-width: 480px) {
+    .verify-table { font-size: 0.75em; }
+    .verify-table td, .verify-table th { padding: 4px 2px; }
+    .vt-label { font-size: 0.8em; width: 46px; }
+    .vt-games { display: none; }
+    th.vt-games { display: none; }
+}
