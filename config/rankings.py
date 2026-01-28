@@ -17,8 +17,11 @@ MACHINES = {
         'very_bad_prob': 200,  # 明確に低設定
         'typical_daily_games': 6500,  # 1日あたりの一般的な消化G数
         # 天井パラメータ（設定変更/リセット時の天井短縮恩恵）
-        'normal_ceiling': 800,        # 通常天井
-        'reset_ceiling': 600,         # リセット時天井（朝イチ天井）
+        # ※液晶表示G数とスタート数（実G数）に差あり
+        #   液晶999G+α ≒ スタート数約800G（データサイトはスタート数）
+        'normal_ceiling': 800,        # 通常天井（スタート数ベース。液晶表示では999G+α）
+        'normal_ceiling_lcd': 999,    # 液晶表示上の天井G数
+        'reset_ceiling': 600,         # リセット時天井（朝イチ天井、スタート数ベース）
         'reset_first_hit_bonus': True, # 朝イチ初当たりに恩恵あり
     },
     'hokuto_tensei2': {
