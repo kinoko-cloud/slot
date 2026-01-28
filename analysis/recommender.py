@@ -1870,27 +1870,25 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
             elif total_good >= 3:
                 reasons.append(f"🔥 直近の推移: {trend_str}（好調{total_good}日中、大{big_days}/中{mid_days}/小{small_days}日）")
 
-        # --- 据え置き率（好調翌日も好調の実績）---
+        # --- この台の好調継続率 ---
         continuation_rate = historical_perf.get('continuation_rate', 0)
         continuation_total = historical_perf.get('continuation_total', 0)
         continuation_good = historical_perf.get('continuation_good', 0)
         if continuation_total >= 2:
             if continuation_rate >= 0.6:
-                reasons.append(f"📊 好調翌日も好調: {continuation_good}/{continuation_total}回（{continuation_rate:.0%}）→ 据え置き傾向")
+                reasons.append(f"📊 この台は好調が続きやすい（好調→翌日も好調: {continuation_good}/{continuation_total}回 = {continuation_rate:.0%}）")
             elif continuation_rate < 0.4:
-                reasons.append(f"⚠️ 好調翌日も好調: {continuation_good}/{continuation_total}回（{continuation_rate:.0%}）→ 下げ注意")
+                reasons.append(f"⚠️ この台は好調が続きにくい（好調→翌日も好調: {continuation_good}/{continuation_total}回 = {continuation_rate:.0%}）")
 
-        # --- 連続好調記録（この台の最長記録との比較）---
+        # --- 連続好調の実績 ---
         max_streak = historical_perf.get('max_consecutive_good', 0)
         if consecutive_plus >= 3 and max_streak > 0:
-            if consecutive_plus >= max_streak and continuation_rate >= 0.6:
-                reasons.append(f"📊 {consecutive_plus}日連続好調 = 最長記録更新中 + 据え置き率{continuation_rate:.0%} → 店が推してる台")
-            elif consecutive_plus >= max_streak:
-                reasons.append(f"📊 {consecutive_plus}日連続好調 = 最長記録更新中（据え置き率{continuation_rate:.0%}）")
+            if consecutive_plus >= max_streak:
+                reasons.append(f"📊 {consecutive_plus}日連続好調中 → この台の過去最長を更新中（店が高設定を入れ続けてる可能性）")
             elif consecutive_plus >= max_streak - 1:
-                reasons.append(f"📊 {consecutive_plus}日連続好調（過去最長{max_streak}日）→ 記録更新が近い")
+                reasons.append(f"📊 {consecutive_plus}日連続好調中（この台の過去最長{max_streak}日にあと1日）")
             else:
-                reasons.append(f"📊 {consecutive_plus}日連続好調（過去最長{max_streak}日）→ まだ伸びる余地あり")
+                reasons.append(f"📊 {consecutive_plus}日連続好調中（この台の過去最長は{max_streak}日）")
 
         # 設定変更周期情報（Phase 2+）
         cycle_analysis = kwargs.get('cycle_analysis', {})
@@ -1904,7 +1902,7 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
                 if key and key in btg:
                     rate = btg[key]
                     if rate['total'] >= 2:
-                        cycle_parts.append(f"{key}日不調→翌日好調: {rate['good']}/{rate['total']}回({rate['rate']:.0%})")
+                        cycle_parts.append(f"{key}日不調が続いた後→好調に切り替わる率{rate['rate']:.0%}（{rate['good']}/{rate['total']}回）")
             # 連続好調中なら据え置き率
             if consecutive_plus > 0:
                 gtg = cycle_analysis.get('good_to_good', {})
@@ -1912,7 +1910,7 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
                 if key and key in gtg:
                     rate = gtg[key]
                     if rate['total'] >= 2:
-                        cycle_parts.append(f"{key}日連続好調→翌日も: {rate['good']}/{rate['total']}回({rate['rate']:.0%})")
+                        cycle_parts.append(f"{key}日好調が続いた後→翌日も好調率{rate['rate']:.0%}（{rate['good']}/{rate['total']}回）")
             # 交互パターン
             alt_score = cycle_analysis.get('alternating_score', 0)
             if alt_score >= 0.6 and cycle_analysis.get('total_days', 0) >= 7:
@@ -1920,7 +1918,12 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
             # 平均周期
             avg_cycle = cycle_analysis.get('avg_cycle', 0)
             if avg_cycle > 0 and cycle_analysis.get('total_days', 0) >= 7:
-                cycle_parts.append(f"好調周期: 平均{avg_cycle:.1f}日間隔")
+                if avg_cycle <= 1.5:
+                    cycle_parts.append(f"ほぼ毎日好調になる台")
+                elif avg_cycle <= 2.5:
+                    cycle_parts.append(f"2日に1回くらい好調になる台")
+                else:
+                    cycle_parts.append(f"好調になるのは{avg_cycle:.0f}日に1回ペース")
             if cycle_parts:
                 reasons.append(f"🔁 {' / '.join(cycle_parts)}")
 
