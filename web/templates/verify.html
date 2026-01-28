@@ -116,26 +116,15 @@
                     </div>
                     <div class="verify-table-wrap">
                     <table class="verify-table">
-                        <colgroup>
-                            <col style="width:48px">
-                            <col style="width:28px">
-                            <col style="width:28px">
-                            <col style="width:54px">
-                            <col style="width:34px">
-                            <col style="width:48px">
-                            <col style="width:60px">
-                            <col style="width:48px">
-                        </colgroup>
                         <thead>
                             <tr>
-                                <th>台番</th>
-                                <th>予</th>
-                                <th>結</th>
-                                <th>判定</th>
-                                <th>ART</th>
-                                <th>確率</th>
-                                <th>差枚</th>
-                                <th class="vt-games">G数</th>
+                                <th class="vt-unit">台番</th>
+                                <th class="vt-pred">予</th>
+                                <th class="vt-result">結</th>
+                                <th class="vt-label">判定</th>
+                                <th class="vt-art">ART</th>
+                                <th class="vt-prob">確率</th>
+                                <th class="vt-diff">差枚</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -168,11 +157,10 @@
                             <td class="vt-art">{{ unit.actual_art if unit.actual_prob > 0 else '-' }}</td>
                             <td class="vt-prob {% if unit.actual_is_good and unit.actual_prob <= 100 %}excellent{% elif unit.actual_is_good %}good{% elif unit.actual_prob >= 200 %}bad{% endif %}">{% if unit.actual_prob > 0 %}1/{{ unit.actual_prob|int }}{% else %}-{% endif %}</td>
                             <td class="vt-diff {% if unit.diff_medals > 0 %}plus{% elif unit.diff_medals < 0 %}minus{% endif %}">{% if unit.diff_medals %}{{ '{:+,}'.format(unit.diff_medals|int) }}{% else %}-{% endif %}</td>
-                            <td class="vt-games">{% if unit.actual_games and unit.actual_games > 0 %}{{ '{:,}'.format(unit.actual_games|int) }}{% else %}-{% endif %}</td>
                         </tr>
                             {# 展開可能な当たり履歴セクション #}
                             {% if unit.history %}
-                            <tr class="verify-detail-row hidden"><td colspan="8">
+                            <tr class="verify-detail-row hidden"><td colspan="7">
                             <div class="verify-detail-inner">
                                 {# サマリ統計 #}
                                 {% if unit.history_summary %}

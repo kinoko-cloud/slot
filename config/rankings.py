@@ -222,6 +222,18 @@ def get_rank(score: float) -> str:
             return rank
     return 'D'
 
+_RANK_ORDER = ['D', 'C', 'B', 'A', 'S']
+
+def rank_up(rank: str) -> str:
+    """ランクを1段階上げる（S→S）"""
+    idx = _RANK_ORDER.index(rank) if rank in _RANK_ORDER else 0
+    return _RANK_ORDER[min(idx + 1, len(_RANK_ORDER) - 1)]
+
+def rank_down(rank: str) -> str:
+    """ランクを1段階下げる（D→D）"""
+    idx = _RANK_ORDER.index(rank) if rank in _RANK_ORDER else 0
+    return _RANK_ORDER[max(idx - 1, 0)]
+
 def get_store_units(store_key: str) -> list:
     """店舗の台番号リストを取得"""
     store = STORES.get(store_key)

@@ -1685,9 +1685,10 @@ def generate_verify_page(env):
                 pre_open_rank = pre_open.get('rank', 'C')
                 pre_open_score = pre_open.get('score', 50)
 
-                # 判定
+                # 判定（機種ごとの閾値を使用）
+                _good_th = 145 if machine_key == 'sbj' else 100
                 is_predicted_good = predicted_rank in ('S', 'A')
-                is_actual_good = actual_prob > 0 and actual_prob <= 130
+                is_actual_good = actual_prob > 0 and actual_prob <= _good_th
                 is_actual_excellent = actual_prob > 0 and actual_prob <= 100
                 is_actual_bad = actual_prob >= 200 or (actual_games >= 1000 and actual_art == 0)
 
