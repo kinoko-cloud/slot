@@ -602,11 +602,13 @@ def generate_index(env):
     # 前日の爆発台: 最大連チャン枚数でソート
     # 差枚だと「万枚出して飲まれた台」が低く出る。
     # max_chain（1回の連チャン区間の累計枚数）なら爆発の瞬間を正しく評価。
-    yesterday_top10.sort(key=lambda x: (-x.get('yesterday_max_medals', 0), -x.get('diff_medals', 0)))
+    # 前日の爆発台も差枚優先
+    yesterday_top10.sort(key=lambda x: (-x.get('yesterday_diff_medals', x.get('diff_medals', 0)), -x.get('yesterday_max_medals', 0)))
     yesterday_top10 = yesterday_top10[:10]
 
     # 本日の爆発台: 最大連チャン枚数でソート
-    today_top10.sort(key=lambda x: (-x.get('max_medals', 0), -x.get('diff_medals', 0)))
+    # 爆発台は差枚優先（朝から座ってたらいくら勝てたか）
+    today_top10.sort(key=lambda x: (-x.get('diff_medals', 0), -x.get('max_medals', 0)))
     today_top10 = today_top10[:10]
 
     # 曜日ランキング
