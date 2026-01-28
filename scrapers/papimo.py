@@ -45,17 +45,18 @@ def get_unit_history(page, hall_id: str, unit_id: str, days_back: int = 14,
     if expected_machine:
         try:
             page_text = page.inner_text('body')
-            # papimoのページにある機種名を探す
+            # papimoのページ上部に機種名が含まれる行を探す
             page_machine = ''
-            for line in page_text.split('\n'):
+            for line in page_text.split('\n')[:30]:  # ページ上部30行以内
                 line = line.strip()
-                if any(kw in line for kw in ['ブラックジャック', '北斗', 'バジリスク', 'ヴァルヴレイヴ',
-                                              'まどマギ', '番長', 'リゼロ', 'カバネリ', '鉄拳', '転生']):
+                if len(line) > 3 and ('L' in line or 'ス' in line or '北' in line):
                     page_machine = line
                     break
             if page_machine:
-                if expected_machine not in page_machine:
-                    print(f"    ⚠️ 機種不一致! 台{unit_id}: 期待={expected_machine}, 実際={page_machine}")
+                keywords = expected_machine if isinstance(expected_machine, list) else [expected_machine]
+                missing = [kw for kw in keywords if kw not in page_machine]
+                if missing:
+                    print(f"    ⚠️ 機種不一致! 台{unit_id}: 期待キーワード={keywords}, 実際={page_machine}, 不足={missing}")
                     print(f"    → 台番号が別機種に変わった可能性。スキップします。")
                     result['machine_mismatch'] = True
                     result['actual_machine'] = page_machine

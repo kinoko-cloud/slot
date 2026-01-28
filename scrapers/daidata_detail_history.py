@@ -68,13 +68,17 @@ def get_all_history(hall_id: str = "100860", unit_id: str = "3011", hall_name: s
             if machine_match:
                 result['machine_name'] = machine_match.group(1)
                 print(f"機種: {result['machine_name']}")
-                # 期待する機種名と照合
-                if expected_machine and expected_machine not in result['machine_name']:
-                    print(f"  ⚠️ 機種不一致! 台{unit_id}: 期待={expected_machine}, 実際={result['machine_name']}")
-                    print(f"  → 台番号が別機種に変わった可能性。スキップします。")
-                    result['machine_mismatch'] = True
-                    browser.close()
-                    return result
+                # 期待する機種名と照合（verify_keywordsは文字列またはリスト）
+                if expected_machine:
+                    keywords = expected_machine if isinstance(expected_machine, list) else [expected_machine]
+                    actual = result['machine_name']
+                    missing = [kw for kw in keywords if kw not in actual]
+                    if missing:
+                        print(f"  ⚠️ 機種不一致! 台{unit_id}: 期待キーワード={keywords}, 実際={actual}, 不足={missing}")
+                        print(f"  → 台番号が別機種に変わった可能性。スキップします。")
+                        result['machine_mismatch'] = True
+                        browser.close()
+                        return result
 
             # 0. 概要ページから日別サマリー（最大持ち玉・累計スタート）をパース
             overview_by_date = _parse_overview_summary(text)
