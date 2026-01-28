@@ -1309,26 +1309,34 @@ def _get_verify_date_str():
     return ''
 
 def _get_verify_accuracy():
-    """バックテスト結果からS/A的中率を取得（nodata除外、verifyページと同じ計算）"""
+    """verifyページと完全に同じ的中率を返す（verify結果JSONから直接読む）"""
     files = sorted(glob.glob('data/verify/verify_*_results.json'), reverse=True)
-    if files:
-        try:
-            data = json.load(open(files[0]))
-            total_sa = 0
-            total_hit = 0
-            for sk, units in data.get('units', {}).items():
-                for u in units:
-                    # nodata台を除外（verifyページと同じ）
-                    if u.get('actual_prob', 0) == 0 and u.get('diff_medals', 0) == 0:
-                        continue
-                    if u.get('predicted_rank') in ('S', 'A'):
-                        total_sa += 1
-                        if u.get('actual_is_good', False):
-                            total_hit += 1
-            if total_sa > 0:
-                return int(total_hit / total_sa * 100)
-        except:
-            pass
+    if not files:
+        return 0
+    try:
+        data = json.load(open(files[0]))
+        # generate_verify.pyで計算済みのoverall_rateを使う
+        rate = data.get('overall_rate', 0)
+        if rate > 0:
+            return int(rate)
+        # フォールバック: verifyページ生成時と同じ計算
+        # nodata除外 + games>=500 フィルタ
+        total_sa = 0
+        total_hit = 0
+        for sk, units in data.get('units', {}).items():
+            for u in units:
+                prob = u.get('actual_prob', 0)
+                games = u.get('actual_games', 0)
+                if prob <= 0 or games < 500:
+                    continue
+                if u.get('predicted_rank') in ('S', 'A'):
+                    total_sa += 1
+                    if u.get('actual_is_good', False):
+                        total_hit += 1
+        if total_sa > 0:
+            return int(total_hit / total_sa * 100)
+    except:
+        pass
     return 0
 
 
