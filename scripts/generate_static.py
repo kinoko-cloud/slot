@@ -1067,7 +1067,7 @@ def _process_history_for_verify(history):
     if not history:
         return [], {}
 
-    # 時間順にソート
+    # チェーン計算は時間昇順で行う（連チャン判定のため）
     sorted_hist = sorted(history, key=lambda x: x.get('time', '00:00'))
 
     # チェーン計算: AT間のG数を蓄積し、閾値以下なら連チャン
@@ -1188,6 +1188,11 @@ def _process_history_for_verify(history):
         'tenjou_count': tenjou_count,
         'max_chain': max_chain,
     }
+
+    # 表示用に降順（最新が上、朝が下）に並び替え + indexを振り直す
+    processed.reverse()
+    for i, entry in enumerate(processed):
+        entry['index'] = i + 1
 
     return processed, summary
 
@@ -1729,10 +1734,10 @@ def generate_history_pages(env):
                 except Exception:
                     pass
 
-                # 当たり履歴を時刻順にソート（古い時刻→新しい時刻）
+                # 当たり履歴を時刻降順にソート（最新が上、朝が下）
                 history_sorted = []
                 if history:
-                    history_sorted = sorted(history, key=lambda x: x.get('time', '00:00'))
+                    history_sorted = sorted(history, key=lambda x: x.get('time', '00:00'), reverse=True)
 
                 template_days.append({
                     'date': date_str,
