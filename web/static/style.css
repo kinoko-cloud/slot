@@ -5927,3 +5927,48 @@ a.perfect-card:hover { background: rgba(255,215,0,0.18); }
 .vb-icon { font-size: 1.4em; }
 .vb-text { flex: 1; font-weight: bold; font-size: 0.9em; }
 .vb-arrow { color: #ffd700; font-size: 1.3em; }
+
+/* トップナビ */
+.top-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 14px;
+}
+.top-nav-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 12px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    color: #ccc;
+    text-decoration: none;
+    font-size: 0.8em;
+    white-space: nowrap;
+    transition: background 0.15s;
+}
+.top-nav-link:hover { background: rgba(255,255,255,0.12); }
+.top-nav-link.verify-link {
+    background: rgba(255,215,0,0.12);
+    border-color: rgba(255,215,0,0.3);
+    color: #ffd700;
+    font-weight: bold;
+}
+
+/* もっと見るトグル */
+.more-recs-toggle {
+    text-align: center;
+    padding: 10px;
+    color: #4ecdc4;
+    font-weight: bold;
+    font-size: 0.9em;
+    cursor: pointer;
+    border: 1px dashed rgba(78,205,196,0.3);
+    border-radius: 8px;
+    margin: 8px 0;
+}
+.more-recs-toggle:hover { background: rgba(78,205,196,0.08); }
+.compact-card { padding: 8px 10px !important; }
+.compact-card .reasons-full { font-size: 0.85em; }

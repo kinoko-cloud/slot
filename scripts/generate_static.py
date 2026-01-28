@@ -558,10 +558,10 @@ def generate_index(env):
     # スコア順（信頼度・試行回数を考慮した総合スコア）
     top3_candidates.sort(key=lambda r: -r.get('final_score', 0))
 
-    # 各機種から1台ずつ確保 + 重複台排除
+    # 各機種から1台ずつ確保 + 重複台排除（最大30台）
     top3 = []
     seen_machines = set()
-    seen_units = set()  # 同じ台番の重複排除
+    seen_units = set()
     for r in top3_candidates:
         mk = r.get('machine_key', '')
         uid = str(r.get('unit_id', ''))
@@ -571,16 +571,16 @@ def generate_index(env):
             seen_units.add(uid)
         if len(top3) >= len(MACHINES):
             break
-    # 残り枠をスコア順で埋める
+    # 残り枠をスコア順で埋める（30台まで）
     for r in top3_candidates:
         uid = str(r.get('unit_id', ''))
         if uid not in seen_units:
             top3.append(r)
             seen_units.add(uid)
-        if len(top3) >= 3:
+        if len(top3) >= 30:
             break
     if not top3:
-        top3 = top3_candidates[:3]
+        top3 = top3_candidates[:30]
 
     # TOP3 + 全S/A候補 + 爆発台の過去3日分の当たり履歴を加工
     for rec in top3 + top3_candidates + yesterday_top10 + today_top10:
