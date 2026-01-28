@@ -130,33 +130,25 @@
                         </thead>
                         <tbody>
                         {% for unit in store.units %}
-                        {% set pred_good = unit.pre_open_rank in ('S', 'A') %}
-                        {% set result_good = unit.actual_is_good is defined and unit.actual_is_good %}
-                        {% set result_excellent = result_good and unit.actual_prob <= 100 %}
-                        {% set pred_excellent = unit.pre_open_rank == 'S' and unit.pre_open_score >= 75 %}
-                        {% set result_bad = unit.actual_prob >= 200 %}
-                        {% set pred_bad = unit.pre_open_rank in ('C', 'D') %}
-                        {% set label_class %}{% if unit.verdict_class == 'nodata' %}nodata{% elif pred_good and result_excellent %}perfect{% elif pred_good and result_good %}hit{% elif pred_good and result_bad %}miss{% elif pred_good %}neutral{% elif pred_bad and result_good %}miss{% elif pred_bad and not result_good %}hit{% else %}neutral{% endif %}{% endset %}
-                        <tr class="verify-row verdict-{{ unit.verdict_class }}{% if unit.history %} has-detail{% endif %}" onclick="toggleDetail(this)">
+                        {% set pred_rank = unit.pre_open_rank|default(unit.predicted_rank|default('C')) %}
+                        {% set pred_good = pred_rank in ('S', 'A') %}
+                        {% set pred_excellent = pred_rank == 'S' and (unit.pre_open_score|default(unit.predicted_score|default(50))) >= 75 %}
+                        <tr class="verify-row verdict-{{ unit.verdict_class|default('nodata') }}{% if unit.history %} has-detail{% endif %}" onclick="toggleDetail(this)">
                             <td class="vt-unit">{{ unit.unit_id|pad_id }}</td>
                             <td class="vt-pred">
                                 {% if pred_excellent %}<span class="vr-mark excellent">◎</span>
                                 {% elif pred_good %}<span class="vr-mark good">◯</span>
-                                {% elif unit.pre_open_rank == 'B' %}<span class="vr-mark neutral">△</span>
+                                {% elif pred_rank == 'B' %}<span class="vr-mark neutral">△</span>
                                 {% else %}<span class="vr-mark bad">✕</span>{% endif %}
                             </td>
                             <td class="vt-result">
-                                {% if unit.verdict_class == 'perfect' or (result_good and unit.actual_prob <= 100) %}<span class="vr-mark excellent">◎</span>
-                                {% elif result_good %}<span class="vr-mark good">◯</span>
-                                {% elif unit.actual_prob >= 200 %}<span class="vr-mark bad">✕</span>
-                                {% elif unit.actual_prob > 0 %}<span class="vr-mark neutral">△</span>
-                                {% else %}<span class="vr-mark nodata">-</span>{% endif %}
+                                <span class="vr-mark {{ unit.result_mark_class|default('nodata') }}">{{ unit.result_mark|default('-') }}</span>
                             </td>
-                            <td class="vt-label verdict-label-{{ label_class }}">
-                                {% if unit.verdict_class == 'nodata' %}—{% elif pred_excellent and result_excellent %}大的中！{% elif pred_good and result_excellent %}的中！{% elif pred_good and result_good %}的中{% elif pred_good and result_bad %}ハズレ{% elif pred_good %}おしい{% elif pred_bad and result_excellent %}大ハズレ{% elif pred_bad and result_good %}ハズレ{% elif pred_bad and result_bad %}的中{% elif pred_bad %}的中{% elif result_good %}ハズレ{% elif result_bad %}的中{% else %}—{% endif %}
+                            <td class="vt-label verdict-label-{{ unit.verdict_class|default('nodata') }}">
+                                {{ unit.verdict_text|default('—') }}
                             </td>
                             <td class="vt-art">{{ unit.actual_art if unit.actual_prob > 0 else '-' }}</td>
-                            <td class="vt-prob {% if unit.actual_is_good and unit.actual_prob <= 100 %}excellent{% elif unit.actual_is_good %}good{% elif unit.actual_prob >= 200 %}bad{% endif %}">{% if unit.actual_prob > 0 %}1/{{ unit.actual_prob|int }}{% else %}-{% endif %}</td>
+                            <td class="vt-prob {{ unit.result_mark_class|default('') }}">{% if unit.actual_prob > 0 %}1/{{ unit.actual_prob|int }}{% else %}-{% endif %}</td>
                             <td class="vt-diff {% if unit.diff_medals > 0 %}plus{% elif unit.diff_medals < 0 %}minus{% endif %}">{% if unit.diff_medals %}{{ '{:+,}'.format(unit.diff_medals|int) }}{% else %}-{% endif %}</td>
                             <td class="vt-max">{% if unit.max_medals %}{{ '{:,}'.format(unit.max_medals|int) }}{% else %}-{% endif %}</td>
                         </tr>

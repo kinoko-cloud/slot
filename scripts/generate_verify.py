@@ -101,12 +101,11 @@ def generate_verify(predict_date: str) -> dict:
     
     from analysis.diff_medals_estimator import estimate_diff_medals
     from analysis.analyzer import calculate_max_chain_medals
+    from analysis.verdict import get_result_level, get_verdict, is_hit, RESULT_MARKS
 
     for r in results:
         sk, mk = r['sk'], r['mk']
-        th = 130 if mk == 'sbj' else 100
         prob = r['prob']
-        good = prob > 0 and prob <= th
         
         dm = r['dm']
         mm = r['mm']
@@ -120,23 +119,21 @@ def generate_verify(predict_date: str) -> dict:
             history = day_data.get('history', [])
             
             if history:
-                # historyからメダル合計を計算
+                # historyからメダル合計を計算 → 差枚推定
                 total_medals = sum(h.get('medals', 0) for h in history)
                 if dm == 0 and total_medals > 0 and r['games'] > 0:
                     dm = estimate_diff_medals(total_medals, r['games'], mk)
                 if mm == 0:
                     mm = calculate_max_chain_medals(history)
-            
-            # historyがなくてもgamesとartから差枚を推定
-            if dm == 0 and r['games'] > 0 and r['art'] > 0:
-                # 粗い推定: 機種別の平均出玉 × ART回数 - 消費
-                avg_payout = 200 if mk == 'sbj' else 300
-                total_medals_est = r['art'] * avg_payout
-                dm = estimate_diff_medals(total_medals_est, r['games'], mk)
+        
+        # 結果レベル判定（確率+差枚）
+        result_level = get_result_level(prob, dm, mk)
+        verdict_text, verdict_class = get_verdict(r['rank'], result_level)
+        result_mark, result_mark_class = RESULT_MARKS.get(result_level, ('-', 'nodata'))
         
         if sk not in v['units']:
             v['units'][sk] = []
-            v['stores'][sk] = {'name': r['sn'], 'sa_total': 0, 'sa_hit': 0, 'rate': 0, 'surprise': 0}
+            v['stores'][sk] = {'name': r['sn'], 'machine_key': mk, 'sa_total': 0, 'sa_hit': 0, 'rate': 0, 'surprise': 0}
         
         v['units'][sk].append({
             'unit_id': r['uid'],
@@ -145,17 +142,22 @@ def generate_verify(predict_date: str) -> dict:
             'actual_art': r['art'],
             'actual_games': r['games'],
             'actual_prob': prob,
-            'actual_is_good': good,
+            'result_level': result_level,
+            'result_mark': result_mark,
+            'result_mark_class': result_mark_class,
+            'verdict_text': verdict_text,
+            'verdict_class': verdict_class,
             'max_medals': mm,
             'diff_medals': dm,
         })
     
-    # 集計
+    # 集計（新判定ロジックで）
     for sk, units in v['units'].items():
+        mk = v['stores'][sk].get('machine_key', 'sbj')
         valid = [u for u in units if u['actual_prob'] > 0 and u['actual_games'] >= 500]
         sa = sum(1 for u in valid if u['predicted_rank'] in ('S', 'A'))
-        hit = sum(1 for u in valid if u['predicted_rank'] in ('S', 'A') and u['actual_is_good'])
-        sur = sum(1 for u in valid if u['predicted_rank'] not in ('S', 'A') and u['actual_is_good'])
+        hit = sum(1 for u in valid if u['predicted_rank'] in ('S', 'A') and is_hit(u['predicted_rank'], u['result_level']))
+        sur = sum(1 for u in valid if u['predicted_rank'] not in ('S', 'A') and u['verdict_class'] == 'surprise')
         v['stores'][sk].update({
             'sa_total': sa, 'sa_hit': hit,
             'rate': round(hit / sa * 100, 1) if sa > 0 else 0,
