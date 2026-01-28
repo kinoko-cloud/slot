@@ -523,12 +523,15 @@ def calculate_unit_historical_performance(days: List[dict], machine_key: str = '
     # 日付順にソート（新しい順）
     sorted_days = sorted(days, key=lambda x: x.get('date', ''), reverse=True)
 
-    # 好調判定の出玉品質チェック用閾値
-    # ハマリ500G超が多い or 最大獲得枚数が低い → 確率が良くても好調ではない
-    deep_hama_limit = 3  # これ以上ハマりがあると好調除外
-    min_max_medals_sbj = 500   # SBJ: 最大獲得枚数がこれ未満→好調除外
-    min_max_medals_hokuto = 1000  # 北斗: 最大獲得枚数がこれ未満→好調除外
-    min_max_medals = min_max_medals_hokuto if machine_key == 'hokuto_tensei2' else min_max_medals_sbj
+    # 好調判定の出玉品質チェック用閾値（機種別に調整）
+    # SBJ: 天井999Gだが通常はハマりにくい → ハマリ3回で除外
+    # 北斗: 天井が深くハマりやすい → ハマリ5回で除外
+    if machine_key == 'hokuto_tensei2':
+        deep_hama_limit = 5   # 北斗はハマりやすいので緩め
+        min_max_medals = 0    # 北斗はmax_medalsチェック不要（ハマリだけで判定）
+    else:
+        deep_hama_limit = 3   # SBJ: ハマリ500G超が3回以上で除外
+        min_max_medals = 300  # SBJ: 最大獲得300枚未満は好調とは言えない
 
     for day in sorted_days:
         art = day.get('art', 0)
