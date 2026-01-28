@@ -53,7 +53,7 @@
         </header>
 
         <main>
-            {# === 答え合わせバナー（大きく） === #}
+            {# === 結果バナー === #}
             <a href="{{ url_for('verify') }}" class="verify-banner-lg">
                 {% if verify_accuracy %}
                 <div class="vb-circle {% if verify_accuracy >= 60 %}good{% elif verify_accuracy >= 40 %}ok{% else %}bad{% endif %}">
@@ -61,8 +61,15 @@
                 </div>
                 {% endif %}
                 <div class="vb-lg-info">
-                    <span class="vb-title-lg">{% if verify_date_str %}{{ verify_date_str }}{% else %}昨日{% endif %}の結果</span>
-                    <span class="vb-detail-lg">🎯 答え合わせ</span>
+                    <span class="vb-title-lg">{% if verify_date_str %}{{ verify_date_str }}{% else %}昨日{% endif %}の的中率</span>
+                    {% if verify_highlights %}
+                    <div class="vb-highlights">
+                        {% for h in verify_highlights %}
+                        <span class="vb-highlight">{{ h }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    <span class="vb-detail-lg">詳しく見る →</span>
                 </div>
             </a>
 
