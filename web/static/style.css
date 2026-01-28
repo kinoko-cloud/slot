@@ -6202,3 +6202,43 @@ a.perfect-card:hover { background: rgba(255,215,0,0.18); }
     color: #555;
     position: static;
 }
+
+/* プルダウン店舗メニュー */
+.dd-store { padding: 4px 0; }
+.dd-store-name {
+    display: block;
+    padding: 4px 12px;
+    color: #fff;
+    font-weight: bold;
+    font-size: 0.85em;
+}
+.dd-machines { padding-left: 12px; }
+.dd-machines a {
+    display: block;
+    padding: 5px 12px;
+    color: #aaa;
+    text-decoration: none;
+    font-size: 0.8em;
+    border-radius: 4px;
+}
+.dd-machines a:hover { background: rgba(255,255,255,0.06); color: #ddd; }
+
+/* ハンバーガー店舗メニュー */
+.hm-divider { border-top: 1px solid rgba(255,255,255,0.08); margin: 4px 0; }
+.hm-label { padding: 6px 14px; color: #888; font-size: 0.75em; font-weight: bold; text-transform: uppercase; }
+.hm-store { padding: 2px 0; }
+.hm-store-name {
+    display: block;
+    padding: 6px 14px;
+    color: #fff;
+    font-weight: bold;
+    font-size: 0.9em;
+}
+.hm-machine {
+    display: block;
+    padding: 5px 14px 5px 28px;
+    color: #aaa;
+    text-decoration: none;
+    font-size: 0.85em;
+}
+.hm-machine:hover { color: #ddd; background: rgba(255,255,255,0.04); }
