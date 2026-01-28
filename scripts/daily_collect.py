@@ -122,7 +122,17 @@ def collect_daily_data(machine_keys: list = None, max_units_per_store: int = Non
                         _hist_dir = _P(f'data/history/{store_key}_{machine_key}')
                         _hist_file = _hist_dir / f'{unit_id}.json'
                         _days_back = 2 if _hist_file.exists() else 14
-                        result = get_unit_history(page, hall_id, unit_id, days_back=_days_back)
+                        # 機種名キーワード（台番号の機種不一致検出用）
+                        _machine_keywords = {
+                            'sbj': 'ブラックジャック',
+                            'hokuto_tensei2': '北斗',
+                        }
+                        _expected = _machine_keywords.get(machine_key)
+                        result = get_unit_history(page, hall_id, unit_id, days_back=_days_back,
+                                                  expected_machine=_expected)
+                        if result.get('machine_mismatch'):
+                            print(f"    ⚠️ 台{unit_id}は別機種に変更された可能性。収集スキップ。")
+                            continue
                         result['hall_name'] = hall_name
                         result['machine_key'] = machine_key
                         result['machine_name'] = machine_name

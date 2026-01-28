@@ -23,8 +23,14 @@ PAPIMO_CONFIG = {
 }
 
 
-def get_unit_history(page, hall_id: str, unit_id: str, days_back: int = 14) -> dict:
-    """1台分の履歴を取得（最大14日分）"""
+def get_unit_history(page, hall_id: str, unit_id: str, days_back: int = 14,
+                     expected_machine: str = None) -> dict:
+    """1台分の履歴を取得（最大14日分）
+    
+    Args:
+        expected_machine: 期待する機種名のキーワード（例: 'ブラックジャック', '北斗'）。
+                         ページ上の機種名と照合し、不一致なら警告を出してスキップ。
+    """
     result = {
         'unit_id': unit_id,
         'days': []
@@ -34,6 +40,28 @@ def get_unit_history(page, hall_id: str, unit_id: str, days_back: int = 14) -> d
     url = f"https://papimo.jp/h/{hall_id}/hit/view/{unit_id}"
     page.goto(url, wait_until='load', timeout=30000)
     page.wait_for_timeout(2000)
+
+    # 機種名バリデーション: ページ上の機種名を取得して照合
+    if expected_machine:
+        try:
+            page_text = page.inner_text('body')
+            # papimoのページにある機種名を探す
+            page_machine = ''
+            for line in page_text.split('\n'):
+                line = line.strip()
+                if any(kw in line for kw in ['ブラックジャック', '北斗', 'バジリスク', 'ヴァルヴレイヴ',
+                                              'まどマギ', '番長', 'リゼロ', 'カバネリ', '鉄拳', '転生']):
+                    page_machine = line
+                    break
+            if page_machine:
+                if expected_machine not in page_machine:
+                    print(f"    ⚠️ 機種不一致! 台{unit_id}: 期待={expected_machine}, 実際={page_machine}")
+                    print(f"    → 台番号が別機種に変わった可能性。スキップします。")
+                    result['machine_mismatch'] = True
+                    result['actual_machine'] = page_machine
+                    return result
+        except Exception as e:
+            print(f"    機種名確認エラー: {e}")
 
     # 利用可能な日付を取得
     available_dates = page.evaluate('''() => {
