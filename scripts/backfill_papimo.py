@@ -50,6 +50,18 @@ with sync_playwright() as p:
                         seen.add(dt)
                         unique.append(day)
                 
+                # is_good計算（機種判定）
+                threshold = 330 if 'hokuto' in machine_key else 130
+                for day in unique:
+                    art = day.get('art', 0)
+                    ts = day.get('total_start', day.get('games', 0))
+                    if art > 0 and ts > 0 and day.get('prob', 0) == 0:
+                        day['prob'] = round(ts / art, 1)
+                    if day.get('prob', 0) > 0:
+                        day['is_good'] = day['prob'] <= threshold
+                    elif 'is_good' not in day:
+                        day['is_good'] = False
+                
                 existing_data['days'] = unique
                 existing_path.write_text(json.dumps(existing_data, ensure_ascii=False, indent=2))
                 print(f'  +{len(new_days)}日追加 → 合計{len(unique)}日分', flush=True)
