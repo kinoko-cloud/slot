@@ -14,8 +14,12 @@
             <a href="{{ url_for('index') }}" class="back-link">&lt; トップに戻る</a>
             <h1>答え合わせ</h1>
             <div class="update-info">
-                {{ result_date_str }}の実績で答え合わせ<br>
-                <small>予測データ: {{ predict_base }}までの蓄積データで予測</small>
+                {% if result_date_str %}
+                {{ result_date_str }}で答え合わせ<br>
+                {% endif %}
+                {% if predict_base %}
+                <small>予測: {{ predict_base }}で予測</small>
+                {% endif %}
             </div>
         </header>
 
