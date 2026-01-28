@@ -21,7 +21,7 @@
         {# === ハンバーガーメニュー === #}
         <nav id="hamburger-menu" class="hamburger-menu hidden">
             <a href="#top3-section">📊 おすすめ台</a>
-            <a href="#yesterday-section">💥 爆発台ランキング</a>
+            <a href="#explosion-section">💥 爆発台ランキング</a>
             <a href="{{ url_for('verify') }}">🏆 答え合わせ</a>
             <div class="hm-divider"></div>
             <div class="hm-label">🏪 店舗別</div>
@@ -68,7 +68,7 @@
             {# === ナビゲーション（プルダウン） === #}
             <div class="nav-dropdowns">
                 <a href="#top3-section" class="nav-pill">📊 おすすめ台</a>
-                <a href="#yesterday-section" class="nav-pill">💥 爆発台</a>
+                <a href="#explosion-section" class="nav-pill">💥 爆発台</a>
                 <div class="nav-dropdown">
                     <button class="nav-pill dropdown-toggle" onclick="this.parentElement.classList.toggle('open')">🏪 店舗別 ▾</button>
                     <div class="dropdown-content">
@@ -235,7 +235,7 @@
 
             {# === 閉店後: 当日の爆発台 === #}
             {% if display_mode in ('before_open', 'after_close') and yesterday_top10 %}
-            <section class="today-hot-section" id="yesterday-section">
+            <section class="today-hot-section" id="explosion-section">
                 <h2>{{ date_prefix }} {{ data_date_str }}の爆発台 TOP{{ yesterday_top10|length }}</h2>
                 {% for rec in yesterday_top10 %}
                 <a href="{{ url_for('recommend', store_key=rec.store_key) }}" class="yesterday-card">
@@ -611,7 +611,7 @@
 
             {# === 営業中: 本日の爆発台（TOP3の直後） === #}
             {% if is_open and today_top10 %}
-            <section class="today-hot-section" id="yesterday-section">
+            <section class="today-hot-section" id="explosion-section">
                 <h2>{{ data_date_str }}の爆発台 TOP{{ today_top10|length }}</h2>
                 <div class="today-hot-note">出玉上位</div>
                 {% for rec in today_top10 %}
@@ -695,7 +695,7 @@
 
             {# === 営業中: 前日の爆発台を最下部に表示 === #}
             {% if is_open and yesterday_top10 %}
-            <section class="today-hot-section">
+            <section class="today-hot-section" id="explosion-section">
                 <h2>{{ prev_date_str }}の爆発台 TOP{{ yesterday_top10|length }}</h2>
                 <div class="today-hot-note">据え置き狙いの参考に</div>
                 {% for rec in yesterday_top10 %}

@@ -14,14 +14,14 @@
         <div class="top-bar">
             <div class="top-bar-left">
                 <img src="/static/logo.svg" alt="スロプロMAX" class="site-logo">
-                <span class="version-info">0128_14:04</span>
+                <span class="version-info">0128_14:05</span>
             </div>
             <button class="hamburger-btn" onclick="document.getElementById('hamburger-menu').classList.toggle('hidden')" aria-label="メニュー">☰</button>
         </div>
         
         <nav id="hamburger-menu" class="hamburger-menu hidden">
             <a href="#top3-section">📊 おすすめ台</a>
-            <a href="#yesterday-section">💥 爆発台ランキング</a>
+            <a href="#explosion-section">💥 爆発台ランキング</a>
             <a href="/verify.html">🏆 答え合わせ</a>
             <div class="hm-divider"></div>
             <div class="hm-label">🏪 店舗別</div>
@@ -98,7 +98,7 @@
             
             <div class="nav-dropdowns">
                 <a href="#top3-section" class="nav-pill">📊 おすすめ台</a>
-                <a href="#yesterday-section" class="nav-pill">💥 爆発台</a>
+                <a href="#explosion-section" class="nav-pill">💥 爆発台</a>
                 <div class="nav-dropdown">
                     <button class="nav-pill dropdown-toggle" onclick="this.parentElement.classList.toggle('open')">🏪 店舗別 ▾</button>
                     <div class="dropdown-content">
@@ -1851,7 +1851,7 @@
 
             
             
-            <section class="today-hot-section">
+            <section class="today-hot-section" id="explosion-section">
                 <h2>1月26日(月)の爆発台 TOP10</h2>
                 <div class="today-hot-note">据え置き狙いの参考に</div>
                 
@@ -15136,7 +15136,7 @@
 
         <footer>
             <p><a href="/verify.html" class="footer-link">答え合わせ（予測 vs 実績）</a></p>
-            <p class="build-time">ビルド: 2026-01-28 14:04:38</p>
+            <p class="build-time">ビルド: 2026-01-28 14:05:44</p>
         </footer>
     </div>
     <script src="/static/realtime.js"></script>
