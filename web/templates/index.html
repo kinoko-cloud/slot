@@ -352,30 +352,77 @@
                         {% endif %}
                     </div>
                     {% endif %}
-                    {# === 前日・前々日データ（営業中のみ） === #}
-                    {% if is_open and (rec.yesterday_art or rec.day_before_art) %}
+                    {# === 前日・前々日・3日前データ（営業中のみ） === #}
+                    {% if is_open and (rec.yesterday_art or rec.day_before_art or rec.three_days_ago_art) %}
                     <div class="top3-prev-days">
                         {% if rec.yesterday_art %}
-                        <div class="prev-day-row">
-                            <span class="prev-day-label">前日:</span>
+                        <div class="prev-day-row{% if rec.yesterday_history_processed %} has-detail{% endif %}" onclick="toggleHitDetail(event, this)">
+                            <span class="prev-day-label">{{ short_date(rec.yesterday_date) or '前日' }}:</span>
                             <span class="prev-art">ART {{ rec.yesterday_art }}</span>
                             {% if rec.yesterday_rb %} / RB {{ rec.yesterday_rb }}{% endif %}
                             {% if rec.yesterday_games %} / {{ '{:,}'.format(rec.yesterday_games) }}G{% endif %}
                             {% if rec.yesterday_diff_medals is defined and rec.yesterday_diff_medals != 0 %}
                             <span class="diff-medals-sm {% if rec.yesterday_diff_medals > 0 %}plus{% else %}minus{% endif %}">{{ '{:+,}'.format(rec.yesterday_diff_medals) }}枚</span>
                             {% endif %}
+                            {% if rec.yesterday_max_rensa and rec.yesterday_max_rensa >= 3 %}<span class="rensa-sm">{{ rec.yesterday_max_rensa }}連</span>{% endif %}
+                            {% if rec.yesterday_history_processed %}<span class="expand-icon small">▼</span>{% endif %}
+                        </div>
+                        {% if rec.yesterday_history_processed %}
+                        <div class="hit-detail-panel" style="display:none;">
+                            {% if rec.yesterday_history_summary %}
+                            <div class="hit-summary-row"><span>{{ rec.yesterday_history_summary.total_hits or 0 }}当たり</span><span>最大{{ rec.yesterday_history_summary.max_chain or 0 }}連</span><span>平均{{ rec.yesterday_history_summary.avg_valley or 0 }}G</span></div>
+                            {% endif %}
+                            <table class="hit-detail-table"><thead><tr><th>#</th><th>時刻</th><th>G数</th><th>種類</th><th>連</th><th>枚数</th></tr></thead><tbody>
+                            {% for hit in rec.yesterday_history_processed %}<tr class="{% if hit.is_tenjou %}tenjou{% elif hit.is_hot_chain %}hot-chain{% elif hit.is_deep %}deep{% endif %}"><td>{{ hit.index }}</td><td>{{ hit.time or '-' }}</td><td class="{% if hit.is_deep %}deep{% elif hit.is_shallow %}shallow{% endif %}">{{ hit.start }}G</td><td class="{{ hit.type|lower }}">{{ hit.type }}</td><td class="{% if hit.is_hot_chain %}hot{% endif %}">{% if hit.chain_pos is defined and hit.chain_pos > 1 %}{{ hit.chain_pos }}連{% else %}-{% endif %}</td><td>{% if hit.medals > 0 %}{{ '{:,}'.format(hit.medals) }}{% else %}-{% endif %}</td></tr>{% endfor %}
+                            </tbody></table>
                         </div>
                         {% endif %}
+                        {% endif %}
                         {% if rec.day_before_art %}
-                        <div class="prev-day-row">
-                            <span class="prev-day-label">前々日:</span>
+                        <div class="prev-day-row{% if rec.day_before_history_processed %} has-detail{% endif %}" onclick="toggleHitDetail(event, this)">
+                            <span class="prev-day-label">{{ short_date(rec.day_before_date) or '前々日' }}:</span>
                             <span class="prev-art">ART {{ rec.day_before_art }}</span>
                             {% if rec.day_before_rb %} / RB {{ rec.day_before_rb }}{% endif %}
                             {% if rec.day_before_games %} / {{ '{:,}'.format(rec.day_before_games) }}G{% endif %}
                             {% if rec.day_before_diff_medals is defined and rec.day_before_diff_medals != 0 %}
                             <span class="diff-medals-sm {% if rec.day_before_diff_medals > 0 %}plus{% else %}minus{% endif %}">{{ '{:+,}'.format(rec.day_before_diff_medals) }}枚</span>
                             {% endif %}
+                            {% if rec.day_before_max_rensa and rec.day_before_max_rensa >= 3 %}<span class="rensa-sm">{{ rec.day_before_max_rensa }}連</span>{% endif %}
+                            {% if rec.day_before_history_processed %}<span class="expand-icon small">▼</span>{% endif %}
                         </div>
+                        {% if rec.day_before_history_processed %}
+                        <div class="hit-detail-panel" style="display:none;">
+                            {% if rec.day_before_history_summary %}
+                            <div class="hit-summary-row"><span>{{ rec.day_before_history_summary.total_hits or 0 }}当たり</span><span>最大{{ rec.day_before_history_summary.max_chain or 0 }}連</span><span>平均{{ rec.day_before_history_summary.avg_valley or 0 }}G</span></div>
+                            {% endif %}
+                            <table class="hit-detail-table"><thead><tr><th>#</th><th>時刻</th><th>G数</th><th>種類</th><th>連</th><th>枚数</th></tr></thead><tbody>
+                            {% for hit in rec.day_before_history_processed %}<tr class="{% if hit.is_tenjou %}tenjou{% elif hit.is_hot_chain %}hot-chain{% elif hit.is_deep %}deep{% endif %}"><td>{{ hit.index }}</td><td>{{ hit.time or '-' }}</td><td class="{% if hit.is_deep %}deep{% elif hit.is_shallow %}shallow{% endif %}">{{ hit.start }}G</td><td class="{{ hit.type|lower }}">{{ hit.type }}</td><td class="{% if hit.is_hot_chain %}hot{% endif %}">{% if hit.chain_pos is defined and hit.chain_pos > 1 %}{{ hit.chain_pos }}連{% else %}-{% endif %}</td><td>{% if hit.medals > 0 %}{{ '{:,}'.format(hit.medals) }}{% else %}-{% endif %}</td></tr>{% endfor %}
+                            </tbody></table>
+                        </div>
+                        {% endif %}
+                        {% endif %}
+                        {% if rec.three_days_ago_art %}
+                        <div class="prev-day-row{% if rec.three_days_ago_history_processed %} has-detail{% endif %}" onclick="toggleHitDetail(event, this)">
+                            <span class="prev-day-label">{{ short_date(rec.three_days_ago_date) or '3日前' }}:</span>
+                            <span class="prev-art">ART {{ rec.three_days_ago_art }}</span>
+                            {% if rec.three_days_ago_rb %} / RB {{ rec.three_days_ago_rb }}{% endif %}
+                            {% if rec.three_days_ago_games %} / {{ '{:,}'.format(rec.three_days_ago_games) }}G{% endif %}
+                            {% if rec.three_days_ago_diff_medals is defined and rec.three_days_ago_diff_medals != 0 %}
+                            <span class="diff-medals-sm {% if rec.three_days_ago_diff_medals > 0 %}plus{% else %}minus{% endif %}">{{ '{:+,}'.format(rec.three_days_ago_diff_medals) }}枚</span>
+                            {% endif %}
+                            {% if rec.three_days_ago_max_rensa and rec.three_days_ago_max_rensa >= 3 %}<span class="rensa-sm">{{ rec.three_days_ago_max_rensa }}連</span>{% endif %}
+                            {% if rec.three_days_ago_history_processed %}<span class="expand-icon small">▼</span>{% endif %}
+                        </div>
+                        {% if rec.three_days_ago_history_processed %}
+                        <div class="hit-detail-panel" style="display:none;">
+                            {% if rec.three_days_ago_history_summary %}
+                            <div class="hit-summary-row"><span>{{ rec.three_days_ago_history_summary.total_hits or 0 }}当たり</span><span>最大{{ rec.three_days_ago_history_summary.max_chain or 0 }}連</span><span>平均{{ rec.three_days_ago_history_summary.avg_valley or 0 }}G</span></div>
+                            {% endif %}
+                            <table class="hit-detail-table"><thead><tr><th>#</th><th>時刻</th><th>G数</th><th>種類</th><th>連</th><th>枚数</th></tr></thead><tbody>
+                            {% for hit in rec.three_days_ago_history_processed %}<tr class="{% if hit.is_tenjou %}tenjou{% elif hit.is_hot_chain %}hot-chain{% elif hit.is_deep %}deep{% endif %}"><td>{{ hit.index }}</td><td>{{ hit.time or '-' }}</td><td class="{% if hit.is_deep %}deep{% elif hit.is_shallow %}shallow{% endif %}">{{ hit.start }}G</td><td class="{{ hit.type|lower }}">{{ hit.type }}</td><td class="{% if hit.is_hot_chain %}hot{% endif %}">{% if hit.chain_pos is defined and hit.chain_pos > 1 %}{{ hit.chain_pos }}連{% else %}-{% endif %}</td><td>{% if hit.medals > 0 %}{{ '{:,}'.format(hit.medals) }}{% else %}-{% endif %}</td></tr>{% endfor %}
+                            </tbody></table>
+                        </div>
+                        {% endif %}
                         {% endif %}
                     </div>
                     {% endif %}
@@ -615,6 +662,17 @@
     </div>
     <script src="{{ url_for('static', filename='realtime.js') }}"></script>
     <script>
+    function toggleHitDetail(e, el) {
+        e.preventDefault();
+        e.stopPropagation();
+        var panel = el.nextElementSibling;
+        if (panel && panel.classList.contains('hit-detail-panel')) {
+            var isHidden = panel.style.display === 'none' || !panel.style.display;
+            panel.style.display = isHidden ? 'block' : 'none';
+            var icon = el.querySelector('.expand-icon');
+            if (icon) icon.textContent = isHidden ? '▲' : '▼';
+        }
+    }
     function toggleYesterdayHistory(e, el) {
         e.preventDefault();
         e.stopPropagation();
