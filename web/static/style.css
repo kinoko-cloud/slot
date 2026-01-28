@@ -5810,3 +5810,40 @@ strong.minus {
 .vt-group-result { background: rgba(255, 107, 107, 0.08); }
 .vt-pred { background: rgba(78, 205, 196, 0.05); }
 .vt-result { background: rgba(255, 107, 107, 0.05); }
+
+/* 🏆 全台的中ハイライト */
+.perfect-highlight {
+    margin-bottom: 20px;
+}
+.perfect-highlight h2 {
+    text-align: center;
+    color: #ffd700;
+    margin-bottom: 10px;
+}
+.perfect-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.perfect-card {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    background: linear-gradient(135deg, rgba(255,215,0,0.12), rgba(255,107,107,0.08));
+    border: 1px solid rgba(255,215,0,0.3);
+    border-radius: 8px;
+}
+.perfect-icon { font-size: 1.3em; }
+.perfect-store { font-weight: bold; color: #fff; }
+.perfect-machine { color: #aaa; font-size: 0.85em; }
+.perfect-badge {
+    margin-left: auto;
+    background: rgba(255,215,0,0.2);
+    color: #ffd700;
+    font-weight: bold;
+    font-size: 0.85em;
+    padding: 3px 10px;
+    border-radius: 12px;
+    white-space: nowrap;
+}
