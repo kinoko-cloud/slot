@@ -21,88 +21,80 @@ SITE777_STORES = {
     'shibuya_espass': {
         'name': 'エスパス渋谷新館',
         'pmc': '13031030',
-        'urt': '2173',
+        'urt': '-1',
         'machines': {
             'sbj': '120273',
             'hokuto_tensei2': '120343',
         },
     },
-    # 他店舗は pmc が判明次第追加
+    'shinjuku_espass': {
+        'name': 'エスパス歌舞伎町',
+        'pmc': '13031021',
+        'urt': '-1',
+        'machines': {
+            'sbj': '120273',
+            'hokuto_tensei2': '120343',
+        },
+    },
+    'seibu_shinjuku_espass': {
+        'name': 'エスパス西武新宿',
+        'pmc': '13031023',
+        'urt': '-1',
+        'machines': {
+            'sbj': '120273',
+            'hokuto_tensei2': '120343',
+        },
+    },
+    'akiba_espass': {
+        'name': 'エスパス秋葉原',
+        'pmc': '13031026',
+        'urt': '-1',
+        'machines': {
+            'sbj': '120273',
+            'hokuto_tensei2': '120343',
+        },
+    },
+    'island_akihabara': {
+        'name': 'アイランド秋葉原',
+        'pmc': '06007007',
+        'urt': '-1',
+        'machines': {
+            'sbj': '120273',
+            'hokuto_tensei2': '120343',
+        },
+    },
 }
 
 
-def get_machine_data(pmc: str, mdc: str, urt: str, dtdd: int = 1, hall_name: str = '') -> list:
-    """1機種・1日分の全台データを取得
-
-    Args:
-        pmc: 店舗コード
-        mdc: 機種コード
-        urt: 貸玉区分
-        dtdd: 日付オフセット（0=今日, 1=昨日, ...7=7日前）
-        hall_name: ログ用
-
-    Returns:
-        [{unit_id, bb, rb, art, max_medals}]
-    """
-    url = f'{BASE}/D3310.do?pmc={pmc}&mdc={mdc}&bn=1&soc=1&sw=1&pan=1&urt={urt}&dtdd={dtdd}'
-
+def _parse_unit_data(text: str) -> list:
+    """ページテキストから台データをパース"""
     results = []
-
-    with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
-        ctx = browser.new_context(user_agent=UA)
-        page = ctx.new_page()
-
-        try:
-            page.goto(url, timeout=30000)
-            page.wait_for_timeout(3000)
-
-            text = page.inner_text('body')
-            lines = text.split('\n')
-
-            # データ行をパース
-            # ヘッダーは「台番」「BB回数」等が各行に分かれる
-            # データ行は「3011\t0\t14\t71\t6422」のタブ区切り
-            for line in lines:
-                line = line.strip()
-                if not line:
+    for line in text.split('\n'):
+        line = line.strip()
+        if not line:
+            continue
+        if '累計' in line or '月額' in line or '有料' in line:
+            continue
+        parts = line.split('\t')
+        if len(parts) >= 5:
+            try:
+                uid = parts[0].strip()
+                if not uid or not uid[0].isdigit():
                     continue
-                if '累計' in line or '月額' in line or '有料' in line:
-                    continue
-                # タブ区切りで5カラム（台番号 BB RB ART 最高出玉）
-                parts = line.split('\t')
-                if len(parts) >= 5:
-                    try:
-                        uid = parts[0].strip()
-                        # 数字で始まる台番号のみ（「平均」等はスキップ）
-                        if not uid or not uid[0].isdigit():
-                            continue
-                        entry = {
-                            'unit_id': uid,
-                            'bb': int(parts[1]),
-                            'rb': int(parts[2]),
-                            'art': int(parts[3]),
-                            'max_medals': int(parts[4]),
-                        }
-                        results.append(entry)
-                    except (ValueError, IndexError):
-                        continue
-        finally:
-            browser.close()
-
+                results.append({
+                    'unit_id': uid,
+                    'bb': int(parts[1]),
+                    'rb': int(parts[2]),
+                    'art': int(parts[3]),
+                    'max_medals': int(parts[4]),
+                })
+            except (ValueError, IndexError):
+                continue
     return results
 
 
 def get_store_data(store_key: str, days_back: int = 1) -> dict:
-    """1店舗の全機種・指定日数分のデータを取得
-
-    Args:
-        store_key: 店舗キー（SITE777_STORESのキー）
-        days_back: 取得日数（1=昨日のみ, 7=過去7日分）
-
-    Returns:
-        {machine_key: [{unit_id, bb, rb, art, max_medals, date}]}
-    """
+    """1店舗の全機種・指定日数分のデータを取得（1ブラウザで全取得）"""
     store = SITE777_STORES.get(store_key)
     if not store:
         print(f'⚠ 店舗未登録: {store_key}')
@@ -113,23 +105,36 @@ def get_store_data(store_key: str, days_back: int = 1) -> dict:
     name = store['name']
     results = {}
 
-    for machine_key, mdc in store['machines'].items():
-        machine_data = []
-        for dtdd in range(1, days_back + 1):
-            target_date = (datetime.now() - timedelta(days=dtdd)).strftime('%Y-%m-%d')
-            print(f'  {name} {machine_key} {target_date} (dtdd={dtdd})...', end='', flush=True)
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True)
+        ctx = browser.new_context(user_agent=UA)
+        page = ctx.new_page()
 
-            try:
-                data = get_machine_data(pmc, mdc, urt, dtdd, name)
-                for d in data:
-                    d['date'] = target_date
-                    d['machine_key'] = machine_key
-                machine_data.extend(data)
-                print(f' {len(data)}台')
-            except Exception as e:
-                print(f' エラー: {e}')
+        try:
+            for machine_key, mdc in store['machines'].items():
+                machine_data = []
+                for dtdd in range(1, days_back + 1):
+                    target_date = (datetime.now() - timedelta(days=dtdd)).strftime('%Y-%m-%d')
+                    print(f'  {name} {machine_key} {target_date} (dtdd={dtdd})...', end='', flush=True)
 
-        results[machine_key] = machine_data
+                    try:
+                        url = f'{BASE}/D3310.do?pmc={pmc}&mdc={mdc}&bn=1&soc=1&sw=1&pan=1&urt={urt}&dtdd={dtdd}'
+                        page.goto(url, timeout=30000)
+                        page.wait_for_timeout(2000)
+
+                        text = page.inner_text('body')
+                        data = _parse_unit_data(text)
+                        for d in data:
+                            d['date'] = target_date
+                            d['machine_key'] = machine_key
+                        machine_data.extend(data)
+                        print(f' {len(data)}台')
+                    except Exception as e:
+                        print(f' エラー: {e}')
+
+                results[machine_key] = machine_data
+        finally:
+            browser.close()
 
     return results
 
