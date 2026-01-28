@@ -5795,3 +5795,18 @@ strong.minus {
 .verify-detail-row { background: rgba(0,0,0,0.2); }
 .verify-detail-row td { padding: 0; }
 .verify-detail-row.hidden { display: none; }
+
+/* verify テーブル 2段ヘッダー */
+.vt-group-row { border-bottom: 1px solid #333; }
+.vt-group-header {
+    padding: 4px 4px 2px;
+    font-size: 0.7em;
+    font-weight: bold;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.vt-group-pred { background: rgba(78, 205, 196, 0.08); }
+.vt-group-result { background: rgba(255, 107, 107, 0.08); }
+.vt-pred { background: rgba(78, 205, 196, 0.05); }
+.vt-result { background: rgba(255, 107, 107, 0.05); }
