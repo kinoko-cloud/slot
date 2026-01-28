@@ -10,7 +10,20 @@
 </head>
 <body data-page-type="index">
     <div class="container">
-        <div class="version-info">{{ now_short }} Ver.</div>
+        {# === トップバー === #}
+        <div class="top-bar">
+            <span class="version-info">{{ now_short }} Ver.</span>
+            <button class="hamburger-btn" onclick="document.getElementById('hamburger-menu').classList.toggle('hidden')" aria-label="メニュー">☰</button>
+        </div>
+        {# === ハンバーガーメニュー === #}
+        <nav id="hamburger-menu" class="hamburger-menu hidden">
+            <a href="#top3-section">📊 おすすめ台</a>
+            <a href="#yesterday-section">💥 爆発台ランキング</a>
+            <a href="{{ url_for('verify') }}">🏆 答え合わせ</a>
+            {% for link in recommend_links %}
+            <a href="{{ url_for('recommend', store_key=link.store_key) }}">{{ link.icon }} {{ link.name }}</a>
+            {% endfor %}
+        </nav>
         <header>
             {% if display_mode == 'before_open' %}
             <h1><span class="title-main">{{ next_day_prefix }} {{ next_day_str }}のおすすめ台</span></h1>

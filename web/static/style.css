@@ -5984,3 +5984,51 @@ a.perfect-card:hover { background: rgba(255,215,0,0.18); }
     margin-left: 4px;
     font-size: 0.95em;
 }
+
+/* トップバー */
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+}
+.top-bar .version-info {
+    font-size: 0.7em;
+    color: #555;
+    position: static;
+    text-align: left;
+}
+.hamburger-btn {
+    background: none;
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 6px;
+    color: #ccc;
+    font-size: 1.4em;
+    padding: 4px 10px;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+.hamburger-btn:hover { background: rgba(255,255,255,0.08); }
+
+/* ハンバーガーメニュー */
+.hamburger-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    background: #1a1a2e;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 6px;
+    margin-bottom: 10px;
+}
+.hamburger-menu.hidden { display: none; }
+.hamburger-menu a {
+    display: block;
+    padding: 10px 14px;
+    color: #ddd;
+    text-decoration: none;
+    font-size: 0.9em;
+    border-radius: 6px;
+    transition: background 0.15s;
+}
+.hamburger-menu a:hover { background: rgba(255,255,255,0.06); }
