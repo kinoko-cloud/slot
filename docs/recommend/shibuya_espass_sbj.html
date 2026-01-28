@@ -26,14 +26,18 @@
                 </span>
                 <span class="cache-badge github">GITHUB</span>
                 
-                <div class="stale-warning">データが10時間58分前のものです</div>
+                <div class="stale-warning">データが11時間9分前のものです</div>
                 
                 
             </div>
 
             <!-- 空き状況サマリ -->
             
-            <div class="closed-notice">現在営業時間外です</div>
+            <div class="availability-summary">
+                <span class="avail-empty" onclick="filterUnits('empty')">空き 3台</span>
+                <span class="avail-playing" onclick="filterUnits('playing')">遊技中 0台</span>
+                <span class="avail-all" onclick="filterUnits('all')">全て</span>
+            </div>
             
 
             <div class="action-buttons">
@@ -104,37 +108,41 @@
                         <a href="/history/shibuya_espass_sbj_3012.html" class="unit-id-large unit-id-link">3012番台</a>
                         <span class="machine-name-sm">スーパーブラックジャック</span>
                         
+                            
+                            <span class="avail-badge-lg empty">空き</span>
+                            
+                        
                         <span class="rank-badge-lg" style="background-color: #ff6b6b">S</span>
                         <span class="expand-icon">▼</span>
                     </div>
 
                     
-                    
-                    
-                    <div class="reasons-full">
-                        
-                        
-                        
-                        <div class="reason-line-top reason-pattern">🔄 7日連続好調 + エスパス渋谷新館は水曜が狙い目 → 据え置き濃厚</div>
-                        
-                        
-                        
-                        <div class="reason-line-top reason-cycle">🔁 好調周期: 平均1.1日間隔</div>
-                        
-                        
-                        
-                        <div class="reason-line-top">🔥 直近の推移: 小→小→小→中→小（好調8日中、大0/中2/小6日）</div>
-                        
-                        
-                        
-                        <div class="reason-line-top reason-rank">📊 好調翌日も好調: 6/7回（86%）→ 据え置き傾向</div>
-                        
-                        
-                        
-                        <div class="reason-line-top reason-rank">📊 7日連続好調 = 最長記録更新中 + 据え置き率86% → 店が推してる台</div>
-                        
-                        
-                        
+                    <!-- 営業中: リアルタイムデータ -->
+                    <div class="today-data-row">
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">0</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            
+                        </div>
+                        <div class="data-row-secondary">
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">0</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell ">
+                                <span class="data-value">0</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">0</span>
+                                <span class="data-label">累計G</span>
+                            </div>
+                        </div>
                     </div>
                     
 
@@ -164,6 +172,14 @@
                     </div>
 
                     <!-- 推奨理由（営業中のみ — 閉店後は上に表示済み） -->
+                    
+                    <div class="reason-main">
+                        
+                        <div class="reason-line reason-pattern">🔄 7日連続好調 + エスパス渋谷新館は水曜が狙い目 → 据え置き濃厚</div>
+                        
+                        <div class="reason-line ">🔁 好調周期: 平均1.1日間隔</div>
+                        
+                    </div>
                     
 
                     <!-- 詳細（クリックで展開） -->
@@ -218,37 +234,41 @@
                         <a href="/history/shibuya_espass_sbj_3011.html" class="unit-id-large unit-id-link">3011番台</a>
                         <span class="machine-name-sm">スーパーブラックジャック</span>
                         
+                            
+                            <span class="avail-badge-lg empty">空き</span>
+                            
+                        
                         <span class="rank-badge-lg" style="background-color: #ffa502">A</span>
                         <span class="expand-icon">▼</span>
                     </div>
 
                     
-                    
-                    
-                    <div class="reasons-full">
-                        
-                        
-                        
-                        <div class="reason-line-top reason-cycle">🔁 1日不調→翌日好調: 2/2回(100%) / 好調周期: 平均1.3日間隔</div>
-                        
-                        
-                        
-                        <div class="reason-line-top">🔥 直近の推移: 大→小→小→小→中（低めが4日続いた → そろそろ大爆発が来やすい）</div>
-                        
-                        
-                        
-                        <div class="reason-line-top reason-today">💡 エスパス渋谷新館の水曜は狙い目の曜日（店舗傾向）</div>
-                        
-                        
-                        
-                        <div class="reason-line-top reason-rank">📊 好調翌日も好調: 4/6回（67%）→ 据え置き傾向</div>
-                        
-                        
-                        
-                        <div class="reason-line-top reason-rank">📊 9日間中7日好調（好調率78%）→ 高設定が入りやすい台</div>
-                        
-                        
-                        
+                    <!-- 営業中: リアルタイムデータ -->
+                    <div class="today-data-row">
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">0</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            
+                        </div>
+                        <div class="data-row-secondary">
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">0</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell ">
+                                <span class="data-value">0</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">0</span>
+                                <span class="data-label">累計G</span>
+                            </div>
+                        </div>
                     </div>
                     
 
@@ -278,6 +298,14 @@
                     </div>
 
                     <!-- 推奨理由（営業中のみ — 閉店後は上に表示済み） -->
+                    
+                    <div class="reason-main">
+                        
+                        <div class="reason-line ">🔁 1日不調→翌日好調: 2/2回(100%) / 好調周期: 平均1.3日間隔</div>
+                        
+                        <div class="reason-line ">🔥 直近の推移: 大→小→小→小→中（低めが4日続いた → そろそろ大爆発が来やすい）</div>
+                        
+                    </div>
                     
 
                     <!-- 詳細（クリックで展開） -->
@@ -314,11 +342,11 @@
                             
                             <div class="reason-item">🔥 直近の推移: 大→小→小→小→中（低めが4日続いた → そろそろ大爆発が来やすい）</div>
                             
-                            <div class="reason-item">💡 エスパス渋谷新館の水曜は狙い目の曜日（店舗傾向）</div>
-                            
                             <div class="reason-item">📊 好調翌日も好調: 4/6回（67%）→ 据え置き傾向</div>
                             
                             <div class="reason-item">📊 9日間中7日好調（好調率78%）→ 高設定が入りやすい台</div>
+                            
+                            <div class="reason-item">💡 エスパス渋谷新館の水曜は狙い目の曜日（店舗傾向）</div>
                             
                         </div>
                         

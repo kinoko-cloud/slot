@@ -26,14 +26,18 @@
                 </span>
                 <span class="cache-badge github">GITHUB</span>
                 
-                <div class="stale-warning">データが10時間58分前のものです</div>
+                <div class="stale-warning">データが11時間9分前のものです</div>
                 
                 
             </div>
 
             <!-- 空き状況サマリ -->
             
-            <div class="closed-notice">現在営業時間外です</div>
+            <div class="availability-summary">
+                <span class="avail-empty" onclick="filterUnits('empty')">空き 41台</span>
+                <span class="avail-playing" onclick="filterUnits('playing')">遊技中 0台</span>
+                <span class="avail-all" onclick="filterUnits('all')">全て</span>
+            </div>
             
 
             <div class="action-buttons">
@@ -104,37 +108,41 @@
                         <a href="/history/shinjuku_espass_hokuto_1.html" class="unit-id-large unit-id-link">0001番台</a>
                         <span class="machine-name-sm">北斗の拳 転生の章2</span>
                         
+                            
+                            <span class="avail-badge-lg empty">空き</span>
+                            
+                        
                         <span class="rank-badge-lg" style="background-color: #ff6b6b">S</span>
                         <span class="expand-icon">▼</span>
                     </div>
 
                     
-                    
-                    
-                    <div class="reasons-full">
-                        
-                        
-                        
-                        <div class="reason-line-top reason-pattern">🔄 2日連続好調 → 据え置き期待</div>
-                        
-                        
-                        
-                        <div class="reason-line-top">🔥 直近の推移: 小→中→中→中→小（好調6日中、大0/中4/小2日）</div>
-                        
-                        
-                        
-                        <div class="reason-line-top reason-today">💡 エスパス歌舞伎町の水曜は過去実績から普通〜やや期待できる日</div>
-                        
-                        
-                        
-                        <div class="reason-line-top reason-rank">📊 好調翌日も好調: 4/5回（80%）→ 据え置き傾向</div>
-                        
-                        
-                        
-                        <div class="reason-line-top reason-rank">📊 7日間中6日好調（好調率86%）→ 高設定が入りやすい台</div>
-                        
-                        
-                        
+                    <!-- 営業中: リアルタイムデータ -->
+                    <div class="today-data-row">
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">0</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            
+                        </div>
+                        <div class="data-row-secondary">
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">0</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell ">
+                                <span class="data-value">0</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">0</span>
+                                <span class="data-label">累計G</span>
+                            </div>
+                        </div>
                     </div>
                     
 
@@ -164,6 +172,14 @@
                     </div>
 
                     <!-- 推奨理由（営業中のみ — 閉店後は上に表示済み） -->
+                    
+                    <div class="reason-main">
+                        
+                        <div class="reason-line reason-pattern">🔄 2日連続好調 → 据え置き期待</div>
+                        
+                        <div class="reason-line ">🔥 直近の推移: 小→中→中→中→小（好調6日中、大0/中4/小2日）</div>
+                        
+                    </div>
                     
 
                     <!-- 詳細（クリックで展開） -->
@@ -968,29 +984,41 @@
                         <a href="/history/shinjuku_espass_hokuto_3.html" class="unit-id-large unit-id-link">0003番台</a>
                         <span class="machine-name-sm">北斗の拳 転生の章2</span>
                         
+                            
+                            <span class="avail-badge-lg empty">空き</span>
+                            
+                        
                         <span class="rank-badge-lg" style="background-color: #ff6b6b">S</span>
                         <span class="expand-icon">▼</span>
                     </div>
 
                     
-                    
-                    
-                    <div class="reasons-full">
-                        
-                        
-                        
-                        <div class="reason-line-top reason-today">💡 エスパス歌舞伎町の水曜は過去実績から普通〜やや期待できる日</div>
-                        
-                        
-                        
-                        <div class="reason-line-top reason-rank">📊 好調翌日も好調: 4/5回（80%）→ 据え置き傾向</div>
-                        
-                        
-                        
-                        <div class="reason-line-top reason-rank">📊 7日間中6日好調（好調率86%）→ 高設定が入りやすい台</div>
-                        
-                        
-                        
+                    <!-- 営業中: リアルタイムデータ -->
+                    <div class="today-data-row">
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">0</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            
+                        </div>
+                        <div class="data-row-secondary">
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">0</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell ">
+                                <span class="data-value">0</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">0</span>
+                                <span class="data-label">累計G</span>
+                            </div>
+                        </div>
                     </div>
                     
 
@@ -1020,6 +1048,14 @@
                     </div>
 
                     <!-- 推奨理由（営業中のみ — 閉店後は上に表示済み） -->
+                    
+                    <div class="reason-main">
+                        
+                        <div class="reason-line reason-confidence">💡 エスパス歌舞伎町の水曜は過去実績から普通〜やや期待できる日</div>
+                        
+                        <div class="reason-line reason-rank">📊 好調翌日も好調: 4/5回（80%）→ 据え置き傾向</div>
+                        
+                    </div>
                     
 
                     <!-- 詳細（クリックで展開） -->
@@ -1068,29 +1104,41 @@
                         <a href="/history/shinjuku_espass_hokuto_8.html" class="unit-id-large unit-id-link">0008番台</a>
                         <span class="machine-name-sm">北斗の拳 転生の章2</span>
                         
+                            
+                            <span class="avail-badge-lg empty">空き</span>
+                            
+                        
                         <span class="rank-badge-lg" style="background-color: #ff6b6b">S</span>
                         <span class="expand-icon">▼</span>
                     </div>
 
                     
-                    
-                    
-                    <div class="reasons-full">
-                        
-                        
-                        
-                        <div class="reason-line-top reason-today">💡 エスパス歌舞伎町の水曜は過去実績から普通〜やや期待できる日</div>
-                        
-                        
-                        
-                        <div class="reason-line-top reason-rank">📊 好調翌日も好調: 4/5回（80%）→ 据え置き傾向</div>
-                        
-                        
-                        
-                        <div class="reason-line-top reason-rank">📊 7日間中6日好調（好調率86%）→ 高設定が入りやすい台</div>
-                        
-                        
-                        
+                    <!-- 営業中: リアルタイムデータ -->
+                    <div class="today-data-row">
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">0</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            
+                        </div>
+                        <div class="data-row-secondary">
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">0</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell ">
+                                <span class="data-value">0</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">0</span>
+                                <span class="data-label">累計G</span>
+                            </div>
+                        </div>
                     </div>
                     
 
@@ -1120,6 +1168,14 @@
                     </div>
 
                     <!-- 推奨理由（営業中のみ — 閉店後は上に表示済み） -->
+                    
+                    <div class="reason-main">
+                        
+                        <div class="reason-line reason-confidence">💡 エスパス歌舞伎町の水曜は過去実績から普通〜やや期待できる日</div>
+                        
+                        <div class="reason-line reason-rank">📊 好調翌日も好調: 4/5回（80%）→ 据え置き傾向</div>
+                        
+                    </div>
                     
 
                     <!-- 詳細（クリックで展開） -->
@@ -1168,29 +1224,41 @@
                         <a href="/history/shinjuku_espass_hokuto_6.html" class="unit-id-large unit-id-link">0006番台</a>
                         <span class="machine-name-sm">北斗の拳 転生の章2</span>
                         
+                            
+                            <span class="avail-badge-lg empty">空き</span>
+                            
+                        
                         <span class="rank-badge-lg" style="background-color: #ff6b6b">S</span>
                         <span class="expand-icon">▼</span>
                     </div>
 
                     
-                    
-                    
-                    <div class="reasons-full">
-                        
-                        
-                        
-                        <div class="reason-line-top reason-today">💡 エスパス歌舞伎町の水曜は過去実績から普通〜やや期待できる日</div>
-                        
-                        
-                        
-                        <div class="reason-line-top reason-rank">📊 好調翌日も好調: 4/4回（100%）→ 据え置き傾向</div>
-                        
-                        
-                        
-                        <div class="reason-line-top reason-rank">📊 7日間中5日好調（好調率71%）→ 高設定が入りやすい台</div>
-                        
-                        
-                        
+                    <!-- 営業中: リアルタイムデータ -->
+                    <div class="today-data-row">
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">0</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            
+                        </div>
+                        <div class="data-row-secondary">
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">0</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell ">
+                                <span class="data-value">0</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">0</span>
+                                <span class="data-label">累計G</span>
+                            </div>
+                        </div>
                     </div>
                     
 
@@ -1220,6 +1288,14 @@
                     </div>
 
                     <!-- 推奨理由（営業中のみ — 閉店後は上に表示済み） -->
+                    
+                    <div class="reason-main">
+                        
+                        <div class="reason-line reason-confidence">💡 エスパス歌舞伎町の水曜は過去実績から普通〜やや期待できる日</div>
+                        
+                        <div class="reason-line reason-rank">📊 好調翌日も好調: 4/4回（100%）→ 据え置き傾向</div>
+                        
+                    </div>
                     
 
                     <!-- 詳細（クリックで展開） -->
@@ -1268,21 +1344,41 @@
                         <a href="/history/shinjuku_espass_hokuto_4.html" class="unit-id-large unit-id-link">0004番台</a>
                         <span class="machine-name-sm">北斗の拳 転生の章2</span>
                         
+                            
+                            <span class="avail-badge-lg empty">空き</span>
+                            
+                        
                         <span class="rank-badge-lg" style="background-color: #ff6b6b">S</span>
                         <span class="expand-icon">▼</span>
                     </div>
 
                     
-                    
-                    
-                    <div class="reasons-full">
-                        
-                        
-                        
-                        <div class="reason-line-top">エスパス歌舞伎町の水曜は普通（店舗傾向：土曜が最強、金曜も狙い目）</div>
-                        
-                        
-                        
+                    <!-- 営業中: リアルタイムデータ -->
+                    <div class="today-data-row">
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">0</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            
+                        </div>
+                        <div class="data-row-secondary">
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">0</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell ">
+                                <span class="data-value">0</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">0</span>
+                                <span class="data-label">累計G</span>
+                            </div>
+                        </div>
                     </div>
                     
 
@@ -1312,6 +1408,12 @@
                     </div>
 
                     <!-- 推奨理由（営業中のみ — 閉店後は上に表示済み） -->
+                    
+                    <div class="reason-main">
+                        
+                        <div class="reason-line ">エスパス歌舞伎町の水曜は普通（店舗傾向：土曜が最強、金曜も狙い目）</div>
+                        
+                    </div>
                     
 
                     <!-- 詳細（クリックで展開） -->
@@ -1349,25 +1451,41 @@
                         <a href="/history/shinjuku_espass_hokuto_5.html" class="unit-id-large unit-id-link">0005番台</a>
                         <span class="machine-name-sm">北斗の拳 転生の章2</span>
                         
+                            
+                            <span class="avail-badge-lg empty">空き</span>
+                            
+                        
                         <span class="rank-badge-lg" style="background-color: #ff6b6b">S</span>
                         <span class="expand-icon">▼</span>
                     </div>
 
                     
-                    
-                    
-                    <div class="reasons-full">
-                        
-                        
-                        
-                        <div class="reason-line-top">エスパス歌舞伎町の水曜は普通（店舗傾向：土曜が最強、金曜も狙い目）</div>
-                        
-                        
-                        
-                        <div class="reason-line-top reason-warn">🚨 前日はART確率1/184で低設定濃厚（全台中央値1/106）</div>
-                        
-                        
-                        
+                    <!-- 営業中: リアルタイムデータ -->
+                    <div class="today-data-row">
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">0</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            
+                        </div>
+                        <div class="data-row-secondary">
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">0</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell ">
+                                <span class="data-value">0</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">0</span>
+                                <span class="data-label">累計G</span>
+                            </div>
+                        </div>
                     </div>
                     
 
@@ -1397,6 +1515,14 @@
                     </div>
 
                     <!-- 推奨理由（営業中のみ — 閉店後は上に表示済み） -->
+                    
+                    <div class="reason-main">
+                        
+                        <div class="reason-line ">エスパス歌舞伎町の水曜は普通（店舗傾向：土曜が最強、金曜も狙い目）</div>
+                        
+                        <div class="reason-line reason-warn">🚨 前日はART確率1/184で低設定濃厚（全台中央値1/106）</div>
+                        
+                    </div>
                     
 
                     <!-- 詳細（クリックで展開） -->
@@ -1434,25 +1560,41 @@
                         <a href="/history/shinjuku_espass_hokuto_7.html" class="unit-id-large unit-id-link">0007番台</a>
                         <span class="machine-name-sm">北斗の拳 転生の章2</span>
                         
+                            
+                            <span class="avail-badge-lg empty">空き</span>
+                            
+                        
                         <span class="rank-badge-lg" style="background-color: #ff6b6b">S</span>
                         <span class="expand-icon">▼</span>
                     </div>
 
                     
-                    
-                    
-                    <div class="reasons-full">
-                        
-                        
-                        
-                        <div class="reason-line-top">エスパス歌舞伎町の水曜は普通（店舗傾向：土曜が最強、金曜も狙い目）</div>
-                        
-                        
-                        
-                        <div class="reason-line-top reason-warn">🚨 前日はART確率1/120と悪くないが、最大11連と爆発なし → 過去に同パターン→翌日好調: 17/28回=61%</div>
-                        
-                        
-                        
+                    <!-- 営業中: リアルタイムデータ -->
+                    <div class="today-data-row">
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">0</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            
+                        </div>
+                        <div class="data-row-secondary">
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">0</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell ">
+                                <span class="data-value">0</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">0</span>
+                                <span class="data-label">累計G</span>
+                            </div>
+                        </div>
                     </div>
                     
 
@@ -1482,6 +1624,14 @@
                     </div>
 
                     <!-- 推奨理由（営業中のみ — 閉店後は上に表示済み） -->
+                    
+                    <div class="reason-main">
+                        
+                        <div class="reason-line ">エスパス歌舞伎町の水曜は普通（店舗傾向：土曜が最強、金曜も狙い目）</div>
+                        
+                        <div class="reason-line reason-warn">🚨 前日はART確率1/120と悪くないが、最大11連と爆発なし → 過去に同パターン→翌日好調: 17/28回=61%</div>
+                        
+                    </div>
                     
 
                     <!-- 詳細（クリックで展開） -->
@@ -1519,21 +1669,41 @@
                         <a href="/history/shinjuku_espass_hokuto_9.html" class="unit-id-large unit-id-link">0009番台</a>
                         <span class="machine-name-sm">北斗の拳 転生の章2</span>
                         
+                            
+                            <span class="avail-badge-lg empty">空き</span>
+                            
+                        
                         <span class="rank-badge-lg" style="background-color: #ff6b6b">S</span>
                         <span class="expand-icon">▼</span>
                     </div>
 
                     
-                    
-                    
-                    <div class="reasons-full">
-                        
-                        
-                        
-                        <div class="reason-line-top">エスパス歌舞伎町の水曜は普通（店舗傾向：土曜が最強、金曜も狙い目）</div>
-                        
-                        
-                        
+                    <!-- 営業中: リアルタイムデータ -->
+                    <div class="today-data-row">
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">0</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            
+                        </div>
+                        <div class="data-row-secondary">
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">0</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell ">
+                                <span class="data-value">0</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">0</span>
+                                <span class="data-label">累計G</span>
+                            </div>
+                        </div>
                     </div>
                     
 
@@ -1563,6 +1733,12 @@
                     </div>
 
                     <!-- 推奨理由（営業中のみ — 閉店後は上に表示済み） -->
+                    
+                    <div class="reason-main">
+                        
+                        <div class="reason-line ">エスパス歌舞伎町の水曜は普通（店舗傾向：土曜が最強、金曜も狙い目）</div>
+                        
+                    </div>
                     
 
                     <!-- 詳細（クリックで展開） -->
@@ -2348,25 +2524,41 @@
                         <a href="/history/shinjuku_espass_hokuto_10.html" class="unit-id-large unit-id-link">0010番台</a>
                         <span class="machine-name-sm">北斗の拳 転生の章2</span>
                         
+                            
+                            <span class="avail-badge-lg empty">空き</span>
+                            
+                        
                         <span class="rank-badge-lg" style="background-color: #ff6b6b">S</span>
                         <span class="expand-icon">▼</span>
                     </div>
 
                     
-                    
-                    
-                    <div class="reasons-full">
-                        
-                        
-                        
-                        <div class="reason-line-top">エスパス歌舞伎町の水曜は普通（店舗傾向：土曜が最強、金曜も狙い目）</div>
-                        
-                        
-                        
-                        <div class="reason-line-top reason-warn">🚨 前日はART確率1/171でやや不調（全台中央値1/106）</div>
-                        
-                        
-                        
+                    <!-- 営業中: リアルタイムデータ -->
+                    <div class="today-data-row">
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">0</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            
+                        </div>
+                        <div class="data-row-secondary">
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">0</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell ">
+                                <span class="data-value">0</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">0</span>
+                                <span class="data-label">累計G</span>
+                            </div>
+                        </div>
                     </div>
                     
 
@@ -2396,6 +2588,14 @@
                     </div>
 
                     <!-- 推奨理由（営業中のみ — 閉店後は上に表示済み） -->
+                    
+                    <div class="reason-main">
+                        
+                        <div class="reason-line ">エスパス歌舞伎町の水曜は普通（店舗傾向：土曜が最強、金曜も狙い目）</div>
+                        
+                        <div class="reason-line reason-warn">🚨 前日はART確率1/171でやや不調（全台中央値1/106）</div>
+                        
+                    </div>
                     
 
                     <!-- 詳細（クリックで展開） -->
@@ -2971,25 +3171,41 @@
                         <a href="/history/shinjuku_espass_hokuto_11.html" class="unit-id-large unit-id-link">0011番台</a>
                         <span class="machine-name-sm">北斗の拳 転生の章2</span>
                         
+                            
+                            <span class="avail-badge-lg empty">空き</span>
+                            
+                        
                         <span class="rank-badge-lg" style="background-color: #ffa502">A</span>
                         <span class="expand-icon">▼</span>
                     </div>
 
                     
-                    
-                    
-                    <div class="reasons-full">
-                        
-                        
-                        
-                        <div class="reason-line-top">エスパス歌舞伎町の水曜は普通（店舗傾向：土曜が最強、金曜も狙い目）</div>
-                        
-                        
-                        
-                        <div class="reason-line-top reason-warn">🚨 前日はART確率1/125と悪くないが、最大6連と爆発なし → 過去に同パターン→翌日好調: 17/28回=61%</div>
-                        
-                        
-                        
+                    <!-- 営業中: リアルタイムデータ -->
+                    <div class="today-data-row">
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">0</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            
+                        </div>
+                        <div class="data-row-secondary">
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">0</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell ">
+                                <span class="data-value">0</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">0</span>
+                                <span class="data-label">累計G</span>
+                            </div>
+                        </div>
                     </div>
                     
 
@@ -3019,6 +3235,14 @@
                     </div>
 
                     <!-- 推奨理由（営業中のみ — 閉店後は上に表示済み） -->
+                    
+                    <div class="reason-main">
+                        
+                        <div class="reason-line ">エスパス歌舞伎町の水曜は普通（店舗傾向：土曜が最強、金曜も狙い目）</div>
+                        
+                        <div class="reason-line reason-warn">🚨 前日はART確率1/125と悪くないが、最大6連と爆発なし → 過去に同パターン→翌日好調: 17/28回=61%</div>
+                        
+                    </div>
                     
 
                     <!-- 詳細（クリックで展開） -->
@@ -3644,21 +3868,41 @@
                         <a href="/history/shinjuku_espass_hokuto_12.html" class="unit-id-large unit-id-link">0012番台</a>
                         <span class="machine-name-sm">北斗の拳 転生の章2</span>
                         
+                            
+                            <span class="avail-badge-lg empty">空き</span>
+                            
+                        
                         <span class="rank-badge-lg" style="background-color: #ffa502">A</span>
                         <span class="expand-icon">▼</span>
                     </div>
 
                     
-                    
-                    
-                    <div class="reasons-full">
-                        
-                        
-                        
-                        <div class="reason-line-top">エスパス歌舞伎町の水曜は普通（店舗傾向：土曜が最強、金曜も狙い目）</div>
-                        
-                        
-                        
+                    <!-- 営業中: リアルタイムデータ -->
+                    <div class="today-data-row">
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">0</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            
+                        </div>
+                        <div class="data-row-secondary">
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">0</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell ">
+                                <span class="data-value">0</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">0</span>
+                                <span class="data-label">累計G</span>
+                            </div>
+                        </div>
                     </div>
                     
 
@@ -3680,6 +3924,12 @@
                     </div>
 
                     <!-- 推奨理由（営業中のみ — 閉店後は上に表示済み） -->
+                    
+                    <div class="reason-main">
+                        
+                        <div class="reason-line ">エスパス歌舞伎町の水曜は普通（店舗傾向：土曜が最強、金曜も狙い目）</div>
+                        
+                    </div>
                     
 
                     <!-- 詳細（クリックで展開） -->
@@ -3933,21 +4183,41 @@
                         <a href="/history/shinjuku_espass_hokuto_13.html" class="unit-id-large unit-id-link">0013番台</a>
                         <span class="machine-name-sm">北斗の拳 転生の章2</span>
                         
+                            
+                            <span class="avail-badge-lg empty">空き</span>
+                            
+                        
                         <span class="rank-badge-lg" style="background-color: #ffa502">A</span>
                         <span class="expand-icon">▼</span>
                     </div>
 
                     
-                    
-                    
-                    <div class="reasons-full">
-                        
-                        
-                        
-                        <div class="reason-line-top">エスパス歌舞伎町の水曜は普通（店舗傾向：土曜が最強、金曜も狙い目）</div>
-                        
-                        
-                        
+                    <!-- 営業中: リアルタイムデータ -->
+                    <div class="today-data-row">
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">0</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            
+                        </div>
+                        <div class="data-row-secondary">
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">0</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell ">
+                                <span class="data-value">0</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">0</span>
+                                <span class="data-label">累計G</span>
+                            </div>
+                        </div>
                     </div>
                     
 
@@ -3977,6 +4247,12 @@
                     </div>
 
                     <!-- 推奨理由（営業中のみ — 閉店後は上に表示済み） -->
+                    
+                    <div class="reason-main">
+                        
+                        <div class="reason-line ">エスパス歌舞伎町の水曜は普通（店舗傾向：土曜が最強、金曜も狙い目）</div>
+                        
+                    </div>
                     
 
                     <!-- 詳細（クリックで展開） -->
@@ -4782,25 +5058,41 @@
                         <a href="/history/shinjuku_espass_hokuto_14.html" class="unit-id-large unit-id-link">0014番台</a>
                         <span class="machine-name-sm">北斗の拳 転生の章2</span>
                         
+                            
+                            <span class="avail-badge-lg empty">空き</span>
+                            
+                        
                         <span class="rank-badge-lg" style="background-color: #ffa502">A</span>
                         <span class="expand-icon">▼</span>
                     </div>
 
                     
-                    
-                    
-                    <div class="reasons-full">
-                        
-                        
-                        
-                        <div class="reason-line-top">エスパス歌舞伎町の水曜は普通（店舗傾向：土曜が最強、金曜も狙い目）</div>
-                        
-                        
-                        
-                        <div class="reason-line-top reason-warn">🚨 前日はART確率1/120と悪くないが、最大7連と爆発なし → 過去に同パターン→翌日好調: 17/28回=61%</div>
-                        
-                        
-                        
+                    <!-- 営業中: リアルタイムデータ -->
+                    <div class="today-data-row">
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">0</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            
+                        </div>
+                        <div class="data-row-secondary">
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">0</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell ">
+                                <span class="data-value">0</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">0</span>
+                                <span class="data-label">累計G</span>
+                            </div>
+                        </div>
                     </div>
                     
 
@@ -4830,6 +5122,14 @@
                     </div>
 
                     <!-- 推奨理由（営業中のみ — 閉店後は上に表示済み） -->
+                    
+                    <div class="reason-main">
+                        
+                        <div class="reason-line ">エスパス歌舞伎町の水曜は普通（店舗傾向：土曜が最強、金曜も狙い目）</div>
+                        
+                        <div class="reason-line reason-warn">🚨 前日はART確率1/120と悪くないが、最大7連と爆発なし → 過去に同パターン→翌日好調: 17/28回=61%</div>
+                        
+                    </div>
                     
 
                     <!-- 詳細（クリックで展開） -->
@@ -5485,25 +5785,41 @@
                         <a href="/history/shinjuku_espass_hokuto_15.html" class="unit-id-large unit-id-link">0015番台</a>
                         <span class="machine-name-sm">北斗の拳 転生の章2</span>
                         
+                            
+                            <span class="avail-badge-lg empty">空き</span>
+                            
+                        
                         <span class="rank-badge-lg" style="background-color: #ffa502">A</span>
                         <span class="expand-icon">▼</span>
                     </div>
 
                     
-                    
-                    
-                    <div class="reasons-full">
-                        
-                        
-                        
-                        <div class="reason-line-top">エスパス歌舞伎町の水曜は普通（店舗傾向：土曜が最強、金曜も狙い目）</div>
-                        
-                        
-                        
-                        <div class="reason-line-top reason-warn">🚨 前日はART確率1/259で低設定濃厚（全台中央値1/106）</div>
-                        
-                        
-                        
+                    <!-- 営業中: リアルタイムデータ -->
+                    <div class="today-data-row">
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">0</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            
+                        </div>
+                        <div class="data-row-secondary">
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">0</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell ">
+                                <span class="data-value">0</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">0</span>
+                                <span class="data-label">累計G</span>
+                            </div>
+                        </div>
                     </div>
                     
 
@@ -5533,6 +5849,14 @@
                     </div>
 
                     <!-- 推奨理由（営業中のみ — 閉店後は上に表示済み） -->
+                    
+                    <div class="reason-main">
+                        
+                        <div class="reason-line ">エスパス歌舞伎町の水曜は普通（店舗傾向：土曜が最強、金曜も狙い目）</div>
+                        
+                        <div class="reason-line reason-warn">🚨 前日はART確率1/259で低設定濃厚（全台中央値1/106）</div>
+                        
+                    </div>
                     
 
                     <!-- 詳細（クリックで展開） -->
@@ -5878,21 +6202,41 @@
                         <a href="/history/shinjuku_espass_hokuto_16.html" class="unit-id-large unit-id-link">0016番台</a>
                         <span class="machine-name-sm">北斗の拳 転生の章2</span>
                         
+                            
+                            <span class="avail-badge-lg empty">空き</span>
+                            
+                        
                         <span class="rank-badge-lg" style="background-color: #ffa502">A</span>
                         <span class="expand-icon">▼</span>
                     </div>
 
                     
-                    
-                    
-                    <div class="reasons-full">
-                        
-                        
-                        
-                        <div class="reason-line-top">エスパス歌舞伎町の水曜は普通（店舗傾向：土曜が最強、金曜も狙い目）</div>
-                        
-                        
-                        
+                    <!-- 営業中: リアルタイムデータ -->
+                    <div class="today-data-row">
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">0</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            
+                        </div>
+                        <div class="data-row-secondary">
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">0</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell ">
+                                <span class="data-value">0</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">0</span>
+                                <span class="data-label">累計G</span>
+                            </div>
+                        </div>
                     </div>
                     
 
@@ -5922,6 +6266,12 @@
                     </div>
 
                     <!-- 推奨理由（営業中のみ — 閉店後は上に表示済み） -->
+                    
+                    <div class="reason-main">
+                        
+                        <div class="reason-line ">エスパス歌舞伎町の水曜は普通（店舗傾向：土曜が最強、金曜も狙い目）</div>
+                        
+                    </div>
                     
 
                     <!-- 詳細（クリックで展開） -->
@@ -7217,25 +7567,41 @@
                         <a href="/history/shinjuku_espass_hokuto_17.html" class="unit-id-large unit-id-link">0017番台</a>
                         <span class="machine-name-sm">北斗の拳 転生の章2</span>
                         
+                            
+                            <span class="avail-badge-lg empty">空き</span>
+                            
+                        
                         <span class="rank-badge-lg" style="background-color: #ffa502">A</span>
                         <span class="expand-icon">▼</span>
                     </div>
 
                     
-                    
-                    
-                    <div class="reasons-full">
-                        
-                        
-                        
-                        <div class="reason-line-top">エスパス歌舞伎町の水曜は普通（店舗傾向：土曜が最強、金曜も狙い目）</div>
-                        
-                        
-                        
-                        <div class="reason-line-top reason-warn">🚨 前日はART確率1/135と悪くないが、最大9連と爆発なし → 過去に同パターン→翌日好調: 17/28回=61%</div>
-                        
-                        
-                        
+                    <!-- 営業中: リアルタイムデータ -->
+                    <div class="today-data-row">
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">0</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            
+                        </div>
+                        <div class="data-row-secondary">
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">0</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell ">
+                                <span class="data-value">0</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">0</span>
+                                <span class="data-label">累計G</span>
+                            </div>
+                        </div>
                     </div>
                     
 
@@ -7265,6 +7631,14 @@
                     </div>
 
                     <!-- 推奨理由（営業中のみ — 閉店後は上に表示済み） -->
+                    
+                    <div class="reason-main">
+                        
+                        <div class="reason-line ">エスパス歌舞伎町の水曜は普通（店舗傾向：土曜が最強、金曜も狙い目）</div>
+                        
+                        <div class="reason-line reason-warn">🚨 前日はART確率1/135と悪くないが、最大9連と爆発なし → 過去に同パターン→翌日好調: 17/28回=61%</div>
+                        
+                    </div>
                     
 
                     <!-- 詳細（クリックで展開） -->
@@ -7880,25 +8254,41 @@
                         <a href="/history/shinjuku_espass_hokuto_18.html" class="unit-id-large unit-id-link">0018番台</a>
                         <span class="machine-name-sm">北斗の拳 転生の章2</span>
                         
+                            
+                            <span class="avail-badge-lg empty">空き</span>
+                            
+                        
                         <span class="rank-badge-lg" style="background-color: #ffa502">A</span>
                         <span class="expand-icon">▼</span>
                     </div>
 
                     
-                    
-                    
-                    <div class="reasons-full">
-                        
-                        
-                        
-                        <div class="reason-line-top">エスパス歌舞伎町の水曜は普通（店舗傾向：土曜が最強、金曜も狙い目）</div>
-                        
-                        
-                        
-                        <div class="reason-line-top reason-warn">🚨 前日はART確率1/118と悪くないが、最大8連と爆発なし → 過去に同パターン→翌日好調: 17/28回=61%</div>
-                        
-                        
-                        
+                    <!-- 営業中: リアルタイムデータ -->
+                    <div class="today-data-row">
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">0</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            
+                        </div>
+                        <div class="data-row-secondary">
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">0</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell ">
+                                <span class="data-value">0</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">0</span>
+                                <span class="data-label">累計G</span>
+                            </div>
+                        </div>
                     </div>
                     
 
@@ -7928,6 +8318,14 @@
                     </div>
 
                     <!-- 推奨理由（営業中のみ — 閉店後は上に表示済み） -->
+                    
+                    <div class="reason-main">
+                        
+                        <div class="reason-line ">エスパス歌舞伎町の水曜は普通（店舗傾向：土曜が最強、金曜も狙い目）</div>
+                        
+                        <div class="reason-line reason-warn">🚨 前日はART確率1/118と悪くないが、最大8連と爆発なし → 過去に同パターン→翌日好調: 17/28回=61%</div>
+                        
+                    </div>
                     
 
                     <!-- 詳細（クリックで展開） -->
