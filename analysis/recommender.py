@@ -1736,23 +1736,64 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
         # --- 好調の中身分析（ART回数・最大連チャンで好調レベルを可視化）---
         good_day_details = historical_perf.get('good_day_details', [])
         if good_day_details and len(good_day_details) >= 3:
-            # ART回数で爆発レベル分類
-            big_days = sum(1 for d in good_day_details if d.get('art', 0) >= 80)
-            mid_days = sum(1 for d in good_day_details if 50 <= d.get('art', 0) < 80)
-            small_days = sum(1 for d in good_day_details if 0 < d.get('art', 0) < 50)
-            total_good = big_days + mid_days + small_days
-            if total_good >= 3:
-                parts = []
-                if big_days > 0:
-                    parts.append(f"大爆発(ART80↑){big_days}日")
-                if mid_days > 0:
-                    parts.append(f"中爆発(ART50〜80){mid_days}日")
-                if small_days > 0:
-                    parts.append(f"小当たり(ART50未満){small_days}日")
-                # 最大連チャンの最高記録
-                max_rensa_all = max((d.get('max_rensa', 0) for d in good_day_details), default=0)
-                avg_art = sum(d.get('art', 0) for d in good_day_details) / len(good_day_details)
-                reasons.append(f"🔥 好調{total_good}日の内訳: {' / '.join(parts)}（平均ART {avg_art:.0f}回、最大{max_rensa_all}連）")
+            # 爆発レベル分類
+            def _level(art):
+                if art >= 80: return 'big'
+                if art >= 50: return 'mid'
+                return 'small'
+            
+            levels = [_level(d.get('art', 0)) for d in good_day_details]  # 新→古
+            big_days = levels.count('big')
+            mid_days = levels.count('mid')
+            small_days = levels.count('small')
+            total_good = len(levels)
+            
+            # --- 直近の推移パターンから次の予測 ---
+            recent_levels = levels[:5]  # 直近5日の爆発レベル（新→古）
+            
+            # 直近で中/小が連続してたら「そろそろ大爆発」
+            recent_non_big = 0
+            for lv in recent_levels:
+                if lv != 'big':
+                    recent_non_big += 1
+                else:
+                    break
+            
+            # 大爆発→中/小→大爆発の交互パターン検出
+            alternating = 0
+            for i in range(len(recent_levels) - 1):
+                if recent_levels[i] != recent_levels[i+1]:
+                    alternating += 1
+            alt_rate = alternating / max(len(recent_levels) - 1, 1)
+            
+            # 「中→中→大→中→大→中→大」のような推移を説明
+            level_labels = {'big': '大', 'mid': '中', 'small': '小'}
+            trend_str = '→'.join(level_labels[lv] for lv in reversed(recent_levels))
+            
+            # 最新日からの連続大爆発カウント
+            consec_big = 0
+            for lv in recent_levels:
+                if lv == 'big':
+                    consec_big += 1
+                else:
+                    break
+            
+            if recent_non_big >= 2 and big_days >= 1:
+                # 中/小が2日以上続いてる → 大爆発予測
+                reasons.append(f"🔥 直近の推移: {trend_str}（低めが{recent_non_big}日続いた → そろそろ大爆発が来やすい）")
+            elif consec_big >= 2:
+                # 大爆発が2日以上連続
+                reasons.append(f"🔥 直近の推移: {trend_str}（大爆発{consec_big}日連続 → 高設定据え置きの証拠）")
+            elif alt_rate >= 0.6 and total_good >= 4:
+                # 交互パターン
+                last_level = recent_levels[0]
+                next_expect = '大爆発' if last_level != 'big' else '中程度'
+                reasons.append(f"🔥 直近の推移: {trend_str}（大小交互 → 本日は{next_expect}の可能性）")
+            elif recent_non_big == 1 and recent_levels[0] != 'big':
+                # 直近1日だけ中/小 → まだ大爆発の射程内
+                reasons.append(f"🔥 直近の推移: {trend_str}（前日は低めだが高設定の範囲内 → 大爆発に期待）")
+            elif total_good >= 3:
+                reasons.append(f"🔥 直近の推移: {trend_str}（好調{total_good}日中、大{big_days}/中{mid_days}/小{small_days}日）")
 
         # --- 据え置き率（好調翌日も好調の実績）---
         continuation_rate = historical_perf.get('continuation_rate', 0)
