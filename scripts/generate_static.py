@@ -1365,6 +1365,21 @@ def _generate_verify_from_backtest(env, results):
             'total_good': m_actual + m_surprise, 'rate': m_rate,
         })
     
+    # 100%的中の店舗×機種を抽出
+    perfect_stores = []
+    for mk, md in verify_data.items():
+        for sd in md['stores']:
+            sa_total = sd.get('sa_total', 0)
+            sa_hit = sd.get('sa_hit', 0)
+            if sa_total >= 1 and sa_hit == sa_total:
+                perfect_stores.append({
+                    'store_name': sd.get('store_name', sd.get('name', '')),
+                    'machine_name': md['name'],
+                    'machine_icon': md['icon'],
+                    'sa_total': sa_total,
+                    'sa_hit': sa_hit,
+                })
+
     hypotheses = []
     for mk, md in verify_data.items():
         for sd in md['stores']:
@@ -1414,6 +1429,7 @@ def _generate_verify_from_backtest(env, results):
         total_good_all=_total_good_all,
         machine_accuracy=machine_accuracy,
         hypotheses=hypotheses[:6],
+        perfect_stores=perfect_stores,
         version=f'backtest_{actual_date}',
         result_date_str=f'{_fmt_date(actual_date)}の実績',
         predict_base=predict_time_info,
@@ -1689,6 +1705,21 @@ def generate_verify_page(env):
     except Exception as e:
         print(f"  ⚠ 仮説生成エラー: {e}")
 
+    # 100%的中の店舗×機種を抽出
+    perfect_stores = []
+    for mk, md in verify_data.items():
+        for sd in md['stores']:
+            sa_total = sd.get('sa_total', 0)
+            sa_hit = sd.get('sa_hit', 0)
+            if sa_total >= 1 and sa_hit == sa_total:
+                perfect_stores.append({
+                    'store_name': sd.get('store_name', sd.get('name', '')),
+                    'machine_name': md['name'],
+                    'machine_icon': md['icon'],
+                    'sa_total': sa_total,
+                    'sa_hit': sa_hit,
+                })
+
     html = template.render(
         verify_data=verify_data,
         accuracy=accuracy,
@@ -1701,6 +1732,7 @@ def generate_verify_page(env):
         result_date_str=result_date_str,
         predict_base=predict_base,
         hypotheses=hypotheses,
+        perfect_stores=perfect_stores,
     )
 
     output_path = OUTPUT_DIR / 'verify.html'

@@ -77,6 +77,23 @@
                 {% endif %}
             </section>
 
+            <!-- 🏆 全台的中ハイライト -->
+            {% if perfect_stores %}
+            <section class="perfect-highlight">
+                <h2>🏆 全台的中！</h2>
+                <div class="perfect-list">
+                    {% for ps in perfect_stores %}
+                    <div class="perfect-card">
+                        <span class="perfect-icon">{{ ps.machine_icon }}</span>
+                        <span class="perfect-store">{{ ps.store_name }}</span>
+                        <span class="perfect-machine">{{ ps.machine_name }}</span>
+                        <span class="perfect-badge">{{ ps.sa_hit }}/{{ ps.sa_total }}台 全的中！</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+            {% endif %}
+
             <!-- 分析・仮説セクション -->
             {% if hypotheses %}
             <section class="hypotheses-section">
