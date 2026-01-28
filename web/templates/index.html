@@ -190,7 +190,7 @@
                     {% if rec.today_history and rec.today_history|length >= 2 %}
                     <div class="sparkline-section">
                         <div class="sparkline-label">{% if rec.history_date %}{{ rec.history_date }}{% endif %} 差枚推移</div>
-                        {{ sparkline(rec.today_history, width=220, height=45, diff_medals=rec.diff_medals)|safe }}
+                        {{ sparkline(rec.today_history, width=220, height=45, diff_medals=rec.diff_medals|default(none))|safe }}
                     </div>
                     {% endif %}
                 </a>
@@ -285,7 +285,7 @@
                     {% if rec.today_history and rec.today_history|length >= 2 %}
                     <div class="sparkline-section">
                         <div class="sparkline-label">{% if rec.history_date %}{{ rec.history_date }}{% endif %} 差枚推移</div>
-                        {{ sparkline(rec.today_history, width=220, height=45, diff_medals=rec.diff_medals)|safe }}
+                        {{ sparkline(rec.today_history, width=220, height=45, diff_medals=rec.diff_medals|default(none))|safe }}
                     </div>
                     {% endif %}
                 </a>
@@ -392,11 +392,11 @@
                     </div>{# /yesterday-card-left #}
                     {% if rec.yesterday_history and rec.yesterday_history|length >= 3 %}
                     <div class="yesterday-card-right">
-                        {{ sparkline(rec.yesterday_history, diff_medals=rec.diff_medals)|safe }}
+                        {{ sparkline(rec.yesterday_history, diff_medals=rec.diff_medals|default(none))|safe }}
                     </div>
                     {% elif rec.today_history and rec.today_history|length >= 3 %}
                     <div class="yesterday-card-right">
-                        {{ sparkline(rec.today_history, diff_medals=rec.diff_medals)|safe }}
+                        {{ sparkline(rec.today_history, diff_medals=rec.diff_medals|default(none))|safe }}
                     </div>
                     {% endif %}
                     </div>{# /yesterday-card-inner #}
@@ -858,11 +858,11 @@
                     </div>{# /yesterday-card-left #}
                     {% if rec.yesterday_history and rec.yesterday_history|length >= 3 %}
                     <div class="yesterday-card-right">
-                        {{ sparkline(rec.yesterday_history, diff_medals=rec.diff_medals)|safe }}
+                        {{ sparkline(rec.yesterday_history, diff_medals=rec.diff_medals|default(none))|safe }}
                     </div>
                     {% elif rec.today_history and rec.today_history|length >= 3 %}
                     <div class="yesterday-card-right">
-                        {{ sparkline(rec.today_history, diff_medals=rec.diff_medals)|safe }}
+                        {{ sparkline(rec.today_history, diff_medals=rec.diff_medals|default(none))|safe }}
                     </div>
                     {% endif %}
                     </div>{# /yesterday-card-inner #}
