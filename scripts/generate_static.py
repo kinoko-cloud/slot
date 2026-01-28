@@ -564,12 +564,14 @@ def generate_index(env):
     if not top3:
         top3 = top3_candidates[:3]
 
-    # 前日の爆発台: 差枚でソート
-    yesterday_top10.sort(key=lambda x: (-x.get('diff_medals', 0), -x['yesterday_art']))
+    # 前日の爆発台: 最大連チャン枚数でソート
+    # 差枚だと「万枚出して飲まれた台」が低く出る。
+    # max_chain（1回の連チャン区間の累計枚数）なら爆発の瞬間を正しく評価。
+    yesterday_top10.sort(key=lambda x: (-x.get('yesterday_max_medals', 0), -x.get('diff_medals', 0)))
     yesterday_top10 = yesterday_top10[:10]
 
-    # 本日の爆発台: 差枚でソート（推定差枚の多い順）
-    today_top10.sort(key=lambda x: (-x.get('diff_medals', 0), -x['max_medals']))
+    # 本日の爆発台: 最大連チャン枚数でソート
+    today_top10.sort(key=lambda x: (-x.get('max_medals', 0), -x.get('diff_medals', 0)))
     today_top10 = today_top10[:10]
 
     # 曜日ランキング
