@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
     <meta name="googlebot" content="noindex, nofollow">
-    <title>答え合わせ - 予測精度検証</title>
+    <title>的中結果</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v={{ cache_bust }}">
 </head>
 <body>
@@ -15,10 +15,10 @@
                 <a href="{{ url_for('index') }}" class="back-link">&lt; トップ</a>
                 <img src="{{ url_for('static', filename='logo.svg') }}" alt="スロプロMAX" class="site-logo">
             </div>
-            <h1>答え合わせ</h1>
+            <h1>的中結果</h1>
             <div class="update-info">
                 {% if result_date_str %}
-                {{ result_date_str }}で答え合わせ<br>
+                {{ result_date_str }}の的中結果<br>
                 {% endif %}
                 {% if predict_base %}
                 <small>予測: {{ predict_base }}で予測</small>
@@ -30,7 +30,7 @@
             {% if not verify_data %}
             <section class="no-recommendation">
                 <p>本日のデータがまだありません</p>
-                <p class="sub">営業中にデータが蓄積されると答え合わせが表示されます</p>
+                <p class="sub">営業中にデータが蓄積されると的中結果が表示されます</p>
             </section>
             {% else %}
 
