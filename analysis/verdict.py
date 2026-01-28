@@ -28,17 +28,17 @@ RESULT_THRESHOLDS = {
         'good_diff': 500,        # ◯の差枚閾値
         'bad_diff': -1500,       # ✕の差枚閾値
         'excellent_max': 2000,   # ◎の最大枚数閾値
-        'good_max': 1000,        # ◯の最大枚数閾値
+        'good_max': 500,         # ◯の最大枚数閾値
     },
     'hokuto_tensei2': {
         'excellent_prob': 80,
-        'good_prob': 100,
-        'bad_prob': 150,
+        'good_prob': 120,
+        'bad_prob': 160,
         'excellent_diff': 3000,
         'good_diff': 1000,
         'bad_diff': -3000,
         'excellent_max': 5000,
-        'good_max': 3000,
+        'good_max': 1500,
     },
 }
 
