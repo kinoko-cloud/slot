@@ -1003,6 +1003,18 @@ def generate_recommend_pages(env):
             else:
                 store_analysis['overall'] = f"高設定台が少ない（全{total}台中{high_count}台がA以上）"
 
+        # 各台の過去3日分の当たり履歴を答え合わせ形式に加工
+        for rec in recommendations:
+            for hist_key in ('yesterday_history', 'day_before_history', 'three_days_ago_history'):
+                raw_hist = rec.get(hist_key, [])
+                if raw_hist:
+                    processed, summary = _process_history_for_verify(raw_hist)
+                    rec[f'{hist_key}_processed'] = processed
+                    rec[f'{hist_key}_summary'] = summary
+                else:
+                    rec[f'{hist_key}_processed'] = []
+                    rec[f'{hist_key}_summary'] = {}
+
         # 台番号アラート
         store_alerts = [a for a in get_active_alerts() if a.get('store_key') == store_key]
 

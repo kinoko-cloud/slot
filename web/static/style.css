@@ -5558,3 +5558,45 @@ strong.minus {
     background: #4a3f20;
     color: #ffd700;
 }
+
+/* 当たり履歴展開パネル（推薦ページ用） */
+.hit-detail-panel {
+    margin: 4px 0 8px 0;
+    padding: 8px;
+    background: var(--card-bg, #1a1a2e);
+    border-radius: 6px;
+    border: 1px solid rgba(255,255,255,0.1);
+    font-size: 0.8em;
+}
+.hit-summary-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 6px;
+    color: #aaa;
+    font-size: 0.9em;
+}
+.hit-summary-row .deep { color: #ff6b6b; }
+.hit-detail-table { width: 100%; border-collapse: collapse; }
+.hit-detail-table th {
+    font-size: 0.75em;
+    color: #888;
+    padding: 2px 4px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.hit-detail-table td {
+    padding: 2px 4px;
+    text-align: center;
+    font-size: 0.85em;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.hit-detail-table tr.tenjou { background: rgba(255,100,100,0.15); }
+.hit-detail-table tr.hot-chain { background: rgba(255,200,0,0.1); }
+.hit-detail-table tr.deep td { color: #ff6b6b; }
+.hit-detail-table td.shallow { color: #4ecdc4; }
+.prev-day-rec.has-detail { cursor: pointer; }
+.prev-day-rec .expand-icon {
+    font-size: 0.7em;
+    margin-left: 4px;
+    opacity: 0.6;
+}
