@@ -29,6 +29,13 @@
         </header>
 
         <main>
+            {# === 答え合わせバナー === #}
+            <a href="{{ url_for('verify') }}" class="verify-banner">
+                <span class="vb-icon">🏆</span>
+                <span class="vb-text">答え合わせ — 予測はどれだけ当たった？</span>
+                <span class="vb-arrow">›</span>
+            </a>
+
             {# === 閉店後: おすすめ台を最上部に === #}
             {% if display_mode in ('before_open', 'after_close') and top3 %}
             <section class="recommendations top" id="top3-section">

@@ -5889,3 +5889,41 @@ a.perfect-card {
 }
 a.perfect-card:hover { background: rgba(255,215,0,0.18); }
 .perfect-arrow { margin-left: auto; color: #ffd700; font-size: 1.2em; }
+
+/* サマリセクション モバイル対応 */
+@media (max-width: 600px) {
+    .verify-accuracy {
+        flex-direction: column;
+        gap: 10px;
+    }
+    .accuracy-circle {
+        width: 70px;
+        height: 70px;
+    }
+    .accuracy-num { font-size: 1.3em; }
+    .accuracy-row {
+        flex-wrap: wrap;
+        gap: 2px 8px;
+        font-size: 0.8em;
+    }
+    .acc-label { min-width: 0; }
+}
+
+/* 答え合わせバナー（トップページ上部） */
+.verify-banner {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, rgba(255,215,0,0.15), rgba(255,107,107,0.1));
+    border: 1px solid rgba(255,215,0,0.35);
+    border-radius: 10px;
+    text-decoration: none;
+    color: #fff;
+    transition: background 0.15s;
+}
+.verify-banner:hover { background: rgba(255,215,0,0.22); }
+.vb-icon { font-size: 1.4em; }
+.vb-text { flex: 1; font-weight: bold; font-size: 0.9em; }
+.vb-arrow { color: #ffd700; font-size: 1.3em; }
