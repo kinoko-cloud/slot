@@ -99,11 +99,40 @@ def generate_verify(predict_date: str) -> dict:
         'stores': {}, 'units': {}
     }
     
+    from analysis.diff_medals_estimator import estimate_diff_medals
+    from analysis.analyzer import calculate_max_chain_medals
+
     for r in results:
         sk, mk = r['sk'], r['mk']
-        th = 145 if mk == 'sbj' else 100
+        th = 130 if mk == 'sbj' else 100
         prob = r['prob']
         good = prob > 0 and prob <= th
+        
+        dm = r['dm']
+        mm = r['mm']
+        
+        # diff_medals/max_medalsが0の場合、蓄積DBのhistoryから推定
+        if (dm == 0 or mm == 0) and r['art'] > 0:
+            # 蓄積DBから当日のhistoryを取得
+            store_data = all_data.get(sk, {})
+            uid_data = store_data.get(r['uid'], {})
+            day_data = uid_data.get(predict_date, {})
+            history = day_data.get('history', [])
+            
+            if history:
+                # historyからメダル合計を計算
+                total_medals = sum(h.get('medals', 0) for h in history)
+                if dm == 0 and total_medals > 0 and r['games'] > 0:
+                    dm = estimate_diff_medals(total_medals, r['games'], mk)
+                if mm == 0:
+                    mm = calculate_max_chain_medals(history)
+            
+            # historyがなくてもgamesとartから差枚を推定
+            if dm == 0 and r['games'] > 0 and r['art'] > 0:
+                # 粗い推定: 機種別の平均出玉 × ART回数 - 消費
+                avg_payout = 200 if mk == 'sbj' else 300
+                total_medals_est = r['art'] * avg_payout
+                dm = estimate_diff_medals(total_medals_est, r['games'], mk)
         
         if sk not in v['units']:
             v['units'][sk] = []
@@ -117,8 +146,8 @@ def generate_verify(predict_date: str) -> dict:
             'actual_games': r['games'],
             'actual_prob': prob,
             'actual_is_good': good,
-            'max_medals': r['mm'],
-            'diff_medals': r['dm'],
+            'max_medals': mm,
+            'diff_medals': dm,
         })
     
     # 集計
