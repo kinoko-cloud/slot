@@ -1529,32 +1529,34 @@ def _generate_verify_from_backtest(env, results):
                     parts.append(f'<span class="td-max">最大{mx:,}枚</span>')
                 return ' / '.join(parts)
             
-            # 1. 爆発台の的中（S/A予測 × 確率1/80以下）
-            explosions = sorted([u for u in valid if u.get('actual_prob', 0) <= 80], key=lambda x: x.get('actual_prob', 999))
-            for u in explosions:
-                rank = u.get('pre_open_rank', u.get('predicted_rank', 'C'))
-                if rank in ('S', 'A'):
+            sa_units = [u for u in valid if u.get('pre_open_rank', u.get('predicted_rank', 'C')) in ('S', 'A')]
+            
+            # 1. 大的中（S/A予測 × 確率1/100以下）
+            for u in sorted(sa_units, key=lambda x: x.get('actual_prob', 999)):
+                if u.get('actual_prob', 999) <= 100:
                     topics.append({
                         'icon': '💥',
                         'type': 'explosion',
                         'machine': machine_name,
                         'title': f'大的中！{store_name} {u["unit_id"]}番',
                         'detail': _unit_stats(u),
-                        'score': 100 + (80 - u.get('actual_prob', 80)),
+                        'score': 200 + (100 - u.get('actual_prob', 100)),
                     })
             
-            # 2. S/A予測の的中（好調台）— 爆発と重複しない台
-            sa_units = [u for u in valid if u.get('pre_open_rank', u.get('predicted_rank', 'C')) in ('S', 'A')]
-            sa_good = [u for u in sa_units if u.get('actual_is_good', False) and u.get('actual_prob', 999) > 80]
-            for u in sorted(sa_good, key=lambda x: x.get('actual_prob', 999)):
-                topics.append({
-                    'icon': '🎯',
-                    'type': 'hit',
-                    'machine': machine_name,
-                    'title': f'的中！{store_name} {u["unit_id"]}番',
-                    'detail': _unit_stats(u),
-                    'score': 88 + (150 - min(u.get('actual_prob', 150), 150)),
-                })
+            # 2. 的中（S/A予測 × 差枚+5,000以上）— 大的中と重複しない台
+            explosion_ids = {u.get('unit_id') for u in sa_units if u.get('actual_prob', 999) <= 100}
+            for u in sorted(sa_units, key=lambda x: -x.get('diff_medals', 0)):
+                diff = u.get('diff_medals', 0)
+                uid = u.get('unit_id')
+                if diff >= 5000 and uid not in explosion_ids:
+                    topics.append({
+                        'icon': '🎯',
+                        'type': 'hit',
+                        'machine': machine_name,
+                        'title': f'的中！{store_name} {u["unit_id"]}番',
+                        'detail': _unit_stats(u),
+                        'score': 100 + diff // 1000,
+                    })
     
     # スコア順、最大10件
     topics.sort(key=lambda x: -x.get('score', 0))
