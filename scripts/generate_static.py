@@ -1534,9 +1534,9 @@ def _generate_verify_from_backtest(env, results):
             
             sa_units = [u for u in valid if u.get('pre_open_rank', u.get('predicted_rank', 'C')) in ('S', 'A')]
             
-            # 1. 大的中（S/A予測 × 確率1/100以下）
+            # 1. 大的中（S/A予測 × 確率1/100以下 × 差枚+3,000以上）
             for u in sorted(sa_units, key=lambda x: x.get('actual_prob', 999)):
-                if u.get('actual_prob', 999) <= 100:
+                if u.get('actual_prob', 999) <= 100 and u.get('diff_medals', 0) >= 3000:
                     topics.append({
                         'icon': '💥',
                         'type': 'explosion',
@@ -1547,7 +1547,7 @@ def _generate_verify_from_backtest(env, results):
                     })
             
             # 2. 的中（S/A予測 × 差枚+5,000以上）— 大的中と重複しない台
-            explosion_ids = {u.get('unit_id') for u in sa_units if u.get('actual_prob', 999) <= 100}
+            explosion_ids = {u.get('unit_id') for u in sa_units if u.get('actual_prob', 999) <= 100 and u.get('diff_medals', 0) >= 3000}
             for u in sorted(sa_units, key=lambda x: -x.get('diff_medals', 0)):
                 diff = u.get('diff_medals', 0)
                 uid = u.get('unit_id')
