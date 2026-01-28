@@ -978,13 +978,16 @@ def analyze_trend(days: List[dict], machine_key: str = 'sbj') -> dict:
         result['yesterday_date'] = yesterday_day.get('date', '')
         # 昨日の最大連チャン数・最大連チャン枚数
         yesterday_history = yesterday_day.get('history', [])
+        # site777のmax_medalsがあればそちらを優先（データソース間の不一致回避）
+        site_max_medals = yesterday_day.get('max_medals', 0)
         if yesterday_history:
             from analysis.analyzer import calculate_max_chain_medals
             result['yesterday_max_rensa'] = calculate_max_rensa(yesterday_history)
-            result['yesterday_max_medals'] = calculate_max_chain_medals(yesterday_history)
+            calc_max = calculate_max_chain_medals(yesterday_history)
+            result['yesterday_max_medals'] = max(site_max_medals, calc_max)
             result['yesterday_history'] = yesterday_history
         else:
-            result['yesterday_max_medals'] = yesterday_day.get('max_medals', 0)
+            result['yesterday_max_medals'] = site_max_medals
 
     # 前々日の結果
     if len(daily_results) >= 2:
@@ -996,13 +999,14 @@ def analyze_trend(days: List[dict], machine_key: str = 'sbj') -> dict:
     if len(sorted_days) >= 2:
         result['day_before_rb'] = sorted_days[1].get('rb', 0)
         db_history = sorted_days[1].get('history', [])
+        site_db_max = sorted_days[1].get('max_medals', 0)
         if db_history:
             from analysis.analyzer import calculate_max_chain_medals
             result['day_before_max_rensa'] = calculate_max_rensa(db_history)
-            result['day_before_max_medals'] = calculate_max_chain_medals(db_history)
+            result['day_before_max_medals'] = max(site_db_max, calculate_max_chain_medals(db_history))
         else:
             result['day_before_max_rensa'] = sorted_days[1].get('max_rensa', 0)
-            result['day_before_max_medals'] = sorted_days[1].get('max_medals', 0)
+            result['day_before_max_medals'] = site_db_max
 
     # 3日前の結果
     if len(daily_results) >= 3:
@@ -1014,13 +1018,14 @@ def analyze_trend(days: List[dict], machine_key: str = 'sbj') -> dict:
     if len(sorted_days) >= 3:
         result['three_days_ago_rb'] = sorted_days[2].get('rb', 0)
         td_history = sorted_days[2].get('history', [])
+        site_td_max = sorted_days[2].get('max_medals', 0)
         if td_history:
             from analysis.analyzer import calculate_max_chain_medals
             result['three_days_ago_max_rensa'] = calculate_max_rensa(td_history)
-            result['three_days_ago_max_medals'] = calculate_max_chain_medals(td_history)
+            result['three_days_ago_max_medals'] = max(site_td_max, calculate_max_chain_medals(td_history))
         else:
             result['three_days_ago_max_rensa'] = sorted_days[2].get('max_rensa', 0)
-            result['three_days_ago_max_medals'] = sorted_days[2].get('max_medals', 0)
+            result['three_days_ago_max_medals'] = site_td_max
 
     # トレンド判定
     if consecutive_plus >= 3:
