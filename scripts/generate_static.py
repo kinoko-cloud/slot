@@ -1347,23 +1347,31 @@ def _generate_verify_from_backtest(env, results):
     """バックテスト結果からverifyページを生成"""
     from analysis.feedback import analyze_prediction_errors
     
-    # recommend_unitsからdiff_medals/max_medalsを取得
-    avail_lookup = {}
-    for sk in results.get('stores', {}).keys():
-        try:
-            recs = recommend_units(sk)
-            for r in recs:
-                uid = str(r.get('unit_id', ''))
-                avail_lookup[(sk, uid)] = {
-                    'max_medals': r.get('yesterday_max_medals', 0),
-                    'diff_medals': r.get('diff_medals', r.get('yesterday_diff_medals', 0)),
-                }
-        except:
-            pass
-    
     STORE_TO_MACHINE = {}
     for sk, sv in STORES.items():
         STORE_TO_MACHINE[sk] = sv.get('machine', sv.get('machine_key', 'sbj'))
+    
+    # availability.jsonからdiff_medals/max_medalsを取得
+    # availability.jsonは当日最終データ（historyからdiff推定可能）
+    avail_lookup = {}
+    try:
+        from analysis.diff_medals_estimator import estimate_diff_medals
+        avail_data = json.load(open(str(PROJECT_ROOT / 'data' / 'availability.json')))
+        for sk, sdata in avail_data.get('stores', {}).items():
+            mk = STORE_TO_MACHINE.get(sk, 'sbj')
+            for u in sdata.get('units', []):
+                uid = str(u.get('unit_id', ''))
+                hist = u.get('today_history', [])
+                medals_total = sum(h.get('medals', 0) for h in hist)
+                games = u.get('total_start', 0)
+                max_medals = u.get('max_medals', 0)
+                diff = estimate_diff_medals(medals_total, games, mk) if games > 0 else 0
+                avail_lookup[(sk, uid)] = {
+                    'max_medals': max_medals,
+                    'diff_medals': diff,
+                }
+    except Exception as e:
+        print(f"  ⚠ availability.json読み込みエラー: {e}")
     
     machine_groups = {}
     for store_key, store_data in results.get('stores', {}).items():
