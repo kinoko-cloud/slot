@@ -256,6 +256,29 @@ def main():
         except Exception as e:
             print(f'⚠ ランキング取得エラー: {e}')
 
+        # サイトセブン（全台の最高出玉データ）
+        print('\n' + '=' * 60)
+        print('サイトセブン データ取得（全台BB/RB/ART/最高出玉）')
+        print('=' * 60)
+        try:
+            from scrapers.site777 import collect_and_save as s777_collect
+            s777_results = s777_collect(days_back=1)
+            total = sum(len(units) for store in s777_results.values() for units in store.values())
+            print(f'サイトセブン完了: {len(s777_results)}店舗 計{total}台分')
+        except Exception as e:
+            print(f'⚠ サイトセブン取得エラー: {e}')
+
+        # アナスロ（店舗日別 総差枚・勝率・旧イベント日）
+        print('\n' + '=' * 60)
+        print('アナスロ データ取得（店舗日別 差枚・勝率）')
+        print('=' * 60)
+        try:
+            from scrapers.anaslo import collect_and_save as anaslo_collect
+            anaslo_results = anaslo_collect()
+            print(f'アナスロ完了: {len(anaslo_results)}店舗')
+        except Exception as e:
+            print(f'⚠ アナスロ取得エラー: {e}')
+
 
 if __name__ == '__main__':
     main()
