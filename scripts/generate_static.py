@@ -361,16 +361,35 @@ def generate_index(env):
                     if y_art and y_art > 0:
                         y_games = rec.get('yesterday_games', 0)
                         y_prob = y_games / y_art if y_art > 0 and y_games > 0 else 0
-                        # 差枚計算
+                        # 差枚計算（medalsベース優先 → フォールバックで機械割ベース）
                         y_diff_medals = 0
                         y_setting = ''
                         y_setting_num = 0
                         if y_art > 0 and y_games > 0:
+                            # 設定推定（表示用）
                             y_profit = calculate_expected_profit(y_games, y_art, key)
-                            y_diff_medals = y_profit.get('current_estimate', 0)
                             y_si = y_profit.get('setting_info', {})
                             y_setting = y_si.get('estimated_setting', '')
                             y_setting_num = y_si.get('setting_num', 0)
+                            # 差枚: historyのmedals合計から実測ベースで推定
+                            try:
+                                from analysis.history_accumulator import load_unit_history
+                                from analysis.diff_medals_estimator import estimate_diff_medals
+                                acc = load_unit_history(store_key, rec['unit_id'])
+                                y_date = rec.get('yesterday_date', '')
+                                for ad in acc.get('days', []):
+                                    if ad.get('date') == y_date:
+                                        ad_hist = ad.get('history', [])
+                                        ad_games = ad.get('games', ad.get('total_start', 0))
+                                        if ad_hist and ad_games > 0:
+                                            medals_total = sum(h.get('medals', 0) for h in ad_hist)
+                                            y_diff_medals = estimate_diff_medals(medals_total, ad_games, key)
+                                        break
+                            except Exception:
+                                pass
+                            # フォールバック: medalsが取れなければ機械割ベース
+                            if y_diff_medals == 0:
+                                y_diff_medals = y_profit.get('current_estimate', 0)
                         # 連チャン・天井・最大メダルを計算
                         y_max_rensa = rec.get('yesterday_max_rensa', 0) or rec.get('today_max_rensa', 0)
                         y_max_medals = rec.get('yesterday_max_medals', 0)
