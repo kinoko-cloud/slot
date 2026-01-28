@@ -1650,20 +1650,12 @@ def _generate_verify_from_backtest(env, results):
         except:
             return date_str
     
-    pred_date = results.get('prediction_date', '')
-    actual_date = results.get('date', '')
+    actual_date = results.get('date', '')        # 実績日（1/28）
+    pred_base_date = results.get('prediction_date', '')  # 予測に使ったデータの最新日（1/27）
     generated_at = results.get('generated_at', '')
     
-    # 予測生成時刻（バックテスト結果に含まれていれば使用）
-    if generated_at:
-        try:
-            gen_dt = datetime.fromisoformat(generated_at)
-            gen_time_str = gen_dt.strftime('%H:%M')
-            predict_time_info = f'{_fmt_date(pred_date)} {gen_time_str}時点のデータで予測'
-        except:
-            predict_time_info = f'{_fmt_date(pred_date)}までの蓄積データで予測'
-    else:
-        predict_time_info = f'{_fmt_date(pred_date)}までの蓄積データで予測'
+    # 予測の説明: 「1/27までのデータで予測」
+    predict_time_info = f'{_fmt_date(pred_base_date)}までのデータで予測'
     
     # 全台数計算
     _total_all_units = sum(len(s['units']) for mg in machine_groups.values() for s in mg['stores'])

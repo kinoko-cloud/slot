@@ -92,8 +92,8 @@ def generate_verify(predict_date: str) -> dict:
     
     # verify形式に変換
     v = {
-        'date': prev_date,
-        'prediction_date': predict_date,
+        'date': predict_date,
+        'prediction_date': prev_date,
         'generated_at': datetime.now(JST).isoformat(),
         'total_sa': 0, 'total_hit': 0, 'overall_rate': 0,
         'stores': {}, 'units': {}
