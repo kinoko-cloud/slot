@@ -169,11 +169,11 @@
                         <span class="store-name-sm">{{ rec.store_name }}</span>
                         <span class="unit-id-sm">{{ rec.unit_id|pad_id }}番</span>
                         {% if rec.prediction_result == 'hit' %}
-                        <span class="prediction-badge hit">✅ 予想的中</span>
+                        <span class="prediction-badge hit">✅ 的中</span>
                         {% elif rec.prediction_result == 'missed' %}
-                        <span class="prediction-badge missed">😱 予想外の好調</span>
+                        <span class="prediction-badge missed">😱 予想外</span>
                         {% elif rec.prediction_result == 'miss' %}
-                        <span class="prediction-badge miss">❌ 予想外れ</span>
+                        <span class="prediction-badge miss">❌ 外れ</span>
                         {% endif %}
                     </div>
                     {# === 差枚（目立たせる） === #}
@@ -598,6 +598,13 @@
                     <div class="yesterday-sub-header">
                         <span class="store-name-sm">{{ rec.store_name }}</span>
                         <span class="unit-id-sm">{{ rec.unit_id|pad_id }}番</span>
+                        {% if rec.prediction_result == 'hit' %}
+                        <span class="prediction-badge hit">✅ 的中</span>
+                        {% elif rec.prediction_result == 'missed' %}
+                        <span class="prediction-badge missed">😱 予想外</span>
+                        {% elif rec.prediction_result == 'miss' %}
+                        <span class="prediction-badge miss">❌ 外れ</span>
+                        {% endif %}
                         {% if rec.availability == '空き' %}
                         <span class="avail-sm empty">空</span>
                         {% elif rec.availability == '遊技中' %}

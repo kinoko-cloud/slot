@@ -298,6 +298,22 @@ def generate_index(env):
         },
     }
 
+    # 前日の答え合わせデータ（予測ランクの参照用）
+    verify_lookup = {}  # {store_key: {unit_id: {predicted_rank, predicted_score, actual_is_good}}}
+    try:
+        import datetime as _dt_mod
+        _yesterday_str = (_dt_mod.datetime.now() - _dt_mod.timedelta(days=1)).strftime('%Y%m%d')
+        _verify_path = Path(f'data/verify/verify_{_yesterday_str}.json')
+        if _verify_path.exists():
+            import json as _json_mod
+            _verify_data = _json_mod.loads(_verify_path.read_text())
+            for _vsk, _vunits in _verify_data.items():
+                if isinstance(_vunits, list):
+                    verify_lookup[_vsk] = {str(u['unit_id']): u for u in _vunits}
+            print(f"  verify データ読込: {len(verify_lookup)}店舗分")
+    except Exception as e:
+        print(f"  verify データ読込エラー（続行）: {e}")
+
     # 機種一覧とトップ台を収集
     machines = []
     top3_all = []
@@ -427,12 +443,14 @@ def generate_index(env):
                                         break
                             except:
                                 pass
-                        # 前日の予想ランクを取得
-                        predicted_rank = rec.get('rank', 'C')
-                        predicted_score = rec.get('score', 50)
+                        # 前日の予想ランクを取得（verifyデータ優先、なければ現在のランク）
+                        unit_str = str(rec['unit_id'])
+                        _vunit = verify_lookup.get(store_key, {}).get(unit_str, {})
+                        predicted_rank = _vunit.get('predicted_rank', rec.get('final_rank', 'C'))
+                        predicted_score = _vunit.get('predicted_score', rec.get('final_score', 50))
                         was_predicted_good = predicted_rank in ('S', 'A')
                         # 実際の結果（好調だったか）
-                        good_threshold = 130 if key == 'sbj' else 330
+                        good_threshold = MACHINES.get(key, {}).get('good_prob', 130)
                         was_actually_good = y_prob > 0 and y_prob <= good_threshold
                         # 的中判定
                         if was_predicted_good and was_actually_good:
