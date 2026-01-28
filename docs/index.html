@@ -14,12 +14,13 @@
         <div class="top-bar">
             <div class="top-bar-left">
                 <img src="/static/logo.svg" alt="スロプロMAX" class="site-logo">
-                <span class="version-info">0128_14:14</span>
+                <span class="version-info">0128_14:18</span>
             </div>
             <button class="hamburger-btn" onclick="document.getElementById('hamburger-menu').classList.toggle('hidden')" aria-label="メニュー">☰</button>
         </div>
         
         <nav id="hamburger-menu" class="hamburger-menu hidden">
+            <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});document.getElementById('hamburger-menu').classList.add('hidden');return false;">🏠 トップ</a>
             <a href="#top3-section">📊 おすすめ台</a>
             <a href="#explosion-section">💥 爆発台ランキング</a>
             <a href="/verify.html">🏆 答え合わせ</a>
@@ -15408,7 +15409,7 @@
 
         <footer>
             <p><a href="/verify.html" class="footer-link">答え合わせ（予測 vs 実績）</a></p>
-            <p class="build-time">ビルド: 2026-01-28 14:14:04</p>
+            <p class="build-time">ビルド: 2026-01-28 14:18:07</p>
         </footer>
     </div>
     <script src="/static/realtime.js"></script>
