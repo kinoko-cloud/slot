@@ -184,6 +184,19 @@
                         </div>
                         {% endif %}
                     </div>
+                    {# === 本日の波グラフ === #}
+                    {% if rec.today_history and rec.today_history|length > 0 %}
+                    <div class="wave-section">
+                        <div class="wave-label">本日の波</div>
+                        <div class="wave-graph">
+                            {% for h in rec.today_history %}
+                            <span class="wave-bar {% if h.start >= 500 %}deep{% elif h.start >= 300 %}mid{% elif h.start <= 70 %}rensa{% endif %}" title="{{ h.time }} {{ h.start }}G">
+                                {% if h.start >= 500 %}▇{% elif h.start >= 300 %}▅{% elif h.start >= 200 %}▄{% elif h.start >= 100 %}▃{% elif h.start >= 70 %}▂{% else %}▁{% endif %}
+                            </span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
                 </a>
                 {% endfor %}
                 {# === もっと見る（TOP11〜30） === #}
