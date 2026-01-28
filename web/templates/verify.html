@@ -49,32 +49,11 @@
                         </div>
                         <div class="accuracy-row">
                             <span class="acc-label">　うちB以下予測 → 好調</span>
-                            <span class="acc-value surprise">{{ surprise_good }}台（予測外）</span>
+                            <span class="acc-value surprise">{{ surprise_good }}台（予想ハズレ）</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- 機種別の的中率 -->
-                {% if machine_accuracy %}
-                <div class="machine-accuracy-breakdown">
-                    {% for ma in machine_accuracy %}
-                    <div class="machine-acc-card">
-                        <div class="mac-header">
-                            <span class="ma-icon">{{ ma.icon }}</span>
-                            <span class="ma-name">{{ ma.name }}</span>
-                            <span class="ma-rate {% if ma.rate >= 60 %}good{% elif ma.rate >= 40 %}ok{% else %}bad{% endif %}">{{ ma.rate|int }}%</span>
-                        </div>
-                        <div class="mac-body">
-                            <div class="mac-row">全{{ ma.all_units }}台中 → 好調{{ ma.total_good }}台</div>
-                            <div class="mac-row">S/A予測{{ ma.total }}台中 → 的中{{ ma.hit }}台</div>
-                            {% if ma.surprise > 0 %}
-                            <div class="mac-row mac-miss">B以下{{ ma.all_units - ma.total }}台中 → {{ ma.surprise }}台が好調（見逃し）</div>
-                            {% endif %}
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-                {% endif %}
             </section>
 
             <!-- 🏆 全台的中ハイライト -->
@@ -159,7 +138,7 @@
                                 {% if pred_excellent %}<span class="vr-mark excellent">◎</span>
                                 {% elif pred_good %}<span class="vr-mark good">◯</span>
                                 {% elif unit.pre_open_rank == 'B' %}<span class="vr-mark neutral">△</span>
-                                {% else %}<span class="vr-mark bad">✕</span>{% endif %}<span class="rank-badge-xs" style="background-color: {{ rank_color(unit.pre_open_rank) }}">{{ unit.pre_open_rank }}</span>
+                                {% else %}<span class="vr-mark bad">✕</span>{% endif %}
                             </td>
                             <td class="vt-result">
                                 {% if unit.verdict_class == 'perfect' or (result_good and unit.actual_prob <= 100) %}<span class="vr-mark excellent">◎</span>
