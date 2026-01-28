@@ -245,6 +245,17 @@ def main():
             save_path = save_alerts(alerts, source='daily')
             print(f'アラート保存: {save_path}')
 
+        # ランキングデータ取得（差玉TOP10）
+        print('\n' + '=' * 60)
+        print('ランキングデータ取得（差玉TOP10）')
+        print('=' * 60)
+        try:
+            from scrapers.daidata_ranking import collect_all_rankings
+            ranking_results = collect_all_rankings()
+            print(f'ランキング取得完了: {len(ranking_results)}店舗')
+        except Exception as e:
+            print(f'⚠ ランキング取得エラー: {e}')
+
 
 if __name__ == '__main__':
     main()
