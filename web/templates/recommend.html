@@ -188,14 +188,14 @@
                                 <span class="data-label">ART確率</span>
                             </div>
                             {% endif %}
-                            {% if rec.today_max_rensa and rec.today_max_rensa >= 3 %}
+                            {% if rec.art_count > 0 and rec.today_max_rensa and rec.today_max_rensa >= 3 %}
                             <div class="data-cell rensa-cell {% if rec.today_max_rensa >= 10 %}excellent{% elif rec.today_max_rensa >= 5 %}good{% endif %}">
                                 <span class="data-value">最大{{ rec.today_max_rensa }}連</span>
                             </div>
                             {% endif %}
                         </div>
                         <div class="data-row-secondary">
-                            {% if rec.max_medals and rec.max_medals > 0 %}
+                            {% if rec.art_count > 0 and rec.max_medals and rec.max_medals > 0 %}
                             {% set badge = medals_badge(rec.max_medals) %}
                             <div class="data-cell {% if badge %}{{ badge.class }}{% endif %}">
                                 <span class="data-value">{{ '{:,}'.format(rec.max_medals) }}</span>
@@ -210,7 +210,7 @@
                                 <span class="data-value">{{ rec.current_hama or 0 }}</span>
                                 <span class="data-label">現在G</span>
                             </div>
-                            {% if rec.today_deep_hama and rec.today_deep_hama > 0 %}
+                            {% if rec.art_count > 0 and rec.today_deep_hama and rec.today_deep_hama > 0 %}
                             <div class="data-cell bad">
                                 <span class="data-value">{{ rec.today_deep_hama }}回</span>
                                 <span class="data-label">500G超</span>

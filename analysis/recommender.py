@@ -728,7 +728,7 @@ def analyze_activity_pattern(history: List[dict], day_data: dict = None) -> dict
     return result
 
 
-def analyze_trend(days: List[dict]) -> dict:
+def analyze_trend(days: List[dict], machine_key: str = 'sbj') -> dict:
     """過去日のトレンドを分析
 
     Returns:
@@ -812,18 +812,28 @@ def analyze_trend(days: List[dict]) -> dict:
         result['avg_games_7days'] = sum(game_counts) / len(game_counts)
 
     # 連続プラス/マイナス判定
-    # 低稼働（2000G未満）はスキップ（確率がブレすぎて信頼できない）
-    MIN_GAMES_FOR_STREAK = 2000
+    # 低稼働日の扱い:
+    #   - 確率が好調域（prob <= good_threshold）→ プラスとしてカウント（即やめ=高設定の可能性）
+    #   - 確率が不調域 → マイナスとしてカウント
+    #   - データ極少（ART<3かつG<500）→ スキップ（判定不能）
+    good_prob_threshold = get_machine_threshold(machine_key, 'good_prob')
     consecutive_plus = 0
     consecutive_minus = 0
     for date, diff, art, games in daily_results:
-        if games < MIN_GAMES_FOR_STREAK and games > 0:
-            # 低稼働日はスキップ（連続を途切れさせない）
+        if art < 3 and games < 500 and games > 0:
+            # 極少データ（即やめ等）はスキップ（連続を途切れさせない）
             continue
         if diff > 0:
             consecutive_plus += 1
             consecutive_minus = 0
         elif diff < 0:
+            # 低稼働でマイナスだが確率が良い場合はプラス扱い
+            if art > 0 and games > 0:
+                prob = games / art
+                if prob <= good_prob_threshold:
+                    consecutive_plus += 1
+                    consecutive_minus = 0
+                    continue
             consecutive_minus += 1
             consecutive_plus = 0
         elif games == 0 and art > 0:
@@ -2317,7 +2327,7 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
                     if unit.get('unit_id') == unit_id:
                         unit_history = unit
                         days = unit.get('days', [])
-                        trend_data = analyze_trend(days)
+                        trend_data = analyze_trend(days, machine_key)
                         break
 
         # 当日データ分析
@@ -2434,7 +2444,7 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
                     'max_rensa': d.get('max_rensa', 0),
                     'max_medals': d.get('max_medals', 0),
                 })
-            trend_from_acc = analyze_trend(acc_days_for_trend)
+            trend_from_acc = analyze_trend(acc_days_for_trend, machine_key)
             # 蓄積DBの方が新しいデータがあれば、trend_dataを上書き
             acc_latest = max(d.get('date', '') for d in accumulated['days']) if accumulated['days'] else ''
             trend_latest = trend_data.get('yesterday_date', '')
@@ -2580,7 +2590,8 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
                     history_date = today_str
                     break
             if not today_history:
-                # 直近の履歴データを探す（日付降順）
+                # 当日データがない場合、直近の履歴データを探す（日付降順）
+                # ただしフォールバック元の日付を記録（today扱いしない）
                 sorted_days = sorted(unit_days, key=lambda x: x.get('date', ''), reverse=True)
                 for day in sorted_days:
                     if day.get('history'):
