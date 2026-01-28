@@ -1314,6 +1314,7 @@ def _generate_verify_from_backtest(env, results):
                 'actual_art': u.get('actual_art', 0),
                 'actual_prob': prob,
                 'actual_games': games,
+                'actual_is_good': is_good,
                 'verdict': verdict,
                 'verdict_class': verdict_class,
             })
@@ -1565,6 +1566,7 @@ def generate_verify_page(env):
                     'actual_art': actual_art,
                     'actual_prob': actual_prob,
                     'actual_games': actual_games,
+                    'actual_is_good': is_actual_good,
                     'verdict': verdict,
                     'verdict_class': verdict_class,
                     'history': processed_history,
@@ -1575,7 +1577,7 @@ def generate_verify_page(env):
             if units_data:
                 # 店舗別的中率（開店前予測ベース）
                 store_sa_total = sum(1 for u in units_data if u['pre_open_rank'] in ('S', 'A'))
-                store_sa_hit = sum(1 for u in units_data if u['pre_open_rank'] in ('S', 'A') and u.get('actual_prob', 0) > 0 and u['actual_prob'] <= 130)
+                store_sa_hit = sum(1 for u in units_data if u['pre_open_rank'] in ('S', 'A') and u.get('actual_is_good', False))
                 store_sa_rate = (store_sa_hit / store_sa_total * 100) if store_sa_total > 0 else 0
                 stores_data.append({
                     'name': store.get('name', store_key),
