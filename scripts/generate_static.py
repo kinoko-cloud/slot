@@ -1772,35 +1772,24 @@ def generate_verify_page(env):
                 _good_th = machine.get('good_prob', 130)
                 is_predicted_good = predicted_rank in ('S', 'A')
                 is_actual_good = actual_prob > 0 and actual_prob <= _good_th
-                is_actual_excellent = actual_prob > 0 and actual_prob <= 100
-                is_actual_bad = actual_prob >= 200 or (actual_games >= 1000 and actual_art == 0)
-
+                # 結果判定（verdict.py共通ロジック）
+                from analysis.verdict import get_result_level, get_verdict, is_hit as v_is_hit, RESULT_MARKS
+                diff_medals = rec.get('diff_medals', 0)
+                result_level = get_result_level(actual_prob, diff_medals, machine_key)
+                result_mark, result_mark_class = RESULT_MARKS.get(result_level, ('-', 'nodata'))
+                verdict_text, verdict_class = get_verdict(pre_open_rank, result_level)
+                
+                if actual_games < 500 and actual_art == 0:
+                    result_level = 'nodata'
+                    result_mark, result_mark_class = '-', 'nodata'
+                    verdict_text, verdict_class = '—', 'nodata'
+                
                 if is_predicted_good:
                     total_predicted_good += 1
-                    if is_actual_excellent:
-                        verdict = '\u25CE'  # ◎
-                        verdict_class = 'perfect'
+                    if v_is_hit(pre_open_rank, result_level):
                         total_actual_good += 1
-                    elif is_actual_good:
-                        verdict = '\u25CB'  # ○
-                        verdict_class = 'hit'
-                        total_actual_good += 1
-                    elif is_actual_bad:
-                        verdict = '\u2715'  # ✕
-                        verdict_class = 'miss'
-                    else:
-                        verdict = '\u25B3'  # △
-                        verdict_class = 'neutral'
-                elif not is_predicted_good and is_actual_good:
-                    verdict = '\u2605'  # ★ 発掘
-                    verdict_class = 'surprise'
+                elif verdict_class == 'surprise':
                     total_surprise += 1
-                elif actual_games < 500:
-                    verdict = '-'
-                    verdict_class = 'nodata'
-                else:
-                    verdict = '\u25B3'  # △
-                    verdict_class = 'neutral'
 
                 # 当たり履歴を取得
                 unit_daily = daily_units_map.get(str(rec.get('unit_id', '')), {})
@@ -1824,8 +1813,12 @@ def generate_verify_page(env):
                     'actual_art': actual_art,
                     'actual_prob': actual_prob,
                     'actual_games': actual_games,
-                    'actual_is_good': is_actual_good,
-                    'verdict': verdict,
+                    'diff_medals': diff_medals,
+                    'max_medals': rec.get('max_medals', 0),
+                    'result_level': result_level,
+                    'result_mark': result_mark,
+                    'result_mark_class': result_mark_class,
+                    'verdict_text': verdict_text,
                     'verdict_class': verdict_class,
                     'history': processed_history,
                     'history_summary': history_summary,
@@ -1835,7 +1828,7 @@ def generate_verify_page(env):
             if units_data:
                 # 店舗別的中率（開店前予測ベース）
                 store_sa_total = sum(1 for u in units_data if u['pre_open_rank'] in ('S', 'A'))
-                store_sa_hit = sum(1 for u in units_data if u['pre_open_rank'] in ('S', 'A') and u.get('actual_is_good', False))
+                store_sa_hit = sum(1 for u in units_data if u['pre_open_rank'] in ('S', 'A') and v_is_hit(u['pre_open_rank'], u.get('result_level', 'nodata')))
                 store_sa_rate = (store_sa_hit / store_sa_total * 100) if store_sa_total > 0 else 0
                 stores_data.append({
                     'name': store.get('name', store_key),
