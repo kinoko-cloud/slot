@@ -6295,3 +6295,43 @@ a.perfect-card:hover { background: rgba(255,215,0,0.18); }
 .topic-icon { font-size: 1.3em; flex-shrink: 0; }
 .topic-title { font-weight: bold; font-size: 0.95em; color: #fff; }
 .topic-detail { font-size: 0.8em; color: #aaa; margin-top: 2px; }
+
+/* verify テーブル */
+.verify-table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+.verify-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85em;
+    min-width: 500px;
+}
+.verify-table th {
+    padding: 6px 8px;
+    text-align: center;
+    color: #888;
+    font-size: 0.8em;
+    border-bottom: 1px solid #333;
+    white-space: nowrap;
+}
+.verify-table td {
+    padding: 5px 6px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    white-space: nowrap;
+}
+.verify-row { cursor: pointer; transition: background 0.15s; }
+.verify-row:hover { background: rgba(255,255,255,0.04); }
+.verify-row.has-detail .vt-unit::after { content: ' ▸'; color: #555; font-size: 0.7em; }
+.verify-row.expanded .vt-unit::after { content: ' ▾'; }
+.vt-unit { font-weight: bold; text-align: left; }
+.vt-diff.plus { color: #2ed573; font-weight: bold; }
+.vt-diff.minus { color: #ff6b6b; }
+.verdict-label-perfect { color: #ff6b6b; font-weight: bold; }
+.verdict-label-hit { color: #4ecdc4; font-weight: bold; }
+.verdict-label-miss { color: #888; }
+.verdict-label-neutral { color: #666; }
+.verdict-label-nodata { color: #444; }
+.verify-detail-row td { padding: 0; }
+.verify-detail-inner { padding: 8px; background: rgba(0,0,0,0.2); }
