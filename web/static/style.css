@@ -6031,19 +6031,22 @@ a.perfect-card:hover { background: rgba(255,215,0,0.18); }
 }
 .vb-title-lg { font-weight: bold; font-size: 1.1em; color: #fff; display: block; }
 .vb-detail-lg {
-    color: #fff;
-    font-size: 0.9em;
-    background: linear-gradient(135deg, #ffd700 0%, #ffa500 100%);
-    padding: 8px 16px;
-    border-radius: 20px;
+    color: #1a1a1a;
+    font-size: 1em;
+    background: linear-gradient(135deg, #ffd700 0%, #ffcc00 100%);
+    padding: 10px 20px;
+    border-radius: 25px;
     font-weight: bold;
-    margin-top: 6px;
+    margin-top: 8px;
     display: inline-block;
     transition: all 0.2s ease;
+    text-shadow: none;
+    letter-spacing: 0.5px;
 }
 .verify-banner-lg:hover .vb-detail-lg {
     transform: scale(1.05);
-    box-shadow: 0 2px 8px rgba(255,215,0,0.4);
+    box-shadow: 0 4px 12px rgba(255,215,0,0.5);
+    background: linear-gradient(135deg, #ffe033 0%, #ffd700 100%);
 }
 
 /* トピック */
