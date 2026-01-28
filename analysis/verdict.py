@@ -27,25 +27,31 @@ RESULT_THRESHOLDS = {
         'excellent_diff': 1500,  # ◎の差枚閾値
         'good_diff': 500,        # ◯の差枚閾値
         'bad_diff': -1500,       # ✕の差枚閾値
+        'excellent_max': 2000,   # ◎の最大枚数閾値
+        'good_max': 1000,        # ◯の最大枚数閾値
     },
     'hokuto_tensei2': {
         'excellent_prob': 80,
         'good_prob': 100,
-        'bad_prob': 130,
+        'bad_prob': 150,
         'excellent_diff': 3000,
         'good_diff': 1000,
         'bad_diff': -3000,
+        'excellent_max': 5000,
+        'good_max': 3000,
     },
 }
 
 
-def get_result_level(prob: float, diff_medals: int, machine_key: str) -> str:
+def get_result_level(prob: float, diff_medals: int, machine_key: str,
+                     max_medals: int = 0) -> str:
     """結果レベルを判定する
 
     Args:
         prob: ART確率（1/X のX。0=データなし）
         diff_medals: 差枚（正=勝ち、負=負け。0=データなし）
         machine_key: 機種キー
+        max_medals: 最大枚数（差枚なし時の代替指標。0=データなし）
 
     Returns:
         'excellent'(◎), 'good'(◯), 'normal'(△), 'bad'(✕), 'nodata'(-)
@@ -54,28 +60,41 @@ def get_result_level(prob: float, diff_medals: int, machine_key: str) -> str:
         return 'nodata'
 
     th = RESULT_THRESHOLDS.get(machine_key, RESULT_THRESHOLDS['sbj'])
-    has_diff = diff_medals != 0  # 差枚データがあるか
+    has_diff = diff_medals != 0
+    has_max = max_medals > 0
 
-    # ✕判定
+    # 出玉指標: 差枚優先、なければ最大枚数で代替
+    def _output_check(excellent_th, good_th):
+        """出玉が閾値を満たすか判定"""
+        if has_diff:
+            return diff_medals >= excellent_th, diff_medals >= good_th
+        if has_max:
+            return max_medals >= th['excellent_max'], max_medals >= th['good_max']
+        # どちらもなし → 確率のみで判定（出玉条件はパス扱い）
+        return True, True
+
+    # ✕判定（確率悪い OR 差枚大幅マイナス）
     if prob >= th['bad_prob']:
         return 'bad'
     if has_diff and diff_medals <= th['bad_diff']:
         return 'bad'
 
-    # ◎判定
+    # ◎判定（確率非常に良い AND 出玉◎域）
     if prob <= th['excellent_prob']:
-        if not has_diff or diff_medals >= th['excellent_diff']:
+        is_exc, is_good = _output_check(th['excellent_diff'], th['good_diff'])
+        if is_exc:
             return 'excellent'
-        if diff_medals >= th['good_diff']:
+        if is_good:
             return 'good'
-        # 確率は◎域だが差枚が弱い → △に降格
+        # 確率は◎域だが出玉が弱い → △
         return 'normal'
 
-    # ◯判定
+    # ◯判定（確率好調域 AND 出玉◯域）
     if prob <= th['good_prob']:
-        if not has_diff or diff_medals >= th['good_diff']:
+        _, is_good = _output_check(th['excellent_diff'], th['good_diff'])
+        if is_good:
             return 'good'
-        # 確率は好調域だが差枚が弱い → △に降格
+        # 確率は好調域だが出玉が弱い → △
         return 'normal'
 
     # それ以外 = △

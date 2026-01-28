@@ -126,8 +126,8 @@ def generate_verify(predict_date: str) -> dict:
                 if mm == 0:
                     mm = calculate_max_chain_medals(history)
         
-        # 結果レベル判定（確率+差枚）
-        result_level = get_result_level(prob, dm, mk)
+        # 結果レベル判定（確率+差枚+最大枚数）
+        result_level = get_result_level(prob, dm, mk, max_medals=mm)
         verdict_text, verdict_class = get_verdict(r['rank'], result_level)
         result_mark, result_mark_class = RESULT_MARKS.get(result_level, ('-', 'nodata'))
         
