@@ -191,6 +191,8 @@ def get_actual_for_date(all_data, avail_actuals, avail_date, predict_date):
                     'art': art,
                     'total_start': total,
                     'actual_prob': total / art if art > 0 else 0,
+                    'max_medals': u.get('max_medals', 0),
+                    'diff_medals': u.get('diff_medals', 0),
                 }
         return actuals
 
@@ -212,6 +214,8 @@ def get_actual_for_date(all_data, avail_actuals, avail_date, predict_date):
                     'art': art,
                     'total_start': total,
                     'actual_prob': total / art if art > 0 else 0,
+                    'max_medals': day.get('max_medals', 0),
+                    'diff_medals': day.get('diff_medals', 0),
                 }
 
     return actuals
