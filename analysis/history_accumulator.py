@@ -112,7 +112,9 @@ def _accumulate_unit(store_key: str, unit_id: str, days: list, machine_key: str)
             'rb': day.get('rb', 0),
             'games': games,
             'prob': round(prob, 1) if prob > 0 else 0,
-            'is_good': prob > 0 and prob <= good_prob,
+            # 試行回数が少ない日は信頼性が低いため好調判定しない
+            # SBJ: ART 20回以上、北斗: ART 10回以上
+            'is_good': prob > 0 and prob <= good_prob and art >= (20 if machine_key == 'sbj' else 10),
         }
 
         # 当たり履歴があれば最大連チャン・最大枚数を計算
