@@ -18,6 +18,7 @@ PROJECT_ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
 from jinja2 import Environment, FileSystemLoader
+from analysis.verdict import get_result_level, get_verdict, is_hit as v_is_hit, RESULT_MARKS
 from config.rankings import STORES, MACHINES, get_stores_by_machine, get_machine_info
 from analysis.recommender import recommend_units, load_daily_data, generate_store_analysis, calculate_expected_profit, analyze_today_graph, calculate_at_intervals
 from analysis.analyzer import calculate_first_hits, mark_first_hits
@@ -301,7 +302,7 @@ def generate_index(env):
     }
 
     # 前日の答え合わせデータ（予測ランクの参照用）
-    verify_lookup = {}  # {store_key: {unit_id: {predicted_rank, predicted_score, actual_is_good}}}
+    verify_lookup = {}  # {store_key: {unit_id: {predicted_rank, predicted_score, ...}}}
     try:
         import datetime as _dt_mod
         _yesterday_str = (_dt_mod.datetime.now() - _dt_mod.timedelta(days=1)).strftime('%Y%m%d')
@@ -451,18 +452,18 @@ def generate_index(env):
                         predicted_rank = _vunit.get('predicted_rank', rec.get('final_rank', 'C'))
                         predicted_score = _vunit.get('predicted_score', rec.get('final_score', 50))
                         was_predicted_good = predicted_rank in ('S', 'A')
-                        # 実際の結果（好調だったか）
-                        good_threshold = MACHINES.get(key, {}).get('good_prob', 130)
-                        was_actually_good = y_prob > 0 and y_prob <= good_threshold
-                        # 的中判定
-                        if was_predicted_good and was_actually_good:
-                            prediction_result = 'hit'    # 予想◎→結果◎
-                        elif was_predicted_good and not was_actually_good:
-                            prediction_result = 'miss'   # 予想◎→結果✗
-                        elif not was_predicted_good and was_actually_good:
-                            prediction_result = 'missed'  # 見逃し（予想外の好調）
+                        # 的中判定（verdict.py共通ロジック）
+                        _y_diff = rec.get('yesterday_diff_medals', rec.get('diff_medals', 0))
+                        _y_rl = get_result_level(y_prob, _y_diff, key)
+                        _y_vtext, _y_vcls = get_verdict(predicted_rank, _y_rl)
+                        if v_is_hit(predicted_rank, _y_rl):
+                            prediction_result = 'hit'
+                        elif _y_vcls == 'surprise':
+                            prediction_result = 'missed'
+                        elif _y_vcls == 'miss':
+                            prediction_result = 'miss'
                         else:
-                            prediction_result = 'correct'  # 予想通り不調
+                            prediction_result = 'correct'
 
                         # 初当たり計算 & 履歴マーキング
                         y_hist_raw = rec.get('yesterday_history', [])
@@ -1329,7 +1330,7 @@ def _get_verify_accuracy():
                     continue
                 if u.get('predicted_rank') in ('S', 'A'):
                     total_sa += 1
-                    if u.get('actual_is_good', False):
+                    if u.get('verdict_class') in ('perfect', 'hit'):
                         total_hit += 1
         if total_sa > 0:
             return int(total_hit / total_sa * 100)
@@ -1355,7 +1356,7 @@ def _get_verify_highlights():
                 rank = u.get('predicted_rank', 'C')
                 prob = u.get('actual_prob', 999)
                 diff = u.get('diff_medals', 0)
-                if rank in ('S', 'A') and u.get('actual_is_good', False):
+                if rank in ('S', 'A') and u.get('verdict_class') in ('perfect', 'hit'):
                     if prob <= 100 and diff >= 3000:
                         big_hits.append({
                             'unit_id': u.get('unit_id'),
@@ -1378,7 +1379,7 @@ def _get_verify_highlights():
         # 的中台数
         total_hit = sum(1 for sk, units in data.get('units', {}).items() 
                        for u in units 
-                       if u.get('predicted_rank') in ('S', 'A') and u.get('actual_is_good', False))
+                       if u.get('predicted_rank') in ('S', 'A') and u.get('verdict_class') in ('perfect', 'hit'))
         if total_hit > 0:
             highlights.append(f"📊 おすすめ台 {total_hit}台が的中")
         
@@ -1394,22 +1395,15 @@ def _get_verify_highlights():
 
 
 def _is_unit_hit(u):
-    """予想と結果が一致=的中"""
+    """予想と結果が一致=的中（verdict.pyベース）"""
+    # verdict_class が既に計算済みの場合はそれを使う
+    vc = u.get('verdict_class')
+    if vc:
+        return vc in ('perfect', 'hit')
+    # フォールバック: result_levelから判定
     rank = u.get('pre_open_rank', u.get('predicted_rank', 'C'))
-    is_good = u.get('actual_is_good', False)
-    prob = u.get('actual_prob', 0)
-    pred_good = rank in ('S', 'A')
-    pred_bad = rank in ('C', 'D')
-    result_bad = prob >= 200
-    if pred_good and is_good:
-        return True  # 好調予想→好調
-    if pred_bad and result_bad:
-        return True  # ダメ予想→不調
-    if pred_bad and not is_good:
-        return True  # ダメ予想→好調じゃない
-    if rank == 'B' and not is_good and not result_bad:
-        return True  # 微妙予想→微妙
-    return False
+    rl = u.get('result_level', 'nodata')
+    return v_is_hit(rank, rl)
 
 
 def _generate_verify_from_backtest(env, results):
@@ -1455,29 +1449,23 @@ def _generate_verify_from_backtest(env, results):
         formatted_units = []
         for u in sorted(units, key=lambda x: -x.get('predicted_score', 0)):
             rank = u.get('predicted_rank', 'C')
-            is_sa = rank in ('S', 'A')
-            is_good = u.get('actual_is_good', False)
             prob = u.get('actual_prob', 0)
             games = u.get('actual_games', 0)
             
-            if games < 500 or prob <= 0:
-                # データ不足（未稼働・games取得失敗）→ 判定不能
-                verdict, verdict_class = '-', 'nodata'
-            elif is_sa and is_good and prob <= 100:
-                verdict, verdict_class = '◎', 'perfect'
-            elif is_sa and is_good:
-                verdict, verdict_class = '○', 'hit'
-            elif is_sa and not is_good:
-                verdict, verdict_class = '✕', 'miss'
-            elif not is_sa and is_good:
-                verdict, verdict_class = '★', 'surprise'
-            else:
-                verdict, verdict_class = '△', 'neutral'
-            
             uid = str(u.get('unit_id', ''))
             avail_info = avail_lookup.get((store_key, uid), {})
-            max_medals = avail_info.get('max_medals', 0)
-            diff_medals = avail_info.get('diff_medals', 0)
+            max_medals = u.get('max_medals', 0) or avail_info.get('max_medals', 0)
+            diff_medals = u.get('diff_medals', 0) or avail_info.get('diff_medals', 0)
+            
+            # verdict.py共通ロジックで判定
+            if games < 500 or prob <= 0:
+                result_level = 'nodata'
+                result_mark, result_mark_class = '-', 'nodata'
+                verdict_text, verdict_class = '—', 'nodata'
+            else:
+                result_level = get_result_level(prob, diff_medals, mk)
+                result_mark, result_mark_class = RESULT_MARKS.get(result_level, ('-', 'nodata'))
+                verdict_text, verdict_class = get_verdict(rank, result_level)
             
             formatted_units.append({
                 'unit_id': u.get('unit_id', ''),
@@ -1488,23 +1476,18 @@ def _generate_verify_from_backtest(env, results):
                 'actual_art': u.get('actual_art', 0),
                 'actual_prob': prob,
                 'actual_games': games,
-                'actual_is_good': is_good,
                 'max_medals': max_medals,
                 'diff_medals': diff_medals,
-                'verdict': verdict,
+                'result_level': result_level,
+                'result_mark': result_mark,
+                'result_mark_class': result_mark_class,
+                'verdict_text': verdict_text,
                 'verdict_class': verdict_class,
             })
         
-        # 全台ベースの的中率（予測と結果が一致した割合）
-        # 的中 = S/A予測→好調 + B以下予測→不調
-        # ハズレ = S/A予測→不調 + B以下予測→好調
+        # 全台ベースの的中率
         valid_units = [u for u in formatted_units if u['verdict_class'] != 'nodata']
-        correct = 0
-        for u in valid_units:
-            is_sa = u['predicted_rank'] in ('S', 'A')
-            is_good = u.get('actual_is_good', False)
-            if (is_sa and is_good) or (not is_sa and not is_good):
-                correct += 1
+        correct = sum(1 for u in valid_units if _is_unit_hit(u))
         total_valid = len(valid_units)
         accuracy_rate = (correct / total_valid * 100) if total_valid > 0 else 0
         
@@ -1768,12 +1751,8 @@ def generate_verify_page(env):
                 pre_open_rank = pre_open.get('rank', 'C')
                 pre_open_score = pre_open.get('score', 50)
 
-                # 判定（機種ごとの閾値を使用）
-                _good_th = machine.get('good_prob', 130)
-                is_predicted_good = predicted_rank in ('S', 'A')
-                is_actual_good = actual_prob > 0 and actual_prob <= _good_th
                 # 結果判定（verdict.py共通ロジック）
-                from analysis.verdict import get_result_level, get_verdict, is_hit as v_is_hit, RESULT_MARKS
+                is_predicted_good = predicted_rank in ('S', 'A')
                 diff_medals = rec.get('diff_medals', 0)
                 result_level = get_result_level(actual_prob, diff_medals, machine_key)
                 result_mark, result_mark_class = RESULT_MARKS.get(result_level, ('-', 'nodata'))
@@ -1880,12 +1859,11 @@ def generate_verify_page(env):
                 m_all += 1
                 is_sa = unit['pre_open_rank'] in ('S', 'A')
                 prob = unit.get('actual_prob', 0)
-                is_good = prob > 0 and prob <= 130
                 if is_sa:
                     m_predicted += 1
-                    if is_good:
+                    if _is_unit_hit(unit):
                         m_actual += 1
-                elif not is_sa and is_good:
+                elif unit.get('verdict_class') == 'surprise':
                     m_surprise += 1
         rate = (m_actual / m_predicted * 100) if m_predicted > 0 else 0
         machine_accuracy.append({
@@ -2045,7 +2023,8 @@ def generate_history_pages(env):
                 rb = d.get('rb', 0) or 0
                 games = d.get('games', 0) or 0
                 prob = d.get('prob', 0) or 0
-                is_good = d.get('is_good', False)
+                _day_rl = get_result_level(prob, d.get('diff_medals', 0), machine_key)
+                is_good = _day_rl in ('excellent', 'good')
                 max_rensa = d.get('max_rensa', 0) or 0
                 history = d.get('history', [])
                 # 最大枚数: historyがあれば連チャン区間累計で再計算
