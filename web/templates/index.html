@@ -23,7 +23,7 @@
             <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});document.getElementById('hamburger-menu').classList.add('hidden');return false;">🏠 トップ</a>
             <a href="#top3-section">📊 おすすめ台</a>
             <a href="#explosion-section">💥 爆発台ランキング</a>
-            <a href="{{ url_for('verify') }}">🏆 答え合わせ</a>
+            <a href="{{ url_for('verify') }}">🏆 的中結果</a>
             <div class="hm-divider"></div>
             <div class="hm-label">🏪 店舗別</div>
             {% for store in store_nav_links %}
@@ -245,7 +245,7 @@
                     </div>
                     {% endfor %}
                 </div>
-                <div class="hero-footer">答え合わせ詳細を見る →</div>
+                <div class="hero-footer">的中結果を見る →</div>
             </section>
             </a>
             {% endif %}
@@ -866,7 +866,7 @@
         <!-- 「曜日の傾向」セクションは「店舗別曜日傾向」テーブルに統合済み -->
 
         <footer>
-            <p><a href="{{ url_for('verify') }}" class="footer-link">答え合わせ（予測 vs 実績）</a></p>
+            <p><a href="{{ url_for('verify') }}" class="footer-link">的中結果</a></p>
             <p class="build-time">ビルド: {{ build_time }}</p>
         </footer>
     </div>
