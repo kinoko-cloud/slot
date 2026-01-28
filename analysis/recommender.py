@@ -312,66 +312,63 @@ def load_daily_data(date_str: str = None, machine_key: str = None) -> dict:
         f'daily_hokuto_tensei2_{date_str}.json',
     ]
 
-    for pattern in patterns:
-        file_path = data_dir / pattern
-        if file_path.exists():
-            with open(file_path, 'r', encoding='utf-8') as f:
-                data = json.load(f)
-                # 機種キーが指定されている場合、該当機種のデータがあるか確認
-                if machine_key:
-                    machines = data.get('machines', [])
-                    if machine_key in machines or not machines:
-                        return data
-                else:
-                    return data
+    # 全日付のデータを統合（最新を優先しつつ、古い日付のデータも取り込む）
+    merged_data = {'stores': {}}
+    found_dates = []
 
-    # パターンマッチでファイルを探す
-    import glob
-    for pattern in [f'daily_*_{date_str}.json', f'*_daily_{date_str}.json']:
-        matches = list(data_dir.glob(pattern))
-        if matches:
-            # 最新のファイルを使用
-            latest = max(matches, key=lambda p: p.stat().st_mtime)
-            with open(latest, 'r', encoding='utf-8') as f:
-                return json.load(f)
-
-    # 今日のデータがない場合、直近7日間のデータを探す（フォールバック）
+    # 今日 + 直近7日分のデータを全て読み込んで統合
     from datetime import timedelta
     base_date = datetime.strptime(date_str, '%Y%m%d')
-    for days_back in range(1, 8):
-        fallback_date = (base_date - timedelta(days=days_back)).strftime('%Y%m%d')
+    dates_to_check = [date_str] + [(base_date - timedelta(days=d)).strftime('%Y%m%d') for d in range(1, 8)]
+
+    for check_date in dates_to_check:
+        found_files = []
+        # パターンマッチ
         for pattern in patterns:
-            fallback_pattern = pattern.replace(date_str, fallback_date)
-            file_path = data_dir / fallback_pattern
+            file_path = data_dir / pattern.replace(date_str, check_date)
             if file_path.exists():
+                found_files.append(file_path)
+        # ワイルドカード
+        for wp in [f'daily_*_{check_date}.json', f'*_daily_{check_date}.json']:
+            for match in data_dir.glob(wp):
+                if match not in found_files:
+                    found_files.append(match)
+
+        for file_path in found_files:
+            try:
                 with open(file_path, 'r', encoding='utf-8') as f:
                     data = json.load(f)
-                    if machine_key:
-                        machines = data.get('machines', [])
-                        if machine_key in machines or not machines:
-                            # rawデータからIsland等のデータを補完
-                            data = _merge_raw_data(data, fallback_date)
-                            return data
-                    else:
-                        data = _merge_raw_data(data, fallback_date)
-                        return data
-        # ワイルドカードでも探す
-        for wp in [f'daily_*_{fallback_date}.json', f'*_daily_{fallback_date}.json']:
-            matches = list(data_dir.glob(wp))
-            if matches:
-                latest = max(matches, key=lambda p: p.stat().st_mtime)
-                with open(latest, 'r', encoding='utf-8') as f:
-                    data = json.load(f)
-                    data = _merge_raw_data(data, fallback_date)
-                    return data
+                if machine_key:
+                    machines = data.get('machines', [])
+                    if machines and machine_key not in machines:
+                        continue
+                # 店舗データを統合（既にある店舗は上書きしない=最新優先）
+                for sk, sv in data.get('stores', {}).items():
+                    if sk not in merged_data['stores']:
+                        merged_data['stores'][sk] = sv
+                        found_dates.append(check_date)
+                # メタデータをコピー
+                for meta_key in ['machines', 'fetched_at', 'data_date']:
+                    if meta_key in data and meta_key not in merged_data:
+                        merged_data[meta_key] = data[meta_key]
+            except Exception:
+                pass
 
-    return {}
+    # rawデータで補完（全日付のrawを試行。最新を優先）
+    for check_date in dates_to_check:
+        merged_data = _merge_raw_data(merged_data, check_date)
+
+    if not merged_data.get('stores'):
+        return {}
+
+    return merged_data
 
 
 def _merge_raw_data(daily_data: dict, date_str: str) -> dict:
     """rawディレクトリのpapimo等のデータをdaily_dataに補完する
 
-    papimo rawデータ（リスト形式）を日別データの形式に変換してマージ
+    papimo rawデータ（リスト形式）およびdaidata rawデータ（個別ファイル）を
+    日別データの形式に変換してマージ
     """
     raw_dir = Path(__file__).parent.parent / 'data' / 'raw'
     if not raw_dir.exists():
@@ -379,42 +376,91 @@ def _merge_raw_data(daily_data: dict, date_str: str) -> dict:
 
     stores = daily_data.get('stores', {})
 
-    # papimo rawデータを検索
-    papimo_files = sorted(raw_dir.glob(f'papimo_island_sbj_{date_str}_*.json'), reverse=True)
-    if papimo_files:
+    # --- papimo rawデータ（リスト形式）---
+    for papimo_pattern, store_key in [
+        (f'papimo_island_sbj_{date_str}_*.json', 'island_akihabara_sbj'),
+        (f'papimo_island_hokuto_{date_str}_*.json', 'island_akihabara_hokuto_tensei2'),
+    ]:
+        papimo_files = sorted(raw_dir.glob(papimo_pattern), reverse=True)
+        if not papimo_files:
+            continue
         try:
             with open(papimo_files[0], 'r', encoding='utf-8') as f:
                 raw_units = json.load(f)
-
             if isinstance(raw_units, list) and raw_units:
-                # island_akihabara_sbjのデータが既にあれば日数を確認
-                existing = stores.get('island_akihabara_sbj', {})
+                existing = stores.get(store_key, {})
                 existing_units = existing.get('units', [])
-
-                # 既存データの日数が少ない場合にrawデータで上書き
-                existing_days = 0
-                if existing_units:
-                    existing_days = len(existing_units[0].get('days', []))
-
+                existing_days = len(existing_units[0].get('days', [])) if existing_units else 0
                 raw_days = len(raw_units[0].get('days', []))
-
                 if raw_days > existing_days:
-                    # rawデータを日別形式に変換
                     converted_units = []
                     for raw_unit in raw_units:
                         converted_units.append({
                             'unit_id': str(raw_unit.get('unit_id', '')),
                             'days': raw_unit.get('days', []),
+                            'machine_key': raw_unit.get('machine_key'),
                         })
-
-                    stores['island_akihabara_sbj'] = {
+                    stores[store_key] = {
                         'units': converted_units,
                         'data_source': 'papimo_raw',
                     }
-                    daily_data['stores'] = stores
-        except Exception as e:
-            pass  # rawデータ読み込み失敗は無視
+        except Exception:
+            pass
 
+    # --- daidata rawデータ（個別ファイル: sbj_UNITID_history_DATE_TIME.json）---
+    # hall_id → store_keyのマッピング
+    HALL_STORE_MAP = {
+        '100860': {'sbj': 'shibuya_espass_sbj', 'hokuto_tensei2': 'shibuya_espass_hokuto_tensei2'},
+        '100949': {'sbj': 'shinjuku_espass_sbj', 'hokuto_tensei2': 'shinjuku_espass_hokuto_tensei2'},
+        '100928': {'sbj': 'akiba_espass_sbj', 'hokuto_tensei2': 'akiba_espass_hokuto_tensei2'},
+        '100950': {'sbj': 'seibu_shinjuku_espass_sbj', 'hokuto_tensei2': 'seibu_shinjuku_espass_hokuto_tensei2'},
+    }
+    from collections import defaultdict
+    raw_by_store = defaultdict(list)  # store_key -> [unit_data, ...]
+
+    raw_files = sorted(raw_dir.glob(f'sbj_*_history_{date_str}_*.json'))
+    for raw_file in raw_files:
+        try:
+            with open(raw_file, 'r', encoding='utf-8') as f:
+                raw_unit = json.load(f)
+            if not isinstance(raw_unit, dict):
+                continue
+            hall_id = str(raw_unit.get('hall_id', ''))
+            uid = str(raw_unit.get('unit_id', ''))
+            days = raw_unit.get('days', [])
+            if not hall_id or not uid or not days:
+                continue
+            # 機種判定: BB=0なら北斗転生2、BB>0ならSBJ
+            bb_total = sum(d.get('bb', 0) for d in days)
+            machine_key = 'sbj' if bb_total > 0 else 'hokuto_tensei2'
+            hall_map = HALL_STORE_MAP.get(hall_id)
+            if not hall_map:
+                continue
+            store_key = hall_map.get(machine_key)
+            if not store_key:
+                continue
+            raw_by_store[store_key].append({
+                'unit_id': uid,
+                'days': days,
+                'machine_key': machine_key,
+            })
+        except Exception:
+            pass
+
+    # rawデータをstoresにマージ
+    for store_key, raw_units in raw_by_store.items():
+        existing = stores.get(store_key, {})
+        existing_units = existing.get('units', [])
+        existing_count = len(existing_units)
+        raw_count = len(raw_units)
+        # rawの方が台数が多い場合に上書き
+        if raw_count > existing_count:
+            stores[store_key] = {
+                'units': raw_units,
+                'data_source': 'daidata_raw',
+            }
+
+    daily_data['stores'] = stores
     return daily_data
 
 
@@ -1179,10 +1225,15 @@ def analyze_today_data(unit_data: dict, current_hour: int = None, machine_key: s
             result['today_score_bonus'] = int(12 * games_multiplier)
             result['today_reasons'].append(f'本日ART確率 1/{result["art_prob"]:.0f} (中間設定域)')
         elif result['art_prob'] <= thresholds['low_at_prob']:
-            result['today_score_bonus'] = 0
+            result['today_score_bonus'] = int(-5 * games_multiplier)
+            result['today_reasons'].append(f'本日ART確率 1/{result["art_prob"]:.0f} (低設定寄り)')
         elif result['art_prob'] >= thresholds['very_low_at_prob']:
-            result['today_score_bonus'] = int(-10 * games_multiplier)
+            result['today_score_bonus'] = int(-15 * games_multiplier)
             result['today_reasons'].append(f'本日ART確率 1/{result["art_prob"]:.0f} (低設定域)')
+        else:
+            # mid_at_prob < art_prob < very_low_at_prob（微妙ゾーン）
+            result['today_score_bonus'] = int(-8 * games_multiplier)
+            result['today_reasons'].append(f'本日ART確率 1/{result["art_prob"]:.0f} (設定不明域)')
 
     # 時間帯に対する稼働量の評価
     if current_hour >= 10:
@@ -2342,21 +2393,48 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
                 if _a > 0 and _g > 500:
                     _day_probs.append(_g / _a)
             if len(_day_probs) >= 2:
-                _good = get_machine_threshold(machine_key, 'good_prob')
-                _bad = get_machine_threshold(machine_key, 'bad_prob')
                 _avg = sum(_day_probs) / len(_day_probs)
                 _worst = max(_day_probs)  # 最悪日（確率が高い=悪い）
-                # 安定性: 最悪日もgood域なら高評価、そうでなければ保守的に
-                # データ蓄積が少ない段階では控えめに評価（過信防止）
-                _data_confidence = min(len(_day_probs) / 5.0, 1.0)  # 5日以上で信頼度MAX
-                if _avg <= _good * 0.65 and _worst <= _good and len(_day_probs) >= 4:
-                    base_score = 75  # 安定して好調（A域）
-                elif _avg <= _good * 0.85 and _worst <= _bad:
-                    base_score = 65  # 好調だが振れあり（B-A境界）
-                elif _avg <= _bad:
-                    base_score = 55  # まずまず（B域）
+
+                # 店舗内の全台の平均確率を計算して相対評価
+                # これにより「北斗の全ARTベースで全台good域に見える」問題を回避
+                _store_probs = []
+                if store_data:
+                    for _su in store_data.get('units', []):
+                        _sd = _su.get('days', [])
+                        _sp = []
+                        for _dd in _sd:
+                            _sa = _dd.get('art', 0); _sg = _dd.get('total_start', 0)
+                            if _sa > 0 and _sg > 500:
+                                _sp.append(_sg / _sa)
+                        if _sp:
+                            _store_probs.append(sum(_sp) / len(_sp))
+
+                if len(_store_probs) >= 5:
+                    # 店舗内相対評価: パーセンタイルでbase_scoreを決定
+                    _store_probs_sorted = sorted(_store_probs)
+                    _rank_pos = sum(1 for p in _store_probs_sorted if p > _avg)  # 小さい方が良い
+                    _pct = _rank_pos / len(_store_probs_sorted)
+                    if _pct >= 0.85:  # 上位15%
+                        base_score = 70
+                    elif _pct >= 0.65:  # 上位35%
+                        base_score = 60
+                    elif _pct >= 0.35:  # 中間
+                        base_score = 50
+                    else:  # 下位35%
+                        base_score = 42
                 else:
-                    base_score = 45  # 不調
+                    # 台数が少ない場合は絶対評価
+                    _good = get_machine_threshold(machine_key, 'good_prob')
+                    _bad = get_machine_threshold(machine_key, 'bad_prob')
+                    if _avg <= _good * 0.65 and _worst <= _good and len(_day_probs) >= 4:
+                        base_score = 70
+                    elif _avg <= _good * 0.85 and _worst <= _bad:
+                        base_score = 60
+                    elif _avg <= _bad:
+                        base_score = 50
+                    else:
+                        base_score = 42
                 base_rank = get_rank(base_score)
 
         # 当日データ分析
@@ -2585,17 +2663,21 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
             pass
 
         # === 最終スコア計算 ===
-        raw_score = (base_score
-                     + today_analysis.get('today_score_bonus', 0)
-                     + trend_bonus
-                     + historical_bonus   # 【改善1】過去実績ボーナス
-                     + slump_bonus        # 【改善2】不調翌日ボーナス
-                     + activity_bonus     # 【改善4+5】稼働パターン+ハイエナ
-                     + medal_balance_penalty  # 出玉バランスペナルティ
-                     + weekday_bonus      # 曜日ボーナス
-                     + yesterday_diff_bonus  # 前日差枚ボーナス
-                     + pattern_bonus      # 店舗設定投入パターンボーナス
-                     )
+        total_bonus = (today_analysis.get('today_score_bonus', 0)
+                       + trend_bonus
+                       + historical_bonus   # 【改善1】過去実績ボーナス
+                       + slump_bonus        # 【改善2】不調翌日ボーナス
+                       + activity_bonus     # 【改善4+5】稼働パターン+ハイエナ
+                       + medal_balance_penalty  # 出玉バランスペナルティ
+                       + weekday_bonus      # 曜日ボーナス
+                       + yesterday_diff_bonus  # 前日差枚ボーナス
+                       + pattern_bonus      # 店舗設定投入パターンボーナス
+                       )
+        # ボーナス合計にキャップ: base_scoreからの変動を±20に制限
+        # base=50 → 最大70(A), base=55 → 最大75(S境界), base=65 → 最大85(S)
+        # base=45 → 最大65(A境界)。ボーナスだけでSにはなりにくい
+        total_bonus = max(-20, min(20, total_bonus))
+        raw_score = base_score + total_bonus
 
         # === フィードバック補正 ===
         # 過去の答え合わせ結果から台・曜日の補正を適用
