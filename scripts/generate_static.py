@@ -564,6 +564,21 @@ def generate_index(env):
     if not top3:
         top3 = top3_candidates[:3]
 
+    # TOP3 + 爆発台の過去3日分の当たり履歴を加工
+    for rec in top3 + yesterday_top10 + today_top10:
+        for hist_key in ('yesterday_history', 'day_before_history', 'three_days_ago_history'):
+            raw_hist = rec.get(hist_key, [])
+            proc_key = f'{hist_key}_processed'
+            summ_key = f'{hist_key}_summary'
+            if proc_key not in rec:  # 重複加工防止
+                if raw_hist:
+                    processed, summary = _process_history_for_verify(raw_hist)
+                    rec[proc_key] = processed
+                    rec[summ_key] = summary
+                else:
+                    rec[proc_key] = []
+                    rec[summ_key] = {}
+
     # 前日の爆発台: 最大連チャン枚数でソート
     # 差枚だと「万枚出して飲まれた台」が低く出る。
     # max_chain（1回の連チャン区間の累計枚数）なら爆発の瞬間を正しく評価。
