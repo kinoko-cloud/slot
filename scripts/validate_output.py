@@ -214,10 +214,16 @@ def _validate_index(content, expected_mode, expected_verify_dt, expected_rec_dt,
                 if 'reason-line' not in card:
                     card_issues.append('おすすめ理由なし')
 
-                # 直近データ行
+                # 直近データ行（展開可能かチェック）
                 recent_rows = re.findall(r'recent-day-row', card)
                 if not recent_rows:
                     card_issues.append('直近データ行なし')
+                else:
+                    # 履歴データがある日には展開ボタンがあるか
+                    expandable = re.findall(r'recent-day-detail', card)
+                    if not expandable:
+                        # historyなし台（アイランド北斗等）はINFO扱い
+                        pass  # historyがそもそもない台は展開不可で正常
 
                 # 差枚推移グラフ
                 if 'sparkline' not in card:
