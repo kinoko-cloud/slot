@@ -1278,19 +1278,26 @@ def _process_history_for_verify(history):
 
 
 def _try_load_backtest_results():
-    """最新のバックテスト結果を読み込む"""
+    """有効な実績データがある最新のバックテスト結果を読み込む"""
     import glob
-    results_files = sorted(glob.glob(str(PROJECT_ROOT / 'data' / 'verify' / 'verify_*_results.json')))
-    if not results_files:
-        return None
-    latest = results_files[-1]
-    try:
-        data = json.loads(Path(latest).read_text())
-        if data.get('total_sa', 0) > 0:
-            print(f"  バックテスト結果を使用: {Path(latest).name}")
-            return data
-    except:
-        pass
+    results_files = sorted(glob.glob(str(PROJECT_ROOT / 'data' / 'verify' / 'verify_*_results.json')), reverse=True)
+    for f in results_files:
+        try:
+            data = json.loads(Path(f).read_text())
+            # S/A予測台のうちactual_prob>0が1台でもあれば有効
+            has_valid = False
+            for sk, units in data.get('units', {}).items():
+                for u in units:
+                    if u.get('predicted_rank') in ('S', 'A') and u.get('actual_prob', 0) > 0:
+                        has_valid = True
+                        break
+                if has_valid:
+                    break
+            if has_valid:
+                print(f"  バックテスト結果を使用: {Path(f).name}")
+                return data
+        except:
+            pass
     return None
 
 
@@ -1519,8 +1526,13 @@ def _generate_verify_from_backtest(env, results):
             
             uid = str(u.get('unit_id', ''))
             avail_info = avail_lookup.get((store_key, uid), {})
-            max_medals = u.get('max_medals', 0) or avail_info.get('max_medals', 0)
-            diff_medals = u.get('diff_medals', 0) or avail_info.get('diff_medals', 0)
+            # バックテスト結果のデータを優先（availability.jsonは当日データなので混在させない）
+            max_medals = u.get('max_medals', 0)
+            diff_medals = u.get('diff_medals', 0)
+            if max_medals == 0 and diff_medals == 0:
+                # バックテスト結果にデータがない場合のみavailabilityから補完
+                max_medals = avail_info.get('max_medals', 0)
+                diff_medals = avail_info.get('diff_medals', 0)
             
             # verdict.py共通ロジックで判定
             if games < 500 or prob <= 0:
@@ -1550,18 +1562,17 @@ def _generate_verify_from_backtest(env, results):
                 'verdict_class': verdict_class,
             })
         
-        # 全台ベースの的中率
+        # S/A予測台ベースの的中率
         valid_units = [u for u in formatted_units if u['verdict_class'] != 'nodata']
-        correct = sum(1 for u in valid_units if _is_unit_hit(u))
-        total_valid = len(valid_units)
-        accuracy_rate = (correct / total_valid * 100) if total_valid > 0 else 0
+        sa_valid = [u for u in valid_units if u['predicted_rank'] in ('S', 'A')]
+        sa_hit = sum(1 for u in sa_valid if _is_unit_hit(u))
         
         machine_groups[mk]['stores'].append({
             'name': store_data.get('name', store_key),
             'units': formatted_units,
-            'sa_total': total_valid,
-            'sa_hit': correct,
-            'sa_rate': accuracy_rate,
+            'sa_total': len(sa_valid),
+            'sa_hit': sa_hit,
+            'sa_rate': (sa_hit / len(sa_valid) * 100) if sa_valid else 0,
         })
     
     verify_data = {}
@@ -1603,7 +1614,7 @@ def _generate_verify_from_backtest(env, results):
             _units = sd.get('units', [])
             _valid = [u for u in _units if u.get('actual_prob', 0) > 0 and u.get('actual_games', 0) >= 500]
             _sa = [u for u in _valid if u.get('predicted_rank') in ('S', 'A')]
-            if len(_sa) >= 2:
+            if len(_sa) >= 3:
                 _hit = sum(1 for u in _sa if u.get('verdict_class') in ('perfect', 'hit'))
                 _rate = int(_hit / len(_sa) * 100)
                 store_accuracy_header.append({
@@ -2036,7 +2047,7 @@ def generate_verify_page(env):
             units = sd.get('units', [])
             _valid = [u for u in units if u.get('actual_prob', 0) > 0 and u.get('actual_games', 0) >= 500]
             _sa = [u for u in _valid if u.get('pre_open_rank', u.get('predicted_rank', '')) in ('S', 'A')]
-            if len(_sa) >= 2:
+            if len(_sa) >= 3:
                 _hit = sum(1 for u in _sa if _is_unit_hit(u))
                 _rate = int(_hit / len(_sa) * 100)
                 store_accuracy_header.append({
