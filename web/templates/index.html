@@ -62,7 +62,7 @@
                         <div class="vb-circle {% if cat.rate >= 60 %}good{% elif cat.rate >= 40 %}ok{% else %}bad{% endif %}">
                             <span class="vb-circle-num">{{ cat.rate }}%</span>
                         </div>
-                        <span class="vb-circle-label">{{ cat.icon }} {{ cat.label }}</span>
+                        <span class="vb-circle-label">{{ cat.label|replace('\n', '<br>')|safe }}</span>
                     </div>
                     {% endfor %}
                     {% endif %}

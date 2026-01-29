@@ -1342,43 +1342,44 @@ def _get_verify_accuracy():
 
 
 def _get_verify_by_category():
-    """機種別・店別の的中率を返す（トップページ表示用、最大3件）"""
+    """店舗×機種別の的中率を返す（トップページ表示用、上位2件）"""
     files = sorted(glob.glob('data/verify/verify_*_results.json'), reverse=True)
     if not files:
         return []
     try:
         data = json.load(open(files[0]))
-        by_cat = {}  # {label: {sa, hit, icon}}
+        by_store = {}
         for sk, units in data.get('units', {}).items():
             mk = data['stores'][sk].get('machine_key', 'sbj')
             sn = data['stores'][sk].get('name', sk)
-            # 機種別
-            mk_label = 'SBJ' if mk == 'sbj' else '北斗'
+            mk_short = 'SBJ' if mk == 'sbj' else '北斗'
             mk_icon = '🎰' if mk == 'sbj' else '⚔️'
-            if mk_label not in by_cat:
-                by_cat[mk_label] = {'sa': 0, 'hit': 0, 'icon': mk_icon}
+            key = f"{sn}|{mk_short}"
+            if key not in by_store:
+                by_store[key] = {'sa': 0, 'hit': 0, 'icon': mk_icon, 'store': sn, 'mk': mk_short}
             for u in units:
                 prob = u.get('actual_prob', 0)
                 games = u.get('actual_games', 0)
                 if prob <= 0 or games < 500:
                     continue
                 if u.get('predicted_rank') in ('S', 'A'):
-                    by_cat[mk_label]['sa'] += 1
+                    by_store[key]['sa'] += 1
                     if u.get('verdict_class') in ('perfect', 'hit'):
-                        by_cat[mk_label]['hit'] += 1
+                        by_store[key]['hit'] += 1
+        
+        # S/A台が3台以上ある店から的中率の高い順に2つ
+        candidates = [d for d in by_store.values() if d['sa'] >= 3]
+        candidates.sort(key=lambda x: -x['hit'] / x['sa'])
         
         result = []
-        for label in ['SBJ', '北斗']:
-            d = by_cat.get(label)
-            if d and d['sa'] > 0:
-                rate = int(d['hit'] / d['sa'] * 100)
-                result.append({
-                    'label': label,
-                    'icon': d['icon'],
-                    'rate': rate,
-                    'hit': d['hit'],
-                    'total': d['sa'],
-                })
+        for d in candidates[:2]:
+            rate = int(d['hit'] / d['sa'] * 100)
+            result.append({
+                'label': f"{d['store']}\n{d['icon']}{d['mk']}",
+                'rate': rate,
+                'hit': d['hit'],
+                'total': d['sa'],
+            })
         return result
     except:
         return []
