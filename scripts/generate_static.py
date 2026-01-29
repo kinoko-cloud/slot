@@ -1375,7 +1375,8 @@ def _get_verify_by_category():
         for d in candidates[:2]:
             rate = int(d['hit'] / d['sa'] * 100)
             result.append({
-                'label': f"{d['icon']}{d['mk']}\n{d['store']}",
+                'mk_name': f"{d['icon']}{d['mk']}",
+                'store_name': d['store'],
                 'rate': rate,
                 'hit': d['hit'],
                 'total': d['sa'],
