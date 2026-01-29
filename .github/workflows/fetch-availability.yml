@@ -2,8 +2,10 @@ name: Fetch Availability
 
 on:
   schedule:
-    # 毎日 10:00-23:00 JST の間、1時間ごとに実行
-    - cron: '0 1-14 * * *'  # UTC 1:00-14:00 = JST 10:00-23:00
+    # 毎日 10:00-23:00 JST の間、15分ごとに実行
+    # GitHub Actionsのcronは正確ではない（数分の遅延あり）が、
+    # 15分間隔であれば実用上問題ない
+    - cron: '*/15 1-14 * * *'  # UTC 1:00-14:59 = JST 10:00-23:59
   workflow_dispatch:  # 手動実行も可能
 
 concurrency:
