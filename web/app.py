@@ -131,9 +131,16 @@ def deploy():
         return jsonify({'error': 'Unauthorized'}), 401
 
     try:
-        # git pull を実行
+        # git fetch + reset で強制同期（ローカル変更は破棄）
+        subprocess.run(
+            ['git', 'fetch', 'origin', 'main'],
+            cwd=PROJECT_ROOT,
+            capture_output=True,
+            text=True,
+            timeout=30
+        )
         result = subprocess.run(
-            ['git', 'pull', 'origin', 'main'],
+            ['git', 'reset', '--hard', 'origin/main'],
             cwd=PROJECT_ROOT,
             capture_output=True,
             text=True,
