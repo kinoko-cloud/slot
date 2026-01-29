@@ -5977,6 +5977,23 @@ a.perfect-card:hover { background: rgba(255,215,0,0.18); }
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(255,215,0,0.2);
 }
+.vb-circles-row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-shrink: 0;
+}
+.vb-circle-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+.vb-circle-label {
+    font-size: 0.65em;
+    color: #aaa;
+    white-space: nowrap;
+}
 .vb-circle {
     width: 46px;
     height: 46px;

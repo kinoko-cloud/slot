@@ -32,13 +32,13 @@ RESULT_THRESHOLDS = {
     },
     'hokuto_tensei2': {
         'excellent_prob': 80,
-        'good_prob': 120,
+        'good_prob': 120,       # 確率基準
         'bad_prob': 160,
         'excellent_diff': 3000,
         'good_diff': 1000,
         'bad_diff': -3000,
         'excellent_max': 5000,
-        'good_max': 1500,
+        'good_max': 1500,       # max≥1500で確率不足を補完
     },
 }
 
