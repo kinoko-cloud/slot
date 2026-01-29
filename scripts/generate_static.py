@@ -344,11 +344,13 @@ def generate_index(env):
                     pass
 
                 # リアルタイムデータ取得（本日のART/RB等）
+                # 営業中のみ使用。開店前/閉店後はstaleデータを使わない
                 realtime = None
-                try:
-                    realtime = get_realtime_data(store_key)
-                except:
-                    pass
+                if is_open:
+                    try:
+                        realtime = get_realtime_data(store_key)
+                    except:
+                        pass
 
                 recs = recommend_units(store_key, realtime_data=realtime, availability=availability,
                                       data_date_label=reason_data_label, prev_date_label=reason_prev_label)
@@ -587,58 +589,10 @@ def generate_index(env):
         top3 = top3_candidates[:30]
 
     # TOP3 + 全S/A候補 + 爆発台: 蓄積DBから前日/前々日/3日前 + recent_daysを一括補完
-    for rec in top3 + top3_candidates + yesterday_top10 + today_top10:
-        try:
-            from analysis.history_accumulator import load_unit_history
-            acc = load_unit_history(rec.get('store_key', ''), rec.get('unit_id', ''))
-            if acc and acc.get('days'):
-                days_by_date = {d['date']: d for d in acc['days'] if d.get('date')}
-                # 前日/前々日/3日前の補完
-                for prefix, date_key in [
-                    ('day_before_', 'day_before_date'),
-                    ('three_days_ago_', 'three_days_ago_date'),
-                    ('yesterday_', 'yesterday_date'),
-                ]:
-                    target_date = rec.get(date_key, '')
-                    if not target_date:
-                        continue
-                    day_data = days_by_date.get(target_date)
-                    if not day_data:
-                        continue
-                    if not rec.get(f'{prefix}diff_medals'):
-                        db_diff = day_data.get('diff_medals')
-                        if db_diff is not None and db_diff != 0:
-                            rec[f'{prefix}diff_medals'] = int(db_diff)
-                    if not rec.get(f'{prefix}max_rensa'):
-                        db_rensa = day_data.get('max_rensa')
-                        if db_rensa:
-                            rec[f'{prefix}max_rensa'] = db_rensa
-                    if not rec.get(f'{prefix}max_medals'):
-                        db_max = day_data.get('max_medals')
-                        if db_max:
-                            rec[f'{prefix}max_medals'] = db_max
-                # recent_daysの補完
-                for rd in rec.get('recent_days', []):
-                    rd_date = rd.get('date', '')
-                    if not rd_date:
-                        continue
-                    day_data = days_by_date.get(rd_date)
-                    if not day_data:
-                        continue
-                    if not rd.get('diff_medals'):
-                        db_diff = day_data.get('diff_medals')
-                        if db_diff is not None and db_diff != 0:
-                            rd['diff_medals'] = int(db_diff)
-                    if not rd.get('max_rensa'):
-                        db_rensa = day_data.get('max_rensa')
-                        if db_rensa:
-                            rd['max_rensa'] = db_rensa
-                    if not rd.get('max_medals'):
-                        db_max = day_data.get('max_medals')
-                        if db_max:
-                            rd['max_medals'] = db_max
-        except Exception:
-            pass
+    # 全recの蓄積DB補完を一括実行（enrich_rec.py: 1箇所で全パスを処理）
+    from scripts.enrich_rec import enrich_recs
+    all_recs_to_enrich = list({id(r): r for r in top3 + top3_candidates + yesterday_top10 + today_top10}.values())
+    enrich_recs(all_recs_to_enrich)
 
     # TOP3 + 全S/A候補 + 爆発台の過去3日分の当たり履歴を加工
     for rec in top3 + top3_candidates + yesterday_top10 + today_top10:
@@ -791,60 +745,72 @@ def generate_index(env):
         data_date_str = format_date_with_weekday(now)
         prev_date_str = format_date_with_weekday(yesterday)
 
-    # 機種別的中率（ヒーロー表示用: 高い順に2つ）
+    # 機種別的中率（ヒーロー表示用: verifyデータから取得）
     accuracy_hero = []
-    for machine_key, machine in MACHINES.items():
-        stores = get_stores_by_machine(machine_key)
-        m_total = 0
-        m_hit = 0
-        store_results = []  # 店舗別の結果
-        for store_key, store in stores.items():
-            s_total = 0
-            s_hit = 0
-            try:
-                pre_recs = recommend_units(store_key)  # 過去データのみ
-                rt = get_realtime_data(store_key)
-                rt_recs = recommend_units(store_key, realtime_data=rt)
-                rt_map = {}
-                for r in rt_recs:
-                    rt_map[str(r.get('unit_id', ''))] = r
-                for r in pre_recs:
-                    uid = str(r.get('unit_id', ''))
-                    if r.get('final_rank', 'C') in ('S', 'A'):
-                        m_total += 1
-                        s_total += 1
-                        rt_r = rt_map.get(uid, {})
-                        art = rt_r.get('art_count', 0)
-                        games = rt_r.get('total_games', 0)
-                        if art > 0 and games / art <= 130:
-                            m_hit += 1
-                            s_hit += 1
-            except:
-                pass
-            if s_total > 0:
-                s_rate = s_hit / s_total * 100
-                short_name = store.get('name', store_key).replace('エスパス日拓', '').replace('店', '')
-                store_results.append({'name': short_name, 'rate': s_rate, 'hit': s_hit, 'total': s_total})
+    verify_data = _get_latest_valid_verify()
+    if verify_data and verify_data.get('units'):
+        # store_key → machine_key のマッピングを事前に構築
+        _store_to_machine = {}
+        for _mk in MACHINES:
+            for _sk in get_stores_by_machine(_mk):
+                _store_to_machine[_sk] = _mk
 
-        # 的中率が高い店舗を表示（100%の店は名前、それ以外は率）
-        store_results.sort(key=lambda x: -x['rate'])
-        top_parts = []
-        for sr in store_results[:3]:
-            if sr['rate'] >= 100:
-                top_parts.append(f"{sr['name']}全的中")
-            elif sr['rate'] >= 50:
-                top_parts.append(f"{sr['name']}{sr['hit']}/{sr['total']}")
-        top_stores = ' / '.join(top_parts) if top_parts else ''
+        # 機種別に集計
+        machine_stats = {}  # {machine_key: {total, hit, stores: {store_key: {total, hit}}}}
+        for store_key, units in verify_data['units'].items():
+            mk = _store_to_machine.get(store_key)
+            if not mk:
+                continue
+            if mk not in machine_stats:
+                machine_stats[mk] = {'total': 0, 'hit': 0, 'stores': {}}
+            ms = machine_stats[mk]
+            if store_key not in ms['stores']:
+                ms['stores'][store_key] = {'total': 0, 'hit': 0}
+            ss = ms['stores'][store_key]
+            for u in units:
+                if u.get('predicted_rank') in ('S', 'A') and u.get('actual_prob', 0) > 0:
+                    ms['total'] += 1
+                    ss['total'] += 1
+                    # 的中判定: prediction_resultがあればそれ、なければprob直接判定
+                    pr = u.get('prediction_result')
+                    if pr in ('hit', 'excellent'):
+                        ms['hit'] += 1
+                        ss['hit'] += 1
+                    elif pr is None and u.get('actual_prob', 999) <= 130:
+                        # prediction_resultが未設定の場合、確率130以下=好調=的中
+                        ms['hit'] += 1
+                        ss['hit'] += 1
 
-        rate = (m_hit / m_total * 100) if m_total > 0 else 0
-        accuracy_hero.append({
-            'name': machine['short_name'],
-            'icon': machine['icon'],
-            'rate': rate,
-            'hit': m_hit,
-            'total': m_total,
-            'top_stores': top_stores,
-        })
+        for machine_key, machine in MACHINES.items():
+            ms = machine_stats.get(machine_key, {'total': 0, 'hit': 0, 'stores': {}})
+            rate = (ms['hit'] / ms['total'] * 100) if ms['total'] > 0 else 0
+
+            # 店舗別の結果
+            store_results = []
+            for sk, ss in ms['stores'].items():
+                if ss['total'] > 0:
+                    s_rate = ss['hit'] / ss['total'] * 100
+                    stores_config = get_stores_by_machine(machine_key)
+                    store_info = stores_config.get(sk, {})
+                    short_name = store_info.get('name', sk).replace('エスパス日拓', '').replace('店', '')
+                    store_results.append({'name': short_name, 'rate': s_rate, 'hit': ss['hit'], 'total': ss['total']})
+            store_results.sort(key=lambda x: -x['rate'])
+            top_parts = []
+            for sr in store_results[:3]:
+                if sr['rate'] >= 100:
+                    top_parts.append(f"{sr['name']}全的中")
+                elif sr['rate'] >= 50:
+                    top_parts.append(f"{sr['name']}{sr['hit']}/{sr['total']}")
+            top_stores = ' / '.join(top_parts) if top_parts else ''
+
+            accuracy_hero.append({
+                'name': machine['short_name'],
+                'icon': machine['icon'],
+                'rate': rate,
+                'hit': ms['hit'],
+                'total': ms['total'],
+                'top_stores': top_stores,
+            })
     # 高い順にソート
     accuracy_hero.sort(key=lambda x: -x['rate'])
 
@@ -1027,38 +993,9 @@ def generate_ranking_pages(env):
             return -score
 
         all_recommendations.sort(key=sort_key)
-        # 蓄積DBから前々日/3日前のdiff_medals等を補完
-        for rec in all_recommendations:
-            try:
-                from analysis.history_accumulator import load_unit_history
-                acc = load_unit_history(rec.get('store_key', ''), rec.get('unit_id', ''))
-                if acc and acc.get('days'):
-                    days_by_date = {d['date']: d for d in acc['days'] if d.get('date')}
-                    for prefix, date_key in [
-                        ('day_before_', 'day_before_date'),
-                        ('three_days_ago_', 'three_days_ago_date'),
-                        ('yesterday_', 'yesterday_date'),
-                    ]:
-                        target_date = rec.get(date_key, '')
-                        if not target_date:
-                            continue
-                        day_data = days_by_date.get(target_date)
-                        if not day_data:
-                            continue
-                        if not rec.get(f'{prefix}diff_medals'):
-                            db_diff = day_data.get('diff_medals')
-                            if db_diff is not None and db_diff != 0:
-                                rec[f'{prefix}diff_medals'] = int(db_diff)
-                        if not rec.get(f'{prefix}max_rensa'):
-                            db_rensa = day_data.get('max_rensa')
-                            if db_rensa:
-                                rec[f'{prefix}max_rensa'] = db_rensa
-                        if not rec.get(f'{prefix}max_medals'):
-                            db_max = day_data.get('max_medals')
-                            if db_max:
-                                rec[f'{prefix}max_medals'] = db_max
-            except Exception:
-                pass
+        # 蓄積DB補完（共通関数）
+        from scripts.enrich_rec import enrich_recs as _enrich
+        _enrich(all_recommendations)
         top_recs = [r for r in all_recommendations if r['final_rank'] in ('S', 'A') and not r['is_running']][:10]
         other_recs = [r for r in all_recommendations if r not in top_recs][:20]
 
@@ -1184,41 +1121,9 @@ def generate_recommend_pages(env):
             else:
                 store_analysis['overall'] = f"高設定台が少ない（全{total}台中{high_count}台がA以上）"
 
-        # 前々日・3日前のdiff_medals/max_rensa/max_medalsを蓄積DBから補完
-        for rec in recommendations:
-            try:
-                from analysis.history_accumulator import load_unit_history
-                acc = load_unit_history(store_key, rec.get('unit_id', ''))
-                if acc and acc.get('days'):
-                    days_by_date = {d['date']: d for d in acc['days'] if d.get('date')}
-                    for prefix, date_key in [
-                        ('day_before_', 'day_before_date'),
-                        ('three_days_ago_', 'three_days_ago_date'),
-                        ('yesterday_', 'yesterday_date'),
-                    ]:
-                        target_date = rec.get(date_key, '')
-                        if not target_date:
-                            continue
-                        day_data = days_by_date.get(target_date)
-                        if not day_data:
-                            continue
-                        # diff_medals補完
-                        if not rec.get(f'{prefix}diff_medals'):
-                            db_diff = day_data.get('diff_medals')
-                            if db_diff is not None and db_diff != 0:
-                                rec[f'{prefix}diff_medals'] = int(db_diff)
-                        # max_rensa補完
-                        if not rec.get(f'{prefix}max_rensa'):
-                            db_rensa = day_data.get('max_rensa')
-                            if db_rensa:
-                                rec[f'{prefix}max_rensa'] = db_rensa
-                        # max_medals補完
-                        if not rec.get(f'{prefix}max_medals'):
-                            db_max = day_data.get('max_medals')
-                            if db_max:
-                                rec[f'{prefix}max_medals'] = db_max
-            except Exception:
-                pass
+        # 蓄積DB補完（共通関数）
+        from scripts.enrich_rec import enrich_recs as _enrich_recs
+        _enrich_recs(recommendations)
 
         # 各台の過去3日分の当たり履歴を答え合わせ形式に加工
         for rec in recommendations:
@@ -2529,6 +2434,13 @@ def main():
     print("=" * 50)
     print("静的サイト生成完了!")
     print("=" * 50)
+
+    # ビルド後検証
+    print("\n--- ビルド後検証 ---")
+    from scripts.validate_output import validate_all
+    if not validate_all():
+        print("⚠️ 検証でERRORが検出されました")
+    print("--- 検証完了 ---")
 
 
 if __name__ == '__main__':
