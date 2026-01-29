@@ -442,6 +442,9 @@
                             <span class="recent-label">{{ short_date(day.date) }}</span>
                             <span class="recent-art">ART {{ day.art }}</span>
                             {% if day.prob > 0 %}<span class="recent-prob {% if day.prob <= 100 %}excellent{% elif day.prob <= 130 %}good{% elif day.prob >= 200 %}bad{% endif %}">1/{{ day.prob|int }}</span>{% endif %}
+                            {% if day.diff_medals is defined and day.diff_medals != 0 %}<span class="diff-medals-sm {% if day.diff_medals > 0 %}plus{% else %}minus{% endif %}">{{ '{:+,}'.format(day.diff_medals) }}枚</span>{% endif %}
+                            {% if day.max_rensa is defined and day.max_rensa >= 3 %}<span class="rensa-sm">{{ day.max_rensa }}連</span>{% endif %}
+                            {% if day.max_medals is defined and day.max_medals > 0 %}<span class="max-medals-sm">最大{{ '{:,}'.format(day.max_medals) }}枚</span>{% endif %}
                         </div>
                         {% endif %}
                         {% endfor %}
