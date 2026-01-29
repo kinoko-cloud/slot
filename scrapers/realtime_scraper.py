@@ -5,13 +5,20 @@
 
 daidata: requestsベース（PythonAnywhereでも動作）
 papimo: Playwrightベース（ローカル専用）
+
+店舗定義はconfig/rankings.pyのSTORESを唯一のソースとする（重複定義を避ける）
 """
 
 import json
 import re
+import sys
 import requests
 from datetime import datetime
 from pathlib import Path
+
+# プロジェクトルートをパスに追加
+PROJECT_ROOT = Path(__file__).parent.parent
+sys.path.insert(0, str(PROJECT_ROOT))
 
 try:
     from bs4 import BeautifulSoup
@@ -25,46 +32,47 @@ try:
 except ImportError:
     HAS_PLAYWRIGHT = False
 
-# 店舗設定（キーはconfig/rankings.pyと統一）
-STORES = {
-    # SBJ
-    'island_akihabara_sbj': {
-        'name': 'アイランド秋葉原',
-        'source': 'papimo',
-        'hall_id': '00031715',
-        'sbj_machine_id': '225010000',
-        'units': ['1015', '1016', '1017', '1018', '1020', '1021', '1022', '1023',
-                  '1025', '1026', '1027', '1028', '1030', '1031'],
-    },
-    'shibuya_espass_sbj': {
-        'name': 'エスパス日拓渋谷新館',
-        'source': 'daidata',
-        'hall_id': '100860',
-        'units': ['3011', '3012', '3013'],
-    },
-    'shinjuku_espass_sbj': {
-        'name': 'エスパス日拓新宿歌舞伎町店',
-        'source': 'daidata',
-        'hall_id': '100949',
-        'units': ['682', '683', '684', '685'],
-    },
-    'akiba_espass_sbj': {
-        'name': 'エスパス日拓秋葉原駅前店',
-        'source': 'daidata',
-        'hall_id': '100928',
-        'units': ['2158', '2159', '2160', '2161'],
-    },
-    'seibu_shinjuku_espass_sbj': {
-        'name': 'エスパス日拓西武新宿駅前店',
-        'source': 'daidata',
-        'hall_id': '100950',
-        'units': ['3185', '3186', '3187', '4109', '4118', '4125', '4168'],
-    },
+from config.rankings import STORES as CONFIG_STORES
+
+# papimo用hall_id（config/rankings.pyではhall_id=Noneのため別途定義）
+PAPIMO_HALL_IDS = {
+    'island_akihabara_sbj': '00031715',
+    'island_akihabara_hokuto': '00031715',
 }
 
-# 旧キーとの互換性
-STORES['island_akihabara'] = STORES['island_akihabara_sbj']
-STORES['shibuya_espass'] = STORES['shibuya_espass_sbj']
+# 旧キー → 新キー互換マップ
+_LEGACY_KEY_MAP = {
+    'island_akihabara': 'island_akihabara_sbj',
+    'shibuya_espass': 'shibuya_espass_sbj',
+}
+
+
+def _build_stores():
+    """config/rankings.pyのSTORESからリアルタイムスクレイパー用の設定を構築"""
+    stores = {}
+    # 旧形式のキーは除外
+    old_keys = {'island_akihabara', 'shibuya_espass', 'shinjuku_espass'}
+    for store_key, cfg in CONFIG_STORES.items():
+        if store_key in old_keys:
+            continue
+        if not cfg.get('units'):
+            continue
+        source = cfg.get('data_source', 'daidata')
+        hall_id = PAPIMO_HALL_IDS.get(store_key) or cfg.get('hall_id')
+        stores[store_key] = {
+            'name': cfg['name'],
+            'source': source,
+            'hall_id': hall_id,
+            'units': cfg['units'],
+        }
+    # 旧キー互換
+    for old_key, new_key in _LEGACY_KEY_MAP.items():
+        if new_key in stores:
+            stores[old_key] = stores[new_key]
+    return stores
+
+
+STORES = _build_stores()
 
 
 def scrape_papimo_current(page, hall_id: str, units: list) -> list:
@@ -341,8 +349,9 @@ def scrape_realtime(store_key: str = None) -> dict:
 def main():
     """メイン処理"""
     print("=" * 60)
-    print("SBJ リアルタイムデータ取得")
+    print("リアルタイムデータ取得（全機種対応）")
     print(f"取得時刻: {datetime.now().strftime('%Y-%m-%d %H:%M')}")
+    print(f"対象店舗: {len([k for k in STORES if k not in _LEGACY_KEY_MAP])}店舗")
     print("=" * 60)
 
     # 全店舗のデータを取得
@@ -354,15 +363,6 @@ def main():
     with open(save_path, 'w', encoding='utf-8') as f:
         json.dump(results, f, ensure_ascii=False, indent=2)
     print(f"\n✓ 保存: {save_path}")
-
-    # 予測を実行
-    from analysis.realtime_predictor import generate_realtime_report
-
-    for key, data in results.items():
-        store = STORES[key]
-        current_day_data = data['units']
-        report = generate_realtime_report(store['name'], current_day_data)
-        print(report)
 
     return results
 
