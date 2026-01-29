@@ -1554,6 +1554,27 @@ def _generate_verify_from_backtest(env, results):
                 result_mark, result_mark_class = RESULT_MARKS.get(result_level, ('-', 'nodata'))
                 verdict_text, verdict_class = get_verdict(rank, result_level)
             
+            # 蓄積DBから当たり履歴を取得
+            raw_hist = []
+            try:
+                from analysis.history_accumulator import load_unit_history
+                hist_data = load_unit_history(store_key, uid)
+                if hist_data and hist_data.get('days'):
+                    # actual_date = prediction_date + 1日
+                    pred_date = results.get('prediction_date', '')
+                    if pred_date:
+                        from datetime import datetime as _dt, timedelta as _td
+                        actual_date = (_dt.strptime(pred_date, '%Y-%m-%d') + _td(days=1)).strftime('%Y-%m-%d')
+                    else:
+                        actual_date = results.get('actual_date', '')
+                    for d in hist_data['days']:
+                        if d.get('date') == actual_date:
+                            raw_hist = d.get('history', [])
+                            break
+            except:
+                pass
+            processed_history, history_summary = _process_history_for_verify(raw_hist)
+            
             formatted_units.append({
                 'unit_id': u.get('unit_id', ''),
                 'pre_open_rank': rank,
@@ -1570,6 +1591,8 @@ def _generate_verify_from_backtest(env, results):
                 'result_mark_class': result_mark_class,
                 'verdict_text': verdict_text,
                 'verdict_class': verdict_class,
+                'history': processed_history,
+                'history_summary': history_summary,
             })
         
         # S/A予測台ベースの的中率
