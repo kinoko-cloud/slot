@@ -10,8 +10,12 @@
 </head>
 <body data-page-type="unit-history">
     <div class="container">
+        {# === トップバー（共通） === #}
+        {% set back_url = url_for('recommend', store_key=store_key) %}
+        {% set back_text = store.name %}
+        {% set show_hamburger = false %}
+        {% include '_topbar.html' %}
         <header>
-            <a href="{{ url_for('recommend', store_key=store_key) }}" class="back-link">&lt; {{ store.name }}</a>
             <h1>{{ unit_id|pad_id }}番台 履歴</h1>
             <div class="machine-label">{{ machine.icon }} {{ machine.short_name }}</div>
             <div class="uh-meta">
@@ -195,6 +199,7 @@
             toggle.textContent = '▲';
         }
     }
+    {% include '_common_js.html' %}
     </script>
 </body>
 </html>

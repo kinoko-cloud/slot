@@ -10,11 +10,11 @@
 </head>
 <body>
     <div class="container">
+        {# === トップバー（共通） === #}
+        {% set back_url = url_for('index') %}
+        {% set show_hamburger = false %}
+        {% include '_topbar.html' %}
         <header>
-            <div class="top-bar">
-                <a href="{{ url_for('index') }}" class="back-link">&lt; トップ</a>
-                <img src="{{ url_for('static', filename='logo.svg') }}" alt="スロプロMAX" class="site-logo">
-            </div>
             <h1>的中結果</h1>
             <div class="update-info">
                 {% if result_date_str %}
@@ -270,6 +270,7 @@
             rowEl.classList.add('expanded');
         }
     }
+    {% include '_common_js.html' %}
     </script>
 </body>
 </html>

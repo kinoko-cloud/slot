@@ -10,8 +10,12 @@
 </head>
 <body>
     <div class="container">
+        {# === トップバー（共通） === #}
+        {% set back_url = url_for('index') %}
+        {% set back_text = '機種選択' %}
+        {% set show_hamburger = false %}
+        {% include '_topbar.html' %}
         <header>
-            <a href="{{ url_for('index') }}" class="back-link">&lt; 機種選択</a>
             <h1>{{ machine.icon }} {{ machine.short_name }}</h1>
         </header>
 
@@ -40,5 +44,8 @@
             <p class="hidden-text">.</p>
         </footer>
     </div>
+    <script>
+    {% include '_common_js.html' %}
+    </script>
 </body>
 </html>

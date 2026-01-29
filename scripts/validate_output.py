@@ -107,6 +107,33 @@ def validate_all():
         rcontent = f.read_text()
         all_issues.extend(_validate_recommend(f, rcontent))
 
+    # === 全ページ共通要素チェック（トップバー統一規格） ===
+    # 主要ページ + サブページ。historyは数が多いのでサンプルチェック。
+    all_html_files = list(DOCS_DIR.glob('*.html'))
+    if (DOCS_DIR / 'recommend').exists():
+        all_html_files.extend(DOCS_DIR.glob('recommend/*.html'))
+    if (DOCS_DIR / 'ranking').exists():
+        all_html_files.extend(DOCS_DIR.glob('ranking/*.html'))
+    if (DOCS_DIR / 'machine').exists():
+        all_html_files.extend(DOCS_DIR.glob('machine/*.html'))
+    # historyはサンプル3件のみ（数百ファイルあるため）
+    if (DOCS_DIR / 'history').exists():
+        history_files = sorted(DOCS_DIR.glob('history/*.html'))
+        all_html_files.extend(history_files[:3])
+
+    for f in all_html_files:
+        fname = f.name
+        # _unit_card等のパーシャルはスキップ
+        if fname.startswith('_'):
+            continue
+        content = f.read_text()
+        # build-ver（ビルド時刻）の存在チェック
+        if 'build-ver' not in content:
+            all_issues.append(f'WARN: {f.relative_to(DOCS_DIR)}: build-ver（ビルド時刻）が見つからない')
+        # common_jsの動的モード/時刻更新
+        if 'updateModeBadge' not in content and 'updateCurrentTime' not in content:
+            all_issues.append(f'WARN: {f.relative_to(DOCS_DIR)}: 動的モード切替JS（_common_js）が見つからない')
+
     # 結果表示
     errors = [i for i in all_issues if i.startswith('ERROR')]
     warns = [i for i in all_issues if i.startswith('WARN')]
