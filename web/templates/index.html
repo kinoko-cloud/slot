@@ -62,7 +62,7 @@
                         <div class="vb-circle {% if cat.rate >= 100 %}rainbow{% elif cat.rate >= 85 %}hot{% elif cat.rate >= 70 %}good{% elif cat.rate >= 55 %}warm{% elif cat.rate >= 40 %}ok{% elif cat.rate >= 25 %}cool{% elif cat.rate >= 10 %}cold{% else %}ice{% endif %}">
                             <span class="vb-circle-num">{{ cat.rate }}%</span>
                         </div>
-                        <span class="vb-circle-label">{{ cat.label|replace('\n', '<br>')|safe }}</span>
+                        <span class="vb-circle-label"><span class="vb-mk">{{ cat.mk_name }}</span><br>{{ cat.store_name }}</span>
                     </div>
                     {% endfor %}
                     {% endif %}
