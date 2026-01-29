@@ -586,13 +586,14 @@ def generate_index(env):
     if not top3:
         top3 = top3_candidates[:30]
 
-    # TOP3 + 全S/A候補 + 爆発台の前々日/3日前データを蓄積DBから補完
+    # TOP3 + 全S/A候補 + 爆発台: 蓄積DBから前日/前々日/3日前 + recent_daysを一括補完
     for rec in top3 + top3_candidates + yesterday_top10 + today_top10:
         try:
             from analysis.history_accumulator import load_unit_history
             acc = load_unit_history(rec.get('store_key', ''), rec.get('unit_id', ''))
             if acc and acc.get('days'):
                 days_by_date = {d['date']: d for d in acc['days'] if d.get('date')}
+                # 前日/前々日/3日前の補完
                 for prefix, date_key in [
                     ('day_before_', 'day_before_date'),
                     ('three_days_ago_', 'three_days_ago_date'),
@@ -616,6 +617,26 @@ def generate_index(env):
                         db_max = day_data.get('max_medals')
                         if db_max:
                             rec[f'{prefix}max_medals'] = db_max
+                # recent_daysの補完
+                for rd in rec.get('recent_days', []):
+                    rd_date = rd.get('date', '')
+                    if not rd_date:
+                        continue
+                    day_data = days_by_date.get(rd_date)
+                    if not day_data:
+                        continue
+                    if not rd.get('diff_medals'):
+                        db_diff = day_data.get('diff_medals')
+                        if db_diff is not None and db_diff != 0:
+                            rd['diff_medals'] = int(db_diff)
+                    if not rd.get('max_rensa'):
+                        db_rensa = day_data.get('max_rensa')
+                        if db_rensa:
+                            rd['max_rensa'] = db_rensa
+                    if not rd.get('max_medals'):
+                        db_max = day_data.get('max_medals')
+                        if db_max:
+                            rd['max_medals'] = db_max
         except Exception:
             pass
 

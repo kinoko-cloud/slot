@@ -1128,13 +1128,32 @@ def analyze_trend(days: List[dict], machine_key: str = 'sbj') -> dict:
         art = d.get('art', 0)
         games = d.get('games', 0) or d.get('total_start', 0)
         prob = games / art if art > 0 and games > 0 else 0
-        # max_medals: historyがあれば連チャン累計で計算
         day_history = d.get('history', [])
+        
+        # diff_medals: DB値 → historyから計算
+        day_diff = d.get('diff_medals', 0) or 0
+        if not day_diff and day_history:
+            sorted_h = sorted(day_history, key=lambda x: (-x.get('hit_num', 0), x.get('time', '00:00')))
+            day_diff = sum(h.get('medals', 0) - h.get('start', 0) * 3 for h in sorted_h)
+        
+        # max_medals: historyから計算
         if day_history:
             from analysis.analyzer import calculate_max_chain_medals
             day_max_medals = calculate_max_chain_medals(day_history)
         else:
-            day_max_medals = d.get('max_medals', 0)
+            day_max_medals = d.get('max_medals', 0) or 0
+        
+        # max_rensa: DB値 → historyから計算
+        day_rensa = d.get('max_rensa', 0) or 0
+        if not day_rensa and day_history:
+            sorted_h = sorted(day_history, key=lambda x: (-x.get('hit_num', 0), x.get('time', '00:00')))
+            mc = 0; c = 0
+            for h in sorted_h:
+                if h.get('start', 999) <= 30:
+                    c += 1; mc = max(mc, c)
+                else:
+                    c = 1
+            day_rensa = mc
 
         recent_days.append({
             'date': d.get('date', ''),
@@ -1142,7 +1161,8 @@ def analyze_trend(days: List[dict], machine_key: str = 'sbj') -> dict:
             'rb': d.get('rb', 0),
             'games': games,
             'prob': round(prob, 1) if prob > 0 else 0,
-            'max_rensa': d.get('max_rensa', 0),
+            'diff_medals': day_diff,
+            'max_rensa': day_rensa,
             'max_medals': day_max_medals,
             'history': day_history,
         })
@@ -2674,8 +2694,9 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
                     'rb': d.get('rb', 0),
                     'prob': d.get('prob', 0),
                     'history': d.get('history', []),
-                    'max_rensa': d.get('max_rensa', 0),
-                    'max_medals': d.get('max_medals', 0),
+                    'diff_medals': d.get('diff_medals', 0) or 0,
+                    'max_rensa': d.get('max_rensa', 0) or 0,
+                    'max_medals': d.get('max_medals', 0) or 0,
                 })
             trend_from_acc = analyze_trend(acc_days_for_trend, machine_key)
             # 蓄積DBの方が新しいデータがあれば、trend_dataを上書き
