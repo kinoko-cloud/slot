@@ -1294,12 +1294,33 @@ def _try_load_backtest_results():
     return None
 
 
+def _get_latest_valid_verify():
+    """有効な実績データがあるverifyファイルを返す（nodataのみのファイルはスキップ）"""
+    files = sorted(glob.glob('data/verify/verify_*_results.json'), reverse=True)
+    for f in files:
+        try:
+            data = json.load(open(f))
+            # S/A予測台のうちactual_prob>0が1台でもあれば有効
+            has_data = False
+            for sk, units in data.get('units', {}).items():
+                for u in units:
+                    if u.get('predicted_rank') in ('S', 'A') and u.get('actual_prob', 0) > 0:
+                        has_data = True
+                        break
+                if has_data:
+                    break
+            if has_data:
+                return data
+        except:
+            pass
+    return None
+
+
 def _get_verify_date_str():
     """バックテスト結果の実績日を取得"""
-    files = sorted(glob.glob('data/verify/verify_*_results.json'), reverse=True)
-    if files:
+    data = _get_latest_valid_verify()
+    if data:
         try:
-            data = json.load(open(files[0]))
             d = data.get('date', '')
             if d:
                 dt = datetime.strptime(d, '%Y-%m-%d')
@@ -1311,11 +1332,10 @@ def _get_verify_date_str():
 
 def _get_verify_accuracy():
     """verifyページと完全に同じ的中率を返す（verify結果JSONから直接読む）"""
-    files = sorted(glob.glob('data/verify/verify_*_results.json'), reverse=True)
-    if not files:
+    data = _get_latest_valid_verify()
+    if not data:
         return 0
     try:
-        data = json.load(open(files[0]))
         # generate_verify.pyで計算済みのoverall_rateを使う
         rate = data.get('overall_rate', 0)
         if rate > 0:
@@ -1343,11 +1363,10 @@ def _get_verify_accuracy():
 
 def _get_verify_by_category():
     """店舗×機種別の的中率を返す（トップページ表示用、上位2件）"""
-    files = sorted(glob.glob('data/verify/verify_*_results.json'), reverse=True)
-    if not files:
+    data = _get_latest_valid_verify()
+    if not data:
         return []
     try:
-        data = json.load(open(files[0]))
         by_store = {}
         for sk, units in data.get('units', {}).items():
             mk = data['stores'][sk].get('machine_key', 'sbj')
@@ -1389,11 +1408,10 @@ def _get_verify_by_category():
 def _get_verify_highlights():
     """バックテスト結果から特筆事項を取得（最大2件）"""
     highlights = []
-    files = sorted(glob.glob('data/verify/verify_*_results.json'), reverse=True)
-    if not files:
+    data = _get_latest_valid_verify()
+    if not data:
         return highlights
     try:
-        data = json.load(open(files[0]))
         
         # 大的中（S/A予測 × 確率1/100以下 × 差枚+3000以上）を探す
         big_hits = []
@@ -2011,6 +2029,25 @@ def generate_verify_page(env):
     perfect_stores.sort(key=lambda x: (-x['rate'], -x['total_units']))
     perfect_stores = perfect_stores[:5]
 
+    # 店×機種別の的中率ヘッダー
+    store_accuracy_header = []
+    for mk, md in verify_data.items():
+        for si, sd in enumerate(md['stores']):
+            units = sd.get('units', [])
+            _valid = [u for u in units if u.get('actual_prob', 0) > 0 and u.get('actual_games', 0) >= 500]
+            _sa = [u for u in _valid if u.get('pre_open_rank', u.get('predicted_rank', '')) in ('S', 'A')]
+            if len(_sa) >= 2:
+                _hit = sum(1 for u in _sa if _is_unit_hit(u))
+                _rate = int(_hit / len(_sa) * 100)
+                store_accuracy_header.append({
+                    'rate': _rate,
+                    'machine_name': md['name'],
+                    'store_name': sd.get('store_name', sd.get('name', '')),
+                    'hit': _hit,
+                    'total': len(_sa),
+                })
+    store_accuracy_header.sort(key=lambda x: (-x['rate'], -x['total']))
+
     html = template.render(
         verify_data=verify_data,
         accuracy=accuracy,
@@ -2024,6 +2061,7 @@ def generate_verify_page(env):
         predict_base=predict_base,
         topics=[],
         perfect_stores=perfect_stores,
+        store_accuracy_header=store_accuracy_header,
     )
 
     output_path = OUTPUT_DIR / 'verify.html'
