@@ -77,6 +77,12 @@ def collect_daily_data(machine_keys: list = None, max_units_per_store: int = Non
                         print(f"    ⚠️ 台{unit_id}は別機種に変更された可能性。収集スキップ。")
                         continue
                     if result:
+                        # 空データチェック: daysが空 or 全日art=0&games=0ならスキップ
+                        valid_days = [d for d in result.get('days', [])
+                                      if d.get('art', 0) > 0 or (d.get('total_start', 0) or d.get('games', 0) or 0) > 0]
+                        if not valid_days:
+                            print(f"    ⚠️ 台{unit_id}: 有効データなし（スクレイピング失敗の可能性）")
+                            continue
                         result['machine_key'] = machine_key
                         result['machine_name'] = machine_name
                         collected.append(result)
@@ -132,6 +138,12 @@ def collect_daily_data(machine_keys: list = None, max_units_per_store: int = Non
                                                   expected_machine=_expected)
                         if result.get('machine_mismatch'):
                             print(f"    ⚠️ 台{unit_id}は別機種に変更された可能性。収集スキップ。")
+                            continue
+                        # 空データチェック
+                        valid_days = [d for d in result.get('days', [])
+                                      if d.get('art', 0) > 0 or (d.get('total_start', 0) or d.get('games', 0) or 0) > 0]
+                        if not valid_days:
+                            print(f"    ⚠️ 台{unit_id}: 有効データなし（スクレイピング失敗の可能性）")
                             continue
                         result['hall_name'] = hall_name
                         result['machine_key'] = machine_key
@@ -245,7 +257,7 @@ def main():
 
         results = collect_daily_data(machine_keys=machine_keys, max_units_per_store=args.max_units)
 
-        # 台番号検証
+        # 台番号検証（従来）
         print('\n' + '=' * 60)
         print('台番号検証')
         print('=' * 60)
@@ -254,6 +266,23 @@ def main():
         if alerts:
             save_path = save_alerts(alerts, source='daily')
             print(f'アラート保存: {save_path}')
+
+        # 包括データ整合性チェック（新）
+        try:
+            from scripts.data_integrity_check import run_all_checks, save_check_result, format_notification
+            integrity_alerts = run_all_checks(results)
+            if integrity_alerts:
+                save_check_result(integrity_alerts)
+            # 重大アラートがあれば通知テキスト出力（GitHub Actions等で拾える）
+            notification = format_notification(integrity_alerts)
+            if notification:
+                # 通知テキストをファイルに保存（外部から読める形で）
+                notif_path = Path('data/alerts/latest_notification.txt')
+                notif_path.parent.mkdir(parents=True, exist_ok=True)
+                notif_path.write_text(notification, encoding='utf-8')
+                print(f'\n📱 重大アラート通知テキスト保存: {notif_path}')
+        except Exception as e:
+            print(f'⚠ 整合性チェックエラー: {e}')
 
         # ランキングデータ取得（差玉TOP10）
         print('\n' + '=' * 60)
