@@ -4164,6 +4164,13 @@ strong.minus {
     background: rgba(0, 0, 0, 0.3);
     border-radius: 6px;
     padding: 8px 4px;
+    overflow: hidden;
+}
+.line-chart-container svg {
+    width: 100%;
+    height: auto;
+    display: block;
+    max-width: 100%;
 }
 .line-chart {
     width: 100%;
