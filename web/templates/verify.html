@@ -34,6 +34,19 @@
             </section>
             {% else %}
 
+            <!-- 店×機種別 的中率ヘッダー -->
+            {% if store_accuracy_header %}
+            <section class="verify-top-header">
+                {% for sa in store_accuracy_header %}
+                <div class="verify-top-item">
+                    <span class="verify-top-rate {% if sa.rate >= 100 %}rainbow{% elif sa.rate >= 80 %}hot{% elif sa.rate >= 60 %}good{% elif sa.rate >= 40 %}ok{% else %}cold{% endif %}">{{ sa.rate }}%</span>
+                    <span class="verify-top-machine">{{ sa.machine_name }}</span>
+                    <span class="verify-top-store">{{ sa.store_name }}</span>
+                </div>
+                {% endfor %}
+            </section>
+            {% endif %}
+
             <!-- 的中率サマリ -->
             <section class="verify-summary">
                 <div class="verify-accuracy">

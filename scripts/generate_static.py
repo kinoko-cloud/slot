@@ -1578,6 +1578,25 @@ def _generate_verify_from_backtest(env, results):
             'total_good': m_actual + m_surprise, 'rate': m_rate,
         })
     
+    # 店×機種別の的中率ヘッダー（最上部テキスト表示用）
+    store_accuracy_header = []
+    for mk, md in verify_data.items():
+        for si, sd in enumerate(md['stores']):
+            _units = sd.get('units', [])
+            _valid = [u for u in _units if u.get('actual_prob', 0) > 0 and u.get('actual_games', 0) >= 500]
+            _sa = [u for u in _valid if u.get('predicted_rank') in ('S', 'A')]
+            if len(_sa) >= 2:
+                _hit = sum(1 for u in _sa if u.get('verdict_class') in ('perfect', 'hit'))
+                _rate = int(_hit / len(_sa) * 100)
+                store_accuracy_header.append({
+                    'rate': _rate,
+                    'machine_name': md['name'],
+                    'store_name': sd.get('store_name', sd.get('name', '')),
+                    'hit': _hit,
+                    'total': len(_sa),
+                })
+    store_accuracy_header.sort(key=lambda x: (-x['rate'], -x['total']))
+
     perfect_stores = []
     for mk, md in verify_data.items():
         for si, sd in enumerate(md['stores']):
@@ -1701,6 +1720,7 @@ def _generate_verify_from_backtest(env, results):
         machine_accuracy=machine_accuracy,
         topics=topics,
         perfect_stores=perfect_stores,
+        store_accuracy_header=store_accuracy_header,
         version=f'backtest_{actual_date}',
         result_date_str=f'{_fmt_date(actual_date)}の実績',
         predict_base=predict_time_info,
