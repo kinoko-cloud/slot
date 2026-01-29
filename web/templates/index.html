@@ -56,14 +56,6 @@
             {# === 結果バナー === #}
             <a href="{{ url_for('verify') }}" class="verify-banner-lg">
                 <div class="vb-circles-row">
-                    {% if verify_accuracy %}
-                    <div class="vb-circle-item">
-                        <div class="vb-circle {% if verify_accuracy >= 60 %}good{% elif verify_accuracy >= 40 %}ok{% else %}bad{% endif %}">
-                            <span class="vb-circle-num">{{ verify_accuracy }}%</span>
-                        </div>
-                        <span class="vb-circle-label">全体</span>
-                    </div>
-                    {% endif %}
                     {% if verify_categories %}
                     {% for cat in verify_categories %}
                     <div class="vb-circle-item">
