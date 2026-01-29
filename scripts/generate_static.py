@@ -1658,6 +1658,8 @@ def _generate_verify_from_backtest(env, results):
                     'total': len(_sa),
                 })
     store_accuracy_header.sort(key=lambda x: (-x['rate'], -x['total']))
+    # 良い結果のみ表示（60%以上）
+    store_accuracy_header = [s for s in store_accuracy_header if s['rate'] >= 60]
 
     perfect_stores = []
     for mk, md in verify_data.items():
@@ -2091,6 +2093,7 @@ def generate_verify_page(env):
                     'total': len(_sa),
                 })
     store_accuracy_header.sort(key=lambda x: (-x['rate'], -x['total']))
+    store_accuracy_header = [s for s in store_accuracy_header if s['rate'] >= 60]
 
     html = template.render(
         verify_data=verify_data,
