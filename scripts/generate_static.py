@@ -858,6 +858,7 @@ def generate_index(env):
         verify_date_str=_get_verify_date_str(),
         verify_accuracy=_get_verify_accuracy(),
         verify_highlights=_get_verify_highlights(),
+        verify_categories=_get_verify_by_category(),
         date_prefix=date_prefix,
         next_day_prefix=next_day_prefix,
         next_day_str=next_day_str,
@@ -1338,6 +1339,49 @@ def _get_verify_accuracy():
     except:
         pass
     return 0
+
+
+def _get_verify_by_category():
+    """機種別・店別の的中率を返す（トップページ表示用、最大3件）"""
+    files = sorted(glob.glob('data/verify/verify_*_results.json'), reverse=True)
+    if not files:
+        return []
+    try:
+        data = json.load(open(files[0]))
+        by_cat = {}  # {label: {sa, hit, icon}}
+        for sk, units in data.get('units', {}).items():
+            mk = data['stores'][sk].get('machine_key', 'sbj')
+            sn = data['stores'][sk].get('name', sk)
+            # 機種別
+            mk_label = 'SBJ' if mk == 'sbj' else '北斗'
+            mk_icon = '🎰' if mk == 'sbj' else '⚔️'
+            if mk_label not in by_cat:
+                by_cat[mk_label] = {'sa': 0, 'hit': 0, 'icon': mk_icon}
+            for u in units:
+                prob = u.get('actual_prob', 0)
+                games = u.get('actual_games', 0)
+                if prob <= 0 or games < 500:
+                    continue
+                if u.get('predicted_rank') in ('S', 'A'):
+                    by_cat[mk_label]['sa'] += 1
+                    if u.get('verdict_class') in ('perfect', 'hit'):
+                        by_cat[mk_label]['hit'] += 1
+        
+        result = []
+        for label in ['SBJ', '北斗']:
+            d = by_cat.get(label)
+            if d and d['sa'] > 0:
+                rate = int(d['hit'] / d['sa'] * 100)
+                result.append({
+                    'label': label,
+                    'icon': d['icon'],
+                    'rate': rate,
+                    'hit': d['hit'],
+                    'total': d['sa'],
+                })
+        return result
+    except:
+        return []
 
 
 def _get_verify_highlights():

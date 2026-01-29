@@ -55,11 +55,26 @@
         <main>
             {# === 結果バナー === #}
             <a href="{{ url_for('verify') }}" class="verify-banner-lg">
-                {% if verify_accuracy %}
-                <div class="vb-circle {% if verify_accuracy >= 60 %}good{% elif verify_accuracy >= 40 %}ok{% else %}bad{% endif %}">
-                    <span class="vb-circle-num">{{ verify_accuracy }}%</span>
+                <div class="vb-circles-row">
+                    {% if verify_accuracy %}
+                    <div class="vb-circle-item">
+                        <div class="vb-circle {% if verify_accuracy >= 60 %}good{% elif verify_accuracy >= 40 %}ok{% else %}bad{% endif %}">
+                            <span class="vb-circle-num">{{ verify_accuracy }}%</span>
+                        </div>
+                        <span class="vb-circle-label">全体</span>
+                    </div>
+                    {% endif %}
+                    {% if verify_categories %}
+                    {% for cat in verify_categories %}
+                    <div class="vb-circle-item">
+                        <div class="vb-circle {% if cat.rate >= 60 %}good{% elif cat.rate >= 40 %}ok{% else %}bad{% endif %}">
+                            <span class="vb-circle-num">{{ cat.rate }}%</span>
+                        </div>
+                        <span class="vb-circle-label">{{ cat.icon }} {{ cat.label }}</span>
+                    </div>
+                    {% endfor %}
+                    {% endif %}
                 </div>
-                {% endif %}
                 <div class="vb-lg-info">
                     <span class="vb-title-lg">{% if verify_date_str %}{{ verify_date_str }}{% else %}昨日{% endif %}の的中率</span>
                     {% if verify_highlights %}
