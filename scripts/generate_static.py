@@ -1352,7 +1352,7 @@ def _get_verify_by_category():
         for sk, units in data.get('units', {}).items():
             mk = data['stores'][sk].get('machine_key', 'sbj')
             sn = data['stores'][sk].get('name', sk)
-            mk_short = 'SBJ' if mk == 'sbj' else '北斗'
+            mk_short = 'SBJ' if mk == 'sbj' else '北斗転生2'
             mk_icon = '🎰' if mk == 'sbj' else '⚔️'
             key = f"{sn}|{mk_short}"
             if key not in by_store:
@@ -1375,7 +1375,7 @@ def _get_verify_by_category():
         for d in candidates[:2]:
             rate = int(d['hit'] / d['sa'] * 100)
             result.append({
-                'label': f"{d['store']}\n{d['icon']}{d['mk']}",
+                'label': f"{d['icon']}{d['mk']}\n{d['store']}",
                 'rate': rate,
                 'hit': d['hit'],
                 'total': d['sa'],
