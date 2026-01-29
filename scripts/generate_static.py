@@ -1367,9 +1367,9 @@ def _get_verify_by_category():
                     if u.get('verdict_class') in ('perfect', 'hit'):
                         by_store[key]['hit'] += 1
         
-        # S/A台が3台以上ある店から的中率の高い順に2つ
-        candidates = [d for d in by_store.values() if d['sa'] >= 3]
-        candidates.sort(key=lambda x: -x['hit'] / x['sa'])
+        # S/A台が2台以上ある店から的中率の高い順に2つ（同率は台数多い方優先）
+        candidates = [d for d in by_store.values() if d['sa'] >= 2]
+        candidates.sort(key=lambda x: (-x['hit'] / x['sa'], -x['sa']))
         
         result = []
         for d in candidates[:2]:
