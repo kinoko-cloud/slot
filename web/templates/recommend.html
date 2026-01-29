@@ -41,10 +41,21 @@
 </head>
 <body data-page-type="recommend" data-store-key="{{ store_key }}">
     <div class="container">
+        {# === トップバー === #}
+        <div class="top-bar">
+            <div class="top-bar-left">
+                <a href="{{ url_for('index') }}" class="back-link">&lt; トップ</a>
+            </div>
+            <div class="top-bar-right">
+                <span class="version-info" id="version-info">{{ now_short }}</span>
+            </div>
+        </div>
         <header>
-            <a href="{{ url_for('index') }}" class="back-link">&lt; トップに戻る</a>
             <h1>{{ store.name }}</h1>
             <div class="machine-label">{{ machine.icon }} {{ machine.short_name }}</div>
+            {% if data_date_str %}
+            <div class="data-date-label">📅 データ: {{ data_date_str }}まで</div>
+            {% endif %}
             <div class="realtime-bar">
                 <span id="realtime-status" class="realtime-status">読込中...</span>
                 <button onclick="refreshData()" class="refresh-btn">🔄 更新</button>
@@ -553,6 +564,21 @@
             startScraping();
         });
         {% endif %}
+    /* ver時刻更新 */
+    (function() {
+        function updateVersionTime() {
+            var now = new Date();
+            var jst = new Date(now.getTime() + (now.getTimezoneOffset() + 540) * 60000);
+            var mm = String(jst.getMonth() + 1).padStart(2, '0');
+            var dd = String(jst.getDate()).padStart(2, '0');
+            var hh = String(jst.getHours()).padStart(2, '0');
+            var mi = String(jst.getMinutes()).padStart(2, '0');
+            var el = document.getElementById('version-info');
+            if (el) el.textContent = mm + dd + '_' + hh + ':' + mi;
+        }
+        updateVersionTime();
+        setInterval(updateVersionTime, 60000);
+    })();
     </script>
 </body>
 </html>

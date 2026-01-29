@@ -14,9 +14,11 @@
         <div class="top-bar">
             <div class="top-bar-left">
                 <img src="{{ url_for('static', filename='logo.svg') }}" alt="スロプロMAX" class="site-logo">
-                <span class="version-info">{{ now_short }}</span>
             </div>
-            <button class="hamburger-btn" onclick="document.getElementById('hamburger-menu').classList.toggle('hidden')" aria-label="メニュー">☰</button>
+            <div class="top-bar-right">
+                <span class="version-info" id="version-info">{{ now_short }}</span>
+                <button class="hamburger-btn" onclick="document.getElementById('hamburger-menu').classList.toggle('hidden')" aria-label="メニュー">☰</button>
+            </div>
         </div>
         {# === ハンバーガーメニュー === #}
         <nav id="hamburger-menu" class="hamburger-menu hidden">
@@ -1070,6 +1072,56 @@
             el.classList.remove('active');
         }
     }
+
+    /* === 動的モード切替 + ver時刻更新 === */
+    (function() {
+        function getDisplayMode() {
+            var now = new Date();
+            // JST = UTC+9
+            var jst = new Date(now.getTime() + (now.getTimezoneOffset() + 540) * 60000);
+            var h = jst.getHours(), m = jst.getMinutes();
+            if (h < 10) return 'before_open';
+            if (h >= 23 || (h === 22 && m >= 50)) return 'after_close';
+            return 'realtime';
+        }
+
+        function updateModeBadge() {
+            var mode = getDisplayMode();
+            var badge = document.querySelector('.mode-badge');
+            if (!badge) return;
+            badge.className = 'mode-badge';
+            if (mode === 'before_open') {
+                badge.classList.add('before-open');
+                badge.textContent = '🌙 営業前';
+            } else if (mode === 'after_close') {
+                badge.classList.add('after-close');
+                badge.textContent = '🔒 閉店後';
+            } else {
+                badge.classList.add('realtime');
+                badge.textContent = '🟢 営業中';
+            }
+        }
+
+        function updateVersionTime() {
+            var now = new Date();
+            var jst = new Date(now.getTime() + (now.getTimezoneOffset() + 540) * 60000);
+            var mm = String(jst.getMonth() + 1).padStart(2, '0');
+            var dd = String(jst.getDate()).padStart(2, '0');
+            var hh = String(jst.getHours()).padStart(2, '0');
+            var mi = String(jst.getMinutes()).padStart(2, '0');
+            var el = document.getElementById('version-info');
+            if (el) el.textContent = mm + dd + '_' + hh + ':' + mi;
+        }
+
+        // 初回実行
+        updateModeBadge();
+        updateVersionTime();
+        // 1分ごとに更新
+        setInterval(function() {
+            updateModeBadge();
+            updateVersionTime();
+        }, 60000);
+    })();
     </script>
 </body>
 </html>
