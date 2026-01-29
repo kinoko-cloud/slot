@@ -41,15 +41,10 @@
 </head>
 <body data-page-type="recommend" data-store-key="{{ store_key }}">
     <div class="container">
-        {# === トップバー === #}
-        <div class="top-bar">
-            <div class="top-bar-left">
-                <a href="{{ url_for('index') }}" class="back-link">&lt; トップ</a>
-            </div>
-            <div class="top-bar-right">
-                <span class="version-info" id="version-info">{{ now_short }}</span>
-            </div>
-        </div>
+        {# === トップバー（共通） === #}
+        {% set back_url = url_for('index') %}
+        {% set show_hamburger = false %}
+        {% include '_topbar.html' %}
         <header>
             <h1>{{ store.name }}</h1>
             <div class="machine-label">{{ machine.icon }} {{ machine.short_name }}</div>
@@ -564,21 +559,7 @@
             startScraping();
         });
         {% endif %}
-    /* ver時刻更新 */
-    (function() {
-        function updateVersionTime() {
-            var now = new Date();
-            var jst = new Date(now.getTime() + (now.getTimezoneOffset() + 540) * 60000);
-            var mm = String(jst.getMonth() + 1).padStart(2, '0');
-            var dd = String(jst.getDate()).padStart(2, '0');
-            var hh = String(jst.getHours()).padStart(2, '0');
-            var mi = String(jst.getMinutes()).padStart(2, '0');
-            var el = document.getElementById('version-info');
-            if (el) el.textContent = mm + dd + '_' + hh + ':' + mi;
-        }
-        updateVersionTime();
-        setInterval(updateVersionTime, 60000);
-    })();
+    {% include '_common_js.html' %}
     </script>
 </body>
 </html>

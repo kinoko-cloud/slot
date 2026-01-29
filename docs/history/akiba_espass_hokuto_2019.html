@@ -10,8 +10,26 @@
 </head>
 <body data-page-type="unit-history">
     <div class="container">
+        
+        
+        
+        
+        
+<div class="top-bar">
+    <div class="top-bar-left">
+        
+        <a href="/recommend/akiba_espass_hokuto.html" class="back-link">&lt; エスパス日拓秋葉原駅前店</a>
+        
+        
+        <img src="/static/logo.svg" alt="スロプロMAX" class="site-logo">
+        
+    </div>
+    <div class="top-bar-right">
+        <span class="version-info" id="build-ver" title="ビルド時刻">v0130_07:32</span>
+        
+    </div>
+</div>
         <header>
-            <a href="/recommend/akiba_espass_hokuto.html" class="back-link">&lt; エスパス日拓秋葉原駅前店</a>
             <h1>2019番台 履歴</h1>
             <div class="machine-label">👊 北斗の拳 転生の章2</div>
             <div class="uh-meta">
@@ -5595,6 +5613,50 @@
             toggle.textContent = '▲';
         }
     }
+    
+/* === 共通: 動的モード切替 + 現在時刻 === */
+(function() {
+    function getJST() {
+        var now = new Date();
+        return new Date(now.getTime() + (now.getTimezoneOffset() + 540) * 60000);
+    }
+    function getDisplayMode() {
+        var jst = getJST();
+        var h = jst.getHours(), m = jst.getMinutes();
+        if (h < 10) return 'before_open';
+        if (h >= 23 || (h === 22 && m >= 50)) return 'after_close';
+        return 'realtime';
+    }
+    function updateModeBadge() {
+        var mode = getDisplayMode();
+        var badge = document.querySelector('.mode-badge');
+        if (!badge) return;
+        badge.className = 'mode-badge';
+        if (mode === 'before_open') {
+            badge.classList.add('before-open');
+            badge.textContent = '🌙 営業前';
+        } else if (mode === 'after_close') {
+            badge.classList.add('after-close');
+            badge.textContent = '🔒 閉店後';
+        } else {
+            badge.classList.add('realtime');
+            badge.textContent = '🟢 営業中';
+        }
+    }
+    function updateCurrentTime() {
+        var jst = getJST();
+        var hh = String(jst.getHours()).padStart(2, '0');
+        var mi = String(jst.getMinutes()).padStart(2, '0');
+        var el = document.getElementById('current-time');
+        if (el) el.textContent = hh + ':' + mi;
+    }
+    updateModeBadge();
+    updateCurrentTime();
+    setInterval(function() {
+        updateModeBadge();
+        updateCurrentTime();
+    }, 60000);
+})();
     </script>
 </body>
 </html>

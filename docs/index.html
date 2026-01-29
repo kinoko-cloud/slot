@@ -6,20 +6,26 @@
     <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
     <meta name="googlebot" content="noindex, nofollow">
     <title>本日のおすすめ台</title>
-    <link rel="stylesheet" href="/static/style.css?v=20260130071926">
+    <link rel="stylesheet" href="/static/style.css?v=20260130073220">
 </head>
 <body data-page-type="index">
     <div class="container">
         
-        <div class="top-bar">
-            <div class="top-bar-left">
-                <img src="/static/logo.svg" alt="スロプロMAX" class="site-logo">
-            </div>
-            <div class="top-bar-right">
-                <span class="version-info" id="version-info">0130_07:19</span>
-                <button class="hamburger-btn" onclick="document.getElementById('hamburger-menu').classList.toggle('hidden')" aria-label="メニュー">☰</button>
-            </div>
-        </div>
+        
+<div class="top-bar">
+    <div class="top-bar-left">
+        
+        
+        <img src="/static/logo.svg" alt="スロプロMAX" class="site-logo">
+        
+    </div>
+    <div class="top-bar-right">
+        <span class="version-info" id="build-ver" title="ビルド時刻">v0130_07:32</span>
+        
+        <button class="hamburger-btn" onclick="document.getElementById('hamburger-menu').classList.toggle('hidden')" aria-label="メニュー">☰</button>
+        
+    </div>
+</div>
         
         <nav id="hamburger-menu" class="hamburger-menu hidden">
             <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});document.getElementById('hamburger-menu').classList.add('hidden');return false;">🏠 トップ</a>
@@ -74,10 +80,13 @@
             
         </nav>
         <header>
-            
             <h1><span class="title-main">本日 1月30日(金)のおすすめ台</span></h1>
-            <div class="mode-badge before-open">🌙 営業前</div>
-            
+            <div class="mode-line">
+                
+                <div class="mode-badge before-open">🌙 営業前</div>
+                
+                <span class="current-time" id="current-time"></span>
+            </div>
             <div class="realtime-bar">
                 <span id="realtime-status" class="realtime-status">読込中...</span>
                 <button onclick="refreshData()" class="refresh-btn">🔄 更新</button>
@@ -14060,7 +14069,7 @@
 
         <footer>
             <p><a href="/verify.html" class="footer-link">的中結果</a></p>
-            <p class="build-time">ビルド: 2026-01-30 07:19:26</p>
+            <p class="build-time">ビルド: 2026-01-30 07:32:20</p>
         </footer>
     </div>
     <script src="/static/realtime.js"></script>
@@ -14110,55 +14119,50 @@
         }
     }
 
-    /* === 動的モード切替 + ver時刻更新 === */
-    (function() {
-        function getDisplayMode() {
-            var now = new Date();
-            // JST = UTC+9
-            var jst = new Date(now.getTime() + (now.getTimezoneOffset() + 540) * 60000);
-            var h = jst.getHours(), m = jst.getMinutes();
-            if (h < 10) return 'before_open';
-            if (h >= 23 || (h === 22 && m >= 50)) return 'after_close';
-            return 'realtime';
+    
+/* === 共通: 動的モード切替 + 現在時刻 === */
+(function() {
+    function getJST() {
+        var now = new Date();
+        return new Date(now.getTime() + (now.getTimezoneOffset() + 540) * 60000);
+    }
+    function getDisplayMode() {
+        var jst = getJST();
+        var h = jst.getHours(), m = jst.getMinutes();
+        if (h < 10) return 'before_open';
+        if (h >= 23 || (h === 22 && m >= 50)) return 'after_close';
+        return 'realtime';
+    }
+    function updateModeBadge() {
+        var mode = getDisplayMode();
+        var badge = document.querySelector('.mode-badge');
+        if (!badge) return;
+        badge.className = 'mode-badge';
+        if (mode === 'before_open') {
+            badge.classList.add('before-open');
+            badge.textContent = '🌙 営業前';
+        } else if (mode === 'after_close') {
+            badge.classList.add('after-close');
+            badge.textContent = '🔒 閉店後';
+        } else {
+            badge.classList.add('realtime');
+            badge.textContent = '🟢 営業中';
         }
-
-        function updateModeBadge() {
-            var mode = getDisplayMode();
-            var badge = document.querySelector('.mode-badge');
-            if (!badge) return;
-            badge.className = 'mode-badge';
-            if (mode === 'before_open') {
-                badge.classList.add('before-open');
-                badge.textContent = '🌙 営業前';
-            } else if (mode === 'after_close') {
-                badge.classList.add('after-close');
-                badge.textContent = '🔒 閉店後';
-            } else {
-                badge.classList.add('realtime');
-                badge.textContent = '🟢 営業中';
-            }
-        }
-
-        function updateVersionTime() {
-            var now = new Date();
-            var jst = new Date(now.getTime() + (now.getTimezoneOffset() + 540) * 60000);
-            var mm = String(jst.getMonth() + 1).padStart(2, '0');
-            var dd = String(jst.getDate()).padStart(2, '0');
-            var hh = String(jst.getHours()).padStart(2, '0');
-            var mi = String(jst.getMinutes()).padStart(2, '0');
-            var el = document.getElementById('version-info');
-            if (el) el.textContent = mm + dd + '_' + hh + ':' + mi;
-        }
-
-        // 初回実行
+    }
+    function updateCurrentTime() {
+        var jst = getJST();
+        var hh = String(jst.getHours()).padStart(2, '0');
+        var mi = String(jst.getMinutes()).padStart(2, '0');
+        var el = document.getElementById('current-time');
+        if (el) el.textContent = hh + ':' + mi;
+    }
+    updateModeBadge();
+    updateCurrentTime();
+    setInterval(function() {
         updateModeBadge();
-        updateVersionTime();
-        // 1分ごとに更新
-        setInterval(function() {
-            updateModeBadge();
-            updateVersionTime();
-        }, 60000);
-    })();
+        updateCurrentTime();
+    }, 60000);
+})();
     </script>
 </body>
 </html>

@@ -906,10 +906,12 @@ def generate_machine_pages(env):
             for key, store in stores.items()
         ]
 
+        now = datetime.now(JST)
         html = template.render(
             machine=machine,
             machine_key=machine_key,
             stores=store_list,
+            now_short=now.strftime('%m%d_%H:%M'),
         )
 
         output_path = output_subdir / f'{machine_key}.html'
@@ -1833,6 +1835,7 @@ def _generate_verify_from_backtest(env, results):
     _total_good_all = total_hit + total_surprise
 
     template = env.get_template('verify.html')
+    now = datetime.now(JST)
     html = template.render(
         verify_data=verify_data,
         accuracy=accuracy,
@@ -1848,6 +1851,7 @@ def _generate_verify_from_backtest(env, results):
         version=f'backtest_{actual_date}',
         result_date_str=f'{_fmt_date(actual_date)}の実績',
         predict_base=predict_time_info,
+        now_short=now.strftime('%m%d_%H:%M'),
     )
     
     output_path = OUTPUT_DIR / 'verify.html'
@@ -2154,6 +2158,7 @@ def generate_verify_page(env):
                 })
     store_accuracy_header.sort(key=lambda x: (-x['rate'], -x['total']))
 
+    now = datetime.now(JST)
     html = template.render(
         verify_data=verify_data,
         accuracy=accuracy,
@@ -2168,6 +2173,7 @@ def generate_verify_page(env):
         topics=[],
         perfect_stores=perfect_stores,
         store_accuracy_header=store_accuracy_header,
+        now_short=now.strftime('%m%d_%H:%M'),
     )
 
     output_path = OUTPUT_DIR / 'verify.html'
@@ -2205,6 +2211,7 @@ def generate_history_pages(env):
 
             if not acc_days:
                 # データが無い台もページだけは作成（空表示）
+                now = datetime.now(JST)
                 html = template.render(
                     store=store,
                     store_key=store_key,
@@ -2213,6 +2220,7 @@ def generate_history_pages(env):
                     machine_key=machine_key,
                     days=[],
                     total_summary=None,
+                    now_short=now.strftime('%m%d_%H:%M'),
                 )
                 output_path = output_subdir / f'{store_key}_{unit_id_str}.html'
                 output_path.write_text(html, encoding='utf-8')
@@ -2304,6 +2312,7 @@ def generate_history_pages(env):
                 'total_diff_medals': total_diff,
             }
 
+            now = datetime.now(JST)
             html = template.render(
                 store=store,
                 store_key=store_key,
@@ -2312,6 +2321,7 @@ def generate_history_pages(env):
                 machine_key=machine_key,
                 days=template_days,
                 total_summary=total_summary,
+                now_short=now.strftime('%m%d_%H:%M'),
             )
 
             output_path = output_subdir / f'{store_key}_{unit_id_str}.html'

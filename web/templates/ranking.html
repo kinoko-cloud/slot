@@ -11,14 +11,22 @@
 </head>
 <body>
     <div class="container">
-        <div class="version-info">{{ now_short }} Ver.</div>
+        {# === トップバー（共通） === #}
+        {% set back_url = url_for('machine_stores', machine_key=machine_key) %}
+        {% set back_text = '店舗選択' %}
+        {% set show_hamburger = false %}
+        {% include '_topbar.html' %}
         <header>
-            <a href="{{ url_for('machine_stores', machine_key=machine_key) }}" class="back-link">&lt; 店舗選択</a>
             <h1>{{ machine.icon }} {{ machine.short_name }}</h1>
             <div class="update-info">全店舗総合ランキング ({{ total_count }}台)</div>
-            {% if night_mode %}
-            <div class="mode-badge tomorrow">🌙 明日のおすすめ予想</div>
-            {% endif %}
+            <div class="mode-line">
+                {% if night_mode %}
+                <div class="mode-badge tomorrow">🌙 明日のおすすめ予想</div>
+                {% else %}
+                <div class="mode-badge before-open">🌙 営業前</div>
+                {% endif %}
+                <span class="current-time" id="current-time"></span>
+            </div>
         </header>
 
         <!-- ランク説明 -->
@@ -269,6 +277,7 @@
                 }
             }
         }
+    {% include '_common_js.html' %}
     </script>
 </body>
 </html>
