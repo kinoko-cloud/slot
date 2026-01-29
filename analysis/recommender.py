@@ -2381,6 +2381,53 @@ def generate_store_analysis(store_key: str, daily_data: dict = None) -> dict:
     }
 
 
+def _estimate_store_good_rate(store_key: str, machine_key: str, perf_days_all=None) -> float:
+    """店×機種の好調台率を推定する（S/A枠制限用）
+    
+    蓄積DBから各台の過去実績を集計して、店全体の好調率を返す。
+    データ不足時は保守的に0.35を返す。
+    """
+    try:
+        from analysis.history_accumulator import load_unit_history
+        import glob, os
+        
+        store_mk_key = f"{store_key}_{machine_key}"
+        hist_dir = f"data/history/{store_mk_key}"
+        if not os.path.exists(hist_dir):
+            # フォールバック: store_key直下
+            hist_dir = f"data/history/{store_key}"
+        
+        if not os.path.exists(hist_dir):
+            return 0.35
+        
+        good_prob = get_machine_threshold(machine_key, 'good_prob')
+        total_unit_days = 0
+        good_unit_days = 0
+        
+        for f in glob.glob(f"{hist_dir}/*.json"):
+            try:
+                import json as _json
+                data = _json.load(open(f))
+                for d in data.get('days', []):
+                    art = d.get('art', 0)
+                    games = d.get('games', 0) or d.get('total_start', 0)
+                    if art > 0 and games > 500:
+                        total_unit_days += 1
+                        prob = games / art
+                        mm = d.get('max_medals', 0)
+                        if prob <= good_prob or mm >= 1500:
+                            good_unit_days += 1
+            except:
+                pass
+        
+        if total_unit_days >= 20:
+            return good_unit_days / total_unit_days
+    except:
+        pass
+    
+    return 0.35  # デフォルト: 保守的
+
+
 def recommend_units(store_key: str, realtime_data: dict = None, availability: dict = None,
                     data_date_label: str = None, prev_date_label: str = None) -> list:
     """推奨台リストを生成
@@ -3183,16 +3230,19 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
 
             rec['final_rank'] = absolute_rank
 
-        # 4. S/A台数の上限制限（全台Sにならないようにする）
-        # 島の50%以上がS/Aになるのは非現実的
-        max_sa_ratio = 0.5  # S+Aは最大50%
-        max_sa_count = max(3, int(n * max_sa_ratio))  # 最低3台は許可
+        # 4. S/A台数の上限制限
+        # 店×機種の好調率に基づいてS/A枠を決定
+        # 好調率がわからない場合は保守的に35%
+        _store_good_rate = _estimate_store_good_rate(store_key, machine_key, perf_days_all=sorted_by_score)
+        # S/A枠 = 好調率の半分程度（好調台の全部をS/Aにする必要はない）
+        # 好調率70%の店 → S/A枠35%、好調率50%の店 → S/A枠25%
+        max_sa_ratio = min(0.40, max(0.15, _store_good_rate * 0.5))
+        max_sa_count = max(2, int(n * max_sa_ratio))
         sa_count = 0
         for rec in sorted_by_score:
             if rec['final_rank'] in ('S', 'A'):
                 sa_count += 1
                 if sa_count > max_sa_count:
-                    # 上限超過分はBに降格
                     rec['final_rank'] = 'B'
 
     # スコア順にソート（稼働中の台は少し下げる）
