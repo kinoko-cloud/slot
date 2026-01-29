@@ -1140,6 +1140,22 @@ def generate_recommend_pages(env):
         # 台番号アラート
         store_alerts = [a for a in get_active_alerts() if a.get('store_key') == store_key]
 
+        # データ日付ラベル（蓄積DBの最新日付を取得）
+        data_date_str = None
+        try:
+            from analysis.history_accumulator import load_unit_history
+            _units = store.get('units', [])
+            if _units:
+                _hist = load_unit_history(store_key, str(_units[0]))
+                if _hist and _hist.get('days'):
+                    _latest = max(d.get('date', '') for d in _hist['days'])
+                    if _latest:
+                        _dt = datetime.strptime(_latest, '%Y-%m-%d')
+                        data_date_str = f"{_dt.month}/{_dt.day}({WEEKDAY_NAMES[_dt.weekday()]})"
+        except Exception:
+            pass
+
+        now = datetime.now(JST)
         html = template.render(
             store=store,
             store_key=store_key,
@@ -1147,13 +1163,15 @@ def generate_recommend_pages(env):
             machine_key=machine_key,
             top_recs=top_recs,
             other_recs=other_recs,
-            updated_at=datetime.now(JST).strftime('%H:%M'),
+            updated_at=now.strftime('%H:%M'),
+            now_short=now.strftime('%m%d_%H:%M'),
             cache_info=cache_info,
             availability_info=availability_info,
             is_open=is_open,
             display_mode=display_mode,
             store_analysis=store_analysis,
             unit_alerts=store_alerts,
+            data_date_str=data_date_str,
         )
 
         output_path = output_subdir / f'{store_key}.html'

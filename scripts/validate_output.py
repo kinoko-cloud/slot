@@ -139,19 +139,13 @@ def _validate_index(content, expected_mode, expected_verify_dt, expected_rec_dt,
     """index.htmlの検証"""
     issues = []
 
-    # 1. 時間帯モードチェック（mode-badgeの内容で判定）
+    # 1. 時間帯モードチェック
+    # ※ mode-badgeはクライアントサイドJSで現在時刻に基づいて動的更新される
+    # HTMLに焼き付いた値はビルド時のもの。JSが上書きするのでERRORにしない
     badges = re.findall(r'mode-badge[^>]*>([^<]+)', content)
     badge_text = badges[0].strip() if badges else ''
-    
-    if expected_mode == 'before_open':
-        if '営業前' not in badge_text and '開店前' not in badge_text:
-            issues.append(f'ERROR: 開店前モードのはずだがバッジが「{badge_text}」(now={now.strftime("%H:%M")})')
-    elif expected_mode == 'after_close':
-        if '閉店' not in badge_text and '営業終了' not in badge_text:
-            issues.append(f'ERROR: 閉店後モードのはずだがバッジが「{badge_text}」(now={now.strftime("%H:%M")})')
-    elif expected_mode == 'realtime':
-        if '営業中' not in badge_text:
-            issues.append(f'WARN: 営業中モードのはずだがバッジが「{badge_text}」')
+    if not badge_text:
+        issues.append(f'WARN: mode-badgeが見つからない')
 
     # 2. 的中率ヒーローカードのチェック
     hero_cards = re.findall(r'hero-rate-card', content)

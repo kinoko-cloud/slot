@@ -5973,10 +5973,21 @@ a.perfect-card:hover { background: rgba(255,215,0,0.18); }
     align-items: center;
     gap: 8px;
 }
-.top-bar-left .version-info {
+.top-bar-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.top-bar-right .version-info {
     font-size: 0.65em;
     color: #555;
     position: static;
+    white-space: nowrap;
+}
+.data-date-label {
+    font-size: 0.78em;
+    color: #8a8aaa;
+    margin: 4px 0 0;
 }
 
 /* プルダウン店舗メニュー */
