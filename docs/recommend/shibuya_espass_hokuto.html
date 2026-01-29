@@ -28,14 +28,18 @@
                 </span>
                 <span class="cache-badge github">GITHUB</span>
                 
-                <div class="stale-warning">データが10時間59分前のものです</div>
+                <div class="stale-warning">データが11時間18分前のものです</div>
                 
                 
             </div>
 
             <!-- 空き状況サマリ -->
             
-            <div class="closed-notice">現在営業時間外です</div>
+            <div class="availability-summary">
+                <span class="avail-empty" onclick="filterUnits('empty')">空き 30台</span>
+                <span class="avail-playing" onclick="filterUnits('playing')">遊技中 0台</span>
+                <span class="avail-all" onclick="filterUnits('all')">全て</span>
+            </div>
             
 
             <div class="action-buttons">
@@ -108,29 +112,41 @@
                         <span class="unit-id-large">2046番台</span>
                         <span class="machine-name-sm">北斗の拳 転生の章2</span>
                         
+                            
+                            <span class="avail-badge-lg empty">空き</span>
+                            
+                        
                         <span class="rank-badge-lg" style="background-color: #ffa502">A</span>
                         <span class="expand-icon">▼</span>
                     </div>
 
                     
-                    
-                    
-                    <div class="reasons-full">
-                        
-                        
-                        
-                        <div class="reason-line-top reason-today">💡 好調台(1/109)が途中放棄 → おいしい台</div>
-                        
-                        
-                        
-                        <div class="reason-line-top reason-rank">📊 過去データAランク: 高設定が入りやすい台</div>
-                        
-                        
-                        
-                        <div class="reason-line-top reason-warn">🚨 前日はART確率1/172でやや不調（全台中央値1/94）</div>
-                        
-                        
-                        
+                    <!-- 営業中: リアルタイムデータ -->
+                    <div class="today-data-row">
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">0</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            
+                        </div>
+                        <div class="data-row-secondary">
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">0</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell ">
+                                <span class="data-value">0</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">0</span>
+                                <span class="data-label">累計G</span>
+                            </div>
+                        </div>
                     </div>
                     
 
@@ -2471,6 +2487,14 @@
 
                     <!-- 推奨理由（営業中のみ — 閉店後は上に表示済み） -->
                     
+                    <div class="reason-main">
+                        
+                        <div class="reason-line reason-confidence">💡 好調台(1/109)が途中放棄 → おいしい台</div>
+                        
+                        <div class="reason-line reason-rank">📊 過去データAランク: 高設定が入りやすい台</div>
+                        
+                    </div>
+                    
 
                     </summary>
                     <!-- 詳細（展開） -->
@@ -2847,33 +2871,41 @@
                         <span class="unit-id-large">2061番台</span>
                         <span class="machine-name-sm">北斗の拳 転生の章2</span>
                         
+                            
+                            <span class="avail-badge-lg empty">空き</span>
+                            
+                        
                         <span class="rank-badge-lg" style="background-color: #ffa502">A</span>
                         <span class="expand-icon">▼</span>
                     </div>
 
                     
-                    
-                    
-                    <div class="reasons-full">
-                        
-                        
-                        
-                        <div class="reason-line-top reason-pattern">🔄 7日連続好調 + エスパス渋谷新館は木曜が狙い目 → 据え置き濃厚</div>
-                        
-                        
-                        
-                        <div class="reason-line-top reason-today">💡 好調台(1/65)が途中放棄 → おいしい台</div>
-                        
-                        
-                        
-                        <div class="reason-line-top">💰 好調日の平均ART 89回（1/65）→ 打てば出やすい台</div>
-                        
-                        
-                        
-                        <div class="reason-line-top reason-warn">🚨 前日はART確率1/91と悪くないが、最大9連と爆発なし → 過去に同パターン→翌日好調: 49/73回=67%（好調率71%のため本日も期待）</div>
-                        
-                        
-                        
+                    <!-- 営業中: リアルタイムデータ -->
+                    <div class="today-data-row">
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">0</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            
+                        </div>
+                        <div class="data-row-secondary">
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">0</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell ">
+                                <span class="data-value">0</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">0</span>
+                                <span class="data-label">累計G</span>
+                            </div>
+                        </div>
                     </div>
                     
 
@@ -5844,6 +5876,14 @@
 
                     <!-- 推奨理由（営業中のみ — 閉店後は上に表示済み） -->
                     
+                    <div class="reason-main">
+                        
+                        <div class="reason-line reason-pattern">🔄 7日連続好調 + エスパス渋谷新館は木曜が狙い目 → 据え置き濃厚</div>
+                        
+                        <div class="reason-line reason-confidence">💡 好調台(1/65)が途中放棄 → おいしい台</div>
+                        
+                    </div>
+                    
 
                     </summary>
                     <!-- 詳細（展開） -->
@@ -6468,37 +6508,41 @@
                         <span class="unit-id-large">2047番台</span>
                         <span class="machine-name-sm">北斗の拳 転生の章2</span>
                         
+                            
+                            <span class="avail-badge-lg empty">空き</span>
+                            
+                        
                         <span class="rank-badge-lg" style="background-color: #ffa502">A</span>
                         <span class="expand-icon">▼</span>
                     </div>
 
                     
-                    
-                    
-                    <div class="reasons-full">
-                        
-                        
-                        
-                        <div class="reason-line-top reason-pattern">🔄 3日連続好調 + エスパス渋谷新館は木曜が狙い目 → 据え置き濃厚</div>
-                        
-                        
-                        
-                        <div class="reason-line-top">🔥 直近の推移: 中→大→中→中→中（ART80回以上の大爆発がなく3日経過。過去の傾向では中/小の後に大が来やすい）</div>
-                        
-                        
-                        
-                        <div class="reason-line-top reason-today">💡 好調台(1/109)が途中放棄 → おいしい台</div>
-                        
-                        
-                        
-                        <div class="reason-line-top">💰 好調日の平均ART 71回（1/79）→ 打てば出やすい台</div>
-                        
-                        
-                        
-                        <div class="reason-line-top reason-warn">🚨 前日はART確率1/157でやや不調（全台中央値1/94）（好調率71%のため本日も期待）</div>
-                        
-                        
-                        
+                    <!-- 営業中: リアルタイムデータ -->
+                    <div class="today-data-row">
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">0</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            
+                        </div>
+                        <div class="data-row-secondary">
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">0</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell ">
+                                <span class="data-value">0</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">0</span>
+                                <span class="data-label">累計G</span>
+                            </div>
+                        </div>
                     </div>
                     
 
@@ -8776,6 +8820,14 @@
 
                     <!-- 推奨理由（営業中のみ — 閉店後は上に表示済み） -->
                     
+                    <div class="reason-main">
+                        
+                        <div class="reason-line reason-pattern">🔄 3日連続好調 + エスパス渋谷新館は木曜が狙い目 → 据え置き濃厚</div>
+                        
+                        <div class="reason-line ">🔥 直近の推移: 中→大→中→中→中（ART80回以上の大爆発がなく3日経過。過去の傾向では中/小の後に大が来やすい）</div>
+                        
+                    </div>
+                    
 
                     </summary>
                     <!-- 詳細（展開） -->
@@ -9186,41 +9238,41 @@
                         <span class="unit-id-large">2055番台</span>
                         <span class="machine-name-sm">北斗の拳 転生の章2</span>
                         
+                            
+                            <span class="avail-badge-lg empty">空き</span>
+                            
+                        
                         <span class="rank-badge-lg" style="background-color: #ffa502">A</span>
                         <span class="expand-icon">▼</span>
                     </div>
 
                     
-                    
-                    
-                    <div class="reasons-full">
-                        
-                        
-                        
-                        <div class="reason-line-top">🔥 直近の推移: 大→大→大→中→小（ART80回以上の大爆発がなく2日経過。過去の傾向では中/小の後に大が来やすい）</div>
-                        
-                        
-                        
-                        <div class="reason-line-top reason-today">💡 好調台(1/88)が途中放棄 → おいしい台</div>
-                        
-                        
-                        
-                        <div class="reason-line-top">💰 好調日の平均ART 72回（1/77）→ 打てば出やすい台</div>
-                        
-                        
-                        
-                        <div class="reason-line-top reason-rank">📊 好調→翌日も好調の実績: 3/5回（60%）※やや期待できる程度</div>
-                        
-                        
-                        
-                        <div class="reason-line-top reason-rank">📊 7日間中5日好調（好調率71%）→ 高設定が入りやすい台</div>
-                        
-                        
-                        
-                        <div class="reason-line-top reason-warn">🚨 前日はART確率1/116と悪くないが、最大11連と爆発なし → 過去に同パターン→翌日好調: 49/73回=67%（好調率71%のため本日も期待）</div>
-                        
-                        
-                        
+                    <!-- 営業中: リアルタイムデータ -->
+                    <div class="today-data-row">
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">0</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            
+                        </div>
+                        <div class="data-row-secondary">
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">0</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell ">
+                                <span class="data-value">0</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">0</span>
+                                <span class="data-label">累計G</span>
+                            </div>
+                        </div>
                     </div>
                     
 
@@ -11273,6 +11325,14 @@
 
                     <!-- 推奨理由（営業中のみ — 閉店後は上に表示済み） -->
                     
+                    <div class="reason-main">
+                        
+                        <div class="reason-line ">🔥 直近の推移: 大→大→大→中→小（ART80回以上の大爆発がなく2日経過。過去の傾向では中/小の後に大が来やすい）</div>
+                        
+                        <div class="reason-line reason-confidence">💡 好調台(1/88)が途中放棄 → おいしい台</div>
+                        
+                    </div>
+                    
 
                     </summary>
                     <!-- 詳細（展開） -->
@@ -11817,29 +11877,41 @@
                         <span class="unit-id-large">2239番台</span>
                         <span class="machine-name-sm">北斗の拳 転生の章2</span>
                         
+                            
+                            <span class="avail-badge-lg empty">空き</span>
+                            
+                        
                         <span class="rank-badge-lg" style="background-color: #ffa502">A</span>
                         <span class="expand-icon">▼</span>
                     </div>
 
                     
-                    
-                    
-                    <div class="reasons-full">
-                        
-                        
-                        
-                        <div class="reason-line-top reason-pattern">🔄 2日連続好調 + エスパス渋谷新館は木曜が狙い目 → 据え置き期待</div>
-                        
-                        
-                        
-                        <div class="reason-line-top reason-today">💡 好調台(1/91)が途中放棄 → おいしい台</div>
-                        
-                        
-                        
-                        <div class="reason-line-top reason-rank">📊 7日間中2日好調（好調率29%）→ 低設定が入りやすい台</div>
-                        
-                        
-                        
+                    <!-- 営業中: リアルタイムデータ -->
+                    <div class="today-data-row">
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">0</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            
+                        </div>
+                        <div class="data-row-secondary">
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">0</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell ">
+                                <span class="data-value">0</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">0</span>
+                                <span class="data-label">累計G</span>
+                            </div>
+                        </div>
                     </div>
                     
 
@@ -13910,6 +13982,14 @@
 
                     <!-- 推奨理由（営業中のみ — 閉店後は上に表示済み） -->
                     
+                    <div class="reason-main">
+                        
+                        <div class="reason-line reason-pattern">🔄 2日連続好調 + エスパス渋谷新館は木曜が狙い目 → 据え置き期待</div>
+                        
+                        <div class="reason-line reason-confidence">💡 好調台(1/91)が途中放棄 → おいしい台</div>
+                        
+                    </div>
+                    
 
                     </summary>
                     <!-- 詳細（展開） -->
@@ -15190,7 +15270,7 @@
 
     
     
-    <div class="v2-reason">🔄 2日連続不調 + エスパス渋谷新館の木曜は狙い目 → 1/28(水)リセット期待（SBJ全店舗実績: 16/21回=76%で翌日回復）</div>
+    <div class="v2-reason">🔄 2日連続不調 + エスパス渋谷新館の木曜は狙い目 → 翌日リセット期待（SBJ全店舗実績: 16/21回=76%で翌日回復）</div>
     
 
     
@@ -15242,7 +15322,7 @@
     <div class="unit-details hidden">
         <div class="v2-detail-reasons">
             
-            <div class="reason-item">🔄 2日連続不調 + エスパス渋谷新館の木曜は狙い目 → 1/28(水)リセット期待（SBJ全店舗実績: 16/21回=76%で翌日回復）</div>
+            <div class="reason-item">🔄 2日連続不調 + エスパス渋谷新館の木曜は狙い目 → 翌日リセット期待（SBJ全店舗実績: 16/21回=76%で翌日回復）</div>
             
             <div class="reason-item">💡 好調台(1/102)が途中放棄 → おいしい台</div>
             
@@ -16230,7 +16310,7 @@
 
     
     
-    <div class="v2-reason">🔥 直近の推移: 大→中→大→大→中（大小交互 → 1/28(水)は大爆発の可能性）</div>
+    <div class="v2-reason">🔥 直近の推移: 大→中→大→大→中（大小交互 → 本日は大爆発の可能性）</div>
     
 
     
@@ -16282,7 +16362,7 @@
     <div class="unit-details hidden">
         <div class="v2-detail-reasons">
             
-            <div class="reason-item">🔥 直近の推移: 大→中→大→大→中（大小交互 → 1/28(水)は大爆発の可能性）</div>
+            <div class="reason-item">🔥 直近の推移: 大→中→大→大→中（大小交互 → 本日は大爆発の可能性）</div>
             
             <div class="reason-item">💡 好調台(1/105)が途中放棄 → おいしい台</div>
             
@@ -17020,7 +17100,7 @@
 
     
     
-    <div class="v2-reason">🔄 2日連続不調 + エスパス渋谷新館の木曜は狙い目 → 1/28(水)リセット期待（SBJ全店舗実績: 16/21回=76%で翌日回復）</div>
+    <div class="v2-reason">🔄 2日連続不調 + エスパス渋谷新館の木曜は狙い目 → 翌日リセット期待（SBJ全店舗実績: 16/21回=76%で翌日回復）</div>
     
 
     
@@ -17072,7 +17152,7 @@
     <div class="unit-details hidden">
         <div class="v2-detail-reasons">
             
-            <div class="reason-item">🔄 2日連続不調 + エスパス渋谷新館の木曜は狙い目 → 1/28(水)リセット期待（SBJ全店舗実績: 16/21回=76%で翌日回復）</div>
+            <div class="reason-item">🔄 2日連続不調 + エスパス渋谷新館の木曜は狙い目 → 翌日リセット期待（SBJ全店舗実績: 16/21回=76%で翌日回復）</div>
             
             <div class="reason-item">💡 好調台(1/32)が途中放棄 → おいしい台</div>
             
@@ -18062,7 +18142,7 @@
 
     
     
-    <div class="v2-reason">🔄 3日連続不調 → そろそろ1/28(水)設定上げ期待（SBJ全店舗実績: 4/4回=100%で翌日回復）</div>
+    <div class="v2-reason">🔄 3日連続不調 → そろそろ翌日設定上げ期待（SBJ全店舗実績: 4/4回=100%で翌日回復）</div>
     
 
     
@@ -18114,7 +18194,7 @@
     <div class="unit-details hidden">
         <div class="v2-detail-reasons">
             
-            <div class="reason-item">🔄 3日連続不調 → そろそろ1/28(水)設定上げ期待（SBJ全店舗実績: 4/4回=100%で翌日回復）</div>
+            <div class="reason-item">🔄 3日連続不調 → そろそろ翌日設定上げ期待（SBJ全店舗実績: 4/4回=100%で翌日回復）</div>
             
             <div class="reason-item">📊 朝から夜まで粘り → 高設定の可能性</div>
             
@@ -20150,7 +20230,7 @@
 
     
     
-    <div class="v2-reason">🔄 2日連続不調 + エスパス渋谷新館の木曜は狙い目 → 1/28(水)リセット期待（SBJ全店舗実績: 16/21回=76%で翌日回復）</div>
+    <div class="v2-reason">🔄 2日連続不調 + エスパス渋谷新館の木曜は狙い目 → 翌日リセット期待（SBJ全店舗実績: 16/21回=76%で翌日回復）</div>
     
 
     
@@ -20202,7 +20282,7 @@
     <div class="unit-details hidden">
         <div class="v2-detail-reasons">
             
-            <div class="reason-item">🔄 2日連続不調 + エスパス渋谷新館の木曜は狙い目 → 1/28(水)リセット期待（SBJ全店舗実績: 16/21回=76%で翌日回復）</div>
+            <div class="reason-item">🔄 2日連続不調 + エスパス渋谷新館の木曜は狙い目 → 翌日リセット期待（SBJ全店舗実績: 16/21回=76%で翌日回復）</div>
             
             <div class="reason-item">🚨 夕方以降に当たり集中 → ハイエナ後の連チャンの可能性</div>
             

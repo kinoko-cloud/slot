@@ -28,14 +28,18 @@
                 </span>
                 <span class="cache-badge github">GITHUB</span>
                 
-                <div class="stale-warning">データが10時間59分前のものです</div>
+                <div class="stale-warning">データが11時間18分前のものです</div>
                 
                 
             </div>
 
             <!-- 空き状況サマリ -->
             
-            <div class="closed-notice">現在営業時間外です</div>
+            <div class="availability-summary">
+                <span class="avail-empty" onclick="filterUnits('empty')">空き 14台</span>
+                <span class="avail-playing" onclick="filterUnits('playing')">遊技中 0台</span>
+                <span class="avail-all" onclick="filterUnits('all')">全て</span>
+            </div>
             
 
             <div class="action-buttons">
@@ -108,29 +112,41 @@
                         <span class="unit-id-large">1023番台</span>
                         <span class="machine-name-sm">スーパーブラックジャック</span>
                         
+                            
+                            <span class="avail-badge-lg empty">空き</span>
+                            
+                        
                         <span class="rank-badge-lg" style="background-color: #ff6b6b">S</span>
                         <span class="expand-icon">▼</span>
                     </div>
 
                     
-                    
-                    
-                    <div class="reasons-full">
-                        
-                        
-                        
-                        <div class="reason-line-top reason-pattern">🔄 6日連続好調 → 据え置き期待（ただし転落警戒も）</div>
-                        
-                        
-                        
-                        <div class="reason-line-top">🔥 直近の推移: 大→中→大→大→中（大小交互 → 1/28(水)は大爆発の可能性）</div>
-                        
-                        
-                        
-                        <div class="reason-line-top">💰 好調日の平均ART 82回（1/95）→ 打てば出やすい台</div>
-                        
-                        
-                        
+                    <!-- 営業中: リアルタイムデータ -->
+                    <div class="today-data-row">
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">0</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            
+                        </div>
+                        <div class="data-row-secondary">
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">0</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell ">
+                                <span class="data-value">0</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">0</span>
+                                <span class="data-label">累計G</span>
+                            </div>
+                        </div>
                     </div>
                     
 
@@ -2408,6 +2424,14 @@
 
                     <!-- 推奨理由（営業中のみ — 閉店後は上に表示済み） -->
                     
+                    <div class="reason-main">
+                        
+                        <div class="reason-line reason-pattern">🔄 6日連続好調 → 据え置き期待（ただし転落警戒も）</div>
+                        
+                        <div class="reason-line ">🔥 直近の推移: 大→中→大→大→中（大小交互 → 本日は大爆発の可能性）</div>
+                        
+                    </div>
+                    
 
                     </summary>
                     <!-- 詳細（展開） -->
@@ -2828,7 +2852,7 @@
                             
                             <div class="reason-item">🔄 6日連続好調 → 据え置き期待（ただし転落警戒も）</div>
                             
-                            <div class="reason-item">🔥 直近の推移: 大→中→大→大→中（大小交互 → 1/28(水)は大爆発の可能性）</div>
+                            <div class="reason-item">🔥 直近の推移: 大→中→大→大→中（大小交互 → 本日は大爆発の可能性）</div>
                             
                             <div class="reason-item">💰 好調日の平均ART 82回（1/95）→ 打てば出やすい台</div>
                             
@@ -2844,25 +2868,41 @@
                         <span class="unit-id-large">1027番台</span>
                         <span class="machine-name-sm">スーパーブラックジャック</span>
                         
+                            
+                            <span class="avail-badge-lg empty">空き</span>
+                            
+                        
                         <span class="rank-badge-lg" style="background-color: #ff6b6b">S</span>
                         <span class="expand-icon">▼</span>
                     </div>
 
                     
-                    
-                    
-                    <div class="reasons-full">
-                        
-                        
-                        
-                        <div class="reason-line-top reason-pattern">🔄 2日連続不調 → 1/28(水)リセット期待（この店の過去実績: 10/13回=77%で翌日回復）</div>
-                        
-                        
-                        
-                        <div class="reason-line-top reason-rank">📊 13日間中5日好調（好調率38%）→ 低設定が入りやすい台</div>
-                        
-                        
-                        
+                    <!-- 営業中: リアルタイムデータ -->
+                    <div class="today-data-row">
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">0</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            
+                        </div>
+                        <div class="data-row-secondary">
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">0</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell ">
+                                <span class="data-value">0</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">0</span>
+                                <span class="data-label">累計G</span>
+                            </div>
+                        </div>
                     </div>
                     
 
@@ -4582,6 +4622,14 @@
 
                     <!-- 推奨理由（営業中のみ — 閉店後は上に表示済み） -->
                     
+                    <div class="reason-main">
+                        
+                        <div class="reason-line reason-pattern">🔄 2日連続不調 → 翌日リセット期待（この店の過去実績: 10/13回=77%で翌日回復）</div>
+                        
+                        <div class="reason-line reason-rank">📊 13日間中5日好調（好調率38%）→ 低設定が入りやすい台</div>
+                        
+                    </div>
+                    
 
                     </summary>
                     <!-- 詳細（展開） -->
@@ -5169,25 +5217,41 @@
                         <span class="unit-id-large">1025番台</span>
                         <span class="machine-name-sm">スーパーブラックジャック</span>
                         
+                            
+                            <span class="avail-badge-lg empty">空き</span>
+                            
+                        
                         <span class="rank-badge-lg" style="background-color: #ff6b6b">S</span>
                         <span class="expand-icon">▼</span>
                     </div>
 
                     
-                    
-                    
-                    <div class="reasons-full">
-                        
-                        
-                        
-                        <div class="reason-line-top reason-rank">📊 過去データSランク: 高設定が頻繁に入る台</div>
-                        
-                        
-                        
-                        <div class="reason-line-top reason-warn">🚨 前日はART確率1/128と悪くないが、最大9連と爆発なし → 過去に同パターン→翌日好調: 37/54回=69%</div>
-                        
-                        
-                        
+                    <!-- 営業中: リアルタイムデータ -->
+                    <div class="today-data-row">
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">0</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            
+                        </div>
+                        <div class="data-row-secondary">
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">0</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell ">
+                                <span class="data-value">0</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">0</span>
+                                <span class="data-label">累計G</span>
+                            </div>
+                        </div>
                     </div>
                     
 
@@ -7159,6 +7223,14 @@
 
                     <!-- 推奨理由（営業中のみ — 閉店後は上に表示済み） -->
                     
+                    <div class="reason-main">
+                        
+                        <div class="reason-line reason-rank">📊 過去データSランク: 高設定が頻繁に入る台</div>
+                        
+                        <div class="reason-line reason-warn">🚨 前日はART確率1/128と悪くないが、最大9連と爆発なし → 過去に同パターン→翌日好調: 37/54回=69%</div>
+                        
+                    </div>
+                    
 
                     </summary>
                     <!-- 詳細（展開） -->
@@ -7578,33 +7650,41 @@
                         <span class="unit-id-large">1017番台</span>
                         <span class="machine-name-sm">スーパーブラックジャック</span>
                         
+                            
+                            <span class="avail-badge-lg empty">空き</span>
+                            
+                        
                         <span class="rank-badge-lg" style="background-color: #ff6b6b">S</span>
                         <span class="expand-icon">▼</span>
                     </div>
 
                     
-                    
-                    
-                    <div class="reasons-full">
-                        
-                        
-                        
-                        <div class="reason-line-top reason-pattern">🔄 7日連続好調 → 据え置き期待（ただし転落警戒も）</div>
-                        
-                        
-                        
-                        <div class="reason-line-top">🔥 直近の推移: 中→中→中→大→中（1/27(火)は低めだが高設定の範囲内 → 大爆発に期待）</div>
-                        
-                        
-                        
-                        <div class="reason-line-top">💰 好調日の平均ART 76回（1/102）→ 打てば出やすい台</div>
-                        
-                        
-                        
-                        <div class="reason-line-top reason-warn">🚨 前日は2,615G消化で低稼働 → 高設定でも数字が伸びにくい稼働量（好調率92%のため本日も期待）</div>
-                        
-                        
-                        
+                    <!-- 営業中: リアルタイムデータ -->
+                    <div class="today-data-row">
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">0</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            
+                        </div>
+                        <div class="data-row-secondary">
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">0</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell ">
+                                <span class="data-value">0</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">0</span>
+                                <span class="data-label">累計G</span>
+                            </div>
+                        </div>
                     </div>
                     
 
@@ -10116,6 +10196,14 @@
 
                     <!-- 推奨理由（営業中のみ — 閉店後は上に表示済み） -->
                     
+                    <div class="reason-main">
+                        
+                        <div class="reason-line reason-pattern">🔄 7日連続好調 → 据え置き期待（ただし転落警戒も）</div>
+                        
+                        <div class="reason-line ">🔥 直近の推移: 中→中→中→大→中（前日は低めだが高設定の範囲内 → 大爆発に期待）</div>
+                        
+                    </div>
+                    
 
                     </summary>
                     <!-- 詳細（展開） -->
@@ -10302,7 +10390,7 @@
                             
                             <div class="reason-item">🔄 7日連続好調 → 据え置き期待（ただし転落警戒も）</div>
                             
-                            <div class="reason-item">🔥 直近の推移: 中→中→中→大→中（1/27(火)は低めだが高設定の範囲内 → 大爆発に期待）</div>
+                            <div class="reason-item">🔥 直近の推移: 中→中→中→大→中（前日は低めだが高設定の範囲内 → 大爆発に期待）</div>
                             
                             <div class="reason-item">💰 好調日の平均ART 76回（1/102）→ 打てば出やすい台</div>
                             
@@ -10320,29 +10408,41 @@
                         <span class="unit-id-large">1021番台</span>
                         <span class="machine-name-sm">スーパーブラックジャック</span>
                         
+                            
+                            <span class="avail-badge-lg empty">空き</span>
+                            
+                        
                         <span class="rank-badge-lg" style="background-color: #ff6b6b">S</span>
                         <span class="expand-icon">▼</span>
                     </div>
 
                     
-                    
-                    
-                    <div class="reasons-full">
-                        
-                        
-                        
-                        <div class="reason-line-top reason-pattern">🔄 3日連続好調 → 据え置き期待（ただし転落警戒も）</div>
-                        
-                        
-                        
-                        <div class="reason-line-top reason-rank">📊 過去データAランク: 高設定が入りやすい台</div>
-                        
-                        
-                        
-                        <div class="reason-line-top reason-warn">🚨 前日はART確率1/182で低設定濃厚（全台中央値1/128）</div>
-                        
-                        
-                        
+                    <!-- 営業中: リアルタイムデータ -->
+                    <div class="today-data-row">
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">0</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            
+                        </div>
+                        <div class="data-row-secondary">
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">0</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell ">
+                                <span class="data-value">0</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">0</span>
+                                <span class="data-label">累計G</span>
+                            </div>
+                        </div>
                     </div>
                     
 
@@ -12665,6 +12765,14 @@
 
                     <!-- 推奨理由（営業中のみ — 閉店後は上に表示済み） -->
                     
+                    <div class="reason-main">
+                        
+                        <div class="reason-line reason-pattern">🔄 3日連続好調 → 据え置き期待（ただし転落警戒も）</div>
+                        
+                        <div class="reason-line reason-rank">📊 過去データAランク: 高設定が入りやすい台</div>
+                        
+                    </div>
+                    
 
                     </summary>
                     <!-- 詳細（展開） -->
@@ -13757,7 +13865,7 @@
             
             <div class="reason-item">🔄 2日連続好調 → 据え置き期待</div>
             
-            <div class="reason-item">🔥 直近の推移: 小→大→中→中→大（大小交互 → 1/28(水)は中程度の可能性）</div>
+            <div class="reason-item">🔥 直近の推移: 小→大→中→中→大（大小交互 → 本日は中程度の可能性）</div>
             
             <div class="reason-item">💰 好調日の平均ART 74回（1/102）→ 打てば出やすい台</div>
             
@@ -15005,7 +15113,7 @@
 
     
     
-    <div class="v2-reason">🔄 3日連続不調 → そろそろ1/28(水)設定上げ期待（この店の過去実績: 3/3回=100%で翌日回復）</div>
+    <div class="v2-reason">🔄 3日連続不調 → そろそろ翌日設定上げ期待（この店の過去実績: 3/3回=100%で翌日回復）</div>
     
 
     
@@ -15057,7 +15165,7 @@
     <div class="unit-details hidden">
         <div class="v2-detail-reasons">
             
-            <div class="reason-item">🔄 3日連続不調 → そろそろ1/28(水)設定上げ期待（この店の過去実績: 3/3回=100%で翌日回復）</div>
+            <div class="reason-item">🔄 3日連続不調 → そろそろ翌日設定上げ期待（この店の過去実績: 3/3回=100%で翌日回復）</div>
             
             <div class="reason-item">📊 過去データAランク: 高設定が入りやすい台</div>
             

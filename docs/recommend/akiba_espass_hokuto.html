@@ -28,14 +28,18 @@
                 </span>
                 <span class="cache-badge github">GITHUB</span>
                 
-                <div class="stale-warning">データが10時間59分前のものです</div>
+                <div class="stale-warning">データが11時間18分前のものです</div>
                 
                 
             </div>
 
             <!-- 空き状況サマリ -->
             
-            <div class="closed-notice">現在営業時間外です</div>
+            <div class="availability-summary">
+                <span class="avail-empty" onclick="filterUnits('empty')">空き 22台</span>
+                <span class="avail-playing" onclick="filterUnits('playing')">遊技中 0台</span>
+                <span class="avail-all" onclick="filterUnits('all')">全て</span>
+            </div>
             
 
             <div class="action-buttons">
@@ -108,37 +112,41 @@
                         <span class="unit-id-large">2014番台</span>
                         <span class="machine-name-sm">北斗の拳 転生の章2</span>
                         
+                            
+                            <span class="avail-badge-lg empty">空き</span>
+                            
+                        
                         <span class="rank-badge-lg" style="background-color: #ffa502">A</span>
                         <span class="expand-icon">▼</span>
                     </div>
 
                     
-                    
-                    
-                    <div class="reasons-full">
-                        
-                        
-                        
-                        <div class="reason-line-top reason-pattern">🔄 5日連続好調 → 据え置き期待（ただし転落警戒も）</div>
-                        
-                        
-                        
-                        <div class="reason-line-top">🔥 直近の推移: 小→小→中→中→中（好調6日中、大0/中4/小2日）</div>
-                        
-                        
-                        
-                        <div class="reason-line-top reason-today">💡 好調台(1/38)が途中放棄 → おいしい台</div>
-                        
-                        
-                        
-                        <div class="reason-line-top">💰 好調日の平均ART 61回（1/71）→ 打てば出やすい台</div>
-                        
-                        
-                        
-                        <div class="reason-line-top reason-warn">🚨 前日はART確率1/87と悪くないが、最大6連と爆発なし → 過去に同パターン→翌日好調: 49/73回=67%（好調率86%のため本日も期待）</div>
-                        
-                        
-                        
+                    <!-- 営業中: リアルタイムデータ -->
+                    <div class="today-data-row">
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">0</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            
+                        </div>
+                        <div class="data-row-secondary">
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">0</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell ">
+                                <span class="data-value">0</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">0</span>
+                                <span class="data-label">累計G</span>
+                            </div>
+                        </div>
                     </div>
                     
 
@@ -2272,6 +2280,14 @@
 
                     <!-- 推奨理由（営業中のみ — 閉店後は上に表示済み） -->
                     
+                    <div class="reason-main">
+                        
+                        <div class="reason-line reason-pattern">🔄 5日連続好調 → 据え置き期待（ただし転落警戒も）</div>
+                        
+                        <div class="reason-line ">🔥 直近の推移: 小→小→中→中→中（好調6日中、大0/中4/小2日）</div>
+                        
+                    </div>
+                    
 
                     </summary>
                     <!-- 詳細（展開） -->
@@ -2586,41 +2602,41 @@
                         <span class="unit-id-large">2017番台</span>
                         <span class="machine-name-sm">北斗の拳 転生の章2</span>
                         
+                            
+                            <span class="avail-badge-lg empty">空き</span>
+                            
+                        
                         <span class="rank-badge-lg" style="background-color: #ffa502">A</span>
                         <span class="expand-icon">▼</span>
                     </div>
 
                     
-                    
-                    
-                    <div class="reasons-full">
-                        
-                        
-                        
-                        <div class="reason-line-top">🔥 直近の推移: 小→大→中→中→小（ART80回以上の大爆発がなく3日経過。過去の傾向では中/小の後に大が来やすい）</div>
-                        
-                        
-                        
-                        <div class="reason-line-top reason-today">💡 好調台(1/91)が途中放棄 → おいしい台</div>
-                        
-                        
-                        
-                        <div class="reason-line-top">💰 好調日の平均ART 62回（1/78）→ 打てば出やすい台</div>
-                        
-                        
-                        
-                        <div class="reason-line-top reason-rank">📊 好調→翌日も好調の実績: 3/4回（75%）※やや期待できる程度</div>
-                        
-                        
-                        
-                        <div class="reason-line-top reason-rank">📊 7日間中5日好調（好調率71%）→ 高設定が入りやすい台</div>
-                        
-                        
-                        
-                        <div class="reason-line-top reason-warn">🚨 前日はART確率1/228で低設定濃厚（全台中央値1/109）（好調率71%のため本日も期待）</div>
-                        
-                        
-                        
+                    <!-- 営業中: リアルタイムデータ -->
+                    <div class="today-data-row">
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">0</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            
+                        </div>
+                        <div class="data-row-secondary">
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">0</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell ">
+                                <span class="data-value">0</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">0</span>
+                                <span class="data-label">累計G</span>
+                            </div>
+                        </div>
                     </div>
                     
 
@@ -4727,6 +4743,14 @@
 
                     <!-- 推奨理由（営業中のみ — 閉店後は上に表示済み） -->
                     
+                    <div class="reason-main">
+                        
+                        <div class="reason-line ">🔥 直近の推移: 小→大→中→中→小（ART80回以上の大爆発がなく3日経過。過去の傾向では中/小の後に大が来やすい）</div>
+                        
+                        <div class="reason-line reason-confidence">💡 好調台(1/91)が途中放棄 → おいしい台</div>
+                        
+                    </div>
+                    
 
                     </summary>
                     <!-- 詳細（展開） -->
@@ -4899,29 +4923,41 @@
                         <span class="unit-id-large">2067番台</span>
                         <span class="machine-name-sm">北斗の拳 転生の章2</span>
                         
+                            
+                            <span class="avail-badge-lg empty">空き</span>
+                            
+                        
                         <span class="rank-badge-lg" style="background-color: #ffa502">A</span>
                         <span class="expand-icon">▼</span>
                     </div>
 
                     
-                    
-                    
-                    <div class="reasons-full">
-                        
-                        
-                        
-                        <div class="reason-line-top reason-pattern">🔄 7日連続好調 → 据え置き期待（ただし転落警戒も）</div>
-                        
-                        
-                        
-                        <div class="reason-line-top">🔥 直近の推移: 小→小→小→中→中（好調5日中、大0/中2/小3日）</div>
-                        
-                        
-                        
-                        <div class="reason-line-top">💰 好調日の平均ART 45回（1/89）→ 打てば出やすい台</div>
-                        
-                        
-                        
+                    <!-- 営業中: リアルタイムデータ -->
+                    <div class="today-data-row">
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">0</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            
+                        </div>
+                        <div class="data-row-secondary">
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">0</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell ">
+                                <span class="data-value">0</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">0</span>
+                                <span class="data-label">累計G</span>
+                            </div>
+                        </div>
                     </div>
                     
 
@@ -6713,6 +6749,14 @@
 
                     <!-- 推奨理由（営業中のみ — 閉店後は上に表示済み） -->
                     
+                    <div class="reason-main">
+                        
+                        <div class="reason-line reason-pattern">🔄 7日連続好調 → 据え置き期待（ただし転落警戒も）</div>
+                        
+                        <div class="reason-line ">🔥 直近の推移: 小→小→小→中→中（好調5日中、大0/中2/小3日）</div>
+                        
+                    </div>
+                    
 
                     </summary>
                     <!-- 詳細（展開） -->
@@ -7989,7 +8033,7 @@
 
     
     
-    <div class="v2-reason">🔥 直近の推移: 中→中→小→中→小（大小交互 → 1/28(水)は大爆発の可能性）</div>
+    <div class="v2-reason">🔥 直近の推移: 中→中→小→中→小（大小交互 → 本日は大爆発の可能性）</div>
     
 
     
@@ -8041,7 +8085,7 @@
     <div class="unit-details hidden">
         <div class="v2-detail-reasons">
             
-            <div class="reason-item">🔥 直近の推移: 中→中→小→中→小（大小交互 → 1/28(水)は大爆発の可能性）</div>
+            <div class="reason-item">🔥 直近の推移: 中→中→小→中→小（大小交互 → 本日は大爆発の可能性）</div>
             
             <div class="reason-item">💰 好調日の平均ART 50回（1/83）→ 打てば出やすい台</div>
             
@@ -9293,7 +9337,7 @@
 
     
     
-    <div class="v2-reason">🔄 直近2日とも不調（1/178→1/240）→ 1/28(水)設定変更期待大（SBJ全店舗実績: 16/21回=76%で翌日回復）</div>
+    <div class="v2-reason">🔄 直近2日とも不調（1/178→1/240）→ 翌日設定変更期待大（SBJ全店舗実績: 16/21回=76%で翌日回復）</div>
     
 
     
@@ -9345,7 +9389,7 @@
     <div class="unit-details hidden">
         <div class="v2-detail-reasons">
             
-            <div class="reason-item">🔄 直近2日とも不調（1/178→1/240）→ 1/28(水)設定変更期待大（SBJ全店舗実績: 16/21回=76%で翌日回復）</div>
+            <div class="reason-item">🔄 直近2日とも不調（1/178→1/240）→ 翌日設定変更期待大（SBJ全店舗実績: 16/21回=76%で翌日回復）</div>
             
             <div class="reason-item">🚨 前日はART確率1/188で低設定濃厚（全台中央値1/109）</div>
             
@@ -9511,7 +9555,7 @@
 
     
     
-    <div class="v2-reason">🔄 4日連続不調 → 1/28(水)設定変更の可能性大</div>
+    <div class="v2-reason">🔄 4日連続不調 → 翌日設定変更の可能性大</div>
     
 
     
@@ -9563,9 +9607,9 @@
     <div class="unit-details hidden">
         <div class="v2-detail-reasons">
             
-            <div class="reason-item">🔄 4日連続不調 → 1/28(水)設定変更の可能性大</div>
+            <div class="reason-item">🔄 4日連続不調 → 翌日設定変更の可能性大</div>
             
-            <div class="reason-item">🔄 ローテ傾向: <span class="rot-bad">✕</span>→<span class="rot-mid">△</span>→<span class="rot-good">◎</span>→<span class="rot-mid">△</span>→<span class="rot-good">◎</span>→<span class="rot-bad">✕</span>（6/6回交互） → 本日上げ期待</div>
+            <div class="reason-item">🔄 ローテ傾向: <span class="rot-bad">✕</span>→<span class="rot-mid">△</span>→<span class="rot-good">◎</span>→<span class="rot-mid">△</span>→<span class="rot-good">◎</span>→<span class="rot-bad">✕</span>（6/6回交互） → 翌日上げ期待</div>
             
             <div class="reason-item">📊 7日間中2日好調（好調率29%）→ 低設定が入りやすい台</div>
             
@@ -9733,7 +9777,7 @@
 
     
     
-    <div class="v2-reason">🔄 2日連続不調 → 1/28(水)リセット期待（SBJ全店舗実績: 16/21回=76%で翌日回復）</div>
+    <div class="v2-reason">🔄 2日連続不調 → 翌日リセット期待（SBJ全店舗実績: 16/21回=76%で翌日回復）</div>
     
 
     
@@ -9785,7 +9829,7 @@
     <div class="unit-details hidden">
         <div class="v2-detail-reasons">
             
-            <div class="reason-item">🔄 2日連続不調 → 1/28(水)リセット期待（SBJ全店舗実績: 16/21回=76%で翌日回復）</div>
+            <div class="reason-item">🔄 2日連続不調 → 翌日リセット期待（SBJ全店舗実績: 16/21回=76%で翌日回復）</div>
             
             <div class="reason-item">💡 好調台(1/125)が途中放棄 → おいしい台</div>
             
@@ -10567,7 +10611,7 @@
             
             <div class="reason-item">🔄 2日連続好調 → 据え置き期待</div>
             
-            <div class="reason-item">🔄 直近2日とも不調（1/622→1/161）→ 本日設定変更期待大（SBJ全店舗実績: 16/21回=76%で翌日回復）</div>
+            <div class="reason-item">🔄 直近2日とも不調（1/622→1/161）→ 翌日設定変更期待大（SBJ全店舗実績: 16/21回=76%で翌日回復）</div>
             
             <div class="reason-item">🚨 前日はART確率1/161でやや不調（全台中央値1/109）</div>
             
@@ -10775,7 +10819,7 @@
 
     
     
-    <div class="v2-reason">🔄 直近2日とも不調（1/204→1/271）→ 1/28(水)設定変更期待大（SBJ全店舗実績: 16/21回=76%で翌日回復）</div>
+    <div class="v2-reason">🔄 直近2日とも不調（1/204→1/271）→ 翌日設定変更期待大（SBJ全店舗実績: 16/21回=76%で翌日回復）</div>
     
 
     
@@ -10827,7 +10871,7 @@
     <div class="unit-details hidden">
         <div class="v2-detail-reasons">
             
-            <div class="reason-item">🔄 直近2日とも不調（1/204→1/271）→ 1/28(水)設定変更期待大（SBJ全店舗実績: 16/21回=76%で翌日回復）</div>
+            <div class="reason-item">🔄 直近2日とも不調（1/204→1/271）→ 翌日設定変更期待大（SBJ全店舗実績: 16/21回=76%で翌日回復）</div>
             
             <div class="reason-item">🚨 前日はART確率1/157でやや不調（全台中央値1/109）</div>
             
@@ -11035,7 +11079,7 @@
 
     
     
-    <div class="v2-reason">🔄 3日連続不調 → そろそろ1/28(水)設定上げ期待（SBJ全店舗実績: 4/4回=100%で翌日回復）</div>
+    <div class="v2-reason">🔄 3日連続不調 → そろそろ翌日設定上げ期待（SBJ全店舗実績: 4/4回=100%で翌日回復）</div>
     
 
     
@@ -11087,7 +11131,7 @@
     <div class="unit-details hidden">
         <div class="v2-detail-reasons">
             
-            <div class="reason-item">🔄 3日連続不調 → そろそろ1/28(水)設定上げ期待（SBJ全店舗実績: 4/4回=100%で翌日回復）</div>
+            <div class="reason-item">🔄 3日連続不調 → そろそろ翌日設定上げ期待（SBJ全店舗実績: 4/4回=100%で翌日回復）</div>
             
             <div class="reason-item">📊 7日間中1日好調（好調率14%）→ 低設定が入りやすい台</div>
             
@@ -11815,7 +11859,7 @@
 
     
     
-    <div class="v2-reason">🔄 2日連続不調 → 1/28(水)リセット期待（SBJ全店舗実績: 16/21回=76%で翌日回復）</div>
+    <div class="v2-reason">🔄 2日連続不調 → 翌日リセット期待（SBJ全店舗実績: 16/21回=76%で翌日回復）</div>
     
 
     
@@ -11867,7 +11911,7 @@
     <div class="unit-details hidden">
         <div class="v2-detail-reasons">
             
-            <div class="reason-item">🔄 2日連続不調 → 1/28(水)リセット期待（SBJ全店舗実績: 16/21回=76%で翌日回復）</div>
+            <div class="reason-item">🔄 2日連続不調 → 翌日リセット期待（SBJ全店舗実績: 16/21回=76%で翌日回復）</div>
             
             <div class="reason-item">📊 7日間中1日好調（好調率14%）→ 低設定が入りやすい台</div>
             
