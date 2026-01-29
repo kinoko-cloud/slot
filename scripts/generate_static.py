@@ -586,6 +586,39 @@ def generate_index(env):
     if not top3:
         top3 = top3_candidates[:30]
 
+    # TOP3 + 全S/A候補 + 爆発台の前々日/3日前データを蓄積DBから補完
+    for rec in top3 + top3_candidates + yesterday_top10 + today_top10:
+        try:
+            from analysis.history_accumulator import load_unit_history
+            acc = load_unit_history(rec.get('store_key', ''), rec.get('unit_id', ''))
+            if acc and acc.get('days'):
+                days_by_date = {d['date']: d for d in acc['days'] if d.get('date')}
+                for prefix, date_key in [
+                    ('day_before_', 'day_before_date'),
+                    ('three_days_ago_', 'three_days_ago_date'),
+                    ('yesterday_', 'yesterday_date'),
+                ]:
+                    target_date = rec.get(date_key, '')
+                    if not target_date:
+                        continue
+                    day_data = days_by_date.get(target_date)
+                    if not day_data:
+                        continue
+                    if not rec.get(f'{prefix}diff_medals'):
+                        db_diff = day_data.get('diff_medals')
+                        if db_diff is not None and db_diff != 0:
+                            rec[f'{prefix}diff_medals'] = int(db_diff)
+                    if not rec.get(f'{prefix}max_rensa'):
+                        db_rensa = day_data.get('max_rensa')
+                        if db_rensa:
+                            rec[f'{prefix}max_rensa'] = db_rensa
+                    if not rec.get(f'{prefix}max_medals'):
+                        db_max = day_data.get('max_medals')
+                        if db_max:
+                            rec[f'{prefix}max_medals'] = db_max
+        except Exception:
+            pass
+
     # TOP3 + 全S/A候補 + 爆発台の過去3日分の当たり履歴を加工
     for rec in top3 + top3_candidates + yesterday_top10 + today_top10:
         for hist_key in ('yesterday_history', 'day_before_history', 'three_days_ago_history'):
@@ -973,6 +1006,38 @@ def generate_ranking_pages(env):
             return -score
 
         all_recommendations.sort(key=sort_key)
+        # 蓄積DBから前々日/3日前のdiff_medals等を補完
+        for rec in all_recommendations:
+            try:
+                from analysis.history_accumulator import load_unit_history
+                acc = load_unit_history(rec.get('store_key', ''), rec.get('unit_id', ''))
+                if acc and acc.get('days'):
+                    days_by_date = {d['date']: d for d in acc['days'] if d.get('date')}
+                    for prefix, date_key in [
+                        ('day_before_', 'day_before_date'),
+                        ('three_days_ago_', 'three_days_ago_date'),
+                        ('yesterday_', 'yesterday_date'),
+                    ]:
+                        target_date = rec.get(date_key, '')
+                        if not target_date:
+                            continue
+                        day_data = days_by_date.get(target_date)
+                        if not day_data:
+                            continue
+                        if not rec.get(f'{prefix}diff_medals'):
+                            db_diff = day_data.get('diff_medals')
+                            if db_diff is not None and db_diff != 0:
+                                rec[f'{prefix}diff_medals'] = int(db_diff)
+                        if not rec.get(f'{prefix}max_rensa'):
+                            db_rensa = day_data.get('max_rensa')
+                            if db_rensa:
+                                rec[f'{prefix}max_rensa'] = db_rensa
+                        if not rec.get(f'{prefix}max_medals'):
+                            db_max = day_data.get('max_medals')
+                            if db_max:
+                                rec[f'{prefix}max_medals'] = db_max
+            except Exception:
+                pass
         top_recs = [r for r in all_recommendations if r['final_rank'] in ('S', 'A') and not r['is_running']][:10]
         other_recs = [r for r in all_recommendations if r not in top_recs][:20]
 
