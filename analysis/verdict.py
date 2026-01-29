@@ -25,10 +25,10 @@ RESULT_THRESHOLDS = {
         'good_prob': 130,        # ◯の確率閾値
         'bad_prob': 160,         # ✕の確率閾値
         'excellent_diff': 1500,  # ◎の差枚閾値
-        'good_diff': 500,        # ◯の差枚閾値
+        'good_diff': 500,        # ◯の差枚閾値（差枚ベース）
         'bad_diff': -1500,       # ✕の差枚閾値
-        'excellent_max': 2000,   # ◎の最大枚数閾値
-        'good_max': 500,         # ◯の最大枚数閾値
+        'excellent_max': 3000,   # ◎: 最大3000枚以上
+        'good_max': 2000,        # ◯: 最大2000枚以上（1000前後は△）
     },
     'hokuto_tensei2': {
         'excellent_prob': 80,
@@ -63,15 +63,17 @@ def get_result_level(prob: float, diff_medals: int, machine_key: str,
     has_diff = diff_medals != 0
     has_max = max_medals > 0
 
-    # 出玉指標: 差枚優先、なければ最大枚数で代替
+    # 出玉指標: 差枚 OR 最大枚数のどちらかを満たせばOK
     def _output_check(excellent_th, good_th):
-        """出玉が閾値を満たすか判定"""
-        if has_diff:
-            return diff_medals >= excellent_th, diff_medals >= good_th
-        if has_max:
-            return max_medals >= th['excellent_max'], max_medals >= th['good_max']
-        # どちらもなし → 確率のみで判定（出玉条件はパス扱い）
-        return True, True
+        """出玉が閾値を満たすか判定（差枚・max_medalsのいずれか）"""
+        exc_diff = diff_medals >= excellent_th if has_diff else False
+        good_diff = diff_medals >= good_th if has_diff else False
+        exc_max = max_medals >= th['excellent_max'] if has_max else False
+        good_max = max_medals >= th['good_max'] if has_max else False
+        if not has_diff and not has_max:
+            # どちらもなし → 確率のみで判定（出玉条件はパス扱い）
+            return True, True
+        return (exc_diff or exc_max), (good_diff or good_max)
 
     # ✕判定（確率悪い OR 差枚大幅マイナス）
     if prob >= th['bad_prob']:
