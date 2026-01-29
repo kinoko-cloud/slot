@@ -1539,10 +1539,25 @@ def _generate_verify_from_backtest(env, results):
             # バックテスト結果のデータを優先（availability.jsonは当日データなので混在させない）
             max_medals = u.get('max_medals', 0)
             diff_medals = u.get('diff_medals', 0)
-            if max_medals == 0 and diff_medals == 0:
-                # バックテスト結果にデータがない場合のみavailabilityから補完
-                max_medals = avail_info.get('max_medals', 0)
-                diff_medals = avail_info.get('diff_medals', 0)
+            # 蓄積DBから差枚・最大枚数を補完
+            if max_medals == 0 or diff_medals == 0:
+                try:
+                    from analysis.history_accumulator import load_unit_history
+                    _hd = load_unit_history(store_key, uid)
+                    if _hd:
+                        pred_date = results.get('prediction_date', '')
+                        if pred_date:
+                            from datetime import datetime as _dt2, timedelta as _td2
+                            _adate = (_dt2.strptime(pred_date, '%Y-%m-%d') + _td2(days=1)).strftime('%Y-%m-%d')
+                            for _dd in _hd.get('days', []):
+                                if _dd.get('date') == _adate:
+                                    if max_medals == 0:
+                                        max_medals = _dd.get('max_medals', 0)
+                                    if diff_medals == 0:
+                                        diff_medals = _dd.get('diff_medals', 0)
+                                    break
+                except:
+                    pass
             
             # verdict.py共通ロジックで判定
             if games < 500 or prob <= 0:
