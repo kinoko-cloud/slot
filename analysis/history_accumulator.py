@@ -15,32 +15,47 @@ RENCHAIN_THRESHOLD = 100  # AT間100G以内なら連チャン
 
 
 def _calc_history_stats(history: list) -> tuple:
-    """当たり履歴から最大連チャン・最大枚数を計算"""
+    """当たり履歴から最大連チャン・最大獲得枚数（連チャン合計）を計算
+    
+    max_medals = 1回の連チャン中に獲得した合計枚数の最大値
+    （個別hitの最大ではなく、連チャン塊としての合計）
+    """
     if not history:
         return 0, 0
 
     sorted_hist = sorted(history, key=lambda x: x.get('time', '00:00'))
-    max_medals = max((h.get('medals', 0) for h in sorted_hist), default=0)
 
-    # 連チャン計算
+    # 連チャン計算 + 連チャン中の合計枚数
     chain_len = 0
     max_chain = 0
     accumulated_games = 0
+    chain_medals = 0      # 現在の連チャン中の累計枚数
+    max_medals = 0        # 連チャン合計枚数の最大値
 
     for i, hit in enumerate(sorted_hist):
         hit_type = hit.get('type', 'ART')
         start = hit.get('start', 0)
+        medals = hit.get('medals', 0)
         accumulated_games += start
 
         if hit_type in ('ART', 'AT', 'BIG'):
             if i == 0 or accumulated_games > RENCHAIN_THRESHOLD:
-                max_chain = max(max_chain, chain_len)
+                # 前の連チャンが終了 → 記録
+                if chain_len > 0:
+                    max_chain = max(max_chain, chain_len)
+                    max_medals = max(max_medals, chain_medals)
                 chain_len = 1
+                chain_medals = medals
             else:
                 chain_len += 1
+                chain_medals += medals
             accumulated_games = 0
 
-    max_chain = max(max_chain, chain_len)
+    # 最後の連チャンを記録
+    if chain_len > 0:
+        max_chain = max(max_chain, chain_len)
+        max_medals = max(max_medals, chain_medals)
+
     return max_chain, max_medals
 
 

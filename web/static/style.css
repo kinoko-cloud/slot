@@ -6005,6 +6005,27 @@ a.perfect-card:hover { background: rgba(255,215,0,0.18); }
     color: #444;
     opacity: 0.7;
 }
+.recent-day-block {
+    margin-bottom: 2px;
+}
+.recent-day-row.has-detail {
+    cursor: pointer;
+}
+.recent-day-row.has-detail:hover {
+    background: rgba(255,255,255,0.04);
+}
+.recent-day-detail {
+    margin: 2px 0 6px 0;
+    max-height: 300px;
+    overflow-y: auto;
+}
+.recent-day-detail .hit-detail-table.compact {
+    font-size: 0.72em;
+}
+.recent-day-detail .hit-detail-table.compact td,
+.recent-day-detail .hit-detail-table.compact th {
+    padding: 1px 4px;
+}
 
 /* プルダウン店舗メニュー */
 .dd-store { padding: 4px 0; }
