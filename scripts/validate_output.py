@@ -134,6 +134,9 @@ def validate_all():
         if 'updateModeBadge' not in content and 'updateCurrentTime' not in content:
             all_issues.append(f'WARN: {f.relative_to(DOCS_DIR)}: 動的モード切替JS（_common_js）が見つからない')
 
+    # === リアルタイム機能の健全性チェック ===
+    all_issues.extend(_validate_realtime())
+
     # 結果表示
     errors = [i for i in all_issues if i.startswith('ERROR')]
     warns = [i for i in all_issues if i.startswith('WARN')]
@@ -315,6 +318,70 @@ def _validate_recommend(filepath, content):
         pct = missing / total_recs * 100
         if pct > 50:
             issues.append(f'WARN: {filepath.name} 差枚なし: {missing}/{total_recs} ({pct:.0f}%)')
+
+    return issues
+
+
+def _validate_realtime():
+    """リアルタイム機能の健全性チェック"""
+    issues = []
+
+    # 1. availability.jsonの存在と鮮度
+    avail_path = PROJECT_ROOT / 'data' / 'availability.json'
+    if not avail_path.exists():
+        issues.append('WARN: data/availability.json が存在しない')
+    else:
+        try:
+            with open(avail_path) as f:
+                avail_data = json.load(f)
+
+            fetched_at = avail_data.get('fetched_at', '')
+            if fetched_at:
+                from datetime import timezone
+                fetch_time = datetime.fromisoformat(fetched_at)
+                now = datetime.now(timezone(timedelta(hours=9)))
+                age_hours = (now - fetch_time).total_seconds() / 3600
+                if age_hours > 24:
+                    issues.append(f'WARN: availability.json が{age_hours:.0f}時間前のデータ（24h超）')
+                elif age_hours > 1:
+                    issues.append(f'INFO: availability.json が{age_hours:.1f}時間前のデータ')
+
+            # 全9キーの存在チェック
+            expected_keys = [
+                'shibuya_espass_sbj', 'shinjuku_espass_sbj', 'akiba_espass_sbj',
+                'seibu_shinjuku_espass_sbj', 'island_akihabara_sbj',
+                'shibuya_espass_hokuto', 'shinjuku_espass_hokuto', 'akiba_espass_hokuto',
+                'island_akihabara_hokuto',
+            ]
+            stores = avail_data.get('stores', {})
+            missing = [k for k in expected_keys if k not in stores]
+            if missing:
+                issues.append(f'WARN: availability.json に不足キー: {missing}')
+
+            # 各店舗のunitsが空でないか
+            empty_stores = []
+            for k in expected_keys:
+                store_data = stores.get(k, {})
+                if not store_data.get('units'):
+                    empty_stores.append(k)
+            if empty_stores:
+                issues.append(f'INFO: availability.json units空: {empty_stores}')
+
+        except Exception as e:
+            issues.append(f'WARN: availability.json パースエラー: {e}')
+
+    # 2. realtime.jsがdocs/static/に含まれるか
+    rt_js_path = DOCS_DIR / 'static' / 'realtime.js'
+    if not rt_js_path.exists():
+        issues.append('ERROR: docs/static/realtime.js が存在しない（リアルタイム更新不可）')
+
+    # 3. recommend/*.htmlにdata-store-key属性があるか
+    rec_dir = DOCS_DIR / 'recommend'
+    if rec_dir.exists():
+        for f in rec_dir.glob('*.html'):
+            content = f.read_text()
+            if 'data-store-key' not in content:
+                issues.append(f'WARN: {f.name} に data-store-key 属性がない（リアルタイム更新不可）')
 
     return issues
 
