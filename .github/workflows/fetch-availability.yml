@@ -6,11 +6,20 @@ on:
     - cron: '0 1-14 * * *'  # UTC 1:00-14:00 = JST 10:00-23:00
   workflow_dispatch:  # 手動実行も可能
 
+concurrency:
+  group: slot-data-update
+  cancel-in-progress: false
+
 jobs:
   fetch:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -19,14 +28,13 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install playwright
+          pip install playwright flask jinja2 requests
           playwright install chromium
           playwright install-deps chromium
 
       - name: Fetch daidata availability
         timeout-minutes: 15
         run: |
-          # 137台のスクレイピングで5-8分かかる。リトライは1回のみ。
           echo "Attempt 1"
           if python scripts/fetch_daidata_availability.py; then
             echo "Success!"
@@ -37,44 +45,51 @@ jobs:
             python scripts/fetch_daidata_availability.py || true
           fi
 
-          # 最終的にファイルが存在するか確認
           if [ -f data/availability.json ]; then
-            echo "Data file exists, proceeding with commit"
+            echo "Data file exists"
           else
-            echo "Warning: Data file not created after all attempts"
+            echo "Warning: Data file not created"
             exit 1
           fi
 
-      - name: Verify data integrity
+      - name: Regenerate static site
         run: |
-          python scripts/verify_units.py --source integrity || echo "Integrity issues found (non-blocking)"
+          python scripts/generate_static.py
 
-      - name: Commit and push
+      - name: Commit and push (with rebase retry)
         run: |
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
-          git add data/availability.json
-          # 変更がなければスキップ
+          
+          git add data/availability.json docs/
+          
           if git diff --staged --quiet; then
             echo "No changes to commit"
             exit 0
           fi
-          git commit -m "update: availability $(TZ='Asia/Tokyo' date +'%Y-%m-%d %H:%M') JST"
-          # リトライ付きpush（リモートが先に進んでいる場合の競合回避）
-          max_push=3
-          for i in $(seq 1 $max_push); do
+          
+          TIMESTAMP=$(TZ='Asia/Tokyo' date +'%H:%M')
+          git commit -m "auto: リアルタイム更新 ${TIMESTAMP}"
+          
+          # リトライ付きpush（最大5回）
+          for i in 1 2 3 4 5; do
+            # 最新を取得してリベース
+            git pull --rebase origin main || {
+              # コンフリクト時はローカル優先
+              git checkout --theirs data/availability.json 2>/dev/null || true
+              git checkout --theirs docs/ 2>/dev/null || true
+              git add data/availability.json docs/
+              git rebase --continue 2>/dev/null || git rebase --abort
+              git pull --rebase origin main || true
+            }
+            
             if git push origin main; then
-              echo "Push succeeded"
+              echo "Push succeeded (attempt $i)"
               exit 0
             fi
-            echo "Push failed (attempt $i/$max_push), rebasing..."
-            git pull --rebase origin main
-            # rebaseコンフリクト時はavailability.jsonを常にローカル優先
-            if [ -f .git/rebase-merge/done ] || [ -d .git/rebase-apply ]; then
-              git checkout --theirs data/availability.json
-              git add data/availability.json
-              git rebase --continue || true
-            fi
+            echo "Push failed (attempt $i/5), retrying in 5s..."
+            sleep 5
           done
-          echo "Push failed after $max_push attempts"
+          
+          echo "Push failed after 5 attempts"
           exit 1

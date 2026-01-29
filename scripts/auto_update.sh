@@ -6,11 +6,19 @@ set -e
 cd /home/riichi/works/slot
 
 LOGFILE="logs/auto_update.log"
+LOCKFILE="/tmp/slot_auto_update.lock"
 mkdir -p logs
 
 log() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" >> "$LOGFILE"
 }
+
+# 排他ロック（既に実行中なら即終了）
+exec 200>"$LOCKFILE"
+if ! flock -n 200; then
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] 前回の更新がまだ実行中、スキップ" >> "$LOGFILE"
+    exit 0
+fi
 
 log "=== 自動更新開始 ==="
 
@@ -33,14 +41,22 @@ else
 fi
 
 # 3. git push（差分がある場合のみ）
-if git diff --quiet docs/; then
+git add data/availability.json docs/
+if git diff --staged --quiet; then
     log "変更なし、スキップ"
 else
     log "変更あり、デプロイ中..."
-    git add docs/
     git commit -m "auto: リアルタイム更新 $(date '+%H:%M')" --no-verify >> "$LOGFILE" 2>&1
-    git push >> "$LOGFILE" 2>&1
-    log "デプロイ完了"
+    # リトライ付きpush
+    for i in 1 2 3; do
+        git pull --rebase origin main >> "$LOGFILE" 2>&1 || true
+        if git push >> "$LOGFILE" 2>&1; then
+            log "デプロイ完了"
+            break
+        fi
+        log "Push失敗 (attempt $i/3)、リトライ..."
+        sleep 3
+    done
 fi
 
 log "=== 自動更新完了 ==="

@@ -3100,3 +3100,919 @@ To github.com:kinoko-cloud/slot.git
    eb72ad2..056f2c5  main -> main
 [2026-01-29 10:03:22] デプロイ完了
 [2026-01-29 10:03:22] === 自動更新完了 ===
+[2026-01-29 10:15:03] === 自動更新開始 ===
+[2026-01-29 10:15:03] データ取得中...
+[2026-01-29 10:18:06] データ取得失敗（タイムアウトまたはエラー）
+[2026-01-29 10:18:06] 静的サイト生成中...
+==================================================
+静的サイト生成開始
+出力先: /home/riichi/works/slot/docs
+==================================================
+
+Running unit verification...
+✓ 台番号の異常なし
+Running data integrity check...
+
+==================================================
+データ整合性チェック: 2件の問題
+  🟡 警告: 2件
+==================================================
+🟡 [units_insufficient] 西武新宿駅前エスパス: 台数不足（期待7台、実際3台）
+🟡 [data_stale] データが693分前のもの（60分超過）
+
+  📊 パターン記録: island_akihabara_hokuto_tensei2 (182件)
+  📊 パターン記録: shinjuku_espass_hokuto_tensei2 (181件)
+  📊 パターン記録: akiba_espass_sbj (38件)
+  📊 パターン記録: island_akihabara_sbj (182件)
+  📊 パターン記録: shinjuku_espass_sbj (111件)
+  📊 パターン記録: seibu_shinjuku_espass_hokuto_tensei2 (21件)
+  📊 パターン記録: akiba_espass_hokuto_tensei2 (185件)
+  📊 パターン記録: seibu_shinjuku_espass_sbj (21件)
+  📊 パターン記録: shibuya_espass_sbj (27件)
+  📊 パターン記録: shibuya_espass_hokuto_tensei2 (236件)
+
+Generating index.html...
+Local data is stale (693 minutes old)
+Local data is stale (693 minutes old)
+Local data is stale (693 minutes old)
+Local data is stale (693 minutes old)
+Local data is stale (693 minutes old)
+Local data is stale (693 minutes old)
+Local data is stale (693 minutes old)
+Local data is stale (693 minutes old)
+Local data is stale (693 minutes old)
+Local data is stale (693 minutes old)
+Local data is stale (693 minutes old)
+Local data is stale (693 minutes old)
+Local data is stale (693 minutes old)
+Local data is stale (693 minutes old)
+Local data is stale (693 minutes old)
+Local data is stale (693 minutes old)
+Local data is stale (693 minutes old)
+Local data is stale (693 minutes old)
+Local data is stale (693 minutes old)
+Local data is stale (693 minutes old)
+Local data is stale (693 minutes old)
+Local data is stale (693 minutes old)
+Local data is stale (693 minutes old)
+Local data is stale (693 minutes old)
+Local data is stale (693 minutes old)
+Local data is stale (693 minutes old)
+Local data is stale (693 minutes old)
+Local data is stale (693 minutes old)
+  -> /home/riichi/works/slot/docs/index.html
+Generating machine pages...
+  -> /home/riichi/works/slot/docs/machine/sbj.html
+  -> /home/riichi/works/slot/docs/machine/hokuto_tensei2.html
+Generating ranking pages...
+Local data is stale (693 minutes old)
+Local data is stale (693 minutes old)
+Local data is stale (693 minutes old)
+Local data is stale (693 minutes old)
+Local data is stale (693 minutes old)
+Local data is stale (693 minutes old)
+Local data is stale (693 minutes old)
+Local data is stale (693 minutes old)
+Local data is stale (693 minutes old)
+Local data is stale (693 minutes old)
+  -> /home/riichi/works/slot/docs/ranking/sbj.html
+Local data is stale (693 minutes old)
+Local data is stale (693 minutes old)
+Local data is stale (693 minutes old)
+Local data is stale (693 minutes old)
+Local data is stale (693 minutes old)
+Local data is stale (693 minutes old)
+Local data is stale (693 minutes old)
+Local data is stale (693 minutes old)
+  -> /home/riichi/works/slot/docs/ranking/hokuto_tensei2.html
+Generating recommend pages...
+  Processing island_akihabara_sbj...
+Local data is stale (693 minutes old)
+Local data is stale (693 minutes old)
+  Processing shibuya_espass_sbj...
+Local data is stale (693 minutes old)
+Local data is stale (693 minutes old)
+  Processing shinjuku_espass_sbj...
+Local data is stale (693 minutes old)
+Local data is stale (693 minutes old)
+  Processing seibu_shinjuku_espass_sbj...
+Local data is stale (693 minutes old)
+Local data is stale (693 minutes old)
+  Processing akiba_espass_sbj...
+Local data is stale (693 minutes old)
+Local data is stale (693 minutes old)
+  Processing shibuya_espass_hokuto...
+Local data is stale (693 minutes old)
+Local data is stale (693 minutes old)
+  Processing shinjuku_espass_hokuto...
+Local data is stale (693 minutes old)
+Local data is stale (693 minutes old)
+  Processing akiba_espass_hokuto...
+Local data is stale (693 minutes old)
+Local data is stale (693 minutes old)
+  Processing island_akihabara_hokuto...
+Local data is stale (693 minutes old)
+Local data is stale (693 minutes old)
+  -> /home/riichi/works/slot/docs/recommend/
+Generating verify page...
+  バックテスト結果を使用: verify_20260128_results.json
+  -> /home/riichi/works/slot/docs/verify.html (バックテスト: 的中率45%)
+Generating history pages...
+  -> /home/riichi/works/slot/docs/history/ (137 pages)
+Copying static files...
+  -> /home/riichi/works/slot/docs/static/
+Generating metadata...
+  -> /home/riichi/works/slot/docs/metadata.json
+
+==================================================
+静的サイト生成完了!
+==================================================
+[2026-01-29 10:18:22] 静的サイト生成完了
+[2026-01-29 10:18:22] 変更あり、デプロイ中...
+[main e10e704] auto: リアルタイム更新 10:18
+ 14 files changed, 16 insertions(+), 16 deletions(-)
+To github.com:kinoko-cloud/slot.git
+   3697056..e10e704  main -> main
+[2026-01-29 10:18:25] デプロイ完了
+[2026-01-29 10:18:25] === 自動更新完了 ===
+[2026-01-29 10:30:02] === 自動更新開始 ===
+[2026-01-29 10:30:02] データ取得中...
+[2026-01-29 10:33:07] データ取得失敗（タイムアウトまたはエラー）
+[2026-01-29 10:33:07] 静的サイト生成中...
+==================================================
+静的サイト生成開始
+出力先: /home/riichi/works/slot/docs
+==================================================
+
+Running unit verification...
+✓ 台番号の異常なし
+Running data integrity check...
+
+==================================================
+データ整合性チェック: 2件の問題
+  🟡 警告: 2件
+==================================================
+🟡 [units_insufficient] 西武新宿駅前エスパス: 台数不足（期待7台、実際3台）
+🟡 [data_stale] データが708分前のもの（60分超過）
+
+  📊 パターン記録: island_akihabara_hokuto_tensei2 (182件)
+  📊 パターン記録: shinjuku_espass_hokuto_tensei2 (181件)
+  📊 パターン記録: akiba_espass_sbj (38件)
+  📊 パターン記録: island_akihabara_sbj (182件)
+  📊 パターン記録: shinjuku_espass_sbj (111件)
+  📊 パターン記録: seibu_shinjuku_espass_hokuto_tensei2 (21件)
+  📊 パターン記録: akiba_espass_hokuto_tensei2 (185件)
+  📊 パターン記録: seibu_shinjuku_espass_sbj (21件)
+  📊 パターン記録: shibuya_espass_sbj (27件)
+  📊 パターン記録: shibuya_espass_hokuto_tensei2 (236件)
+
+Generating index.html...
+Local data is stale (708 minutes old)
+Local data is stale (708 minutes old)
+Local data is stale (708 minutes old)
+Local data is stale (708 minutes old)
+Local data is stale (708 minutes old)
+Local data is stale (708 minutes old)
+Local data is stale (708 minutes old)
+Local data is stale (708 minutes old)
+Local data is stale (708 minutes old)
+Local data is stale (708 minutes old)
+Local data is stale (708 minutes old)
+Local data is stale (708 minutes old)
+Local data is stale (708 minutes old)
+Local data is stale (708 minutes old)
+Local data is stale (708 minutes old)
+Local data is stale (708 minutes old)
+Local data is stale (708 minutes old)
+Local data is stale (708 minutes old)
+Local data is stale (708 minutes old)
+Local data is stale (708 minutes old)
+Local data is stale (708 minutes old)
+Local data is stale (708 minutes old)
+Local data is stale (708 minutes old)
+Local data is stale (708 minutes old)
+Local data is stale (708 minutes old)
+Local data is stale (708 minutes old)
+Local data is stale (708 minutes old)
+Local data is stale (708 minutes old)
+  -> /home/riichi/works/slot/docs/index.html
+Generating machine pages...
+  -> /home/riichi/works/slot/docs/machine/sbj.html
+  -> /home/riichi/works/slot/docs/machine/hokuto_tensei2.html
+Generating ranking pages...
+Local data is stale (708 minutes old)
+Local data is stale (708 minutes old)
+Local data is stale (708 minutes old)
+Local data is stale (708 minutes old)
+Local data is stale (708 minutes old)
+Local data is stale (708 minutes old)
+Local data is stale (708 minutes old)
+Local data is stale (708 minutes old)
+Local data is stale (708 minutes old)
+Local data is stale (708 minutes old)
+  -> /home/riichi/works/slot/docs/ranking/sbj.html
+Local data is stale (708 minutes old)
+Local data is stale (708 minutes old)
+Local data is stale (708 minutes old)
+Local data is stale (708 minutes old)
+Local data is stale (708 minutes old)
+Local data is stale (708 minutes old)
+Local data is stale (708 minutes old)
+Local data is stale (708 minutes old)
+  -> /home/riichi/works/slot/docs/ranking/hokuto_tensei2.html
+Generating recommend pages...
+  Processing island_akihabara_sbj...
+Local data is stale (708 minutes old)
+Local data is stale (708 minutes old)
+  Processing shibuya_espass_sbj...
+Local data is stale (708 minutes old)
+Local data is stale (708 minutes old)
+  Processing shinjuku_espass_sbj...
+Local data is stale (708 minutes old)
+Local data is stale (708 minutes old)
+  Processing seibu_shinjuku_espass_sbj...
+Local data is stale (708 minutes old)
+Local data is stale (708 minutes old)
+  Processing akiba_espass_sbj...
+Local data is stale (708 minutes old)
+Local data is stale (708 minutes old)
+  Processing shibuya_espass_hokuto...
+Local data is stale (708 minutes old)
+Local data is stale (708 minutes old)
+  Processing shinjuku_espass_hokuto...
+Local data is stale (708 minutes old)
+Local data is stale (708 minutes old)
+  Processing akiba_espass_hokuto...
+Local data is stale (708 minutes old)
+Local data is stale (708 minutes old)
+  Processing island_akihabara_hokuto...
+Local data is stale (708 minutes old)
+Local data is stale (708 minutes old)
+  -> /home/riichi/works/slot/docs/recommend/
+Generating verify page...
+  バックテスト結果を使用: verify_20260128_results.json
+  -> /home/riichi/works/slot/docs/verify.html (バックテスト: 的中率45%)
+Generating history pages...
+  -> /home/riichi/works/slot/docs/history/ (137 pages)
+Copying static files...
+  -> /home/riichi/works/slot/docs/static/
+Generating metadata...
+  -> /home/riichi/works/slot/docs/metadata.json
+
+==================================================
+静的サイト生成完了!
+==================================================
+[2026-01-29 10:33:19] 静的サイト生成完了
+[2026-01-29 10:33:20] 変更あり、デプロイ中...
+[main 698e748] auto: リアルタイム更新 10:33
+ 14 files changed, 16 insertions(+), 16 deletions(-)
+To github.com:kinoko-cloud/slot.git
+   e10e704..698e748  main -> main
+[2026-01-29 10:33:22] デプロイ完了
+[2026-01-29 10:33:22] === 自動更新完了 ===
+[2026-01-29 10:45:02] === 自動更新開始 ===
+[2026-01-29 10:45:02] データ取得中...
+[2026-01-29 10:48:05] データ取得失敗（タイムアウトまたはエラー）
+[2026-01-29 10:48:05] 静的サイト生成中...
+node:events:486
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: write EPIPE
+    at afterWriteDispatched (node:internal/stream_base_commons:159:15)
+    at writeGeneric (node:internal/stream_base_commons:150:3)
+    at Socket._writeGeneric (node:net:966:11)
+    at Socket._write (node:net:978:8)
+    at writeOrBuffer (node:internal/streams/writable:570:12)
+    at _write (node:internal/streams/writable:499:10)
+    at Writable.write (node:internal/streams/writable:508:10)
+    at PipeTransport.send (/home/riichi/.local/lib/python3.12/site-packages/playwright/driver/package/lib/server/utils/pipeTransport.js:52:21)
+    at dispatcherConnection.onmessage (/home/riichi/.local/lib/python3.12/site-packages/playwright/driver/package/lib/cli/driver.js:60:59)
+    at DispatcherConnection.sendDispose (/home/riichi/.local/lib/python3.12/site-packages/playwright/driver/package/lib/server/dispatchers/dispatcher.js:191:10)
+Emitted 'error' event on Socket instance at:
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21) {
+  errno: -32,
+  code: 'EPIPE',
+  syscall: 'write'
+}
+
+Node.js v24.11.1
+==================================================
+静的サイト生成開始
+出力先: /home/riichi/works/slot/docs
+==================================================
+
+Running unit verification...
+✓ 台番号の異常なし
+Running data integrity check...
+
+==================================================
+データ整合性チェック: 2件の問題
+  🟡 警告: 2件
+==================================================
+🟡 [units_insufficient] 西武新宿駅前エスパス: 台数不足（期待7台、実際3台）
+🟡 [data_stale] データが723分前のもの（60分超過）
+
+  📊 パターン記録: island_akihabara_hokuto_tensei2 (182件)
+  📊 パターン記録: shinjuku_espass_hokuto_tensei2 (181件)
+  📊 パターン記録: akiba_espass_sbj (38件)
+  📊 パターン記録: island_akihabara_sbj (182件)
+  📊 パターン記録: shinjuku_espass_sbj (111件)
+  📊 パターン記録: seibu_shinjuku_espass_hokuto_tensei2 (21件)
+  📊 パターン記録: akiba_espass_hokuto_tensei2 (185件)
+  📊 パターン記録: seibu_shinjuku_espass_sbj (21件)
+  📊 パターン記録: shibuya_espass_sbj (27件)
+  📊 パターン記録: shibuya_espass_hokuto_tensei2 (236件)
+
+Generating index.html...
+Local data is stale (723 minutes old)
+Local data is stale (723 minutes old)
+Local data is stale (723 minutes old)
+Local data is stale (723 minutes old)
+Local data is stale (723 minutes old)
+Local data is stale (723 minutes old)
+Local data is stale (723 minutes old)
+Local data is stale (723 minutes old)
+Local data is stale (723 minutes old)
+Local data is stale (723 minutes old)
+Local data is stale (723 minutes old)
+Local data is stale (723 minutes old)
+Local data is stale (723 minutes old)
+Local data is stale (723 minutes old)
+Local data is stale (723 minutes old)
+Local data is stale (723 minutes old)
+Local data is stale (723 minutes old)
+Local data is stale (723 minutes old)
+Local data is stale (723 minutes old)
+Local data is stale (723 minutes old)
+Local data is stale (723 minutes old)
+Local data is stale (723 minutes old)
+Local data is stale (723 minutes old)
+Local data is stale (723 minutes old)
+Local data is stale (723 minutes old)
+Local data is stale (723 minutes old)
+Local data is stale (723 minutes old)
+Local data is stale (723 minutes old)
+  -> /home/riichi/works/slot/docs/index.html
+Generating machine pages...
+  -> /home/riichi/works/slot/docs/machine/sbj.html
+  -> /home/riichi/works/slot/docs/machine/hokuto_tensei2.html
+Generating ranking pages...
+Local data is stale (723 minutes old)
+Local data is stale (723 minutes old)
+Local data is stale (723 minutes old)
+Local data is stale (723 minutes old)
+Local data is stale (723 minutes old)
+Local data is stale (723 minutes old)
+Local data is stale (723 minutes old)
+Local data is stale (723 minutes old)
+Local data is stale (723 minutes old)
+Local data is stale (723 minutes old)
+  -> /home/riichi/works/slot/docs/ranking/sbj.html
+Local data is stale (723 minutes old)
+Local data is stale (723 minutes old)
+Local data is stale (723 minutes old)
+Local data is stale (723 minutes old)
+Local data is stale (723 minutes old)
+Local data is stale (723 minutes old)
+Local data is stale (723 minutes old)
+Local data is stale (723 minutes old)
+  -> /home/riichi/works/slot/docs/ranking/hokuto_tensei2.html
+Generating recommend pages...
+  Processing island_akihabara_sbj...
+Local data is stale (723 minutes old)
+Local data is stale (723 minutes old)
+  Processing shibuya_espass_sbj...
+Local data is stale (723 minutes old)
+Local data is stale (723 minutes old)
+  Processing shinjuku_espass_sbj...
+Local data is stale (723 minutes old)
+Local data is stale (723 minutes old)
+  Processing seibu_shinjuku_espass_sbj...
+Local data is stale (723 minutes old)
+Local data is stale (723 minutes old)
+  Processing akiba_espass_sbj...
+Local data is stale (723 minutes old)
+Local data is stale (723 minutes old)
+  Processing shibuya_espass_hokuto...
+Local data is stale (723 minutes old)
+Local data is stale (723 minutes old)
+  Processing shinjuku_espass_hokuto...
+Local data is stale (723 minutes old)
+Local data is stale (723 minutes old)
+  Processing akiba_espass_hokuto...
+Local data is stale (723 minutes old)
+Local data is stale (723 minutes old)
+  Processing island_akihabara_hokuto...
+Local data is stale (723 minutes old)
+Local data is stale (723 minutes old)
+  -> /home/riichi/works/slot/docs/recommend/
+Generating verify page...
+  バックテスト結果を使用: verify_20260128_results.json
+  -> /home/riichi/works/slot/docs/verify.html (バックテスト: 的中率45%)
+Generating history pages...
+  -> /home/riichi/works/slot/docs/history/ (137 pages)
+Copying static files...
+  -> /home/riichi/works/slot/docs/static/
+Generating metadata...
+  -> /home/riichi/works/slot/docs/metadata.json
+
+==================================================
+静的サイト生成完了!
+==================================================
+[2026-01-29 10:48:16] 静的サイト生成完了
+[2026-01-29 10:48:17] 変更あり、デプロイ中...
+[main ddc39ef] auto: リアルタイム更新 10:48
+ 14 files changed, 16 insertions(+), 16 deletions(-)
+To github.com:kinoko-cloud/slot.git
+   698e748..ddc39ef  main -> main
+[2026-01-29 10:48:19] デプロイ完了
+[2026-01-29 10:48:19] === 自動更新完了 ===
+[2026-01-29 11:00:03] === 自動更新開始 ===
+[2026-01-29 11:00:03] データ取得中...
+[2026-01-29 11:03:06] データ取得失敗（タイムアウトまたはエラー）
+[2026-01-29 11:15:03] === 自動更新開始 ===
+[2026-01-29 11:15:03] データ取得中...
+[2026-01-29 11:18:08] データ取得失敗（タイムアウトまたはエラー）
+[2026-01-29 11:18:08] 静的サイト生成中...
+node:events:486
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: write EPIPE
+    at afterWriteDispatched (node:internal/stream_base_commons:159:15)
+    at writeGeneric (node:internal/stream_base_commons:150:3)
+    at Socket._writeGeneric (node:net:966:11)
+    at Socket._write (node:net:978:8)
+    at writeOrBuffer (node:internal/streams/writable:570:12)
+    at _write (node:internal/streams/writable:499:10)
+    at Writable.write (node:internal/streams/writable:508:10)
+    at PipeTransport.send (/home/riichi/.local/lib/python3.12/site-packages/playwright/driver/package/lib/server/utils/pipeTransport.js:52:21)
+    at dispatcherConnection.onmessage (/home/riichi/.local/lib/python3.12/site-packages/playwright/driver/package/lib/cli/driver.js:60:59)
+    at DispatcherConnection.sendEvent (/home/riichi/.local/lib/python3.12/site-packages/playwright/driver/package/lib/server/dispatchers/dispatcher.js:180:10)
+Emitted 'error' event on Socket instance at:
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21) {
+  errno: -32,
+  code: 'EPIPE',
+  syscall: 'write'
+}
+
+Node.js v24.11.1
+==================================================
+静的サイト生成開始
+出力先: /home/riichi/works/slot/docs
+==================================================
+
+Running unit verification...
+✓ 台番号の異常なし
+Running data integrity check...
+
+==================================================
+データ整合性チェック: 1件の問題
+  🟡 警告: 1件
+==================================================
+🟡 [units_insufficient] 西武新宿駅前エスパス: 台数不足（期待7台、実際3台）
+
+  📊 パターン記録: island_akihabara_hokuto_tensei2 (182件)
+  📊 パターン記録: shinjuku_espass_hokuto_tensei2 (181件)
+  📊 パターン記録: akiba_espass_sbj (38件)
+  📊 パターン記録: island_akihabara_sbj (182件)
+  📊 パターン記録: shinjuku_espass_sbj (111件)
+  📊 パターン記録: seibu_shinjuku_espass_hokuto_tensei2 (21件)
+  📊 パターン記録: akiba_espass_hokuto_tensei2 (185件)
+  📊 パターン記録: seibu_shinjuku_espass_sbj (21件)
+  📊 パターン記録: shibuya_espass_sbj (27件)
+  📊 パターン記録: shibuya_espass_hokuto_tensei2 (236件)
+
+Generating index.html...
+Using local data (fetched 20 minutes ago)
+Using local data (fetched 20 minutes ago)
+Using local data (fetched 20 minutes ago)
+Using local data (fetched 20 minutes ago)
+Using local data (fetched 20 minutes ago)
+Using local data (fetched 20 minutes ago)
+Using local data (fetched 20 minutes ago)
+Using local data (fetched 20 minutes ago)
+Using local data (fetched 20 minutes ago)
+Using local data (fetched 20 minutes ago)
+Using local data (fetched 20 minutes ago)
+Using local data (fetched 20 minutes ago)
+Using local data (fetched 20 minutes ago)
+Using local data (fetched 20 minutes ago)
+Using local data (fetched 20 minutes ago)
+Using local data (fetched 20 minutes ago)
+Using local data (fetched 20 minutes ago)
+Using local data (fetched 20 minutes ago)
+Using local data (fetched 20 minutes ago)
+Using local data (fetched 20 minutes ago)
+Using local data (fetched 20 minutes ago)
+Using local data (fetched 20 minutes ago)
+Using local data (fetched 20 minutes ago)
+Using local data (fetched 20 minutes ago)
+Using local data (fetched 20 minutes ago)
+Using local data (fetched 20 minutes ago)
+Using local data (fetched 20 minutes ago)
+Using local data (fetched 20 minutes ago)
+  -> /home/riichi/works/slot/docs/index.html
+Generating machine pages...
+  -> /home/riichi/works/slot/docs/machine/sbj.html
+  -> /home/riichi/works/slot/docs/machine/hokuto_tensei2.html
+Generating ranking pages...
+Using local data (fetched 20 minutes ago)
+Using local data (fetched 20 minutes ago)
+Using local data (fetched 20 minutes ago)
+Using local data (fetched 20 minutes ago)
+Using local data (fetched 20 minutes ago)
+Using local data (fetched 20 minutes ago)
+Using local data (fetched 20 minutes ago)
+Using local data (fetched 20 minutes ago)
+Using local data (fetched 20 minutes ago)
+Using local data (fetched 20 minutes ago)
+  -> /home/riichi/works/slot/docs/ranking/sbj.html
+Using local data (fetched 20 minutes ago)
+Using local data (fetched 20 minutes ago)
+Using local data (fetched 20 minutes ago)
+Using local data (fetched 20 minutes ago)
+Using local data (fetched 20 minutes ago)
+Using local data (fetched 20 minutes ago)
+Using local data (fetched 20 minutes ago)
+Using local data (fetched 20 minutes ago)
+  -> /home/riichi/works/slot/docs/ranking/hokuto_tensei2.html
+Generating recommend pages...
+  Processing island_akihabara_sbj...
+Using local data (fetched 20 minutes ago)
+Using local data (fetched 20 minutes ago)
+  Processing shibuya_espass_sbj...
+Using local data (fetched 20 minutes ago)
+Using local data (fetched 20 minutes ago)
+  Processing shinjuku_espass_sbj...
+Using local data (fetched 20 minutes ago)
+Using local data (fetched 20 minutes ago)
+  Processing seibu_shinjuku_espass_sbj...
+Using local data (fetched 20 minutes ago)
+Using local data (fetched 20 minutes ago)
+  Processing akiba_espass_sbj...
+Using local data (fetched 20 minutes ago)
+Using local data (fetched 20 minutes ago)
+  Processing shibuya_espass_hokuto...
+Using local data (fetched 20 minutes ago)
+Using local data (fetched 20 minutes ago)
+  Processing shinjuku_espass_hokuto...
+Using local data (fetched 20 minutes ago)
+Using local data (fetched 20 minutes ago)
+  Processing akiba_espass_hokuto...
+Using local data (fetched 20 minutes ago)
+Using local data (fetched 20 minutes ago)
+  Processing island_akihabara_hokuto...
+Using local data (fetched 20 minutes ago)
+Using local data (fetched 20 minutes ago)
+  -> /home/riichi/works/slot/docs/recommend/
+Generating verify page...
+  バックテスト結果を使用: verify_20260128_results.json
+  -> /home/riichi/works/slot/docs/verify.html (バックテスト: 的中率48%)
+Generating history pages...
+  -> /home/riichi/works/slot/docs/history/ (137 pages)
+Copying static files...
+  -> /home/riichi/works/slot/docs/static/
+Generating metadata...
+  -> /home/riichi/works/slot/docs/metadata.json
+
+==================================================
+静的サイト生成完了!
+==================================================
+[2026-01-29 11:18:16] 静的サイト生成完了
+[2026-01-29 11:18:16] 変更あり、デプロイ中...
+[main ea2066b] auto: リアルタイム更新 11:18
+ 15 files changed, 53780 insertions(+), 115088 deletions(-)
+error: cannot pull with rebase: You have unstaged changes.
+error: Please commit or stash them.
+To github.com:kinoko-cloud/slot.git
+   ddc39ef..ea2066b  main -> main
+[2026-01-29 11:18:20] デプロイ完了
+[2026-01-29 11:18:20] === 自動更新完了 ===
+[2026-01-29 11:30:03] === 自動更新開始 ===
+[2026-01-29 11:30:03] データ取得中...
+[2026-01-29 11:33:08] データ取得失敗（タイムアウトまたはエラー）
+[2026-01-29 11:33:08] 静的サイト生成中...
+node:events:486
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: write EPIPE
+    at afterWriteDispatched (node:internal/stream_base_commons:159:15)
+    at writeGeneric (node:internal/stream_base_commons:150:3)
+    at Socket._writeGeneric (node:net:966:11)
+    at Socket._write (node:net:978:8)
+    at writeOrBuffer (node:internal/streams/writable:570:12)
+    at _write (node:internal/streams/writable:499:10)
+    at Writable.write (node:internal/streams/writable:508:10)
+    at PipeTransport.send (/home/riichi/.local/lib/python3.12/site-packages/playwright/driver/package/lib/server/utils/pipeTransport.js:52:21)
+    at dispatcherConnection.onmessage (/home/riichi/.local/lib/python3.12/site-packages/playwright/driver/package/lib/cli/driver.js:60:59)
+    at DispatcherConnection.sendDispose (/home/riichi/.local/lib/python3.12/site-packages/playwright/driver/package/lib/server/dispatchers/dispatcher.js:191:10)
+Emitted 'error' event on Socket instance at:
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21) {
+  errno: -32,
+  code: 'EPIPE',
+  syscall: 'write'
+}
+
+Node.js v24.11.1
+==================================================
+静的サイト生成開始
+出力先: /home/riichi/works/slot/docs
+==================================================
+
+Running unit verification...
+✓ 台番号の異常なし
+Running data integrity check...
+
+==================================================
+データ整合性チェック: 1件の問題
+  🟡 警告: 1件
+==================================================
+🟡 [units_insufficient] 西武新宿駅前エスパス: 台数不足（期待7台、実際3台）
+
+  📊 パターン記録: island_akihabara_hokuto_tensei2 (182件)
+  📊 パターン記録: shinjuku_espass_hokuto_tensei2 (181件)
+  📊 パターン記録: akiba_espass_sbj (38件)
+  📊 パターン記録: island_akihabara_sbj (182件)
+  📊 パターン記録: shinjuku_espass_sbj (111件)
+  📊 パターン記録: seibu_shinjuku_espass_hokuto_tensei2 (21件)
+  📊 パターン記録: akiba_espass_hokuto_tensei2 (185件)
+  📊 パターン記録: seibu_shinjuku_espass_sbj (21件)
+  📊 パターン記録: shibuya_espass_sbj (27件)
+  📊 パターン記録: shibuya_espass_hokuto_tensei2 (236件)
+
+Generating index.html...
+Local data is stale (35 minutes old)
+Local data is stale (35 minutes old)
+Local data is stale (35 minutes old)
+Local data is stale (35 minutes old)
+Local data is stale (35 minutes old)
+Local data is stale (35 minutes old)
+Local data is stale (35 minutes old)
+Local data is stale (35 minutes old)
+Local data is stale (35 minutes old)
+Local data is stale (35 minutes old)
+Local data is stale (35 minutes old)
+Local data is stale (35 minutes old)
+Local data is stale (35 minutes old)
+Local data is stale (35 minutes old)
+Local data is stale (35 minutes old)
+Local data is stale (35 minutes old)
+Local data is stale (35 minutes old)
+Local data is stale (35 minutes old)
+Local data is stale (35 minutes old)
+Local data is stale (35 minutes old)
+Local data is stale (35 minutes old)
+Local data is stale (35 minutes old)
+Local data is stale (35 minutes old)
+Local data is stale (35 minutes old)
+Local data is stale (35 minutes old)
+Local data is stale (35 minutes old)
+Local data is stale (35 minutes old)
+Local data is stale (35 minutes old)
+  -> /home/riichi/works/slot/docs/index.html
+Generating machine pages...
+  -> /home/riichi/works/slot/docs/machine/sbj.html
+  -> /home/riichi/works/slot/docs/machine/hokuto_tensei2.html
+Generating ranking pages...
+Local data is stale (35 minutes old)
+Local data is stale (35 minutes old)
+Local data is stale (35 minutes old)
+Local data is stale (35 minutes old)
+Local data is stale (35 minutes old)
+Local data is stale (35 minutes old)
+Local data is stale (35 minutes old)
+Local data is stale (35 minutes old)
+Local data is stale (35 minutes old)
+Local data is stale (35 minutes old)
+  -> /home/riichi/works/slot/docs/ranking/sbj.html
+Local data is stale (35 minutes old)
+Local data is stale (35 minutes old)
+Local data is stale (35 minutes old)
+Local data is stale (35 minutes old)
+Local data is stale (35 minutes old)
+Local data is stale (35 minutes old)
+Local data is stale (35 minutes old)
+Local data is stale (35 minutes old)
+  -> /home/riichi/works/slot/docs/ranking/hokuto_tensei2.html
+Generating recommend pages...
+  Processing island_akihabara_sbj...
+Local data is stale (35 minutes old)
+Local data is stale (35 minutes old)
+  Processing shibuya_espass_sbj...
+Local data is stale (35 minutes old)
+Local data is stale (35 minutes old)
+  Processing shinjuku_espass_sbj...
+Local data is stale (35 minutes old)
+Local data is stale (35 minutes old)
+  Processing seibu_shinjuku_espass_sbj...
+Local data is stale (35 minutes old)
+Local data is stale (35 minutes old)
+  Processing akiba_espass_sbj...
+Local data is stale (35 minutes old)
+Local data is stale (35 minutes old)
+  Processing shibuya_espass_hokuto...
+Local data is stale (35 minutes old)
+Local data is stale (35 minutes old)
+  Processing shinjuku_espass_hokuto...
+Local data is stale (35 minutes old)
+Local data is stale (35 minutes old)
+  Processing akiba_espass_hokuto...
+Local data is stale (35 minutes old)
+Local data is stale (35 minutes old)
+  Processing island_akihabara_hokuto...
+Local data is stale (35 minutes old)
+Local data is stale (35 minutes old)
+  -> /home/riichi/works/slot/docs/recommend/
+Generating verify page...
+  バックテスト結果を使用: verify_20260128_results.json
+  -> /home/riichi/works/slot/docs/verify.html (バックテスト: 的中率48%)
+Generating history pages...
+  -> /home/riichi/works/slot/docs/history/ (137 pages)
+Copying static files...
+  -> /home/riichi/works/slot/docs/static/
+Generating metadata...
+  -> /home/riichi/works/slot/docs/metadata.json
+
+==================================================
+静的サイト生成完了!
+==================================================
+[2026-01-29 11:33:18] 静的サイト生成完了
+[2026-01-29 11:33:18] 変更あり、デプロイ中...
+[main c814502] auto: リアルタイム更新 11:33
+ 14 files changed, 16 insertions(+), 16 deletions(-)
+error: cannot pull with rebase: You have unstaged changes.
+error: Please commit or stash them.
+To github.com:kinoko-cloud/slot.git
+   ea2066b..c814502  main -> main
+[2026-01-29 11:33:21] デプロイ完了
+[2026-01-29 11:33:21] === 自動更新完了 ===
+[2026-01-29 11:45:02] === 自動更新開始 ===
+[2026-01-29 11:45:02] データ取得中...
+[2026-01-29 11:48:06] データ取得失敗（タイムアウトまたはエラー）
+[2026-01-29 11:48:06] 静的サイト生成中...
+node:events:486
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: write EPIPE
+    at afterWriteDispatched (node:internal/stream_base_commons:159:15)
+    at writeGeneric (node:internal/stream_base_commons:150:3)
+    at Socket._writeGeneric (node:net:966:11)
+    at Socket._write (node:net:978:8)
+    at writeOrBuffer (node:internal/streams/writable:570:12)
+    at _write (node:internal/streams/writable:499:10)
+    at Writable.write (node:internal/streams/writable:508:10)
+    at PipeTransport.send (/home/riichi/.local/lib/python3.12/site-packages/playwright/driver/package/lib/server/utils/pipeTransport.js:52:21)
+    at dispatcherConnection.onmessage (/home/riichi/.local/lib/python3.12/site-packages/playwright/driver/package/lib/cli/driver.js:60:59)
+    at DispatcherConnection.sendDispose (/home/riichi/.local/lib/python3.12/site-packages/playwright/driver/package/lib/server/dispatchers/dispatcher.js:191:10)
+Emitted 'error' event on Socket instance at:
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21) {
+  errno: -32,
+  code: 'EPIPE',
+  syscall: 'write'
+}
+
+Node.js v24.11.1
+==================================================
+静的サイト生成開始
+出力先: /home/riichi/works/slot/docs
+==================================================
+
+Running unit verification...
+✓ 台番号の異常なし
+Running data integrity check...
+
+==================================================
+データ整合性チェック: 1件の問題
+  🟡 警告: 1件
+==================================================
+🟡 [units_insufficient] 西武新宿駅前エスパス: 台数不足（期待7台、実際3台）
+
+  📊 パターン記録: island_akihabara_hokuto_tensei2 (182件)
+  📊 パターン記録: shinjuku_espass_hokuto_tensei2 (181件)
+  📊 パターン記録: akiba_espass_sbj (38件)
+  📊 パターン記録: island_akihabara_sbj (182件)
+  📊 パターン記録: shinjuku_espass_sbj (111件)
+  📊 パターン記録: seibu_shinjuku_espass_hokuto_tensei2 (21件)
+  📊 パターン記録: akiba_espass_hokuto_tensei2 (185件)
+  📊 パターン記録: seibu_shinjuku_espass_sbj (21件)
+  📊 パターン記録: shibuya_espass_sbj (27件)
+  📊 パターン記録: shibuya_espass_hokuto_tensei2 (236件)
+
+Generating index.html...
+Local data is stale (50 minutes old)
+Local data is stale (50 minutes old)
+Local data is stale (50 minutes old)
+Local data is stale (50 minutes old)
+Local data is stale (50 minutes old)
+Local data is stale (50 minutes old)
+Local data is stale (50 minutes old)
+Local data is stale (50 minutes old)
+Local data is stale (50 minutes old)
+Local data is stale (50 minutes old)
+Local data is stale (50 minutes old)
+Local data is stale (50 minutes old)
+Local data is stale (50 minutes old)
+Local data is stale (50 minutes old)
+Local data is stale (50 minutes old)
+Local data is stale (50 minutes old)
+Local data is stale (50 minutes old)
+Local data is stale (50 minutes old)
+Local data is stale (50 minutes old)
+Local data is stale (50 minutes old)
+Local data is stale (50 minutes old)
+Local data is stale (50 minutes old)
+Local data is stale (50 minutes old)
+Local data is stale (50 minutes old)
+Local data is stale (50 minutes old)
+Local data is stale (50 minutes old)
+Local data is stale (50 minutes old)
+Local data is stale (50 minutes old)
+  -> /home/riichi/works/slot/docs/index.html
+Generating machine pages...
+  -> /home/riichi/works/slot/docs/machine/sbj.html
+  -> /home/riichi/works/slot/docs/machine/hokuto_tensei2.html
+Generating ranking pages...
+Local data is stale (50 minutes old)
+Local data is stale (50 minutes old)
+Local data is stale (50 minutes old)
+Local data is stale (50 minutes old)
+Local data is stale (50 minutes old)
+Local data is stale (50 minutes old)
+Local data is stale (50 minutes old)
+Local data is stale (50 minutes old)
+Local data is stale (50 minutes old)
+Local data is stale (50 minutes old)
+  -> /home/riichi/works/slot/docs/ranking/sbj.html
+Local data is stale (50 minutes old)
+Local data is stale (50 minutes old)
+Local data is stale (50 minutes old)
+Local data is stale (50 minutes old)
+Local data is stale (50 minutes old)
+Local data is stale (50 minutes old)
+Local data is stale (50 minutes old)
+Local data is stale (50 minutes old)
+  -> /home/riichi/works/slot/docs/ranking/hokuto_tensei2.html
+Generating recommend pages...
+  Processing island_akihabara_sbj...
+Local data is stale (50 minutes old)
+Local data is stale (50 minutes old)
+  Processing shibuya_espass_sbj...
+Local data is stale (50 minutes old)
+Local data is stale (50 minutes old)
+  Processing shinjuku_espass_sbj...
+Local data is stale (50 minutes old)
+Local data is stale (50 minutes old)
+  Processing seibu_shinjuku_espass_sbj...
+Local data is stale (50 minutes old)
+Local data is stale (50 minutes old)
+  Processing akiba_espass_sbj...
+Local data is stale (50 minutes old)
+Local data is stale (50 minutes old)
+  Processing shibuya_espass_hokuto...
+Local data is stale (50 minutes old)
+Local data is stale (50 minutes old)
+  Processing shinjuku_espass_hokuto...
+Local data is stale (50 minutes old)
+Local data is stale (50 minutes old)
+  Processing akiba_espass_hokuto...
+Local data is stale (50 minutes old)
+Local data is stale (50 minutes old)
+  Processing island_akihabara_hokuto...
+Local data is stale (50 minutes old)
+Local data is stale (50 minutes old)
+  -> /home/riichi/works/slot/docs/recommend/
+Generating verify page...
+  バックテスト結果を使用: verify_20260128_results.json
+  -> /home/riichi/works/slot/docs/verify.html (バックテスト: 的中率48%)
+Generating history pages...
+  -> /home/riichi/works/slot/docs/history/ (137 pages)
+Copying static files...
+  -> /home/riichi/works/slot/docs/static/
+Generating metadata...
+  -> /home/riichi/works/slot/docs/metadata.json
+
+==================================================
+静的サイト生成完了!
+==================================================
+[2026-01-29 11:48:18] 静的サイト生成完了
+[2026-01-29 11:48:18] 変更あり、デプロイ中...
+[main 63593a6] auto: リアルタイム更新 11:48
+ 14 files changed, 16 insertions(+), 16 deletions(-)
+error: cannot pull with rebase: You have unstaged changes.
+error: Please commit or stash them.
+To github.com:kinoko-cloud/slot.git
+   c814502..63593a6  main -> main
+[2026-01-29 11:48:20] デプロイ完了
+[2026-01-29 11:48:20] === 自動更新完了 ===
