@@ -6005,9 +6005,19 @@ a.perfect-card:hover { background: rgba(255,215,0,0.18); }
     border: 3px solid #555;
     flex-shrink: 0;
 }
-.vb-circle.good { border-color: #2ed573; }
-.vb-circle.ok { border-color: #ffa502; }
-.vb-circle.bad { border-color: #ff6b6b; }
+.vb-circle.rainbow {
+    border-color: transparent;
+    background:
+        linear-gradient(#1a1a2e, #1a1a2e) padding-box,
+        conic-gradient(#ff0000, #ff8800, #ffee00, #00ff88, #0088ff, #aa00ff, #ff0000) border-box;
+}
+.vb-circle.hot { border-color: #ff2222; }
+.vb-circle.good { border-color: #ff6600; }
+.vb-circle.warm { border-color: #ffaa00; }
+.vb-circle.ok { border-color: #cccc00; }
+.vb-circle.cool { border-color: #44aa44; }
+.vb-circle.cold { border-color: #3388bb; }
+.vb-circle.ice { border-color: #4466aa; }
 .vb-circle-num {
     font-size: 1.15em;
     font-weight: 800;
