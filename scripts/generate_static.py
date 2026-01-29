@@ -1647,7 +1647,7 @@ def _generate_verify_from_backtest(env, results):
             _units = sd.get('units', [])
             _valid = [u for u in _units if u.get('actual_prob', 0) > 0 and u.get('actual_games', 0) >= 500]
             _sa = [u for u in _valid if u.get('predicted_rank') in ('S', 'A')]
-            if len(_sa) >= 3:
+            if len(_sa) >= 2:
                 _hit = sum(1 for u in _sa if u.get('verdict_class') in ('perfect', 'hit'))
                 _rate = int(_hit / len(_sa) * 100)
                 store_accuracy_header.append({
@@ -2082,7 +2082,7 @@ def generate_verify_page(env):
             units = sd.get('units', [])
             _valid = [u for u in units if u.get('actual_prob', 0) > 0 and u.get('actual_games', 0) >= 500]
             _sa = [u for u in _valid if u.get('pre_open_rank', u.get('predicted_rank', '')) in ('S', 'A')]
-            if len(_sa) >= 3:
+            if len(_sa) >= 2:
                 _hit = sum(1 for u in _sa if _is_unit_hit(u))
                 _rate = int(_hit / len(_sa) * 100)
                 store_accuracy_header.append({
