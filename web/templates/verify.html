@@ -95,6 +95,8 @@
                 <h2>{{ machine_data.icon }} {{ machine_data.name }}</h2>
 
                 {% for store in machine_data.stores %}
+                {% set has_valid = store.units|selectattr('verdict_class', 'ne', 'nodata')|list|length > 0 %}
+                {% if not has_valid %}{% continue %}{% endif %}
                 <div class="verify-store" id="store-{{ machine_name }}-{{ loop.index0 }}">
                     <div class="verify-store-header">
                         <h3 class="verify-store-name">{{ store.name }}</h3>
@@ -120,6 +122,7 @@
                         </thead>
                         <tbody>
                         {% for unit in store.units %}
+                        {% if unit.verdict_class|default('nodata') == 'nodata' %}{% continue %}{% endif %}
                         {% set pred_rank = unit.pre_open_rank|default(unit.predicted_rank|default('C')) %}
                         {% set pred_good = pred_rank in ('S', 'A') %}
                         {% set pred_excellent = pred_rank == 'S' and (unit.pre_open_score|default(unit.predicted_score|default(50))) >= 75 %}
