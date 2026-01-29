@@ -47,7 +47,7 @@ REALTIME_CACHE = {}
 SCRAPING_STATUS = {}
 
 # バージョン確認用
-APP_VERSION = '2026-01-27-v13-cloudflare-redirect'
+APP_VERSION = '2026-01-31-v14-realtime-integration'
 
 # Cloudflare Pagesへのリダイレクト設定
 CLOUDFLARE_URL = 'https://slot-e8a.pages.dev'
