@@ -890,18 +890,23 @@ def analyze_trend(days: List[dict], machine_key: str = 'sbj') -> dict:
         art_counts.append(art)
         game_counts.append(games)
 
-        # 差枚推定（historyのmedalsがあれば正確に計算、なければ確率ベース）
+        # 差枚推定（蓄積DBのdiff_medals最優先 → historyベース → 確率ベース）
         if games > 0:
             estimated_diff = 0
-            hist = day.get('history', [])
-            if hist:
-                # historyがあれば実medalsベースで差枚推定
-                try:
-                    from analysis.diff_medals_estimator import estimate_diff_medals
-                    medals_total = sum(h.get('medals', 0) for h in hist)
-                    estimated_diff = estimate_diff_medals(medals_total, games, machine_key)
-                except Exception:
-                    pass
+            # 蓄積DBにdiff_medalsがあればそれを使う（最も正確）
+            db_diff = day.get('diff_medals')
+            if db_diff is not None and db_diff != 0:
+                estimated_diff = db_diff
+            else:
+                hist = day.get('history', [])
+                if hist:
+                    # historyがあれば実medalsベースで差枚推定
+                    try:
+                        from analysis.diff_medals_estimator import estimate_diff_medals
+                        medals_total = sum(h.get('medals', 0) for h in hist)
+                        estimated_diff = estimate_diff_medals(medals_total, games, machine_key)
+                    except Exception:
+                        pass
             if estimated_diff == 0 and art > 0:
                 # フォールバック: 確率ベース推定
                 art_prob = games / art
@@ -940,10 +945,11 @@ def analyze_trend(days: List[dict], machine_key: str = 'sbj') -> dict:
             consecutive_plus += 1
             consecutive_minus = 0
         elif diff < 0:
-            # 低稼働でマイナスだが確率が良い場合はプラス扱い
+            # 低稼働でマイナスだが確率が良い場合のみプラス扱い
+            # ただし大幅マイナス（-2000枚以上）は確率が良くても好調とは言えない
             if art > 0 and games > 0:
                 prob = games / art
-                if prob <= good_prob_threshold:
+                if prob <= good_prob_threshold and diff > -2000:
                     consecutive_plus += 1
                     consecutive_minus = 0
                     continue
@@ -2699,10 +2705,11 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
                     'max_medals': d.get('max_medals', 0) or 0,
                 })
             trend_from_acc = analyze_trend(acc_days_for_trend, machine_key)
-            # 蓄積DBの方が新しいデータがあれば、trend_dataを上書き
+            # 蓄積DBにdiff_medalsが含まれるため、蓄積DBのtrend_dataを常に優先
+            # （daily dataのestimate_diff_medalsは誤差が大きい）
             acc_latest = max(d.get('date', '') for d in accumulated['days']) if accumulated['days'] else ''
             trend_latest = trend_data.get('yesterday_date', '')
-            if acc_latest > trend_latest:
+            if acc_latest >= trend_latest:
                 trend_data = trend_from_acc
 
         # Phase 2+: 設定変更周期分析
