@@ -2,7 +2,7 @@
 
 **⚠️ セッション開始時に必ず読むこと。RSさんはこの全体像を理解している前提で指示を出す。**
 
-**最終更新: 2026-01-30**
+**最終更新: 2026-01-31**
 
 ---
 
@@ -46,25 +46,23 @@
 | `data/availability/{store_key}.json` | リアルタイム空き状況 |
 
 ### スクレイパー層
-| ファイル | 役割 |
-|---------|------|
-| `scrapers/daidata_detail_history.py` | daidata: 当たり履歴取得（Playwright） |
-| `scrapers/papimo.py` | papimo: 当たり履歴取得（requests） |
-| `scrapers/daidata_direct.py` | daidata: 基本データ取得 |
-| `scrapers/availability_checker.py` | リアルタイムデータ取得（availability.json / GAS） |
-| `scrapers/realtime_scraper.py` | リアルタイムスクレイピング |
+| ファイル | 役割 | 状態 |
+|---------|------|------|
+| `scrapers/daidata_detail_history.py` | daidata: 当たり履歴取得（Playwright） | ✅ 現役 |
+| `scrapers/papimo.py` | papimo: 当たり履歴取得（requests） | ✅ 現役 |
+| `scrapers/daidata_direct.py` | daidata: 基本データ取得 | ✅ 現役 |
+| `scrapers/availability_checker.py` | リアルタイムデータ取得（availability.json / GAS） | ✅ 現役 |
+| `scrapers/realtime_scraper.py` | リアルタイムスクレイピング（**全9店舗対応**） | ✅ 現役 |
 
 ### 分析・予測層
-| ファイル | 役割 |
-|---------|------|
-| `analysis/recommender.py` | **メイン予測エンジン** — スコアリング/ランク/おすすめ文生成 |
-| `analysis/history_accumulator.py` | 蓄積DB管理 — 日別データ蓄積/連チャン/差枚計算 |
-| `analysis/diff_medals_estimator.py` | 差枚推定（⚠️ 不正確、フォールバックのみ） |
-| `analysis/store_analyzer.py` | 店舗分析 |
-| `analysis/pattern_detector.py` | パターン検出 |
-| `analysis/realtime_predictor.py` | リアルタイム予測 |
-| `analysis/verdict.py` | 判定ロジック |
-| `analysis/feedback.py` | 的中フィードバック |
+| ファイル | 役割 | 状態 |
+|---------|------|------|
+| `analysis/recommender.py` | **メイン予測エンジン** — スコアリング/ランク/おすすめ文生成 | ✅ 現役 |
+| `analysis/history_accumulator.py` | 蓄積DB管理 — 日別データ蓄積/連チャン/差枚計算 | ✅ 現役 |
+| `analysis/diff_medals_estimator.py` | 差枚推定（⚠️ 不正確、フォールバックのみ） | ✅ 現役（廃止検討中） |
+| `analysis/pattern_detector.py` | パターン検出 | ✅ 現役 |
+| `analysis/verdict.py` | 判定ロジック | ✅ 現役 |
+| `analysis/feedback.py` | 的中フィードバック | ✅ 現役 |
 
 ### 設定層
 | ファイル | 役割 |
@@ -88,14 +86,22 @@
 | `web/templates/_common_js.html` | 共通JS |
 
 ### スクリプト層
-| ファイル | 役割 |
-|---------|------|
-| `scripts/generate_static.py` | **静的サイトビルド** → docs/ に出力 |
-| `scripts/daily_collect.py` | **日次データ収集** — スクレイピング→蓄積DB更新→ビルド |
-| `scripts/data_integrity_check.py` | データ品質チェック |
-| `scripts/validate_output.py` | ビルド後HTML検証 |
-| `scripts/enrich_rec.py` | データ補完 |
-| `scripts/nightly_verify.py` | 夜間的中検証 |
+| ファイル | 役割 | 状態 |
+|---------|------|------|
+| `scripts/generate_static.py` | **静的サイトビルド** → docs/ に出力 | ✅ 現役 |
+| `scripts/daily_collect.py` | **日次データ収集** — スクレイピング→蓄積DB更新→ビルド | ✅ 現役 |
+| `scripts/fetch_daidata_availability.py` | **リアルタイムデータ取得**（Playwright、全9店舗） | ✅ 現役 |
+| `scripts/auto_update.sh` | **15分cron自動更新**（ローカル用） | ✅ 現役 |
+| `scripts/data_integrity_check.py` | データ品質チェック | ✅ 現役 |
+| `scripts/validate_output.py` | ビルド後HTML検証 + リアルタイム健全性チェック | ✅ 現役 |
+| `scripts/enrich_rec.py` | データ補完 | ✅ 現役 |
+| `scripts/nightly_verify.py` | 夜間的中検証 | ✅ 現役 |
+
+### アーカイブ（_archive/）
+開発残骸。削除はしないが現在使用しない。
+- `_archive/scrapers/`: daidata_scraper{,2,3}.py, daidata_sbj.py, test_*.py 等
+- `_archive/analysis/`: compare_all.py, store_analyzer.py, realtime_predictor.py
+- `_archive/scripts/`: backfill_papimo.py, fetch_island_history.py
 
 ### ドキュメント
 | ファイル | 役割 |
@@ -106,11 +112,19 @@
 | `REVIEW_CHECKLIST.md` | レビューチェックリスト |
 
 ### デプロイ
-| 項目 | 値 |
-|------|-----|
-| 静的ホスティング | Cloudflare Pages (`docs/`) |
-| APIサーバー | PythonAnywhere (`web/app.py`) |
-| データ取得 | GitHub Actions + ローカルcron |
+| 項目 | 値 | 状態 |
+|------|-----|------|
+| 静的ホスティング | Cloudflare Pages (`docs/`) | ✅ 稼働中 |
+| APIサーバー | PythonAnywhere (`web/app.py`) — v14 | ✅ 稼働中 |
+| データ取得（定期） | GitHub Actions 15分ごと (`fetch-availability.yml`) | ✅ 稼働中 |
+| データ取得（ローカル） | WSL cron 15分ごと (`auto_update.sh`) | ✅ 稼働中（WSL起動時） |
+| 自動デプロイ | push→`deploy.yml`→PythonAnywhere git pull+reload | ✅ 稼働中 |
+
+### 健全性チェック
+| ファイル | 用途 |
+|---------|------|
+| `INTEGRATION_CHECK.md` | リアルタイム機能の手動チェックリスト |
+| `scripts/validate_output.py` | 自動検証（ビルド時 + リアルタイム健全性） |
 
 ---
 
@@ -144,8 +158,10 @@ cron → daily_collect.py
 
 1. **estimate_diff_medals()は信用できない** — 符号すら逆になることがある。蓄積DBのdiff_medals最優先
 2. **config/rankings.pyが閾値の唯一の定義元** — 他でハードコードしない
-3. **PythonAnywhereのAPIが現在どの程度稼働しているかは要確認**
+3. **PythonAnywhere API**: 稼働中。deploy.ymlで自動デプロイ（push→git pull→reload）
 4. **静的サイト(docs/)とFlask動的サイト(web/app.py)が共存** — 閉店後は静的、営業中はAPI経由の動的更新
+5. **WSL再起動後はcronデーモンが停止する** — `sudo service cron start` が必要
+6. **リアルタイム機能の放置検知** — `INTEGRATION_CHECK.md` で定期確認、`validate_output.py` で自動チェック
 
 ---
 
@@ -208,3 +224,4 @@ cron → daily_collect.py
 |------|------|
 | 2026-01-30 | 初版作成（RSさん指摘：既存コードを忘れて新規で作る問題への対策） |
 | 2026-01-30 | Why（設計意図・経緯）セクション追加 |
+| 2026-01-31 | リアルタイム機能統合 — 全9店舗対応、稼働状態を明記、アーカイブ整理 |
