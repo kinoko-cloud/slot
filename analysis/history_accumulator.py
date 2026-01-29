@@ -104,6 +104,13 @@ def _accumulate_unit(store_key: str, unit_id: str, days: list, machine_key: str)
 
         art = day.get('art', 0)
         games = day.get('total_start', 0) or day.get('games', 0)
+
+        # スクレイピング失敗/空データのフィルタ:
+        # art=0 かつ games=0 のデータは「取得失敗」と判断して蓄積しない
+        # （本当にART 0回なら games>0 のはず＝稼働してるが当たってない）
+        if art == 0 and (games is None or games == 0):
+            continue
+
         prob = games / art if art > 0 and games > 0 else 0
 
         entry = {
