@@ -1963,6 +1963,11 @@ def generate_verify_page(env):
 
             # リアルタイム予測（当日データ込み）
             recommendations = recommend_units(store_key, realtime_data=realtime, availability=availability)
+            
+            # verify用: 蓄積DBからdiff_medals等を補完
+            from scripts.enrich_rec import enrich_recs as _verify_enrich
+            _verify_enrich(recommendations)
+            
             units_data = []
 
             # この店舗の日別データからユニットマップを作成
@@ -1996,8 +2001,25 @@ def generate_verify_page(env):
 
                 # 結果判定（verdict.py共通ロジック）
                 is_predicted_good = predicted_rank in ('S', 'A')
-                diff_medals = rec.get('diff_medals', 0)
-                max_medals_val = rec.get('max_medals', 0)
+                # diff_medals: 蓄積DB直接参照 → rec → 0
+                diff_medals = rec.get('yesterday_diff_medals', 0) or rec.get('diff_medals', 0)
+                max_medals_val = rec.get('yesterday_max_medals', 0) or rec.get('max_medals', 0)
+                # 蓄積DBから直接取得（recにない場合のフォールバック）
+                if diff_medals == 0 or max_medals_val == 0:
+                    _verify_date = results.get('date', '') or results.get('actual_date', '')
+                    _unit_hist = daily_units_map.get(uid, {})
+                    if not _unit_hist:
+                        # 蓄積DBファイルから直接読む
+                        from analysis.history_accumulator import load_unit_history
+                        _uhist = load_unit_history(store_key, uid)
+                        if _uhist:
+                            for _dd in _uhist.get('days', []):
+                                if _dd.get('date') == _verify_date:
+                                    if diff_medals == 0:
+                                        diff_medals = _dd.get('diff_medals', 0) or 0
+                                    if max_medals_val == 0:
+                                        max_medals_val = _dd.get('max_medals', 0) or 0
+                                    break
                 result_level = get_result_level(actual_prob, diff_medals, machine_key, max_medals=max_medals_val)
                 result_mark, result_mark_class = RESULT_MARKS.get(result_level, ('-', 'nodata'))
                 verdict_text, verdict_class = get_verdict(pre_open_rank, result_level)

@@ -1,0 +1,33 @@
+# slot-e8a.pages.dev — 検索・AI・クロール全般を拒否
+User-agent: *
+Disallow: /
+
+# AI/LLMクローラーを明示的に拒否
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ChatGPT-User
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+User-agent: Claude-Web
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: Bytespider
+Disallow: /
+
+User-agent: FacebookBot
+Disallow: /
+
+User-agent: PerplexityBot
+Disallow: /
+
+# sitemap不要（インデックス拒否のため）
