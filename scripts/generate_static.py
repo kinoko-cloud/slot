@@ -609,6 +609,14 @@ def generate_index(env):
                     rec[proc_key] = []
                     rec[summ_key] = {}
 
+        # recent_daysの各日のhistoryも加工（連チャン表記・天井判定用）
+        for day in rec.get('recent_days', []):
+            raw_hist = day.get('history', [])
+            if raw_hist and 'history_processed' not in day:
+                processed, summary = _process_history_for_verify(raw_hist)
+                day['history_processed'] = processed
+                day['history_summary'] = summary
+
     # 前日の爆発台: 最大連チャン枚数でソート
     # 差枚だと「万枚出して飲まれた台」が低く出る。
     # max_chain（1回の連チャン区間の累計枚数）なら爆発の瞬間を正しく評価。
@@ -1211,15 +1219,18 @@ def _process_history_for_verify(history):
 
         accumulated_games += start
 
+        # 天井判定: RBを跨いだ累計G数（accumulated_games）で判定
+        # SBJ: RBではゲーム数天井がリセットされない（BB間で引き継ぐ）
         entry = {
             'index': i + 1,
             'time': time_str,
             'start': start,
             'type': hit_type,
             'medals': medals,
-            'is_deep': start >= 500,
+            'is_deep': accumulated_games >= 500 if not is_big_hit(hit_type) else start >= 500,
             'is_shallow': start <= 10 and i > 0,
-            'is_tenjou': start >= 800,
+            'is_tenjou': accumulated_games >= 800 if is_big_hit(hit_type) else False,
+            'accumulated_games': accumulated_games,  # RBを跨いだ累計G数
         }
 
         if is_big_hit(hit_type):
