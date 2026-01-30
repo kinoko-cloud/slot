@@ -277,28 +277,7 @@
             </section>
             {% endif %}
 
-            {# === 閉店後/集計中: 的中率ヒーロー表示 === #}
-            {% if accuracy_hero and accuracy_hero[0].rate > 0 %}
-            <a href="{{ url_for('verify') }}" class="accuracy-hero-link">
-            <section class="accuracy-hero">
-                <div class="hero-title">{{ date_prefix }} {{ data_date_str }}の的中率</div>
-                <div class="hero-rates">
-                    {% for hero in accuracy_hero %}
-                    <div class="hero-rate-card">
-                        <span class="hero-icon">{{ hero.icon }}</span>
-                        <span class="hero-name">{{ hero.name }}</span>
-                        <span class="hero-pct {% if hero.rate >= 80 %}excellent{% elif hero.rate >= 60 %}good{% else %}normal{% endif %}">{{ hero.rate|int }}%</span>
-                        <span class="hero-detail">{{ hero.hit }}/{{ hero.total }}的中</span>
-                        {% if hero.top_stores %}
-                        <span class="hero-stores">{{ hero.top_stores }}</span>
-                        {% endif %}
-                    </div>
-                    {% endfor %}
-                </div>
-                <div class="hero-footer">的中結果を見る →</div>
-            </section>
-            </a>
-            {% endif %}
+            {# 的中率は上部verify-banner-lgに統合済み。旧accuracy-heroブロックは削除 #}
 
             {# === 閉店後: 当日の爆発台 === #}
             {% if display_mode in ('before_open', 'after_close') and yesterday_top10 %}
