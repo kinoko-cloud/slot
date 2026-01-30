@@ -1,4 +1,6 @@
 {# === 直近データ展開マクロ === #}
+{# day_hist: _process_history_for_verify()で加工済みデータ（chain_pos, is_hot_chain, is_tenjou, accumulated_games等付き） #}
+{# SBJ: RBではゲーム数天井がリセットされない → accumulated_gamesで天井判定 #}
 {% macro recent_day_expandable(day_art, day_prob, day_date, day_label, day_diff, day_rensa, day_max_m, day_hist) %}
 {% if day_art > 0 %}
 <div class="recent-day-block">
@@ -14,14 +16,16 @@
     {% if day_hist and day_hist|length > 0 %}
     <div class="recent-day-detail hidden">
         <table class="hit-detail-table compact">
-            <thead><tr><th>時刻</th><th>G数</th><th>種類</th><th>枚数</th></tr></thead>
+            <thead><tr><th>#</th><th>時刻</th><th>G数</th><th>種類</th><th>連</th><th>枚数</th></tr></thead>
             <tbody>
             {% for h in day_hist %}
-            <tr class="{% if h.start >= 500 %}deep{% elif h.start <= 10 %}shallow{% endif %}">
+            <tr class="{% if h.is_tenjou is defined and h.is_tenjou %}tenjou{% elif h.is_hot_chain is defined and h.is_hot_chain %}hot-chain{% elif h.is_deep is defined and h.is_deep %}deep{% elif h.start is defined and h.start >= 500 %}deep{% endif %}{% if h.is_shallow is defined and h.is_shallow %} shallow{% elif h.start is defined and h.start <= 10 %} shallow{% endif %}">
+                <td>{{ h.index|default(loop.index) }}</td>
                 <td>{{ h.time or '-' }}</td>
-                <td>{{ h.start }}G</td>
+                <td class="{% if h.is_tenjou is defined and h.is_tenjou %}tenjou{% elif h.is_deep is defined and h.is_deep %}deep{% endif %}{% if h.is_shallow is defined and h.is_shallow %} shallow{% endif %}">{{ h.start }}G{% if h.is_tenjou is defined and h.is_tenjou and h.accumulated_games is defined and h.accumulated_games != h.start %}<br><small class="acc-games">累計{{ h.accumulated_games }}G</small>{% endif %}</td>
                 <td class="{{ h.type|lower }}">{{ h.type }}</td>
-                <td>{% if h.medals > 0 %}{{ '{:,}'.format(h.medals) }}{% else %}-{% endif %}</td>
+                <td class="{% if h.is_hot_chain is defined and h.is_hot_chain %}hot{% endif %}">{% if h.chain_pos is defined and h.chain_pos > 1 %}{{ h.chain_pos }}連{% else %}-{% endif %}</td>
+                <td>{% if h.medals is defined and h.medals > 0 %}{{ '{:,}'.format(h.medals) }}{% else %}-{% endif %}</td>
             </tr>
             {% endfor %}
             </tbody>
@@ -183,11 +187,11 @@
                         {% set db_art = rec.day_before_art or 0 %}
                         {% set db_games = rec.day_before_games or 0 %}
                         {% set db_prob = (db_games / db_art)|int if db_art > 0 and db_games > 0 else 0 %}
-                        {{ recent_day_expandable(y_art, y_prob, rec.yesterday_date, '前日', rec.yesterday_diff_medals|default(0), rec.yesterday_max_rensa|default(0), rec.yesterday_max_medals|default(0), rec.yesterday_history|default([])) }}
-                        {{ recent_day_expandable(db_art, db_prob, rec.day_before_date, '前々日', rec.day_before_diff_medals|default(0), rec.day_before_max_rensa|default(0), rec.day_before_max_medals|default(0), rec.day_before_history|default([])) }}
+                        {{ recent_day_expandable(y_art, y_prob, rec.yesterday_date, '前日', rec.yesterday_diff_medals|default(0), rec.yesterday_max_rensa|default(0), rec.yesterday_max_medals|default(0), rec.yesterday_history_processed|default(rec.yesterday_history|default([]))) }}
+                        {{ recent_day_expandable(db_art, db_prob, rec.day_before_date, '前々日', rec.day_before_diff_medals|default(0), rec.day_before_max_rensa|default(0), rec.day_before_max_medals|default(0), rec.day_before_history_processed|default(rec.day_before_history|default([]))) }}
                         {% set _td_art = rec.three_days_ago_art|default(0) %}
                         {% set _td_prob = ((rec.three_days_ago_games|default(0)) / _td_art)|int if _td_art > 0 else 0 %}
-                        {{ recent_day_expandable(_td_art, _td_prob, rec.three_days_ago_date|default(''), '3日前', rec.three_days_ago_diff_medals|default(0), rec.three_days_ago_max_rensa|default(0), rec.three_days_ago_max_medals|default(0), rec.three_days_ago_history|default([])) }}
+                        {{ recent_day_expandable(_td_art, _td_prob, rec.three_days_ago_date|default(''), '3日前', rec.three_days_ago_diff_medals|default(0), rec.three_days_ago_max_rensa|default(0), rec.three_days_ago_max_medals|default(0), rec.three_days_ago_history_processed|default(rec.three_days_ago_history|default([]))) }}
                     </div>
                     {# === 差枚推移グラフ（today_history → yesterday_history フォールバック） === #}
                     {% set graph_hist = rec.today_history if rec.today_history and rec.today_history|length >= 2 else (rec.yesterday_history if rec.yesterday_history and rec.yesterday_history|length >= 2 else none) %}
@@ -248,11 +252,11 @@
                         {% set db_art = rec.day_before_art or 0 %}
                         {% set db_games = rec.day_before_games or 0 %}
                         {% set db_prob = (db_games / db_art)|int if db_art > 0 and db_games > 0 else 0 %}
-                        {{ recent_day_expandable(y_art, y_prob, rec.yesterday_date, '前日', rec.yesterday_diff_medals|default(0), rec.yesterday_max_rensa|default(0), rec.yesterday_max_medals|default(0), rec.yesterday_history|default([])) }}
-                        {{ recent_day_expandable(db_art, db_prob, rec.day_before_date, '前々日', rec.day_before_diff_medals|default(0), rec.day_before_max_rensa|default(0), rec.day_before_max_medals|default(0), rec.day_before_history|default([])) }}
+                        {{ recent_day_expandable(y_art, y_prob, rec.yesterday_date, '前日', rec.yesterday_diff_medals|default(0), rec.yesterday_max_rensa|default(0), rec.yesterday_max_medals|default(0), rec.yesterday_history_processed|default(rec.yesterday_history|default([]))) }}
+                        {{ recent_day_expandable(db_art, db_prob, rec.day_before_date, '前々日', rec.day_before_diff_medals|default(0), rec.day_before_max_rensa|default(0), rec.day_before_max_medals|default(0), rec.day_before_history_processed|default(rec.day_before_history|default([]))) }}
                         {% set _td_art = rec.three_days_ago_art|default(0) %}
                         {% set _td_prob = ((rec.three_days_ago_games|default(0)) / _td_art)|int if _td_art > 0 else 0 %}
-                        {{ recent_day_expandable(_td_art, _td_prob, rec.three_days_ago_date|default(''), '3日前', rec.three_days_ago_diff_medals|default(0), rec.three_days_ago_max_rensa|default(0), rec.three_days_ago_max_medals|default(0), rec.three_days_ago_history|default([])) }}
+                        {{ recent_day_expandable(_td_art, _td_prob, rec.three_days_ago_date|default(''), '3日前', rec.three_days_ago_diff_medals|default(0), rec.three_days_ago_max_rensa|default(0), rec.three_days_ago_max_medals|default(0), rec.three_days_ago_history_processed|default(rec.three_days_ago_history|default([]))) }}
                     </div>
                     {% set _gh = rec.today_history if rec.today_history and rec.today_history|length >= 2 else (rec.yesterday_history if rec.yesterday_history and rec.yesterday_history|length >= 2 else none) %}
                     {% if _gh %}
@@ -404,27 +408,30 @@
                         <div class="recent-days compact">
                         {% for day in rec.recent_days[:7] %}
                         {% if day.art > 0 %}
+                        {% set _dhist = day.history_processed|default(day.history|default([])) %}
                         <div class="recent-day-block">
-                            <div class="recent-day-row {% if day.history and day.history|length > 0 %}has-detail{% endif %}" onclick="{% if day.history and day.history|length > 0 %}toggleRecentDayDetail(event, this){% endif %}">
+                            <div class="recent-day-row {% if _dhist and _dhist|length > 0 %}has-detail{% endif %}" onclick="{% if _dhist and _dhist|length > 0 %}toggleRecentDayDetail(event, this){% endif %}">
                                 <span class="recent-label">{{ short_date(day.date) }}</span>
                                 <span class="recent-art">ART {{ day.art }}</span>
                                 {% if day.prob > 0 %}<span class="recent-prob {% if day.prob <= 100 %}excellent{% elif day.prob <= 130 %}good{% elif day.prob >= 200 %}bad{% endif %}">1/{{ day.prob|int }}</span>{% endif %}
                                 {% if day.diff_medals is defined and day.diff_medals != 0 %}<span class="diff-medals-sm {% if day.diff_medals > 0 %}plus{% else %}minus{% endif %}">{{ '{:+,}'.format(day.diff_medals) }}枚</span>{% endif %}
                                 {% if day.max_rensa is defined and day.max_rensa >= 3 %}<span class="rensa-sm">{{ day.max_rensa }}連</span>{% endif %}
                                 {% if day.max_medals is defined and day.max_medals > 0 %}<span class="max-medals-sm">最大{{ '{:,}'.format(day.max_medals) }}枚</span>{% endif %}
-                                {% if day.history and day.history|length > 0 %}<span class="expand-icon small">▼</span>{% endif %}
+                                {% if _dhist and _dhist|length > 0 %}<span class="expand-icon small">▼</span>{% endif %}
                             </div>
-                            {% if day.history and day.history|length > 0 %}
+                            {% if _dhist and _dhist|length > 0 %}
                             <div class="recent-day-detail hidden">
                                 <table class="hit-detail-table compact">
-                                    <thead><tr><th>時刻</th><th>G数</th><th>種類</th><th>枚数</th></tr></thead>
+                                    <thead><tr><th>#</th><th>時刻</th><th>G数</th><th>種類</th><th>連</th><th>枚数</th></tr></thead>
                                     <tbody>
-                                    {% for h in day.history %}
-                                    <tr class="{% if h.start >= 500 %}deep{% elif h.start <= 10 %}shallow{% endif %}">
+                                    {% for h in _dhist %}
+                                    <tr class="{% if h.is_tenjou is defined and h.is_tenjou %}tenjou{% elif h.is_hot_chain is defined and h.is_hot_chain %}hot-chain{% elif h.is_deep is defined and h.is_deep %}deep{% elif h.start >= 500 %}deep{% endif %}{% if h.is_shallow is defined and h.is_shallow %} shallow{% elif h.start <= 10 %} shallow{% endif %}">
+                                        <td>{{ h.index|default(loop.index) }}</td>
                                         <td>{{ h.time or '-' }}</td>
-                                        <td>{{ h.start }}G</td>
+                                        <td class="{% if h.is_deep is defined and h.is_deep %}deep{% elif h.start >= 500 %}deep{% endif %}">{{ h.start }}G</td>
                                         <td class="{{ h.type|lower }}">{{ h.type }}</td>
-                                        <td>{% if h.medals > 0 %}{{ '{:,}'.format(h.medals) }}{% else %}-{% endif %}</td>
+                                        <td class="{% if h.is_hot_chain is defined and h.is_hot_chain %}hot{% endif %}">{% if h.chain_pos is defined and h.chain_pos > 1 %}{{ h.chain_pos }}連{% else %}-{% endif %}</td>
+                                        <td>{% if h.medals is defined and h.medals > 0 %}{{ '{:,}'.format(h.medals) }}{% else %}-{% endif %}</td>
                                     </tr>
                                     {% endfor %}
                                     </tbody>
@@ -672,11 +679,11 @@
                         {% set db_art = rec.day_before_art or 0 %}
                         {% set db_games = rec.day_before_games or 0 %}
                         {% set db_prob = (db_games / db_art)|int if db_art > 0 and db_games > 0 else 0 %}
-                        {{ recent_day_expandable(y_art, y_prob, rec.yesterday_date, '前日', rec.yesterday_diff_medals|default(0), rec.yesterday_max_rensa|default(0), rec.yesterday_max_medals|default(0), rec.yesterday_history|default([])) }}
-                        {{ recent_day_expandable(db_art, db_prob, rec.day_before_date, '前々日', rec.day_before_diff_medals|default(0), rec.day_before_max_rensa|default(0), rec.day_before_max_medals|default(0), rec.day_before_history|default([])) }}
+                        {{ recent_day_expandable(y_art, y_prob, rec.yesterday_date, '前日', rec.yesterday_diff_medals|default(0), rec.yesterday_max_rensa|default(0), rec.yesterday_max_medals|default(0), rec.yesterday_history_processed|default(rec.yesterday_history|default([]))) }}
+                        {{ recent_day_expandable(db_art, db_prob, rec.day_before_date, '前々日', rec.day_before_diff_medals|default(0), rec.day_before_max_rensa|default(0), rec.day_before_max_medals|default(0), rec.day_before_history_processed|default(rec.day_before_history|default([]))) }}
                         {% set _td_art = rec.three_days_ago_art|default(0) %}
                         {% set _td_prob = ((rec.three_days_ago_games|default(0)) / _td_art)|int if _td_art > 0 else 0 %}
-                        {{ recent_day_expandable(_td_art, _td_prob, rec.three_days_ago_date|default(''), '3日前', rec.three_days_ago_diff_medals|default(0), rec.three_days_ago_max_rensa|default(0), rec.three_days_ago_max_medals|default(0), rec.three_days_ago_history|default([])) }}
+                        {{ recent_day_expandable(_td_art, _td_prob, rec.three_days_ago_date|default(''), '3日前', rec.three_days_ago_diff_medals|default(0), rec.three_days_ago_max_rensa|default(0), rec.three_days_ago_max_medals|default(0), rec.three_days_ago_history_processed|default(rec.three_days_ago_history|default([]))) }}
                     </div>
                     {% set _gh = rec.today_history if rec.today_history and rec.today_history|length >= 2 else (rec.yesterday_history if rec.yesterday_history and rec.yesterday_history|length >= 2 else none) %}
                     {% if _gh %}
