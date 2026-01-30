@@ -1220,7 +1220,14 @@ def _process_history_for_verify(history):
         accumulated_games += start
 
         # 天井判定: RBを跨いだ累計G数（accumulated_games）で判定
-        # SBJ: RBではゲーム数天井がリセットされない（BB間で引き継ぐ）
+        # SBJ天井ルール（CLAUDE.md準拠）:
+        #   - ゲーム数天井: 999G+α（RBではリセットされない、BB間で引き継ぐ）
+        #   - リセット（設定変更）時: 666G+αに短縮（朝イチ1回目のみ）
+        #   - 表示G数と内部G数にズレあり（順押ししないと内部カウントされないケース）
+        #   - → 天井到達 = 必ずART（BIG濃厚）
+        # 北斗: あべしシステム（別仕様、ここでは非対応）
+        # → 天井閾値は999G（800Gは天井ではない）
+        TENJOU_THRESHOLD = 999
         entry = {
             'index': i + 1,
             'time': time_str,
@@ -1229,7 +1236,7 @@ def _process_history_for_verify(history):
             'medals': medals,
             'is_deep': accumulated_games >= 500 if not is_big_hit(hit_type) else start >= 500,
             'is_shallow': start <= 10 and i > 0,
-            'is_tenjou': accumulated_games >= 800 if is_big_hit(hit_type) else False,
+            'is_tenjou': accumulated_games >= TENJOU_THRESHOLD if is_big_hit(hit_type) else False,
             'accumulated_games': accumulated_games,  # RBを跨いだ累計G数
         }
 
@@ -1304,7 +1311,7 @@ def _process_history_for_verify(history):
     valleys = big_hit_starts if big_hit_starts else starts
     max_valley = max(valleys) if valleys else 0
     avg_valley = int(sum(valleys) / len(valleys)) if valleys else 0
-    tenjou_count = sum(1 for v in valleys if v >= 800)
+    tenjou_count = sum(1 for v in valleys if v >= 999)  # SBJ天井=999G+α
 
     # 最大チェーン
     chain_lengths = [e.get('chain_len', 0) for e in processed if e.get('chain_id', 0) > 0]

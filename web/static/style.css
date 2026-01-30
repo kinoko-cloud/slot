@@ -1,4 +1,23 @@
-/* SBJ 台選びアシスタント - モバイル対応CSS */
+/* ===================================================================
+   SBJ 台選びアシスタント - スタイルシート
+   ===================================================================
+   セクション構成:
+   1. 共通/レイアウト       — リセット, body, container, header, footer
+   2. 的中率ヒーロー       — accuracy-hero, hero-rate-card
+   3. モードバッジ          — mode-badge, realtime-bar
+   4. カード/ランク         — unit-card, rank-badge, rank-s/a/b/c/d
+   5. 直近データ/展開詳細   — recent-days, hit-detail, verify-detail
+   6. グラフ/差枚           — sparkline, diff-medals, medals badges
+   7. おすすめ/理由         — reasons, recommendation sections
+   8. ローディング          — loading-overlay, progress-bar
+   9. 店舗/機種/曜日        — store cards, schedule, day-cell
+  10. 答え合わせ(verify)    — verify-summary, verify-grid
+  11. 台履歴(unit_history)  — uh-day-card, uh-hit-wrapper
+  12. ナビゲーション        — top-bar, hamburger, dropdowns
+  13. レスポンシブ          — @media queries
+   =================================================================== */
+
+/* ===== 1. 共通/レイアウト ===== */
 
 * {
     margin: 0;
@@ -14,7 +33,7 @@ body {
     min-height: 100vh;
 }
 
-/* === 的中率ヒーロー表示 === */
+/* ===== 2. 的中率ヒーロー表示 ===== */
 .accuracy-hero {
     background: linear-gradient(135deg, #1a1a3e 0%, #0a0a2e 100%);
     border: 1px solid #2a3a5c;
@@ -148,7 +167,7 @@ header h1 {
     margin-top: 5px;
 }
 
-/* モードバッジ（営業中/閉店後） */
+/* ===== 3. モードバッジ（営業中/閉店後） ===== */
 .mode-badge {
     display: inline-block;
     padding: 4px 12px;
@@ -350,7 +369,7 @@ header h1 {
     color: #888;
 }
 
-/* 推奨セクション */
+/* ===== 7. おすすめ/理由 ===== */
 .recommendations {
     margin-bottom: 15px;
 }
@@ -393,7 +412,7 @@ header h1 {
     content: "";
 }
 
-/* 台カード */
+/* ===== 4. カード/ランク ===== */
 .unit-card {
     background: #252541;
     border-radius: 8px;
@@ -622,7 +641,7 @@ footer {
     cursor: not-allowed;
 }
 
-/* ローディングオーバーレイ */
+/* ===== 8. ローディング ===== */
 .loading-overlay {
     position: fixed;
     top: 0;
@@ -1592,6 +1611,8 @@ strong.minus {
     align-items: center;
     gap: 4px;
     color: #aaa;
+    padding: 3px 8px;
+    border-radius: 4px;
 }
 
 .rank-dot {
@@ -2830,8 +2851,7 @@ strong.minus {
     margin-left: 1px;
 }
 
-/* ARTバッジ */
-/* 差枚表示 */
+/* ===== 6. グラフ/差枚 ===== */
 .diff-medals {
     font-weight: 900;
     font-size: 1.1em;
@@ -2913,7 +2933,7 @@ strong.minus {
     min-width: 3.5em;
 }
 
-/* 直近3日間データ */
+/* ===== 5. 直近データ/展開詳細 ===== */
 .recent-days {
     margin-top: 8px;
     padding: 8px;
@@ -3294,10 +3314,7 @@ strong.minus {
     font-size: 0.7em;
 }
 
-.legend-item {
-    padding: 3px 8px;
-    border-radius: 4px;
-}
+/* .legend-item: 重複定義を統合済み（元の定義はランク説明セクションにある） */
 
 .legend-item.best {
     background: #3b2a00;
@@ -6342,10 +6359,7 @@ a.perfect-card:hover { background: rgba(255,215,0,0.18); }
     color: #74b9ff;
     font-weight: 600;
 }
-.analysis-title {
-    font-size: 1.1em;
-    margin-bottom: 12px;
-}
+/* .analysis-title: 重複定義を統合済み（元の定義は店舗分析セクションにある） */
 
 /* カードヘッダー2行構成 */
 .v2-header-row1 {
