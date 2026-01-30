@@ -1255,9 +1255,11 @@ def analyze_today_data(unit_data: dict, current_hour: int = None, machine_key: s
     result['bb_count'] = today_data.get('bb', 0)
     result['rb_count'] = today_data.get('rb', 0)
     result['total_games'] = today_data.get('total_start', 0)
+    result['diff_medals'] = today_data.get('diff_medals', 0) or 0
+    result['max_medals'] = today_data.get('max_medals', 0) or 0
 
     if result['art_count'] > 0 and result['total_games'] > 0:
-        result['art_prob'] = result['total_games'] / result['art_count']
+        result['art_prob'] = int(result['total_games'] / result['art_count'])
 
     # 履歴から時間情報を取得
     history = today_data.get('history', [])
