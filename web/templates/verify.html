@@ -201,7 +201,7 @@
                                             <tr class="{% if hit.is_tenjou %}tenjou{% elif hit.is_hot_chain %}hot-chain{% elif hit.is_deep %}deep{% endif %}">
                                                 <td class="vd-num">{{ hit.index }}</td>
                                                 <td class="vd-time">{{ hit.time or '-' }}</td>
-                                                <td class="vd-games {% if hit.is_deep %}deep{% elif hit.is_shallow %}shallow{% endif %}">{{ hit.start }}G</td>
+                                                <td class="vd-games {% if hit.is_tenjou is defined and hit.is_tenjou %}tenjou{% elif hit.is_deep %}deep{% endif %}{% if hit.is_shallow %} shallow{% endif %}">{{ hit.start }}G{% if hit.is_tenjou is defined and hit.is_tenjou and hit.accumulated_games is defined and hit.accumulated_games != hit.start %}<br><small class="acc-games">累計{{ hit.accumulated_games }}G</small>{% endif %}</td>
                                                 <td class="vd-type {{ hit.type|lower }}">{{ hit.type }}</td>
                                                 <td class="vd-chain {% if hit.chain_pos is defined and hit.chain_pos >= 8 %}chain-8{% elif hit.chain_pos is defined and hit.chain_pos >= 5 %}chain-5{% elif hit.chain_pos is defined and hit.chain_pos >= 3 %}chain-3{% elif hit.chain_pos is defined and hit.chain_pos >= 2 %}chain-2{% endif %}">{% if hit.chain_pos is defined and hit.chain_pos > 1 %}{{ hit.chain_pos }}連{% elif hit.chain_len is defined and hit.chain_len == 1 %}-{% else %}-{% endif %}</td>
                                                 <td class="vd-medals">{% if hit.medals > 0 %}{{ '{:,}'.format(hit.medals) }}{% else %}-{% endif %}</td>
