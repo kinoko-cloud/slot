@@ -44,12 +44,25 @@ DAIDATA_STORES = {
         'model_encoded': 'L%EF%BD%BD%EF%BD%B0%EF%BE%8A%EF%BE%9F%EF%BD%B0%EF%BE%8C%EF%BE%9E%EF%BE%97%EF%BD%AF%EF%BD%B8%EF%BD%BC%EF%BE%9E%EF%BD%AC%EF%BD%AF%EF%BD%B8',
         'units': ['3185', '3186', '3187'],  # 4000番台は全て低貸のため除外
     },
+    # === 渋谷本館 (hall_id=100930) ===
+    'shibuya_honkan_espass_sbj': {
+        'hall_id': '100930',
+        'name': '渋谷エスパス本館',
+        'model_encoded': 'L%EF%BD%BD%EF%BD%B0%EF%BE%8A%EF%BE%9F%EF%BD%B0%EF%BE%8C%EF%BE%9E%EF%BE%97%EF%BD%AF%EF%BD%B8%EF%BD%BC%EF%BE%9E%EF%BD%AC%EF%BD%AF%EF%BD%B8',
+        'units': ['3095', '3096', '3097'],
+    },
     # === 北斗転生2 (detail page only, model_encoded不要) ===
     'shibuya_espass_hokuto': {
         'hall_id': '100860',
         'name': 'エスパス渋谷新館(北斗)',
         'model_encoded': None,  # detail pageのみで取得
         'units': [str(i) for i in range(2046, 2068)] + [str(i) for i in range(2233, 2241)],
+    },
+    'shibuya_honkan_espass_hokuto': {
+        'hall_id': '100930',
+        'name': 'エスパス渋谷本館(北斗)',
+        'model_encoded': None,
+        'units': [str(i) for i in range(2013, 2020)] + [str(i) for i in range(2030, 2038)],
     },
     'shinjuku_espass_hokuto': {
         'hall_id': '100949',

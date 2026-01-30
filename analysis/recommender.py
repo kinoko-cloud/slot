@@ -2871,6 +2871,7 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
             if not today_history:
                 # 当日データがない場合、直近の履歴データを探す（日付降順）
                 # ただしフォールバック元の日付を記録（today扱いしない）
+                # NOTE: フォールバックhistoryはgenerate_reasons用。today_max_rensa等には使わない。
                 sorted_days = sorted(unit_days, key=lambda x: x.get('date', ''), reverse=True)
                 for day in sorted_days:
                     if day.get('history'):
@@ -2952,10 +2953,12 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
             current_at_games = final_start  # 履歴がない場合はfinal_startをそのまま使用
 
         # 本日のAT間データ（履歴から計算）
-        today_at_intervals = calculate_at_intervals(today_history) if today_history else []
+        # is_today_dataでない場合（フォールバック履歴）はtoday系を0にする
+        _use_today_history = today_history and (is_today_data or (realtime_data and realtime_is_today))
+        today_at_intervals = calculate_at_intervals(today_history) if _use_today_history else []
         today_deep_hama_count = sum(1 for g in today_at_intervals if g >= 500)  # 500G以上のハマり
         today_max_at_interval = max(today_at_intervals) if today_at_intervals else 0
-        today_max_rensa = calculate_max_rensa(today_history) if today_history else 0
+        today_max_rensa = calculate_max_rensa(today_history, machine_key=machine_key) if _use_today_history else 0
 
         rec = {
             'unit_id': unit_id,

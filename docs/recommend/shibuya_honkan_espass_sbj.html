@@ -1,0 +1,569 @@
+
+
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+    <meta name="googlebot" content="noindex, nofollow">
+    <title>エスパス日拓渋谷本館</title>
+    <link rel="stylesheet" href="/static/style.css?v=20260130132017">
+</head>
+<body data-page-type="recommend" data-store-key="shibuya_honkan_espass_sbj">
+    <div class="container">
+        
+        
+        
+        
+<div class="top-bar">
+    <div class="top-bar-left">
+        
+        <a href="/index.html" class="back-link">&lt; トップ</a>
+        
+        
+        <img src="/static/logo.svg" alt="スロプロMAX" class="site-logo">
+        
+    </div>
+    <div class="top-bar-right">
+        <span class="version-info" id="build-ver" title="ビルド時刻">v0130_13:20</span>
+        
+    </div>
+</div>
+        <header>
+            <h1>エスパス日拓渋谷本館</h1>
+            <div class="machine-label">🃏 スーパーブラックジャック</div>
+            
+            <div class="realtime-bar">
+                <span id="realtime-status" class="realtime-status">読込中...</span>
+                <button onclick="refreshData()" class="refresh-btn">🔄 更新</button>
+            </div>
+            <div class="update-info">
+                
+                <span class="data-source no-realtime">リアルタイムデータなし（過去の傾向で評価）</span>
+                
+            </div>
+
+            <!-- 空き状況サマリ -->
+            
+
+            <div class="action-buttons">
+                <button onclick="location.reload()" class="refresh-btn" title="ページを再読み込み">🔄 再読込</button>
+                <button onclick="startScraping()" class="scrape-btn" id="scrape-btn" title="リアルタイムデータを新規取得">📡 最新データ取得</button>
+            </div>
+            <div class="button-hint">
+                <span class="hint-item">再読込: キャッシュを使用</span>
+                <span class="hint-item">最新データ取得: サイトから再収集</span>
+            </div>
+        </header>
+
+        <!-- 台番号アラート -->
+        
+
+        <!-- 店舗分析 -->
+        
+        <div class="store-analysis">
+            <div class="analysis-title"><span class="analysis-machine">スーパーブラックジャック</span>（<span class="analysis-store">エスパス渋谷本館</span>）分析</div>
+            <div class="analysis-rank-dist">
+                全3台: C:3台
+            </div>
+            <div class="analysis-overall">高設定台が少ない（全3台中0台がA以上）</div>
+            
+            
+        </div>
+        
+
+        <!-- ランク説明 -->
+        <div class="rank-legend">
+            <span class="legend-item"><span class="rank-dot" style="background:#ff6b6b"></span>S 高設定濃厚</span>
+            <span class="legend-item"><span class="rank-dot" style="background:#ffa502"></span>A 高設定域</span>
+            <span class="legend-item"><span class="rank-dot" style="background:#2ed573"></span>B 中間以上</span>
+            <span class="legend-item"><span class="rank-dot" style="background:#70a1ff"></span>C 普通</span>
+            <span class="legend-item"><span class="rank-dot" style="background:#747d8c"></span>D 低設定疑い</span>
+        </div>
+
+        <!-- ローディングオーバーレイ -->
+        <div id="loading-overlay" class="loading-overlay hidden">
+            <div class="loading-content">
+                <div class="loading-spinner"></div>
+                <div class="loading-text">データ取得中</div>
+                <div class="loading-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill"></div>
+                    </div>
+                    <div class="progress-time" id="progress-time">0秒</div>
+                </div>
+                <div class="loading-hint">通常10-30秒かかります</div>
+            </div>
+        </div>
+
+        <main>
+            
+            <section class="recommendations top">
+                <h2>推奨台</h2>
+                
+                <details class="unit-card rank-c " data-availability="unknown">
+                    <summary class="unit-card-summary">
+                    <!-- メインヘッダー: 台番号 + 機種名 + 空き状況 + ランク -->
+                    <div class="unit-main-header">
+                        <span class="unit-id-large">3095番台</span>
+                        <span class="machine-name-sm">スーパーブラックジャック</span>
+                        
+                            
+                        
+                        <span class="rank-badge-lg" style="background-color: #70a1ff">C</span>
+                        <span class="expand-icon">▼</span>
+                    </div>
+
+                    
+                    <!-- 営業中: リアルタイムデータ -->
+                    <div class="today-data-row">
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">0</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            
+                        </div>
+                        <div class="data-row-secondary">
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">0</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell ">
+                                <span class="data-value">0</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">0</span>
+                                <span class="data-label">累計G</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+
+                    
+                    
+                    <div class="rec-prev-days">
+                        <span class="prev-day-rec no-data">過去データなし（新台 or 台移動の可能性）</span>
+                    </div>
+                    
+
+                    
+                    <div class="estimation-row">
+                        
+                        <span class="past-eval">
+                            
+                            蓄積傾向: <strong style="color: #70a1ff">Cランク</strong>
+                            
+                        </span>
+                    </div>
+
+                    <!-- 推奨理由（営業中のみ — 閉店後は上に表示済み） -->
+                    
+
+                    </summary>
+                    <!-- 詳細（展開） -->
+                    <div class="unit-details">
+                        <div class="detail-grid">
+                            <div class="detail-section">
+                                <div class="detail-title">本日詳細</div>
+                                
+                                <div class="detail-item">まだ本日のデータなし</div>
+                                
+                            </div>
+
+                            
+                            
+
+                            <div class="detail-section">
+                                <div class="detail-title">過去データ分析</div>
+                                
+                                
+                                
+                            </div>
+                        </div>
+                        
+                    </div>
+                </details>
+                
+                <details class="unit-card rank-c " data-availability="unknown">
+                    <summary class="unit-card-summary">
+                    <!-- メインヘッダー: 台番号 + 機種名 + 空き状況 + ランク -->
+                    <div class="unit-main-header">
+                        <span class="unit-id-large">3096番台</span>
+                        <span class="machine-name-sm">スーパーブラックジャック</span>
+                        
+                            
+                        
+                        <span class="rank-badge-lg" style="background-color: #70a1ff">C</span>
+                        <span class="expand-icon">▼</span>
+                    </div>
+
+                    
+                    <!-- 営業中: リアルタイムデータ -->
+                    <div class="today-data-row">
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">0</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            
+                        </div>
+                        <div class="data-row-secondary">
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">0</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell ">
+                                <span class="data-value">0</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">0</span>
+                                <span class="data-label">累計G</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+
+                    
+                    
+                    <div class="rec-prev-days">
+                        <span class="prev-day-rec no-data">過去データなし（新台 or 台移動の可能性）</span>
+                    </div>
+                    
+
+                    
+                    <div class="estimation-row">
+                        
+                        <span class="past-eval">
+                            
+                            蓄積傾向: <strong style="color: #70a1ff">Cランク</strong>
+                            
+                        </span>
+                    </div>
+
+                    <!-- 推奨理由（営業中のみ — 閉店後は上に表示済み） -->
+                    
+
+                    </summary>
+                    <!-- 詳細（展開） -->
+                    <div class="unit-details">
+                        <div class="detail-grid">
+                            <div class="detail-section">
+                                <div class="detail-title">本日詳細</div>
+                                
+                                <div class="detail-item">まだ本日のデータなし</div>
+                                
+                            </div>
+
+                            
+                            
+
+                            <div class="detail-section">
+                                <div class="detail-title">過去データ分析</div>
+                                
+                                
+                                
+                            </div>
+                        </div>
+                        
+                    </div>
+                </details>
+                
+                <details class="unit-card rank-c " data-availability="unknown">
+                    <summary class="unit-card-summary">
+                    <!-- メインヘッダー: 台番号 + 機種名 + 空き状況 + ランク -->
+                    <div class="unit-main-header">
+                        <span class="unit-id-large">3097番台</span>
+                        <span class="machine-name-sm">スーパーブラックジャック</span>
+                        
+                            
+                        
+                        <span class="rank-badge-lg" style="background-color: #70a1ff">C</span>
+                        <span class="expand-icon">▼</span>
+                    </div>
+
+                    
+                    <!-- 営業中: リアルタイムデータ -->
+                    <div class="today-data-row">
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">0</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            
+                        </div>
+                        <div class="data-row-secondary">
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">0</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell ">
+                                <span class="data-value">0</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">0</span>
+                                <span class="data-label">累計G</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+
+                    
+                    
+                    <div class="rec-prev-days">
+                        <span class="prev-day-rec no-data">過去データなし（新台 or 台移動の可能性）</span>
+                    </div>
+                    
+
+                    
+                    <div class="estimation-row">
+                        
+                        <span class="past-eval">
+                            
+                            蓄積傾向: <strong style="color: #70a1ff">Cランク</strong>
+                            
+                        </span>
+                    </div>
+
+                    <!-- 推奨理由（営業中のみ — 閉店後は上に表示済み） -->
+                    
+
+                    </summary>
+                    <!-- 詳細（展開） -->
+                    <div class="unit-details">
+                        <div class="detail-grid">
+                            <div class="detail-section">
+                                <div class="detail-title">本日詳細</div>
+                                
+                                <div class="detail-item">まだ本日のデータなし</div>
+                                
+                            </div>
+
+                            
+                            
+
+                            <div class="detail-section">
+                                <div class="detail-title">過去データ分析</div>
+                                
+                                
+                                
+                            </div>
+                        </div>
+                        
+                    </div>
+                </details>
+                
+            </section>
+            
+
+            <section class="recommendations other">
+                <h2>その他の台</h2>
+                
+            </section>
+        </main>
+
+        <footer>
+            <p>
+                <a href="/ranking/sbj.html" class="footer-link">総合ランキング</a>
+                |
+                <a href="https://autogmail.pythonanywhere.com/api/status/shibuya_honkan_espass_sbj" class="api-link">JSON</a>
+            </p>
+        </footer>
+    </div>
+
+    <script src="/static/realtime.js"></script>
+    <script>
+        const storeKey = 'shibuya_honkan_espass_sbj';
+        let scrapingTimer = null;
+        let elapsedSeconds = 0;
+        let currentFilter = 'all';
+
+        function toggleHitDetail(el, e) {
+            // イベント伝播を止める（親カードのtoggleDetailsが発火しないように）
+            (e || event).stopPropagation();
+            const panel = el.nextElementSibling;
+            if (panel && panel.classList.contains('hit-detail-panel')) {
+                const isHidden = panel.style.display === 'none' || !panel.style.display;
+                panel.style.display = isHidden ? 'block' : 'none';
+                const icon = el.querySelector('.expand-icon');
+                if (icon) icon.textContent = isHidden ? '▲' : '▼';
+            }
+        }
+
+        function toggleDetails(card) {
+            const details = card.querySelector('.unit-details');
+            const icon = card.querySelector('.expand-icon');
+            if (details) {
+                details.classList.toggle('hidden');
+                if (icon) {
+                    icon.textContent = details.classList.contains('hidden') ? '▼' : '▲';
+                }
+            }
+        }
+
+        function filterUnits(filter) {
+            currentFilter = filter;
+            const cards = document.querySelectorAll('[data-availability]');
+            cards.forEach(card => {
+                const avail = card.dataset.availability;
+                if (filter === 'all') {
+                    card.style.display = '';
+                } else if (filter === 'empty') {
+                    card.style.display = avail === '空き' ? '' : 'none';
+                } else if (filter === 'playing') {
+                    card.style.display = avail === '遊技中' ? '' : 'none';
+                }
+            });
+
+            // ハイライト
+            document.querySelectorAll('.availability-summary span').forEach(el => {
+                el.classList.remove('active');
+            });
+            document.querySelector('.avail-' + filter)?.classList.add('active');
+        }
+
+        function showLoading() {
+            document.getElementById('loading-overlay').classList.remove('hidden');
+            document.getElementById('scrape-btn').disabled = true;
+            elapsedSeconds = 0;
+            updateProgress();
+            scrapingTimer = setInterval(updateProgress, 1000);
+        }
+
+        function hideLoading() {
+            document.getElementById('loading-overlay').classList.add('hidden');
+            document.getElementById('scrape-btn').disabled = false;
+            if (scrapingTimer) {
+                clearInterval(scrapingTimer);
+                scrapingTimer = null;
+            }
+        }
+
+        function updateProgress() {
+            elapsedSeconds++;
+            const timeText = document.getElementById('progress-time');
+            const progressFill = document.getElementById('progress-fill');
+
+            timeText.textContent = elapsedSeconds + '秒';
+            const progress = Math.min((elapsedSeconds / 30) * 100, 95);
+            progressFill.style.width = progress + '%';
+        }
+
+        // APIベースURL（realtime.jsで未定義の場合のみ定義）
+        if (typeof API_BASE === 'undefined') {
+            var API_BASE = window.location.hostname.includes('pages.dev')
+                ? 'https://autogmail.pythonanywhere.com'
+                : '';
+        }
+
+        function startScraping() {
+            showLoading();
+            fetch(API_BASE + '/api/scrape/' + storeKey)
+                .then(r => r.json())
+                .then(data => {
+                    console.log('Scraping started:', data);
+                    checkScrapingStatus();
+                })
+                .catch(err => {
+                    console.error('Error starting scraping:', err);
+                    hideLoading();
+                    alert('エラーが発生しました');
+                });
+        }
+
+        function checkScrapingStatus() {
+            fetch(API_BASE + '/api/scrape_status/' + storeKey)
+                .then(r => r.json())
+                .then(data => {
+                    if (data.status === 'completed') {
+                        hideLoading();
+                        location.reload();
+                    } else if (data.status === 'error') {
+                        hideLoading();
+                        alert('取得エラー: ' + (data.error || '不明なエラー'));
+                    } else if (data.status === 'running') {
+                        setTimeout(checkScrapingStatus, 1000);
+                    } else {
+                        setTimeout(checkScrapingStatus, 500);
+                    }
+                })
+                .catch(err => {
+                    console.error('Error checking status:', err);
+                    hideLoading();
+                    alert('ステータス確認エラー');
+                });
+        }
+
+        // 自動更新（5分ごと）
+        setTimeout(function() {
+            location.reload();
+        }, 5 * 60 * 1000);
+
+        // ページ読み込み時に自動でリアルタイムデータ取得
+        
+        // リアルタイムデータがない場合、自動取得開始
+        document.addEventListener('DOMContentLoaded', function() {
+            startScraping();
+        });
+        
+    
+/* === 共通: 動的モード切替 + 現在時刻 === */
+(function() {
+    function getJST() {
+        var now = new Date();
+        return new Date(now.getTime() + (now.getTimezoneOffset() + 540) * 60000);
+    }
+    function getDisplayMode() {
+        var jst = getJST();
+        var h = jst.getHours(), m = jst.getMinutes();
+        if (h < 10) return 'before_open';
+        if (h >= 23 || (h === 22 && m >= 50)) return 'after_close';
+        return 'realtime';
+    }
+    function updateModeBadge() {
+        var mode = getDisplayMode();
+        var badge = document.querySelector('.mode-badge');
+        if (!badge) return;
+        badge.className = 'mode-badge';
+        if (mode === 'before_open') {
+            badge.classList.add('before-open');
+            badge.textContent = '🌙 営業前';
+        } else if (mode === 'after_close') {
+            badge.classList.add('after-close');
+            badge.textContent = '🔒 閉店後';
+        } else {
+            badge.classList.add('realtime');
+            badge.textContent = '🟢 営業中';
+        }
+    }
+    function updateCurrentTime() {
+        var jst = getJST();
+        var hh = String(jst.getHours()).padStart(2, '0');
+        var mi = String(jst.getMinutes()).padStart(2, '0');
+        var el = document.getElementById('current-time');
+        if (el) el.textContent = hh + ':' + mi;
+    }
+    updateModeBadge();
+    updateCurrentTime();
+    setInterval(function() {
+        updateModeBadge();
+        updateCurrentTime();
+    }, 60000);
+})();
+    </script>
+</body>
+</html>

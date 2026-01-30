@@ -130,6 +130,23 @@ STORES = {
         'units': ['2158', '2159', '2160', '2161'],
         'data_source': 'daidata',
     },
+    # === 渋谷本館 (hall_id=100930) ===
+    'shibuya_honkan_espass_sbj': {
+        'name': 'エスパス日拓渋谷本館',
+        'short_name': 'エスパス渋谷本館',
+        'hall_id': '100930',
+        'machine': 'sbj',
+        'units': ['3095', '3096', '3097'],
+        'data_source': 'daidata',
+    },
+    'shibuya_honkan_espass_hokuto': {
+        'name': 'エスパス日拓渋谷本館',
+        'short_name': 'エスパス渋谷本館',
+        'hall_id': '100930',
+        'machine': 'hokuto_tensei2',
+        'units': [str(i) for i in range(2013, 2020)] + [str(i) for i in range(2030, 2038)],  # 2013-2019, 2030-2037
+        'data_source': 'daidata',
+    },
     # === 北斗転生2 ===
     'shibuya_espass_hokuto': {
         'name': 'エスパス日拓渋谷新館',
