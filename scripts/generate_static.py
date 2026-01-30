@@ -17,6 +17,13 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
+# === ビルド前の仕様整合性チェック ===
+from scripts.pre_build_check import run_all as _pre_build_check
+_pre_build_errors = _pre_build_check()
+if _pre_build_errors > 0:
+    print(f'\n🛑 仕様整合性エラー {_pre_build_errors}件 — CLAUDE.md / config/rankings.py を確認してください')
+    sys.exit(1)
+
 from jinja2 import Environment, FileSystemLoader
 from analysis.verdict import get_result_level, get_verdict, is_hit as v_is_hit, RESULT_MARKS
 from config.rankings import STORES, MACHINES, get_stores_by_machine, get_machine_info
