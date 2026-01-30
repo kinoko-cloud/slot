@@ -1169,13 +1169,13 @@ def generate_recommend_pages(env):
             store_analysis['total_units'] = total
             high_ratio = high_count / total * 100 if total > 0 else 0
             if high_ratio >= 70:
-                store_analysis['overall'] = f"高設定台が非常に多い（全{total}台中{high_count}台がA以上）"
+                store_analysis['overall'] = f"好調台が非常に多い（全{total}台中{high_count}台がA以上）"
             elif high_ratio >= 50:
-                store_analysis['overall'] = f"高設定台が多い（全{total}台中{high_count}台がA以上）"
+                store_analysis['overall'] = f"好調台が多い（全{total}台中{high_count}台がA以上）"
             elif high_ratio >= 30:
-                store_analysis['overall'] = f"高設定台あり（全{total}台中{high_count}台がA以上）"
+                store_analysis['overall'] = f"好調台あり（全{total}台中{high_count}台がA以上）"
             else:
-                store_analysis['overall'] = f"高設定台が少ない（全{total}台中{high_count}台がA以上）"
+                store_analysis['overall'] = f"好調台が少ない（全{total}台中{high_count}台がA以上）"
 
         # 蓄積DB補完（共通関数）
         from scripts.enrich_rec import enrich_recs as _enrich_recs

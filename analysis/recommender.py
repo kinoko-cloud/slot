@@ -34,10 +34,10 @@ MACHINE_SPECS = {
         'setting1_payout': 97.8,
         # 閾値（表示用）
         'excellent_prob': 80,   # 設定6超え
-        'high_prob': 100,       # 高設定域
-        'mid_prob': 130,        # 中間設定域
-        'low_prob': 180,        # 低設定域境界
-        'very_low_prob': 250,   # 低設定域
+        'high_prob': 100,       # 高機械割域
+        'mid_prob': 130,        # 中間域
+        'low_prob': 180,        # 低機械割域境界
+        'very_low_prob': 250,   # 低機械割域
     },
     'hokuto_tensei2': {
         'setting6_at_prob': 273.1,
@@ -76,7 +76,7 @@ def estimate_setting_from_prob(art_prob: float, machine_key: str = 'sbj') -> dic
 
     Returns:
         {
-            'estimated_setting': str,  # '高設定濃厚', '高設定域', '中間', '低設定域'
+            'estimated_setting': str,  # '高機械割域', '高機械割域', '中間', '低機械割域'
             'payout_estimate': float,  # 推定機械割
             'hourly_expected': int,    # 1時間あたり期待差枚
             'confidence': str,         # 'high', 'medium', 'low'
@@ -102,7 +102,7 @@ def estimate_setting_from_prob(art_prob: float, machine_key: str = 'sbj') -> dic
     # ART確率が設定6より良い場合
     if art_prob <= s6_prob:
         payout = s6_payout + (s6_prob - art_prob) * 0.1  # さらに上乗せ
-        setting = '設定6'
+        setting = '高機械割'
         setting_num = 6
         confidence = 'high'
     # 設定6〜設定1の間
@@ -112,7 +112,7 @@ def estimate_setting_from_prob(art_prob: float, machine_key: str = 'sbj') -> dic
         # ratioを設定番号に変換（1.0→6, 0.0→1）
         setting_num = round(1 + ratio * 5)
         setting_num = max(1, min(6, setting_num))  # 1-6にクランプ
-        setting = f'設定{setting_num}'
+        setting = f'機械割{round(payout,1)}%'
         if ratio >= 0.8:
             confidence = 'high'
         elif ratio >= 0.5:
@@ -122,7 +122,7 @@ def estimate_setting_from_prob(art_prob: float, machine_key: str = 'sbj') -> dic
     # 設定1より悪い場合
     else:
         payout = s1_payout - (art_prob - s1_prob) * 0.05
-        setting = '設定1'
+        setting = '低機械割'
         setting_num = 1
         confidence = 'low'
 
@@ -607,7 +607,7 @@ def calculate_unit_historical_performance(days: List[dict], machine_key: str = '
     # スコアボーナス計算
     # 好調率が高い台にボーナス、低い台にペナルティ（最大±10点）
     if good_day_rate >= 0.8:
-        score_bonus = 10  # 80%以上好調 → 高設定が頻繁に入る台
+        score_bonus = 10  # 80%以上好調 → 高機械割が頻繁に入る台
     elif good_day_rate >= 0.7:
         score_bonus = 7
     elif good_day_rate >= 0.6:
@@ -619,7 +619,7 @@ def calculate_unit_historical_performance(days: List[dict], machine_key: str = '
     elif good_day_rate >= 0.3:
         score_bonus = -5
     else:
-        score_bonus = -8  # 30%未満好調 → 低設定が入りやすい台
+        score_bonus = -8  # 30%未満好調 → 低機械割が入りやすい台
 
     # 好調日の詳細（爆発レベル分析用） — 品質チェック付き
     good_day_details = []
@@ -704,10 +704,10 @@ def analyze_activity_pattern(history: List[dict], day_data: dict = None) -> dict
     """【改善4】稼働パターン分析（時刻データ活用）
 
     当たり履歴の時刻から稼働パターンを分析:
-    - 粘り度: 朝から閉店まで打たれてる台は高設定の可能性UP
+    - 粘り度: 朝から閉店まで打たれてる台は高機械割の可能性UP
     - 途中放棄: 当たり間の時間差1時間以上 = 離席判定
     - 好調台の途中放棄 = おいしい台（ボーナス）
-    - 不調台の途中放棄 = 低設定と見切られた（ペナルティ）
+    - 不調台の途中放棄 = 低機械割と見切られた（ペナルティ）
     - 100-200Gでやめてる台 = 狙い目（天井狙い余地）
 
     Args:
@@ -758,9 +758,9 @@ def analyze_activity_pattern(history: List[dict], day_data: dict = None) -> dict
     last_hour = last_time.hour
 
     if first_hour <= 11 and last_hour >= 19:
-        # 朝から閉店近くまで粘っている → 高設定の可能性
+        # 朝から閉店近くまで粘っている → 高機械割の可能性
         result['persistence_score'] = 8
-        result['description'] = '朝から夜まで粘り → 高設定の可能性'
+        result['description'] = '朝から夜まで粘り → 高機械割の可能性'
     elif first_hour <= 11 and last_hour >= 17:
         result['persistence_score'] = 5
         result['description'] = '朝から夕方まで稼働'
@@ -805,10 +805,10 @@ def analyze_activity_pattern(history: List[dict], day_data: dict = None) -> dict
             result['abandonment_bonus'] = 5
             result['description'] = f'好調台(1/{overall_prob:.0f})が途中放棄 → おいしい台'
         elif overall_prob >= 180:
-            # 不調台の途中放棄 = 低設定と見切られた（ペナルティ）
+            # 不調台の途中放棄 = 低機械割と見切られた（ペナルティ）
             result['abandonment_type'] = 'bad_abandoned'
             result['abandonment_bonus'] = -5
-            result['description'] = f'不調台(1/{overall_prob:.0f})が見切られた → 低設定疑い'
+            result['description'] = f'不調台(1/{overall_prob:.0f})が見切られた → 低機械割疑い'
         else:
             result['abandonment_type'] = 'neutral_abandoned'
             result['abandonment_bonus'] = 0
@@ -831,7 +831,7 @@ def analyze_activity_pattern(history: List[dict], day_data: dict = None) -> dict
         # 夕方以降にしか当たりがない → ハイエナの可能性
         result['is_hyena_target'] = True
         result['hyena_penalty'] = -5
-        result['description'] = '夕方以降のみ稼働 → ハイエナの可能性（高設定とは限らない）'
+        result['description'] = '夕方以降のみ稼働 → ハイエナの可能性（高機械割とは限らない）'
     elif len(evening_hits) > len(morning_hits) * 2 and len(evening_hits) >= 10:
         # 夕方以降に当たりが集中 → 天井狙い後の連チャンの可能性
         result['is_hyena_target'] = True
@@ -931,7 +931,7 @@ def analyze_trend(days: List[dict], machine_key: str = 'sbj') -> dict:
 
     # 連続プラス/マイナス判定
     # 低稼働日の扱い:
-    #   - 確率が好調域（prob <= good_threshold）→ プラスとしてカウント（即やめ=高設定の可能性）
+    #   - 確率が好調域（prob <= good_threshold）→ プラスとしてカウント（即やめ=高機械割の可能性）
     #   - 確率が不調域 → マイナスとしてカウント
     #   - データ極少（ART<3かつG<500）→ スキップ（判定不能）
     good_prob_threshold = get_machine_threshold(machine_key, 'good_prob')
@@ -1317,25 +1317,25 @@ def analyze_today_data(unit_data: dict, current_hour: int = None, machine_key: s
     if result['art_prob'] > 0:
         if result['art_prob'] <= thresholds['setting6_at_prob']:
             result['today_score_bonus'] = int(25 * games_multiplier)
-            result['today_reasons'].append(f'本日ART確率 1/{result["art_prob"]:.0f} (設定6域)')
+            result['today_reasons'].append(f'本日ART確率 1/{result["art_prob"]:.0f} (高機械割域)')
         elif result['art_prob'] <= thresholds['high_at_prob']:
             result['today_score_bonus'] = int(18 * games_multiplier)
-            result['today_reasons'].append(f'本日ART確率 1/{result["art_prob"]:.0f} (高設定域)')
+            result['today_reasons'].append(f'本日ART確率 1/{result["art_prob"]:.0f} (高機械割域)')
         elif result['art_prob'] <= thresholds['mid_at_prob']:
             result['today_score_bonus'] = int(12 * games_multiplier)
-            result['today_reasons'].append(f'本日ART確率 1/{result["art_prob"]:.0f} (中間設定域)')
+            result['today_reasons'].append(f'本日ART確率 1/{result["art_prob"]:.0f} (中間域)')
         elif result['art_prob'] <= thresholds['low_at_prob']:
-            # 130-180: 低設定寄り → 強めのペナルティ
+            # 130-180: 低機械割寄り → 強めのペナルティ
             result['today_score_bonus'] = int(-20 * games_multiplier)
-            result['today_reasons'].append(f'🚨 本日ART確率 1/{result["art_prob"]:.0f} (低設定寄り)')
+            result['today_reasons'].append(f'🚨 本日ART確率 1/{result["art_prob"]:.0f} (低機械割寄り)')
         elif result['art_prob'] >= thresholds['very_low_at_prob']:
             # 250以上: 完全に低設定 → 最大ペナルティ
             result['today_score_bonus'] = int(-30 * games_multiplier)
-            result['today_reasons'].append(f'🚨 本日ART確率 1/{result["art_prob"]:.0f} (低設定域)')
+            result['today_reasons'].append(f'🚨 本日ART確率 1/{result["art_prob"]:.0f} (低機械割域)')
         else:
-            # 180-250: 低設定濃厚 → 強ペナルティ
+            # 180-250: 低機械割域 → 強ペナルティ
             result['today_score_bonus'] = int(-25 * games_multiplier)
-            result['today_reasons'].append(f'🚨 本日ART確率 1/{result["art_prob"]:.0f} (低設定濃厚)')
+            result['today_reasons'].append(f'🚨 本日ART確率 1/{result["art_prob"]:.0f} (低機械割域)')
 
     # 時間帯に対する稼働量の評価
     if current_hour >= 10:
@@ -1474,7 +1474,7 @@ def analyze_graph_pattern(days: List[dict]) -> dict:
         # 変動が少ない = ミミズ（横ばい）
         pattern = 'mimizu'
         if avg >= 35 and has_big_rensa:
-            description = f'安定高挙動（平均{avg:.0f}ART、10連+あり）→ 高設定濃厚'
+            description = f'安定高挙動（平均{avg:.0f}ART、10連+あり）→ 高機械割域'
         elif avg >= 30:
             description = f'安定推移（平均{avg:.0f}ART）'
             if not has_big_rensa:
@@ -1502,10 +1502,10 @@ def analyze_graph_pattern(days: List[dict]) -> dict:
         # 変動が大きい
         if recent_avg > older_avg * 1.2:
             pattern = 'rising'
-            description = f'右肩上がり → 高設定に変更された可能性'
+            description = f'右肩上がり → 高機械割に変更された可能性'
         elif recent_avg < older_avg * 0.8:
             pattern = 'falling'
-            description = f'右肩下がり → 設定下げ警戒'
+            description = f'右肩下がり → 機械割下げ警戒'
         else:
             pattern = 'volatile'
             if has_big_rensa:
@@ -1826,7 +1826,7 @@ def analyze_today_graph(history: List[dict]) -> dict:
         description = f'【本日】{max_rensa}連の爆発あり！'
     elif explosion_potential == 'low':
         recent_trend = 'flat'
-        description = f'【本日】{total_hits}ART消化、連荘控えめ → 高設定でもムラあり'
+        description = f'【本日】{total_hits}ART消化、連荘控えめ → 高機械割でもムラあり'
     elif explosion_potential == 'building':
         recent_trend = 'building'
         description = f'【本日】ハマりなく{total_hits}回当選中 → 連荘期待'
@@ -1869,7 +1869,7 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
     優先順位:
     1. この台の過去ランク（なぜこの台なのか）
     2. 前日の実績分析（翌日予測の根拠）
-    3. 連続パターン（設定変更サイクルの読み）
+    3. 連続パターン（入替サイクルの読み）
     4. 本日データ（稼働中の場合のみ）
     5. 店舗曜日傾向（補足情報）
     """
@@ -1906,7 +1906,7 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
         # 好調率は🔄に連続好調が含まれる場合は省略（重複回避）
         # 連続好調3日以上なら🔄で「N日連続好調 + 曜日」が出るので好調率は冗長
         if consecutive_plus < 3:
-            reasons.append(f"📊 {total_perf_days}日間中{good_days}日好調（好調率{good_day_rate:.0%}）→ 高設定が入りやすい台")
+            reasons.append(f"📊 {total_perf_days}日間中{good_days}日好調（好調率{good_day_rate:.0%}）→ 高機械割が入りやすい台")
 
         # --- この台を打つメリット（好調日の具体的な出玉実績）---
         avg_good_art = historical_perf.get('avg_good_art', 0)
@@ -1964,7 +1964,7 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
                 reasons.append(f"🔥 直近の推移: {trend_str}（ART80回以上の大爆発がなく{recent_non_big}日経過。過去の傾向では中/小の後に大が来やすい）")
             elif consec_big >= 2:
                 # 大爆発が2日以上連続
-                reasons.append(f"🔥 直近の推移: {trend_str}（大爆発{consec_big}日連続 → 高設定据え置きの証拠）")
+                reasons.append(f"🔥 直近の推移: {trend_str}（大爆発{consec_big}日連続 → 高機械割据え置きの証拠）")
             elif alt_rate >= 0.6 and total_good >= 4:
                 # 交互パターン
                 last_level = recent_levels[0]
@@ -1972,7 +1972,7 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
                 reasons.append(f"🔥 直近の推移: {trend_str}（大小交互 → 本日は{next_expect}の可能性）")
             elif recent_non_big == 1 and recent_levels[0] != 'big':
                 # 直近1日だけ中/小 → まだ大爆発の射程内
-                reasons.append(f"🔥 直近の推移: {trend_str}（前日は低めだが高設定の範囲内 → 大爆発に期待）")
+                reasons.append(f"🔥 直近の推移: {trend_str}（前日は低めだが高機械割の範囲内 → 大爆発に期待）")
             elif total_good >= 3:
                 reasons.append(f"🔥 直近の推移: {trend_str}（好調{total_good}日中、大{big_days}/中{mid_days}/小{small_days}日）")
 
@@ -1992,13 +1992,13 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
         max_streak = historical_perf.get('max_consecutive_good', 0)
         if consecutive_plus >= 3 and max_streak > 0:
             if consecutive_plus >= max_streak:
-                reasons.append(f"📊 {consecutive_plus}日連続好調中 → この台の過去最長を更新中（店が高設定を入れ続けてる可能性）")
+                reasons.append(f"📊 {consecutive_plus}日連続好調中 → この台の過去最長を更新中（店が高機械割を入れ続けてる可能性）")
             elif consecutive_plus >= max_streak - 1:
                 reasons.append(f"📊 {consecutive_plus}日連続好調中（この台の過去最長{max_streak}日にあと1日）")
             else:
                 reasons.append(f"📊 {consecutive_plus}日連続好調中（この台の過去最長は{max_streak}日）")
 
-        # 設定変更周期情報（Phase 2+）
+        # 入替周期情報（Phase 2+）
         cycle_analysis = kwargs.get('cycle_analysis', {})
         analysis_phase = kwargs.get('analysis_phase', 1)
         if cycle_analysis and analysis_phase >= 2:
@@ -2067,12 +2067,12 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
         # 店舗傾向は台の推奨理由としては表示しない（台固有データのみ）
         # 店舗傾向は店舗分析セクションで別途表示
     elif total_perf_days > 0 and good_day_rate <= 0.4:
-        reasons.append(f"📊 {total_perf_days}日間中{good_days}日好調（好調率{good_day_rate:.0%}）→ 低設定が入りやすい台")
+        reasons.append(f"📊 {total_perf_days}日間中{good_days}日好調（好調率{good_day_rate:.0%}）→ 低機械割が入りやすい台")
     elif base_rank == 'S':
         if total_perf_days > 0 and good_day_rate < 0.5:
             reasons.append(f"📊 過去データSランク（ただし直近{total_perf_days}日は好調{good_days}日のみ={good_day_rate:.0%}）")
         else:
-            reasons.append(f"📊 過去データSランク: 高設定が頻繁に入る台")
+            reasons.append(f"📊 過去データSランク: 高機械割が頻繁に入る台")
     elif base_rank == 'A':
         consecutive_bad = historical_perf.get('consecutive_bad', 0)
         if total_perf_days > 0 and good_day_rate < 0.5:
@@ -2080,11 +2080,11 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
         elif consecutive_bad >= 2:
             reasons.append(f"📊 過去データAランク（好調率{good_day_rate:.0%}だが直近{consecutive_bad}日連続不調中）")
         else:
-            reasons.append(f"📊 過去データAランク: 高設定が入りやすい台")
+            reasons.append(f"📊 過去データAランク: 高機械割が入りやすい台")
     elif base_rank == 'B':
-        reasons.append(f"📊 過去データBランク: 中間設定以上が多い台")
+        reasons.append(f"📊 過去データBランク: 中間以上が多い台")
 
-    # === 2. 連続パターン・傾向（設定変更サイクルの読み） ===
+    # === 2. 連続パターン・傾向（入替サイクルの読み） ===
     # これが翌日予測の核心 — 前日単体の成績ではなく「流れ」
     # 蓄積データからの回復率統計を取得（店舗 → 足りなければ機種全体）
     _mk = kwargs.get('machine_key', 'sbj')
@@ -2103,10 +2103,10 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
 
     if consecutive_minus >= 4:
         _r_note = _recovery_note(4)
-        reasons.append(f"🔄 {consecutive_minus}日連続不調 → {next_day_label}設定変更の可能性大{_r_note}")
+        reasons.append(f"🔄 {consecutive_minus}日連続不調 → {next_day_label}入替の可能性大{_r_note}")
     elif consecutive_minus >= 3:
         _r_note = _recovery_note(3)
-        reasons.append(f"🔄 {consecutive_minus}日連続不調 → そろそろ{next_day_label}設定上げ期待{_r_note}")
+        reasons.append(f"🔄 {consecutive_minus}日連続不調 → そろそろ{next_day_label}入替期待{_r_note}")
     elif consecutive_minus == 2:
         _r_note = _recovery_note(2)
         if today_rating >= 4:
@@ -2134,7 +2134,7 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
     day_before_prob_val = trend.get('day_before_prob', 0)
     if yesterday_prob_val >= 150 and day_before_prob_val >= 150:
         _r_note2 = _recovery_note(2)
-        reasons.append(f"🔄 直近2日とも不調（1/{day_before_prob_val:.0f}→1/{yesterday_prob_val:.0f}）→ {next_day_label}設定変更期待大{_r_note2}")
+        reasons.append(f"🔄 直近2日とも不調（1/{day_before_prob_val:.0f}→1/{yesterday_prob_val:.0f}）→ {next_day_label}入替期待大{_r_note2}")
 
     # ローテーションパターン
     if days:
@@ -2157,13 +2157,13 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
     # 閉店後は「当日の結果」として表示（翌日予測の根拠にはしない）
     if total_games > 0 and is_today_data:
         if art_prob > 0 and art_prob <= 80:
-            reasons.append(f"🔥 本日ART確率1/{art_prob:.0f} ({total_games:,}G消化) → 設定6域の挙動")
+            reasons.append(f"🔥 本日ART確率1/{art_prob:.0f} ({total_games:,}G消化) → 高機械割域の挙動")
         elif art_prob > 0 and art_prob <= 100:
-            reasons.append(f"🔥 本日ART確率1/{art_prob:.0f} ({total_games:,}G消化) → 高設定濃厚")
+            reasons.append(f"🔥 本日ART確率1/{art_prob:.0f} ({total_games:,}G消化) → 高機械割域")
         elif art_prob > 0 and art_prob <= 130 and total_games >= 3000:
             reasons.append(f"🔥 本日1/{art_prob:.0f}で安定稼働中 ({total_games:,}G消化)")
         elif art_prob > 0 and art_prob >= 200:
-            reasons.append(f"🚨 本日ART確率1/{art_prob:.0f} ({total_games:,}G消化) → 低設定域の挙動")
+            reasons.append(f"🚨 本日ART確率1/{art_prob:.0f} ({total_games:,}G消化) → 低機械割域の挙動")
 
     # 本日の天井到達・連チャン判定（当日データのみ）
     if today_history and is_today_data:
@@ -2171,7 +2171,7 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
         today_at_intervals = calculate_at_intervals(today_history)
         today_ceiling = sum(1 for g in today_at_intervals if g >= 999)
         if today_ceiling > 0:
-            reasons.append(f"🔥 本日天井到達{today_ceiling}回 → 低設定の可能性に注意")
+            reasons.append(f"🔥 本日天井到達{today_ceiling}回 → 低機械割の可能性に注意")
         if today_graph.get('has_explosion'):
             reasons.append(f"🔥 本日{today_graph['max_rensa']}連の爆発あり")
         elif today_graph.get('is_on_fire'):
@@ -2181,7 +2181,7 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
     # === 3.5 出玉バランス判定 ===
     medal_balance_penalty = kwargs.get('medal_balance_penalty', 0)
     if medal_balance_penalty <= -8:
-        reasons.append(f"🚨 出玉バランス悪い: ART多いが最大枚数少ない（低設定の可能性）")
+        reasons.append(f"🚨 出玉バランス悪い: ART多いが最大枚数少ない（低機械割の可能性）")
     elif medal_balance_penalty <= -5:
         reasons.append(f"🚨 ART回数の割に出玉が伸びていない")
 
@@ -2207,9 +2207,9 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
     # 根拠の優先度ソート（ローテ・周期・傾向を先に、過去ランクは後に）
     def _reason_priority(r):
         if '🔄' in r and ('ローテ' in r or '連続不調' in r or '連続好調' in r):
-            return 0  # ローテ・設定変更パターン（台ごとに違う→差別化できる）
+            return 0  # ローテ・入替パターン（台ごとに違う→差別化できる）
         if '🔁' in r:
-            return 1  # 設定変更周期
+            return 1  # 入替周期
         if '🔥' in r or '💡' in r:
             return 2  # 本日データ・期待根拠
         if '📈' in r:
@@ -2714,7 +2714,7 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
             if acc_latest >= trend_latest:
                 trend_data = trend_from_acc
 
-        # Phase 2+: 設定変更周期分析
+        # Phase 2+: 入替周期分析
         if analysis_phase >= 2:
             cycle_analysis = analyze_setting_change_cycle(accumulated, machine_key)
         # Phase 3+: 曜日別パターン
@@ -2730,20 +2730,20 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
             historical_bonus = historical_perf.get('score_bonus', 0)
 
         # === 【改善2】前日不調→翌日狙い目の重み付け強化 ===
-        # 前日不調（1/150以上）の台は、翌日設定変更で上がる可能性が75%
-        # 2日連続不調の台はさらにスコアアップ（設定変更期待）
+        # 前日不調（1/150以上）の台は、翌日入替で上がる可能性が75%
+        # 2日連続不調の台はさらにスコアアップ（入替期待）
         slump_bonus = 0
         yesterday_prob = trend_data.get('yesterday_prob', 0)
         day_before_prob = trend_data.get('day_before_prob', 0)
         bad_prob_threshold = get_machine_threshold(machine_key, 'bad_prob')
 
         if yesterday_prob >= bad_prob_threshold:
-            slump_bonus += 5  # 前日不調 → 翌日設定変更期待
+            slump_bonus += 5  # 前日不調 → 翌日入替期待
             if day_before_prob >= bad_prob_threshold:
-                slump_bonus += 5  # 2日連続不調 → さらに設定変更期待（合計+10）
+                slump_bonus += 5  # 2日連続不調 → さらに入替期待（合計+10）
 
         # === 出玉バランス判定 ===
-        # ART回数が多いのに最大枚数が少ない → 連チャンが弱い = 低設定の可能性
+        # ART回数が多いのに最大枚数が少ない → 連チャンが弱い = 低機械割の可能性
         # 北斗で50回当たって最大2574枚のようなケースにペナルティ
         medal_balance_penalty = 0
         if realtime_data and realtime_is_today:
@@ -2803,7 +2803,7 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
         elif _yd >= 1000:
             yesterday_diff_bonus = 3
         elif _yd <= -3000:
-            yesterday_diff_bonus = 3  # 大負け翌日は設定変更期待
+            yesterday_diff_bonus = 3  # 大負け翌日は入替期待
 
         # === 店舗設定投入パターンボーナス ===
         # 店舗固有の設定投入癖（据え置き率、特定日傾向、台番傾向等）を補正
@@ -3229,7 +3229,7 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
             _mr = get_machine_recovery_stats(_mk)
             _rs = _mr.get(2, {})
             _r_note = f"（SBJ全店舗実績: {_rs['recovered']}/{_rs['total']}回={_rs['rate']:.0%}で翌日回復）" if _rs.get('total', 0) >= 3 else ""
-            rec['reasons'].insert(1, f"🔄 直近2日とも不調（1/{_dbp:.0f}→1/{_yp:.0f}）→ {_ndl}設定変更期待大{_r_note}")
+            rec['reasons'].insert(1, f"🔄 直近2日とも不調（1/{_dbp:.0f}→1/{_yp:.0f}）→ {_ndl}入替期待大{_r_note}")
 
         recommendations.append(rec)
 
@@ -3343,7 +3343,7 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
                 if is_low_activity and yp <= 150:
                     msg = f"🚨 前日は{yg:,}G消化で低稼働 → 高設定でも数字が伸びにくい稼働量"
                 elif yp > 180:
-                    msg = f"🚨 前日はART確率1/{yp:.0f}で低設定濃厚（全台中央値1/{median_y_prob:.0f}）"
+                    msg = f"🚨 前日はART確率1/{yp:.0f}で低機械割域（全台中央値1/{median_y_prob:.0f}）"
                 elif yp > 150:
                     msg = f"🚨 前日はART確率1/{yp:.0f}でやや不調（全台中央値1/{median_y_prob:.0f}）"
                 else:
