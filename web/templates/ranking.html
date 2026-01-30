@@ -141,7 +141,7 @@
                         <div class="recent-day-row">
                             <span class="recent-label">{{ short_date(rec.yesterday_date) or '前日' }}</span>
                             <span class="recent-art">ART {{ y_art }}</span>
-                            {% if y_prob > 0 %}<span class="recent-prob {% if y_prob <= 100 %}excellent{% elif y_prob <= 130 %}good{% elif y_prob >= 200 %}bad{% endif %}">1/{{ y_prob }}</span>{% endif %}
+                            {% if y_prob > 0 %}<span class="recent-prob {% if y_prob <= 100 %}excellent{% elif y_prob <= 130 %}good{% elif y_prob >= 200 %}bad{% endif %}">1/{{ y_prob|int }}</span>{% endif %}
                             {% if rec.yesterday_diff_medals is defined and rec.yesterday_diff_medals != 0 %}
                             <span class="diff-medals-sm {% if rec.yesterday_diff_medals > 0 %}plus{% else %}minus{% endif %}">{{ '{:+,}'.format(rec.yesterday_diff_medals) }}枚</span>
                             {% endif %}
@@ -153,7 +153,7 @@
                         <div class="recent-day-row">
                             <span class="recent-label">{{ short_date(rec.day_before_date) or '前々日' }}</span>
                             <span class="recent-art">ART {{ db_art }}</span>
-                            {% if db_prob > 0 %}<span class="recent-prob {% if db_prob <= 100 %}excellent{% elif db_prob <= 130 %}good{% elif db_prob >= 200 %}bad{% endif %}">1/{{ db_prob }}</span>{% endif %}
+                            {% if db_prob > 0 %}<span class="recent-prob {% if db_prob <= 100 %}excellent{% elif db_prob <= 130 %}good{% elif db_prob >= 200 %}bad{% endif %}">1/{{ db_prob|int }}</span>{% endif %}
                             {% if rec.day_before_diff_medals is defined and rec.day_before_diff_medals != 0 %}
                             <span class="diff-medals-sm {% if rec.day_before_diff_medals > 0 %}plus{% else %}minus{% endif %}">{{ '{:+,}'.format(rec.day_before_diff_medals) }}枚</span>
                             {% endif %}
@@ -166,7 +166,7 @@
                         <div class="recent-day-row">
                             <span class="recent-label">{{ short_date(rec.three_days_ago_date) or '3日前' }}</span>
                             <span class="recent-art">ART {{ rec.three_days_ago_art }}</span>
-                            {% if td_prob > 0 %}<span class="recent-prob {% if td_prob <= 100 %}excellent{% elif td_prob <= 130 %}good{% elif td_prob >= 200 %}bad{% endif %}">1/{{ td_prob }}</span>{% endif %}
+                            {% if td_prob > 0 %}<span class="recent-prob {% if td_prob <= 100 %}excellent{% elif td_prob <= 130 %}good{% elif td_prob >= 200 %}bad{% endif %}">1/{{ td_prob|int }}</span>{% endif %}
                             {% if rec.three_days_ago_diff_medals is defined and rec.three_days_ago_diff_medals != 0 %}
                             <span class="diff-medals-sm {% if rec.three_days_ago_diff_medals > 0 %}plus{% else %}minus{% endif %}">{{ '{:+,}'.format(rec.three_days_ago_diff_medals) }}枚</span>
                             {% endif %}
