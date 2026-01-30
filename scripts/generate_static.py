@@ -271,6 +271,18 @@ def generate_index(env):
                 {'store_key': 'shibuya_espass_hokuto', 'icon': '👊', 'short_name': '北斗転生2'},
             ],
         },
+        'shibuya_honkan_espass': {
+            'name': 'エスパス日拓渋谷本館',
+            'short_name': 'エスパス渋谷本館',
+            'day_ratings': {'月': 3, '火': 3, '水': 3, '木': 3, '金': 3, '土': 3, '日': 3},
+            'best_note': '新規追加。データ収集中',
+            'worst_note': '',
+            'overall_rating': 3,
+            'machine_links': [
+                {'store_key': 'shibuya_honkan_espass_sbj', 'icon': '🃏', 'short_name': 'SBJ'},
+                {'store_key': 'shibuya_honkan_espass_hokuto', 'icon': '👊', 'short_name': '北斗転生2'},
+            ],
+        },
         'shinjuku_espass': {
             'name': 'エスパス日拓新宿歌舞伎町店',
             'short_name': 'エスパス歌舞伎町',
@@ -362,25 +374,12 @@ def generate_index(env):
                 recs = recommend_units(store_key, realtime_data=realtime, availability=availability,
                                       data_date_label=reason_data_label, prev_date_label=reason_prev_label)
                 
-                # availabilityが今日のデータでない場合、today関連をリセット
-                # （昨日のstaleデータがtodayとして表示されるのを防止）
-                import datetime as _dt_mod
-                _jst = _dt_mod.timezone(_dt_mod.timedelta(hours=9))
-                _today_str = _dt_mod.datetime.now(_jst).strftime('%Y-%m-%d')
-                _avail_date = ''
-                try:
-                    import json as _json
-                    with open(BASE / 'data' / 'availability.json') as _af:
-                        _avail_data = _json.load(_af)
-                    _fetched = _avail_data.get('fetched_at', '')
-                    if _fetched:
-                        _avail_date = _fetched[:10]  # YYYY-MM-DD
-                except:
-                    pass
-                if _avail_date != _today_str:
-                    for r in recs:
+                # recommenderが返すtoday関連データの正当性チェック
+                # daidata未更新等で昨日のstaleデータがtodayとして入る場合がある
+                # → total_games==0なのにart_count>0の台はstaleデータ
+                for r in recs:
+                    if r.get('total_games', 0) == 0 and r.get('art_count', 0) > 0:
                         r['art_count'] = 0
-                        r['total_games'] = 0
                         r['max_medals'] = 0
                         r['today_max_rensa'] = 0
                         r['today_history'] = []
