@@ -435,7 +435,8 @@ def main():
         'fetched_at': datetime.now(JST).isoformat(),
     }
 
-    with sync_playwright() as p:
+    try:
+      with sync_playwright() as p:
         browser = p.chromium.launch(
             headless=True,
             args=[
@@ -577,7 +578,20 @@ def main():
         except Exception as e:
             print(f"Warning: browser close error: {e}")
 
-    # JSONに保存
+    except Exception as e:
+        print(f"\nFATAL: Playwright crashed: {e}")
+        print("Saving partial data...")
+
+    # JSONに保存（クラッシュ時も部分データを書き出す）
+    _save_result(result)
+
+
+def _save_result(result):
+    """resultをavailability.jsonに書き込み"""
+    if not result.get('stores'):
+        print("Warning: no store data to save")
+        return
+
     output_path = Path(__file__).parent.parent / 'data' / 'availability.json'
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
