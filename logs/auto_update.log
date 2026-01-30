@@ -16638,3 +16638,252 @@ To github.com:kinoko-cloud/slot.git
    d4f7ba8..e6288c9  main -> main
 [2026-01-30 14:05:29] デプロイ完了 (attempt 1, origin)
 [2026-01-30 14:05:29] === 自動更新完了 ===
+[2026-01-30 14:15:04] === 自動更新開始 ===
+error: cannot pull with rebase: You have unstaged changes.
+error: Please commit or stash them.
+[2026-01-30 14:15:04] git pull失敗（続行）
+[2026-01-30 14:15:04] データ取得中（全店舗）...
+[2026-01-30 14:20:16] データ取得タイムアウト（5分）
+[2026-01-30 14:20:16] availability.json: 10店舗
+[2026-01-30 14:20:16] 静的サイト生成中...
+
+⚠️  PRE-BUILD WARNINGS (90):
+  WARN: island_akihabara_hokuto_tensei2/0731 2026-01-26 max_rensa=21 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_hokuto_tensei2/36 2026-01-28 max_rensa=28 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_hokuto_tensei2/682 2026-01-22 max_rensa=34 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_hokuto_tensei2/35 2026-01-28 max_rensa=24 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_hokuto_tensei2/24 2026-01-28 max_rensa=32 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_hokuto_tensei2/128 2026-01-28 max_rensa=23 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_hokuto_tensei2/6 2026-01-26 max_rensa=24 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_hokuto_tensei2/7 2026-01-26 max_rensa=34 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_hokuto_tensei2/23 2026-01-28 max_rensa=29 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_hokuto_tensei2/685 2026-01-20 max_rensa=35 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_hokuto_tensei2/3 2026-01-27 max_rensa=28 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_hokuto_tensei2/3 2026-01-26 max_rensa=23 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_hokuto_tensei2/16 2026-01-27 max_rensa=45 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_hokuto_tensei2/16 2026-01-26 max_rensa=35 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_hokuto_tensei2/684 2026-01-20 max_rensa=43 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_hokuto_tensei2/8 2026-01-27 max_rensa=33 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_hokuto_tensei2/21 2026-01-26 max_rensa=62 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: akiba_espass_sbj/2158 2026-01-28 max_rensa=40 （sbjの上限25を超過 — 連チャン閾値要確認）
+  WARN: akiba_espass_sbj/2160 2026-01-27 max_rensa=51 （sbjの上限25を超過 — 連チャン閾値要確認）
+  WARN: island_akihabara_sbj/1017 2026-01-26 max_rensa=39 （sbjの上限25を超過 — 連チャン閾値要確認）
+  WARN: island_akihabara_sbj/1016 2026-01-25 max_rensa=34 （sbjの上限25を超過 — 連チャン閾値要確認）
+  WARN: island_akihabara_sbj/1023 2026-01-26 max_rensa=28 （sbjの上限25を超過 — 連チャン閾値要確認）
+  WARN: island_akihabara/1028 2026-01-26 max_rensa=23 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: island_akihabara/1020 2026-01-26 max_rensa=22 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_sbj/10 2026-01-21 max_rensa=26 （sbjの上限25を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_sbj/10 2026-01-23 max_rensa=31 （sbjの上限25を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_sbj/4 2026-01-21 max_rensa=44 （sbjの上限25を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_sbj/4 2026-01-23 max_rensa=36 （sbjの上限25を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_sbj/683 2026-01-28 max_rensa=29 （sbjの上限25を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_sbj/12 2026-01-21 max_rensa=53 （sbjの上限25を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_sbj/12 2026-01-23 max_rensa=26 （sbjの上限25を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_sbj/9 2026-01-21 max_rensa=41 （sbjの上限25を超過 — 連チャン閾値要確認）
+  WARN: akiba_espass_hokuto_tensei2/2014 2026-01-27 max_rensa=35 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: akiba_espass_hokuto_tensei2/2016 2026-01-27 max_rensa=22 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: akiba_espass_hokuto_tensei2/2068 2026-01-28 max_rensa=32 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: akiba_espass_hokuto_tensei2/2159 2026-01-21 max_rensa=49 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: akiba_espass_hokuto_tensei2/2019 2026-01-28 max_rensa=31 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: akiba_espass_hokuto_tensei2/2058 2026-01-26 max_rensa=30 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: akiba_espass_hokuto_tensei2/2066 2026-01-28 max_rensa=34 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: akiba_espass_hokuto_tensei2/2063 2026-01-26 max_rensa=21 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: akiba_espass_hokuto_tensei2/2059 2026-01-28 max_rensa=27 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: akiba_espass_hokuto_tensei2/2017 2026-01-26 max_rensa=21 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: akiba_espass_hokuto_tensei2/2060 2026-01-28 max_rensa=30 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: akiba_espass_hokuto_tensei2/2060 2026-01-27 max_rensa=21 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: akiba_espass_hokuto_tensei2/2060 2026-01-26 max_rensa=21 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: akiba_espass_hokuto_tensei2/2161 2026-01-21 max_rensa=37 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: akiba_espass_hokuto_tensei2/2011 2026-01-25 max_rensa=21 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: akiba_espass_hokuto_tensei2/2013 2026-01-27 max_rensa=27 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: akiba_espass_hokuto_tensei2/2057 2026-01-26 max_rensa=25 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: akiba_espass_hokuto_tensei2/2015 2026-01-26 max_rensa=23 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: akiba_espass_hokuto_tensei2/2067 2026-01-27 max_rensa=26 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: akiba_espass_hokuto_tensei2/2067 2026-01-26 max_rensa=33 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_sbj/3013 2026-01-28 max_rensa=31 （sbjの上限25を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto/2046 2026-01-23 max_rensa=32 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/2061 2026-01-27 max_rensa=38 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/2061 2026-01-26 max_rensa=22 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/2236 2026-01-26 max_rensa=52 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/2049 2026-01-26 max_rensa=38 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/2239 2026-01-27 max_rensa=28 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/2233 2026-01-27 max_rensa=49 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/2233 2026-01-26 max_rensa=37 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/2065 2026-01-28 max_rensa=27 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/3011 2026-01-22 max_rensa=41 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/2235 2026-01-26 max_rensa=32 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/2064 2026-01-27 max_rensa=67 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/2058 2026-01-27 max_rensa=25 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/2234 2026-01-28 max_rensa=38 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/2234 2026-01-27 max_rensa=33 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/2237 2026-01-27 max_rensa=23 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/2056 2026-01-27 max_rensa=28 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/2056 2026-01-26 max_rensa=21 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/2066 2026-01-28 max_rensa=41 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/2066 2026-01-27 max_rensa=29 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/2053 2026-01-28 max_rensa=24 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/2053 2026-01-27 max_rensa=30 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/2240 2026-01-27 max_rensa=36 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/2047 2026-01-27 max_rensa=22 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/2047 2026-01-26 max_rensa=26 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/2048 2026-01-26 max_rensa=35 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/3013 2026-01-22 max_rensa=26 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/2051 2026-01-28 max_rensa=47 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/2052 2026-01-28 max_rensa=29 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/2052 2026-01-27 max_rensa=26 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/3012 2026-01-21 max_rensa=23 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/2050 2026-01-28 max_rensa=31 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/2055 2026-01-27 max_rensa=22 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/2055 2026-01-26 max_rensa=21 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/2057 2026-01-27 max_rensa=42 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/2067 2026-01-28 max_rensa=33 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/2067 2026-01-27 max_rensa=31 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+==================================================
+静的サイト生成開始
+出力先: /home/riichi/works/slot/docs
+==================================================
+
+Running unit verification...
+✓ 台番号の異常なし
+Running data integrity check...
+
+==================================================
+データ整合性チェック: 8件の問題
+  🔴 重大: 4件
+  🟡 警告: 4件
+==================================================
+🔴 [all_art_zero] 渋谷エスパス新館: 全3台のART=0（データ取得失敗の可能性）
+🟡 [art_zero_with_games] 渋谷エスパス新館 3011番: 2,749G消化済みなのにART=0
+🟡 [art_zero_with_games] 渋谷エスパス新館 3012番: 2,962G消化済みなのにART=0
+🟡 [art_zero_with_games] 渋谷エスパス新館 3013番: 3,881G消化済みなのにART=0
+🔴 [all_art_zero] 新宿エスパス歌舞伎町: 全4台のART=0（データ取得失敗の可能性）
+🔴 [all_art_zero] 秋葉原エスパス駅前: 全4台のART=0（データ取得失敗の可能性）
+🟡 [units_insufficient] 西武新宿駅前エスパス: 台数不足（期待7台、実際3台）
+🔴 [all_art_zero] 西武新宿駅前エスパス: 全3台のART=0（データ取得失敗の可能性）
+
+  📊 パターン記録: island_akihabara_hokuto_tensei2 (182件)
+  📊 パターン記録: shinjuku_espass_hokuto_tensei2 (221件)
+  📊 パターン記録: akiba_espass_sbj (42件)
+  📊 パターン記録: island_akihabara_sbj (182件)
+  📊 パターン記録: shinjuku_espass_sbj (117件)
+  📊 パターン記録: seibu_shinjuku_espass_hokuto_tensei2 (21件)
+  📊 パターン記録: akiba_espass_hokuto_tensei2 (207件)
+  📊 パターン記録: seibu_shinjuku_espass_sbj (23件)
+  📊 パターン記録: shibuya_espass_sbj (32件)
+  📊 パターン記録: shibuya_espass_hokuto (7件)
+  📊 パターン記録: shibuya_espass_hokuto_tensei2 (266件)
+
+Generating index.html...
+Local data is stale (42 minutes old)
+Local data is stale (42 minutes old)
+Local data is stale (42 minutes old)
+Local data is stale (42 minutes old)
+Local data is stale (42 minutes old)
+Local data is stale (42 minutes old)
+Local data is stale (42 minutes old)
+Local data is stale (42 minutes old)
+Local data is stale (42 minutes old)
+Local data is stale (42 minutes old)
+Local data is stale (42 minutes old)
+Local data is stale (42 minutes old)
+Local data is stale (42 minutes old)
+Local data is stale (42 minutes old)
+Local data is stale (42 minutes old)
+Local data is stale (42 minutes old)
+Local data is stale (42 minutes old)
+Local data is stale (42 minutes old)
+Local data is stale (42 minutes old)
+  -> /home/riichi/works/slot/docs/index.html
+Generating machine pages...
+  -> /home/riichi/works/slot/docs/machine/sbj.html
+  -> /home/riichi/works/slot/docs/machine/hokuto_tensei2.html
+Generating ranking pages...
+Local data is stale (42 minutes old)
+Local data is stale (42 minutes old)
+Local data is stale (42 minutes old)
+Local data is stale (42 minutes old)
+Local data is stale (42 minutes old)
+Local data is stale (42 minutes old)
+Local data is stale (42 minutes old)
+Local data is stale (42 minutes old)
+Local data is stale (42 minutes old)
+Local data is stale (42 minutes old)
+  -> /home/riichi/works/slot/docs/ranking/sbj.html
+Local data is stale (42 minutes old)
+Local data is stale (42 minutes old)
+Local data is stale (42 minutes old)
+Local data is stale (42 minutes old)
+Local data is stale (42 minutes old)
+Local data is stale (42 minutes old)
+Local data is stale (42 minutes old)
+Local data is stale (42 minutes old)
+  -> /home/riichi/works/slot/docs/ranking/hokuto_tensei2.html
+Generating recommend pages...
+  Processing island_akihabara_sbj...
+Local data is stale (42 minutes old)
+Local data is stale (42 minutes old)
+  Processing shibuya_espass_sbj...
+Local data is stale (42 minutes old)
+Local data is stale (42 minutes old)
+  Processing shinjuku_espass_sbj...
+Local data is stale (42 minutes old)
+Local data is stale (42 minutes old)
+  Processing seibu_shinjuku_espass_sbj...
+Local data is stale (42 minutes old)
+Local data is stale (42 minutes old)
+  Processing akiba_espass_sbj...
+Local data is stale (42 minutes old)
+Local data is stale (42 minutes old)
+  Processing shibuya_honkan_espass_sbj...
+  Processing shibuya_honkan_espass_hokuto...
+  Processing shibuya_espass_hokuto...
+Local data is stale (42 minutes old)
+Local data is stale (42 minutes old)
+  Processing shinjuku_espass_hokuto...
+Local data is stale (42 minutes old)
+Local data is stale (42 minutes old)
+  Processing akiba_espass_hokuto...
+Local data is stale (42 minutes old)
+Local data is stale (42 minutes old)
+  Processing island_akihabara_hokuto...
+Local data is stale (42 minutes old)
+Local data is stale (42 minutes old)
+  -> /home/riichi/works/slot/docs/recommend/
+Generating verify page...
+  バックテスト結果を使用: verify_20260129_results.json
+  -> /home/riichi/works/slot/docs/verify.html (バックテスト: 的中率50%)
+Generating history pages...
+  -> /home/riichi/works/slot/docs/history/ (155 pages)
+Copying static files...
+  -> /home/riichi/works/slot/docs/static/
+Generating metadata...
+  -> /home/riichi/works/slot/docs/metadata.json
+
+==================================================
+静的サイト生成完了!
+==================================================
+
+--- ビルド後検証 ---
+
+❌ ERRORS (1):
+  ERROR: 直近データの最新日付が1/27だが前日1/29であるべき（蓄積DBが古い可能性）
+
+ℹ️  INFO (4):
+  INFO: 的中率ヒーローカード0件（営業中モードでは非表示が正常）
+  INFO: verify.html に日付表示なし
+  INFO: recommend/shibuya_espass_sbj.html: 天井行の50%にRB跨ぎ累計なし（1/2）
+  INFO: CSS未使用クラスが255件（残骸蓄積注意。主要なもの: acc-label, acc-value, accuracy-circle, accuracy-detail, accuracy-hero, accuracy-hero-link, accuracy-label, accuracy-num, accuracy-row, alert-critical...）
+⚠️ 検証でERRORが検出されました
+--- 検証完了 ---
+[2026-01-30 14:20:28] 静的サイト生成完了
+[2026-01-30 14:20:29] 変更あり、デプロイ中...
+[main 72be0d1] auto: リアルタイム更新 14:20
+ 173 files changed, 355 insertions(+), 355 deletions(-)
+error: cannot pull with rebase: You have unstaged changes.
+error: Please commit or stash them.
+error: cannot pull with rebase: You have unstaged changes.
+error: Please commit or stash them.
+To github.com:kinoko-cloud/slot.git
+   0fa56bf..72be0d1  main -> main
+[2026-01-30 14:20:32] デプロイ完了 (attempt 1, origin)
+[2026-01-30 14:20:32] === 自動更新完了 ===

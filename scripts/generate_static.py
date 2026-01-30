@@ -376,15 +376,25 @@ def generate_index(env):
                 
                 # recommenderが返すtoday関連データの正当性チェック
                 # daidata未更新等で昨日のstaleデータがtodayとして入る場合がある
-                # → total_games==0なのにart_count>0の台はstaleデータ
+                # 1. total_games==0なのにart_count>0 → staleデータ
+                # 2. art_count < today_max_rensa → 連チャン数がART数を超えるのは矛盾
                 for r in recs:
-                    if r.get('total_games', 0) == 0 and r.get('art_count', 0) > 0:
+                    _art = r.get('art_count', 0)
+                    _games = r.get('total_games', 0)
+                    _rensa = r.get('today_max_rensa', 0)
+                    if _games == 0 and _art > 0:
                         r['art_count'] = 0
                         r['max_medals'] = 0
                         r['today_max_rensa'] = 0
                         r['today_history'] = []
                         r['art_prob'] = 0
                         r['rb_count'] = 0
+                    # 連チャン数がART数より大きい場合は矛盾（staleデータ混入）
+                    if _rensa > _art and _art > 0:
+                        r['today_max_rensa'] = 0
+                    # today_max_rensaだけ残ってる場合もリセット
+                    if _art == 0 and _rensa > 0:
+                        r['today_max_rensa'] = 0
 
                 # 全recsにメタデータを付与
                 for rec in recs:
