@@ -27,7 +27,7 @@ if _pre_build_errors > 0:
 from jinja2 import Environment, FileSystemLoader
 from analysis.verdict import get_result_level, get_verdict, is_hit as v_is_hit, RESULT_MARKS
 from config.rankings import STORES, MACHINES, get_stores_by_machine, get_machine_info
-from analysis.recommender import recommend_units, load_daily_data, generate_store_analysis, calculate_expected_profit, analyze_today_graph, calculate_at_intervals
+from analysis.recommender import recommend_units, load_daily_data, generate_store_analysis, calculate_expected_profit, analyze_today_graph, calculate_at_intervals, get_machine_from_store_key
 from analysis.analyzer import calculate_first_hits, mark_first_hits
 from scrapers.availability_checker import get_availability, get_realtime_data
 from scripts.verify_units import get_active_alerts, get_unit_status
@@ -374,34 +374,44 @@ def generate_index(env):
                 recs = recommend_units(store_key, realtime_data=realtime, availability=availability,
                                       data_date_label=reason_data_label, prev_date_label=reason_prev_label)
                 
-                # recommenderが返すtoday関連データの正当性チェック
-                # daidata未更新等で昨日のstaleデータがtodayとして入る場合がある
-                # 1. total_games==0なのにart_count>0 → staleデータ
-                # 2. art_count < today_max_rensa → 連チャン数がART数を超えるのは矛盾
+                # recommenderが返すtoday関連データの整合性チェック
+                # today_historyからart/rensa/diff_medalsを再計算して一貫性を保つ
+                from analysis.analyzer import calculate_max_rensa as _calc_rensa
                 for r in recs:
                     _art = r.get('art_count', 0)
                     _games = r.get('total_games', 0)
                     _rensa = r.get('today_max_rensa', 0)
-                    _is_stale = False
-                    if _games == 0 and _art > 0:
-                        r['art_count'] = 0
-                        r['max_medals'] = 0
+                    _hist = r.get('today_history', [])
+                    
+                    # today_historyの整合性チェック
+                    # recommenderのart_count（daidataソース）とtoday_history（JSONソース）が
+                    # 異なる日のデータを参照してる場合がある
+                    if _hist:
+                        _hist_art = sum(1 for h in _hist if h.get('type', '') in ('ART', 'AT', 'BB'))
+                        _hist_rb = sum(1 for h in _hist if h.get('type', '') == 'RB')
+                        _mk = r.get('machine_key', '') or get_machine_from_store_key(store_key)
+                        _hist_rensa = _calc_rensa(_hist, machine_key=_mk)
+                        
+                        # art_countとhistory ART数が一致 → データソースが同じ日
+                        if _art > 0 and _art == _hist_art:
+                            # 一致してるのでhistoryからrensaを再計算
+                            r['today_max_rensa'] = _hist_rensa
+                        elif _art > 0 and _art != _hist_art:
+                            # 不一致 → historyは別日のstale。art_countを信頼、historyは使わない
+                            r['today_history'] = []
+                            r['today_max_rensa'] = 0
+                        elif _art == 0 and _hist_art > 0:
+                            # art_count未設定だがhistoryあり → historyベースで表示
+                            r['art_count'] = _hist_art
+                            r['rb_count'] = _hist_rb
+                            r['today_max_rensa'] = _hist_rensa
+                        # else: 両方0 → 何もしない
+                    
+                    # historyがない場合のクリーンアップ
+                    elif _art == 0:
                         r['today_max_rensa'] = 0
-                        r['today_history'] = []
-                        r['art_prob'] = 0
-                        r['rb_count'] = 0
                         r['diff_medals'] = 0
-                        _is_stale = True
-                    # 連チャン数がART数より大きい場合は矛盾（staleデータ混入）
-                    if _rensa > _art and _art > 0:
-                        r['today_max_rensa'] = 0
-                        _is_stale = True
-                    # today_max_rensaだけ残ってる場合もリセット
-                    if _art == 0 and _rensa > 0:
-                        r['today_max_rensa'] = 0
-                        _is_stale = True
-                    # staleデータの場合、「本日」を含む理由テキストもクリーンアップ
-                    if _is_stale:
+                        # 「本日」を含む理由テキストもクリーンアップ
                         for key in ('today_reasons', 'reasons'):
                             if key in r and r[key]:
                                 r[key] = [reason for reason in r[key] 
