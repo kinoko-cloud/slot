@@ -2865,24 +2865,38 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
         history_date = ''
         if unit_history:
             unit_days = unit_history.get('days', [])
-            # 当日の履歴を取得（なければ直近日にフォールバック）
-            today_str = datetime.now().strftime('%Y-%m-%d')
-            yesterday_str = (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d')
-            for day in unit_days:
-                if day.get('date') == today_str:
+        
+        # data/history/ JSONからも補完（daily_dataに含まれないhistoryを取得）
+        _hist_file = Path(__file__).parent.parent / 'data' / 'history' / data_store_key / f'{unit_id}.json'
+        if not _hist_file.exists():
+            _hist_file = Path(__file__).parent.parent / 'data' / 'history' / store_key / f'{unit_id}.json'
+        if _hist_file.exists():
+            try:
+                import json as _json
+                _hist_data = _json.loads(_hist_file.read_text())
+                _existing_dates = {d.get('date') for d in unit_days}
+                for _hd in _hist_data.get('days', []):
+                    if _hd.get('date') and _hd['date'] not in _existing_dates:
+                        unit_days.append(_hd)
+            except:
+                pass
+        
+        # 当日の履歴を取得（なければ直近日にフォールバック）
+        today_str = datetime.now().strftime('%Y-%m-%d')
+        yesterday_str = (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d')
+        for day in unit_days:
+            if day.get('date') == today_str:
+                today_history = day.get('history', [])
+                history_date = today_str
+                break
+        if not today_history:
+            # 当日データがない場合、直近の履歴データを探す（日付降順）
+            sorted_days = sorted(unit_days, key=lambda x: x.get('date', ''), reverse=True)
+            for day in sorted_days:
+                if day.get('history'):
                     today_history = day.get('history', [])
-                    history_date = today_str
+                    history_date = day.get('date', '')
                     break
-            if not today_history:
-                # 当日データがない場合、直近の履歴データを探す（日付降順）
-                # ただしフォールバック元の日付を記録（today扱いしない）
-                # NOTE: フォールバックhistoryはgenerate_reasons用。today_max_rensa等には使わない。
-                sorted_days = sorted(unit_days, key=lambda x: x.get('date', ''), reverse=True)
-                for day in sorted_days:
-                    if day.get('history'):
-                        today_history = day.get('history', [])
-                        history_date = day.get('date', '')
-                        break
 
         # データ日付を取得（今日 or 昨日）
         data_date = today_analysis.get('data_date', '')
