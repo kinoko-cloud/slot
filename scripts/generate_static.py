@@ -2574,11 +2574,19 @@ def main():
     print("静的サイト生成完了!")
     print("=" * 50)
 
-    # ビルド後検証
+    # ビルド後検証（既存）
     print("\n--- ビルド後検証 ---")
     from scripts.validate_output import validate_all
     if not validate_all():
-        print("⚠️ 検証でERRORが検出されました")
+        print("⚠️ validate_output: ERRORが検出されました")
+    
+    # post_build_check（HTML出力の整合性チェック）
+    from scripts.post_build_check import run_all as _post_build_check
+    post_errors = _post_build_check()
+    if post_errors > 0:
+        print(f"\n🚫 POST-BUILD CHECK FAILED: {post_errors}件のERROR")
+        print("修正してから再ビルドしてください")
+        sys.exit(1)
     print("--- 検証完了 ---")
 
 
