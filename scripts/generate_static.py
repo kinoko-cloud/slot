@@ -361,6 +361,31 @@ def generate_index(env):
 
                 recs = recommend_units(store_key, realtime_data=realtime, availability=availability,
                                       data_date_label=reason_data_label, prev_date_label=reason_prev_label)
+                
+                # availabilityが今日のデータでない場合、today関連をリセット
+                # （昨日のstaleデータがtodayとして表示されるのを防止）
+                import datetime as _dt_mod
+                _jst = _dt_mod.timezone(_dt_mod.timedelta(hours=9))
+                _today_str = _dt_mod.datetime.now(_jst).strftime('%Y-%m-%d')
+                _avail_date = ''
+                try:
+                    import json as _json
+                    with open(BASE / 'data' / 'availability.json') as _af:
+                        _avail_data = _json.load(_af)
+                    _fetched = _avail_data.get('fetched_at', '')
+                    if _fetched:
+                        _avail_date = _fetched[:10]  # YYYY-MM-DD
+                except:
+                    pass
+                if _avail_date != _today_str:
+                    for r in recs:
+                        r['art_count'] = 0
+                        r['total_games'] = 0
+                        r['max_medals'] = 0
+                        r['today_max_rensa'] = 0
+                        r['today_history'] = []
+                        r['art_prob'] = 0
+                        r['rb_count'] = 0
 
                 # 全recsにメタデータを付与
                 for rec in recs:
