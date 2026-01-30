@@ -1195,6 +1195,9 @@ def analyze_today_data(unit_data: dict, current_hour: int = None, machine_key: s
         'rb_count': 0,
         'total_games': 0,
         'art_prob': 0,
+        'diff_medals': 0,
+        'max_medals': 0,
+        'today_max_rensa': 0,
         'last_hit_time': None,
         'first_hit_time': None,
         'is_running': False,
@@ -2176,7 +2179,7 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
             reasons.append(f"🔥 本日{today_graph['max_rensa']}連の爆発あり")
         elif today_graph.get('is_on_fire'):
             if current_at_games <= 100:
-                reasons.append("🔥 連チャン中 → 高設定継続の期待")
+                reasons.append("🔥 連チャン中 → 高機械割継続の期待")
 
     # === 3.5 出玉バランス判定 ===
     medal_balance_penalty = kwargs.get('medal_balance_penalty', 0)
@@ -2201,7 +2204,7 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
             reasons.append(f"過去データ{base_rank}ランク")
         if store_name and today_weekday:
             best_info = weekday_info.get('best_days', '')
-            rating_label = {5: '高設定投入日', 4: '狙い目', 3: '普通', 2: '弱い日', 1: '回収日'}.get(today_rating, '普通')
+            rating_label = {5: '好調日', 4: '狙い目', 3: '普通', 2: '弱い日', 1: '回収日'}.get(today_rating, '普通')
             reasons.append(f"{store_name}の{today_weekday}曜は{rating_label}（店舗傾向{'：' + best_info if best_info else ''}）")
 
     # 根拠の優先度ソート（ローテ・周期・傾向を先に、過去ランクは後に）
@@ -2218,7 +2221,7 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
             return 4  # 台固有の曜日傾向
         if '📅' in r:
             return 7  # 店舗全体の曜日傾向（全台共通→差別化できない→後回し）
-        if '📊' in r and ('好調率' in r or '高設定' in r):
+        if '📊' in r and ('好調率' in r or '高機械割' in r):
             return 8  # 過去ランク（差別化弱い→最後）
         return 5
 
@@ -2354,13 +2357,13 @@ def generate_store_analysis(store_key: str, daily_data: dict = None) -> dict:
 
     # 全体評価
     if high_ratio >= 70:
-        overall = f"高設定台が非常に多い（全{total_units}台中{high_count}台がA以上）"
+        overall = f"好調台が非常に多い（全{total_units}台中{high_count}台がA以上）"
     elif high_ratio >= 50:
-        overall = f"高設定台が多め（全{total_units}台中{high_count}台がA以上）"
+        overall = f"好調台が多め（全{total_units}台中{high_count}台がA以上）"
     elif high_ratio >= 30:
-        overall = f"高設定台あり（全{total_units}台中{high_count}台がA以上、台選びが重要）"
+        overall = f"好調台あり（全{total_units}台中{high_count}台がA以上、台選びが重要）"
     else:
-        overall = f"高設定台が少ない（全{total_units}台中{high_count}台がA以上）"
+        overall = f"好調台が少ない（全{total_units}台中{high_count}台がA以上）"
 
     # 曜日傾向
     weekday_info = get_store_weekday_info(store_key)
@@ -3005,6 +3008,7 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
             'yesterday_max_rensa': trend_data.get('yesterday_max_rensa', 0),
             'yesterday_max_medals': trend_data.get('yesterday_max_medals', 0),
             'max_medals': max_medals,
+            'diff_medals': today_analysis.get('diff_medals', 0),
             # 3日目のデータ（蓄積DBから取得）
             'three_days_ago_art': 0,
             'three_days_ago_rb': 0,
@@ -3341,7 +3345,7 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
 
                 # 原因推定: 事実ベースでシンプルに
                 if is_low_activity and yp <= 150:
-                    msg = f"🚨 前日は{yg:,}G消化で低稼働 → 高設定でも数字が伸びにくい稼働量"
+                    msg = f"🚨 前日は{yg:,}G消化で低稼働 → 好調でも数字が伸びにくい稼働量"
                 elif yp > 180:
                     msg = f"🚨 前日はART確率1/{yp:.0f}で低機械割域（全台中央値1/{median_y_prob:.0f}）"
                 elif yp > 150:

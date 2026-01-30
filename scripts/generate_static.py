@@ -382,6 +382,7 @@ def generate_index(env):
                     _art = r.get('art_count', 0)
                     _games = r.get('total_games', 0)
                     _rensa = r.get('today_max_rensa', 0)
+                    _is_stale = False
                     if _games == 0 and _art > 0:
                         r['art_count'] = 0
                         r['max_medals'] = 0
@@ -389,12 +390,22 @@ def generate_index(env):
                         r['today_history'] = []
                         r['art_prob'] = 0
                         r['rb_count'] = 0
+                        r['diff_medals'] = 0
+                        _is_stale = True
                     # 連チャン数がART数より大きい場合は矛盾（staleデータ混入）
                     if _rensa > _art and _art > 0:
                         r['today_max_rensa'] = 0
+                        _is_stale = True
                     # today_max_rensaだけ残ってる場合もリセット
                     if _art == 0 and _rensa > 0:
                         r['today_max_rensa'] = 0
+                        _is_stale = True
+                    # staleデータの場合、「本日」を含む理由テキストもクリーンアップ
+                    if _is_stale:
+                        for key in ('today_reasons', 'reasons'):
+                            if key in r and r[key]:
+                                r[key] = [reason for reason in r[key] 
+                                          if '本日' not in reason]
 
                 # 全recsにメタデータを付与
                 for rec in recs:
