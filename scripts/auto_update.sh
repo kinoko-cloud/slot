@@ -85,7 +85,7 @@ if git diff --staged --quiet; then
 else
     log "変更あり、デプロイ中..."
     git commit -m "auto: リアルタイム更新 $(date '+%H:%M')" --no-verify >> "$LOGFILE" 2>&1
-    # リトライ付きpush（最大5回）
+    # リトライ付きpush（最大5回、メイン→セカンダリフォールバック）
     PUSH_SUCCESS=false
     for i in 1 2 3 4 5; do
         git pull --rebase origin main >> "$LOGFILE" 2>&1 || {
@@ -93,15 +93,21 @@ else
             git pull --rebase origin main >> "$LOGFILE" 2>&1 || true
         }
         if git push >> "$LOGFILE" 2>&1; then
-            log "デプロイ完了 (attempt $i)"
+            log "デプロイ完了 (attempt $i, origin)"
             PUSH_SUCCESS=true
             break
         fi
-        log "Push失敗 (attempt $i/5)、リトライ..."
+        # セカンダリアカウントでリトライ
+        if git push secondary main >> "$LOGFILE" 2>&1; then
+            log "デプロイ完了 (attempt $i, secondary)"
+            PUSH_SUCCESS=true
+            break
+        fi
+        log "Push失敗 (attempt $i/5)、5秒待機..."
         sleep 5
     done
     if [ "$PUSH_SUCCESS" = false ]; then
-        log "ERROR: Push失敗（5回試行）"
+        log "ERROR: Push失敗（5回試行、origin+secondary両方）"
     fi
 fi
 
