@@ -250,6 +250,14 @@ def _validate_index(content, expected_mode, expected_verify_dt, expected_rec_dt,
                 # 差枚推移グラフ
                 if 'sparkline' not in card:
                     card_issues.append('差枚推移グラフなし')
+                else:
+                    # グラフ日付が最新（前日）であることを確認
+                    graph_date_m = re.search(r'(\d{4}-\d{2}-\d{2})\s*差枚推移', card)
+                    if graph_date_m:
+                        graph_date = graph_date_m.group(1)
+                        expected_graph_date = expected_verify_dt.strftime('%Y-%m-%d') if expected_verify_dt else None
+                        if expected_graph_date and graph_date < expected_graph_date:
+                            card_issues.append(f'グラフ日付が古い({graph_date}、期待={expected_graph_date})')
 
                 # 差枚表示
                 if recent_rows and 'diff-medals-sm' not in card:
