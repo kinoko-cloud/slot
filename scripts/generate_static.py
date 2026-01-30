@@ -787,15 +787,19 @@ def generate_index(env):
                 if u.get('predicted_rank') in ('S', 'A') and u.get('actual_prob', 0) > 0:
                     ms['total'] += 1
                     ss['total'] += 1
-                    # 的中判定: prediction_resultがあればそれ、なければprob直接判定
-                    pr = u.get('prediction_result')
-                    if pr in ('hit', 'excellent'):
+                    # 的中判定: verdict_class/result_level/prediction_resultの順で確認
+                    vc = u.get('verdict_class', '')
+                    rl = u.get('result_level', '')
+                    pr = u.get('prediction_result', '')
+                    if vc == 'hit' or pr in ('hit', 'excellent') or rl == 'good':
                         ms['hit'] += 1
                         ss['hit'] += 1
-                    elif pr is None and u.get('actual_prob', 999) <= 130:
-                        # prediction_resultが未設定の場合、確率130以下=好調=的中
-                        ms['hit'] += 1
-                        ss['hit'] += 1
+                    elif not vc and not pr and not rl:
+                        # フォールバック: 機種別good_prob閾値で判定
+                        _good = get_machine_threshold(mk, 'good_prob') or 130
+                        if u.get('actual_prob', 999) <= _good:
+                            ms['hit'] += 1
+                            ss['hit'] += 1
 
         for machine_key, machine in MACHINES.items():
             ms = machine_stats.get(machine_key, {'total': 0, 'hit': 0, 'stores': {}})

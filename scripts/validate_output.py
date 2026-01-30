@@ -209,7 +209,11 @@ def _validate_index(content, expected_mode, expected_verify_dt, expected_rec_dt,
     if not hero_cards:
         verify_files = sorted(VERIFY_DIR.glob('verify_*_results.json')) if VERIFY_DIR.exists() else []
         if verify_files:
-            issues.append('ERROR: 的中率ヒーローカードが0件（verifyデータは存在する）')
+            # 営業中(realtime)モードではヒーローカードは非表示が正常
+            if expected_mode == 'realtime':
+                issues.append('INFO: 的中率ヒーローカード0件（営業中モードでは非表示が正常）')
+            else:
+                issues.append('ERROR: 的中率ヒーローカードが0件（verifyデータは存在する）')
         else:
             issues.append('INFO: 的中率ヒーローカードなし（verifyデータなし）')
     else:
@@ -392,7 +396,9 @@ def _validate_realtime():
                 now = datetime.now(timezone(timedelta(hours=9)))
                 age_hours = (now - fetch_time).total_seconds() / 3600
                 if age_hours > 24:
-                    issues.append(f'WARN: availability.json が{age_hours:.0f}時間前のデータ（24h超）')
+                    issues.append(f'ERROR: availability.json が{age_hours:.0f}時間前のデータ（24h超 — リアルタイム取得が停止している）')
+                elif age_hours > 2:
+                    issues.append(f'WARN: availability.json が{age_hours:.1f}時間前のデータ（営業中なら更新が必要）')
                 elif age_hours > 1:
                     issues.append(f'INFO: availability.json が{age_hours:.1f}時間前のデータ')
 

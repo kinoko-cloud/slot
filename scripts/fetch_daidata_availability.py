@@ -1,7 +1,13 @@
 #!/usr/bin/env python3
 """
 GitHub Actions用: daidata + papimo.jpから空き状況とリアルタイムデータを取得してJSONに保存
+排他ロック付き — 複数プロセスの同時実行を防止
 """
+# 排他ロック（最初に取得）
+import sys, os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)) + '/..')
+from scripts.fetch_lock import acquire_lock, release_lock
+_lock_fp = acquire_lock()
 
 import json
 import re

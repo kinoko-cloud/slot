@@ -212,6 +212,32 @@ def check_hokuto_abeshi_awareness():
     return issues
 
 
+def check_data_freshness():
+    """データの鮮度チェック（営業時間中にデータが古ければ警告）"""
+    issues = []
+    from datetime import datetime, timezone, timedelta
+    JST = timezone(timedelta(hours=9))
+    now = datetime.now(JST)
+    
+    # 営業時間中（10:00-22:50）のみチェック
+    if now.hour < 10 or (now.hour >= 22 and now.minute >= 50) or now.hour >= 23:
+        return issues
+    
+    avail_path = BASE / 'data' / 'availability.json'
+    if avail_path.exists():
+        import json
+        with open(avail_path) as f:
+            data = json.load(f)
+        fetched_at = data.get('fetched_at', '')
+        if fetched_at:
+            fetch_time = datetime.fromisoformat(fetched_at)
+            age_hours = (now - fetch_time).total_seconds() / 3600
+            if age_hours > 24:
+                issues.append(f'WARN: availability.json が{age_hours:.0f}時間前（リアルタイム取得停止の可能性）')
+    
+    return issues
+
+
 def run_all():
     """全チェック実行"""
     all_issues = []
@@ -220,6 +246,7 @@ def run_all():
     all_issues.extend(check_spec_prediction())
     all_issues.extend(check_diff_medals_priority())
     all_issues.extend(check_hokuto_abeshi_awareness())
+    all_issues.extend(check_data_freshness())
 
     errors = [i for i in all_issues if i.startswith('ERROR')]
     warns = [i for i in all_issues if i.startswith('WARN') or i.startswith('HARDCODE')]

@@ -6,6 +6,13 @@
 - 前日までのデータを取得
 - JSONで日付別に保存
 - 長期的な傾向分析用
+- 排他ロック付き — 複数プロセスの同時実行を防止
+"""
+# 排他ロック（最初に取得）
+import sys, os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)) + '/..')
+from scripts.fetch_lock import acquire_lock
+_lock_fp = acquire_lock()
 
 対応機種:
 - SBJ (スーパーブラックジャック)

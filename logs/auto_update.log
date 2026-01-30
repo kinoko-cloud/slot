@@ -12266,3 +12266,429 @@ To github.com:kinoko-cloud/slot.git
    cd61ddc..068a0d9  main -> main
 [2026-01-30 10:35:31] デプロイ完了 (attempt 1)
 [2026-01-30 10:35:31] === 自動更新完了 ===
+[2026-01-30 10:45:02] === 自動更新開始 ===
+error: cannot pull with rebase: You have unstaged changes.
+error: Please commit or stash them.
+[2026-01-30 10:45:02] git pull失敗（続行）
+[2026-01-30 10:45:02] データ取得中（全店舗）...
+daidata規約同意完了: 100860 (渋谷エスパス新館)
+daidata規約同意完了: 100949 (新宿エスパス歌舞伎町)
+daidata規約同意完了: 100928 (秋葉原エスパス駅前)
+daidata規約同意完了: 100950 (西武新宿駅前エスパス)
+
+[daidata] Fetching 渋谷エスパス新館...
+  URL: https://daidata.goraggio.com/100860/unit_list?model=L%EF%BD%BD%EF%BD%B0%EF%BE%8A%EF%BE%9F%EF%BD%B0%EF%BE%8C%EF%BE%9E%EF%BE%97%EF%BD%AF%EF%BD%B8%EF%BD%BC%EF%BE%9E%EF%BD%AC%EF%BD%AF%EF%BD%B8&ballPrice=21.70&ps=S
+    3011: 空き
+    3012: 空き
+    3013: 空き
+  Fetching unit details...
+    3011: ART=85, G数=2749, 最大=6569, 履歴=0件, 最大連=0連
+    3012: ART=31, G数=2962, 最大=1480, 履歴=0件, 最大連=0連
+    3013: ART=53, G数=3881, 最大=2912, 履歴=0件, 最大連=0連
+  Done - Playing: [], Empty: ['3011', '3012', '3013']
+
+[daidata] Fetching 新宿エスパス歌舞伎町...
+  URL: https://daidata.goraggio.com/100949/unit_list?model=L%EF%BD%BD%EF%BD%B0%EF%BE%8A%EF%BE%9F%EF%BD%B0%EF%BE%8C%EF%BE%9E%EF%BE%97%EF%BD%AF%EF%BD%B8%EF%BD%BC%EF%BE%9E%EF%BD%AC%EF%BD%AF%EF%BD%B8&ballPrice=21.70&ps=S
+    682: 空き
+    683: 空き
+    684: 空き
+    685: 空き
+  Fetching unit details...
+    682: ART=24, G数=2421, 最大=1355, 履歴=0件, 最大連=0連
+    683: ART=41, G数=2750, 最大=2263, 履歴=0件, 最大連=0連
+    684: ART=17, G数=2166, 最大=725, 履歴=0件, 最大連=0連
+    685: ART=50, G数=2866, 最大=2569, 履歴=0件, 最大連=0連
+  Done - Playing: [], Empty: ['682', '683', '684', '685']
+
+[daidata] Fetching 秋葉原エスパス駅前...
+  URL: https://daidata.goraggio.com/100928/unit_list?model=L%EF%BD%BD%EF%BD%B0%EF%BE%8A%EF%BE%9F%EF%BD%B0%EF%BE%8C%EF%BE%9E%EF%BE%97%EF%BD%AF%EF%BD%B8%EF%BD%BC%EF%BE%9E%EF%BD%AC%EF%BD%AF%EF%BD%B8&ballPrice=21.70&ps=S
+    2158: 空き
+    2159: 空き
+    2160: 空き
+    2161: 空き
+  Fetching unit details...
+    2158: ART=12, G数=2856, 最大=503, 履歴=0件, 最大連=0連
+    2159: ART=10, G数=2066, 最大=374, 履歴=0件, 最大連=0連
+    2160: ART=29, G数=2755, 最大=1421, 履歴=0件, 最大連=0連
+    2161: ART=30, G数=3733, 最大=1029, 履歴=0件, 最大連=0連
+  Done - Playing: [], Empty: ['2158', '2159', '2160', '2161']
+
+[daidata] Fetching 西武新宿駅前エスパス...
+  URL: https://daidata.goraggio.com/100950/unit_list?model=L%EF%BD%BD%EF%BD%B0%EF%BE%8A%EF%BE%9F%EF%BD%B0%EF%BE%8C%EF%BE%9E%EF%BE%97%EF%BD%AF%EF%BD%B8%EF%BD%BC%EF%BE%9E%EF%BD%AC%EF%BD%AF%EF%BD%B8&ballPrice=21.70&ps=S
+    3185: 空き
+    3186: 空き
+    3187: 空き
+  Fetching unit details...
+    3185: ART=0, G数=0, 最大=0, 履歴=0件, 最大連=0連
+    3186: ART=0, G数=0, 最大=0, 履歴=0件, 最大連=0連
+    3187: ART=0, G数=0, 最大=0, 履歴=0件, 最大連=0連
+  Done - Playing: [], Empty: ['3185', '3186', '3187']
+
+[daidata] Fetching エスパス渋谷新館(北斗)...
+  Fetching unit details...
+    2046: ART=111, G数=4908, 最大=10681, 履歴=0件, 最大連=0連
+    2047: ART=73, G数=4359, 最大=6396, 履歴=0件, 最大連=0連
+    2048: ART=55, G数=5279, 最大=2738, 履歴=0件, 最大連=0連
+    2049: ART=79, G数=6701, 最大=2945, 履歴=0件, 最大連=0連
+    2050: ART=38, G数=6703, 最大=916, 履歴=0件, 最大連=0連
+    2051: ART=37, G数=5949, 最大=952, 履歴=0件, 最大連=0連
+    2052: ART=67, G数=5439, 最大=3312, 履歴=0件, 最大連=0連
+    2053: ART=47, G数=6979, 最大=1710, 履歴=0件, 最大連=0連
+    2054: ART=50, G数=7081, 最大=1039, 履歴=0件, 最大連=0連
+    2055: ART=61, G数=6966, 最大=1558, 履歴=0件, 最大連=0連
+    2056: ART=49, G数=5851, 最大=1307, 履歴=0件, 最大連=0連
+    2057: ART=38, G数=5606, 最大=1024, 履歴=0件, 最大連=0連
+    2058: ART=64, G数=5374, 最大=2425, 履歴=0件, 最大連=0連
+    2059: ART=81, G数=6480, 最大=3015, 履歴=0件, 最大連=0連
+    2060: ART=48, G数=5120, 最大=1920, 履歴=0件, 最大連=0連
+    2061: ART=66, G数=5926, 最大=2711, 履歴=0件, 最大連=0連
+    2062: ART=71, G数=6400, 最大=2770, 履歴=0件, 最大連=0連
+    2063: ART=109, G数=3801, 最大=12430, 履歴=0件, 最大連=0連
+    2064: ART=64, G数=7333, 最大=1720, 履歴=0件, 最大連=0連
+    2065: ART=70, G数=5855, 最大=4400, 履歴=0件, 最大連=0連
+    2066: ART=43, G数=6961, 最大=766, 履歴=0件, 最大連=0連
+    2067: ART=109, G数=5476, 最大=12588, 履歴=0件, 最大連=0連
+    2233: ART=68, G数=5969, 最大=2708, 履歴=0件, 最大連=0連
+    2234: ART=41, G数=7100, 最大=1119, 履歴=0件, 最大連=0連
+    2235: ART=57, G数=6113, 最大=1457, 履歴=0件, 最大連=0連
+    2236: ART=46, G数=5313, 最大=1934, 履歴=0件, 最大連=0連
+    2237: ART=95, G数=6608, 最大=5193, 履歴=0件, 最大連=0連
+    2238: ART=36, G数=7213, 最大=985, 履歴=0件, 最大連=0連
+    2239: ART=34, G数=6293, 最大=872, 履歴=0件, 最大連=0連
+    2240: ART=54, G数=7421, 最大=1930, 履歴=0件, 最大連=0連
+  Done - Playing: [], Empty: ['2046', '2047', '2048', '2049', '2050', '2051', '2052', '2053', '2054', '2055', '2056', '2057', '2058', '2059', '2060', '2061', '2062', '2063', '2064', '2065', '2066', '2067', '2233', '2234', '2235', '2236', '2237', '2238', '2239', '2240']
+
+[daidata] Fetching エスパス歌舞伎町(北斗)...
+  Fetching unit details...
+    1: ART=11, G数=3578, 最大=660, 履歴=0件, 最大連=0連
+    2: ART=10, G数=1674, 最大=788, 履歴=0件, 最大連=0連
+    3: ART=86, G数=2862, 最大=10487, 履歴=0件, 最大連=0連
+    4: ART=31, G数=3072, 最大=1175, 履歴=0件, 最大連=0連
+    5: ART=7, G数=1308, 最大=448, 履歴=0件, 最大連=0連
+    6: ART=41, G数=4386, 最大=1140, 履歴=0件, 最大連=0連
+    7: ART=9, G数=2488, 最大=798, 履歴=0件, 最大連=0連
+    8: ART=95, G数=4349, 最大=6793, 履歴=0件, 最大連=0連
+    9: ART=30, G数=4033, 最大=881, 履歴=0件, 最大連=0連
+    10: ART=56, G数=3993, 最大=3147, 履歴=0件, 最大連=0連
+    11: ART=28, G数=4803, 最大=1093, 履歴=0件, 最大連=0連
+    12: ART=0, G数=5111, 最大=1995, 履歴=0件, 最大連=0連
+    13: ART=31, G数=4613, 最大=1166, 履歴=0件, 最大連=0連
+    14: ART=10, G数=1512, 最大=651, 履歴=0件, 最大連=0連
+    15: ART=22, G数=2337, 最大=1564, 履歴=0件, 最大連=0連
+    16: ART=43, G数=3913, 最大=1882, 履歴=0件, 最大連=0連
+    17: ART=41, G数=4306, 最大=1937, 履歴=0件, 最大連=0連
+    18: ART=19, G数=2758, 最大=823, 履歴=0件, 最大連=0連
+    19: ART=30, G数=4038, 最大=935, 履歴=0件, 最大連=0連
+    20: ART=39, G数=2843, 最大=3229, 履歴=0件, 最大連=0連
+    21: ART=4, G数=1286, 最大=441, 履歴=0件, 最大連=0連
+    22: ART=34, G数=5786, 最大=764, 履歴=0件, 最大連=0連
+    23: ART=12, G数=3919, 最大=554, 履歴=0件, 最大連=0連
+    24: ART=49, G数=3916, 最大=1680, 履歴=0件, 最大連=0連
+    25: ART=31, G数=4012, 最大=1539, 履歴=0件, 最大連=0連
+    26: ART=12, G数=3151, 最大=622, 履歴=0件, 最大連=0連
+    27: ART=10, G数=1788, 最大=548, 履歴=0件, 最大連=0連
+    28: ART=3, G数=723, 最大=350, 履歴=0件, 最大連=0連
+    29: ART=102, G数=5405, 最大=4956, 履歴=0件, 最大連=0連
+    30: ART=33, G数=4803, 最大=1348, 履歴=0件, 最大連=0連
+    31: ART=30, G数=3120, 最大=1513, 履歴=0件, 最大連=0連
+    32: ART=36, G数=2862, 最大=2913, 履歴=0件, 最大連=0連
+    33: ART=32, G数=2925, 最大=3487, 履歴=0件, 最大連=0連
+    34: ART=20, G数=2093, 最大=1285, 履歴=0件, 最大連=0連
+    35: ART=68, G数=3424, 最大=7436, 履歴=0件, 最大連=0連
+    36: ART=55, G数=3646, 最大=4756, 履歴=0件, 最大連=0連
+    37: ART=23, G数=3657, 最大=2008, 履歴=0件, 最大連=0連
+    125: ART=8, G数=2016, 最大=658, 履歴=0件, 最大連=0連
+    126: ART=43, G数=2440, 最大=5464, 履歴=0件, 最大連=0連
+    127: ART=14, G数=1644, 最大=535, 履歴=0件, 最大連=0連
+    128: ART=44, G数=4485, 最大=2910, 履歴=0件, 最大連=0連
+[2026-01-30 10:50:15] データ取得タイムアウト（5分）
+[2026-01-30 10:50:15] availability.json: 9店舗
+[2026-01-30 10:50:15] 静的サイト生成中...
+✅ pre-build check: 全仕様整合OK
+==================================================
+静的サイト生成開始
+出力先: /home/riichi/works/slot/docs
+==================================================
+
+Running unit verification...
+✓ 台番号の異常なし
+Running data integrity check...
+
+==================================================
+データ整合性チェック: 2件の問題
+  🟡 警告: 2件
+==================================================
+🟡 [units_insufficient] 西武新宿駅前エスパス: 台数不足（期待7台、実際3台）
+🟡 [data_stale] データが1432分前のもの（60分超過）
+
+  📊 パターン記録: island_akihabara_hokuto_tensei2 (182件)
+  📊 パターン記録: shinjuku_espass_hokuto_tensei2 (221件)
+  📊 パターン記録: akiba_espass_sbj (42件)
+  📊 パターン記録: island_akihabara_sbj (182件)
+  📊 パターン記録: shinjuku_espass_sbj (117件)
+  📊 パターン記録: seibu_shinjuku_espass_hokuto_tensei2 (21件)
+  📊 パターン記録: akiba_espass_hokuto_tensei2 (207件)
+  📊 パターン記録: seibu_shinjuku_espass_sbj (23件)
+  📊 パターン記録: shibuya_espass_sbj (32件)
+  📊 パターン記録: shibuya_espass_hokuto (7件)
+  📊 パターン記録: shibuya_espass_hokuto_tensei2 (266件)
+
+Generating index.html...
+Local data is stale (1432 minutes old)
+Local data is stale (1432 minutes old)
+Local data is stale (1432 minutes old)
+Local data is stale (1432 minutes old)
+Local data is stale (1432 minutes old)
+Local data is stale (1432 minutes old)
+Local data is stale (1432 minutes old)
+Local data is stale (1432 minutes old)
+Local data is stale (1432 minutes old)
+Local data is stale (1432 minutes old)
+Local data is stale (1432 minutes old)
+Local data is stale (1432 minutes old)
+Local data is stale (1432 minutes old)
+Local data is stale (1432 minutes old)
+Local data is stale (1432 minutes old)
+Local data is stale (1432 minutes old)
+Local data is stale (1432 minutes old)
+Local data is stale (1432 minutes old)
+Local data is stale (1432 minutes old)
+  -> /home/riichi/works/slot/docs/index.html
+Generating machine pages...
+  -> /home/riichi/works/slot/docs/machine/sbj.html
+  -> /home/riichi/works/slot/docs/machine/hokuto_tensei2.html
+Generating ranking pages...
+Local data is stale (1432 minutes old)
+Local data is stale (1432 minutes old)
+Local data is stale (1432 minutes old)
+Local data is stale (1432 minutes old)
+Local data is stale (1432 minutes old)
+Local data is stale (1432 minutes old)
+Local data is stale (1432 minutes old)
+Local data is stale (1432 minutes old)
+Local data is stale (1432 minutes old)
+Local data is stale (1432 minutes old)
+  -> /home/riichi/works/slot/docs/ranking/sbj.html
+Local data is stale (1432 minutes old)
+Local data is stale (1432 minutes old)
+Local data is stale (1432 minutes old)
+Local data is stale (1432 minutes old)
+Local data is stale (1432 minutes old)
+Local data is stale (1432 minutes old)
+Local data is stale (1432 minutes old)
+Local data is stale (1432 minutes old)
+  -> /home/riichi/works/slot/docs/ranking/hokuto_tensei2.html
+Generating recommend pages...
+  Processing island_akihabara_sbj...
+Local data is stale (1432 minutes old)
+Local data is stale (1432 minutes old)
+  Processing shibuya_espass_sbj...
+Local data is stale (1432 minutes old)
+Local data is stale (1432 minutes old)
+  Processing shinjuku_espass_sbj...
+Local data is stale (1432 minutes old)
+Local data is stale (1432 minutes old)
+  Processing seibu_shinjuku_espass_sbj...
+Local data is stale (1432 minutes old)
+Local data is stale (1432 minutes old)
+  Processing akiba_espass_sbj...
+Local data is stale (1432 minutes old)
+Local data is stale (1432 minutes old)
+  Processing shibuya_espass_hokuto...
+Local data is stale (1432 minutes old)
+Local data is stale (1432 minutes old)
+  Processing shinjuku_espass_hokuto...
+Local data is stale (1432 minutes old)
+Local data is stale (1432 minutes old)
+  Processing akiba_espass_hokuto...
+Local data is stale (1432 minutes old)
+Local data is stale (1432 minutes old)
+  Processing island_akihabara_hokuto...
+Local data is stale (1432 minutes old)
+Local data is stale (1432 minutes old)
+  -> /home/riichi/works/slot/docs/recommend/
+Generating verify page...
+  バックテスト結果を使用: verify_20260129_results.json
+  -> /home/riichi/works/slot/docs/verify.html (バックテスト: 的中率50%)
+Generating history pages...
+  -> /home/riichi/works/slot/docs/history/ (137 pages)
+Copying static files...
+  -> /home/riichi/works/slot/docs/static/
+Generating metadata...
+  -> /home/riichi/works/slot/docs/metadata.json
+
+==================================================
+静的サイト生成完了!
+==================================================
+
+--- ビルド後検証 ---
+
+ℹ️  INFO (6):
+  INFO: 的中率ヒーローカード0件（営業中モードでは非表示が正常）
+  INFO: verify.html に日付表示なし
+  INFO: availability.json が23.9時間前のデータ
+  INFO: index: 天井行の33%にRB跨ぎ累計なし（6/18）
+  INFO: recommend/shibuya_espass_sbj.html: 天井行の50%にRB跨ぎ累計なし（1/2）
+  INFO: CSS未使用クラスが250件（残骸蓄積注意。主要なもの: acc-label, acc-value, accuracy-circle, accuracy-detail, accuracy-label, accuracy-num, accuracy-row, alert-critical, alert-info, alert-warning...）
+--- 検証完了 ---
+[2026-01-30 10:50:31] 静的サイト生成完了
+[2026-01-30 10:50:31] 変更あり、デプロイ中...
+[main f4ea9f8] auto: リアルタイム更新 10:50
+ 153 files changed, 12772 insertions(+), 12662 deletions(-)
+error: cannot pull with rebase: You have unstaged changes.
+error: Please commit or stash them.
+error: cannot pull with rebase: You have unstaged changes.
+error: Please commit or stash them.
+To github.com:kinoko-cloud/slot.git
+   991c94e..f4ea9f8  main -> main
+[2026-01-30 10:50:36] デプロイ完了 (attempt 1, origin)
+[2026-01-30 10:50:36] === 自動更新完了 ===
+[2026-01-30 11:00:02] === 自動更新開始 ===
+error: cannot pull with rebase: You have unstaged changes.
+error: Please commit or stash them.
+[2026-01-30 11:00:02] git pull失敗（続行）
+[2026-01-30 11:00:02] データ取得中（全店舗）...
+[2026-01-30 11:02:14] データ取得失敗（exit code: 143）
+[2026-01-30 11:02:14] availability.json: 9店舗
+[2026-01-30 11:02:14] 静的サイト生成中...
+✅ pre-build check: 全仕様整合OK
+==================================================
+静的サイト生成開始
+出力先: /home/riichi/works/slot/docs
+==================================================
+
+Running unit verification...
+✓ 台番号の異常なし
+Running data integrity check...
+
+==================================================
+データ整合性チェック: 2件の問題
+  🟡 警告: 2件
+==================================================
+🟡 [units_insufficient] 西武新宿駅前エスパス: 台数不足（期待7台、実際3台）
+🟡 [data_stale] データが1444分前のもの（60分超過）
+
+  📊 パターン記録: island_akihabara_hokuto_tensei2 (182件)
+  📊 パターン記録: shinjuku_espass_hokuto_tensei2 (221件)
+  📊 パターン記録: akiba_espass_sbj (42件)
+  📊 パターン記録: island_akihabara_sbj (182件)
+  📊 パターン記録: shinjuku_espass_sbj (117件)
+  📊 パターン記録: seibu_shinjuku_espass_hokuto_tensei2 (21件)
+  📊 パターン記録: akiba_espass_hokuto_tensei2 (207件)
+  📊 パターン記録: seibu_shinjuku_espass_sbj (23件)
+  📊 パターン記録: shibuya_espass_sbj (32件)
+  📊 パターン記録: shibuya_espass_hokuto (7件)
+  📊 パターン記録: shibuya_espass_hokuto_tensei2 (266件)
+
+Generating index.html...
+Local data is stale (1444 minutes old)
+Local data is stale (1444 minutes old)
+Local data is stale (1444 minutes old)
+Local data is stale (1444 minutes old)
+Local data is stale (1444 minutes old)
+Local data is stale (1444 minutes old)
+Local data is stale (1444 minutes old)
+Local data is stale (1444 minutes old)
+Local data is stale (1444 minutes old)
+Local data is stale (1444 minutes old)
+Local data is stale (1444 minutes old)
+Local data is stale (1444 minutes old)
+Local data is stale (1444 minutes old)
+Local data is stale (1444 minutes old)
+Local data is stale (1444 minutes old)
+Local data is stale (1444 minutes old)
+Local data is stale (1444 minutes old)
+Local data is stale (1444 minutes old)
+Local data is stale (1444 minutes old)
+  -> /home/riichi/works/slot/docs/index.html
+Generating machine pages...
+  -> /home/riichi/works/slot/docs/machine/sbj.html
+  -> /home/riichi/works/slot/docs/machine/hokuto_tensei2.html
+Generating ranking pages...
+Local data is stale (1444 minutes old)
+Local data is stale (1444 minutes old)
+Local data is stale (1444 minutes old)
+Local data is stale (1444 minutes old)
+Local data is stale (1444 minutes old)
+Local data is stale (1444 minutes old)
+Local data is stale (1444 minutes old)
+Local data is stale (1444 minutes old)
+Local data is stale (1444 minutes old)
+Local data is stale (1444 minutes old)
+  -> /home/riichi/works/slot/docs/ranking/sbj.html
+Local data is stale (1444 minutes old)
+Local data is stale (1444 minutes old)
+Local data is stale (1444 minutes old)
+Local data is stale (1444 minutes old)
+Local data is stale (1444 minutes old)
+Local data is stale (1444 minutes old)
+Local data is stale (1444 minutes old)
+Local data is stale (1444 minutes old)
+  -> /home/riichi/works/slot/docs/ranking/hokuto_tensei2.html
+Generating recommend pages...
+  Processing island_akihabara_sbj...
+Local data is stale (1444 minutes old)
+Local data is stale (1444 minutes old)
+  Processing shibuya_espass_sbj...
+Local data is stale (1444 minutes old)
+Local data is stale (1444 minutes old)
+  Processing shinjuku_espass_sbj...
+Local data is stale (1444 minutes old)
+Local data is stale (1444 minutes old)
+  Processing seibu_shinjuku_espass_sbj...
+Local data is stale (1444 minutes old)
+Local data is stale (1444 minutes old)
+  Processing akiba_espass_sbj...
+Local data is stale (1444 minutes old)
+Local data is stale (1444 minutes old)
+  Processing shibuya_espass_hokuto...
+Local data is stale (1444 minutes old)
+Local data is stale (1444 minutes old)
+  Processing shinjuku_espass_hokuto...
+Local data is stale (1444 minutes old)
+Local data is stale (1444 minutes old)
+  Processing akiba_espass_hokuto...
+Local data is stale (1444 minutes old)
+Local data is stale (1444 minutes old)
+  Processing island_akihabara_hokuto...
+Local data is stale (1444 minutes old)
+Local data is stale (1444 minutes old)
+  -> /home/riichi/works/slot/docs/recommend/
+Generating verify page...
+  バックテスト結果を使用: verify_20260129_results.json
+  -> /home/riichi/works/slot/docs/verify.html (バックテスト: 的中率50%)
+Generating history pages...
+  -> /home/riichi/works/slot/docs/history/ (137 pages)
+Copying static files...
+  -> /home/riichi/works/slot/docs/static/
+Generating metadata...
+  -> /home/riichi/works/slot/docs/metadata.json
+
+==================================================
+静的サイト生成完了!
+==================================================
+
+--- ビルド後検証 ---
+
+⚠️  WARNINGS (1):
+  WARN: availability.json が24時間前のデータ（24h超）
+
+ℹ️  INFO (5):
+  INFO: 的中率ヒーローカード0件（営業中モードでは非表示が正常）
+  INFO: verify.html に日付表示なし
+  INFO: index: 天井行の33%にRB跨ぎ累計なし（6/18）
+  INFO: recommend/shibuya_espass_sbj.html: 天井行の50%にRB跨ぎ累計なし（1/2）
+  INFO: CSS未使用クラスが250件（残骸蓄積注意。主要なもの: acc-label, acc-value, accuracy-circle, accuracy-detail, accuracy-label, accuracy-num, accuracy-row, alert-critical, alert-info, alert-warning...）
+--- 検証完了 ---
+[2026-01-30 11:02:27] 静的サイト生成完了
+[2026-01-30 11:02:27] 変更あり、デプロイ中...
+[main 0a052a6] auto: リアルタイム更新 11:02
+ 153 files changed, 315 insertions(+), 315 deletions(-)
+error: cannot pull with rebase: You have unstaged changes.
+error: Please commit or stash them.
+error: cannot pull with rebase: You have unstaged changes.
+error: Please commit or stash them.
+To github.com:kinoko-cloud/slot.git
+   f4ea9f8..0a052a6  main -> main
+[2026-01-30 11:02:31] デプロイ完了 (attempt 1, origin)
+[2026-01-30 11:02:31] === 自動更新完了 ===
