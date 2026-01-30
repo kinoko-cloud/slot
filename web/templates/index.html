@@ -314,7 +314,7 @@
                             {{ '{:+,}'.format(rec.diff_medals) }}枚
                         </span>
                         {% if rec.payout_estimate and rec.payout_estimate > 100 %}
-                        <span class="setting-badge-sm setting-{{ rec.setting_num|default(0) }}">機械割{{ rec.payout_estimate }}%</span>
+                        <span class="setting-badge-sm setting-{{ rec.setting_num|default(0) }}"><small class="payout-label">機械割</small><span class="payout-num">{{ rec.payout_estimate }}%</span></span>
                         {% endif %}
                     </div>
                     {% endif %}
@@ -482,13 +482,13 @@
                     {% if rec.total_games >= 2000 and rec.payout_estimate %}
                     <div class="top3-setting">
                         <span class="setting-estimate setting-{{ rec.setting_num|default(0) }}">
-                            機械割 <span class="payout">{{ rec.payout_estimate }}%</span>
+                            <small class="payout-label">機械割</small><span class="payout-num">{{ rec.payout_estimate }}%</span>
                         </span>
                     </div>
                     {% elif rec.total_games >= 1000 and rec.payout_estimate %}
                     <div class="top3-setting">
                         <span class="setting-estimate setting-{{ rec.setting_num|default(0) }} tentative">
-                            機械割 <span class="payout">{{ rec.payout_estimate }}%?</span> <span class="payout">(様子見)</span>
+                            <small class="payout-label">機械割</small><span class="payout-num">{{ rec.payout_estimate }}%?</span> <span class="payout">(様子見)</span>
                         </span>
                     </div>
                     {% endif %}
@@ -764,7 +764,7 @@
                         <span class="total-games-label">{{ '{:,}'.format(rec.total_games) }}G</span>
                         {% endif %}
                         {% if rec.total_games and rec.total_games >= 1000 and rec.payout_estimate %}
-                        <span class="setting-badge-sm setting-{{ rec.setting_num|default(0) }}">機械割{{ rec.payout_estimate }}%{% if rec.total_games < 2000 %}?{% endif %}</span>
+                        <span class="setting-badge-sm setting-{{ rec.setting_num|default(0) }}"><small class="payout-label">機械割</small><span class="payout-num">{{ rec.payout_estimate }}%</span>{% if rec.total_games < 2000 %}?{% endif %}</span>
                         {% endif %}
                     </div>
                 </a>
@@ -852,7 +852,7 @@
                             {{ '{:+,}'.format(rec.diff_medals) }}枚
                         </span>
                         {% if rec.payout_estimate and rec.payout_estimate > 100 %}
-                        <span class="setting-badge-sm setting-{{ rec.setting_num|default(0) }}">機械割{{ rec.payout_estimate }}%</span>
+                        <span class="setting-badge-sm setting-{{ rec.setting_num|default(0) }}"><small class="payout-label">機械割</small><span class="payout-num">{{ rec.payout_estimate }}%</span></span>
                         {% endif %}
                     </div>
                     {% endif %}
