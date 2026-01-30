@@ -991,8 +991,8 @@ def analyze_trend(days: List[dict], machine_key: str = 'sbj') -> dict:
         site_max_medals = yesterday_day.get('max_medals', 0)
         if yesterday_history:
             from analysis.analyzer import calculate_max_chain_medals
-            result['yesterday_max_rensa'] = calculate_max_rensa(yesterday_history)
-            calc_max = calculate_max_chain_medals(yesterday_history)
+            result['yesterday_max_rensa'] = calculate_max_rensa(yesterday_history, machine_key=machine_key)
+            calc_max = calculate_max_chain_medals(yesterday_history, machine_key=machine_key)
             result['yesterday_max_medals'] = max(site_max_medals, calc_max)
             result['yesterday_history'] = yesterday_history
         else:
@@ -1011,8 +1011,8 @@ def analyze_trend(days: List[dict], machine_key: str = 'sbj') -> dict:
         site_db_max = sorted_days[1].get('max_medals', 0)
         if db_history:
             from analysis.analyzer import calculate_max_chain_medals
-            result['day_before_max_rensa'] = calculate_max_rensa(db_history)
-            result['day_before_max_medals'] = max(site_db_max, calculate_max_chain_medals(db_history))
+            result['day_before_max_rensa'] = calculate_max_rensa(db_history, machine_key=machine_key)
+            result['day_before_max_medals'] = max(site_db_max, calculate_max_chain_medals(db_history, machine_key=machine_key))
         else:
             result['day_before_max_rensa'] = sorted_days[1].get('max_rensa', 0)
             result['day_before_max_medals'] = site_db_max
@@ -1030,8 +1030,8 @@ def analyze_trend(days: List[dict], machine_key: str = 'sbj') -> dict:
         site_td_max = sorted_days[2].get('max_medals', 0)
         if td_history:
             from analysis.analyzer import calculate_max_chain_medals
-            result['three_days_ago_max_rensa'] = calculate_max_rensa(td_history)
-            result['three_days_ago_max_medals'] = max(site_td_max, calculate_max_chain_medals(td_history))
+            result['three_days_ago_max_rensa'] = calculate_max_rensa(td_history, machine_key=machine_key)
+            result['three_days_ago_max_medals'] = max(site_td_max, calculate_max_chain_medals(td_history, machine_key=machine_key))
         else:
             result['three_days_ago_max_rensa'] = sorted_days[2].get('max_rensa', 0)
             result['three_days_ago_max_medals'] = site_td_max

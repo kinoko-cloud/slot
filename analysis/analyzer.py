@@ -84,20 +84,33 @@ def calculate_at_intervals(history: list) -> list:
     return at_intervals
 
 
-def calculate_max_rensa(history: list) -> int:
+def calculate_max_rensa(history: list, machine_key: str = None) -> int:
     """履歴データから最大連チャン数を計算する
 
-    連チャンの定義: 大当たり(BB/AT/ART)間のAT間G数がRENMAIN_THRESHOLD(70G)以下の連続当たり
+    連チャンの定義: 大当たり(BB/AT/ART)間のAT間G数が閾値以下の連続当たり
+    閾値は機種別にconfig/rankings.pyのrenchain_thresholdを参照
     RBを跨いでG数を累積して判定する（AT間と同じロジック）
 
     Args:
         history: 当たり履歴リスト。各要素に 'start', 'type', 'time' フィールドが必要
+        machine_key: 機種キー（閾値取得用）
 
     Returns:
         最大連チャン数（大当たりがあれば1以上、なければ0）
     """
     if not history:
         return 0
+    
+    # 機種別連チャン閾値
+    _threshold = RENCHAIN_THRESHOLD
+    if machine_key:
+        try:
+            from config.rankings import get_machine_threshold
+            _t = get_machine_threshold(machine_key, 'renchain_threshold')
+            if _t:
+                _threshold = _t
+        except:
+            pass
 
     sorted_history = sorted(history, key=lambda x: x.get('time', '00:00'))
 
@@ -112,7 +125,7 @@ def calculate_max_rensa(history: list) -> int:
         accumulated_games += start
 
         if is_big_hit(hit_type):
-            if accumulated_games <= RENCHAIN_THRESHOLD:
+            if accumulated_games <= _threshold:
                 current_chain += 1
             else:
                 current_chain = 1
@@ -122,11 +135,11 @@ def calculate_max_rensa(history: list) -> int:
     return max_chain
 
 
-def calculate_first_hits(history: list) -> dict:
+def calculate_first_hits(history: list, machine_key: str = None) -> dict:
     """履歴データから初当たり（連チャンの起点）を計算する
 
     初当たりの定義:
-    - 連チャン（AT間70G以内）が途切れた後の次の大当たり
+    - 連チャン（AT間閾値G以内）が途切れた後の次の大当たり
     - つまり「is_chainでない大当たり」= 初当たり
     - 最初の大当たりも初当たり
 
@@ -142,6 +155,17 @@ def calculate_first_hits(history: list) -> dict:
     if not history:
         return {'first_hit_count': 0, 'first_hit_indices': []}
 
+    # 機種別連チャン閾値
+    _threshold = RENCHAIN_THRESHOLD
+    if machine_key:
+        try:
+            from config.rankings import get_machine_threshold
+            _t = get_machine_threshold(machine_key, 'renchain_threshold')
+            if _t:
+                _threshold = _t
+        except:
+            pass
+
     sorted_history = sorted(history, key=lambda x: x.get('time', '00:00'))
 
     first_hit_indices = []
@@ -154,8 +178,8 @@ def calculate_first_hits(history: list) -> dict:
         accumulated_games += start
 
         if is_big_hit(hit_type):
-            # 最初の大当たり、またはAT間がRENMAIN_THRESHOLDを超えている → 初当たり
-            if i == 0 or accumulated_games > RENCHAIN_THRESHOLD:
+            # 最初の大当たり、またはAT間が閾値を超えている → 初当たり
+            if i == 0 or accumulated_games > _threshold:
                 first_hit_indices.append(i)
             accumulated_games = 0
         # RB/REGの場合はaccumulated_gamesを継続
@@ -194,7 +218,7 @@ def mark_first_hits(history: list) -> list:
     return marked
 
 
-def calculate_max_chain_medals(history: list) -> int:
+def calculate_max_chain_medals(history: list, machine_key: str = None) -> int:
     """最大連チャン区間の累計枚数を計算する
 
     連チャンが途切れるまでの全当たり（RB含む）の出玉合計。
@@ -202,12 +226,24 @@ def calculate_max_chain_medals(history: list) -> int:
 
     Args:
         history: 当たり履歴リスト
+        machine_key: 機種キー（閾値取得用）
 
     Returns:
         最大連チャン区間の累計枚数
     """
     if not history:
         return 0
+
+    # 機種別連チャン閾値
+    _threshold = RENCHAIN_THRESHOLD
+    if machine_key:
+        try:
+            from config.rankings import get_machine_threshold
+            _t = get_machine_threshold(machine_key, 'renchain_threshold')
+            if _t:
+                _threshold = _t
+        except:
+            pass
 
     sorted_history = sorted(history, key=lambda x: x.get('time', '00:00'))
 
@@ -224,7 +260,7 @@ def calculate_max_chain_medals(history: list) -> int:
         accumulated_games += start
 
         if is_big_hit(hit_type):
-            if accumulated_games <= RENCHAIN_THRESHOLD:
+            if accumulated_games <= _threshold:
                 # 連チャン継続：RB分も含めて累計
                 current_chain += 1
                 current_chain_medals += medals

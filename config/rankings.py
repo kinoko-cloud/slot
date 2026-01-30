@@ -27,6 +27,10 @@ MACHINES = {
         'normal_ceiling': 999,        # 通常天井（液晶G数ベース。データ上は+αの誤差あり）
         'reset_ceiling': 600,         # リセット時天井（朝イチ天井）
         'reset_first_hit_bonus': True, # 朝イチ初当たりに恩恵あり
+        'renchain_threshold': 30,     # 連チャン判定: AT間30G以内なら連チャン継続
+                                       # SBJのATは1セット約30G消化。AT間1-10Gは即連（有利区間内）。
+                                       # 30G以上空いたら通常に戻った可能性 → 新規初当たり扱い。
+                                       # 実績: 閾値30Gで最大20連程度（現実的な範囲）
     },
     'hokuto_tensei2': {
         'name': 'L北斗の拳 転生の章2',
@@ -57,6 +61,8 @@ MACHINES = {
         'reset_ceiling': 600,         # リセット時天井（G数換算。あべし1280≒G数600〜800程度）
         'reset_ceiling_abeshi': 1280, # リセット時あべし天井
         'reset_first_hit_bonus': True, # 朝イチ初当たりに恩恵あり
+        'renchain_threshold': 50,     # 連チャン判定: AT間50G以内なら連チャン継続
+                                       # 北斗はAT消化が速い。50G以内は連チャン、それ以上は新規初当たり。
     },
 }
 
@@ -69,6 +75,7 @@ MACHINE_DEFAULTS = {
     'normal_ceiling': 999,
     'reset_ceiling': 999,       # デフォルトはリセット恩恵なし（通常天井と同じ）
     'reset_first_hit_bonus': False,
+    'renchain_threshold': 70,   # デフォルト連チャン閾値
 }
 
 
