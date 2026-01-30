@@ -596,13 +596,14 @@ def generate_index(env):
 
     # TOP3 + 全S/A候補 + 爆発台の過去3日分の当たり履歴を加工
     for rec in top3 + top3_candidates + yesterday_top10 + today_top10:
+        _mk = _get_machine_key(rec.get('store_key', ''))
         for hist_key in ('yesterday_history', 'day_before_history', 'three_days_ago_history'):
             raw_hist = rec.get(hist_key, [])
             proc_key = f'{hist_key}_processed'
             summ_key = f'{hist_key}_summary'
             if proc_key not in rec:  # 重複加工防止
                 if raw_hist:
-                    processed, summary = _process_history_for_verify(raw_hist)
+                    processed, summary = _process_history_for_verify(raw_hist, machine_key=_mk)
                     rec[proc_key] = processed
                     rec[summ_key] = summary
                 else:
@@ -613,7 +614,7 @@ def generate_index(env):
         for day in rec.get('recent_days', []):
             raw_hist = day.get('history', [])
             if raw_hist and 'history_processed' not in day:
-                processed, summary = _process_history_for_verify(raw_hist)
+                processed, summary = _process_history_for_verify(raw_hist, machine_key=_mk)
                 day['history_processed'] = processed
                 day['history_summary'] = summary
 
@@ -1136,11 +1137,12 @@ def generate_recommend_pages(env):
         _enrich_recs(recommendations)
 
         # 各台の過去3日分の当たり履歴を答え合わせ形式に加工
+        _rec_mk = _get_machine_key(store_key)
         for rec in recommendations:
             for hist_key in ('yesterday_history', 'day_before_history', 'three_days_ago_history'):
                 raw_hist = rec.get(hist_key, [])
                 if raw_hist:
-                    processed, summary = _process_history_for_verify(raw_hist)
+                    processed, summary = _process_history_for_verify(raw_hist, machine_key=_rec_mk)
                     rec[f'{hist_key}_processed'] = processed
                     rec[f'{hist_key}_summary'] = summary
                 else:
@@ -1190,12 +1192,32 @@ def generate_recommend_pages(env):
     print(f"  -> {output_subdir}/")
 
 
-def _process_history_for_verify(history):
+def _get_machine_key(store_key):
+    """store_keyから機種キーを取得"""
+    if not store_key:
+        return None
+    if store_key.endswith('_sbj') or '_sbj_' in store_key:
+        return 'sbj'
+    if store_key.endswith('_hokuto') or '_hokuto_' in store_key:
+        return 'hokuto_tensei2'
+    if 'sbj' in store_key:
+        return 'sbj'
+    if 'hokuto' in store_key:
+        return 'hokuto_tensei2'
+    return None
+
+
+def _process_history_for_verify(history, machine_key=None):
     """当たり履歴を答え合わせ表示用に加工する
 
     - 時間順にソート
     - チェーン（連チャン）を計算
     - 深いハマり・浅い当たりのフラグを付与
+    - 天井判定は機種別（config/rankings.pyのnormal_ceilingを参照）
+    
+    Args:
+        history: 当たり履歴リスト
+        machine_key: 機種キー（'sbj', 'hokuto_tensei2'等）。天井閾値の決定に使用
     """
     from analysis.analyzer import is_big_hit, RENCHAIN_THRESHOLD
 
@@ -1219,15 +1241,12 @@ def _process_history_for_verify(history):
 
         accumulated_games += start
 
-        # 天井判定: RBを跨いだ累計G数（accumulated_games）で判定
-        # SBJ天井ルール（CLAUDE.md準拠）:
-        #   - ゲーム数天井: 999G+α（RBではリセットされない、BB間で引き継ぐ）
-        #   - リセット（設定変更）時: 666G+αに短縮（朝イチ1回目のみ）
-        #   - 表示G数と内部G数にズレあり（順押ししないと内部カウントされないケース）
-        #   - → 天井到達 = 必ずART（BIG濃厚）
-        # 北斗: あべしシステム（別仕様、ここでは非対応）
-        # → 天井閾値は999G（800Gは天井ではない）
-        TENJOU_THRESHOLD = 999
+        # 天井判定: 機種別にconfig/rankings.pyのnormal_ceilingを参照
+        # SBJ: 999G+α（RBではリセットされない。表示G数と内部G数にズレあり）
+        # 北斗: あべしシステム（G数ベースの天井判定は参考値。normal_ceiling=1100）
+        from config.rankings import MACHINES, MACHINE_DEFAULTS
+        machine_config = MACHINES.get(machine_key, MACHINE_DEFAULTS) if machine_key else MACHINE_DEFAULTS
+        TENJOU_THRESHOLD = machine_config.get('normal_ceiling', 999)
         entry = {
             'index': i + 1,
             'time': time_str,
@@ -1311,7 +1330,7 @@ def _process_history_for_verify(history):
     valleys = big_hit_starts if big_hit_starts else starts
     max_valley = max(valleys) if valleys else 0
     avg_valley = int(sum(valleys) / len(valleys)) if valleys else 0
-    tenjou_count = sum(1 for v in valleys if v >= 999)  # SBJ天井=999G+α
+    tenjou_count = sum(1 for v in valleys if v >= TENJOU_THRESHOLD)
 
     # 最大チェーン
     chain_lengths = [e.get('chain_len', 0) for e in processed if e.get('chain_id', 0) > 0]
@@ -1653,7 +1672,7 @@ def _generate_verify_from_backtest(env, results):
                             break
             except:
                 pass
-            processed_history, history_summary = _process_history_for_verify(raw_hist)
+            processed_history, history_summary = _process_history_for_verify(raw_hist, machine_key=_get_machine_key(store_key))
             
             formatted_units.append({
                 'unit_id': u.get('unit_id', ''),
@@ -1995,7 +2014,7 @@ def generate_verify_page(env):
                     today_history_raw = today_data.get('history', [])
                     history_date = today_data.get('date', '')
 
-                processed_history, history_summary = _process_history_for_verify(today_history_raw)
+                processed_history, history_summary = _process_history_for_verify(today_history_raw, machine_key=machine_key)
 
                 units_data.append({
                     'unit_id': rec.get('unit_id', ''),
