@@ -238,6 +238,45 @@ def check_data_freshness():
     return issues
 
 
+def check_renchain_sanity():
+    """連チャン表示の異常値チェック（ビルド前にhistoryから最大連チャンを確認）"""
+    issues = []
+    from pathlib import Path
+    import json
+    from analysis.analyzer import calculate_max_rensa
+    
+    MAX_SANE_RENSA = {'sbj': 25, 'hokuto_tensei2': 20}  # 機種別の現実的な上限
+    DEFAULT_MAX = 20
+    
+    history_dir = BASE / 'data' / 'history'
+    if not history_dir.exists():
+        return issues
+    
+    for hdir in history_dir.iterdir():
+        if not hdir.is_dir():
+            continue
+        mk = 'sbj' if 'sbj' in hdir.name else 'hokuto_tensei2'
+        max_sane = MAX_SANE_RENSA.get(mk, DEFAULT_MAX)
+        
+        for hf in hdir.glob('*.json'):
+            try:
+                data = json.loads(hf.read_text())
+                for day in data.get('days', [])[:3]:  # 直近3日のみ
+                    hist = day.get('history', [])
+                    if not hist:
+                        continue
+                    max_rensa = calculate_max_rensa(hist, machine_key=mk)
+                    if max_rensa > max_sane:
+                        issues.append(
+                            f'WARN: {hdir.name}/{hf.stem} {day["date"]} max_rensa={max_rensa} '
+                            f'（{mk}の上限{max_sane}を超過 — 連チャン閾値要確認）'
+                        )
+            except:
+                continue
+    
+    return issues
+
+
 def run_all():
     """全チェック実行"""
     all_issues = []
@@ -247,6 +286,7 @@ def run_all():
     all_issues.extend(check_diff_medals_priority())
     all_issues.extend(check_hokuto_abeshi_awareness())
     all_issues.extend(check_data_freshness())
+    all_issues.extend(check_renchain_sanity())
 
     errors = [i for i in all_issues if i.startswith('ERROR')]
     warns = [i for i in all_issues if i.startswith('WARN') or i.startswith('HARDCODE')]

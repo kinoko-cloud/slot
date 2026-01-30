@@ -1231,9 +1231,15 @@ def _process_history_for_verify(history, machine_key=None):
         machine_key: 機種キー（'sbj', 'hokuto_tensei2'等）。天井閾値の決定に使用
     """
     from analysis.analyzer import is_big_hit, RENCHAIN_THRESHOLD
+    from config.rankings import MACHINES, MACHINE_DEFAULTS, get_machine_threshold
 
     if not history:
         return [], {}
+
+    # 連チャン閾値: 機種別にconfig/rankings.pyから取得
+    renchain_th = get_machine_threshold(machine_key, 'renchain_threshold') if machine_key else RENCHAIN_THRESHOLD
+    if not renchain_th:
+        renchain_th = RENCHAIN_THRESHOLD
 
     # チェーン計算は時間昇順で行う（連チャン判定のため）
     sorted_hist = sorted(history, key=lambda x: x.get('time', '00:00'))
@@ -1271,7 +1277,7 @@ def _process_history_for_verify(history, machine_key=None):
         }
 
         if is_big_hit(hit_type):
-            if i == 0 or accumulated_games > RENCHAIN_THRESHOLD:
+            if i == 0 or accumulated_games > renchain_th:
                 # 新しいチェーン開始
                 if chain_hits:
                     chain_len = len(chain_hits)
@@ -2315,10 +2321,11 @@ def generate_history_pages(env):
                 prob = d.get('prob', 0) or 0
                 max_rensa = d.get('max_rensa', 0) or 0
                 history = d.get('history', [])
-                # 最大枚数: historyがあれば連チャン区間累計で再計算
+                # historyがあれば機種別閾値で再計算（蓄積DBのmax_rensaは旧閾値の可能性）
                 if history:
-                    from analysis.analyzer import calculate_max_chain_medals
-                    max_medals = calculate_max_chain_medals(history)
+                    from analysis.analyzer import calculate_max_rensa, calculate_max_chain_medals
+                    max_rensa = calculate_max_rensa(history, machine_key=machine_key)
+                    max_medals = calculate_max_chain_medals(history, machine_key=machine_key)
                 else:
                     max_medals = d.get('max_medals', 0) or 0
                 _day_rl = get_result_level(prob, d.get('diff_medals', 0), machine_key, max_medals=max_medals)
