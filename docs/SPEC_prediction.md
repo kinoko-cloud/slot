@@ -138,7 +138,10 @@ final_score = base_score + trend_bonus + historical_bonus + weekday_bonus + pena
 
 **定義: 1回の連チャン中に獲得した合計枚数の最大値**
 
-- 連チャン = ART間100G以内（RENCHAIN_THRESHOLD=100）
+- 連チャン = 機種別閾値以内（config/rankings.pyのrenchain_threshold参照）
+  - SBJ: ART間100G以内
+  - 北斗: ART間50G以内
+  - デフォルト: ART間70G以内
 - 個別hitの最大ではない
 - RBは連チャンカウントに含まない
 
@@ -146,7 +149,7 @@ final_score = base_score + trend_bonus + historical_bonus + weekday_bonus + pena
 
 **定義: 1日の中で最も長い連チャン数**
 
-- 連チャン閾値 = ART間100G以内
+- 連チャン閾値 = 機種別（SBJ:100G / 北斗:50G / デフォルト:70G）
 - ART/AT/BIG のみカウント
 
 ### 5.3 diff_medals（差枚）
