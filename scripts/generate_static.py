@@ -656,10 +656,10 @@ def generate_index(env):
     all_recs_to_enrich = list({id(r): r for r in top3 + top3_candidates + yesterday_top10 + today_top10}.values())
     enrich_recs(all_recs_to_enrich)
 
-    # TOP3 + 全S/A候補 + 爆発台の過去3日分の当たり履歴を加工
+    # TOP3 + 全S/A候補 + 爆発台の過去3日分+当日の当たり履歴を加工
     for rec in top3 + top3_candidates + yesterday_top10 + today_top10:
         _mk = _get_machine_key(rec.get('store_key', ''))
-        for hist_key in ('yesterday_history', 'day_before_history', 'three_days_ago_history'):
+        for hist_key in ('yesterday_history', 'day_before_history', 'three_days_ago_history', 'today_history'):
             raw_hist = rec.get(hist_key, [])
             proc_key = f'{hist_key}_processed'
             summ_key = f'{hist_key}_summary'
@@ -668,6 +668,9 @@ def generate_index(env):
                     processed, summary = _process_history_for_verify(raw_hist, machine_key=_mk)
                     rec[proc_key] = processed
                     rec[summ_key] = summary
+                    # today_historyは加工済みで上書き（テンプレートで直接使用）
+                    if hist_key == 'today_history':
+                        rec['today_history'] = processed
                 else:
                     rec[proc_key] = []
                     rec[summ_key] = {}
