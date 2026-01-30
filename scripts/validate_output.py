@@ -304,6 +304,17 @@ def _validate_index(content, expected_mode, expected_verify_dt, expected_rec_dt,
         else:
             issues.append(f'INFO: index.html 差枚なし行: {missing_diff}/{total_rows} ({pct:.0f}%, データなしの可能性)')
 
+    # 6. 蓄積DBデータの鮮度チェック（直近データの最新日付が前日かどうか）
+    recent_dates = re.findall(r'<span class="recent-label">(\d+)/(\d+)\([月火水木金土日]\)</span>', content)
+    if recent_dates:
+        latest_month = int(recent_dates[0][0])
+        latest_day = int(recent_dates[0][1])
+        expected_yesterday = (now - timedelta(days=1))
+        if latest_month != expected_yesterday.month or latest_day != expected_yesterday.day:
+            actual_str = f'{latest_month}/{latest_day}'
+            expected_str = f'{expected_yesterday.month}/{expected_yesterday.day}'
+            issues.append(f'ERROR: 直近データの最新日付が{actual_str}だが前日{expected_str}であるべき（蓄積DBが古い可能性）')
+
     return issues
 
 
