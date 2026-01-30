@@ -7,7 +7,7 @@
     <div class="recent-day-row {% if day_hist and day_hist|length > 0 %}has-detail{% endif %}" onclick="{% if day_hist and day_hist|length > 0 %}toggleRecentDayDetail(event, this){% endif %}">
         <span class="recent-label">{{ short_date(day_date) or day_label }}</span>
         <span class="recent-art">ART {{ day_art }}</span>
-        {% if day_prob > 0 %}<span class="recent-prob {% if day_prob <= 100 %}excellent{% elif day_prob <= 130 %}good{% elif day_prob >= 200 %}bad{% endif %}">1/{{ day_prob }}</span>{% endif %}
+        {% if day_prob > 0 %}<span class="recent-prob {% if day_prob <= 100 %}excellent{% elif day_prob <= 130 %}good{% elif day_prob >= 200 %}bad{% endif %}">1/{{ day_prob|int }}</span>{% endif %}
         {% if day_diff != 0 %}<span class="diff-medals-sm {% if day_diff > 0 %}plus{% else %}minus{% endif %}">{{ '{:+,}'.format(day_diff) }}枚</span>{% endif %}
         {% if day_rensa >= 3 %}<span class="rensa-sm">{{ day_rensa }}連</span>{% endif %}
         {% if day_max_m > 0 %}<span class="max-medals-sm">最大{{ '{:,}'.format(day_max_m) }}枚</span>{% endif %}
@@ -504,7 +504,7 @@
                     <div class="top3-stats-main">
                         <span class="art-main"><span class="art-num-big">{{ y_art }}</span><span class="art-label">ART</span></span>
                         {% if rec.yesterday_rb and rec.yesterday_rb > 0 %}<span class="rb-badge-top">RB {{ rec.yesterday_rb }}</span>{% endif %}
-                        {% if y_prob > 0 %}<span class="art-prob {% if y_prob <= 100 %}excellent{% elif y_prob <= 130 %}good{% elif y_prob >= 200 %}bad{% endif %}"><span class="prob-label">ART</span>1/{{ y_prob }}</span>{% endif %}
+                        {% if y_prob > 0 %}<span class="art-prob {% if y_prob <= 100 %}excellent{% elif y_prob <= 130 %}good{% elif y_prob >= 200 %}bad{% endif %}"><span class="prob-label">ART</span>1/{{ y_prob|int }}</span>{% endif %}
                     </div>
                     <div class="top3-stats-sub">
                         {% if y_games > 0 %}<span class="total-games">{{ '{:,}'.format(y_games) }}G</span>{% endif %}
