@@ -1394,8 +1394,8 @@ def _process_history_for_verify(history, machine_key=None):
         'max_chain': max_chain,
     }
 
-    # 表示用に昇順（朝が上、夜が下）で表示 — 連チャンの↓方向と時間進行が一致
-    # indexを振り直す
+    # 表示用に降順（最新が上）に並び替え + indexを振り直す
+    processed.reverse()
     for i, entry in enumerate(processed):
         entry['index'] = i + 1
 
@@ -2373,10 +2373,10 @@ def generate_history_pages(env):
                 except Exception:
                     pass
 
-                # 当たり履歴を時刻昇順にソート（朝が上、夜が下）— 連チャンの↓方向と時間進行が一致
+                # 当たり履歴を時刻降順にソート（最新が上）
                 history_sorted = []
                 if history:
-                    history_sorted = sorted(history, key=lambda x: x.get('time', '00:00'))
+                    history_sorted = sorted(history, key=lambda x: x.get('time', '00:00'), reverse=True)
 
                 template_days.append({
                     'date': date_str,
