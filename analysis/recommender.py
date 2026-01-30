@@ -1834,7 +1834,7 @@ def analyze_today_graph(history: List[dict]) -> dict:
     elif no_deep_valley:
         recent_trend = 'stable'
         description = f'ハマりなし安定（最大{max_valley}G）'
-    elif max_valley >= 800:
+    elif max_valley >= 999:
         recent_trend = 'recovering'
         description = f'{max_valley}Gハマりあり → 天井後は様子見'
     else:

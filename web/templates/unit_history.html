@@ -6,7 +6,7 @@
     <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
     <meta name="googlebot" content="noindex, nofollow">
     <title>{{ store.name }} {{ unit_id|pad_id }}番台 - 履歴</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v={{ cache_bust }}">
 </head>
 <body data-page-type="unit-history">
     <div class="container">
@@ -147,7 +147,7 @@
                                     </thead>
                                     <tbody>
                                         {% for h in day.history_sorted %}
-                                        <tr class="{% if h.start >= 800 %}tenjou{% elif h.start >= 500 %}deep{% elif h.start <= 50 and h.type in ('ART','AT','BIG') %}rensa{% endif %}">
+                                        <tr class="{% if h.accumulated_games is defined and h.accumulated_games >= 999 %}tenjou{% elif h.start >= 999 %}tenjou{% elif h.start >= 500 %}deep{% elif h.start <= 50 and h.type in ('ART','AT','BIG') %}rensa{% endif %}">
                                             <td class="num">{{ loop.index }}</td>
                                             <td class="time">{{ h.time or '-' }}</td>
                                             <td class="games {% if h.start >= 500 %}deep{% elif h.start <= 50 %}shallow{% endif %}">{{ h.start }}G</td>
