@@ -92,16 +92,18 @@ def fetch_store_availability(page, hall_id: str, model_encoded: str, expected_un
     print(f"  URL: {url}")
 
     try:
-        page.goto(url, timeout=20000, wait_until='domcontentloaded')
+        page.goto(url, timeout=30000, wait_until='domcontentloaded')
+        page.wait_for_timeout(5000)  # JSレンダリング待ち
 
-        # 規約同意ボタンをクリック
+        # 規約同意ボタンをクリック（daidataがスクレイピング対策で追加）
         try:
-            accept_btn = page.locator('text="利用規約に同意する"')
+            accept_btn = page.locator('button:has-text("利用規約に同意する")')
             if accept_btn.count() > 0:
                 accept_btn.click()
-                page.wait_for_timeout(1500)
+                page.wait_for_timeout(5000)  # 同意後のリロード待ち
                 print("  Accepted terms")
-        except:
+        except Exception as e:
+            print(f"  Terms button: {e}")
             pass
 
         # ポップアップを閉じる
@@ -160,21 +162,21 @@ def fetch_unit_detail(page, hall_id: str, unit_id: str) -> dict:
     url = f"https://daidata.goraggio.com/{hall_id}/detail?unit={unit_id}"
 
     try:
-        page.goto(url, timeout=20000, wait_until='domcontentloaded')
+        page.goto(url, timeout=30000, wait_until='domcontentloaded')
+        page.wait_for_timeout(3000)
 
         # 規約同意ボタンがある場合（店舗ごとに別セッション）
         try:
-            accept_btn = page.locator('text="利用規約に同意する"')
+            accept_btn = page.locator('button:has-text("利用規約に同意する")')
             if accept_btn.count() > 0:
                 accept_btn.click()
-                page.wait_for_timeout(2000)
+                page.wait_for_timeout(5000)
                 # 規約同意後、元のdetailページに戻る
-                page.goto(url, timeout=20000, wait_until='domcontentloaded')
-                page.wait_for_timeout(1500)
+                page.goto(url, timeout=30000, wait_until='domcontentloaded')
+                page.wait_for_timeout(3000)
+                print(f"  unit {unit_id}: 規約同意完了")
         except:
             pass
-
-        page.wait_for_timeout(1500)
 
         # テキストからデータを抽出（最大2回試行）
         text = page.inner_text('body', timeout=30000)
@@ -447,18 +449,28 @@ def main():
         page.route("**/doubleclick*", lambda route: route.abort())
 
         # ===== daidata規約同意（店舗ごとに必要）=====
+        # daidataは利用規約画面がJSで表示され、「利用規約に同意する」ボタンをクリックしないと
+        # データが見られない。店舗ごとにセッションが分かれるため、全店舗で同意が必要。
         agreed_halls = set()
         for config in DAIDATA_STORES.values():
             hall_id = config['hall_id']
             if hall_id in agreed_halls:
                 continue
             try:
-                page.goto(f'https://daidata.goraggio.com/{hall_id}/all_list?ps=S', wait_until='load', timeout=30000)
-                page.wait_for_timeout(2000)
-                page.evaluate('() => { const form = document.querySelector("form"); if (form) form.submit(); }')
-                page.wait_for_timeout(2000)
+                page.goto(f'https://daidata.goraggio.com/{hall_id}/all_list?ps=S', wait_until='domcontentloaded', timeout=30000)
+                page.wait_for_timeout(5000)  # JSレンダリング完了待ち
+                # ボタンクリックで同意
+                agree_btn = page.locator('button:has-text("利用規約に同意する")')
+                if agree_btn.count() > 0:
+                    agree_btn.click()
+                    page.wait_for_timeout(5000)  # 同意後のページ更新待ち
+                    print(f"daidata規約同意完了（ボタンクリック）: {hall_id} ({config['name']})")
+                else:
+                    # ボタンがない場合はformサブミットを試行
+                    page.evaluate('() => { const form = document.querySelector("form"); if (form) form.submit(); }')
+                    page.wait_for_timeout(3000)
+                    print(f"daidata規約同意完了（formサブミット）: {hall_id} ({config['name']})")
                 agreed_halls.add(hall_id)
-                print(f"daidata規約同意完了: {hall_id} ({config['name']})")
             except Exception as e:
                 print(f"daidata規約同意エラー（続行）: {hall_id} - {e}")
 
