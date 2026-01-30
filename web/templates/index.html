@@ -472,7 +472,7 @@
                     </div>
                     <div class="top3-stats-sub">
                         <span class="current-hama">現在: <span class="num">{{ rec.current_hama or 0 }}</span>G</span>
-                        {% if rec.total_games > 0 %}<span class="total-games">累計<span class="num">{{ '{:,}'.format(rec.total_games) }}</span>G</span>{% endif %}
+                        <span class="total-games">累計<span class="num">{{ '{:,}'.format(rec.total_games or 0) }}</span>G</span>
                         {% if rec.max_medals and rec.max_medals > 0 %}{% set badge = medals_badge(rec.max_medals) %}<span class="max-medals-top {% if badge %}{{ badge.class }}{% endif %}">{% if badge %}<span class="medals-icon">{{ badge.icon }}</span>{% endif %}最大<span class="num">{{ '{:,}'.format(rec.max_medals) }}</span>枚</span>{% endif %}
                         {% if rec.today_max_rensa and rec.today_max_rensa >= 3 %}
                         <span class="rensa-badge">最大<span class="num">{{ rec.today_max_rensa }}</span>連</span>
@@ -704,8 +704,8 @@
                                 <span class="rank-badge-xs" style="background-color: {{ rank_color(rec.final_rank) }}">{{ rec.final_rank }}</span>
                             </div>
                             <div class="sa-rec-data">
-                                {% if is_open and rec.art_count > 0 %}
-                                <span class="sa-art">ART {{ rec.art_count }}</span>
+                                {% if is_open %}
+                                <span class="sa-art">ART {{ rec.art_count or 0 }}</span>
                                 {% if rec.art_prob > 0 %}<span class="sa-prob {% if rec.art_prob <= 100 %}excellent{% elif rec.art_prob <= 130 %}good{% elif rec.art_prob >= 200 %}bad{% endif %}">1/{{ rec.art_prob|int }}</span>{% endif %}
                                 {% endif %}
                                 {% if rec.yesterday_art %}
