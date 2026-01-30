@@ -422,7 +422,7 @@ def generate_index(env):
                     y_art = rec.get('yesterday_art', 0)
                     if y_art and y_art > 0:
                         y_games = rec.get('yesterday_games', 0)
-                        y_prob = y_games / y_art if y_art > 0 and y_games > 0 else 0
+                        y_prob = int(y_games / y_art) if y_art > 0 and y_games > 0 else 0
                         # 差枚計算（medalsベース優先 → フォールバックで機械割ベース）
                         y_diff_medals = 0
                         y_setting = ''
@@ -2029,7 +2029,7 @@ def generate_verify_page(env):
                     actual_art = rec.get('yesterday_art', 0)
                     actual_games = rec.get('yesterday_games', 0)
                     if actual_art > 0 and actual_games > 0:
-                        actual_prob = actual_games / actual_art
+                        actual_prob = int(actual_games / actual_art)
                     else:
                         actual_prob = 0
 
@@ -2412,7 +2412,7 @@ def generate_history_pages(env):
 
             # 全期間サマリー
             total_days = len(sorted_days)
-            avg_prob = total_games / total_art if total_art > 0 else 0
+            avg_prob = int(total_games / total_art) if total_art > 0 else 0
             good_rate = round(good_count / total_days * 100) if total_days > 0 else 0
 
             total_summary = {

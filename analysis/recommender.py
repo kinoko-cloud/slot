@@ -160,7 +160,7 @@ def calculate_expected_profit(total_games: int, art_count: int, machine_key: str
         remaining_hours = closing_hour - now.hour - (now.minute / 60)
 
     # ART確率から設定推定
-    art_prob = total_games / art_count if art_count > 0 else 0
+    art_prob = int(total_games / art_count) if art_count > 0 else 0
     setting_info = estimate_setting_from_prob(art_prob, machine_key)
 
     # 現在の推定差枚（投入枚数 × (機械割-100%)/100）
@@ -537,7 +537,7 @@ def calculate_unit_historical_performance(days: List[dict], machine_key: str = '
         art = day.get('art', 0)
         games = _get_games(day)
         if art > 0 and games > 0:
-            prob = games / art
+            prob = int(games / art)
             probs.append(prob)
             total_days += 1
 
@@ -567,14 +567,14 @@ def calculate_unit_historical_performance(days: List[dict], machine_key: str = '
         art = day.get('art', 0)
         games = _get_games(day)
         if art > 0 and games > 0:
-            prob = games / art
+            prob = int(games / art)
             if prob >= bad_prob_threshold:
                 consecutive_bad += 1
             else:
                 break
 
     good_day_rate = good_days / total_days if total_days > 0 else 0.5
-    avg_prob = sum(probs) / len(probs) if probs else 0
+    avg_prob = int(sum(probs) / len(probs)) if probs else 0
 
     # 好調翌日→翌日も好調だった率（据え置き率の目安）
     good_after_good = 0
@@ -589,7 +589,7 @@ def calculate_unit_historical_performance(days: List[dict], machine_key: str = '
         nxt_art = nxt.get('art', 0)
         nxt_games = _get_games(nxt)
         if nxt_art > 0 and nxt_games > 0:
-            nxt_prob = nxt_games / nxt_art
+            nxt_prob = int(nxt_games / nxt_art)
             nxt_qual = _is_quality_good(nxt, nxt_prob, good_prob_threshold, deep_hama_limit, min_max_medals)
             if nxt_qual:
                 # 前日が好調だった場合、翌日(curr)も好調か？
@@ -627,7 +627,7 @@ def calculate_unit_historical_performance(days: List[dict], machine_key: str = '
         art = d.get('art', 0)
         games = d.get('games', d.get('total_games', 0)) or _get_games(d)
         if art > 0 and games > 0:
-            prob = games / art
+            prob = int(games / art)
             if _is_quality_good(d, prob, good_prob_threshold, deep_hama_limit, min_max_medals):
                 good_day_details.append({
                     'date': d.get('date', ''),
@@ -644,7 +644,7 @@ def calculate_unit_historical_performance(days: List[dict], machine_key: str = '
         art = d.get('art', 0)
         games = d.get('games', d.get('total_games', 0)) or _get_games(d)
         if art > 0 and games > 0:
-            prob = games / art
+            prob = int(games / art)
             if _is_quality_good(d, prob, good_prob_threshold, deep_hama_limit, min_max_medals):
                 current_streak += 1
                 max_consecutive_good = max(max_consecutive_good, current_streak)
@@ -797,7 +797,7 @@ def analyze_activity_pattern(history: List[dict], day_data: dict = None) -> dict
         # 空きの前までの確率を計算（好調台の途中放棄かどうか）
         art = day_data.get('art', 0) if day_data else 0
         games = day_data.get('total_start', 0) if day_data else 0
-        overall_prob = games / art if art > 0 and games > 0 else 999
+        overall_prob = int(games / art) if art > 0 and games > 0 else 999
 
         if overall_prob <= 130:
             # 好調台なのに途中放棄 = おいしい台（ボーナス）
@@ -909,7 +909,7 @@ def analyze_trend(days: List[dict], machine_key: str = 'sbj') -> dict:
                         pass
             if estimated_diff == 0 and art > 0:
                 # フォールバック: 確率ベース推定
-                art_prob = games / art
+                art_prob = int(games / art)
                 if art_prob <= 80:
                     estimated_diff = games * 0.3
                 elif art_prob <= 120:
@@ -948,7 +948,7 @@ def analyze_trend(days: List[dict], machine_key: str = 'sbj') -> dict:
             # 低稼働でマイナスだが確率が良い場合のみプラス扱い
             # ただし大幅マイナス（-2000枚以上）は確率が良くても好調とは言えない
             if art > 0 and games > 0:
-                prob = games / art
+                prob = int(games / art)
                 if prob <= good_prob_threshold and diff > -2000:
                     consecutive_plus += 1
                     consecutive_minus = 0
@@ -1133,7 +1133,7 @@ def analyze_trend(days: List[dict], machine_key: str = 'sbj') -> dict:
     for d in sorted_days[:7]:
         art = d.get('art', 0)
         games = d.get('games', 0) or d.get('total_start', 0)
-        prob = games / art if art > 0 and games > 0 else 0
+        prob = int(games / art) if art > 0 and games > 0 else 0
         day_history = d.get('history', [])
         
         # diff_medals: DB値 → historyから計算
@@ -1555,7 +1555,7 @@ def calc_no_explosion_next_day_stats(machine_key: str = 'sbj') -> dict:
                 mr = d.get('max_rensa', 0)
                 if art <= 0 or games <= 0 or mr <= 0:
                     continue
-                prob = games / art
+                prob = int(games / art)
                 # 確率は好調だが最大連チャンが15連未満 → 爆発なし
                 if prob <= good_threshold and mr < 15:
                     if i + 1 < len(days):
@@ -1694,7 +1694,7 @@ def analyze_rotation_pattern(days: List[dict], machine_key: str = 'sbj') -> dict
         art = day.get('art', 0)
         games = day.get('total_start', 0)
         if games > 0 and art > 0:
-            prob = games / art
+            prob = int(games / art)
             _good = get_machine_threshold(machine_key, 'good_prob')
             _vbad = get_machine_threshold(machine_key, 'very_bad_prob')
             if prob <= _good:
@@ -2439,7 +2439,7 @@ def _estimate_store_good_rate(store_key: str, machine_key: str, perf_days_all=No
                     games = d.get('games', 0) or d.get('total_start', 0)
                     if art > 0 and games > 500:
                         total_unit_days += 1
-                        prob = games / art
+                        prob = int(games / art)
                         mm = d.get('max_medals', 0)
                         if prob <= good_prob or mm >= 1500:
                             good_unit_days += 1
