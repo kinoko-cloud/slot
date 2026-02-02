@@ -1,3 +1,6 @@
+{# === 共通マクロをインポート === #}
+{% from '_macros.html' import hit_table, day_row, reasons_list, unit_card_top, unit_card_explosion, unit_card_list %}
+
 {# === 直近データ展開マクロ === #}
 {# day_hist: _process_history_for_verify()で加工済みデータ（chain_pos, is_hot_chain, is_tenjou, accumulated_games等付き） #}
 {# SBJ: RBではゲーム数天井がリセットされない → accumulated_gamesで天井判定 #}
@@ -154,29 +157,7 @@
                     </div>
                     {# === 1. 推奨理由（最重要） === #}
                     <div class="reasons-full">
-                        {% if rec.reasons %}
-                        {% for reason in rec.reasons %}
-                        {% if '📊' in reason %}
-                        <div class="reason-line-top reason-rank">{{ reason }}</div>
-                        {% elif '📈' in reason %}
-                        <div class="reason-line-top reason-stats">{{ reason }}</div>
-                        {% elif '🔁' in reason %}
-                        <div class="reason-line-top reason-cycle">{{ reason }}</div>
-                        {% elif '🔄' in reason %}
-                        <div class="reason-line-top reason-pattern">{{ reason }}</div>
-                        {% elif '💡' in reason %}
-                        <div class="reason-line-top reason-today">{{ reason }}</div>
-                        {% elif '📅' in reason %}
-                        <div class="reason-line-top reason-weekday">{{ reason }}</div>
-                        {% elif '⚠' in reason %}
-                        <div class="reason-line-top reason-warn">{{ reason }}</div>
-                        {% else %}
-                        <div class="reason-line-top">{{ reason }}</div>
-                        {% endif %}
-                        {% endfor %}
-                        {% else %}
-                        <div class="reason-line-top">💡 過去データに基づくおすすめ台</div>
-                        {% endif %}
+                        {{ reasons_list(rec.reasons) }}
                     </div>
                     {# === 2. 直近3日間データ === #}
                     <div class="recent-days">
@@ -227,27 +208,7 @@
                         <span class="store-link-right">{{ rec.store_name }}</span>
                     </div>
                     <div class="reasons-full">
-                        {% if rec.reasons %}
-                        {% for reason in rec.reasons %}
-                        {% if '📊' in reason %}
-                        <div class="reason-line-top reason-rank">{{ reason }}</div>
-                        {% elif '📈' in reason %}
-                        <div class="reason-line-top reason-stats">{{ reason }}</div>
-                        {% elif '🔁' in reason %}
-                        <div class="reason-line-top reason-cycle">{{ reason }}</div>
-                        {% elif '🔄' in reason %}
-                        <div class="reason-line-top reason-pattern">{{ reason }}</div>
-                        {% elif '💡' in reason %}
-                        <div class="reason-line-top reason-today">{{ reason }}</div>
-                        {% elif '📅' in reason %}
-                        <div class="reason-line-top reason-weekday">{{ reason }}</div>
-                        {% elif '⚠' in reason %}
-                        <div class="reason-line-top reason-warn">{{ reason }}</div>
-                        {% else %}
-                        <div class="reason-line-top">{{ reason }}</div>
-                        {% endif %}
-                        {% endfor %}
-                        {% endif %}
+                        {{ reasons_list(rec.reasons) }}
                     </div>
                     <div class="recent-days">
                         <div class="recent-header">直近データ</div>
@@ -590,31 +551,7 @@
                     {% endif %}
                     {# === 推奨理由（全件表示・カテゴリ色分け） === #}
                     <div class="reasons-full">
-                        {% if rec.reasons %}
-                        {% for reason in rec.reasons %}
-                        {% if '📊' in reason %}
-                        <div class="reason-line-top reason-rank">{{ reason }}</div>
-                        {% elif '📈' in reason %}
-                        <div class="reason-line-top reason-stats">{{ reason }}</div>
-                        {% elif '🔁' in reason %}
-                        <div class="reason-line-top reason-cycle">{{ reason }}</div>
-                        {% elif '🔄' in reason %}
-                        <div class="reason-line-top reason-pattern">{{ reason }}</div>
-                        {% elif '💡' in reason %}
-                        <div class="reason-line-top reason-today">{{ reason }}</div>
-                        {% elif '📅' in reason %}
-                        <div class="reason-line-top reason-weekday">{{ reason }}</div>
-                        {% elif '🔥' in reason %}
-                        <div class="reason-line-top reason-today">{{ reason }}</div>
-                        {% elif '⚠' in reason %}
-                        <div class="reason-line-top reason-warn">{{ reason }}</div>
-                        {% else %}
-                        <div class="reason-line-top">{{ reason }}</div>
-                        {% endif %}
-                        {% endfor %}
-                        {% else %}
-                        <div class="reason-line-top"><span class="reason-icon">💡</span> 過去データに基づくおすすめ台</div>
-                        {% endif %}
+                        {{ reasons_list(rec.reasons) }}
                     </div>
                 </a>
                 {% endfor %}
@@ -638,27 +575,7 @@
                         <span class="store-link-right">{{ rec.store_name }}</span>
                     </div>
                     <div class="reasons-full">
-                        {% if rec.reasons %}
-                        {% for reason in rec.reasons %}
-                        {% if '📊' in reason %}
-                        <div class="reason-line-top reason-rank">{{ reason }}</div>
-                        {% elif '📈' in reason %}
-                        <div class="reason-line-top reason-stats">{{ reason }}</div>
-                        {% elif '🔁' in reason %}
-                        <div class="reason-line-top reason-cycle">{{ reason }}</div>
-                        {% elif '🔄' in reason %}
-                        <div class="reason-line-top reason-pattern">{{ reason }}</div>
-                        {% elif '💡' in reason %}
-                        <div class="reason-line-top reason-today">{{ reason }}</div>
-                        {% elif '📅' in reason %}
-                        <div class="reason-line-top reason-weekday">{{ reason }}</div>
-                        {% elif '⚠' in reason %}
-                        <div class="reason-line-top reason-warn">{{ reason }}</div>
-                        {% else %}
-                        <div class="reason-line-top">{{ reason }}</div>
-                        {% endif %}
-                        {% endfor %}
-                        {% endif %}
+                        {{ reasons_list(rec.reasons) }}
                     </div>
                     <div class="recent-days">
                         <div class="recent-header">直近データ</div>

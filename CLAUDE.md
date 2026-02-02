@@ -2,10 +2,15 @@
 
 ## 🔄 セッション引き継ぎ
 
-**「続き」と言われたら：**
+**「続き」や作業指示があったら：**
 1. このファイル (`CLAUDE.md`) を読む
 2. `memory/` の最新日付ファイルを読む（作業ログ）
-3. 必要に応じて `git log --oneline -5` で直近の変更を確認
+3. `git log --oneline -5` で直近の変更を確認
+4. `git remote -v` でリモート構成を確認
+5. `.git/config` でアカウント設定を確認
+6. `~/.openclaw/workspace/memory/` でWhatsApp側の作業ログを確認
+
+**重要**: memoryファイルには一部しか記録されない。git設定やプロジェクト構成も必ず確認すること。
 
 **作業終了時：**
 - 重要な変更は `memory/YYYY-MM-DD.md` に書き出す
@@ -75,6 +80,38 @@ data/
 
 ---
 
+## 🌐 環境構成
+
+### GitHubアカウント（2つ）
+| リモート | SSHエイリアス | 用途 |
+|---------|--------------|------|
+| origin | `github.com` | メイン（デプロイ） |
+| secondary | `github-twiakaid` | 分散用（GitHub Actions無料枠分散） |
+
+### SSHキー構成
+| キーファイル | 対象アカウント | 用途 |
+|-------------|---------------|------|
+| `~/.ssh/id_ed25519` | origin（メイン） | `git@github.com` |
+| `~/.ssh/id_ed25519_twiakaid` | secondary（twiakaid-hash） | `git@github-twiakaid` |
+
+設定ファイル: `~/.ssh/config`
+
+### CI/CD構成
+- **GitHub Actions (origin)**: デプロイ、静的サイト生成
+- **GitHub Actions (secondary)**: 軽いスクレイピング
+- **Circle CI (secondary)**: Playwright重い処理（fetch-availability, daily-collect）
+
+Circle CI設定: `.circleci/config.yml`
+- `hourly-fetch`: 1時間ごと（10:00-23:00 JST）
+- `daily-collection`: 毎日23:00 JST
+
+### OpenClaw連携
+- ワークスペース: `~/.openclaw/workspace/`
+- slotリンク: `~/.openclaw/workspace/slot` → `/home/riichi/works/slot`
+- WhatsApp作業ログ: `~/.openclaw/workspace/memory/YYYY-MM-DD.md`
+
+---
+
 ## 🔧 よく使うコマンド
 
 ```bash
@@ -94,6 +131,25 @@ for r in sorted(recs, key=lambda x: -x.get('final_score',0))[:5]:
 # コミット＆プッシュ
 git add -A && git commit -m "説明" && git push
 ```
+
+---
+
+## 🎰 機種仕様
+
+### SBJ（スマスロ北斗の拳）
+- 天井: 999G+α（通常時）
+- RBではゲーム数天井がリセットされない
+- リセット時天井短縮: 666G+α
+- 好調閾値: 1/130以下
+
+### 北斗の拳 転生2
+- あべし天井システム（G数≠あべし、G数ベース天井判定は参考値）
+- モードA天井: 1536あべし
+- モードB天井: 896あべし  
+- モードC天井: 576あべし
+- 天国天井: 128あべし
+- 天撃失敗後は絶対にやめない（モード移行の可能性）
+- 好調閾値: 1/120以下
 
 ---
 

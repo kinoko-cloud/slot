@@ -8,7 +8,7 @@
 - 長期的な傾向分析用
 - 排他ロック付き — 複数プロセスの同時実行を防止
 """
-# 排他ロック（最初に取得）
+# 排他ロック(最初に取得)
 import sys, os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)) + '/..')
 from scripts.fetch_lock import acquire_lock
@@ -36,8 +36,8 @@ def collect_daily_data(machine_keys: list = None, max_units_per_store: int = Non
     """全店舗のデータを収集
 
     Args:
-        machine_keys: 取得する機種リスト（None=全機種）
-        max_units_per_store: 店舗あたりの最大台数（テスト用）
+        machine_keys: 取得する機種リスト(None=全機種)
+        max_units_per_store: 店舗あたりの最大台数(テスト用)
     """
     today = datetime.now().strftime('%Y%m%d')
     data_dir = Path('data/daily')
@@ -57,7 +57,7 @@ def collect_daily_data(machine_keys: list = None, max_units_per_store: int = Non
     print(f'対象機種: {", ".join(machine_keys)}')
     print('=' * 60)
 
-    # 1. 台データオンライン店舗（当日分も含め全日データを取得）
+    # 1. 台データオンライン店舗(当日分も含め全日データを取得)
     for store_key, store_config in DAIDATA_STORES.items():
         hall_id = store_config['hall_id']
         hall_name = store_config['name']
@@ -88,7 +88,7 @@ def collect_daily_data(machine_keys: list = None, max_units_per_store: int = Non
                         valid_days = [d for d in result.get('days', [])
                                       if d.get('art', 0) > 0 or (d.get('total_start', 0) or d.get('games', 0) or 0) > 0]
                         if not valid_days:
-                            print(f"    ⚠️ 台{unit_id}: 有効データなし（スクレイピング失敗の可能性）")
+                            print(f"    ⚠️ 台{unit_id}: 有効データなし(スクレイピング失敗の可能性)")
                             continue
                         result['machine_key'] = machine_key
                         result['machine_name'] = machine_name
@@ -133,9 +133,9 @@ def collect_daily_data(machine_keys: list = None, max_units_per_store: int = Non
 
                     for unit_id in units:
                         print(f'  台{unit_id}...')
-                        # 当日分（23:00実行時点のリアルタイムデータ）+ 前日分を取得
-                        # 差分更新: historyに既存データがあれば2日分（当日+前日）
-                        # 新規台はフルバックフィル（14日分）
+                        # 当日分(23:00実行時点のリアルタイムデータ)+ 前日分を取得
+                        # 差分更新: historyに既存データがあれば2日分(当日+前日)
+                        # 新規台はフルバックフィル(14日分)
                         from pathlib import Path as _P
                         _hist_dir = _P(f'data/history/{store_key}_{machine_key}')
                         _hist_file = _hist_dir / f'{unit_id}.json'
@@ -150,7 +150,7 @@ def collect_daily_data(machine_keys: list = None, max_units_per_store: int = Non
                         valid_days = [d for d in result.get('days', [])
                                       if d.get('art', 0) > 0 or (d.get('total_start', 0) or d.get('games', 0) or 0) > 0]
                         if not valid_days:
-                            print(f"    ⚠️ 台{unit_id}: 有効データなし（スクレイピング失敗の可能性）")
+                            print(f"    ⚠️ 台{unit_id}: 有効データなし(スクレイピング失敗の可能性)")
                             continue
                         result['hall_name'] = hall_name
                         result['machine_key'] = machine_key
@@ -250,7 +250,7 @@ def main():
     parser.add_argument('--machine', '-m', nargs='+', choices=['sbj', 'hokuto_tensei2', 'all'],
                         default=['all'], help='取得する機種 (default: all)')
     parser.add_argument('--max-units', type=int, default=None,
-                        help='店舗あたりの最大台数（テスト用）')
+                        help='店舗あたりの最大台数(テスト用)')
     args = parser.parse_args()
 
     if args.merge:
@@ -264,7 +264,7 @@ def main():
 
         results = collect_daily_data(machine_keys=machine_keys, max_units_per_store=args.max_units)
 
-        # 台番号検証（従来）
+        # 台番号検証(従来)
         print('\n' + '=' * 60)
         print('台番号検証')
         print('=' * 60)
@@ -274,16 +274,16 @@ def main():
             save_path = save_alerts(alerts, source='daily')
             print(f'アラート保存: {save_path}')
 
-        # 包括データ整合性チェック（新）
+        # 包括データ整合性チェック(新)
         try:
             from scripts.data_integrity_check import run_all_checks, save_check_result, format_notification
             integrity_alerts = run_all_checks(results)
             if integrity_alerts:
                 save_check_result(integrity_alerts)
-            # 重大アラートがあれば通知テキスト出力（GitHub Actions等で拾える）
+            # 重大アラートがあれば通知テキスト出力(GitHub Actions等で拾える)
             notification = format_notification(integrity_alerts)
             if notification:
-                # 通知テキストをファイルに保存（外部から読める形で）
+                # 通知テキストをファイルに保存(外部から読める形で)
                 notif_path = Path('data/alerts/latest_notification.txt')
                 notif_path.parent.mkdir(parents=True, exist_ok=True)
                 notif_path.write_text(notification, encoding='utf-8')
@@ -291,9 +291,9 @@ def main():
         except Exception as e:
             print(f'⚠ 整合性チェックエラー: {e}')
 
-        # ランキングデータ取得（差玉TOP10）
+        # ランキングデータ取得(差玉TOP10)
         print('\n' + '=' * 60)
-        print('ランキングデータ取得（差玉TOP10）')
+        print('ランキングデータ取得(差玉TOP10)')
         print('=' * 60)
         try:
             from scrapers.daidata_ranking import collect_all_rankings
@@ -302,9 +302,9 @@ def main():
         except Exception as e:
             print(f'⚠ ランキング取得エラー: {e}')
 
-        # サイトセブン（全台の最高出玉データ）
+        # サイトセブン(全台の最高出玉データ)
         print('\n' + '=' * 60)
-        print('サイトセブン データ取得（全台BB/RB/ART/最高出玉）')
+        print('サイトセブン データ取得(全台BB/RB/ART/最高出玉)')
         print('=' * 60)
         try:
             from scrapers.site777 import collect_and_save as s777_collect
@@ -314,9 +314,9 @@ def main():
         except Exception as e:
             print(f'⚠ サイトセブン取得エラー: {e}')
 
-        # アナスロ（店舗日別 総差枚・勝率・旧イベント日）
+        # アナスロ(店舗日別 総差枚・勝率・旧イベント日)
         print('\n' + '=' * 60)
-        print('アナスロ データ取得（店舗日別 差枚・勝率）')
+        print('アナスロ データ取得(店舗日別 差枚・勝率)')
         print('=' * 60)
         try:
             from scrapers.anaslo import collect_and_save as anaslo_collect
