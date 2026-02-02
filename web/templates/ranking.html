@@ -46,7 +46,7 @@
                 <div class="top5-note">{{ tomorrow_str }}の狙い目予想 ※今日の結果＋過去傾向から分析</div>
                 {% else %}
                 <h2>狙い目 TOP{{ top_recs|length }}</h2>
-                <div class="top5-note">※機種 / 店名 / 台番号</div>
+                <div class="top5-note">※機種 / 台番号 / 店名</div>
                 {% endif %}
                 {% for rec in top_recs %}
                 <div class="unit-card rank-{{ rec.final_rank|lower }} {{ 'avail-card-empty' if rec.availability == '空き' else 'avail-card-playing' if rec.availability == '遊技中' else '' }}" onclick="toggleDetails(this)">
