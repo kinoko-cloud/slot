@@ -24,7 +24,7 @@
                 <td>{{ h.time or '-' }}</td>
                 <td class="{% if h.is_tenjou is defined and h.is_tenjou %}tenjou{% elif h.is_deep is defined and h.is_deep %}deep{% endif %}{% if h.is_shallow is defined and h.is_shallow %} shallow{% endif %}">{{ h.start }}G{% if h.accumulated_games is defined and h.accumulated_games != h.start and h.accumulated_games > 0 %}<br><small class="acc-games">（累計{{ h.accumulated_games }}G）</small>{% endif %}</td>
                 <td class="{{ h.type|lower }}">{{ h.type }}</td>
-                <td class="{% if h.is_hot_chain is defined and h.is_hot_chain %}hot{% endif %}">{% if h.chain_pos is defined and h.chain_len is defined and h.chain_len > 1 %}{% if h.chain_pos == 1 %}{{ h.chain_len }}連{% else %}↑{% endif %}{% else %}-{% endif %}</td>
+                <td class="{% if h.is_hot_chain is defined and h.is_hot_chain %}hot{% endif %}">{% if h.chain_pos is defined and h.chain_len is defined and h.chain_len > 1 %}{% if h.chain_pos == h.chain_len %}{{ h.chain_len }}連{% else %}↑{% endif %}{% else %}-{% endif %}</td>
                 <td>{% if h.medals is defined and h.medals > 0 %}{{ '{:,}'.format(h.medals) }}{% else %}-{% endif %}</td>
             </tr>
             {% endfor %}
@@ -308,10 +308,11 @@
                         {% endif %}
                     </div>
                     {# === 差枚（目立たせる） === #}
-                    {% if rec.diff_medals is defined and rec.diff_medals != 0 %}
+                    {% set _dm = rec.yesterday_diff_medals|default(rec.diff_medals|default(0)) %}
+                    {% if _dm != 0 %}
                     <div class="yesterday-diff-line">
-                        <span class="diff-medals-lg {% if rec.diff_medals > 0 %}plus{% else %}minus{% endif %}">
-                            {{ '{:+,}'.format(rec.diff_medals) }}枚
+                        <span class="diff-medals-lg {% if _dm > 0 %}plus{% else %}minus{% endif %}">
+                            {{ '{:+,}'.format(_dm) }}枚
                         </span>
                         {% if rec.payout_estimate and rec.payout_estimate > 100 %}
                         <span class="setting-badge-sm setting-{{ rec.setting_num|default(0) }}"><small class="payout-label">機械割</small><span class="payout-num">{{ rec.payout_estimate }}%</span></span>
@@ -414,7 +415,7 @@
                                         <td>{{ h.time or '-' }}</td>
                                         <td class="{% if h.is_deep is defined and h.is_deep %}deep{% elif h.start >= 500 %}deep{% endif %}">{{ h.start }}G{% if h.accumulated_games is defined and h.accumulated_games != h.start and h.accumulated_games > 0 %}<br><small class="acc-games">（累計{{ h.accumulated_games }}G）</small>{% endif %}</td>
                                         <td class="{{ h.type|lower }}">{{ h.type }}</td>
-                                        <td class="{% if h.is_hot_chain is defined and h.is_hot_chain %}hot{% endif %}">{% if h.chain_pos is defined and h.chain_len is defined and h.chain_len > 1 %}{% if h.chain_pos == 1 %}{{ h.chain_len }}連{% else %}↑{% endif %}{% else %}-{% endif %}</td>
+                                        <td class="{% if h.is_hot_chain is defined and h.is_hot_chain %}hot{% endif %}">{% if h.chain_pos is defined and h.chain_len is defined and h.chain_len > 1 %}{% if h.chain_pos == h.chain_len %}{{ h.chain_len }}連{% else %}↑{% endif %}{% else %}-{% endif %}</td>
                                         <td>{% if h.medals is defined and h.medals > 0 %}{{ '{:,}'.format(h.medals) }}{% else %}-{% endif %}</td>
                                     </tr>
                                     {% endfor %}
@@ -534,7 +535,7 @@
                             <div class="hit-summary-row"><span>{{ rec.yesterday_history_summary.total_hits or 0 }}当たり</span><span>最大{{ rec.yesterday_history_summary.max_chain or 0 }}連</span><span>平均{{ rec.yesterday_history_summary.avg_valley or 0 }}G</span></div>
                             {% endif %}
                             <table class="hit-detail-table"><thead><tr><th>#</th><th>時刻</th><th>G数</th><th>種類</th><th>連</th><th>枚数</th></tr></thead><tbody>
-                            {% for hit in rec.yesterday_history_processed %}<tr class="{% if hit.is_tenjou %}tenjou{% elif hit.is_hot_chain %}hot-chain{% elif hit.is_deep %}deep{% endif %}"><td>{{ hit.index }}</td><td>{{ hit.time or '-' }}</td><td class="{% if hit.is_deep %}deep{% elif hit.is_shallow %}shallow{% endif %}">{{ hit.start }}G{% if hit.accumulated_games is defined and hit.accumulated_games != hit.start and hit.accumulated_games > 0 %}<br><small class="acc-games">（累計{{ hit.accumulated_games }}G）</small>{% endif %}</td><td class="{{ hit.type|lower }}">{{ hit.type }}</td><td class="{% if hit.is_hot_chain %}hot{% endif %}">{% if hit.chain_pos is defined and hit.chain_len is defined and hit.chain_len > 1 %}{% if hit.chain_pos == 1 %}{{ hit.chain_len }}連{% else %}↑{% endif %}{% else %}-{% endif %}</td><td>{% if hit.medals > 0 %}{{ '{:,}'.format(hit.medals) }}{% else %}-{% endif %}</td></tr>{% endfor %}
+                            {% for hit in rec.yesterday_history_processed %}<tr class="{% if hit.is_tenjou %}tenjou{% elif hit.is_hot_chain %}hot-chain{% elif hit.is_deep %}deep{% endif %}"><td>{{ hit.index }}</td><td>{{ hit.time or '-' }}</td><td class="{% if hit.is_deep %}deep{% elif hit.is_shallow %}shallow{% endif %}">{{ hit.start }}G{% if hit.accumulated_games is defined and hit.accumulated_games != hit.start and hit.accumulated_games > 0 %}<br><small class="acc-games">（累計{{ hit.accumulated_games }}G）</small>{% endif %}</td><td class="{{ hit.type|lower }}">{{ hit.type }}</td><td class="{% if hit.is_hot_chain %}hot{% endif %}">{% if hit.chain_pos is defined and hit.chain_len is defined and hit.chain_len > 1 %}{% if hit.chain_pos == hit.chain_len %}{{ hit.chain_len }}連{% else %}↑{% endif %}{% else %}-{% endif %}</td><td>{% if hit.medals > 0 %}{{ '{:,}'.format(hit.medals) }}{% else %}-{% endif %}</td></tr>{% endfor %}
                             </tbody></table>
                         </div>
                         {% endif %}
@@ -557,7 +558,7 @@
                             <div class="hit-summary-row"><span>{{ rec.day_before_history_summary.total_hits or 0 }}当たり</span><span>最大{{ rec.day_before_history_summary.max_chain or 0 }}連</span><span>平均{{ rec.day_before_history_summary.avg_valley or 0 }}G</span></div>
                             {% endif %}
                             <table class="hit-detail-table"><thead><tr><th>#</th><th>時刻</th><th>G数</th><th>種類</th><th>連</th><th>枚数</th></tr></thead><tbody>
-                            {% for hit in rec.day_before_history_processed %}<tr class="{% if hit.is_tenjou %}tenjou{% elif hit.is_hot_chain %}hot-chain{% elif hit.is_deep %}deep{% endif %}"><td>{{ hit.index }}</td><td>{{ hit.time or '-' }}</td><td class="{% if hit.is_deep %}deep{% elif hit.is_shallow %}shallow{% endif %}">{{ hit.start }}G{% if hit.accumulated_games is defined and hit.accumulated_games != hit.start and hit.accumulated_games > 0 %}<br><small class="acc-games">（累計{{ hit.accumulated_games }}G）</small>{% endif %}</td><td class="{{ hit.type|lower }}">{{ hit.type }}</td><td class="{% if hit.is_hot_chain %}hot{% endif %}">{% if hit.chain_pos is defined and hit.chain_len is defined and hit.chain_len > 1 %}{% if hit.chain_pos == 1 %}{{ hit.chain_len }}連{% else %}↑{% endif %}{% else %}-{% endif %}</td><td>{% if hit.medals > 0 %}{{ '{:,}'.format(hit.medals) }}{% else %}-{% endif %}</td></tr>{% endfor %}
+                            {% for hit in rec.day_before_history_processed %}<tr class="{% if hit.is_tenjou %}tenjou{% elif hit.is_hot_chain %}hot-chain{% elif hit.is_deep %}deep{% endif %}"><td>{{ hit.index }}</td><td>{{ hit.time or '-' }}</td><td class="{% if hit.is_deep %}deep{% elif hit.is_shallow %}shallow{% endif %}">{{ hit.start }}G{% if hit.accumulated_games is defined and hit.accumulated_games != hit.start and hit.accumulated_games > 0 %}<br><small class="acc-games">（累計{{ hit.accumulated_games }}G）</small>{% endif %}</td><td class="{{ hit.type|lower }}">{{ hit.type }}</td><td class="{% if hit.is_hot_chain %}hot{% endif %}">{% if hit.chain_pos is defined and hit.chain_len is defined and hit.chain_len > 1 %}{% if hit.chain_pos == hit.chain_len %}{{ hit.chain_len }}連{% else %}↑{% endif %}{% else %}-{% endif %}</td><td>{% if hit.medals > 0 %}{{ '{:,}'.format(hit.medals) }}{% else %}-{% endif %}</td></tr>{% endfor %}
                             </tbody></table>
                         </div>
                         {% endif %}
@@ -580,7 +581,7 @@
                             <div class="hit-summary-row"><span>{{ rec.three_days_ago_history_summary.total_hits or 0 }}当たり</span><span>最大{{ rec.three_days_ago_history_summary.max_chain or 0 }}連</span><span>平均{{ rec.three_days_ago_history_summary.avg_valley or 0 }}G</span></div>
                             {% endif %}
                             <table class="hit-detail-table"><thead><tr><th>#</th><th>時刻</th><th>G数</th><th>種類</th><th>連</th><th>枚数</th></tr></thead><tbody>
-                            {% for hit in rec.three_days_ago_history_processed %}<tr class="{% if hit.is_tenjou %}tenjou{% elif hit.is_hot_chain %}hot-chain{% elif hit.is_deep %}deep{% endif %}"><td>{{ hit.index }}</td><td>{{ hit.time or '-' }}</td><td class="{% if hit.is_deep %}deep{% elif hit.is_shallow %}shallow{% endif %}">{{ hit.start }}G{% if hit.accumulated_games is defined and hit.accumulated_games != hit.start and hit.accumulated_games > 0 %}<br><small class="acc-games">（累計{{ hit.accumulated_games }}G）</small>{% endif %}</td><td class="{{ hit.type|lower }}">{{ hit.type }}</td><td class="{% if hit.is_hot_chain %}hot{% endif %}">{% if hit.chain_pos is defined and hit.chain_len is defined and hit.chain_len > 1 %}{% if hit.chain_pos == 1 %}{{ hit.chain_len }}連{% else %}↑{% endif %}{% else %}-{% endif %}</td><td>{% if hit.medals > 0 %}{{ '{:,}'.format(hit.medals) }}{% else %}-{% endif %}</td></tr>{% endfor %}
+                            {% for hit in rec.three_days_ago_history_processed %}<tr class="{% if hit.is_tenjou %}tenjou{% elif hit.is_hot_chain %}hot-chain{% elif hit.is_deep %}deep{% endif %}"><td>{{ hit.index }}</td><td>{{ hit.time or '-' }}</td><td class="{% if hit.is_deep %}deep{% elif hit.is_shallow %}shallow{% endif %}">{{ hit.start }}G{% if hit.accumulated_games is defined and hit.accumulated_games != hit.start and hit.accumulated_games > 0 %}<br><small class="acc-games">（累計{{ hit.accumulated_games }}G）</small>{% endif %}</td><td class="{{ hit.type|lower }}">{{ hit.type }}</td><td class="{% if hit.is_hot_chain %}hot{% endif %}">{% if hit.chain_pos is defined and hit.chain_len is defined and hit.chain_len > 1 %}{% if hit.chain_pos == hit.chain_len %}{{ hit.chain_len }}連{% else %}↑{% endif %}{% else %}-{% endif %}</td><td>{% if hit.medals > 0 %}{{ '{:,}'.format(hit.medals) }}{% else %}-{% endif %}</td></tr>{% endfor %}
                             </tbody></table>
                         </div>
                         {% endif %}
@@ -749,9 +750,10 @@
                         {% endif %}
                     </div>
                     <div class="yesterday-stats">
-                        {% if rec.diff_medals is defined and rec.diff_medals != 0 %}
-                        <span class="diff-medals {% if rec.diff_medals > 0 %}plus{% else %}minus{% endif %}">
-                            {{ '{:+,}'.format(rec.diff_medals) }}枚
+                        {% set _dm3 = rec.yesterday_diff_medals|default(rec.diff_medals|default(0)) %}
+                        {% if _dm3 != 0 %}
+                        <span class="diff-medals {% if _dm3 > 0 %}plus{% else %}minus{% endif %}">
+                            {{ '{:+,}'.format(_dm3) }}枚
                         </span>
                         {% endif %}
                         {% if rec.art_count > 0 %}
@@ -763,8 +765,8 @@
                         {% if rec.total_games and rec.total_games > 0 %}
                         <span class="total-games-label">{{ '{:,}'.format(rec.total_games) }}G</span>
                         {% endif %}
-                        {% if rec.total_games and rec.total_games >= 1000 and rec.payout_estimate %}
-                        <span class="setting-badge-sm setting-{{ rec.setting_num|default(0) }}"><small class="payout-label">機械割</small><span class="payout-num">{{ rec.payout_estimate }}%</span>{% if rec.total_games < 2000 %}?{% endif %}</span>
+                        {% if rec.payout_estimate and rec.payout_estimate > 100 %}
+                        <span class="setting-badge-sm setting-{{ rec.setting_num|default(0) }}"><small class="payout-label">機械割</small><span class="payout-num">{{ rec.payout_estimate }}%</span>{% if rec.total_games is defined and rec.total_games < 2000 %}?{% endif %}</span>
                         {% endif %}
                     </div>
                 </a>
@@ -846,10 +848,11 @@
                         {% endif %}
                     </div>
                     {# === 差枚（目立たせる） === #}
-                    {% if rec.diff_medals is defined and rec.diff_medals != 0 %}
+                    {% set _dm2 = rec.yesterday_diff_medals|default(rec.diff_medals|default(0)) %}
+                    {% if _dm2 != 0 %}
                     <div class="yesterday-diff-line">
-                        <span class="diff-medals-lg {% if rec.diff_medals > 0 %}plus{% else %}minus{% endif %}">
-                            {{ '{:+,}'.format(rec.diff_medals) }}枚
+                        <span class="diff-medals-lg {% if _dm2 > 0 %}plus{% else %}minus{% endif %}">
+                            {{ '{:+,}'.format(_dm2) }}枚
                         </span>
                         {% if rec.payout_estimate and rec.payout_estimate > 100 %}
                         <span class="setting-badge-sm setting-{{ rec.setting_num|default(0) }}"><small class="payout-label">機械割</small><span class="payout-num">{{ rec.payout_estimate }}%</span></span>
