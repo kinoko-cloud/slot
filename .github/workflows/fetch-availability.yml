@@ -77,29 +77,18 @@ jobs:
           TIMESTAMP=$(TZ='Asia/Tokyo' date +'%H:%M')
           git commit -m "auto: リアルタイム更新 ${TIMESTAMP}"
           
-          # リトライ付きpush（最大5回）
+          # シンプルなpush戦略: pull --rebase + push（最大5回）
           for i in 1 2 3 4 5; do
             echo "=== Attempt $i ==="
             
-            # 最新を取得
-            git fetch origin main
-            
-            # リベース試行
-            if git rebase origin/main; then
-              echo "Rebase succeeded"
-            else
-              echo "Rebase conflict, resolving..."
-              # コンフリクト時は自動データ（ours）を優先
-              git checkout --ours data/availability.json 2>/dev/null || true
-              find docs/ -name "*.html" -exec git checkout --ours {} \; 2>/dev/null || true
-              find docs/ -name "*.json" -exec git checkout --ours {} \; 2>/dev/null || true
-              git add -A
-              git rebase --continue || {
-                git rebase --abort
-                # abort後はmerge戦略に切り替え
-                git pull origin main --strategy-option=ours || true
-              }
-            fi
+            # 最新を取得してマージ（コンフリクト時はローカル優先）
+            git pull origin main --no-rebase -X ours || {
+              echo "Pull failed, trying reset approach..."
+              git fetch origin main
+              git reset --soft origin/main
+              git add data/availability.json docs/
+              git commit -m "auto: リアルタイム更新 ${TIMESTAMP}" || true
+            }
             
             if git push origin main; then
               echo "Push succeeded (attempt $i)"
