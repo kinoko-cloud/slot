@@ -1892,6 +1892,7 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
 
     consecutive_plus = trend.get('consecutive_plus', 0)
     consecutive_minus = trend.get('consecutive_minus', 0)
+    consecutive_bad = trend.get('consecutive_bad', 0)  # 確率ベースの連続不調日数
     yesterday_art = trend.get('yesterday_art', 0)
     yesterday_rb = trend.get('yesterday_rb', 0)
     yesterday_games = trend.get('yesterday_games', 0)
@@ -2104,13 +2105,15 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
             return f"（SBJ全店舗実績: {mrs['recovered']}/{mrs['total']}回={mrs['rate']:.0%}で翌日回復）"
         return ""
 
-    if consecutive_minus >= 4:
+    # 連続不調は確率ベース（consecutive_bad）を使用
+    # consecutive_minusは差枚ベースなので、確率が良くても不調扱いになる問題があった
+    if consecutive_bad >= 4:
         _r_note = _recovery_note(4)
-        reasons.append(f"🔄 {consecutive_minus}日連続不調 → {next_day_label}入替の可能性大{_r_note}")
-    elif consecutive_minus >= 3:
+        reasons.append(f"🔄 {consecutive_bad}日連続不調 → {next_day_label}入替の可能性大{_r_note}")
+    elif consecutive_bad >= 3:
         _r_note = _recovery_note(3)
-        reasons.append(f"🔄 {consecutive_minus}日連続不調 → そろそろ{next_day_label}入替期待{_r_note}")
-    elif consecutive_minus == 2:
+        reasons.append(f"🔄 {consecutive_bad}日連続不調 → そろそろ{next_day_label}入替期待{_r_note}")
+    elif consecutive_bad == 2:
         _r_note = _recovery_note(2)
         if today_rating >= 4:
             reasons.append(f"🔄 2日連続不調 + {store_name}の{today_weekday}曜は狙い目 → {next_day_label}リセット期待{_r_note}")

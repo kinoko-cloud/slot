@@ -555,6 +555,7 @@ def generate_index(env):
                             'yesterday_diff_medals': y_diff_medals,
                             'estimated_setting': y_setting,
                             'setting_num': y_setting_num,
+                            'payout_estimate': y_si.get('payout_estimate', 100.0) if y_si else 100.0,
                             'predicted_rank': predicted_rank,
                             'predicted_score': predicted_score,
                             'prediction_result': prediction_result,
@@ -656,6 +657,19 @@ def generate_index(env):
     all_recs_to_enrich = list({id(r): r for r in top3 + top3_candidates + yesterday_top10 + today_top10}.values())
     enrich_recs(all_recs_to_enrich)
 
+    # 閉店後/当日データなしの場合、payout_estimateをyesterdayデータから再計算
+    for rec in top3 + top3_candidates + yesterday_top10 + today_top10:
+        if rec.get('payout_estimate', 100.0) == 100.0 or rec.get('art_count', 0) == 0:
+            y_art = rec.get('yesterday_art', 0)
+            y_games = rec.get('yesterday_games', 0)
+            if y_art > 0 and y_games > 0:
+                _mk = _get_machine_key(rec.get('store_key', ''))
+                y_profit = calculate_expected_profit(y_games, y_art, _mk)
+                y_si = y_profit.get('setting_info', {})
+                rec['payout_estimate'] = y_si.get('payout_estimate', 100.0)
+                rec['setting_num'] = y_si.get('setting_num', 0)
+                rec['estimated_setting'] = y_si.get('estimated_setting', '')
+    
     # TOP3 + 全S/A候補 + 爆発台の過去3日分+当日の当たり履歴を加工
     for rec in top3 + top3_candidates + yesterday_top10 + today_top10:
         _mk = _get_machine_key(rec.get('store_key', ''))
