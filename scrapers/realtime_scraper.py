@@ -262,11 +262,48 @@ def scrape_daidata_current(session_or_page, hall_id: str, units: list, debug_inf
                 if alt_match:
                     data['total_start'] = int(alt_match.group(1))
 
-            # 履歴は省略（重要なのはART回数とスタート数）
-            data['history'] = []
+            # 当日の全当たり履歴を取得
+            history = []
+            try:
+                if HAS_BS4:
+                    text_content = BeautifulSoup(text, 'html.parser').get_text()
+                else:
+                    text_content = re.sub(r'<[^>]+>', ' ', text)
+                # パターン: 時刻 スタート 出メダル タイプ
+                hist_matches = re.findall(
+                    r'(\d{1,2}:\d{2})\s+(\d+)\s+(\d+)\s+(ART|BB|RB|AT|REG)',
+                    text_content
+                )
+                for i, m in enumerate(hist_matches):
+                    history.append({
+                        'hit_num': i + 1,
+                        'time': m[0],
+                        'start': int(m[1]),
+                        'medals': int(m[2]),
+                        'type': m[3],
+                    })
+            except Exception as e:
+                print(f"    履歴取得エラー: {e}")
+            
+            data['history'] = history
+            
+            # 最大枚数・最大連チャンを計算
+            if history:
+                data['max_medals'] = max(h['medals'] for h in history) if history else 0
+                # 連チャン計算（70G以内）
+                max_rensa = 1
+                current_rensa = 1
+                sorted_hist = sorted(history, key=lambda h: h['time'])
+                for j in range(1, len(sorted_hist)):
+                    if sorted_hist[j]['start'] <= 70:
+                        current_rensa += 1
+                        max_rensa = max(max_rensa, current_rensa)
+                    else:
+                        current_rensa = 1
+                data['max_rensa'] = max_rensa
 
             results.append(data)
-            print(f"  台{unit_id}: ART={data.get('art', 0)}, G数={data.get('total_start', 0)}")
+            print(f"  台{unit_id}: ART={data.get('art', 0)}, G数={data.get('total_start', 0)}, 履歴={len(history)}件")
 
         except Exception as e:
             print(f"  台{unit_id}: エラー - {e}")
