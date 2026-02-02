@@ -184,3 +184,29 @@ git add -A && git commit -m "説明" && git push
 - configにない台番号でデータが取れた → 増台の可能性
 - 全台のデータが取れない → 機種撤去 or サイト障害
 - **検出後のRSさんへの通知が未実装**（要対応）
+
+## オンデマンド取得（ページ閲覧時のリアルタイムデータ取得）
+
+### 仕組み（実装済み）
+```
+閲覧者がページ開く
+  → realtime.js が PythonAnywhere API を呼ぶ
+  → /api/scrape/<store_key> でバックグラウンドスクレイピング開始
+  → recommend.html でプログレスバー表示（「データ取得中」）
+  → /api/scrape_status/<store_key> でポーリング（1秒間隔）
+  → 完了 → 最新データでUI更新 or location.reload()
+  → 以後 3-5分間隔で自動更新
+```
+
+### 関連ファイル
+- `web/static/realtime.js` - クライアント側リアルタイム取得
+- `web/app.py` - Flask APIサーバー（/api/scrape, /api/scrape_status）
+- `scrapers/availability_checker.py` - データ取得ロジック
+
+### 動作確認
+- PythonAnywhere API: https://autogmail.pythonanywhere.com
+- 確認コマンド: `curl "https://autogmail.pythonanywhere.com/api/scrape_status/shibuya_espass_sbj"`
+
+### 注意
+- WSLが停止していてもPythonAnywhereで動作する
+- ただし蓄積データ（history）は別途GitHub Actionsで更新が必要
