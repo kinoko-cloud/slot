@@ -817,21 +817,10 @@ def generate_index(env):
     yesterday_str = format_date_with_weekday(yesterday)
 
     # 「本日」「前日」を日付付きに
-    # データの日付はavailability.jsonのfetched_atから取得
-    try:
-        from scrapers.availability_checker import get_daidata_availability
-        avail_data = get_daidata_availability()
-        fetched_at = avail_data.get('fetched_at', '')
-        if fetched_at:
-            data_dt = datetime.fromisoformat(fetched_at)
-            data_date_str = format_date_with_weekday(data_dt)
-            prev_date_str = format_date_with_weekday(data_dt - timedelta(days=1))
-        else:
-            data_date_str = format_date_with_weekday(now)
-            prev_date_str = format_date_with_weekday(yesterday)
-    except:
-        data_date_str = format_date_with_weekday(now)
-        prev_date_str = format_date_with_weekday(yesterday)
+    # データの日付は常に「前日」を表示（データの有無に関係なく）
+    # 今日が2/2なら「2/1の的中率」「2/1の爆発台」と表示
+    data_date_str = format_date_with_weekday(yesterday)  # 前日
+    prev_date_str = format_date_with_weekday(yesterday - timedelta(days=1))  # 前々日
 
     # 機種別的中率（ヒーロー表示用: verifyデータから取得）
     accuracy_hero = []
@@ -1507,18 +1496,11 @@ def _get_latest_valid_verify():
 
 
 def _get_verify_date_str():
-    """バックテスト結果の実績日を取得"""
-    data = _get_latest_valid_verify()
-    if data:
-        try:
-            d = data.get('date', '')
-            if d:
-                dt = datetime.strptime(d, '%Y-%m-%d')
-                weekdays = ['月','火','水','木','金','土','日']
-                return f'{dt.month}/{dt.day}({weekdays[dt.weekday()]})'
-        except:
-            pass
-    return ''
+    """的中率の日付を取得（常に前日を表示）"""
+    # データの有無に関係なく、常に「前日」を表示
+    yesterday = datetime.now() - timedelta(days=1)
+    weekdays = ['月','火','水','木','金','土','日']
+    return f'{yesterday.month}/{yesterday.day}({weekdays[yesterday.weekday()]})'
 
 def _get_verify_accuracy():
     """verifyページと完全に同じ的中率を返す（verify結果JSONから直接読む）"""
