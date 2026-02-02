@@ -52,29 +52,35 @@ DAIDATA_STORES = {
         'units': ['3095', '3096', '3097'],
     },
     # === 北斗転生2 (detail page only, model_encoded不要) ===
+    # Note: 北斗転生2は台数が多くCI環境でタイムアウトするため、
+    # 環境変数 SKIP_HOKUTO=1 でスキップ可能
     'shibuya_espass_hokuto': {
         'hall_id': '100860',
         'name': 'エスパス渋谷新館(北斗)',
         'model_encoded': None,  # detail pageのみで取得
         'units': [str(i) for i in range(2046, 2068)] + [str(i) for i in range(2233, 2241)],
+        'skip_on_ci': True,  # CI環境ではスキップ
     },
     'shibuya_honkan_espass_hokuto': {
         'hall_id': '100930',
         'name': 'エスパス渋谷本館(北斗)',
         'model_encoded': None,
         'units': [str(i) for i in range(2013, 2020)] + [str(i) for i in range(2030, 2038)],
+        'skip_on_ci': True,
     },
     'shinjuku_espass_hokuto': {
         'hall_id': '100949',
         'name': 'エスパス歌舞伎町(北斗)',
         'model_encoded': None,
         'units': [str(i) for i in range(1, 38)] + [str(i) for i in range(125, 129)],
+        'skip_on_ci': True,
     },
     'akiba_espass_hokuto': {
         'hall_id': '100928',
         'name': 'エスパス秋葉原(北斗)',
         'model_encoded': None,
         'units': [str(i) for i in range(2011, 2020)] + [str(i) for i in range(2056, 2069)],
+        'skip_on_ci': True,
     },
 }
 
@@ -94,6 +100,7 @@ PAPIMO_STORES = {
         'name': 'アイランド秋葉原(北斗)',
         'machine_id': '225110007',
         'units': [f'{i:04d}' for i in range(731, 739)] + [f'{i:04d}' for i in range(750, 758)],
+        'skip_on_ci': True,  # CI環境ではスキップ
     },
 }
 
@@ -488,8 +495,17 @@ def main():
             except Exception as e:
                 print(f"daidata規約同意エラー（続行）: {hall_id} - {e}")
 
+        # CI環境判定（Circle CI / GitHub Actions）
+        is_ci = os.environ.get('CI') or os.environ.get('CIRCLECI') or os.environ.get('GITHUB_ACTIONS')
+        if is_ci:
+            print("\n[CI MODE] 北斗転生2はスキップします（SBJのみ取得）")
+
         # ===== daidata店舗 =====
         for store_key, config in DAIDATA_STORES.items():
+            # CI環境でskip_on_ci=Trueの店舗はスキップ
+            if is_ci and config.get('skip_on_ci'):
+                print(f"\n[daidata] Skipping {config['name']} (CI mode)")
+                continue
             print(f"\n[daidata] Fetching {config['name']}...")
 
             # model_encodedがある場合のみ一覧ページで空き状況を取得
@@ -540,6 +556,10 @@ def main():
 
         # ===== papimo.jp店舗 =====
         for store_key, config in PAPIMO_STORES.items():
+            # CI環境でskip_on_ci=Trueの店舗はスキップ
+            if is_ci and config.get('skip_on_ci'):
+                print(f"\n[papimo] Skipping {config['name']} (CI mode)")
+                continue
             print(f"\n[papimo] Fetching {config['name']}...")
 
             # 空き状況を取得
