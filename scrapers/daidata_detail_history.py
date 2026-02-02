@@ -70,9 +70,24 @@ def get_all_history(hall_id: str = "100860", unit_id: str = "3011", hall_name: s
                 print(f"機種: {result['machine_name']}")
                 # 期待する機種名と照合（verify_keywordsは文字列またはリスト）
                 if expected_machine:
+                    # キーワードマッピング（短縮名 → 実際の機種名キーワード）
+                    KEYWORD_MAP = {
+                        'sbj': ['ブラックジャック', 'ﾌﾞﾗｯｸｼﾞｬｯｸ'],
+                        'hokuto': ['北斗', 'ホクト'],
+                        'hokuto_tensei2': ['北斗', '転生'],
+                    }
                     keywords = expected_machine if isinstance(expected_machine, list) else [expected_machine]
+                    # マッピングを適用
+                    expanded = []
+                    for kw in keywords:
+                        if kw in KEYWORD_MAP:
+                            expanded.extend(KEYWORD_MAP[kw])
+                        else:
+                            expanded.append(kw)
                     actual = result['machine_name']
-                    missing = [kw for kw in keywords if kw not in actual]
+                    # いずれかのキーワードが含まれていればOK
+                    matched = any(kw in actual for kw in expanded)
+                    missing = [] if matched else expanded
                     if missing:
                         print(f"  ⚠️ 機種不一致! 台{unit_id}: 期待キーワード={keywords}, 実際={actual}, 不足={missing}")
                         print(f"  → 台番号が別機種に変わった可能性。スキップします。")
