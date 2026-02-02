@@ -1,5 +1,5 @@
 {# === 共通マクロをインポート === #}
-{% from '_macros.html' import hit_table, day_row, reasons_list, unit_card_top, unit_card_explosion, unit_card_list %}
+{% from '_macros.html' import hit_table, day_row, reasons_list, unit_card_top, unit_card_explosion, unit_card_list, unit_store_label %}
 
 {# === 直近データ展開マクロ === #}
 {# day_hist: _process_history_for_verify()で加工済みデータ（chain_pos, is_hot_chain, is_tenjou, accumulated_games等付き） #}
@@ -152,8 +152,7 @@
                         <span class="rank-badge" style="background-color: {{ rank_color(rec.final_rank) }}">{{ rec.final_rank }}</span>
                     </div>
                     <div class="unit-store">
-                        <span class="unit-id-sub"><span class="unit-id-num-lg">{{ rec.unit_id|pad_id }}</span><span class="unit-id-ban">番</span></span>
-                        <span class="store-link-right">{{ rec.store_name }}</span>
+                        {{ unit_store_label(rec.unit_id, rec.store_name, 'large') }}
                     </div>
                     {# === 1. 推奨理由（最重要） === #}
                     <div class="reasons-full">
@@ -204,8 +203,7 @@
                         <span class="rank-badge" style="background-color: {{ rank_color(rec.final_rank) }}">{{ rec.final_rank }}</span>
                     </div>
                     <div class="unit-store">
-                        <span class="unit-id-sub"><span class="unit-id-num-lg">{{ rec.unit_id|pad_id }}</span><span class="unit-id-ban">番</span></span>
-                        <span class="store-link-right">{{ rec.store_name }}</span>
+                        {{ unit_store_label(rec.unit_id, rec.store_name, 'large') }}
                     </div>
                     <div class="reasons-full">
                         {{ reasons_list(rec.reasons) }}
@@ -254,8 +252,7 @@
                         <span class="machine-name-sm">{{ rec.machine_name }}</span>
                     </div>
                     <div class="yesterday-sub-header">
-                        <span class="unit-id-sm">{{ rec.unit_id|pad_id }}番</span>
-                        <span class="store-name-sm">{{ rec.store_name }}</span>
+                        {{ unit_store_label(rec.unit_id, rec.store_name, 'small') }}
                         {% set pred_good = rec.predicted_rank in ('S', 'A') %}
                         {% set result_good = rec.prediction_result in ('hit', 'missed') %}
                         {% if pred_good and result_good %}
@@ -414,7 +411,7 @@
                         <span class="rank-badge" style="background-color: {{ rank_color(rec.final_rank) }}">{{ rec.final_rank }}</span>
                     </div>
                     <div class="unit-store">
-                        <span class="unit-id-sub"><span class="unit-id-num">{{ rec.unit_id|pad_id }}</span><span class="unit-id-ban">番</span></span> <span class="store-link">{{ rec.store_name }}</span>
+                        {{ unit_store_label(rec.unit_id, rec.store_name) }}
                         {% if is_open %}
                             {% if rec.availability == '空き' %}
                             <span class="top3-avail empty">空き</span>
@@ -571,8 +568,7 @@
                         <span class="rank-badge" style="background-color: {{ rank_color(rec.final_rank) }}">{{ rec.final_rank }}</span>
                     </div>
                     <div class="unit-store">
-                        <span class="unit-id-sub"><span class="unit-id-num-lg">{{ rec.unit_id|pad_id }}</span><span class="unit-id-ban">番</span></span>
-                        <span class="store-link-right">{{ rec.store_name }}</span>
+                        {{ unit_store_label(rec.unit_id, rec.store_name, 'large') }}
                     </div>
                     <div class="reasons-full">
                         {{ reasons_list(rec.reasons) }}
@@ -621,8 +617,7 @@
                         <a href="{{ url_for('recommend', store_key=rec.store_key) }}" class="sa-rec-card rank-{{ rec.final_rank|lower }}" data-machine="{{ rec.machine_key }}" data-store="{{ rec.store_key }}" style="text-decoration: none; color: inherit;">
                             <div class="sa-rec-header">
                                 <span class="machine-icon-sm">{{ rec.machine_icon }}</span>
-                                <span class="sa-rec-unit">{{ rec.unit_id|pad_id }}番</span>
-                                <span class="sa-rec-store">{{ rec.store_name }}</span>
+                                {{ unit_store_label(rec.unit_id, rec.store_name, 'small') }}
                                 <span class="rank-badge-xs" style="background-color: {{ rank_color(rec.final_rank) }}">{{ rec.final_rank }}</span>
                             </div>
                             <div class="sa-rec-data">
@@ -658,8 +653,7 @@
                         <span class="machine-name-sm">{{ rec.machine_name }}</span>
                     </div>
                     <div class="yesterday-sub-header">
-                        <span class="unit-id-sm">{{ rec.unit_id|pad_id }}番</span>
-                        <span class="store-name-sm">{{ rec.store_name }}</span>
+                        {{ unit_store_label(rec.unit_id, rec.store_name, 'small') }}
                         {% if rec.availability == '空き' %}
                         <span class="avail-sm empty">空</span>
                         {% elif rec.availability == '遊技中' %}
@@ -745,8 +739,7 @@
                         <span class="machine-name-sm">{{ rec.machine_name }}</span>
                     </div>
                     <div class="yesterday-sub-header">
-                        <span class="unit-id-sm">{{ rec.unit_id|pad_id }}番</span>
-                        <span class="store-name-sm">{{ rec.store_name }}</span>
+                        {{ unit_store_label(rec.unit_id, rec.store_name, 'small') }}
                         {% set pred_good = rec.predicted_rank in ('S', 'A') %}
                         {% set result_good = rec.prediction_result in ('hit', 'missed') %}
                         {% if pred_good and result_good %}

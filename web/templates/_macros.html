@@ -1,5 +1,20 @@
 {# ==================== 共通マクロ集 ==================== #}
 
+{# === 台番号+店名ラベル（統一形式） === #}
+{# 順序: 台番号 → 店名（台番号が4桁固定で揃うため） #}
+{% macro unit_store_label(unit_id, store_name, size='normal') %}
+{% if size == 'large' %}
+<span class="unit-id-sub"><span class="unit-id-num-lg">{{ unit_id|pad_id }}</span><span class="unit-id-ban">番</span></span>
+<span class="store-link-right">{{ store_name }}</span>
+{% elif size == 'small' %}
+<span class="unit-id-sm">{{ unit_id|pad_id }}番</span>
+<span class="store-name-sm">{{ store_name }}</span>
+{% else %}
+<span class="unit-id-sub"><span class="unit-id-num">{{ unit_id|pad_id }}</span><span class="unit-id-ban">番</span></span>
+<span class="store-link">{{ store_name }}</span>
+{% endif %}
+{% endmacro %}
+
 {# === 当たり履歴テーブル（インライン/展開可能） === #}
 {% macro hit_table(processed_hist, summary=none, inline=false) %}
 {% if processed_hist %}
