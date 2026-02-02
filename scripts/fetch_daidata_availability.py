@@ -99,8 +99,9 @@ PAPIMO_STORES = {
         'hall_id': '00031715',
         'name': 'アイランド秋葉原(北斗)',
         'machine_id': '225110007',
-        'units': [f'{i:04d}' for i in range(731, 739)] + [f'{i:04d}' for i in range(750, 758)],
-        'skip_on_ci': True,  # CI環境ではスキップ
+        # 2026-02-02更新: 0731-0738,0750-0757 → 0811-0818,0820-0825 (16台→14台に減台)
+        'units': [f'{i:04d}' for i in range(811, 819)] + [f'{i:04d}' for i in range(820, 826)],
+        'list_url': 'https://papimo.jp/h/00031715/hit/index_sort/225110007/1-20-1290529/83/1/0/0',
     },
 }
 
