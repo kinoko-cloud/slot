@@ -239,8 +239,8 @@ def analyze_setting_change_cycle(unit_history: dict, machine_key: str = 'sbj') -
     # 好調/不調のシーケンスを作成
     sequence = []
     for d in sorted_days:
-        prob = d.get('prob', 0)
-        if prob > 0:
+        prob = d.get('prob') or 0
+        if prob and prob > 0:
             sequence.append(prob <= good_prob)  # True=好調, False=不調
 
     if len(sequence) < 3:
