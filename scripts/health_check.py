@@ -232,7 +232,7 @@ def auto_repair(results):
             result = subprocess.run(
                 ['python3', str(PROJECT_ROOT / 'scripts' / 'fetch_daidata_availability.py')],
                 cwd=str(PROJECT_ROOT),
-                timeout=120,
+                timeout=300,  # 5分
                 capture_output=True,
                 text=True
             )
