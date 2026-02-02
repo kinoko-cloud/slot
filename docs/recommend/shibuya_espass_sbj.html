@@ -9,7 +9,7 @@
     <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
     <meta name="googlebot" content="noindex, nofollow">
     <title>エスパス日拓渋谷新館</title>
-    <link rel="stylesheet" href="/static/style.css?v=20260202215024">
+    <link rel="stylesheet" href="/static/style.css?v=20260202130232">
 </head>
 <body data-page-type="recommend" data-store-key="shibuya_espass_sbj">
     <div class="container">
@@ -27,7 +27,7 @@
         
     </div>
     <div class="top-bar-right">
-        <span class="version-info" id="build-ver" title="ビルド時刻">v0202_21:50</span>
+        <span class="version-info" id="build-ver" title="ビルド時刻">v0202_22:02</span>
         
     </div>
 </div>
@@ -44,16 +44,20 @@
             <div class="update-info">
                 
                 <span class="data-source">
-                    データ取得: <span id="update-time">13:38</span>
+                    データ取得: <span id="update-time">21:58</span>
                 </span>
                 <span class="cache-badge github">GITHUB</span>
-                
-                <div class="stale-warning">データが80時間12分前のものです</div>
                 
                 
             </div>
 
             <!-- 空き状況サマリ -->
+            
+            <div class="availability-summary">
+                <span class="avail-empty" onclick="filterUnits('empty')">空き 3台</span>
+                <span class="avail-playing" onclick="filterUnits('playing')">遊技中 0台</span>
+                <span class="avail-all" onclick="filterUnits('all')">全て</span>
+            </div>
             
 
             <div class="action-buttons">
@@ -119,13 +123,15 @@
             <section class="recommendations top">
                 <h2>推奨台</h2>
                 
-                <details class="unit-card rank-s " data-availability="unknown">
+                <details class="unit-card rank-s avail-card-empty" data-availability="空き">
                     <summary class="unit-card-summary">
                     <!-- メインヘッダー: 台番号 + 機種名 + 空き状況 + ランク -->
                     <div class="unit-main-header">
                         <span class="unit-id-large">3011番台</span>
                         <span class="machine-name-sm">スーパーブラックジャック</span>
                         
+                            
+                            <span class="avail-badge-lg empty">空き</span>
                             
                         
                         <span class="rank-badge-lg" style="background-color: #ff6b6b">S</span>
@@ -2470,6 +2476,8 @@
                             
                             <div class="reason-item">🔥 直近の推移: 中→小→大→大→中（大小交互 → 本日は大爆発の可能性）</div>
                             
+                            <div class="reason-item">🔥 本日17連の爆発あり</div>
+                            
                             <div class="reason-item">💰 好調日の平均ART 41回（1/84）→ 打てば出やすい台</div>
                             
                             <div class="reason-item">📊 14日間中10日好調（好調率71%）→ 高機械割が入りやすい台</div>
@@ -2479,13 +2487,15 @@
                     </div>
                 </details>
                 
-                <details class="unit-card rank-s " data-availability="unknown">
+                <details class="unit-card rank-s avail-card-empty" data-availability="空き">
                     <summary class="unit-card-summary">
                     <!-- メインヘッダー: 台番号 + 機種名 + 空き状況 + ランク -->
                     <div class="unit-main-header">
                         <span class="unit-id-large">3012番台</span>
                         <span class="machine-name-sm">スーパーブラックジャック</span>
                         
+                            
+                            <span class="avail-badge-lg empty">空き</span>
                             
                         
                         <span class="rank-badge-lg" style="background-color: #ff6b6b">S</span>
@@ -4869,9 +4879,11 @@
                             
                             <div class="reason-item">🔥 直近の推移: 小→小→小→大→小（前日は低めだが高機械割の範囲内 → 大爆発に期待）</div>
                             
-                            <div class="reason-item">💰 好調日の平均ART 42回（1/73）→ 打てば出やすい台</div>
+                            <div class="reason-item">🔥 本日天井到達1回 → 低機械割の可能性に注意</div>
                             
-                            <div class="reason-item">📊 14日間中11日好調（好調率79%）→ 高機械割が入りやすい台</div>
+                            <div class="reason-item">🔥 本日11連の爆発あり</div>
+                            
+                            <div class="reason-item">💰 好調日の平均ART 42回（1/73）→ 打てば出やすい台</div>
                             
                         </div>
                         
@@ -4958,6 +4970,8 @@
         <div class="v2-detail-reasons">
             
             <div class="reason-item">🔁 ほぼ毎日好調になる台</div>
+            
+            <div class="reason-item">🔥 本日46連の爆発あり</div>
             
             <div class="reason-item">💰 好調日の平均ART 56回（1/75）→ 打てば出やすい台</div>
             
