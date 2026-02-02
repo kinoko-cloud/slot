@@ -1,5 +1,25 @@
 # スロットサイト 運用ガイド
 
+## CI/CD分散構成
+
+```
+GitHub Actions (kinoko-cloud)
+  └─ DAIDATA（エスパス各店）
+     - 渋谷エスパス
+     - 新宿エスパス
+     - 秋葉原エスパス
+     - 西武新宿エスパス
+
+Circle CI (twiakaid-hash)
+  └─ PAPIMO（アイランド系）
+     - アイランド秋葉原
+```
+
+**メリット:**
+- サイト負荷分散（DAIDATA/PAPIMO別々）
+- アカウント負荷分散（GitHub/CircleCI別々）
+- 障害時の冗長性
+
 ## データ取得フロー
 
 ```
