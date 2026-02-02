@@ -324,6 +324,17 @@ def main():
         except Exception as e:
             print(f'⚠ アナスロ取得エラー: {e}')
 
+        # 傾向分析（毎日更新）
+        print('\n' + '=' * 60)
+        print('傾向分析（グローバル・機種別・店舗別）')
+        print('=' * 60)
+        try:
+            from scripts.analyze_trends import analyze_and_save
+            analyze_and_save()
+            print('傾向分析完了')
+        except Exception as e:
+            print(f'⚠ 傾向分析エラー: {e}')
+
 
 if __name__ == '__main__':
     main()
