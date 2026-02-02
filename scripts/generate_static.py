@@ -670,6 +670,64 @@ def generate_index(env):
                 rec['setting_num'] = y_si.get('setting_num', 0)
                 rec['estimated_setting'] = y_si.get('estimated_setting', '')
     
+    # 日付を固定化（前日、2日前、3日前、...7日前）
+    # データの日付が正しくなければクリア
+    fixed_dates = [(now - timedelta(days=i)).strftime('%Y-%m-%d') for i in range(1, 8)]
+    fixed_yesterday = fixed_dates[0]
+    fixed_day_before = fixed_dates[1]
+    fixed_three_days = fixed_dates[2]
+    
+    for rec in top3 + top3_candidates + yesterday_top10 + today_top10:
+        # 前日データのチェック
+        if rec.get('yesterday_date', '') != fixed_yesterday:
+            rec['yesterday_art'] = 0
+            rec['yesterday_rb'] = 0
+            rec['yesterday_games'] = 0
+            rec['yesterday_diff_medals'] = 0
+            rec['yesterday_max_rensa'] = 0
+            rec['yesterday_max_medals'] = 0
+            rec['yesterday_history'] = []
+        rec['yesterday_date'] = fixed_yesterday
+        
+        # 2日前データのチェック
+        if rec.get('day_before_date', '') != fixed_day_before:
+            rec['day_before_art'] = 0
+            rec['day_before_rb'] = 0
+            rec['day_before_games'] = 0
+            rec['day_before_diff_medals'] = 0
+            rec['day_before_max_rensa'] = 0
+            rec['day_before_max_medals'] = 0
+            rec['day_before_history'] = []
+        rec['day_before_date'] = fixed_day_before
+        
+        # 3日前データのチェック
+        if rec.get('three_days_ago_date', '') != fixed_three_days:
+            rec['three_days_ago_art'] = 0
+            rec['three_days_ago_rb'] = 0
+            rec['three_days_ago_games'] = 0
+            rec['three_days_ago_diff_medals'] = 0
+            rec['three_days_ago_max_rensa'] = 0
+            rec['three_days_ago_max_medals'] = 0
+            rec['three_days_ago_history'] = []
+        rec['three_days_ago_date'] = fixed_three_days
+        
+        # recent_daysも日付固定化
+        if rec.get('recent_days'):
+            new_recent_days = []
+            for i, fixed_date in enumerate(fixed_dates[:7]):
+                # 該当日付のデータを探す
+                matching_day = None
+                for day in rec.get('recent_days', []):
+                    if day.get('date') == fixed_date:
+                        matching_day = day
+                        break
+                if matching_day:
+                    new_recent_days.append(matching_day)
+                else:
+                    # データなしの場合は空エントリ
+                    new_recent_days.append({'date': fixed_date, 'art': 0, 'games': 0})
+            rec['recent_days'] = new_recent_days
+
     # TOP3 + 全S/A候補 + 爆発台の過去3日分+当日の当たり履歴を加工
     for rec in top3 + top3_candidates + yesterday_top10 + today_top10:
         _mk = _get_machine_key(rec.get('store_key', ''))
