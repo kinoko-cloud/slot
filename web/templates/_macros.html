@@ -1,5 +1,19 @@
 {# ==================== 共通マクロ集 ==================== #}
 
+{# === データ状況バッジ（統一形式） === #}
+{# status: 'unit_renumbered' | 'new_unit' | 'data_missing' | 'data_stopped' #}
+{% macro data_status_badge(status, detail='') %}
+{% if status == 'unit_renumbered' %}
+<span class="data-status-badge renumbered">⚠️ 台番号変更のため予測精度低{% if detail %}（{{ detail }}）{% endif %}</span>
+{% elif status == 'new_unit' %}
+<span class="data-status-badge new-unit">🆕 新規台{% if detail %}（{{ detail }}）{% endif %}</span>
+{% elif status == 'data_missing' %}
+<span class="data-status-badge missing">⚠️ 本日データ未取得</span>
+{% elif status == 'data_stopped' %}
+<span class="data-status-badge stopped">⚠️ データ取得停止中{% if detail %}（最終: {{ detail }}）{% endif %}</span>
+{% endif %}
+{% endmacro %}
+
 {# === 台番号+店名ラベル（統一形式） === #}
 {# 順序: 台番号 → 店名（台番号が4桁固定で揃うため） #}
 {% macro unit_store_label(unit_id, store_name, size='normal') %}

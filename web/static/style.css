@@ -6400,3 +6400,29 @@ details.unit-card[open] .expand-icon {
 details.unit-card .unit-details {
     display: block;
 }
+
+/* === データ状況バッジ === */
+.data-status-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    font-weight: bold;
+    margin-left: 8px;
+}
+.data-status-badge.renumbered {
+    background: #f39c12;
+    color: #000;
+}
+.data-status-badge.new-unit {
+    background: #3498db;
+    color: #fff;
+}
+.data-status-badge.missing {
+    background: #e74c3c;
+    color: #fff;
+}
+.data-status-badge.stopped {
+    background: #95a5a6;
+    color: #fff;
+}
