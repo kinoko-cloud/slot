@@ -21,9 +21,9 @@
             <div class="update-info">全店舗総合ランキング ({{ total_count }}台)</div>
             <div class="mode-line">
                 {% if night_mode %}
-                <div class="mode-badge tomorrow">🌙 明日のおすすめ予想</div>
+                <div class="mode-badge tomorrow">🌙 {{ next_day_prefix }}のおすすめ予想</div>
                 {% else %}
-                <div class="mode-badge before-open">🌙 営業前</div>
+                <div class="mode-badge before-open">🌙 {{ next_day_prefix }}のおすすめ予想</div>
                 {% endif %}
                 <span class="current-time" id="current-time"></span>
             </div>

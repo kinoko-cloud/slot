@@ -177,7 +177,7 @@ STORES = {
         'short_name': 'アイランド秋葉原',
         'hall_id': None,
         'machine': 'hokuto_tensei2',
-        'units': [f'{i:04d}' for i in range(731, 739)] + [f'{i:04d}' for i in range(750, 758)],  # 0731-0738, 0750-0757
+        'units': [f'{i:04d}' for i in range(811, 826)],  # 0811-0825 (2026-02-02台番号変更)
         'data_source': 'papimo',
     },
 }

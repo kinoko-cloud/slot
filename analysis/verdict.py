@@ -60,8 +60,8 @@ def get_result_level(prob: float, diff_medals: int, machine_key: str,
         return 'nodata'
 
     th = RESULT_THRESHOLDS.get(machine_key, RESULT_THRESHOLDS['sbj'])
-    has_diff = diff_medals != 0
-    has_max = max_medals > 0
+    has_diff = diff_medals is not None and diff_medals != 0
+    has_max = max_medals is not None and max_medals > 0
 
     # 出玉指標: 差枚 OR 最大枚数のどちらかを満たせばOK
     def _output_check(excellent_th, good_th):

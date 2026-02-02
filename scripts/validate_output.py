@@ -272,7 +272,7 @@ def _validate_index(content, expected_mode, expected_verify_dt, expected_rec_dt,
                     graph_date_m = re.search(r'(\d{4}-\d{2}-\d{2})\s*差枚推移', card)
                     if graph_date_m:
                         graph_date = graph_date_m.group(1)
-                        expected_graph_date = expected_verify_dt.strftime('%Y-%m-%d') if expected_verify_dt else None
+                        expected_graph_date = expected_verify_dt if expected_verify_dt else None
                         if expected_graph_date and graph_date < expected_graph_date:
                             card_issues.append(f'グラフ日付が古い({graph_date}、期待={expected_graph_date})')
 

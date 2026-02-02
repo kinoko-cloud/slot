@@ -1083,6 +1083,17 @@ def is_night_mode():
     return now.hour > 22 or (now.hour == 22 and now.minute >= 45)
 
 
+def get_next_day_prefix():
+    """次の営業日の表記（本日/明日）を返す"""
+    now = datetime.now(JST)
+    if now.hour >= 22 and now.minute >= 45:
+        # 22:45〜23:59 → 「明日」
+        return '明日'
+    else:
+        # 0:00〜22:44 → 「本日」
+        return '本日'
+
+
 def generate_ranking_pages(env):
     """機種別総合ランキングページを生成"""
     print("Generating ranking pages...")
@@ -1140,6 +1151,7 @@ def generate_ranking_pages(env):
         top_recs = [r for r in all_recommendations if r['final_rank'] in ('S', 'A') and not r['is_running']][:10]
         other_recs = [r for r in all_recommendations if r not in top_recs][:20]
 
+        next_day_prefix = get_next_day_prefix()
         html = template.render(
             machine=machine,
             machine_key=machine_key,
@@ -1147,6 +1159,7 @@ def generate_ranking_pages(env):
             other_recs=other_recs,
             total_count=len(all_recommendations),
             night_mode=night_mode,
+            next_day_prefix=next_day_prefix,
             tomorrow_str=tomorrow_str,
             data_date_str=data_date_str,
             prev_date_str=prev_date_str,
