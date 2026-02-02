@@ -113,6 +113,32 @@ def check_history_freshness():
             'all_stores': results
         }
 
+def check_unit_changes():
+    """台変動チェック（増台/減台/台移動/撤去）"""
+    try:
+        import subprocess
+        result = subprocess.run(
+            ['python3', str(PROJECT_ROOT / 'scripts' / 'verify_units.py')],
+            cwd=str(PROJECT_ROOT),
+            capture_output=True,
+            text=True,
+            timeout=60
+        )
+        output = result.stdout + result.stderr
+        
+        if '異常なし' in output:
+            return {'status': 'ok', 'message': '台番号の異常なし'}
+        elif '増台' in output or '減台' in output or '撤去' in output or '台移動' in output:
+            return {
+                'status': 'error',
+                'message': '台変動を検知！',
+                'details': output[:500]
+            }
+        else:
+            return {'status': 'warning', 'message': f'不明な出力: {output[:200]}'}
+    except Exception as e:
+        return {'status': 'warning', 'message': f'台変動チェック失敗: {e}'}
+
 def check_github_actions():
     """GitHub Actionsの最新実行状態チェック"""
     import urllib.request
@@ -171,6 +197,7 @@ def run_all_checks():
     # 各チェック実行
     results['checks']['availability'] = check_availability_freshness()
     results['checks']['history'] = check_history_freshness()
+    results['checks']['unit_changes'] = check_unit_changes()
     results['checks']['github_actions'] = check_github_actions()
     
     # 全体ステータス判定
