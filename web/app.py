@@ -903,38 +903,113 @@ def api_refresh(store_key: str):
     })
 
 
-def run_scraping(store_key: str):
-    """バックグラウンドでデータを取得（GitHub JSON優先）"""
+def run_scraping(store_key: str, max_retries: int = 3):
+    """バックグラウンドでデータを取得（GitHub JSON優先、リトライ＆フォールバック対応）"""
+    import logging
+    import time
+    
     SCRAPING_STATUS[store_key] = {'status': 'running', 'started_at': datetime.now()}
+    last_error = None
+    
+    for attempt in range(max_retries):
+        try:
+            # まずGitHubからリアルタイムデータを試す
+            realtime_data = get_realtime_data(store_key)
+
+            if realtime_data and realtime_data.get('units'):
+                REALTIME_CACHE[store_key] = {
+                    'data': realtime_data,
+                    'fetched_at': datetime.now(),
+                    'source': 'github',
+                }
+                SCRAPING_STATUS[store_key] = {'status': 'completed', 'completed_at': datetime.now(), 'source': 'github'}
+                return
+
+            # GitHubにデータがない場合は直接スクレイピングを試みる
+            from scrapers.realtime_scraper import scrape_realtime
+            results = scrape_realtime(store_key)
+
+            if store_key in results:
+                REALTIME_CACHE[store_key] = {
+                    'data': results[store_key],
+                    'fetched_at': datetime.now(),
+                    'source': 'direct',
+                }
+                SCRAPING_STATUS[store_key] = {'status': 'completed', 'completed_at': datetime.now(), 'source': 'direct'}
+                return
+            else:
+                last_error = 'No data returned'
+                
+        except Exception as e:
+            last_error = str(e)
+            logging.error(f"[run_scraping] {store_key} attempt {attempt + 1}/{max_retries} failed: {e}")
+            
+        # リトライ前に待機（最後の試行では待たない）
+        if attempt < max_retries - 1:
+            time.sleep(2)
+    
+    # 全リトライ失敗 → フォールバック（蓄積データを使用）
+    logging.error(f"[run_scraping] {store_key} all retries failed, using fallback")
     try:
-        # まずGitHubからリアルタイムデータを試す
-        realtime_data = get_realtime_data(store_key)
-
-        if realtime_data and realtime_data.get('units'):
+        fallback_data = load_fallback_history(store_key)
+        if fallback_data:
             REALTIME_CACHE[store_key] = {
-                'data': realtime_data,
+                'data': fallback_data,
                 'fetched_at': datetime.now(),
-                'source': 'github',
+                'source': 'fallback',
             }
-            SCRAPING_STATUS[store_key] = {'status': 'completed', 'completed_at': datetime.now(), 'source': 'github'}
+            SCRAPING_STATUS[store_key] = {
+                'status': 'completed',
+                'completed_at': datetime.now(),
+                'source': 'fallback',
+                'warning': f'Using cached data due to fetch error: {last_error}',
+            }
             return
+    except Exception as fallback_error:
+        logging.error(f"[run_scraping] {store_key} fallback also failed: {fallback_error}")
+    
+    SCRAPING_STATUS[store_key] = {'status': 'error', 'error': last_error or 'Unknown error'}
 
-        # GitHubにデータがない場合は直接スクレイピングを試みる
-        # (PythonAnywhereの無料プランでは403になる可能性あり)
-        from scrapers.realtime_scraper import scrape_realtime
-        results = scrape_realtime(store_key)
 
-        if store_key in results:
-            REALTIME_CACHE[store_key] = {
-                'data': results[store_key],
-                'fetched_at': datetime.now(),
-                'source': 'direct',
-            }
-            SCRAPING_STATUS[store_key] = {'status': 'completed', 'completed_at': datetime.now(), 'source': 'direct'}
-        else:
-            SCRAPING_STATUS[store_key] = {'status': 'error', 'error': 'No data returned'}
-    except Exception as e:
-        SCRAPING_STATUS[store_key] = {'status': 'error', 'error': str(e)}
+def load_fallback_history(store_key: str) -> dict:
+    """蓄積データ（data/history/）からフォールバックデータを読み込む"""
+    import json
+    from pathlib import Path
+    
+    history_dir = Path(f'data/history/{store_key}')
+    if not history_dir.exists():
+        return None
+    
+    units = []
+    for json_file in history_dir.glob('*.json'):
+        try:
+            with open(json_file) as f:
+                data = json.load(f)
+            unit_id = json_file.stem
+            # 最新日のデータを取得
+            if data.get('days'):
+                latest = data['days'][0]
+                units.append({
+                    'unit_id': unit_id,
+                    'art': latest.get('art', 0),
+                    'rb': latest.get('rb', 0),
+                    'total_start': latest.get('total_games', 0),
+                    'history': latest.get('history', []),
+                    'max_medals': latest.get('max_medals', 0),
+                    'max_rensa': latest.get('max_rensa', 0),
+                    'is_fallback': True,
+                })
+        except Exception:
+            continue
+    
+    if not units:
+        return None
+    
+    return {
+        'store_key': store_key,
+        'units': units,
+        'is_fallback': True,
+    }
 
 
 @app.route('/api/debug/<store_key>')
