@@ -201,30 +201,38 @@ def merge_patterns(base: Dict, new: Dict) -> Dict:
     return result
 
 
-def calculate_rates(patterns: Dict) -> Dict:
-    """パターンから確率を計算"""
+def calculate_rates(patterns: Dict, include_store_specific: bool = False) -> Dict:
+    """パターンから確率を計算
+    
+    Args:
+        patterns: パターン統計
+        include_store_specific: 店舗固有の傾向（曜日別等）を含めるか
+            - グローバル/機種別: False（含めない）
+            - 店舗×機種: True（含める）
+    """
     result = {
         'dip_recovery_rate': 0,
-        'weekday_rates': {},
         'prob_zone_rates': {},
     }
     
-    # 凹み→反発確率
+    # 凹み→反発確率（全レベルで有効）
     dr = patterns.get('dip_recovery', {})
     if dr.get('total', 0) > 0:
         result['dip_recovery_rate'] = dr['success'] / dr['total'] * 100
     
-    # 曜日別
-    for i in range(7):
-        wd = patterns.get('weekday_performance', {}).get(i, {})
-        if wd.get('total', 0) > 0:
-            result['weekday_rates'][WEEKDAYS[i]] = wd['good'] / wd['total'] * 100
-    
-    # 確率帯別
+    # 確率帯別（全レベルで有効）
     for zone in ['excellent', 'high', 'mid', 'low']:
         pz = patterns.get('prob_zones', {}).get(zone, {})
         if pz.get('total', 0) > 0:
             result['prob_zone_rates'][zone] = pz['next_good'] / pz['total'] * 100
+    
+    # 店舗固有の傾向（曜日別等）は店舗×機種レベルのみ
+    if include_store_specific:
+        result['weekday_rates'] = {}
+        for i in range(7):
+            wd = patterns.get('weekday_performance', {}).get(i, {})
+            if wd.get('total', 0) > 0:
+                result['weekday_rates'][WEEKDAYS[i]] = wd['good'] / wd['total'] * 100
     
     return result
 
@@ -263,15 +271,17 @@ def analyze_and_save():
             store_machine_patterns[store_machine_key] = store_patterns
     
     # 確率計算
-    global_rates = calculate_rates(global_patterns)
+    # グローバル・機種別: 曜日別などの店舗固有傾向は含めない
+    global_rates = calculate_rates(global_patterns, include_store_specific=False)
     
     machine_rates = {}
     for machine_key, patterns in machine_patterns.items():
-        machine_rates[machine_key] = calculate_rates(patterns)
+        machine_rates[machine_key] = calculate_rates(patterns, include_store_specific=False)
     
+    # 店舗×機種: 曜日別などの店舗固有傾向を含める
     store_machine_rates = {}
     for key, patterns in store_machine_patterns.items():
-        store_machine_rates[key] = calculate_rates(patterns)
+        store_machine_rates[key] = calculate_rates(patterns, include_store_specific=True)
     
     # 保存
     now = datetime.now().isoformat()
@@ -320,10 +330,6 @@ def analyze_and_save():
     
     print("\n【グローバル傾向（全店舗・全機種）】")
     print(f"  前日凹み→翌日反発率: {global_rates.get('dip_recovery_rate', 0):.1f}%")
-    print("  曜日別好調率:")
-    for day, rate in global_rates.get('weekday_rates', {}).items():
-        bar = "█" * int(rate / 5)
-        print(f"    {day}: {rate:5.1f}% {bar}")
     print("  前日確率帯→翌日好調率:")
     for zone, rate in global_rates.get('prob_zone_rates', {}).items():
         zone_label = {'excellent': '1/100未満', 'high': '1/100-130', 'mid': '1/130-180', 'low': '1/180以上'}
@@ -332,9 +338,19 @@ def analyze_and_save():
     for machine_key, rates in machine_rates.items():
         print(f"\n【{machine_key}（全店共通）】")
         print(f"  前日凹み→翌日反発率: {rates.get('dip_recovery_rate', 0):.1f}%")
-        print("  曜日別好調率:")
-        for day, rate in rates.get('weekday_rates', {}).items():
-            print(f"    {day}: {rate:5.1f}%")
+        print("  前日確率帯→翌日好調率:")
+        for zone, rate in rates.get('prob_zone_rates', {}).items():
+            zone_label = {'excellent': '1/100未満', 'high': '1/100-130', 'mid': '1/130-180', 'low': '1/180以上'}
+            print(f"    {zone_label.get(zone, zone):12}: {rate:5.1f}%")
+    
+    # 店舗×機種の曜日傾向サマリー（上位のみ表示）
+    print("\n【店舗×機種 曜日傾向（抜粋）】")
+    for key, rates in list(store_machine_rates.items())[:3]:
+        weekday_rates = rates.get('weekday_rates', {})
+        if weekday_rates:
+            best_day = max(weekday_rates.items(), key=lambda x: x[1])
+            worst_day = min(weekday_rates.items(), key=lambda x: x[1])
+            print(f"  {key}: 最良={best_day[0]}({best_day[1]:.0f}%) 最悪={worst_day[0]}({worst_day[1]:.0f}%)")
     
     print()
     return {
