@@ -210,8 +210,103 @@ def format_alert_message(results):
     
     return '\n'.join(lines)
 
+def auto_repair(results):
+    """自己修復を試みる"""
+    repairs = []
+    
+    # 1. ロックファイルが残っていたら削除
+    lock_file = Path('/tmp/slot_fetch.lock')
+    if lock_file.exists():
+        try:
+            lock_file.unlink()
+            repairs.append('🔧 ロックファイル削除')
+        except:
+            pass
+    
+    # 2. availabilityが古い → fetch実行
+    avail_check = results['checks'].get('availability', {})
+    if avail_check.get('status') == 'error' and avail_check.get('age_hours', 0) > 2:
+        try:
+            import subprocess
+            # 非同期で実行（タイムアウト60秒）
+            result = subprocess.run(
+                ['python3', str(PROJECT_ROOT / 'scripts' / 'fetch_daidata_availability.py')],
+                cwd=str(PROJECT_ROOT),
+                timeout=120,
+                capture_output=True,
+                text=True
+            )
+            if result.returncode == 0:
+                repairs.append('🔧 リアルタイムデータ再取得成功')
+            else:
+                repairs.append(f'⚠️ リアルタイムデータ再取得失敗: {result.stderr[:100]}')
+        except subprocess.TimeoutExpired:
+            repairs.append('⚠️ リアルタイムデータ再取得タイムアウト')
+        except Exception as e:
+            repairs.append(f'⚠️ リアルタイムデータ再取得エラー: {e}')
+    
+    # 3. historyが古い → fetch_all_missing実行（バックグラウンド）
+    hist_check = results['checks'].get('history', {})
+    if hist_check.get('status') == 'error':
+        issues = hist_check.get('issues', [])
+        if len(issues) > 3:  # 4店舗以上古い場合のみ
+            try:
+                import subprocess
+                # バックグラウンドで実行
+                subprocess.Popen(
+                    ['python3', str(PROJECT_ROOT / 'scripts' / 'fetch_all_missing.py')],
+                    cwd=str(PROJECT_ROOT),
+                    stdout=open('/tmp/fetch_all.log', 'w'),
+                    stderr=subprocess.STDOUT
+                )
+                repairs.append('🔧 全店舗データ取得を開始（バックグラウンド）')
+            except Exception as e:
+                repairs.append(f'⚠️ データ取得開始失敗: {e}')
+    
+    # 4. 修復後にサイト再ビルド
+    if any('再取得成功' in r for r in repairs):
+        try:
+            import subprocess
+            result = subprocess.run(
+                ['python3', str(PROJECT_ROOT / 'scripts' / 'generate_static.py')],
+                cwd=str(PROJECT_ROOT),
+                timeout=180,
+                capture_output=True,
+                text=True
+            )
+            if result.returncode == 0:
+                repairs.append('🔧 サイト再ビルド成功')
+            else:
+                repairs.append('⚠️ サイト再ビルド失敗')
+        except:
+            pass
+    
+    return repairs
+
 def main():
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--repair', action='store_true', help='自己修復を試みる')
+    parser.add_argument('--quiet', action='store_true', help='正常時は出力しない')
+    args = parser.parse_args()
+    
     results = run_all_checks()
+    
+    # 自己修復
+    repairs = []
+    if args.repair and results['overall'] == 'error':
+        repairs = auto_repair(results)
+        results['repairs'] = repairs
+        
+        # 修復後に再チェック
+        if repairs:
+            import time
+            time.sleep(2)
+            results['after_repair'] = run_all_checks()
+    
+    # 出力
+    if args.quiet and results['overall'] == 'ok':
+        sys.exit(0)
     
     # JSON出力
     print(json.dumps(results, ensure_ascii=False, indent=2))
@@ -219,11 +314,14 @@ def main():
     # 異常時はexit code 1
     if results['overall'] == 'error':
         # アラートメッセージも出力
+        msg = format_alert_message(results)
+        if repairs:
+            msg += '\n\n--- 自己修復 ---\n' + '\n'.join(repairs)
         print("\n--- ALERT MESSAGE ---", file=sys.stderr)
-        print(format_alert_message(results), file=sys.stderr)
+        print(msg, file=sys.stderr)
         sys.exit(1)
     elif results['overall'] == 'warning':
-        sys.exit(0)  # warningは正常終了
+        sys.exit(0)
     else:
         sys.exit(0)
 
