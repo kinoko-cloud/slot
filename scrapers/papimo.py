@@ -17,8 +17,9 @@ PAPIMO_CONFIG = {
         'sbj_machine_id': '225010000',
         'sbj_units': ['1015', '1016', '1017', '1018', '1020', '1021', '1022', '1023',
                       '1025', '1026', '1027', '1028', '1030', '1031'],
-        'hokuto_units': ['0731', '0732', '0733', '0735', '0736', '0737', '0738',
-                         '0750', '0751', '0752', '0753', '0755', '0756', '0757'],
+        # 2026-02-02更新: 0731-0738,0750-0757 → 0811-0818,0820-0825 (16台→14台に減台)
+        'hokuto_units': ['0811', '0812', '0813', '0814', '0815', '0816', '0817', '0818',
+                         '0820', '0821', '0822', '0823', '0824', '0825'],
     }
 }
 
@@ -343,3 +344,56 @@ if __name__ == '__main__':
         scrape_island_machine('hokuto', days)
     else:
         scrape_sbj_island(days)
+
+
+def discover_machine_units(hall_id: str, machine_id: str, timeout: int = 30000) -> list:
+    """
+    一覧ページから現在の台番号を自動取得（台番号が変わった時用）
+    
+    Args:
+        hall_id: ホールID（例: '00031715'）
+        machine_id: 機種ID（例: '225110007'）
+    
+    Returns:
+        台番号のリスト（例: ['0811', '0812', ...]）
+    """
+    from playwright.sync_api import sync_playwright
+    
+    url = f"https://papimo.jp/h/{hall_id}/hit/index_sort/{machine_id}/1-20-1290529/83/1/0/0"
+    units = []
+    
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True)
+        page = browser.new_page()
+        
+        try:
+            page.goto(url, wait_until='load', timeout=timeout)
+            page.wait_for_timeout(2000)
+            
+            # 台番号を抽出（4桁の数字）
+            import re
+            text = page.inner_text('body')
+            # papimo.jpでは台番号が「No.0811」のような形式で表示される
+            matches = re.findall(r'No\.(\d{4})', text)
+            if matches:
+                units = sorted(set(matches))
+            
+            print(f"[PAPIMO discover] {hall_id}/{machine_id}: {len(units)}台発見")
+            print(f"  台番号: {units}")
+            
+        except Exception as e:
+            print(f"[PAPIMO discover] エラー: {e}")
+        finally:
+            browser.close()
+    
+    return units
+
+
+if __name__ == '__main__':
+    # テスト: Island秋葉原の北斗台番号を探索
+    import sys
+    if len(sys.argv) > 1 and sys.argv[1] == 'discover':
+        hall_id = '00031715'
+        machine_id = '225110007'  # 北斗
+        units = discover_machine_units(hall_id, machine_id)
+        print(f"\n発見した台番号: {units}")
