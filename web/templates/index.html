@@ -403,7 +403,7 @@
                 <div class="top5-note">{{ tomorrow_str }}の狙い目予想 ※今日の結果＋過去傾向から分析</div>
                 {% else %}
                 <h2>いま狙い目の台 TOP{{ [top3|length, 10]|min }}</h2>
-                <div class="top5-note">※機種 / 店名 / 台番号</div>
+                <div class="top5-note">※機種 / 台番号 / 店名</div>
                 {% endif %}
                 {% for rec in top3[:10] %}
                 <a href="{{ url_for('recommend', store_key=rec.store_key) }}" class="unit-card rank-{{ rec.final_rank|lower }}" style="text-decoration: none; color: inherit;">
@@ -414,7 +414,7 @@
                         <span class="rank-badge" style="background-color: {{ rank_color(rec.final_rank) }}">{{ rec.final_rank }}</span>
                     </div>
                     <div class="unit-store">
-                        <span class="store-link">{{ rec.store_name }}</span> / <span class="unit-id-sub"><span class="unit-id-num">{{ rec.unit_id|pad_id }}</span><span class="unit-id-ban">番</span></span>
+                        <span class="unit-id-sub"><span class="unit-id-num">{{ rec.unit_id|pad_id }}</span><span class="unit-id-ban">番</span></span> <span class="store-link">{{ rec.store_name }}</span>
                         {% if is_open %}
                             {% if rec.availability == '空き' %}
                             <span class="top3-avail empty">空き</span>
