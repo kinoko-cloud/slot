@@ -90,6 +90,14 @@ DAIDATA_STORES = {
             'hokuto_tensei2': ['3138', '3139', '3140', '3141', '3142', '3143', '3144', '3145', '3146', '3147', '3148', '3149', '3150', '3151', '3165', '3166'],
         },
     },
+    'shibuya_honkan_espass': {
+        'hall_id': '100930',
+        'name': 'エスパス日拓渋谷本館',
+        'machines': {
+            'sbj': ['3095', '3096', '3097'],
+            'hokuto_tensei2': [str(i) for i in range(2013, 2020)] + [str(i) for i in range(2030, 2038)],
+        },
+    },
 }
 
 # 店舗設定（PAPIMO-NET）

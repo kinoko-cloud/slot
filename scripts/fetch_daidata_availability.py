@@ -44,6 +44,12 @@ DAIDATA_STORES = {
         'model_encoded': 'L%EF%BD%BD%EF%BD%B0%EF%BE%8A%EF%BE%9F%EF%BD%B0%EF%BE%8C%EF%BE%9E%EF%BE%97%EF%BD%AF%EF%BD%B8%EF%BD%BC%EF%BE%9E%EF%BD%AC%EF%BD%AF%EF%BD%B8',
         'units': ['3185', '3186', '3187'],  # 4000番台は全て低貸のため除外
     },
+    'seibu_shinjuku_espass_hokuto': {
+        'hall_id': '100950',
+        'name': 'エスパス西武新宿(北斗)',
+        'model_encoded': None,
+        'units': ['3138', '3139', '3140', '3141', '3142', '3143', '3144', '3145', '3146', '3147', '3148', '3149', '3150', '3151', '3165', '3166'],
+    },
     # === 渋谷本館 (hall_id=100930) ===
     'shibuya_honkan_espass_sbj': {
         'hall_id': '100930',
@@ -52,35 +58,30 @@ DAIDATA_STORES = {
         'units': ['3095', '3096', '3097'],
     },
     # === 北斗転生2 (detail page only, model_encoded不要) ===
-    # Note: 北斗転生2は台数が多くCI環境でタイムアウトするため、
-    # 環境変数 SKIP_HOKUTO=1 でスキップ可能
+    # Note: 台数が多いためタイムアウト時間を延長して取得
     'shibuya_espass_hokuto': {
         'hall_id': '100860',
         'name': 'エスパス渋谷新館(北斗)',
         'model_encoded': None,  # detail pageのみで取得
         'units': [str(i) for i in range(2046, 2068)] + [str(i) for i in range(2233, 2241)],
-        'skip_on_ci': True,  # CI環境ではスキップ
     },
     'shibuya_honkan_espass_hokuto': {
         'hall_id': '100930',
         'name': 'エスパス渋谷本館(北斗)',
         'model_encoded': None,
         'units': [str(i) for i in range(2013, 2020)] + [str(i) for i in range(2030, 2038)],
-        'skip_on_ci': True,
     },
     'shinjuku_espass_hokuto': {
         'hall_id': '100949',
         'name': 'エスパス歌舞伎町(北斗)',
         'model_encoded': None,
         'units': [str(i) for i in range(1, 38)] + [str(i) for i in range(125, 129)],
-        'skip_on_ci': True,
     },
     'akiba_espass_hokuto': {
         'hall_id': '100928',
         'name': 'エスパス秋葉原(北斗)',
         'model_encoded': None,
         'units': [str(i) for i in range(2011, 2020)] + [str(i) for i in range(2056, 2069)],
-        'skip_on_ci': True,
     },
 }
 
@@ -183,7 +184,7 @@ def fetch_unit_detail(page, hall_id: str, unit_id: str) -> dict:
     url = f"https://daidata.goraggio.com/{hall_id}/detail?unit={unit_id}"
 
     try:
-        page.goto(url, timeout=30000, wait_until='domcontentloaded')
+        page.goto(url, timeout=60000, wait_until='domcontentloaded')
         page.wait_for_timeout(3000)
 
         # 規約同意ボタンがある場合（店舗ごとに別セッション）
@@ -193,14 +194,14 @@ def fetch_unit_detail(page, hall_id: str, unit_id: str) -> dict:
                 accept_btn.click()
                 page.wait_for_timeout(5000)
                 # 規約同意後、元のdetailページに戻る
-                page.goto(url, timeout=30000, wait_until='domcontentloaded')
+                page.goto(url, timeout=60000, wait_until='domcontentloaded')
                 page.wait_for_timeout(3000)
                 print(f"  unit {unit_id}: 規約同意完了")
         except:
             pass
 
         # テキストからデータを抽出（最大2回試行）
-        text = page.inner_text('body', timeout=30000)
+        text = page.inner_text('body', timeout=60000)
 
         data = {'unit_id': unit_id, 'bb': 0, 'rb': 0, 'art': 0, 'total_start': 0, 'final_start': 0}
 
@@ -211,14 +212,14 @@ def fetch_unit_detail(page, hall_id: str, unit_id: str) -> dict:
         # マッチしない場合、規約ページが表示されてる可能性 → リトライ
         if not match:
             try:
-                page.goto(url, timeout=20000, wait_until='domcontentloaded')
+                page.goto(url, timeout=60000, wait_until='domcontentloaded')
                 accept_btn = page.locator('text="利用規約に同意する"')
                 if accept_btn.count() > 0:
                     accept_btn.click()
                     page.wait_for_timeout(2000)
-                page.goto(url, timeout=20000, wait_until='domcontentloaded')
+                page.goto(url, timeout=60000, wait_until='domcontentloaded')
                 page.wait_for_timeout(2000)
-                text = page.inner_text('body', timeout=30000)
+                text = page.inner_text('body', timeout=60000)
                 match = re.search(r'BB\s+RB\s+ART\s+スタート回数\s*\n?\s*(\d+)\s+(\d+)\s+(\d+)\s+(\d+)', text)
             except:
                 pass
@@ -497,16 +498,8 @@ def main():
                 print(f"daidata規約同意エラー（続行）: {hall_id} - {e}")
 
         # CI環境判定（Circle CI / GitHub Actions）
-        is_ci = os.environ.get('CI') or os.environ.get('CIRCLECI') or os.environ.get('GITHUB_ACTIONS')
-        if is_ci:
-            print("\n[CI MODE] 北斗転生2はスキップします（SBJのみ取得）")
-
         # ===== daidata店舗 =====
         for store_key, config in DAIDATA_STORES.items():
-            # CI環境でskip_on_ci=Trueの店舗はスキップ
-            if is_ci and config.get('skip_on_ci'):
-                print(f"\n[daidata] Skipping {config['name']} (CI mode)")
-                continue
             print(f"\n[daidata] Fetching {config['name']}...")
 
             # model_encodedがある場合のみ一覧ページで空き状況を取得
@@ -557,10 +550,6 @@ def main():
 
         # ===== papimo.jp店舗 =====
         for store_key, config in PAPIMO_STORES.items():
-            # CI環境でskip_on_ci=Trueの店舗はスキップ
-            if is_ci and config.get('skip_on_ci'):
-                print(f"\n[papimo] Skipping {config['name']} (CI mode)")
-                continue
             print(f"\n[papimo] Fetching {config['name']}...")
 
             # 空き状況を取得
