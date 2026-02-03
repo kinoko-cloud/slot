@@ -2884,21 +2884,37 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
             except:
                 pass
         
-        # 当日の履歴を取得（なければ直近日にフォールバック）
+        # 当日の履歴を取得（リアルタイムデータを優先）
         today_str = datetime.now().strftime('%Y-%m-%d')
         yesterday_str = (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d')
-        for day in unit_days:
-            if day.get('date') == today_str:
-                today_history = day.get('history', [])
-                history_date = today_str
-                break
+        
+        # まずリアルタイムデータからtoday_historyを取得（最優先）
+        if realtime_data and realtime_is_today:
+            for _u in realtime_data.get('units', []):
+                if _u.get('unit_id') == unit_id:
+                    rt_history = _u.get('today_history')
+                    if rt_history:
+                        today_history = rt_history
+                        history_date = today_str
+                    break
+        
+        # リアルタイムデータにない場合、unit_daysから当日のみ取得
         if not today_history:
-            # 当日データがない場合、直近の履歴データを探す（日付降順）
+            for day in unit_days:
+                if day.get('date') == today_str:
+                    today_history = day.get('history', [])
+                    history_date = today_str
+                    break
+        
+        # 当日データがない場合のフォールバック用（generate_reasonsで使用、today系計算には使わない）
+        fallback_history = []
+        fallback_history_date = ''
+        if not today_history:
             sorted_days = sorted(unit_days, key=lambda x: x.get('date', ''), reverse=True)
             for day in sorted_days:
                 if day.get('history'):
-                    today_history = day.get('history', [])
-                    history_date = day.get('date', '')
+                    fallback_history = day.get('history', [])
+                    fallback_history_date = day.get('date', '')
                     break
 
         # データ日付を取得（今日 or 昨日）
@@ -2918,9 +2934,11 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
         elif _final_start > 0:
             current_at_games = _final_start
 
+        # generate_reasonsには本日履歴またはフォールバック履歴を渡す（表示用）
+        _history_for_reasons = today_history if today_history else fallback_history
         reasons = generate_reasons(
             unit_id, trend_data, today_analysis, comparison, base_rank, final_rank,
-            days=unit_days, today_history=today_history, store_key=store_key,
+            days=unit_days, today_history=_history_for_reasons, store_key=store_key,
             is_today_data=is_today_data, current_at_games=current_at_games,
             historical_perf=historical_perf, activity_data=activity_data,
             medal_balance_penalty=medal_balance_penalty,
@@ -2953,16 +2971,15 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
         # max_medals, final_start をリアルタイムデータから取得（今日のデータのみ）
         max_medals = 0
         final_start = 0
+        today_max_rensa_from_rt = 0
         if realtime_data and realtime_is_today:
             units_list = realtime_data.get('units', [])
             for unit in units_list:
                 if unit.get('unit_id') == unit_id:
                     max_medals = unit.get('max_medals', 0)
                     final_start = unit.get('final_start', 0)
-                    # リアルタイムデータに当日履歴があればそちらを使う
-                    rt_history = unit.get('today_history')
-                    if rt_history and (not today_history or len(rt_history) > len(today_history)):
-                        today_history = rt_history
+                    today_max_rensa_from_rt = unit.get('today_max_rensa', 0)
+                    # today_historyは既に上で取得済み
                     break
 
         # 現在のAT間G数を正しく計算（最終大当たりからのG数）
@@ -2975,12 +2992,19 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
             current_at_games = final_start  # 履歴がない場合はfinal_startをそのまま使用
 
         # 本日のAT間データ（履歴から計算）
-        # is_today_dataでない場合（フォールバック履歴）はtoday系を0にする
-        _use_today_history = today_history and (is_today_data or (realtime_data and realtime_is_today))
+        # today_historyが本日のデータの場合のみ計算（フォールバック履歴は使わない）
+        _use_today_history = today_history and history_date == today_str
         today_at_intervals = calculate_at_intervals(today_history) if _use_today_history else []
         today_deep_hama_count = sum(1 for g in today_at_intervals if g >= 500)  # 500G以上のハマり
         today_max_at_interval = max(today_at_intervals) if today_at_intervals else 0
-        today_max_rensa = calculate_max_rensa(today_history, machine_key=machine_key) if _use_today_history else 0
+        # today_max_rensaはリアルタイムデータの値を優先、なければ計算
+        today_max_rensa = today_max_rensa_from_rt if today_max_rensa_from_rt > 0 else (calculate_max_rensa(today_history, machine_key=machine_key) if _use_today_history else 0)
+        
+        # 本日の差枚を計算（履歴から）
+        today_diff_medals = 0
+        if _use_today_history and today_history:
+            # 履歴から差枚を計算: 合計medals - 合計(start * 3)
+            today_diff_medals = sum(h.get('medals', 0) - h.get('start', 0) * 3 for h in today_history)
 
         rec = {
             'unit_id': unit_id,
@@ -3041,6 +3065,7 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
             'today_deep_hama': today_deep_hama_count,  # 500G以上のハマり回数
             'today_max_at_interval': today_max_at_interval,  # 本日最大AT間
             'today_max_rensa': today_max_rensa,  # 本日最大連チャン数
+            'today_diff_medals': today_diff_medals,  # 本日の差枚（履歴から計算）
             # スコア内訳（デバッグ・分析用）
             'score_breakdown': {
                 'base': base_score,

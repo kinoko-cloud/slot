@@ -451,9 +451,17 @@
                         </span>
                     </div>
                     {% endif %}
+                    {# === 営業中: 当日データのサマリー表示（差枚・連チャン） === #}
+                    {% if rec.today_diff_medals or rec.today_max_rensa %}
+                    <div class="top3-today-summary">
+                        {% if rec.today_diff_medals and rec.today_diff_medals != 0 %}
+                        <span class="diff-medals-md {% if rec.today_diff_medals > 0 %}plus{% else %}minus{% endif %}">{{ '{:+,}'.format(rec.today_diff_medals) }}枚</span>
+                        {% endif %}
+                    </div>
+                    {% endif %}
                     {# === 営業中: 当日履歴（クリックで展開） === #}
                     {% if rec.today_history and rec.today_history|length > 0 %}
-                    {{ recent_day_expandable(rec.art_count or 0, rec.art_prob or 0, '', '本日', rec.diff_medals|default(0), rec.today_max_rensa|default(0), rec.max_medals|default(0), rec.today_history) }}
+                    {{ recent_day_expandable(rec.art_count or 0, rec.art_prob or 0, '', '本日', rec.today_diff_medals|default(0), rec.today_max_rensa|default(0), rec.max_medals|default(0), rec.today_history) }}
                     {% endif %}
                     {% else %}
                     {# === 閉店後: 前日データを当日データとして表示 === #}
