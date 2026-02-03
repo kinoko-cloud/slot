@@ -5344,3 +5344,438 @@ error: cannot pull with rebase: You have unstaged changes.
 error: Please commit or stash them.
 [2026-02-03 12:30:04] git pull失敗（続行）
 [2026-02-03 12:30:04] データ取得中（全店舗）...
+[2026-02-03 12:35:19] データ取得タイムアウト（5分）
+[2026-02-03 12:35:19] availability.json: 7店舗
+[2026-02-03 12:35:19] 静的サイト生成中...
+
+⚠️  PRE-BUILD WARNINGS (115):
+  WARN: shinjuku_espass_hokuto_tensei2/31 2026-01-26 max_rensa=23 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_hokuto_tensei2/36 2026-01-26 max_rensa=31 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_hokuto_tensei2/36 2026-01-28 max_rensa=28 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_hokuto_tensei2/682 2026-01-22 max_rensa=34 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_hokuto_tensei2/33 2026-01-27 max_rensa=53 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_hokuto_tensei2/35 2026-01-26 max_rensa=44 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_hokuto_tensei2/35 2026-01-28 max_rensa=24 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_hokuto_tensei2/29 2026-01-26 max_rensa=54 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_hokuto_tensei2/24 2026-01-28 max_rensa=32 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_hokuto_tensei2/13 2026-01-22 max_rensa=39 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_hokuto_tensei2/128 2026-01-28 max_rensa=23 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_hokuto_tensei2/10 2026-01-21 max_rensa=26 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_hokuto_tensei2/10 2026-01-23 max_rensa=31 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_hokuto_tensei2/20 2026-01-22 max_rensa=45 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_hokuto_tensei2/14 2026-01-23 max_rensa=31 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_hokuto_tensei2/32 2026-01-26 max_rensa=54 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_hokuto_tensei2/32 2026-01-27 max_rensa=33 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_hokuto_tensei2/126 2026-01-26 max_rensa=25 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_hokuto_tensei2/1 2026-01-19 max_rensa=22 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_hokuto_tensei2/22 2026-01-22 max_rensa=32 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_hokuto_tensei2/11 2026-01-21 max_rensa=41 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_hokuto_tensei2/11 2026-01-22 max_rensa=65 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_hokuto_tensei2/23 2026-01-26 max_rensa=22 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_hokuto_tensei2/23 2026-01-28 max_rensa=29 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_hokuto_tensei2/18 2026-01-21 max_rensa=37 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_hokuto_tensei2/18 2026-01-23 max_rensa=30 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_hokuto_tensei2/4 2026-01-21 max_rensa=44 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_hokuto_tensei2/4 2026-01-23 max_rensa=36 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_hokuto_tensei2/685 2026-01-20 max_rensa=35 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_hokuto_tensei2/3 2026-01-21 max_rensa=22 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_hokuto_tensei2/26 2026-01-26 max_rensa=24 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_hokuto_tensei2/684 2026-01-20 max_rensa=43 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_hokuto_tensei2/125 2026-01-27 max_rensa=41 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_hokuto_tensei2/30 2026-01-27 max_rensa=28 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_hokuto_tensei2/25 2026-01-26 max_rensa=41 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_hokuto_tensei2/12 2026-01-21 max_rensa=53 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_hokuto_tensei2/12 2026-01-23 max_rensa=26 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_hokuto_tensei2/21 2026-01-22 max_rensa=22 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_hokuto_tensei2/9 2026-01-21 max_rensa=41 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_hokuto_tensei2/9 2026-01-22 max_rensa=22 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_hokuto_tensei2/15 2026-01-21 max_rensa=27 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_hokuto_tensei2/15 2026-01-22 max_rensa=29 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_hokuto_tensei2/2 2026-01-21 max_rensa=24 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: akiba_espass_sbj/2159 2026-01-21 max_rensa=36 （sbjの上限25を超過 — 連チャン閾値要確認）
+  WARN: island_akihabara/1028 2026-01-26 max_rensa=23 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: island_akihabara/1020 2026-01-26 max_rensa=22 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_sbj/682 2026-01-22 max_rensa=34 （sbjの上限25を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_sbj/10 2026-01-21 max_rensa=26 （sbjの上限25を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_sbj/10 2026-01-23 max_rensa=31 （sbjの上限25を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_sbj/4 2026-01-21 max_rensa=44 （sbjの上限25を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_sbj/4 2026-01-23 max_rensa=36 （sbjの上限25を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_sbj/684 2026-01-20 max_rensa=32 （sbjの上限25を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_sbj/12 2026-01-21 max_rensa=53 （sbjの上限25を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_sbj/12 2026-01-23 max_rensa=26 （sbjの上限25を超過 — 連チャン閾値要確認）
+  WARN: shinjuku_espass_sbj/9 2026-01-21 max_rensa=41 （sbjの上限25を超過 — 連チャン閾値要確認）
+  WARN: seibu_shinjuku_espass_hokuto_tensei2/3145 2026-01-26 max_rensa=29 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: seibu_shinjuku_espass_hokuto_tensei2/3143 2026-01-26 max_rensa=41 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: seibu_shinjuku_espass_hokuto_tensei2/3143 2026-01-27 max_rensa=34 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: seibu_shinjuku_espass_hokuto_tensei2/3139 2026-01-26 max_rensa=28 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: seibu_shinjuku_espass_hokuto_tensei2/3147 2026-01-27 max_rensa=22 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: seibu_shinjuku_espass_hokuto_tensei2/3150 2026-01-27 max_rensa=46 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: seibu_shinjuku_espass_hokuto_tensei2/3150 2026-01-28 max_rensa=41 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: seibu_shinjuku_espass_hokuto_tensei2/3148 2026-01-26 max_rensa=26 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: seibu_shinjuku_espass_hokuto_tensei2/3146 2026-01-28 max_rensa=26 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: seibu_shinjuku_espass_hokuto_tensei2/3149 2026-01-26 max_rensa=50 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: akiba_espass_hokuto_tensei2/2014 2026-01-21 max_rensa=23 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: akiba_espass_hokuto_tensei2/2068 2026-01-28 max_rensa=32 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: akiba_espass_hokuto_tensei2/2159 2026-01-21 max_rensa=49 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: akiba_espass_hokuto_tensei2/2065 2026-01-22 max_rensa=36 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: akiba_espass_hokuto_tensei2/2019 2026-01-21 max_rensa=38 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: akiba_espass_hokuto_tensei2/2060 2026-01-21 max_rensa=49 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: akiba_espass_hokuto_tensei2/2062 2026-01-21 max_rensa=24 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: akiba_espass_hokuto_tensei2/2161 2026-01-21 max_rensa=37 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: akiba_espass_hokuto_tensei2/2018 2026-01-21 max_rensa=51 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: akiba_espass_hokuto_tensei2/2015 2026-01-21 max_rensa=47 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: island_akihabara_hokuto/0812 2026-02-02 max_rensa=24 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: seibu_shinjuku_espass_sbj/3143 2026-01-26 max_rensa=41 （sbjの上限25を超過 — 連チャン閾値要確認）
+  WARN: seibu_shinjuku_espass_sbj/3143 2026-01-27 max_rensa=34 （sbjの上限25を超過 — 連チャン閾値要確認）
+  WARN: seibu_shinjuku_espass_sbj/3139 2026-01-26 max_rensa=28 （sbjの上限25を超過 — 連チャン閾値要確認）
+  WARN: seibu_shinjuku_espass_sbj/3150 2026-01-27 max_rensa=46 （sbjの上限25を超過 — 連チャン閾値要確認）
+  WARN: seibu_shinjuku_espass_sbj/3150 2026-01-28 max_rensa=41 （sbjの上限25を超過 — 連チャン閾値要確認）
+  WARN: seibu_shinjuku_espass_sbj/3148 2026-01-26 max_rensa=26 （sbjの上限25を超過 — 連チャン閾値要確認）
+  WARN: seibu_shinjuku_espass_sbj/3146 2026-01-28 max_rensa=26 （sbjの上限25を超過 — 連チャン閾値要確認）
+  WARN: seibu_shinjuku_espass_sbj/3149 2026-01-26 max_rensa=50 （sbjの上限25を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto/2046 2026-01-23 max_rensa=32 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/2061 2026-01-23 max_rensa=60 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/2236 2026-01-22 max_rensa=21 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/2233 2026-01-23 max_rensa=27 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/2065 2026-01-21 max_rensa=21 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/3011 2026-01-22 max_rensa=41 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/2235 2026-01-23 max_rensa=26 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/2058 2026-01-22 max_rensa=29 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/2056 2026-01-21 max_rensa=55 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/2066 2026-01-21 max_rensa=30 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/2066 2026-01-23 max_rensa=22 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/2059 2026-01-22 max_rensa=23 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/2059 2026-01-23 max_rensa=35 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/2240 2026-01-22 max_rensa=25 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/2047 2026-01-22 max_rensa=36 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/2047 2026-01-23 max_rensa=32 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/2048 2026-01-22 max_rensa=24 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/2048 2026-01-23 max_rensa=30 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/2060 2026-01-22 max_rensa=24 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/3013 2026-01-22 max_rensa=26 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/2051 2026-01-22 max_rensa=49 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/2238 2026-01-22 max_rensa=49 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/2062 2026-01-21 max_rensa=43 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/2062 2026-01-22 max_rensa=43 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/2046 2026-01-21 max_rensa=22 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/3012 2026-01-21 max_rensa=23 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/2050 2026-01-21 max_rensa=47 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/2055 2026-01-21 max_rensa=39 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/2055 2026-01-23 max_rensa=30 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/2067 2026-01-21 max_rensa=36 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+  WARN: shibuya_espass_hokuto_tensei2/2067 2026-01-23 max_rensa=36 （hokuto_tensei2の上限20を超過 — 連チャン閾値要確認）
+==================================================
+静的サイト生成開始
+出力先: /home/riichi/works/slot/docs
+==================================================
+
+Running unit verification...
+
+==================================================
+台番号検証結果: 1件のアラート
+==================================================
+
+🟡 [unit_missing] アイランド秋葉原: 台番号 0819 が見つかりません
+
+Running data integrity check...
+
+==================================================
+データ整合性チェック: 2件の問題
+  🟡 警告: 2件
+==================================================
+🟡 [units_insufficient] 西武新宿駅前エスパス: 台数不足（期待7台、実際3台）
+🟡 [data_stale] データが788分前のもの（60分超過）
+
+  ⚠ パターン記録エラー: '>' not supported between instances of 'NoneType' and 'int'
+
+Generating index.html...
+Local data is stale (788 minutes old)
+Local data is stale (788 minutes old)
+Local data is stale (788 minutes old)
+Local data is stale (788 minutes old)
+Local data is stale (788 minutes old)
+Local data is stale (788 minutes old)
+Local data is stale (788 minutes old)
+Local data is stale (788 minutes old)
+Local data is stale (788 minutes old)
+Local data is stale (788 minutes old)
+Local data is stale (788 minutes old)
+Local data is stale (788 minutes old)
+Local data is stale (788 minutes old)
+Local data is stale (788 minutes old)
+Local data is stale (788 minutes old)
+Local data is stale (788 minutes old)
+Local data is stale (788 minutes old)
+Local data is stale (788 minutes old)
+  -> /home/riichi/works/slot/docs/index.html
+Generating machine pages...
+  -> /home/riichi/works/slot/docs/machine/sbj.html
+  -> /home/riichi/works/slot/docs/machine/hokuto_tensei2.html
+Generating ranking pages...
+Local data is stale (788 minutes old)
+Local data is stale (788 minutes old)
+Local data is stale (788 minutes old)
+Local data is stale (788 minutes old)
+Local data is stale (788 minutes old)
+Local data is stale (788 minutes old)
+Local data is stale (788 minutes old)
+Local data is stale (788 minutes old)
+Local data is stale (788 minutes old)
+Local data is stale (788 minutes old)
+  -> /home/riichi/works/slot/docs/ranking/sbj.html
+Local data is stale (788 minutes old)
+Local data is stale (788 minutes old)
+Local data is stale (788 minutes old)
+Local data is stale (788 minutes old)
+Local data is stale (788 minutes old)
+Local data is stale (788 minutes old)
+Local data is stale (788 minutes old)
+Local data is stale (788 minutes old)
+  -> /home/riichi/works/slot/docs/ranking/hokuto_tensei2.html
+Generating recommend pages...
+  Processing island_akihabara_sbj...
+Local data is stale (788 minutes old)
+Local data is stale (788 minutes old)
+  Processing shibuya_espass_sbj...
+Local data is stale (788 minutes old)
+Local data is stale (788 minutes old)
+  Processing shinjuku_espass_sbj...
+Local data is stale (788 minutes old)
+Local data is stale (788 minutes old)
+  Processing seibu_shinjuku_espass_sbj...
+Local data is stale (788 minutes old)
+Local data is stale (788 minutes old)
+  Processing seibu_shinjuku_espass_hokuto...
+  Processing akiba_espass_sbj...
+Local data is stale (788 minutes old)
+Local data is stale (788 minutes old)
+  Processing shibuya_honkan_espass_sbj...
+  Processing shibuya_honkan_espass_hokuto...
+  Processing shibuya_espass_hokuto...
+Local data is stale (788 minutes old)
+Local data is stale (788 minutes old)
+  Processing shinjuku_espass_hokuto...
+Local data is stale (788 minutes old)
+Local data is stale (788 minutes old)
+  Processing akiba_espass_hokuto...
+Local data is stale (788 minutes old)
+Local data is stale (788 minutes old)
+  Processing island_akihabara_hokuto...
+Local data is stale (788 minutes old)
+Local data is stale (788 minutes old)
+  Processing shibuya_espass_hokuto_tensei2...
+  Processing shinjuku_espass_hokuto_tensei2...
+  Processing akiba_espass_hokuto_tensei2...
+  Processing shibuya_honkan_espass_hokuto_tensei2...
+  Processing seibu_shinjuku_espass_hokuto_tensei2...
+  Processing island_akihabara_hokuto_tensei2...
+  -> /home/riichi/works/slot/docs/recommend/
+Generating verify page...
+  バックテスト結果を使用: verify_20260129_results.json
+  -> /home/riichi/works/slot/docs/verify.html (バックテスト: 的中率50%)
+Generating history pages...
+  -> /home/riichi/works/slot/docs/history/ (315 pages)
+Copying static files...
+  -> /home/riichi/works/slot/docs/static/
+Generating metadata...
+  -> /home/riichi/works/slot/docs/metadata.json
+
+==================================================
+静的サイト生成完了!
+==================================================
+
+--- ビルド後検証 ---
+
+⚠️  WARNINGS (3):
+  WARN: availability.json が13.1時間前のデータ（営業中なら更新が必要）
+  WARN: availability.json に不足キー: ['shibuya_espass_hokuto', 'shinjuku_espass_hokuto', 'akiba_espass_hokuto']
+  WARN: recommend/shinjuku_espass_sbj.html: 天井行1件にRB跨ぎ累計G数（acc-games/累計）がない
+
+ℹ️  INFO (5):
+  INFO: 的中率ヒーローカード0件（営業中モードでは非表示が正常）
+  INFO: verify.html に日付表示なし
+  INFO: availability.json units空: ['shibuya_espass_hokuto', 'shinjuku_espass_hokuto', 'akiba_espass_hokuto']
+  INFO: recommend/akiba_espass_sbj.html: 天井行の50%にRB跨ぎ累計なし（1/2）
+  INFO: CSS未使用クラスが260件（残骸蓄積注意。主要なもの: acc-label, acc-value, accuracy-circle, accuracy-detail, accuracy-hero, accuracy-hero-link, accuracy-label, accuracy-num, accuracy-row, alert-critical...）
+✅ post-build check: 全出力検証OK
+--- 検証完了 ---
+[2026-02-03 12:35:53] 静的サイト生成完了
+[2026-02-03 12:35:54] 変更あり、デプロイ中...
+[main b6345083] auto: リアルタイム更新 12:35
+ 340 files changed, 1020301 insertions(+), 10858 deletions(-)
+ create mode 100644 docs/history/akiba_espass_hokuto_tensei2_2011.html
+ create mode 100644 docs/history/akiba_espass_hokuto_tensei2_2012.html
+ create mode 100644 docs/history/akiba_espass_hokuto_tensei2_2013.html
+ create mode 100644 docs/history/akiba_espass_hokuto_tensei2_2014.html
+ create mode 100644 docs/history/akiba_espass_hokuto_tensei2_2015.html
+ create mode 100644 docs/history/akiba_espass_hokuto_tensei2_2016.html
+ create mode 100644 docs/history/akiba_espass_hokuto_tensei2_2017.html
+ create mode 100644 docs/history/akiba_espass_hokuto_tensei2_2018.html
+ create mode 100644 docs/history/akiba_espass_hokuto_tensei2_2019.html
+ create mode 100644 docs/history/akiba_espass_hokuto_tensei2_2056.html
+ create mode 100644 docs/history/akiba_espass_hokuto_tensei2_2057.html
+ create mode 100644 docs/history/akiba_espass_hokuto_tensei2_2058.html
+ create mode 100644 docs/history/akiba_espass_hokuto_tensei2_2059.html
+ create mode 100644 docs/history/akiba_espass_hokuto_tensei2_2060.html
+ create mode 100644 docs/history/akiba_espass_hokuto_tensei2_2061.html
+ create mode 100644 docs/history/akiba_espass_hokuto_tensei2_2062.html
+ create mode 100644 docs/history/akiba_espass_hokuto_tensei2_2063.html
+ create mode 100644 docs/history/akiba_espass_hokuto_tensei2_2064.html
+ create mode 100644 docs/history/akiba_espass_hokuto_tensei2_2065.html
+ create mode 100644 docs/history/akiba_espass_hokuto_tensei2_2066.html
+ create mode 100644 docs/history/akiba_espass_hokuto_tensei2_2067.html
+ create mode 100644 docs/history/akiba_espass_hokuto_tensei2_2068.html
+ create mode 100644 docs/history/island_akihabara_hokuto_tensei2_0811.html
+ create mode 100644 docs/history/island_akihabara_hokuto_tensei2_0812.html
+ create mode 100644 docs/history/island_akihabara_hokuto_tensei2_0813.html
+ create mode 100644 docs/history/island_akihabara_hokuto_tensei2_0814.html
+ create mode 100644 docs/history/island_akihabara_hokuto_tensei2_0815.html
+ create mode 100644 docs/history/island_akihabara_hokuto_tensei2_0816.html
+ create mode 100644 docs/history/island_akihabara_hokuto_tensei2_0817.html
+ create mode 100644 docs/history/island_akihabara_hokuto_tensei2_0818.html
+ create mode 100644 docs/history/island_akihabara_hokuto_tensei2_0819.html
+ create mode 100644 docs/history/island_akihabara_hokuto_tensei2_0820.html
+ create mode 100644 docs/history/island_akihabara_hokuto_tensei2_0821.html
+ create mode 100644 docs/history/island_akihabara_hokuto_tensei2_0822.html
+ create mode 100644 docs/history/island_akihabara_hokuto_tensei2_0823.html
+ create mode 100644 docs/history/island_akihabara_hokuto_tensei2_0824.html
+ create mode 100644 docs/history/island_akihabara_hokuto_tensei2_0825.html
+ create mode 100644 docs/history/seibu_shinjuku_espass_hokuto_3138.html
+ create mode 100644 docs/history/seibu_shinjuku_espass_hokuto_3139.html
+ create mode 100644 docs/history/seibu_shinjuku_espass_hokuto_3140.html
+ create mode 100644 docs/history/seibu_shinjuku_espass_hokuto_3141.html
+ create mode 100644 docs/history/seibu_shinjuku_espass_hokuto_3142.html
+ create mode 100644 docs/history/seibu_shinjuku_espass_hokuto_3143.html
+ create mode 100644 docs/history/seibu_shinjuku_espass_hokuto_3144.html
+ create mode 100644 docs/history/seibu_shinjuku_espass_hokuto_3145.html
+ create mode 100644 docs/history/seibu_shinjuku_espass_hokuto_3146.html
+ create mode 100644 docs/history/seibu_shinjuku_espass_hokuto_3147.html
+ create mode 100644 docs/history/seibu_shinjuku_espass_hokuto_3148.html
+ create mode 100644 docs/history/seibu_shinjuku_espass_hokuto_3149.html
+ create mode 100644 docs/history/seibu_shinjuku_espass_hokuto_3150.html
+ create mode 100644 docs/history/seibu_shinjuku_espass_hokuto_3151.html
+ create mode 100644 docs/history/seibu_shinjuku_espass_hokuto_3165.html
+ create mode 100644 docs/history/seibu_shinjuku_espass_hokuto_3166.html
+ create mode 100644 docs/history/seibu_shinjuku_espass_hokuto_3185.html
+ create mode 100644 docs/history/seibu_shinjuku_espass_hokuto_3186.html
+ create mode 100644 docs/history/seibu_shinjuku_espass_hokuto_3187.html
+ create mode 100644 docs/history/seibu_shinjuku_espass_hokuto_tensei2_3138.html
+ create mode 100644 docs/history/seibu_shinjuku_espass_hokuto_tensei2_3139.html
+ create mode 100644 docs/history/seibu_shinjuku_espass_hokuto_tensei2_3140.html
+ create mode 100644 docs/history/seibu_shinjuku_espass_hokuto_tensei2_3141.html
+ create mode 100644 docs/history/seibu_shinjuku_espass_hokuto_tensei2_3142.html
+ create mode 100644 docs/history/seibu_shinjuku_espass_hokuto_tensei2_3143.html
+ create mode 100644 docs/history/seibu_shinjuku_espass_hokuto_tensei2_3144.html
+ create mode 100644 docs/history/seibu_shinjuku_espass_hokuto_tensei2_3145.html
+ create mode 100644 docs/history/seibu_shinjuku_espass_hokuto_tensei2_3146.html
+ create mode 100644 docs/history/seibu_shinjuku_espass_hokuto_tensei2_3147.html
+ create mode 100644 docs/history/seibu_shinjuku_espass_hokuto_tensei2_3148.html
+ create mode 100644 docs/history/seibu_shinjuku_espass_hokuto_tensei2_3149.html
+ create mode 100644 docs/history/seibu_shinjuku_espass_hokuto_tensei2_3150.html
+ create mode 100644 docs/history/seibu_shinjuku_espass_hokuto_tensei2_3151.html
+ create mode 100644 docs/history/seibu_shinjuku_espass_hokuto_tensei2_3165.html
+ create mode 100644 docs/history/seibu_shinjuku_espass_hokuto_tensei2_3166.html
+ create mode 100644 docs/history/seibu_shinjuku_espass_hokuto_tensei2_3185.html
+ create mode 100644 docs/history/seibu_shinjuku_espass_hokuto_tensei2_3186.html
+ create mode 100644 docs/history/seibu_shinjuku_espass_hokuto_tensei2_3187.html
+ create mode 100644 docs/history/shibuya_espass_hokuto_tensei2_2046.html
+ create mode 100644 docs/history/shibuya_espass_hokuto_tensei2_2047.html
+ create mode 100644 docs/history/shibuya_espass_hokuto_tensei2_2048.html
+ create mode 100644 docs/history/shibuya_espass_hokuto_tensei2_2049.html
+ create mode 100644 docs/history/shibuya_espass_hokuto_tensei2_2050.html
+ create mode 100644 docs/history/shibuya_espass_hokuto_tensei2_2051.html
+ create mode 100644 docs/history/shibuya_espass_hokuto_tensei2_2052.html
+ create mode 100644 docs/history/shibuya_espass_hokuto_tensei2_2053.html
+ create mode 100644 docs/history/shibuya_espass_hokuto_tensei2_2054.html
+ create mode 100644 docs/history/shibuya_espass_hokuto_tensei2_2055.html
+ create mode 100644 docs/history/shibuya_espass_hokuto_tensei2_2056.html
+ create mode 100644 docs/history/shibuya_espass_hokuto_tensei2_2057.html
+ create mode 100644 docs/history/shibuya_espass_hokuto_tensei2_2058.html
+ create mode 100644 docs/history/shibuya_espass_hokuto_tensei2_2059.html
+ create mode 100644 docs/history/shibuya_espass_hokuto_tensei2_2060.html
+ create mode 100644 docs/history/shibuya_espass_hokuto_tensei2_2061.html
+ create mode 100644 docs/history/shibuya_espass_hokuto_tensei2_2062.html
+ create mode 100644 docs/history/shibuya_espass_hokuto_tensei2_2063.html
+ create mode 100644 docs/history/shibuya_espass_hokuto_tensei2_2064.html
+ create mode 100644 docs/history/shibuya_espass_hokuto_tensei2_2065.html
+ create mode 100644 docs/history/shibuya_espass_hokuto_tensei2_2066.html
+ create mode 100644 docs/history/shibuya_espass_hokuto_tensei2_2067.html
+ create mode 100644 docs/history/shibuya_espass_hokuto_tensei2_2233.html
+ create mode 100644 docs/history/shibuya_espass_hokuto_tensei2_2234.html
+ create mode 100644 docs/history/shibuya_espass_hokuto_tensei2_2235.html
+ create mode 100644 docs/history/shibuya_espass_hokuto_tensei2_2236.html
+ create mode 100644 docs/history/shibuya_espass_hokuto_tensei2_2237.html
+ create mode 100644 docs/history/shibuya_espass_hokuto_tensei2_2238.html
+ create mode 100644 docs/history/shibuya_espass_hokuto_tensei2_2239.html
+ create mode 100644 docs/history/shibuya_espass_hokuto_tensei2_2240.html
+ create mode 100644 docs/history/shibuya_honkan_espass_hokuto_tensei2_2013.html
+ create mode 100644 docs/history/shibuya_honkan_espass_hokuto_tensei2_2014.html
+ create mode 100644 docs/history/shibuya_honkan_espass_hokuto_tensei2_2015.html
+ create mode 100644 docs/history/shibuya_honkan_espass_hokuto_tensei2_2016.html
+ create mode 100644 docs/history/shibuya_honkan_espass_hokuto_tensei2_2017.html
+ create mode 100644 docs/history/shibuya_honkan_espass_hokuto_tensei2_2018.html
+ create mode 100644 docs/history/shibuya_honkan_espass_hokuto_tensei2_2019.html
+ create mode 100644 docs/history/shibuya_honkan_espass_hokuto_tensei2_2030.html
+ create mode 100644 docs/history/shibuya_honkan_espass_hokuto_tensei2_2031.html
+ create mode 100644 docs/history/shibuya_honkan_espass_hokuto_tensei2_2032.html
+ create mode 100644 docs/history/shibuya_honkan_espass_hokuto_tensei2_2033.html
+ create mode 100644 docs/history/shibuya_honkan_espass_hokuto_tensei2_2034.html
+ create mode 100644 docs/history/shibuya_honkan_espass_hokuto_tensei2_2035.html
+ create mode 100644 docs/history/shibuya_honkan_espass_hokuto_tensei2_2036.html
+ create mode 100644 docs/history/shibuya_honkan_espass_hokuto_tensei2_2037.html
+ create mode 100644 docs/history/shinjuku_espass_hokuto_tensei2_1.html
+ create mode 100644 docs/history/shinjuku_espass_hokuto_tensei2_10.html
+ create mode 100644 docs/history/shinjuku_espass_hokuto_tensei2_11.html
+ create mode 100644 docs/history/shinjuku_espass_hokuto_tensei2_12.html
+ create mode 100644 docs/history/shinjuku_espass_hokuto_tensei2_125.html
+ create mode 100644 docs/history/shinjuku_espass_hokuto_tensei2_126.html
+ create mode 100644 docs/history/shinjuku_espass_hokuto_tensei2_127.html
+ create mode 100644 docs/history/shinjuku_espass_hokuto_tensei2_128.html
+ create mode 100644 docs/history/shinjuku_espass_hokuto_tensei2_13.html
+ create mode 100644 docs/history/shinjuku_espass_hokuto_tensei2_14.html
+ create mode 100644 docs/history/shinjuku_espass_hokuto_tensei2_15.html
+ create mode 100644 docs/history/shinjuku_espass_hokuto_tensei2_16.html
+ create mode 100644 docs/history/shinjuku_espass_hokuto_tensei2_17.html
+ create mode 100644 docs/history/shinjuku_espass_hokuto_tensei2_18.html
+ create mode 100644 docs/history/shinjuku_espass_hokuto_tensei2_19.html
+ create mode 100644 docs/history/shinjuku_espass_hokuto_tensei2_2.html
+ create mode 100644 docs/history/shinjuku_espass_hokuto_tensei2_20.html
+ create mode 100644 docs/history/shinjuku_espass_hokuto_tensei2_21.html
+ create mode 100644 docs/history/shinjuku_espass_hokuto_tensei2_22.html
+ create mode 100644 docs/history/shinjuku_espass_hokuto_tensei2_23.html
+ create mode 100644 docs/history/shinjuku_espass_hokuto_tensei2_24.html
+ create mode 100644 docs/history/shinjuku_espass_hokuto_tensei2_25.html
+ create mode 100644 docs/history/shinjuku_espass_hokuto_tensei2_26.html
+ create mode 100644 docs/history/shinjuku_espass_hokuto_tensei2_27.html
+ create mode 100644 docs/history/shinjuku_espass_hokuto_tensei2_28.html
+ create mode 100644 docs/history/shinjuku_espass_hokuto_tensei2_29.html
+ create mode 100644 docs/history/shinjuku_espass_hokuto_tensei2_3.html
+ create mode 100644 docs/history/shinjuku_espass_hokuto_tensei2_30.html
+ create mode 100644 docs/history/shinjuku_espass_hokuto_tensei2_31.html
+ create mode 100644 docs/history/shinjuku_espass_hokuto_tensei2_32.html
+ create mode 100644 docs/history/shinjuku_espass_hokuto_tensei2_33.html
+ create mode 100644 docs/history/shinjuku_espass_hokuto_tensei2_34.html
+ create mode 100644 docs/history/shinjuku_espass_hokuto_tensei2_35.html
+ create mode 100644 docs/history/shinjuku_espass_hokuto_tensei2_36.html
+ create mode 100644 docs/history/shinjuku_espass_hokuto_tensei2_37.html
+ create mode 100644 docs/history/shinjuku_espass_hokuto_tensei2_4.html
+ create mode 100644 docs/history/shinjuku_espass_hokuto_tensei2_5.html
+ create mode 100644 docs/history/shinjuku_espass_hokuto_tensei2_6.html
+ create mode 100644 docs/history/shinjuku_espass_hokuto_tensei2_7.html
+ create mode 100644 docs/history/shinjuku_espass_hokuto_tensei2_8.html
+ create mode 100644 docs/history/shinjuku_espass_hokuto_tensei2_9.html
+ create mode 100644 docs/recommend/akiba_espass_hokuto_tensei2.html
+ create mode 100644 docs/recommend/island_akihabara_hokuto_tensei2.html
+ create mode 100644 docs/recommend/seibu_shinjuku_espass_hokuto.html
+ create mode 100644 docs/recommend/seibu_shinjuku_espass_hokuto_tensei2.html
+ create mode 100644 docs/recommend/shibuya_espass_hokuto_tensei2.html
+ create mode 100644 docs/recommend/shibuya_honkan_espass_hokuto_tensei2.html
+ create mode 100644 docs/recommend/shinjuku_espass_hokuto_tensei2.html
+error: cannot pull with rebase: You have unstaged changes.
+error: Please commit or stash them.
+error: cannot pull with rebase: You have unstaged changes.
+error: Please commit or stash them.
+To github.com:kinoko-cloud/slot.git
+   79b9cb1a..b6345083  main -> main
+[2026-02-03 12:36:01] デプロイ完了 (attempt 1, origin)
+[2026-02-03 12:36:01] === 自動更新完了 ===

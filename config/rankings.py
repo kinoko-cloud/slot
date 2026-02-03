@@ -122,6 +122,14 @@ STORES = {
         'units': ['3185', '3186', '3187'],  # 4000番台は全て低貸のため除外
         'data_source': 'daidata',
     },
+    'seibu_shinjuku_espass_hokuto': {
+        'name': 'エスパス日拓西武新宿駅前店',
+        'short_name': 'エスパス西武新宿',
+        'hall_id': '100950',
+        'machine': 'hokuto_tensei2',
+        'units': [str(i) for i in range(3138, 3152)] + ['3165', '3166', '3185', '3186', '3187'],
+        'data_source': 'daidata',
+    },
     'akiba_espass_sbj': {
         'name': 'エスパス日拓秋葉原駅前店',
         'short_name': 'エスパス秋葉原',
@@ -185,6 +193,14 @@ STORES = {
 # 旧形式との互換性
 STORES['island_akihabara'] = STORES['island_akihabara_sbj']
 STORES['shibuya_espass'] = STORES['shibuya_espass_sbj']
+
+# _hokuto_tensei2 サフィックスのエイリアス（historyディレクトリ名との互換性）
+STORES['shibuya_espass_hokuto_tensei2'] = STORES['shibuya_espass_hokuto']
+STORES['shinjuku_espass_hokuto_tensei2'] = STORES['shinjuku_espass_hokuto']
+STORES['akiba_espass_hokuto_tensei2'] = STORES['akiba_espass_hokuto']
+STORES['shibuya_honkan_espass_hokuto_tensei2'] = STORES['shibuya_honkan_espass_hokuto']
+STORES['seibu_shinjuku_espass_hokuto_tensei2'] = STORES.get('seibu_shinjuku_espass_hokuto', {})
+STORES['island_akihabara_hokuto_tensei2'] = STORES['island_akihabara_hokuto']
 
 
 def get_stores_by_machine(machine_key: str) -> dict:
