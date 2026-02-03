@@ -9,7 +9,7 @@
     <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
     <meta name="googlebot" content="noindex, nofollow">
     <title>エスパス日拓西武新宿駅前店</title>
-    <link rel="stylesheet" href="/static/style.css?v=20260203133657">
+    <link rel="stylesheet" href="/static/style.css?v=20260203043907">
 </head>
 <body data-page-type="recommend" data-store-key="seibu_shinjuku_espass_sbj">
     <div class="container">
@@ -27,7 +27,7 @@
         
     </div>
     <div class="top-bar-right">
-        <span class="version-info" id="build-ver" title="ビルド時刻">v0203_13:37</span>
+        <span class="version-info" id="build-ver" title="ビルド時刻">v0203_13:39</span>
         
     </div>
 </div>
@@ -43,23 +43,11 @@
             </div>
             <div class="update-info">
                 
-                <span class="data-source">
-                    データ取得: <span id="update-time">23:26</span>
-                </span>
-                <span class="cache-badge github">GITHUB</span>
-                
-                <div class="stale-warning">データが14時間10分前のものです</div>
-                
+                <span class="data-source no-realtime">リアルタイムデータなし（過去の傾向で評価）</span>
                 
             </div>
 
             <!-- 空き状況サマリ -->
-            
-            <div class="availability-summary">
-                <span class="avail-empty" onclick="filterUnits('empty')">空き 3台</span>
-                <span class="avail-playing" onclick="filterUnits('playing')">遊技中 0台</span>
-                <span class="avail-all" onclick="filterUnits('all')">全て</span>
-            </div>
             
 
             <div class="action-buttons">
@@ -125,15 +113,13 @@
             <section class="recommendations top">
                 <h2>推奨台</h2>
                 
-                <details class="unit-card rank-a avail-card-empty" data-availability="空き">
+                <details class="unit-card rank-a " data-availability="unknown">
                     <summary class="unit-card-summary">
                     <!-- メインヘッダー: 台番号 + 機種名 + 空き状況 + ランク -->
                     <div class="unit-main-header">
                         <span class="unit-id-large">3186番台</span>
                         <span class="machine-name-sm">スーパーブラックジャック</span>
                         
-                            
-                            <span class="avail-badge-lg empty">空き</span>
                             
                         
                         <span class="rank-badge-lg" style="background-color: #ffa502">A</span>
@@ -1610,15 +1596,13 @@
                     </div>
                 </details>
                 
-                <details class="unit-card rank-a avail-card-empty" data-availability="空き">
+                <details class="unit-card rank-a " data-availability="unknown">
                     <summary class="unit-card-summary">
                     <!-- メインヘッダー: 台番号 + 機種名 + 空き状況 + ランク -->
                     <div class="unit-main-header">
                         <span class="unit-id-large">3185番台</span>
                         <span class="machine-name-sm">スーパーブラックジャック</span>
                         
-                            
-                            <span class="avail-badge-lg empty">空き</span>
                             
                         
                         <span class="rank-badge-lg" style="background-color: #ffa502">A</span>
@@ -3253,6 +3237,11 @@
         }, 5 * 60 * 1000);
 
         // ページ読み込み時に自動でリアルタイムデータ取得
+        
+        // リアルタイムデータがない場合、自動取得開始
+        document.addEventListener('DOMContentLoaded', function() {
+            startScraping();
+        });
         
     
 /* === 共通: 動的モード切替 + 現在時刻 === */
