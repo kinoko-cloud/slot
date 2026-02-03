@@ -1257,7 +1257,8 @@ def analyze_today_data(unit_data: dict, current_hour: int = None, machine_key: s
     result['art_count'] = today_data.get('art', 0)
     result['bb_count'] = today_data.get('bb', 0)
     result['rb_count'] = today_data.get('rb', 0)
-    result['total_games'] = today_data.get('total_start', 0)
+    # total_start がない場合は games からフォールバック
+    result['total_games'] = today_data.get('total_start') or today_data.get('games', 0) or 0
     result['diff_medals'] = today_data.get('diff_medals', 0) or 0
     result['max_medals'] = today_data.get('max_medals', 0) or 0
 
@@ -2646,6 +2647,20 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
                     if unit.get('unit_id') == unit_id:
                         today_analysis = analyze_today_data(unit, machine_key=machine_key)
                         break
+
+        # data/history/ からも直接読み込み（daily_dataに最新データがない場合の補完）
+        if today_analysis.get('status') == '-' or today_analysis.get('art_count', 0) == 0:
+            _hist_file_for_today = Path(__file__).parent.parent / 'data' / 'history' / data_store_key / f'{unit_id}.json'
+            if not _hist_file_for_today.exists():
+                _hist_file_for_today = Path(__file__).parent.parent / 'data' / 'history' / store_key / f'{unit_id}.json'
+            if _hist_file_for_today.exists():
+                try:
+                    import json as _json_hist
+                    _hist_unit_data = _json_hist.loads(_hist_file_for_today.read_text())
+                    # historyデータをdaysキー付きの形式で渡す
+                    today_analysis = analyze_today_data(_hist_unit_data, machine_key=machine_key)
+                except Exception:
+                    pass
 
         # 他台との比較
         comparison = compare_with_others(store_key, unit_id, all_units_today)
