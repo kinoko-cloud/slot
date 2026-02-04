@@ -3777,3 +3777,23 @@ def _get_store_dynamic_good_rate(store_key: str, machine_key: str, target_weekda
     
     # データなければデフォルト
     return 0.35
+
+
+# ============================================================
+# 予測ロジック最適化（2026-02-04バックテスト結果）
+# ============================================================
+
+STORE_OPTIMAL_TOP_N = {
+    'akiba_espass_sbj': 12, 'shibuya_espass_sbj': 5, 'shibuya_honkan_espass_sbj': 5,
+    'seibu_shinjuku_espass_sbj': 12, 'shinjuku_espass_sbj': 12, 'island_akihabara_sbj': 12,
+    'akiba_espass_hokuto_tensei2': 12, 'island_akihabara_hokuto_tensei2': 12,
+    'seibu_shinjuku_espass_hokuto_tensei2': 12, 'shibuya_espass_hokuto_tensei2': 12,
+    'shinjuku_espass_hokuto_tensei2': 12,
+}
+
+OPTIMIZED_SCORE_WEIGHTS = {
+    'base': 50, 'good_rate_weight': 45, 'weekday_bonus': 20,
+    'consec_good_3': 30, 'consec_good_2': 18, 'consec_good_1': 10,
+    'consec_bad_4': 8, 'consec_bad_2_penalty': 5,
+    'yesterday_bonus': 25, 'recent_excellent': 18, 'recent_good': 8,
+}
