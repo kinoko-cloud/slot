@@ -476,8 +476,6 @@
                         </span>
                     </div>
                     {% endif %}
-                    {# === 営業中: 当日履歴（詳細ボタンは確率行に移動済み） === #}
-                    {{ history_table_only(rec.today_history) }}
                     {% else %}
                     {# === 閉店後: 前日データを当日データとして表示 === #}
                     {% set y_art = rec.yesterday_art or 0 %}
@@ -574,6 +572,10 @@
                         {{ reasons_list(rec.reasons) }}
                     </div>
                 </a>
+                {# === 営業中: 当日履歴（<a>タグの外に配置） === #}
+                {% if is_open and rec.today_history and rec.today_history|length > 0 %}
+                {{ history_table_only(rec.today_history) }}
+                {% endif %}
                 {% endfor %}
 
                 {# === もっと見る（TOP11〜30）=== #}
@@ -939,11 +941,11 @@
     function toggleHistoryDetail(e, el) {
         e.preventDefault();
         e.stopPropagation();
-        // 親のカード内から.history-detailを探す
+        // 親カードの次の兄弟要素（history-detail）を探す
         var card = el.closest('.unit-card, .rec-card, .top3-card, .sa-card');
         if (!card) return;
-        var detail = card.querySelector('.history-detail');
-        if (!detail) return;
+        var detail = card.nextElementSibling;
+        if (!detail || !detail.classList.contains('history-detail')) return;
         var isHidden = detail.classList.contains('hidden');
         if (isHidden) {
             detail.classList.remove('hidden');
