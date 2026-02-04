@@ -226,6 +226,12 @@
                                 <span class="data-value">{{ '{:,}'.format(rec.total_games) }}</span>
                                 <span class="data-label">累計G</span>
                             </div>
+                            {% if rec.diff_medals is defined and rec.diff_medals != 0 %}
+                            <div class="data-cell {% if rec.diff_medals > 0 %}plus{% else %}minus{% endif %}">
+                                <span class="data-value diff-medals-inline {% if rec.diff_medals > 0 %}plus{% else %}minus{% endif %}">{{ '{:+,}'.format(rec.diff_medals) }}枚</span>
+                                <span class="data-label">差枚</span>
+                            </div>
+                            {% endif %}
                         </div>
                     </div>
                     {% else %}
