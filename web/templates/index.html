@@ -114,31 +114,23 @@
         <main>
             {# === 結果バナー === #}
             <a href="{{ url_for('verify') }}" class="verify-banner-lg">
-                <div class="vb-circles-row">
-                    {% if verify_categories %}
-                    {% for cat in verify_categories %}
-                    <div class="vb-circle-item">
-                        <div class="vb-circle {% if cat.rate >= 100 %}rainbow{% elif cat.rate >= 85 %}hot{% elif cat.rate >= 70 %}good{% elif cat.rate >= 55 %}warm{% elif cat.rate >= 40 %}ok{% elif cat.rate >= 25 %}cool{% elif cat.rate >= 10 %}cold{% else %}ice{% endif %}">
-                            <span class="vb-circle-num">{{ cat.rate }}%</span>
-                        </div>
-                        <span class="vb-circle-label"><span class="vb-mk">{{ cat.mk_name }}</span><br>{{ cat.store_name }}</span>
+                <div class="vb-main-rate">
+                    <div class="vb-circle-big {% if verify_rate >= 85 %}hot{% elif verify_rate >= 70 %}good{% elif verify_rate >= 55 %}warm{% else %}ok{% endif %}">
+                        <span class="vb-rate-num">{{ verify_rate }}%</span>
                     </div>
+                    <div class="vb-rate-meta">
+                        <span class="vb-title-lg">{% if verify_date_str %}{{ verify_date_str }}{% else %}昨日{% endif %}の的中率</span>
+                        <span class="vb-rate-detail">S/A予測 {{ verify_hit }}台/{{ verify_total }}台が好調</span>
+                    </div>
+                </div>
+                {% if verify_examples %}
+                <div class="vb-examples">
+                    {% for ex in verify_examples %}
+                    <span class="vb-example">{{ ex.rank }}予測 {{ ex.store }} 台{{ ex.unit }} → 1/{{ ex.prob }}</span>
                     {% endfor %}
-                    {% endif %}
                 </div>
-                <div class="vb-lg-info">
-                    <span class="vb-title-lg">{% if verify_date_str %}{{ verify_date_str }}{% else %}昨日{% endif %}の的中率</span>
-                    {% if verify_highlights %}
-                    <div class="vb-highlights-row">
-                        {% for h in verify_highlights %}
-                        <span class="vb-highlight">{{ h }}</span>
-                        {% endfor %}
-                        <span class="vb-detail-lg">詳しく見る →</span>
-                    </div>
-                    {% else %}
-                    <span class="vb-detail-lg">詳しく見る →</span>
-                    {% endif %}
-                </div>
+                {% endif %}
+                <span class="vb-detail-lg">詳しく見る →</span>
             </a>
 
             {# === ナビゲーション（プルダウン） === #}
