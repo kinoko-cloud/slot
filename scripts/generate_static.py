@@ -431,6 +431,14 @@ def generate_index(env):
                             if key in r and r[key]:
                                 r[key] = [reason for reason in r[key] 
                                           if '本日' not in reason]
+                    
+                    # 稼働開始後（ART > 0）は昨日ベースの理由をクリア
+                    if _art > 0:
+                        stale_patterns = ['途中放棄', '最終', 'やめ', '狙い余地']
+                        for key in ('today_reasons', 'reasons'):
+                            if key in r and r[key]:
+                                r[key] = [reason for reason in r[key] 
+                                          if not any(p in reason for p in stale_patterns)]
 
                 # 全recsにメタデータを付与
                 for rec in recs:
