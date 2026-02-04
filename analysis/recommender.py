@@ -3064,7 +3064,7 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
             'yesterday_max_rensa': trend_data.get('yesterday_max_rensa', 0),
             'yesterday_max_medals': trend_data.get('yesterday_max_medals', 0),
             'max_medals': max_medals,
-            'diff_medals': today_analysis.get('diff_medals', 0),
+            'diff_medals': today_diff_medals,  # 本日の差枚（履歴から計算）
             # 3日目のデータ（蓄積DBから取得）
             'three_days_ago_art': 0,
             'three_days_ago_rb': 0,
