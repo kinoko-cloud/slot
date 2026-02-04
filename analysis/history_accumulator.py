@@ -324,7 +324,7 @@ def analyze_weekday_pattern(unit_history: dict, machine_key: str = 'sbj') -> dic
     for d in days:
         date_str = d.get('date', '')
         prob = d.get('prob', 0)
-        if not date_str or prob <= 0:
+        if not date_str or not prob or prob <= 0:
             continue
         try:
             dt = datetime.strptime(date_str, '%Y-%m-%d')
