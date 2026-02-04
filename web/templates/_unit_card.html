@@ -75,7 +75,7 @@
     {# 設定推定（あれば） #}
     {% if rec.total_games >= 1000 and rec.estimated_setting %}
     <div class="v2-setting">
-        <span class="setting-badge-sm setting-{{ rec.setting_num|default(0) }}">{{ rec.estimated_setting }}{% if rec.total_games < 3000 %}？{% endif %}</span>
+        <span class="setting-badge-sm setting-{{ rec.setting_num|default(0) }}">{{ rec.estimated_setting }}</span>
     </div>
     {% endif %}
 
