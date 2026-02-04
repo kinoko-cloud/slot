@@ -479,6 +479,13 @@
                         </span>
                     </div>
                     {% endif %}
+                    {# === 本日の差枚推移グラフ（営業中） === #}
+                    {% if rec.today_history and rec.today_history|length >= 2 %}
+                    <div class="sparkline-section">
+                        <div class="sparkline-label">本日 差枚推移</div>
+                        {{ sparkline(rec.today_history, width=220, height=45, diff_medals=rec.diff_medals|default(none))|safe }}
+                    </div>
+                    {% endif %}
                     {% else %}
                     {# === 閉店後: 前日データを当日データとして表示 === #}
                     {% set y_art = rec.yesterday_art or 0 %}
