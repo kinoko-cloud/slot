@@ -439,6 +439,25 @@ def fetch_papimo_unit_detail(page, hall_id: str, unit_id: str) -> dict:
 
 
 def main():
+    import sys
+    
+    # オプション解析
+    sbj_only = '--sbj-only' in sys.argv
+    hokuto_only = '--hokuto-only' in sys.argv
+    
+    # 対象店舗をフィルタリング
+    daidata_stores = DAIDATA_STORES
+    papimo_stores = PAPIMO_STORES
+    
+    if sbj_only:
+        daidata_stores = {k: v for k, v in DAIDATA_STORES.items() if 'sbj' in k}
+        papimo_stores = {k: v for k, v in PAPIMO_STORES.items() if 'sbj' in k}
+        print(f"SBJのみモード: {len(daidata_stores) + len(papimo_stores)}店舗")
+    elif hokuto_only:
+        daidata_stores = {k: v for k, v in DAIDATA_STORES.items() if 'hokuto' in k}
+        papimo_stores = {k: v for k, v in PAPIMO_STORES.items() if 'hokuto' in k}
+        print(f"北斗のみモード: {len(daidata_stores) + len(papimo_stores)}店舗")
+    
     result = {
         'stores': {},
         'fetched_at': datetime.now(JST).isoformat(),
@@ -475,7 +494,7 @@ def main():
         # daidataは利用規約画面がJSで表示され、「利用規約に同意する」ボタンをクリックしないと
         # データが見られない。店舗ごとにセッションが分かれるため、全店舗で同意が必要。
         agreed_halls = set()
-        for config in DAIDATA_STORES.values():
+        for config in daidata_stores.values():
             hall_id = config['hall_id']
             if hall_id in agreed_halls:
                 continue
@@ -499,7 +518,7 @@ def main():
 
         # CI環境判定（Circle CI / GitHub Actions）
         # ===== daidata店舗 =====
-        for store_key, config in DAIDATA_STORES.items():
+        for store_key, config in daidata_stores.items():
             print(f"\n[daidata] Fetching {config['name']}...")
 
             # model_encodedがある場合のみ一覧ページで空き状況を取得
@@ -549,7 +568,7 @@ def main():
             print(f"  Done - Playing: {avail_data.get('playing', [])}, Empty: {avail_data.get('empty', [])}")
 
         # ===== papimo.jp店舗 =====
-        for store_key, config in PAPIMO_STORES.items():
+        for store_key, config in papimo_stores.items():
             print(f"\n[papimo] Fetching {config['name']}...")
 
             # 空き状況を取得
