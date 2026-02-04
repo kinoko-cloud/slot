@@ -3925,3 +3925,71 @@ def _calculate_change_expectation(unit_history: list, good_prob: int = 130) -> t
         return 10, f'{consecutive_bad}日連続不調→変更期待'
     
     return 0, None
+
+
+def _analyze_setting_quality(unit_history: list, machine_key: str = 'sbj') -> dict:
+    """設定品質を分析（高設定 vs 低設定の吐き出し）"""
+    if not unit_history:
+        return {'quality_score': 0, 'avg_diff_per_day': 0, 'avg_deep_hama': 0, 'quality_reason': None}
+    
+    diffs, deep_hama_counts = [], []
+    good_prob = 130 if machine_key == 'sbj' else 290
+    
+    for d in unit_history:
+        art = d.get('art', 0)
+        games = d.get('games', 0) or d.get('total_start', 0)
+        diff = d.get('diff', 0) or d.get('medal_diff', 0)
+        hist = d.get('history', [])
+        
+        if not diff and hist:
+            total_medals = sum(h.get('medals', 0) for h in hist)
+            total_start = sum(h.get('start', 0) for h in hist)
+            diff = total_medals - total_start * 3
+        
+        deep_hama = sum(1 for h in hist if h.get('start', 0) >= 500) if hist else 0
+        
+        if art > 0 and games > 0 and (games / art) <= good_prob:
+            diffs.append(diff)
+            deep_hama_counts.append(deep_hama)
+    
+    if not diffs:
+        return {'quality_score': 0, 'avg_diff_per_day': 0, 'avg_deep_hama': 0, 'quality_reason': None}
+    
+    avg_diff = sum(diffs) / len(diffs)
+    avg_hama = sum(deep_hama_counts) / len(deep_hama_counts) if deep_hama_counts else 0
+    
+    quality_score, reason = 0, None
+    if avg_diff > 2000:
+        quality_score += 15
+        reason = f'好調日の平均差枚+{avg_diff:.0f}枚'
+    elif avg_diff > 0:
+        quality_score += 8
+    elif avg_diff < -2000:
+        quality_score -= 10
+        reason = f'好調日でも差枚-{abs(avg_diff):.0f}枚→引き強の可能性'
+    
+    if avg_hama <= 1:
+        quality_score += 10
+    elif avg_hama >= 3:
+        quality_score -= 8
+        reason = f'平均{avg_hama:.1f}回/日のハマリ→低設定の可能性'
+    
+    return {'quality_score': quality_score, 'avg_diff_per_day': avg_diff, 'avg_deep_hama': avg_hama, 'quality_reason': reason}
+
+
+def _calculate_change_expectation(unit_history: list, good_prob: int = 130) -> tuple:
+    """設定変更期待度を計算"""
+    if not unit_history or len(unit_history) < 3:
+        return 0, None
+    sorted_days = sorted(unit_history, key=lambda x: x.get('date', ''), reverse=True)
+    consecutive_bad = 0
+    for d in sorted_days:
+        art = d.get('art', 0)
+        games = d.get('games', 0) or d.get('total_start', 0)
+        if art <= 0 or games < 500: continue
+        if (games / art) > good_prob: consecutive_bad += 1
+        else: break
+    if consecutive_bad >= 5: return 20, f'{consecutive_bad}日連続不調→設定変更期待大'
+    elif consecutive_bad >= 4: return 15, f'{consecutive_bad}日連続不調→設定変更期待'
+    elif consecutive_bad >= 3: return 10, f'{consecutive_bad}日連続不調→変更期待'
+    return 0, None
