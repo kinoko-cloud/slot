@@ -3217,7 +3217,12 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
                         rec['yesterday_games'] = _rt_total
                         rec['yesterday_date'] = rt_date
                         rec['yesterday_prob'] = round(_rt_total / _rt_art) if _rt_art > 0 else 0
-                        rec['today_history'] = rt_hist
+                        # today_historyは本日データの場合のみ設定（昨日データは設定しない）
+                        if realtime_is_today and rt_hist:
+                            rec['today_history'] = rt_hist
+                        # 昨日データの場合はyesterday_historyに設定
+                        elif rt_hist:
+                            rec['yesterday_history'] = rt_hist
 
                         # 連チャン・最大枚数
                         if rt_hist:
@@ -3243,7 +3248,11 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
                                 rec['yesterday_max_medals'] = rt_max
                             elif calc_medals > 0:
                                 rec['yesterday_max_medals'] = calc_medals
-                            rec['today_history'] = rt_hist
+                            # today_historyは本日データの場合のみ（昨日データはyesterday_historyへ）
+                            if realtime_is_today:
+                                rec['today_history'] = rt_hist
+                            else:
+                                rec['yesterday_history'] = rt_hist
                         if not rec.get('yesterday_prob') and _rt_art > 0 and _rt_total > 0:
                             rec['yesterday_prob'] = round(_rt_total / _rt_art)
                         # 差枚はgenerate_static.pyで計算（history計算は不正確）
