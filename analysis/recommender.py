@@ -3387,12 +3387,15 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
             rec['final_rank'] = absolute_rank
 
         # 4. S/A台数の上限制限
-        # 店×機種の好調率に基づいてS/A枠を決定
-        # 好調率がわからない場合は保守的に35%
-        _store_good_rate = _estimate_store_good_rate(store_key, machine_key, perf_days_all=sorted_by_score)
+        # 店×機種の好調率に基づいてS/A枠を決定（曜日考慮）
+        target_weekday = datetime.now().weekday()
+        _store_good_rate = _get_store_dynamic_good_rate(store_key, machine_key, target_weekday)
+        if _store_good_rate < 0.2:
+            # データ不足時はフォールバック
+            _store_good_rate = _estimate_store_good_rate(store_key, machine_key, perf_days_all=sorted_by_score)
         # S/A枠 = 好調率の半分程度（好調台の全部をS/Aにする必要はない）
         # 好調率70%の店 → S/A枠35%、好調率50%の店 → S/A枠25%
-        max_sa_ratio = min(0.40, max(0.15, _store_good_rate * 0.5))
+        max_sa_ratio = min(0.45, max(0.15, _store_good_rate * 0.55))
         max_sa_count = max(2, int(n * max_sa_ratio))
         sa_count = 0
         for rec in sorted_by_score:
@@ -3718,4 +3721,59 @@ def calculate_enhanced_score(
             enhanced_score += boost
             boost_reasons.append(f'{consecutive["consecutive_bad"]}日不調→変更期待')
     
+    # 3. 全台系イベント日ブースト
+    is_zentai, confidence, hot_units = _is_zentai_day(store_key, target_date)
+    if is_zentai:
+        if confidence == 'high':
+            boost = 20
+        elif confidence == 'medium':
+            boost = 12
+        else:
+            boost = 6
+        enhanced_score += boost
+        boost_reasons.append(f'全台系予測日({confidence})')
+        
+        # ホットユニット（よく高設定が入る台）ならさらにブースト
+        hot_unit_ids = [str(u[0]) if isinstance(u, (list, tuple)) else str(u) for u in hot_units]
+        if str(unit_id) in hot_unit_ids:
+            enhanced_score += 8
+            boost_reasons.append('全台系でよく入る台')
+    
     return enhanced_score, boost_reasons
+
+
+def _is_zentai_day(store_key: str, target_date: str) -> tuple:
+    """全台系イベント日かどうか判定
+    
+    Returns:
+        (is_zentai: bool, confidence: str, hot_units: list)
+    """
+    predictions = _load_zentai_predictions()
+    
+    for sk, pred in predictions.get('predictions', {}).items():
+        # store_keyのマッチング（_sbj, _hokuto_tensei2を除去して比較）
+        sk_base = sk.replace('_sbj', '').replace('_hokuto_tensei2', '')
+        store_base = store_key.replace('_sbj', '').replace('_hokuto_tensei2', '')
+        
+        if sk_base == store_base or store_key.startswith(sk_base):
+            predicted_date = pred.get('predicted_date')
+            confidence = pred.get('confidence', 'low')
+            if predicted_date == target_date:
+                return True, confidence, pred.get('hot_units', [])
+    
+    return False, None, []
+
+
+def _get_store_dynamic_good_rate(store_key: str, machine_key: str, target_weekday: int = None) -> float:
+    """店舗×機種の動的好調率を取得（曜日考慮）"""
+    weekday_pattern = _analyze_weekday_pattern(store_key, machine_key)
+    
+    if weekday_pattern and target_weekday is not None and target_weekday in weekday_pattern:
+        return weekday_pattern[target_weekday] / 100.0
+    
+    # 曜日データがなければ全体平均
+    if weekday_pattern:
+        return sum(weekday_pattern.values()) / len(weekday_pattern) / 100.0
+    
+    # データなければデフォルト
+    return 0.35
