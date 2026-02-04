@@ -2873,6 +2873,7 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
 
         # === 最終スコア計算 ===
         today_bonus = today_analysis.get('today_score_bonus', 0)
+        today_pattern_reason = None  # 後で設定
         prediction_bonus = (trend_bonus
                        + historical_bonus   # 【改善1】過去実績ボーナス
                        + slump_bonus        # 【改善2】不調翌日ボーナス
@@ -3024,6 +3025,18 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
         if enhance_reasons:
             for er in enhance_reasons:
                 reasons.insert(0, f"🔮 {er}")
+        
+        # 当日パターン理由を追加
+        # 当日パターン分析（ハマリ・モミモミ・天井狙い）
+        if today_history:
+            _today_ptn = _analyze_today_pattern(today_history, machine_key)
+            today_pattern_reason = _today_ptn.get('reason')
+            _today_ptn_bonus = _today_ptn.get('score_adjust', 0)
+            if _today_ptn_bonus != 0:
+                final_score += _today_ptn_bonus
+        
+        if today_pattern_reason:
+            reasons.insert(0, f"⏱️ {today_pattern_reason}")
 
         # リアルタイム空き状況がある場合は上書き
         status = today_analysis.get('status', '不明')
@@ -3959,20 +3972,48 @@ def _analyze_setting_quality(unit_history: list, machine_key: str = 'sbj') -> di
     avg_hama = sum(deep_hama_counts) / len(deep_hama_counts) if deep_hama_counts else 0
     
     quality_score, reason = 0, None
-    if avg_diff > 2000:
+    
+    # 差枚による評価（細かい閾値）
+    if avg_diff >= 5000:
+        quality_score += 20
+        reason = f'好調日の平均差枚+{avg_diff:.0f}枚→高設定濃厚'
+    elif avg_diff >= 3000:
         quality_score += 15
         reason = f'好調日の平均差枚+{avg_diff:.0f}枚'
-    elif avg_diff > 0:
+    elif avg_diff >= 2000:
+        quality_score += 12
+    elif avg_diff >= 1000:
         quality_score += 8
-    elif avg_diff < -2000:
-        quality_score -= 10
-        reason = f'好調日でも差枚-{abs(avg_diff):.0f}枚→引き強の可能性'
-    
-    if avg_hama <= 1:
-        quality_score += 10
-    elif avg_hama >= 3:
+    elif avg_diff >= 0:
+        quality_score += 5
+    elif avg_diff >= -1000:
+        quality_score += 0  # 微マイナスは許容
+    elif avg_diff >= -2000:
+        quality_score -= 5
+    elif avg_diff >= -3000:
         quality_score -= 8
-        reason = f'平均{avg_hama:.1f}回/日のハマリ→低設定の可能性'
+        reason = f'好調日でも差枚{avg_diff:.0f}枚→引き強の可能性'
+    elif avg_diff >= -5000:
+        quality_score -= 12
+        reason = f'好調日でも差枚{avg_diff:.0f}枚→低設定の吐き出し'
+    else:
+        quality_score -= 15
+        reason = f'好調日でも差枚{avg_diff:.0f}枚→低設定確定的'
+    
+    # ハマリ回数による評価（細かい閾値）
+    if avg_hama == 0:
+        quality_score += 12
+    elif avg_hama <= 1:
+        quality_score += 8
+    elif avg_hama <= 2:
+        quality_score += 3
+    elif avg_hama <= 3:
+        quality_score -= 5
+        if not reason:
+            reason = f'平均{avg_hama:.1f}回/日のハマリ'
+    else:
+        quality_score -= 10
+        reason = f'平均{avg_hama:.1f}回/日のハマリ→低設定の可能性大'
     
     return {'quality_score': quality_score, 'avg_diff_per_day': avg_diff, 'avg_deep_hama': avg_hama, 'quality_reason': reason}
 
@@ -3993,3 +4034,82 @@ def _calculate_change_expectation(unit_history: list, good_prob: int = 130) -> t
     elif consecutive_bad >= 4: return 15, f'{consecutive_bad}日連続不調→設定変更期待'
     elif consecutive_bad >= 3: return 10, f'{consecutive_bad}日連続不調→変更期待'
     return 0, None
+
+
+def _analyze_today_pattern(today_history: list, machine_key: str = 'sbj') -> dict:
+    """当日のハマリ・モミモミパターンを分析
+    
+    Returns:
+        {
+            'pattern': str,  # 'explosion'/'stable'/'momimomi'/'struggling'
+            'today_diff': int,  # 当日差枚
+            'deep_hama_count': int,  # 当日のハマリ回数
+            'current_hama': int,  # 現在のハマリG数
+            'score_adjust': int,  # スコア調整
+            'reason': str,
+        }
+    """
+    if not today_history:
+        return {'pattern': 'unknown', 'today_diff': 0, 'deep_hama_count': 0, 
+                'current_hama': 0, 'score_adjust': 0, 'reason': None}
+    
+    # 当日差枚を計算
+    total_medals = sum(h.get('medals', 0) for h in today_history)
+    total_start = sum(h.get('start', 0) for h in today_history)
+    today_diff = total_medals - total_start * 3
+    
+    # ハマリ回数（500G以上）
+    deep_hama_count = sum(1 for h in today_history if h.get('start', 0) >= 500)
+    
+    # 現在のハマリG数（最後のART以降）
+    current_hama = today_history[-1].get('start', 0) if today_history else 0
+    
+    # パターン判定
+    pattern = 'unknown'
+    score_adjust = 0
+    reason = None
+    
+    # 天井期待（SBJ: 999G、北斗: あべしシステム）
+    ceiling = 999 if machine_key == 'sbj' else 666  # 北斗はモード次第
+    
+    if today_diff >= 3000:
+        pattern = 'explosion'
+        score_adjust = 0  # すでに爆発中→空かないので加点しない
+        reason = f'本日+{today_diff:,}枚で爆発中'
+    elif today_diff >= 1000:
+        pattern = 'stable'
+        score_adjust = 5
+        reason = f'本日+{today_diff:,}枚で安定稼働'
+    elif -1000 <= today_diff <= 1000:
+        pattern = 'momimomi'
+        # モミモミで様子見
+        if deep_hama_count >= 2:
+            score_adjust = -5
+            reason = f'本日モミモミ（{today_diff:+,}枚）でハマリ{deep_hama_count}回'
+        else:
+            score_adjust = 0
+    elif today_diff < -2000:
+        pattern = 'struggling'
+        if deep_hama_count >= 2:
+            # ハマリ多くてマイナス → 低設定っぽい
+            score_adjust = -10
+            reason = f'本日{today_diff:,}枚でハマリ{deep_hama_count}回→低設定の可能性'
+        else:
+            # ハマリ少ないけどマイナス → 引き弱だが高設定の可能性も
+            score_adjust = 0
+    
+    # 天井狙い判定
+    if current_hama >= ceiling * 0.7:  # 天井の70%以上
+        score_adjust += 10
+        reason = f'現在{current_hama}Gハマリ→天井狙い圏内'
+    elif current_hama >= ceiling * 0.5:
+        score_adjust += 5
+    
+    return {
+        'pattern': pattern,
+        'today_diff': today_diff,
+        'deep_hama_count': deep_hama_count,
+        'current_hama': current_hama,
+        'score_adjust': score_adjust,
+        'reason': reason,
+    }
