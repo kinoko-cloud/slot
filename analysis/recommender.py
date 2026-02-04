@@ -3410,16 +3410,20 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
             rec['final_rank'] = absolute_rank
 
         # 4. S/A台数の上限制限
-        # 店×機種の好調率に基づいてS/A枠を決定（曜日考慮）
-        target_weekday = datetime.now().weekday()
-        _store_good_rate = _get_store_dynamic_good_rate(store_key, machine_key, target_weekday)
-        if _store_good_rate < 0.2:
-            # データ不足時はフォールバック
-            _store_good_rate = _estimate_store_good_rate(store_key, machine_key, perf_days_all=sorted_by_score)
-        # S/A枠 = 好調率の半分程度（好調台の全部をS/Aにする必要はない）
-        # 好調率70%の店 → S/A枠35%、好調率50%の店 → S/A枠25%
-        max_sa_ratio = min(0.45, max(0.15, _store_good_rate * 0.55))
-        max_sa_count = max(2, int(n * max_sa_ratio))
+        # 店×機種の「高設定枠数」をそのまま使う
+        # 店が毎日何台勝たせるつもりか = S/A枠数
+        policy = _load_store_policy(store_key)
+        if policy and policy.get('avg_good_per_day', 0) > 0:
+            # 店のポリシーから枠数を取得
+            max_sa_count = max(2, int(round(policy['avg_good_per_day'])))
+        else:
+            # フォールバック: 従来の計算
+            target_weekday = datetime.now().weekday()
+            _store_good_rate = _get_store_dynamic_good_rate(store_key, machine_key, target_weekday)
+            if _store_good_rate < 0.2:
+                _store_good_rate = _estimate_store_good_rate(store_key, machine_key, perf_days_all=sorted_by_score)
+            max_sa_ratio = min(0.45, max(0.15, _store_good_rate * 0.55))
+            max_sa_count = max(2, int(n * max_sa_ratio))
         sa_count = 0
         for rec in sorted_by_score:
             if rec['final_rank'] in ('S', 'A'):
@@ -4194,3 +4198,89 @@ def calculate_policy_score(
         reasons.append(f'{consecutive_bad}日連続不調→店のリセット周期({avg_reset:.0f}日)')
     
     return score, reasons
+
+
+def calculate_position_score(unit_id: str, all_unit_ids: list) -> tuple:
+    """台の位置によるスコア調整
+    
+    バックテスト結果:
+    - 中央: 73.4%好調
+    - 端(前後): 54-57%好調
+    """
+    if not all_unit_ids:
+        return 0, None
+    
+    try:
+        sorted_ids = sorted(all_unit_ids)
+        idx = sorted_ids.index(str(unit_id))
+        n = len(sorted_ids)
+        pos_ratio = idx / n
+        
+        if 0.2 <= pos_ratio <= 0.8:
+            return 8, '中央位置（好調率高）'
+        else:
+            return -5, '端位置（好調率低）'
+    except:
+        return 0, None
+
+
+def calculate_last_digit_score(unit_id: str) -> tuple:
+    """台番号末尾によるスコア調整
+    
+    バックテスト結果:
+    - 末尾2,3,5: 72-76%好調
+    - 末尾0,6: 57-63%好調
+    """
+    try:
+        last = int(unit_id) % 10
+        if last in (2, 3, 5):
+            return 5, f'末尾{last}（好調率高）'
+        elif last in (0, 6):
+            return -3, f'末尾{last}（好調率低）'
+    except:
+        pass
+    return 0, None
+
+
+def calculate_weekday_global_score(target_weekday: int) -> tuple:
+    """曜日によるスコア調整
+    
+    バックテスト結果:
+    - 土日: 76-77%好調
+    - 月曜: 64%好調
+    """
+    if target_weekday in (5, 6):  # 土日
+        return 8, '土日（好調率77%）'
+    elif target_weekday == 0:  # 月曜
+        return -5, '月曜（好調率64%）'
+    return 0, None
+
+
+def calculate_prev_count_score(prev_good_count: int, total_units: int) -> tuple:
+    """前日好調台数によるスコア調整
+    
+    バックテスト結果:
+    - 前日4-6台好調: 翌日82%
+    - 前日16台好調: 翌日44%
+    """
+    if total_units == 0:
+        return 0, None
+    
+    ratio = prev_good_count / total_units
+    
+    if ratio >= 0.8:  # ほぼ全台好調 → 全台系の翌日
+        return -10, f'前日{prev_good_count}台好調→全台系翌日'
+    elif ratio <= 0.4:  # 絞っている
+        return 5, f'前日{prev_good_count}台好調→継続期待'
+    return 0, None
+
+
+def calculate_reset_expectation_score(consecutive_bad: int) -> tuple:
+    """連続不調によるリセット期待スコア
+    
+    バックテスト結果:
+    - 2日連続不調 → 翌日好調率70.1%
+    """
+    if consecutive_bad >= 2:
+        return 15, f'{consecutive_bad}日連続不調→リセット期待'
+    return 0, None
