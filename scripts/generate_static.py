@@ -1001,6 +1001,18 @@ def generate_index(env):
                 filter_stores_by_name[sn].append({'key': sk, 'name': sn})
     filter_stores = [{'name': name, 'store_keys': [x['key'] for x in stores]} for name, stores in filter_stores_by_name.items()]
 
+    # データ取得時刻を取得
+    data_fetched_at = ''
+    try:
+        from scrapers.availability_checker import get_daidata_availability
+        avail_data = get_daidata_availability()
+        fetched_at_str = avail_data.get('fetched_at', '')
+        if fetched_at_str:
+            fetched_dt = datetime.fromisoformat(fetched_at_str)
+            data_fetched_at = f"{fetched_dt.month}/{fetched_dt.day} {fetched_dt.strftime('%H:%M')}"
+    except:
+        pass
+
     html = template.render(
         machines=machines,
         top3=top3,
@@ -1013,6 +1025,7 @@ def generate_index(env):
         today_date=today_date,
         today_date_formatted=today_date_formatted,
         now_time=now.strftime('%H:%M'),
+        data_fetched_at=data_fetched_at,
         now_short=now.strftime('%m%d_%H:%M'),
         store_recommendations={},
         today_recommended_stores=today_recommended_stores,
