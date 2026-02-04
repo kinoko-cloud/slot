@@ -29,3 +29,8 @@ slot_deploy.tar.gz
 # Keep daily data
 !data/daily/
 .pythonanywhere_token
+
+# ローカル一時ファイル（自動更新でコンフリクトの原因になる）
+logs/
+data/alerts/
+
