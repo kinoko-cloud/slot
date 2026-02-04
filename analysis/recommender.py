@@ -3410,16 +3410,20 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
             rec['final_rank'] = absolute_rank
 
         # 4. S/A台数の上限制限
-        # 店×機種の好調率に基づいてS/A枠を決定（曜日考慮）
-        target_weekday = datetime.now().weekday()
-        _store_good_rate = _get_store_dynamic_good_rate(store_key, machine_key, target_weekday)
-        if _store_good_rate < 0.2:
-            # データ不足時はフォールバック
-            _store_good_rate = _estimate_store_good_rate(store_key, machine_key, perf_days_all=sorted_by_score)
-        # S/A枠 = 好調率の半分程度（好調台の全部をS/Aにする必要はない）
-        # 好調率70%の店 → S/A枠35%、好調率50%の店 → S/A枠25%
-        max_sa_ratio = min(0.45, max(0.15, _store_good_rate * 0.55))
-        max_sa_count = max(2, int(n * max_sa_ratio))
+        # 店×機種の「高設定枠数」をそのまま使う
+        # 店が毎日何台勝たせるつもりか = S/A枠数
+        policy = _load_store_policy(store_key)
+        if policy and policy.get('avg_good_per_day', 0) > 0:
+            # 店のポリシーから枠数を取得
+            max_sa_count = max(2, int(round(policy['avg_good_per_day'])))
+        else:
+            # フォールバック: 従来の計算
+            target_weekday = datetime.now().weekday()
+            _store_good_rate = _get_store_dynamic_good_rate(store_key, machine_key, target_weekday)
+            if _store_good_rate < 0.2:
+                _store_good_rate = _estimate_store_good_rate(store_key, machine_key, perf_days_all=sorted_by_score)
+            max_sa_ratio = min(0.45, max(0.15, _store_good_rate * 0.55))
+            max_sa_count = max(2, int(n * max_sa_ratio))
         sa_count = 0
         for rec in sorted_by_score:
             if rec['final_rank'] in ('S', 'A'):
