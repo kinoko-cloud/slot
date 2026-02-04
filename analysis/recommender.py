@@ -2285,7 +2285,23 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
             if prev_date_label:
                 r = r.replace('前日', prev_date_label)
             replaced.append(r)
-        return replaced
+        # 最低3行を保証
+        while len(replaced) < 3:
+            if total_games > 0 and art_prob > 0 and f"📊 現在{total_games:,}G消化" not in ' '.join(replaced):
+                replaced.append(f"📊 現在{total_games:,}G消化・1/{art_prob:.0f}で推移中")
+            elif store_name and today_weekday and today_rating >= 4 and f"💡 {store_name}の{today_weekday}曜" not in ' '.join(replaced):
+                replaced.append(f"💡 {store_name}の{today_weekday}曜は高評価日")
+            elif yesterday_art > 0 and yesterday_games > 0 and '前日' not in ' '.join(replaced):
+                y_prob = yesterday_games // yesterday_art if yesterday_art > 0 else 0
+                replaced.append(f"📊 前日実績: ART{yesterday_art}回・{yesterday_games:,}G（1/{y_prob}）")
+            elif final_rank in ['S', 'A'] and '過去データ' not in ' '.join(replaced):
+                replaced.append(f"📊 過去データ{final_rank}ランク: 高設定が入りやすい台")
+            elif base_rank in ['S', 'A'] and '過去データ' not in ' '.join(replaced):
+                replaced.append(f"📊 過去データ{base_rank}ランク: 期待値の高い台")
+            else:
+                replaced.append(f"🎰 台番号{unit_id}: おすすめ台としてピックアップ")
+                break
+        return replaced[:5]
 
     # 店舗傾向の根拠を末尾に移動
     # 台個別のデータ根拠を優先、店舗全体の傾向は補助情報として最後
@@ -2300,7 +2316,24 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
             store_reasons.append(r)
         else:
             other_reasons.append(r)
-    return (other_reasons + store_reasons)[:5]
+    result = (other_reasons + store_reasons)[:5]
+    # 最低3行を保証
+    while len(result) < 3:
+        if total_games > 0 and art_prob > 0 and f"📊 現在{total_games:,}G消化" not in ' '.join(result):
+            result.append(f"📊 現在{total_games:,}G消化・1/{art_prob:.0f}で推移中")
+        elif store_name and today_weekday and today_rating >= 4 and f"💡 {store_name}の{today_weekday}曜" not in ' '.join(result):
+            result.append(f"💡 {store_name}の{today_weekday}曜は高評価日")
+        elif yesterday_art > 0 and yesterday_games > 0 and '前日' not in ' '.join(result):
+            y_prob = yesterday_games // yesterday_art if yesterday_art > 0 else 0
+            result.append(f"📊 前日実績: ART{yesterday_art}回・{yesterday_games:,}G（1/{y_prob}）")
+        elif final_rank in ['S', 'A'] and '過去データ' not in ' '.join(result):
+            result.append(f"📊 過去データ{final_rank}ランク: 高設定が入りやすい台")
+        elif base_rank in ['S', 'A'] and '過去データ' not in ' '.join(result):
+            result.append(f"📊 過去データ{base_rank}ランク: 期待値の高い台")
+        else:
+            result.append(f"🎰 台番号{unit_id}: おすすめ台としてピックアップ")
+            break
+    return result[:5]
 
 
 def generate_store_analysis(store_key: str, daily_data: dict = None) -> dict:
