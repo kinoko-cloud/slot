@@ -4,14 +4,41 @@
 {# === 直近データ展開マクロ === #}
 {# day_hist: _process_history_for_verify()で加工済みデータ（chain_pos, is_hot_chain, is_tenjou, accumulated_games等付き） #}
 {# SBJ: RBではゲーム数天井がリセットされない → accumulated_gamesで天井判定 #}
+{# 履歴テーブルのみ出力するマクロ（本日用：トリガーは呼び出し元で設置） #}
+{% macro history_table_only(day_hist) %}
+{% if day_hist and day_hist|length > 0 %}
+<div class="history-detail hidden">
+    <table class="hit-detail-table compact">
+        <thead><tr><th>#</th><th>時刻</th><th>G数</th><th>種類</th><th>連</th><th>枚数</th></tr></thead>
+        <tbody>
+        {% for h in day_hist %}
+        <tr class="{% if h.is_tenjou is defined and h.is_tenjou %}tenjou{% elif h.is_hot_chain is defined and h.is_hot_chain %}hot-chain{% elif h.is_deep is defined and h.is_deep %}deep{% elif h.start is defined and h.start >= 500 %}deep{% endif %}{% if h.is_shallow is defined and h.is_shallow %} shallow{% elif h.start is defined and h.start <= 10 %} shallow{% endif %}">
+            <td>{{ h.index|default(loop.index) }}</td>
+            <td>{{ h.time or '-' }}</td>
+            <td class="{% if h.is_tenjou is defined and h.is_tenjou %}tenjou{% elif h.is_deep is defined and h.is_deep %}deep{% endif %}{% if h.is_shallow is defined and h.is_shallow %} shallow{% endif %}">{{ h.start }}G{% if h.accumulated_games is defined and h.accumulated_games != h.start and h.accumulated_games > 0 %}<br><small class="acc-games">（累計{{ h.accumulated_games }}G）</small>{% endif %}</td>
+            <td class="{{ h.type|lower }}">{{ h.type }}</td>
+            <td class="{% if h.is_hot_chain is defined and h.is_hot_chain %}hot{% endif %}">{% if h.chain_pos is defined and h.chain_len is defined and h.chain_len > 1 %}{% if h.chain_pos == h.chain_len %}{{ h.chain_len }}連{% else %}↑{% endif %}{% else %}-{% endif %}</td>
+            <td>{% if h.medals is defined and h.medals > 0 %}{{ '{:,}'.format(h.medals) }}{% else %}-{% endif %}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+{% endmacro %}
+
+{# 前日・前々日・3日前用のマクロ（ラベル+詳細ボタン+履歴テーブル） #}
 {% macro recent_day_expandable(day_art, day_prob, day_date, day_label, day_diff, day_rensa, day_max_m, day_hist) %}
 {% if day_art > 0 %}
 <div class="recent-day-block">
     <div class="recent-day-row {% if day_hist and day_hist|length > 0 %}has-detail{% endif %}" onclick="{% if day_hist and day_hist|length > 0 %}toggleRecentDayDetail(event, this){% endif %}">
         <span class="recent-label">{{ short_date(day_date) or day_label }}</span>
-        {# ART数、確率、連チャン、最大枚数は上部で表示済みなので削除 #}
+        <span class="recent-art">ART {{ day_art }}</span>
+        {% if day_prob > 0 %}<span class="recent-prob {% if day_prob <= 100 %}excellent{% elif day_prob <= 130 %}good{% elif day_prob >= 200 %}bad{% endif %}">1/{{ day_prob|int }}</span>{% endif %}
         {% if day_diff != 0 %}<span class="diff-medals-sm {% if day_diff > 0 %}plus{% else %}minus{% endif %}">{{ '{:+,}'.format(day_diff) }}枚</span>{% endif %}
-        {% if day_hist and day_hist|length > 0 %}<span class="expand-icon small">▼ 詳細</span>{% endif %}
+        {% if day_rensa >= 3 %}<span class="rensa-sm">{{ day_rensa }}連</span>{% endif %}
+        {% if day_max_m > 0 %}<span class="max-medals-sm">最大{{ '{:,}'.format(day_max_m) }}枚</span>{% endif %}
+        {% if day_hist and day_hist|length > 0 %}<span class="expand-icon small">▼</span>{% endif %}
     </div>
     {% if day_hist and day_hist|length > 0 %}
     <div class="recent-day-detail hidden">
@@ -424,7 +451,8 @@
                     <div class="top3-stats-main">
                         <span class="art-main"><span class="art-num-big">{{ rec.art_count }}</span><span class="art-label">ART</span></span>
                         {% if rec.rb_count > 0 %}<span class="rb-badge-top">RB {{ rec.rb_count }}</span>{% endif %}
-                        {% if rec.art_prob > 0 %}<span class="art-prob {% if rec.art_prob <= 100 %}excellent{% elif rec.art_prob <= 130 %}good{% elif rec.art_prob >= 200 %}bad{% endif %}" title="合成確率"><span class="prob-label">ART</span>1/{{ rec.art_prob|int }}</span>{% endif %}
+                        {% if rec.art_prob > 0 %}<span class="art-prob {% if rec.art_prob <= 100 %}excellent{% elif rec.art_prob <= 130 %}good{% elif rec.art_prob >= 200 %}bad{% endif %}" title="合成確率"><span class="prob-label">合成</span>1/{{ rec.art_prob|int }}</span>{% endif %}
+                        {% if rec.today_history and rec.today_history|length > 0 %}<span class="detail-trigger" onclick="toggleHistoryDetail(event, this)">▼詳細</span>{% endif %}
                     </div>
                     <div class="top3-stats-sub">
                         <span class="current-hama">現在: <span class="num">{{ rec.current_hama or 0 }}</span>G</span>
@@ -448,11 +476,8 @@
                         </span>
                     </div>
                     {% endif %}
-                    {# === 営業中: 当日履歴（クリックで展開） === #}
-                    {# 差枚は上部の top3-stats-sub 等で表示済みのため、ここでは 0 を渡して非表示に #}
-                    {% if rec.today_history and rec.today_history|length > 0 %}
-                    {{ recent_day_expandable(rec.art_count or 0, rec.art_prob or 0, '', '本日', 0, rec.today_max_rensa|default(0), rec.max_medals|default(0), rec.today_history) }}
-                    {% endif %}
+                    {# === 営業中: 当日履歴（詳細ボタンは確率行に移動済み） === #}
+                    {{ history_table_only(rec.today_history) }}
                     {% else %}
                     {# === 閉店後: 前日データを当日データとして表示 === #}
                     {% set y_art = rec.yesterday_art or 0 %}
@@ -461,7 +486,7 @@
                     <div class="top3-stats-main">
                         <span class="art-main"><span class="art-num-big">{{ y_art }}</span><span class="art-label">ART</span></span>
                         {% if rec.yesterday_rb and rec.yesterday_rb > 0 %}<span class="rb-badge-top">RB {{ rec.yesterday_rb }}</span>{% endif %}
-                        {% if y_prob > 0 %}<span class="art-prob {% if y_prob <= 100 %}excellent{% elif y_prob <= 130 %}good{% elif y_prob >= 200 %}bad{% endif %}"><span class="prob-label">ART</span>1/{{ y_prob|int }}</span>{% endif %}
+                        {% if y_prob > 0 %}<span class="art-prob {% if y_prob <= 100 %}excellent{% elif y_prob <= 130 %}good{% elif y_prob >= 200 %}bad{% endif %}"><span class="prob-label">合成</span>1/{{ y_prob|int }}</span>{% endif %}
                     </div>
                     <div class="top3-stats-sub">
                         {% if y_games > 0 %}<span class="total-games">{{ '{:,}'.format(y_games) }}G</span>{% endif %}
@@ -909,6 +934,23 @@
             panel.style.display = isHidden ? 'block' : 'none';
             var icon = el.querySelector('.expand-icon');
             if (icon) icon.textContent = isHidden ? '▲' : '▼';
+        }
+    }
+    function toggleHistoryDetail(e, el) {
+        e.preventDefault();
+        e.stopPropagation();
+        // 親のカード内から.history-detailを探す
+        var card = el.closest('.rec-card, .top3-card, .sa-card');
+        if (!card) return;
+        var detail = card.querySelector('.history-detail');
+        if (!detail) return;
+        var isHidden = detail.classList.contains('hidden');
+        if (isHidden) {
+            detail.classList.remove('hidden');
+            el.textContent = '▲詳細';
+        } else {
+            detail.classList.add('hidden');
+            el.textContent = '▼詳細';
         }
     }
     function toggleRecentDayDetail(e, el) {
