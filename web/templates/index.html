@@ -457,6 +457,9 @@
                     <div class="top3-stats-sub">
                         <span class="current-hama">現在: <span class="num">{{ rec.current_hama or 0 }}</span>G</span>
                         <span class="total-games">累計<span class="num">{{ '{:,}'.format(rec.total_games or 0) }}</span>G</span>
+                        {% if rec.diff_medals is defined and rec.diff_medals != 0 %}
+                        <span class="diff-medals-inline {% if rec.diff_medals > 0 %}plus{% else %}minus{% endif %}">{{ '{:+,}'.format(rec.diff_medals) }}枚</span>
+                        {% endif %}
                         {% if rec.max_medals and rec.max_medals > 0 %}{% set badge = medals_badge(rec.max_medals) %}<span class="max-medals-top {% if badge %}{{ badge.class }}{% endif %}">{% if badge %}<span class="medals-icon">{{ badge.icon }}</span>{% endif %}最大<span class="num">{{ '{:,}'.format(rec.max_medals) }}</span>枚</span>{% endif %}
                         {% if rec.today_max_rensa and rec.today_max_rensa >= 3 %}
                         <span class="rensa-badge">最大<span class="num">{{ rec.today_max_rensa }}</span>連</span>
