@@ -612,17 +612,37 @@ def main():
         print("Saving partial data...")
 
     # JSONに保存（クラッシュ時も部分データを書き出す）
-    _save_result(result)
+    # --sbj-only や --hokuto-only の場合は部分更新（既存データ保持）
+    _save_result(result, partial_update=(sbj_only or hokuto_only))
 
 
-def _save_result(result):
-    """resultをavailability.jsonに書き込み"""
+def _save_result(result, partial_update=False):
+    """resultをavailability.jsonに書き込み
+    
+    Args:
+        result: 取得したデータ
+        partial_update: True=部分更新モード（既存データとマージ）
+    """
     if not result.get('stores'):
         print("Warning: no store data to save")
         return
 
     output_path = Path(__file__).parent.parent / 'data' / 'availability.json'
     output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    # 部分更新モード：既存データとマージ
+    if partial_update and output_path.exists():
+        try:
+            with open(output_path, 'r', encoding='utf-8') as f:
+                existing = json.load(f)
+            # 既存店舗データを保持し、新規取得分だけ上書き
+            merged_stores = existing.get('stores', {})
+            for store_key, store_data in result.get('stores', {}).items():
+                merged_stores[store_key] = store_data
+            result['stores'] = merged_stores
+            print(f"Partial update: merged {len(result['stores'])} stores (new: {len(result.get('stores', {}))})")
+        except Exception as e:
+            print(f"Warning: failed to merge existing data: {e}")
 
     with open(output_path, 'w', encoding='utf-8') as f:
         json.dump(result, f, ensure_ascii=False, indent=2)
