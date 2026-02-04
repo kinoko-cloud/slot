@@ -5786,6 +5786,28 @@ a.perfect-card:hover { background: rgba(255,215,0,0.18); }
         font-size: 0.8em;
     }
     .acc-label { min-width: 0; }
+    /* 的中率コーナー モバイル対応 */
+    .vb-main-rate {
+        flex-direction: column;
+        text-align: center;
+        gap: 8px;
+    }
+    .vb-circle-big {
+        width: 70px;
+        height: 70px;
+    }
+    .vb-rate-num {
+        font-size: 1.5em;
+    }
+    .vb-rate-meta {
+        align-items: center;
+    }
+    .vb-examples {
+        align-items: center;
+    }
+    .vb-example {
+        font-size: 0.65em;
+    }
 }
 
 /* 答え合わせバナー（トップページ上部） */
