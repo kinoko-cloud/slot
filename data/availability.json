@@ -2651,11 +2651,12 @@
       "name": "西武新宿駅前エスパス",
       "hall_id": "100950",
       "playing": [
-        "3185",
-        "3186",
         "3187"
       ],
-      "empty": [],
+      "empty": [
+        "3185",
+        "3186"
+      ],
       "total": 3,
       "units": [
         {
@@ -2739,7 +2740,7 @@
             }
           ],
           "today_max_rensa": 4,
-          "availability": "遊技中"
+          "availability": "空き"
         },
         {
           "unit_id": "3186",
@@ -2773,110 +2774,124 @@
             }
           ],
           "today_max_rensa": 2,
-          "availability": "遊技中"
+          "availability": "空き"
         },
         {
           "unit_id": "3187",
           "bb": 0,
           "rb": 5,
-          "art": 9,
-          "total_start": 1348,
-          "final_start": 112,
-          "max_medals": 403,
+          "art": 11,
+          "total_start": 1497,
+          "final_start": 129,
+          "max_medals": 499,
           "today_history": [
             {
               "hit_num": 1,
+              "time": "18:12",
+              "start": 20,
+              "medals": 220,
+              "type": "ART"
+            },
+            {
+              "hit_num": 2,
+              "time": "18:09",
+              "start": 121,
+              "medals": 83,
+              "type": "ART"
+            },
+            {
+              "hit_num": 3,
               "time": "17:58",
               "start": 17,
               "medals": 145,
               "type": "ART"
             },
             {
-              "hit_num": 2,
+              "hit_num": 4,
               "time": "17:53",
               "start": 3,
               "medals": 144,
               "type": "ART"
             },
             {
-              "hit_num": 3,
+              "hit_num": 5,
               "time": "17:52",
               "start": 10,
               "medals": 35,
               "type": "ART"
             },
             {
-              "hit_num": 4,
+              "hit_num": 6,
               "time": "17:50",
               "start": 29,
               "medals": 31,
               "type": "ART"
             },
             {
-              "hit_num": 5,
+              "hit_num": 7,
               "time": "17:45",
               "start": 83,
               "medals": 141,
               "type": "ART"
             },
             {
-              "hit_num": 6,
+              "hit_num": 8,
               "time": "17:38",
               "start": 275,
               "medals": 83,
               "type": "ART"
             },
             {
-              "hit_num": 7,
+              "hit_num": 9,
               "time": "17:12",
               "start": 86,
               "medals": 51,
               "type": "RB"
             },
             {
-              "hit_num": 8,
+              "hit_num": 10,
               "time": "17:05",
               "start": 129,
               "medals": 51,
               "type": "RB"
             },
             {
-              "hit_num": 9,
+              "hit_num": 11,
               "time": "16:53",
               "start": 55,
               "medals": 51,
               "type": "RB"
             },
             {
-              "hit_num": 10,
+              "hit_num": 12,
               "time": "16:48",
               "start": 70,
               "medals": 51,
               "type": "RB"
             },
             {
-              "hit_num": 11,
+              "hit_num": 13,
               "time": "16:41",
               "start": 14,
               "medals": 39,
               "type": "ART"
             },
             {
-              "hit_num": 12,
+              "hit_num": 14,
               "time": "16:38",
               "start": 12,
               "medals": 42,
               "type": "ART"
             },
             {
-              "hit_num": 13,
+              "hit_num": 15,
               "time": "16:36",
               "start": 117,
               "medals": 72,
               "type": "ART"
             },
             {
-              "hit_num": 14,
+              "hit_num": 16,
               "time": "16:26",
               "start": 327,
               "medals": 51,
@@ -4222,11 +4237,12 @@
     "shibuya_honkan_espass_sbj": {
       "name": "渋谷エスパス本館",
       "hall_id": "100930",
-      "playing": [],
-      "empty": [
-        "3095",
+      "playing": [
         "3096",
         "3097"
+      ],
+      "empty": [
+        "3095"
       ],
       "total": 3,
       "units": [
@@ -4243,35 +4259,49 @@
         {
           "unit_id": "3096",
           "bb": 0,
-          "rb": 0,
+          "rb": 2,
           "art": 4,
-          "total_start": 321,
-          "final_start": 218,
+          "total_start": 1138,
+          "final_start": 459,
           "max_medals": 665,
           "today_history": [
             {
               "hit_num": 1,
+              "time": "18:36",
+              "start": 183,
+              "medals": 49,
+              "type": "RB"
+            },
+            {
+              "hit_num": 2,
+              "time": "18:23",
+              "start": 380,
+              "medals": 51,
+              "type": "RB"
+            },
+            {
+              "hit_num": 3,
               "time": "17:30",
               "start": 12,
               "medals": 217,
               "type": "ART"
             },
             {
-              "hit_num": 2,
+              "hit_num": 4,
               "time": "17:27",
               "start": 12,
               "medals": 147,
               "type": "ART"
             },
             {
-              "hit_num": 3,
+              "hit_num": 5,
               "time": "17:23",
               "start": 22,
               "medals": 149,
               "type": "ART"
             },
             {
-              "hit_num": 4,
+              "hit_num": 6,
               "time": "17:19",
               "start": 57,
               "medals": 217,
@@ -4279,17 +4309,83 @@
             }
           ],
           "today_max_rensa": 4,
-          "availability": "空き"
+          "availability": "遊技中"
         },
         {
           "unit_id": "3097",
           "bb": 0,
-          "rb": 0,
-          "art": 0,
-          "total_start": 273,
-          "final_start": 261,
-          "max_medals": 10,
-          "availability": "空き"
+          "rb": 4,
+          "art": 5,
+          "total_start": 763,
+          "final_start": 104,
+          "max_medals": 463,
+          "today_history": [
+            {
+              "hit_num": 1,
+              "time": "19:01",
+              "start": 49,
+              "medals": 51,
+              "type": "RB"
+            },
+            {
+              "hit_num": 2,
+              "time": "18:54",
+              "start": 18,
+              "medals": 151,
+              "type": "ART"
+            },
+            {
+              "hit_num": 3,
+              "time": "18:51",
+              "start": 4,
+              "medals": 37,
+              "type": "ART"
+            },
+            {
+              "hit_num": 4,
+              "time": "18:50",
+              "start": 12,
+              "medals": 35,
+              "type": "ART"
+            },
+            {
+              "hit_num": 5,
+              "time": "18:45",
+              "start": 12,
+              "medals": 224,
+              "type": "ART"
+            },
+            {
+              "hit_num": 6,
+              "time": "18:43",
+              "start": 57,
+              "medals": 83,
+              "type": "ART"
+            },
+            {
+              "hit_num": 7,
+              "time": "18:38",
+              "start": 53,
+              "medals": 51,
+              "type": "RB"
+            },
+            {
+              "hit_num": 8,
+              "time": "18:34",
+              "start": 95,
+              "medals": 51,
+              "type": "RB"
+            },
+            {
+              "hit_num": 9,
+              "time": "18:27",
+              "start": 346,
+              "medals": 49,
+              "type": "RB"
+            }
+          ],
+          "today_max_rensa": 8,
+          "availability": "遊技中"
         }
       ]
     },
@@ -25227,20 +25323,20 @@
       "playing": [
         "1015",
         "1017",
-        "1018",
-        "1020",
         "1021",
         "1023",
-        "1030"
+        "1026",
+        "1028",
+        "1030",
+        "1031"
       ],
       "empty": [
         "1016",
+        "1018",
+        "1020",
         "1022",
         "1025",
-        "1026",
-        "1027",
-        "1028",
-        "1031"
+        "1027"
       ],
       "total": 14,
       "units": [
@@ -25249,10 +25345,10 @@
           "bb": 0,
           "rb": 8,
           "art": 54,
-          "total_start": 6236,
-          "final_start": 91,
+          "total_start": 6436,
+          "final_start": 269,
           "max_medals": 1789,
-          "combined_prob": 780,
+          "combined_prob": 805,
           "today_history": [
             {
               "hit_num": 1,
@@ -25998,10 +26094,10 @@
           "bb": 0,
           "rb": 10,
           "art": 50,
-          "total_start": 6718,
-          "final_start": 491,
+          "total_start": 6968,
+          "final_start": 739,
           "max_medals": 1022,
-          "combined_prob": 672,
+          "combined_prob": 697,
           "today_history": [
             {
               "hit_num": 1,
@@ -26433,7 +26529,7 @@
           "rb": 6,
           "art": 51,
           "total_start": 5007,
-          "final_start": 117,
+          "final_start": 130,
           "max_medals": 2059,
           "combined_prob": 835,
           "today_history": [
@@ -26838,7 +26934,7 @@
             }
           ],
           "today_max_rensa": 31,
-          "availability": "遊技中"
+          "availability": "空き"
         },
         {
           "unit_id": "1020",
@@ -27216,489 +27312,510 @@
             }
           ],
           "today_max_rensa": 29,
-          "availability": "遊技中"
+          "availability": "空き"
         },
         {
           "unit_id": "1021",
           "bb": 0,
           "rb": 10,
-          "art": 59,
-          "total_start": 6046,
-          "final_start": 233,
+          "art": 61,
+          "total_start": 6296,
+          "final_start": 120,
           "max_medals": 3566,
-          "combined_prob": 605,
+          "combined_prob": 630,
           "today_history": [
             {
               "hit_num": 1,
+              "time": "18:50",
+              "start": 14,
+              "medals": 39,
+              "type": "ART"
+            },
+            {
+              "hit_num": 2,
+              "time": "18:47",
+              "start": 20,
+              "medals": 37,
+              "type": "ART"
+            },
+            {
+              "hit_num": 3,
+              "time": "18:44",
+              "start": 239,
+              "medals": 83,
+              "type": "ART"
+            },
+            {
+              "hit_num": 4,
               "time": "18:27",
               "start": 127,
               "medals": 51,
               "type": "REG"
             },
             {
-              "hit_num": 2,
+              "hit_num": 5,
               "time": "18:15",
               "start": 1,
               "medals": 21,
               "type": "ART"
             },
             {
-              "hit_num": 3,
+              "hit_num": 6,
               "time": "18:04",
               "start": 8,
               "medals": 227,
               "type": "ART"
             },
             {
-              "hit_num": 4,
+              "hit_num": 7,
               "time": "18:02",
               "start": 10,
               "medals": 33,
               "type": "ART"
             },
             {
-              "hit_num": 5,
+              "hit_num": 8,
               "time": "18:00",
               "start": 49,
               "medals": 88,
               "type": "ART"
             },
             {
-              "hit_num": 6,
+              "hit_num": 9,
               "time": "17:54",
               "start": 5,
               "medals": 142,
               "type": "ART"
             },
             {
-              "hit_num": 7,
+              "hit_num": 10,
               "time": "17:50",
               "start": 490,
               "medals": 232,
               "type": "ART"
             },
             {
-              "hit_num": 8,
+              "hit_num": 11,
               "time": "17:07",
               "start": 1,
               "medals": 162,
               "type": "ART"
             },
             {
-              "hit_num": 9,
+              "hit_num": 12,
               "time": "17:03",
               "start": 2,
               "medals": 210,
               "type": "ART"
             },
             {
-              "hit_num": 10,
+              "hit_num": 13,
               "time": "16:58",
               "start": 2,
               "medals": 220,
               "type": "ART"
             },
             {
-              "hit_num": 11,
+              "hit_num": 14,
               "time": "16:56",
               "start": 2,
               "medals": 41,
               "type": "ART"
             },
             {
-              "hit_num": 12,
+              "hit_num": 15,
               "time": "16:52",
               "start": 1,
               "medals": 135,
               "type": "ART"
             },
             {
-              "hit_num": 13,
+              "hit_num": 16,
               "time": "16:47",
               "start": 2,
               "medals": 30,
               "type": "ART"
             },
             {
-              "hit_num": 14,
+              "hit_num": 17,
               "time": "16:44",
               "start": 2,
               "medals": 150,
               "type": "ART"
             },
             {
-              "hit_num": 15,
+              "hit_num": 18,
               "time": "16:41",
               "start": 2,
               "medals": 152,
               "type": "ART"
             },
             {
-              "hit_num": 16,
+              "hit_num": 19,
               "time": "16:38",
               "start": 1,
               "medals": 141,
               "type": "ART"
             },
             {
-              "hit_num": 17,
+              "hit_num": 20,
               "time": "16:34",
               "start": 1,
               "medals": 37,
               "type": "ART"
             },
             {
-              "hit_num": 18,
+              "hit_num": 21,
               "time": "16:32",
               "start": 2,
               "medals": 41,
               "type": "ART"
             },
             {
-              "hit_num": 19,
+              "hit_num": 22,
               "time": "16:31",
               "start": 1,
               "medals": 41,
               "type": "ART"
             },
             {
-              "hit_num": 20,
+              "hit_num": 23,
               "time": "16:27",
               "start": 1,
               "medals": 15,
               "type": "ART"
             },
             {
-              "hit_num": 21,
+              "hit_num": 24,
               "time": "16:21",
               "start": 45,
               "medals": 311,
               "type": "ART"
             },
             {
-              "hit_num": 22,
+              "hit_num": 25,
               "time": "16:15",
               "start": 16,
               "medals": 141,
               "type": "ART"
             },
             {
-              "hit_num": 23,
+              "hit_num": 26,
               "time": "16:09",
               "start": 19,
               "medals": 282,
               "type": "ART"
             },
             {
-              "hit_num": 24,
+              "hit_num": 27,
               "time": "16:04",
               "start": 8,
               "medals": 170,
               "type": "ART"
             },
             {
-              "hit_num": 25,
+              "hit_num": 28,
               "time": "16:01",
               "start": 18,
               "medals": 143,
               "type": "ART"
             },
             {
-              "hit_num": 26,
+              "hit_num": 29,
               "time": "15:57",
               "start": 17,
               "medals": 143,
               "type": "ART"
             },
             {
-              "hit_num": 27,
+              "hit_num": 30,
               "time": "15:54",
               "start": 12,
               "medals": 43,
               "type": "ART"
             },
             {
-              "hit_num": 28,
+              "hit_num": 31,
               "time": "15:52",
               "start": 11,
               "medals": 37,
               "type": "ART"
             },
             {
-              "hit_num": 29,
+              "hit_num": 32,
               "time": "15:50",
               "start": 11,
               "medals": 37,
               "type": "ART"
             },
             {
-              "hit_num": 30,
+              "hit_num": 33,
               "time": "15:46",
               "start": 28,
               "medals": 141,
               "type": "ART"
             },
             {
-              "hit_num": 31,
+              "hit_num": 34,
               "time": "15:41",
               "start": 14,
               "medals": 141,
               "type": "ART"
             },
             {
-              "hit_num": 32,
+              "hit_num": 35,
               "time": "15:37",
               "start": 12,
               "medals": 157,
               "type": "ART"
             },
             {
-              "hit_num": 33,
+              "hit_num": 36,
               "time": "15:35",
               "start": 268,
               "medals": 83,
               "type": "ART"
             },
             {
-              "hit_num": 34,
+              "hit_num": 37,
               "time": "15:15",
               "start": 2,
               "medals": 39,
               "type": "ART"
             },
             {
-              "hit_num": 35,
+              "hit_num": 38,
               "time": "15:13",
               "start": 1,
               "medals": 24,
               "type": "ART"
             },
             {
-              "hit_num": 36,
+              "hit_num": 39,
               "time": "15:09",
               "start": 1,
               "medals": 25,
               "type": "ART"
             },
             {
-              "hit_num": 37,
+              "hit_num": 40,
               "time": "15:06",
               "start": 26,
               "medals": 147,
               "type": "ART"
             },
             {
-              "hit_num": 38,
+              "hit_num": 41,
               "time": "15:00",
               "start": 2,
               "medals": 201,
               "type": "ART"
             },
             {
-              "hit_num": 39,
+              "hit_num": 42,
               "time": "14:56",
               "start": 1,
               "medals": 164,
               "type": "ART"
             },
             {
-              "hit_num": 40,
+              "hit_num": 43,
               "time": "14:52",
               "start": 1,
               "medals": 27,
               "type": "ART"
             },
             {
-              "hit_num": 41,
+              "hit_num": 44,
               "time": "14:28",
               "start": 1,
               "medals": 283,
               "type": "ART"
             },
             {
-              "hit_num": 42,
+              "hit_num": 45,
               "time": "14:25",
               "start": 1,
               "medals": 25,
               "type": "ART"
             },
             {
-              "hit_num": 43,
+              "hit_num": 46,
               "time": "14:20",
               "start": 1,
               "medals": 211,
               "type": "ART"
             },
             {
-              "hit_num": 44,
+              "hit_num": 47,
               "time": "14:17",
               "start": 1,
               "medals": 26,
               "type": "ART"
             },
             {
-              "hit_num": 45,
+              "hit_num": 48,
               "time": "14:15",
               "start": 363,
               "medals": 83,
               "type": "ART"
             },
             {
-              "hit_num": 46,
+              "hit_num": 49,
               "time": "13:40",
               "start": 146,
               "medals": 51,
               "type": "REG"
             },
             {
-              "hit_num": 47,
+              "hit_num": 50,
               "time": "13:27",
               "start": 135,
               "medals": 56,
               "type": "REG"
             },
             {
-              "hit_num": 48,
+              "hit_num": 51,
               "time": "13:15",
               "start": 28,
               "medals": 145,
               "type": "ART"
             },
             {
-              "hit_num": 49,
+              "hit_num": 52,
               "time": "13:12",
               "start": 263,
               "medals": 83,
               "type": "ART"
             },
             {
-              "hit_num": 50,
+              "hit_num": 53,
               "time": "12:47",
               "start": 220,
               "medals": 51,
               "type": "REG"
             },
             {
-              "hit_num": 51,
+              "hit_num": 54,
               "time": "12:28",
               "start": 4,
               "medals": 145,
               "type": "ART"
             },
             {
-              "hit_num": 52,
+              "hit_num": 55,
               "time": "12:27",
               "start": 27,
               "medals": 83,
               "type": "ART"
             },
             {
-              "hit_num": 53,
+              "hit_num": 56,
               "time": "12:24",
               "start": 123,
               "medals": 51,
               "type": "REG"
             },
             {
-              "hit_num": 54,
+              "hit_num": 57,
               "time": "12:14",
               "start": 316,
               "medals": 51,
               "type": "REG"
             },
             {
-              "hit_num": 55,
+              "hit_num": 58,
               "time": "11:39",
               "start": 329,
               "medals": 51,
               "type": "REG"
             },
             {
-              "hit_num": 56,
+              "hit_num": 59,
               "time": "11:15",
               "start": 8,
               "medals": 41,
               "type": "ART"
             },
             {
-              "hit_num": 57,
+              "hit_num": 60,
               "time": "11:11",
               "start": 11,
               "medals": 145,
               "type": "ART"
             },
             {
-              "hit_num": 58,
+              "hit_num": 61,
               "time": "11:07",
               "start": 1,
               "medals": 27,
               "type": "ART"
             },
             {
-              "hit_num": 59,
+              "hit_num": 62,
               "time": "11:00",
               "start": 4,
               "medals": 260,
               "type": "ART"
             },
             {
-              "hit_num": 60,
+              "hit_num": 63,
               "time": "10:56",
               "start": 35,
               "medals": 205,
               "type": "ART"
             },
             {
-              "hit_num": 61,
+              "hit_num": 64,
               "time": "10:53",
               "start": 81,
               "medals": 83,
               "type": "ART"
             },
             {
-              "hit_num": 62,
+              "hit_num": 65,
               "time": "10:46",
               "start": 73,
               "medals": 49,
               "type": "REG"
             },
             {
-              "hit_num": 63,
+              "hit_num": 66,
               "time": "10:41",
               "start": 21,
               "medals": 51,
               "type": "REG"
             },
             {
-              "hit_num": 64,
+              "hit_num": 67,
               "time": "10:38",
               "start": 68,
               "medals": 56,
               "type": "REG"
             },
             {
-              "hit_num": 65,
+              "hit_num": 68,
               "time": "10:31",
               "start": 4,
               "medals": 143,
               "type": "ART"
             },
             {
-              "hit_num": 66,
+              "hit_num": 69,
               "time": "10:27",
               "start": 1,
               "medals": 145,
               "type": "ART"
             },
             {
-              "hit_num": 67,
+              "hit_num": 70,
               "time": "10:23",
               "start": 1,
               "medals": 10,
               "type": "ART"
             },
             {
-              "hit_num": 68,
+              "hit_num": 71,
               "time": "10:19",
               "start": 128,
               "medals": 227,
@@ -28033,330 +28150,337 @@
         {
           "unit_id": "1023",
           "bb": 0,
-          "rb": 10,
+          "rb": 11,
           "art": 36,
-          "total_start": 5449,
-          "final_start": 50,
+          "total_start": 5642,
+          "final_start": 29,
           "max_medals": 1042,
-          "combined_prob": 545,
+          "combined_prob": 513,
           "today_history": [
             {
               "hit_num": 1,
+              "time": "18:58",
+              "start": 176,
+              "medals": 51,
+              "type": "REG"
+            },
+            {
+              "hit_num": 2,
               "time": "18:35",
               "start": 20,
               "medals": 152,
               "type": "ART"
             },
             {
-              "hit_num": 2,
+              "hit_num": 3,
               "time": "18:27",
               "start": 7,
               "medals": 137,
               "type": "ART"
             },
             {
-              "hit_num": 3,
+              "hit_num": 4,
               "time": "18:26",
               "start": 3,
               "medals": 39,
               "type": "ART"
             },
             {
-              "hit_num": 4,
+              "hit_num": 5,
               "time": "18:24",
               "start": 1,
               "medals": 37,
               "type": "ART"
             },
             {
-              "hit_num": 5,
+              "hit_num": 6,
               "time": "18:21",
               "start": 1,
               "medals": 21,
               "type": "ART"
             },
             {
-              "hit_num": 6,
+              "hit_num": 7,
               "time": "18:18",
               "start": 5,
               "medals": 148,
               "type": "ART"
             },
             {
-              "hit_num": 7,
+              "hit_num": 8,
               "time": "18:16",
               "start": 179,
               "medals": 83,
               "type": "ART"
             },
             {
-              "hit_num": 8,
+              "hit_num": 9,
               "time": "17:37",
               "start": 11,
               "medals": 147,
               "type": "ART"
             },
             {
-              "hit_num": 9,
+              "hit_num": 10,
               "time": "17:35",
               "start": 28,
               "medals": 83,
               "type": "ART"
             },
             {
-              "hit_num": 10,
+              "hit_num": 11,
               "time": "17:32",
               "start": 111,
               "medals": 58,
               "type": "REG"
             },
             {
-              "hit_num": 11,
+              "hit_num": 12,
               "time": "17:23",
               "start": 300,
               "medals": 51,
               "type": "REG"
             },
             {
-              "hit_num": 12,
+              "hit_num": 13,
               "time": "17:01",
               "start": 238,
               "medals": 58,
               "type": "REG"
             },
             {
-              "hit_num": 13,
+              "hit_num": 14,
               "time": "16:38",
               "start": 109,
               "medals": 51,
               "type": "REG"
             },
             {
-              "hit_num": 14,
+              "hit_num": 15,
               "time": "16:26",
               "start": 17,
               "medals": 211,
               "type": "ART"
             },
             {
-              "hit_num": 15,
+              "hit_num": 16,
               "time": "16:17",
               "start": 19,
               "medals": 48,
               "type": "ART"
             },
             {
-              "hit_num": 16,
+              "hit_num": 17,
               "time": "16:15",
               "start": 273,
               "medals": 83,
               "type": "ART"
             },
             {
-              "hit_num": 17,
+              "hit_num": 18,
               "time": "15:31",
               "start": 125,
               "medals": 51,
               "type": "REG"
             },
             {
-              "hit_num": 18,
+              "hit_num": 19,
               "time": "15:21",
               "start": 281,
               "medals": 51,
               "type": "REG"
             },
             {
-              "hit_num": 19,
+              "hit_num": 20,
               "time": "14:59",
               "start": 190,
               "medals": 49,
               "type": "REG"
             },
             {
-              "hit_num": 20,
+              "hit_num": 21,
               "time": "14:44",
               "start": 118,
               "medals": 49,
               "type": "REG"
             },
             {
-              "hit_num": 21,
+              "hit_num": 22,
               "time": "14:32",
               "start": 16,
               "medals": 37,
               "type": "ART"
             },
             {
-              "hit_num": 22,
+              "hit_num": 23,
               "time": "14:29",
               "start": 15,
               "medals": 41,
               "type": "ART"
             },
             {
-              "hit_num": 23,
+              "hit_num": 24,
               "time": "14:27",
               "start": 17,
               "medals": 37,
               "type": "ART"
             },
             {
-              "hit_num": 24,
+              "hit_num": 25,
               "time": "14:22",
               "start": 101,
               "medals": 223,
               "type": "ART"
             },
             {
-              "hit_num": 25,
+              "hit_num": 26,
               "time": "14:14",
               "start": 419,
               "medals": 51,
               "type": "REG"
             },
             {
-              "hit_num": 26,
+              "hit_num": 27,
               "time": "13:08",
               "start": 1,
               "medals": 22,
               "type": "ART"
             },
             {
-              "hit_num": 27,
+              "hit_num": 28,
               "time": "13:01",
               "start": 16,
               "medals": 197,
               "type": "ART"
             },
             {
-              "hit_num": 28,
+              "hit_num": 29,
               "time": "12:56",
               "start": 4,
               "medals": 139,
               "type": "ART"
             },
             {
-              "hit_num": 29,
+              "hit_num": 30,
               "time": "12:53",
               "start": 8,
               "medals": 151,
               "type": "ART"
             },
             {
-              "hit_num": 30,
+              "hit_num": 31,
               "time": "12:51",
               "start": 2,
               "medals": 35,
               "type": "ART"
             },
             {
-              "hit_num": 31,
+              "hit_num": 32,
               "time": "12:50",
               "start": 1,
               "medals": 41,
               "type": "ART"
             },
             {
-              "hit_num": 32,
+              "hit_num": 33,
               "time": "12:46",
               "start": 1,
               "medals": 25,
               "type": "ART"
             },
             {
-              "hit_num": 33,
+              "hit_num": 34,
               "time": "12:40",
               "start": 30,
               "medals": 279,
               "type": "ART"
             },
             {
-              "hit_num": 34,
+              "hit_num": 35,
               "time": "12:34",
               "start": 1,
               "medals": 225,
               "type": "ART"
             },
             {
-              "hit_num": 35,
+              "hit_num": 36,
               "time": "12:30",
               "start": 142,
               "medals": 30,
               "type": "ART"
             },
             {
-              "hit_num": 36,
+              "hit_num": 37,
               "time": "12:18",
               "start": 24,
               "medals": 83,
               "type": "ART"
             },
             {
-              "hit_num": 37,
+              "hit_num": 38,
               "time": "12:16",
               "start": 445,
               "medals": 51,
               "type": "REG"
             },
             {
-              "hit_num": 38,
+              "hit_num": 39,
               "time": "11:44",
               "start": 2,
               "medals": 43,
               "type": "ART"
             },
             {
-              "hit_num": 39,
+              "hit_num": 40,
               "time": "11:37",
               "start": 2,
               "medals": 211,
               "type": "ART"
             },
             {
-              "hit_num": 40,
+              "hit_num": 41,
               "time": "11:34",
               "start": 1,
               "medals": 145,
               "type": "ART"
             },
             {
-              "hit_num": 41,
+              "hit_num": 42,
               "time": "11:30",
               "start": 1,
               "medals": 31,
               "type": "ART"
             },
             {
-              "hit_num": 42,
+              "hit_num": 43,
               "time": "11:24",
               "start": 11,
               "medals": 216,
               "type": "ART"
             },
             {
-              "hit_num": 43,
+              "hit_num": 44,
               "time": "11:22",
               "start": 10,
               "medals": 39,
               "type": "ART"
             },
             {
-              "hit_num": 44,
+              "hit_num": 45,
               "time": "11:20",
               "start": 183,
               "medals": 83,
               "type": "ART"
             },
             {
-              "hit_num": 45,
+              "hit_num": 46,
               "time": "11:04",
               "start": 47,
               "medals": 154,
               "type": "ART"
             },
             {
-              "hit_num": 46,
+              "hit_num": 47,
               "time": "10:58",
               "start": 679,
               "medals": 227,
@@ -28791,125 +28915,132 @@
           "bb": 0,
           "rb": 2,
           "art": 16,
-          "total_start": 2389,
-          "final_start": 151,
+          "total_start": 2581,
+          "final_start": 206,
           "max_medals": 848,
-          "combined_prob": 1195,
+          "combined_prob": 1291,
           "today_history": [
             {
               "hit_num": 1,
+              "time": "18:44",
+              "start": 161,
+              "medals": 51,
+              "type": "REG"
+            },
+            {
+              "hit_num": 2,
               "time": "15:31",
               "start": 10,
               "medals": 147,
               "type": "ART"
             },
             {
-              "hit_num": 2,
+              "hit_num": 3,
               "time": "15:29",
               "start": 19,
               "medals": 41,
               "type": "ART"
             },
             {
-              "hit_num": 3,
+              "hit_num": 4,
               "time": "15:24",
               "start": 289,
               "medals": 26,
               "type": "ART"
             },
             {
-              "hit_num": 4,
+              "hit_num": 5,
               "time": "15:03",
               "start": 2,
               "medals": 43,
               "type": "ART"
             },
             {
-              "hit_num": 5,
+              "hit_num": 6,
               "time": "15:00",
               "start": 11,
               "medals": 145,
               "type": "ART"
             },
             {
-              "hit_num": 6,
+              "hit_num": 7,
               "time": "14:58",
               "start": 20,
               "medals": 35,
               "type": "ART"
             },
             {
-              "hit_num": 7,
+              "hit_num": 8,
               "time": "14:54",
               "start": 2,
               "medals": 133,
               "type": "ART"
             },
             {
-              "hit_num": 8,
+              "hit_num": 9,
               "time": "14:50",
               "start": 4,
               "medals": 224,
               "type": "ART"
             },
             {
-              "hit_num": 9,
+              "hit_num": 10,
               "time": "14:46",
               "start": 11,
               "medals": 152,
               "type": "ART"
             },
             {
-              "hit_num": 10,
+              "hit_num": 11,
               "time": "14:42",
               "start": 19,
               "medals": 143,
               "type": "ART"
             },
             {
-              "hit_num": 11,
+              "hit_num": 12,
               "time": "14:39",
               "start": 142,
               "medals": 83,
               "type": "ART"
             },
             {
-              "hit_num": 12,
+              "hit_num": 13,
               "time": "14:29",
               "start": 489,
               "medals": 51,
               "type": "REG"
             },
             {
-              "hit_num": 13,
+              "hit_num": 14,
               "time": "11:26",
               "start": 91,
               "medals": 83,
               "type": "ART"
             },
             {
-              "hit_num": 14,
+              "hit_num": 15,
               "time": "11:15",
               "start": 1,
               "medals": 141,
               "type": "ART"
             },
             {
-              "hit_num": 15,
+              "hit_num": 16,
               "time": "11:11",
               "start": 1,
               "medals": 25,
               "type": "ART"
             },
             {
-              "hit_num": 16,
+              "hit_num": 17,
               "time": "10:53",
               "start": 29,
               "medals": 291,
               "type": "ART"
             },
             {
-              "hit_num": 17,
+              "hit_num": 18,
               "time": "10:50",
               "start": 543,
               "medals": 83,
@@ -28917,7 +29048,7 @@
             }
           ],
           "today_max_rensa": 8,
-          "availability": "空き"
+          "availability": "遊技中"
         },
         {
           "unit_id": "1027",
@@ -29071,468 +29202,482 @@
           "bb": 0,
           "rb": 11,
           "art": 57,
-          "total_start": 6862,
-          "final_start": 4,
+          "total_start": 7112,
+          "final_start": 242,
           "max_medals": 1615,
-          "combined_prob": 624,
+          "combined_prob": 647,
           "today_history": [
             {
               "hit_num": 1,
+              "time": "18:43",
+              "start": 19,
+              "medals": 51,
+              "type": "REG"
+            },
+            {
+              "hit_num": 2,
+              "time": "18:41",
+              "start": 101,
+              "medals": 51,
+              "type": "REG"
+            },
+            {
+              "hit_num": 3,
               "time": "18:33",
               "start": 483,
               "medals": 51,
               "type": "REG"
             },
             {
-              "hit_num": 2,
+              "hit_num": 4,
               "time": "17:57",
               "start": 14,
               "medals": 35,
               "type": "ART"
             },
             {
-              "hit_num": 3,
+              "hit_num": 5,
               "time": "17:54",
               "start": 20,
               "medals": 37,
               "type": "ART"
             },
             {
-              "hit_num": 4,
+              "hit_num": 6,
               "time": "17:48",
               "start": 6,
               "medals": 199,
               "type": "ART"
             },
             {
-              "hit_num": 5,
+              "hit_num": 7,
               "time": "17:46",
               "start": 22,
               "medals": 40,
               "type": "ART"
             },
             {
-              "hit_num": 6,
+              "hit_num": 8,
               "time": "17:44",
               "start": 454,
               "medals": 83,
               "type": "ART"
             },
             {
-              "hit_num": 7,
+              "hit_num": 9,
               "time": "17:10",
               "start": 22,
               "medals": 41,
               "type": "ART"
             },
             {
-              "hit_num": 8,
+              "hit_num": 10,
               "time": "17:08",
               "start": 12,
               "medals": 55,
               "type": "ART"
             },
             {
-              "hit_num": 9,
+              "hit_num": 11,
               "time": "17:06",
               "start": 24,
               "medals": 41,
               "type": "ART"
             },
             {
-              "hit_num": 10,
+              "hit_num": 12,
               "time": "17:00",
               "start": 12,
               "medals": 139,
               "type": "ART"
             },
             {
-              "hit_num": 11,
+              "hit_num": 13,
               "time": "16:58",
               "start": 10,
               "medals": 39,
               "type": "ART"
             },
             {
-              "hit_num": 12,
+              "hit_num": 14,
               "time": "16:56",
               "start": 10,
               "medals": 35,
               "type": "ART"
             },
             {
-              "hit_num": 13,
+              "hit_num": 15,
               "time": "16:54",
               "start": 54,
               "medals": 39,
               "type": "ART"
             },
             {
-              "hit_num": 14,
+              "hit_num": 16,
               "time": "16:45",
               "start": 7,
               "medals": 191,
               "type": "ART"
             },
             {
-              "hit_num": 15,
+              "hit_num": 17,
               "time": "16:41",
               "start": 11,
               "medals": 146,
               "type": "ART"
             },
             {
-              "hit_num": 16,
+              "hit_num": 18,
               "time": "16:39",
               "start": 1,
               "medals": 39,
               "type": "ART"
             },
             {
-              "hit_num": 17,
+              "hit_num": 19,
               "time": "16:35",
               "start": 1,
               "medals": 23,
               "type": "ART"
             },
             {
-              "hit_num": 18,
+              "hit_num": 20,
               "time": "16:30",
               "start": 2,
               "medals": 205,
               "type": "ART"
             },
             {
-              "hit_num": 19,
+              "hit_num": 21,
               "time": "16:27",
               "start": 2,
               "medals": 152,
               "type": "ART"
             },
             {
-              "hit_num": 20,
+              "hit_num": 22,
               "time": "16:26",
               "start": 2,
               "medals": 41,
               "type": "ART"
             },
             {
-              "hit_num": 21,
+              "hit_num": 23,
               "time": "16:22",
               "start": 2,
               "medals": 224,
               "type": "ART"
             },
             {
-              "hit_num": 22,
+              "hit_num": 24,
               "time": "16:18",
               "start": 2,
               "medals": 142,
               "type": "ART"
             },
             {
-              "hit_num": 23,
+              "hit_num": 25,
               "time": "16:17",
               "start": 2,
               "medals": 45,
               "type": "ART"
             },
             {
-              "hit_num": 24,
+              "hit_num": 26,
               "time": "16:14",
               "start": 2,
               "medals": 139,
               "type": "ART"
             },
             {
-              "hit_num": 25,
+              "hit_num": 27,
               "time": "16:11",
               "start": 2,
               "medals": 139,
               "type": "ART"
             },
             {
-              "hit_num": 26,
+              "hit_num": 28,
               "time": "16:09",
               "start": 1,
               "medals": 37,
               "type": "ART"
             },
             {
-              "hit_num": 27,
+              "hit_num": 29,
               "time": "16:06",
               "start": 87,
               "medals": 20,
               "type": "ART"
             },
             {
-              "hit_num": 28,
+              "hit_num": 30,
               "time": "15:59",
               "start": 39,
               "medals": 51,
               "type": "REG"
             },
             {
-              "hit_num": 29,
+              "hit_num": 31,
               "time": "15:56",
               "start": 470,
               "medals": 51,
               "type": "REG"
             },
             {
-              "hit_num": 30,
+              "hit_num": 32,
               "time": "15:15",
               "start": 20,
               "medals": 292,
               "type": "ART"
             },
             {
-              "hit_num": 31,
+              "hit_num": 33,
               "time": "15:13",
               "start": 141,
               "medals": 83,
               "type": "ART"
             },
             {
-              "hit_num": 32,
+              "hit_num": 34,
               "time": "15:00",
               "start": 22,
               "medals": 150,
               "type": "ART"
             },
             {
-              "hit_num": 33,
+              "hit_num": 35,
               "time": "14:58",
               "start": 128,
               "medals": 83,
               "type": "ART"
             },
             {
-              "hit_num": 34,
+              "hit_num": 36,
               "time": "14:48",
               "start": 248,
               "medals": 51,
               "type": "REG"
             },
             {
-              "hit_num": 35,
+              "hit_num": 37,
               "time": "14:28",
               "start": 33,
               "medals": 145,
               "type": "ART"
             },
             {
-              "hit_num": 36,
+              "hit_num": 38,
               "time": "14:23",
               "start": 22,
               "medals": 131,
               "type": "ART"
             },
             {
-              "hit_num": 37,
+              "hit_num": 39,
               "time": "14:20",
               "start": 461,
               "medals": 83,
               "type": "ART"
             },
             {
-              "hit_num": 38,
+              "hit_num": 40,
               "time": "13:46",
               "start": 511,
               "medals": 51,
               "type": "REG"
             },
             {
-              "hit_num": 39,
+              "hit_num": 41,
               "time": "13:07",
               "start": 53,
               "medals": 51,
               "type": "REG"
             },
             {
-              "hit_num": 40,
+              "hit_num": 42,
               "time": "13:01",
               "start": 15,
               "medals": 147,
               "type": "ART"
             },
             {
-              "hit_num": 41,
+              "hit_num": 43,
               "time": "12:56",
               "start": 18,
               "medals": 218,
               "type": "ART"
             },
             {
-              "hit_num": 42,
+              "hit_num": 44,
               "time": "12:52",
               "start": 27,
               "medals": 145,
               "type": "ART"
             },
             {
-              "hit_num": 43,
+              "hit_num": 45,
               "time": "12:49",
               "start": 319,
               "medals": 83,
               "type": "ART"
             },
             {
-              "hit_num": 44,
+              "hit_num": 46,
               "time": "12:22",
               "start": 53,
               "medals": 208,
               "type": "ART"
             },
             {
-              "hit_num": 45,
+              "hit_num": 47,
               "time": "12:17",
               "start": 2,
               "medals": 39,
               "type": "ART"
             },
             {
-              "hit_num": 46,
+              "hit_num": 48,
               "time": "12:16",
               "start": 2,
               "medals": 41,
               "type": "ART"
             },
             {
-              "hit_num": 47,
+              "hit_num": 49,
               "time": "12:12",
               "start": 2,
               "medals": 215,
               "type": "ART"
             },
             {
-              "hit_num": 48,
+              "hit_num": 50,
               "time": "12:10",
               "start": 1,
               "medals": 41,
               "type": "ART"
             },
             {
-              "hit_num": 49,
+              "hit_num": 51,
               "time": "12:07",
               "start": 1,
               "medals": 23,
               "type": "ART"
             },
             {
-              "hit_num": 50,
+              "hit_num": 52,
               "time": "12:02",
               "start": 1,
               "medals": 218,
               "type": "ART"
             },
             {
-              "hit_num": 51,
+              "hit_num": 53,
               "time": "11:59",
               "start": 1,
               "medals": 25,
               "type": "ART"
             },
             {
-              "hit_num": 52,
+              "hit_num": 54,
               "time": "11:53",
               "start": 1,
               "medals": 213,
               "type": "ART"
             },
             {
-              "hit_num": 53,
+              "hit_num": 55,
               "time": "11:50",
               "start": 1,
               "medals": 19,
               "type": "ART"
             },
             {
-              "hit_num": 54,
+              "hit_num": 56,
               "time": "11:46",
               "start": 186,
               "medals": 223,
               "type": "ART"
             },
             {
-              "hit_num": 55,
+              "hit_num": 57,
               "time": "11:30",
               "start": 11,
               "medals": 139,
               "type": "ART"
             },
             {
-              "hit_num": 56,
+              "hit_num": 58,
               "time": "11:28",
               "start": 47,
               "medals": 90,
               "type": "ART"
             },
             {
-              "hit_num": 57,
+              "hit_num": 59,
               "time": "11:24",
               "start": 199,
               "medals": 51,
               "type": "REG"
             },
             {
-              "hit_num": 58,
+              "hit_num": 60,
               "time": "11:08",
               "start": 10,
               "medals": 35,
               "type": "ART"
             },
             {
-              "hit_num": 59,
+              "hit_num": 61,
               "time": "11:06",
               "start": 12,
               "medals": 37,
               "type": "ART"
             },
             {
-              "hit_num": 60,
+              "hit_num": 62,
               "time": "11:04",
               "start": 6,
               "medals": 41,
               "type": "ART"
             },
             {
-              "hit_num": 61,
+              "hit_num": 63,
               "time": "11:02",
               "start": 96,
               "medals": 83,
               "type": "ART"
             },
             {
-              "hit_num": 62,
+              "hit_num": 64,
               "time": "10:54",
               "start": 146,
               "medals": 51,
               "type": "REG"
             },
             {
-              "hit_num": 63,
+              "hit_num": 65,
               "time": "10:36",
               "start": 2,
               "medals": 41,
               "type": "ART"
             },
             {
-              "hit_num": 64,
+              "hit_num": 66,
               "time": "10:32",
               "start": 11,
               "medals": 139,
               "type": "ART"
             },
             {
-              "hit_num": 65,
+              "hit_num": 67,
               "time": "10:31",
               "start": 170,
               "medals": 83,
               "type": "ART"
             },
             {
-              "hit_num": 66,
+              "hit_num": 68,
               "time": "10:17",
               "start": 103,
               "medals": 51,
@@ -29540,717 +29685,717 @@
             }
           ],
           "today_max_rensa": 21,
-          "availability": "空き"
+          "availability": "遊技中"
         },
         {
           "unit_id": "1030",
           "bb": 0,
           "rb": 4,
-          "art": 98,
-          "total_start": 6470,
-          "final_start": 0,
+          "art": 99,
+          "total_start": 6720,
+          "final_start": 166,
           "max_medals": 7361,
-          "combined_prob": 1618,
+          "combined_prob": 1680,
           "today_history": [
             {
               "hit_num": 1,
+              "time": "18:44",
+              "start": 19,
+              "medals": 145,
+              "type": "ART"
+            },
+            {
+              "hit_num": 2,
+              "time": "18:41",
+              "start": 100,
+              "medals": 81,
+              "type": "ART"
+            },
+            {
+              "hit_num": 3,
               "time": "18:32",
               "start": 161,
               "medals": 51,
               "type": "REG"
             },
             {
-              "hit_num": 2,
+              "hit_num": 4,
               "time": "18:08",
               "start": 66,
               "medals": 51,
               "type": "REG"
             },
             {
-              "hit_num": 3,
+              "hit_num": 5,
               "time": "18:02",
               "start": 21,
               "medals": 41,
               "type": "ART"
             },
             {
-              "hit_num": 4,
+              "hit_num": 6,
               "time": "17:59",
               "start": 139,
               "medals": 90,
               "type": "ART"
             },
             {
-              "hit_num": 5,
+              "hit_num": 7,
               "time": "17:48",
               "start": 23,
               "medals": 39,
               "type": "ART"
             },
             {
-              "hit_num": 6,
+              "hit_num": 8,
               "time": "17:43",
               "start": 4,
               "medals": 131,
               "type": "ART"
             },
             {
-              "hit_num": 7,
+              "hit_num": 9,
               "time": "17:40",
               "start": 4,
               "medals": 152,
               "type": "ART"
             },
             {
-              "hit_num": 8,
+              "hit_num": 10,
               "time": "17:37",
               "start": 551,
               "medals": 83,
               "type": "ART"
             },
             {
-              "hit_num": 9,
+              "hit_num": 11,
               "time": "16:51",
               "start": 62,
               "medals": 44,
               "type": "ART"
             },
             {
-              "hit_num": 10,
+              "hit_num": 12,
               "time": "16:46",
               "start": 9,
               "medals": 39,
               "type": "ART"
             },
             {
-              "hit_num": 11,
+              "hit_num": 13,
               "time": "16:43",
               "start": 12,
               "medals": 150,
               "type": "ART"
             },
             {
-              "hit_num": 12,
+              "hit_num": 14,
               "time": "16:41",
               "start": 46,
               "medals": 35,
               "type": "ART"
             },
             {
-              "hit_num": 13,
+              "hit_num": 15,
               "time": "16:34",
               "start": 25,
               "medals": 213,
               "type": "ART"
             },
             {
-              "hit_num": 14,
+              "hit_num": 16,
               "time": "16:29",
               "start": 9,
               "medals": 226,
               "type": "ART"
             },
             {
-              "hit_num": 15,
+              "hit_num": 17,
               "time": "16:25",
               "start": 51,
               "medals": 139,
               "type": "ART"
             },
             {
-              "hit_num": 16,
+              "hit_num": 18,
               "time": "16:20",
               "start": 22,
               "medals": 29,
               "type": "ART"
             },
             {
-              "hit_num": 17,
+              "hit_num": 19,
               "time": "16:17",
               "start": 18,
               "medals": 39,
               "type": "ART"
             },
             {
-              "hit_num": 18,
+              "hit_num": 20,
               "time": "16:14",
               "start": 4,
               "medals": 143,
               "type": "ART"
             },
             {
-              "hit_num": 19,
+              "hit_num": 21,
               "time": "16:11",
               "start": 2,
               "medals": 143,
               "type": "ART"
             },
             {
-              "hit_num": 20,
+              "hit_num": 22,
               "time": "16:10",
               "start": 1,
               "medals": 41,
               "type": "ART"
             },
             {
-              "hit_num": 21,
+              "hit_num": 23,
               "time": "16:07",
               "start": 1,
               "medals": 31,
               "type": "ART"
             },
             {
-              "hit_num": 22,
+              "hit_num": 24,
               "time": "16:02",
               "start": 12,
               "medals": 279,
               "type": "ART"
             },
             {
-              "hit_num": 23,
+              "hit_num": 25,
               "time": "15:59",
               "start": 1,
               "medals": 155,
               "type": "ART"
             },
             {
-              "hit_num": 24,
+              "hit_num": 26,
               "time": "15:58",
               "start": 2,
               "medals": 41,
               "type": "ART"
             },
             {
-              "hit_num": 25,
+              "hit_num": 27,
               "time": "15:55",
               "start": 2,
               "medals": 143,
               "type": "ART"
             },
             {
-              "hit_num": 26,
+              "hit_num": 28,
               "time": "15:52",
               "start": 2,
               "medals": 135,
               "type": "ART"
             },
             {
-              "hit_num": 27,
+              "hit_num": 29,
               "time": "15:51",
               "start": 2,
               "medals": 39,
               "type": "ART"
             },
             {
-              "hit_num": 28,
+              "hit_num": 30,
               "time": "15:48",
               "start": 1,
               "medals": 133,
               "type": "ART"
             },
             {
-              "hit_num": 29,
+              "hit_num": 31,
               "time": "15:44",
               "start": 1,
               "medals": 27,
               "type": "ART"
             },
             {
-              "hit_num": 30,
+              "hit_num": 32,
               "time": "15:39",
               "start": 1,
               "medals": 293,
               "type": "ART"
             },
             {
-              "hit_num": 31,
+              "hit_num": 33,
               "time": "15:36",
               "start": 1,
               "medals": 53,
               "type": "ART"
             },
             {
-              "hit_num": 32,
+              "hit_num": 34,
               "time": "15:33",
               "start": 2,
               "medals": 145,
               "type": "ART"
             },
             {
-              "hit_num": 33,
+              "hit_num": 35,
               "time": "15:32",
               "start": 1,
               "medals": 43,
               "type": "ART"
             },
             {
-              "hit_num": 34,
+              "hit_num": 36,
               "time": "15:28",
               "start": 1,
               "medals": 23,
               "type": "ART"
             },
             {
-              "hit_num": 35,
+              "hit_num": 37,
               "time": "15:22",
               "start": 5,
               "medals": 292,
               "type": "ART"
             },
             {
-              "hit_num": 36,
+              "hit_num": 38,
               "time": "15:17",
               "start": 41,
               "medals": 204,
               "type": "ART"
             },
             {
-              "hit_num": 37,
+              "hit_num": 39,
               "time": "15:12",
               "start": 3,
               "medals": 157,
               "type": "ART"
             },
             {
-              "hit_num": 38,
+              "hit_num": 40,
               "time": "15:10",
               "start": 25,
               "medals": 33,
               "type": "ART"
             },
             {
-              "hit_num": 39,
+              "hit_num": 41,
               "time": "15:07",
               "start": 20,
               "medals": 44,
               "type": "ART"
             },
             {
-              "hit_num": 40,
+              "hit_num": 42,
               "time": "15:02",
               "start": 37,
               "medals": 136,
               "type": "ART"
             },
             {
-              "hit_num": 41,
+              "hit_num": 43,
               "time": "14:58",
               "start": 3,
               "medals": 31,
               "type": "ART"
             },
             {
-              "hit_num": 42,
+              "hit_num": 44,
               "time": "14:54",
               "start": 14,
               "medals": 138,
               "type": "ART"
             },
             {
-              "hit_num": 43,
+              "hit_num": 45,
               "time": "14:51",
               "start": 2,
               "medals": 147,
               "type": "ART"
             },
             {
-              "hit_num": 44,
+              "hit_num": 46,
               "time": "14:48",
               "start": 17,
               "medals": 145,
               "type": "ART"
             },
             {
-              "hit_num": 45,
+              "hit_num": 47,
               "time": "14:45",
               "start": 10,
               "medals": 44,
               "type": "ART"
             },
             {
-              "hit_num": 46,
+              "hit_num": 48,
               "time": "14:43",
               "start": 6,
               "medals": 37,
               "type": "ART"
             },
             {
-              "hit_num": 47,
+              "hit_num": 49,
               "time": "14:40",
               "start": 31,
               "medals": 154,
               "type": "ART"
             },
             {
-              "hit_num": 48,
+              "hit_num": 50,
               "time": "14:36",
               "start": 32,
               "medals": 43,
               "type": "ART"
             },
             {
-              "hit_num": 49,
+              "hit_num": 51,
               "time": "14:33",
               "start": 93,
               "medals": 79,
               "type": "ART"
             },
             {
-              "hit_num": 50,
+              "hit_num": 52,
               "time": "14:24",
               "start": 34,
               "medals": 35,
               "type": "ART"
             },
             {
-              "hit_num": 51,
+              "hit_num": 53,
               "time": "14:18",
               "start": 2,
               "medals": 141,
               "type": "ART"
             },
             {
-              "hit_num": 52,
+              "hit_num": 54,
               "time": "14:17",
               "start": 2,
               "medals": 41,
               "type": "ART"
             },
             {
-              "hit_num": 53,
+              "hit_num": 55,
               "time": "14:14",
               "start": 1,
               "medals": 147,
               "type": "ART"
             },
             {
-              "hit_num": 54,
+              "hit_num": 56,
               "time": "14:10",
               "start": 1,
               "medals": 19,
               "type": "ART"
             },
             {
-              "hit_num": 55,
+              "hit_num": 57,
               "time": "14:06",
               "start": 6,
               "medals": 214,
               "type": "ART"
             },
             {
-              "hit_num": 56,
+              "hit_num": 58,
               "time": "14:04",
               "start": 153,
               "medals": 83,
               "type": "ART"
             },
             {
-              "hit_num": 57,
+              "hit_num": 59,
               "time": "13:52",
               "start": 2,
               "medals": 45,
               "type": "ART"
             },
             {
-              "hit_num": 58,
+              "hit_num": 60,
               "time": "13:50",
               "start": 1,
               "medals": 45,
               "type": "ART"
             },
             {
-              "hit_num": 59,
+              "hit_num": 61,
               "time": "13:47",
               "start": 1,
               "medals": 29,
               "type": "ART"
             },
             {
-              "hit_num": 60,
+              "hit_num": 62,
               "time": "13:41",
               "start": 17,
               "medals": 210,
               "type": "ART"
             },
             {
-              "hit_num": 61,
+              "hit_num": 63,
               "time": "13:39",
               "start": 91,
               "medals": 83,
               "type": "ART"
             },
             {
-              "hit_num": 62,
+              "hit_num": 64,
               "time": "13:31",
               "start": 14,
               "medals": 45,
               "type": "ART"
             },
             {
-              "hit_num": 63,
+              "hit_num": 65,
               "time": "13:27",
               "start": 34,
               "medals": 152,
               "type": "ART"
             },
             {
-              "hit_num": 64,
+              "hit_num": 66,
               "time": "13:23",
               "start": 27,
               "medals": 33,
               "type": "ART"
             },
             {
-              "hit_num": 65,
+              "hit_num": 67,
               "time": "13:20",
               "start": 114,
               "medals": 83,
               "type": "ART"
             },
             {
-              "hit_num": 66,
+              "hit_num": 68,
               "time": "13:03",
               "start": 7,
               "medals": 33,
               "type": "ART"
             },
             {
-              "hit_num": 67,
+              "hit_num": 69,
               "time": "12:59",
               "start": 6,
               "medals": 133,
               "type": "ART"
             },
             {
-              "hit_num": 68,
+              "hit_num": 70,
               "time": "12:53",
               "start": 17,
               "medals": 288,
               "type": "ART"
             },
             {
-              "hit_num": 69,
+              "hit_num": 71,
               "time": "12:50",
               "start": 16,
               "medals": 33,
               "type": "ART"
             },
             {
-              "hit_num": 70,
+              "hit_num": 72,
               "time": "12:47",
               "start": 16,
               "medals": 35,
               "type": "ART"
             },
             {
-              "hit_num": 71,
+              "hit_num": 73,
               "time": "12:43",
               "start": 15,
               "medals": 143,
               "type": "ART"
             },
             {
-              "hit_num": 72,
+              "hit_num": 74,
               "time": "12:39",
               "start": 12,
               "medals": 147,
               "type": "ART"
             },
             {
-              "hit_num": 73,
+              "hit_num": 75,
               "time": "12:35",
               "start": 2,
               "medals": 143,
               "type": "ART"
             },
             {
-              "hit_num": 74,
+              "hit_num": 76,
               "time": "12:31",
               "start": 2,
               "medals": 213,
               "type": "ART"
             },
             {
-              "hit_num": 75,
+              "hit_num": 77,
               "time": "12:28",
               "start": 1,
               "medals": 141,
               "type": "ART"
             },
             {
-              "hit_num": 76,
+              "hit_num": 78,
               "time": "12:24",
               "start": 1,
               "medals": 19,
               "type": "ART"
             },
             {
-              "hit_num": 77,
+              "hit_num": 79,
               "time": "12:19",
               "start": 13,
               "medals": 290,
               "type": "ART"
             },
             {
-              "hit_num": 78,
+              "hit_num": 80,
               "time": "12:15",
               "start": 21,
               "medals": 145,
               "type": "ART"
             },
             {
-              "hit_num": 79,
+              "hit_num": 81,
               "time": "12:11",
               "start": 35,
               "medals": 143,
               "type": "ART"
             },
             {
-              "hit_num": 80,
+              "hit_num": 82,
               "time": "12:04",
               "start": 27,
               "medals": 209,
               "type": "ART"
             },
             {
-              "hit_num": 81,
+              "hit_num": 83,
               "time": "12:00",
               "start": 4,
               "medals": 37,
               "type": "ART"
             },
             {
-              "hit_num": 82,
+              "hit_num": 84,
               "time": "11:58",
               "start": 30,
               "medals": 33,
               "type": "ART"
             },
             {
-              "hit_num": 83,
+              "hit_num": 85,
               "time": "11:53",
               "start": 5,
               "medals": 149,
               "type": "ART"
             },
             {
-              "hit_num": 84,
+              "hit_num": 86,
               "time": "11:52",
               "start": 13,
               "medals": 41,
               "type": "ART"
             },
             {
-              "hit_num": 85,
+              "hit_num": 87,
               "time": "11:48",
               "start": 28,
               "medals": 151,
               "type": "ART"
             },
             {
-              "hit_num": 86,
+              "hit_num": 88,
               "time": "11:41",
               "start": 20,
               "medals": 211,
               "type": "ART"
             },
             {
-              "hit_num": 87,
+              "hit_num": 89,
               "time": "11:39",
               "start": 52,
               "medals": 41,
               "type": "ART"
             },
             {
-              "hit_num": 88,
+              "hit_num": 90,
               "time": "11:34",
               "start": 18,
               "medals": 43,
               "type": "ART"
             },
             {
-              "hit_num": 89,
+              "hit_num": 91,
               "time": "11:28",
               "start": 2,
               "medals": 144,
               "type": "ART"
             },
             {
-              "hit_num": 90,
+              "hit_num": 92,
               "time": "11:27",
               "start": 1,
               "medals": 39,
               "type": "ART"
             },
             {
-              "hit_num": 91,
+              "hit_num": 93,
               "time": "11:23",
               "start": 1,
               "medals": 21,
               "type": "ART"
             },
             {
-              "hit_num": 92,
+              "hit_num": 94,
               "time": "11:18",
               "start": 30,
               "medals": 213,
               "type": "ART"
             },
             {
-              "hit_num": 93,
+              "hit_num": 95,
               "time": "11:14",
               "start": 6,
               "medals": 39,
               "type": "ART"
             },
             {
-              "hit_num": 94,
+              "hit_num": 96,
               "time": "11:08",
               "start": 21,
               "medals": 226,
               "type": "ART"
             },
             {
-              "hit_num": 95,
+              "hit_num": 97,
               "time": "11:02",
               "start": 26,
               "medals": 220,
               "type": "ART"
             },
             {
-              "hit_num": 96,
+              "hit_num": 98,
               "time": "10:55",
               "start": 13,
               "medals": 208,
               "type": "ART"
             },
             {
-              "hit_num": 97,
+              "hit_num": 99,
               "time": "10:52",
               "start": 21,
               "medals": 37,
               "type": "ART"
             },
             {
-              "hit_num": 98,
+              "hit_num": 100,
               "time": "10:49",
               "start": 409,
               "medals": 83,
               "type": "ART"
-            },
-            {
-              "hit_num": 99,
-              "time": "10:20",
-              "start": 31,
-              "medals": 51,
-              "type": "REG"
-            },
-            {
-              "hit_num": 100,
-              "time": "10:17",
-              "start": 101,
-              "medals": 51,
-              "type": "REG"
             }
           ],
           "today_max_rensa": 41,
@@ -30261,10 +30406,10 @@
           "bb": 0,
           "rb": 5,
           "art": 48,
-          "total_start": 5511,
-          "final_start": 32,
+          "total_start": 5761,
+          "final_start": 247,
           "max_medals": 3129,
-          "combined_prob": 1102,
+          "combined_prob": 1152,
           "today_history": [
             {
               "hit_num": 1,
@@ -30639,7 +30784,7 @@
             }
           ],
           "today_max_rensa": 32,
-          "availability": "空き"
+          "availability": "遊技中"
         }
       ]
     },
@@ -34355,5 +34500,5 @@
       ]
     }
   },
-  "fetched_at": "2026-02-04T19:00:03.003470+09:00"
+  "fetched_at": "2026-02-04T19:20:02.278393+09:00"
 }
