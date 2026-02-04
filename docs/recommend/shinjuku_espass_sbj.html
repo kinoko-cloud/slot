@@ -9,7 +9,7 @@
     <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
     <meta name="googlebot" content="noindex, nofollow">
     <title>エスパス日拓新宿歌舞伎町店</title>
-    <link rel="stylesheet" href="/static/style.css?v=20260203153556">
+    <link rel="stylesheet" href="/static/style.css?v=20260204112503">
 </head>
 <body data-page-type="recommend" data-store-key="shinjuku_espass_sbj">
     <div class="container">
@@ -27,7 +27,7 @@
         
     </div>
     <div class="top-bar-right">
-        <span class="version-info" id="build-ver" title="ビルド時刻">v0204_00:36</span>
+        <span class="version-info" id="build-ver" title="ビルド時刻">v0204_11:25</span>
         
     </div>
 </div>
@@ -48,14 +48,18 @@
                 </span>
                 <span class="cache-badge github">GITHUB</span>
                 
-                <div class="stale-warning">データが3時間34分前のものです</div>
+                <div class="stale-warning">データが14時間24分前のものです</div>
                 
                 
             </div>
 
             <!-- 空き状況サマリ -->
             
-            <div class="closed-notice">現在営業時間外です</div>
+            <div class="availability-summary">
+                <span class="avail-empty" onclick="filterUnits('empty')">空き 4台</span>
+                <span class="avail-playing" onclick="filterUnits('playing')">遊技中 0台</span>
+                <span class="avail-all" onclick="filterUnits('all')">全て</span>
+            </div>
             
 
             <div class="action-buttons">
@@ -82,7 +86,7 @@
             
             
             <div class="analysis-weekday">
-                火曜の店舗傾向:
+                水曜の店舗傾向:
                 普通
                 （土曜が最強、金曜も狙い目）
             </div>
@@ -126,33 +130,41 @@
                         <span class="unit-id-large">0682番台</span>
                         <span class="machine-name-sm">スーパーブラックジャック</span>
                         
+                            
+                            <span class="avail-badge-lg empty">空き</span>
+                            
+                        
                         <span class="rank-badge-lg" style="background-color: #ffa502">A</span>
                         <span class="expand-icon">▼</span>
                     </div>
 
                     
-                    
-                    
-                    <div class="reasons-full">
-                        
-                        
-                        
-                        <div class="reason-line-top reason-cycle">🔁 ほぼ毎日好調になる台</div>
-                        
-                        
-                        
-                        <div class="reason-line-top">🔥 直近の推移: 大→小→小→中→大（大小交互 → 2/3(火)は中程度の可能性）</div>
-                        
-                        
-                        
-                        <div class="reason-line-top">💰 好調日の平均ART 53回（1/76）→ 打てば出やすい台</div>
-                        
-                        
-                        
-                        <div class="reason-line-top reason-rank">📊 14日間中12日好調（好調率86%）→ 高機械割が入りやすい台</div>
-                        
-                        
-                        
+                    <!-- 営業中: リアルタイムデータ -->
+                    <div class="today-data-row">
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">0</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            
+                        </div>
+                        <div class="data-row-secondary">
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">0</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell ">
+                                <span class="data-value">0</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">0</span>
+                                <span class="data-label">累計G</span>
+                            </div>
+                        </div>
                     </div>
                     
 
@@ -1980,10 +1992,6 @@
                     
                     <div class="estimation-row">
                         
-                        <span class="setting-estimate setting-6">
-                            高機械割 <span class="payout">(125.1%)</span>
-                        </span>
-                        
                         <span class="past-eval">
                             
                             3日連続不調 → 設定上げの可能性あり
@@ -1993,6 +2001,14 @@
 
                     <!-- 推奨理由（営業中のみ — 閉店後は上に表示済み） -->
                     
+                    <div class="reason-main">
+                        
+                        <div class="reason-line ">🔁 ほぼ毎日好調になる台</div>
+                        
+                        <div class="reason-line ">🔥 直近の推移: 大→小→小→中→大（大小交互 → 本日は中程度の可能性）</div>
+                        
+                    </div>
+                    
 
                     </summary>
                     <!-- 詳細（展開） -->
@@ -2001,15 +2017,7 @@
                             <div class="detail-section">
                                 <div class="detail-title">本日詳細</div>
                                 
-                                
-                                
-                                
-                                
-                                <div class="detail-item">RB: 9回</div>
-                                
-                                
-                                <div class="detail-item">稼働時間: 10:20 〜 21:24</div>
-                                
+                                <div class="detail-item">まだ本日のデータなし</div>
                                 
                             </div>
 
@@ -2035,7 +2043,7 @@
                             
                             <div class="reason-item">🔁 ほぼ毎日好調になる台</div>
                             
-                            <div class="reason-item">🔥 直近の推移: 大→小→小→中→大（大小交互 → 2/3(火)は中程度の可能性）</div>
+                            <div class="reason-item">🔥 直近の推移: 大→小→小→中→大（大小交互 → 本日は中程度の可能性）</div>
                             
                             <div class="reason-item">💰 好調日の平均ART 53回（1/76）→ 打てば出やすい台</div>
                             
@@ -2053,21 +2061,41 @@
                         <span class="unit-id-large">0684番台</span>
                         <span class="machine-name-sm">スーパーブラックジャック</span>
                         
+                            
+                            <span class="avail-badge-lg empty">空き</span>
+                            
+                        
                         <span class="rank-badge-lg" style="background-color: #ffa502">A</span>
                         <span class="expand-icon">▼</span>
                     </div>
 
                     
-                    
-                    
-                    <div class="reasons-full">
-                        
-                        
-                        
-                        <div class="reason-line-top">エスパス歌舞伎町の火曜は普通（店舗傾向：土曜が最強、金曜も狙い目）</div>
-                        
-                        
-                        
+                    <!-- 営業中: リアルタイムデータ -->
+                    <div class="today-data-row">
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">0</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            
+                        </div>
+                        <div class="data-row-secondary">
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">0</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell ">
+                                <span class="data-value">0</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">0</span>
+                                <span class="data-label">累計G</span>
+                            </div>
+                        </div>
                     </div>
                     
 
@@ -4309,10 +4337,6 @@
                     
                     <div class="estimation-row">
                         
-                        <span class="setting-estimate setting-6">
-                            高機械割 <span class="payout">(126.4%)</span>
-                        </span>
-                        
                         <span class="past-eval">
                             
                             直近ART改善傾向
@@ -4322,6 +4346,12 @@
 
                     <!-- 推奨理由（営業中のみ — 閉店後は上に表示済み） -->
                     
+                    <div class="reason-main">
+                        
+                        <div class="reason-line ">エスパス歌舞伎町の水曜は普通（店舗傾向：土曜が最強、金曜も狙い目）</div>
+                        
+                    </div>
+                    
 
                     </summary>
                     <!-- 詳細（展開） -->
@@ -4330,15 +4360,7 @@
                             <div class="detail-section">
                                 <div class="detail-title">本日詳細</div>
                                 
-                                
-                                
-                                
-                                
-                                <div class="detail-item">RB: 6回</div>
-                                
-                                
-                                <div class="detail-item">稼働時間: 12:02 〜 21:37</div>
-                                
+                                <div class="detail-item">まだ本日のデータなし</div>
                                 
                             </div>
 
@@ -4389,7 +4411,7 @@
 
     
     
-    <div class="v2-reason">エスパス歌舞伎町の火曜は普通（店舗傾向：土曜が最強、金曜も狙い目）</div>
+    <div class="v2-reason">エスパス歌舞伎町の水曜は普通（店舗傾向：土曜が最強、金曜も狙い目）</div>
     
 
     
@@ -4436,22 +4458,12 @@
 
     
     
-    <div class="v2-setting">
-        <span class="setting-badge-sm setting-6">高機械割</span>
-    </div>
-    
 
     
     <div class="unit-details hidden">
         <div class="v2-detail-reasons">
             
-            <div class="reason-item">エスパス歌舞伎町の火曜は普通（店舗傾向：土曜が最強、金曜も狙い目）</div>
-            
-        </div>
-        
-        <div class="v2-detail-today">
-            本日: ART 46 / RB 5 / 3,232G
-             / 1/70
+            <div class="reason-item">エスパス歌舞伎町の水曜は普通（店舗傾向：土曜が最強、金曜も狙い目）</div>
             
         </div>
         
@@ -4487,7 +4499,7 @@
 
     
     
-    <div class="v2-reason">エスパス歌舞伎町の火曜は普通（店舗傾向：土曜が最強、金曜も狙い目）</div>
+    <div class="v2-reason">エスパス歌舞伎町の水曜は普通（店舗傾向：土曜が最強、金曜も狙い目）</div>
     
 
     
@@ -4534,22 +4546,12 @@
 
     
     
-    <div class="v2-setting">
-        <span class="setting-badge-sm setting-6">高機械割</span>
-    </div>
-    
 
     
     <div class="unit-details hidden">
         <div class="v2-detail-reasons">
             
-            <div class="reason-item">エスパス歌舞伎町の火曜は普通（店舗傾向：土曜が最強、金曜も狙い目）</div>
-            
-        </div>
-        
-        <div class="v2-detail-today">
-            本日: ART 34 / RB 8 / 4,011G
-             / 1/117
+            <div class="reason-item">エスパス歌舞伎町の水曜は普通（店舗傾向：土曜が最強、金曜も狙い目）</div>
             
         </div>
         
