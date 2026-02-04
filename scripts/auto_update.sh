@@ -90,7 +90,15 @@ else
     log "WARNING: availability.json が存在しない"
 fi
 
-# 2. 静的サイト生成
+# 2. 蓄積データ更新（リアルタイム→History同期）
+log "蓄積データ更新中..."
+if python3 scripts/sync_realtime_to_history.py >> "$LOGFILE" 2>&1; then
+    log "蓄積データ更新完了"
+else
+    log "蓄積データ更新失敗（続行）"
+fi
+
+# 3. 静的サイト生成
 log "静的サイト生成中..."
 if python3 scripts/generate_static.py >> "$LOGFILE" 2>&1; then
     log "静的サイト生成完了"
@@ -100,7 +108,7 @@ else
 fi
 
 # 3. git push（差分がある場合のみ）
-git add data/availability.json docs/
+git add data/availability.json data/history/ docs/
 if git diff --staged --quiet; then
     log "変更なし、スキップ"
 else

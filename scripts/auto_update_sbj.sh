@@ -30,6 +30,9 @@ else
     exit 1
 fi
 
+# 蓄積データ更新
+python3 scripts/sync_realtime_to_history.py >> "$LOGFILE" 2>&1 || log "蓄積データ更新失敗（続行）"
+
 # 静的サイト生成
 if python3 scripts/generate_static.py >> "$LOGFILE" 2>&1; then
     log "静的サイト生成完了"
@@ -40,7 +43,7 @@ fi
 
 # デプロイ（変更があれば）
 if ! git diff --quiet docs/; then
-    git add docs/ data/availability.json
+    git add docs/ data/availability.json data/history/
     git commit -m "auto: SBJ更新 $(date '+%H:%M')" >> "$LOGFILE" 2>&1
     git pull --rebase origin main >> "$LOGFILE" 2>&1 || true
     git push origin main >> "$LOGFILE" 2>&1 && log "デプロイ完了"
