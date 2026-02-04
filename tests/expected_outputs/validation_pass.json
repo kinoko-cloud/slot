@@ -1,0 +1,24 @@
+{
+  "description": "validate_output.py の正常終了時の期待される構造",
+  "status": "success",
+  "checks": {
+    "html_structure": {
+      "status": "pass",
+      "message": "全HTMLファイルの構造が正常"
+    },
+    "broken_links": {
+      "status": "pass",
+      "message": "リンク切れなし"
+    },
+    "required_elements": {
+      "status": "pass",
+      "message": "必須要素が全て存在"
+    },
+    "realtime_health": {
+      "status": "pass",
+      "message": "リアルタイム機能が正常"
+    }
+  },
+  "exit_code": 0,
+  "execution_time_seconds": 8.5
+}

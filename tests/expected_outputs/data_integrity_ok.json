@@ -1,0 +1,35 @@
+{
+  "description": "data_integrity_check.py の正常終了時の期待される構造",
+  "status": "success",
+  "checks": {
+    "history_db": {
+      "status": "pass",
+      "message": "蓄積DBの整合性OK",
+      "details": {
+        "total_units": 200,
+        "valid_units": 200,
+        "invalid_units": 0
+      }
+    },
+    "daily_snapshots": {
+      "status": "pass",
+      "message": "日別スナップショットOK",
+      "details": {
+        "recent_days": 7,
+        "missing_days": 0
+      }
+    },
+    "availability_data": {
+      "status": "pass",
+      "message": "空き状況データOK",
+      "details": {
+        "stores": 12,
+        "stale_data": 0
+      }
+    }
+  },
+  "warnings": [],
+  "errors": [],
+  "exit_code": 0,
+  "execution_time_seconds": 5.2
+}
