@@ -3119,6 +3119,12 @@ strong.minus {
     gap: 3px;
     background: #1a9a4a;
     color: #fff;
+}
+/* 連チャン色グラデーション: 2連=青, 3連=緑, 5連=橙, 8連+=赤 */
+.rensa-badge.rensa-2 { background: #3388bb; }
+.rensa-badge.rensa-3, .rensa-badge.rensa-4 { background: #2ea043; }
+.rensa-badge.rensa-5, .rensa-badge.rensa-6, .rensa-badge.rensa-7 { background: #e08620; }
+.rensa-badge.rensa-8 { background: #d73a49;
     padding: 1px 6px;
     border-radius: 3px;
     font-size: 0.75em;
