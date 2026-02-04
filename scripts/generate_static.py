@@ -1052,6 +1052,10 @@ def generate_index(env):
         accuracy_hero=accuracy_hero,
         verify_date_str=_get_verify_date_str(),
         verify_accuracy=_get_verify_accuracy(),
+        verify_rate=_get_verify_accuracy_prob_based()[0],
+        verify_hit=_get_verify_accuracy_prob_based()[1],
+        verify_total=_get_verify_accuracy_prob_based()[2],
+        verify_examples=_get_verify_examples(),
         verify_highlights=_get_verify_highlights(),
         verify_categories=_get_verify_by_category(),
         date_prefix=date_prefix,
@@ -1608,6 +1612,66 @@ def _get_verify_date_str():
     yesterday = datetime.now() - timedelta(days=1)
     weekdays = ['月','火','水','木','金','土','日']
     return f'{yesterday.month}/{yesterday.day}({weekdays[yesterday.weekday()]})'
+
+
+def _get_verify_accuracy_prob_based():
+    """確率ベースの的中率を返す（S/A予測で確率1/130以下を的中とする）"""
+    data = _get_latest_valid_verify()
+    if not data:
+        return 0, 0, 0
+    try:
+        total_sa = 0
+        total_hit = 0
+        for sk, units in data.get('units', {}).items():
+            for u in units:
+                prob = u.get('actual_prob', 0)
+                games = u.get('actual_games', 0)
+                if prob <= 0 or games < 500:
+                    continue
+                if u.get('predicted_rank') in ('S', 'A'):
+                    total_sa += 1
+                    if prob <= 130:  # 確率1/130以下なら的中
+                        total_hit += 1
+        if total_sa > 0:
+            rate = int(total_hit / total_sa * 100)
+            return rate, total_hit, total_sa
+    except:
+        pass
+    return 0, 0, 0
+
+
+def _get_verify_examples():
+    """的中した台の具体例を返す（最大3件）"""
+    data = _get_latest_valid_verify()
+    if not data:
+        return []
+    try:
+        hits = []
+        for sk, units in data.get('units', {}).items():
+            store_info = data.get('stores', {}).get(sk, {})
+            store_name = store_info.get('name', sk)
+            # 店名を短縮
+            store_name = store_name.replace('エスパス日拓', '').replace('新宿歌舞伎町店', '歌舞伎町').replace('渋谷新館', '渋谷新館').replace('秋葉原駅前店', '秋葉原')
+            
+            for u in units:
+                prob = u.get('actual_prob', 0)
+                games = u.get('actual_games', 0)
+                if prob <= 0 or games < 500:
+                    continue
+                if u.get('predicted_rank') in ('S', 'A') and prob <= 130:
+                    hits.append({
+                        'store': store_name,
+                        'unit': u.get('unit_id', ''),
+                        'rank': u.get('predicted_rank', ''),
+                        'prob': int(prob),
+                    })
+        
+        # 確率の良い順に3件
+        hits.sort(key=lambda x: x['prob'])
+        return hits[:3]
+    except:
+        return []
+
 
 def _get_verify_accuracy():
     """verifyページと完全に同じ的中率を返す（verify結果JSONから直接読む）"""
