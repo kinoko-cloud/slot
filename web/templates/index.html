@@ -114,19 +114,24 @@
         <main>
             {# === 結果バナー === #}
             <a href="{{ url_for('verify') }}" class="verify-banner-lg">
-                <div class="vb-main-rate">
+                <div class="vb-header">
                     <div class="vb-circle-big {% if verify_rate >= 85 %}hot{% elif verify_rate >= 70 %}good{% elif verify_rate >= 55 %}warm{% else %}ok{% endif %}">
                         <span class="vb-rate-num">{{ verify_rate }}%</span>
                     </div>
-                    <div class="vb-rate-meta">
+                    <div class="vb-header-text">
                         <span class="vb-title-lg">{% if verify_date_str %}{{ verify_date_str }}{% else %}昨日{% endif %}の的中率</span>
-                        <span class="vb-rate-detail">S/A予測 {{ verify_hit }}台/{{ verify_total }}台が好調</span>
+                        <span class="vb-subtitle">S/A予測 {{ verify_hit }}/{{ verify_total }}台が好調</span>
                     </div>
                 </div>
                 {% if verify_examples %}
                 <div class="vb-examples">
                     {% for ex in verify_examples %}
-                    <span class="vb-example">{{ ex.rank }}予測 {{ ex.store }} 台{{ ex.unit }} → 1/{{ ex.prob }}</span>
+                    <div class="vb-example-row">
+                        <span class="vb-ex-rank">{{ ex.rank }}</span>
+                        <span class="vb-ex-store">{{ ex.store }}</span>
+                        <span class="vb-ex-unit">台{{ ex.unit }}</span>
+                        <span class="vb-ex-prob">1/{{ ex.prob }}</span>
+                    </div>
                     {% endfor %}
                 </div>
                 {% endif %}
