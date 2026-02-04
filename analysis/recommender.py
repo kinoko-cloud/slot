@@ -2911,7 +2911,17 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
         # === 強化スコア適用（曜日パターン・連続傾向）===
         enhance_reasons = []
         try:
+            # unit_historyが無い場合、data/history/から読み込む
             unit_days_for_enhance = unit_history.get('days', []) if unit_history else []
+            if not unit_days_for_enhance:
+                # 蓄積DBからhistoryを読み込み
+                import json as _json
+                from pathlib import Path as _Path
+                hist_file = _Path(f'data/history/{store_key}/{unit_id}.json')
+                if hist_file.exists():
+                    _hist_data = _json.load(open(hist_file))
+                    unit_days_for_enhance = _hist_data.get('days', [])
+            
             final_score, enhance_reasons = calculate_enhanced_score(
                 base_score=int(final_score),
                 unit_id=unit_id,
@@ -3745,15 +3755,23 @@ def calculate_enhanced_score(
         
         # 高稼働日の好調率が高い台 → 設定投入傾向
         if activity['high_activity_good_rate'] >= 0.7:
-            enhanced_score += 12
+            enhanced_score += 10
             boost_reasons.append(f'高稼働日好調率{activity["high_activity_good_rate"]*100:.0f}%')
         elif activity['high_activity_good_rate'] >= 0.5:
-            enhanced_score += 6
-        
-        # 平均稼働が高い人気台
-        if activity['activity_trend'] == 'high':
             enhanced_score += 5
-            boost_reasons.append(f'人気台(平均{activity["avg_games"]:.0f}G)')
+        
+        # 低稼働だが好調な台 → 穴場として評価（重要！）
+        # 稼働が少なくても、複数日で好調なら高設定の可能性大
+        if activity['activity_trend'] == 'low' and activity['avg_games'] > 0:
+            # 低稼働でも平均確率が良い場合
+            good_days = sum(1 for d in unit_history 
+                          if d.get('art', 0) > 0 and 
+                          (d.get('games', 0) or d.get('total_start', 0)) > 0 and
+                          (d.get('games', 0) or d.get('total_start', 0)) / d.get('art', 1) <= 130)
+            total_days = sum(1 for d in unit_history if d.get('art', 0) > 0)
+            if total_days >= 3 and good_days / total_days >= 0.5:
+                enhanced_score += 15  # 穴場ボーナス
+                boost_reasons.append(f'低稼働でも好調率{good_days}/{total_days}日→穴場')
     
     return enhanced_score, boost_reasons
 
