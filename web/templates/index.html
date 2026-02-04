@@ -9,12 +9,9 @@
 <div class="recent-day-block">
     <div class="recent-day-row {% if day_hist and day_hist|length > 0 %}has-detail{% endif %}" onclick="{% if day_hist and day_hist|length > 0 %}toggleRecentDayDetail(event, this){% endif %}">
         <span class="recent-label">{{ short_date(day_date) or day_label }}</span>
-        <span class="recent-art">ART {{ day_art }}</span>
-        {% if day_prob > 0 %}<span class="recent-prob {% if day_prob <= 100 %}excellent{% elif day_prob <= 130 %}good{% elif day_prob >= 200 %}bad{% endif %}">1/{{ day_prob|int }}</span>{% endif %}
+        {# ART数、確率、連チャン、最大枚数は上部で表示済みなので削除 #}
         {% if day_diff != 0 %}<span class="diff-medals-sm {% if day_diff > 0 %}plus{% else %}minus{% endif %}">{{ '{:+,}'.format(day_diff) }}枚</span>{% endif %}
-        {% if day_rensa >= 3 %}<span class="rensa-sm">{{ day_rensa }}連</span>{% endif %}
-        {% if day_max_m > 0 %}<span class="max-medals-sm">最大{{ '{:,}'.format(day_max_m) }}枚</span>{% endif %}
-        {% if day_hist and day_hist|length > 0 %}<span class="expand-icon small">▼</span>{% endif %}
+        {% if day_hist and day_hist|length > 0 %}<span class="expand-icon small">▼ 詳細</span>{% endif %}
     </div>
     {% if day_hist and day_hist|length > 0 %}
     <div class="recent-day-detail hidden">
