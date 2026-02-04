@@ -66,7 +66,7 @@ fi
 # 1. リアルタイムデータ取得（全9店舗: daidata 7店 + papimo 2店）
 log "データ取得中（全店舗）..."
 FETCH_SUCCESS=false
-if timeout 600 python3 scripts/fetch_daidata_availability.py >> "$LOGFILE" 2>&1; then
+if timeout 2700 python3 scripts/fetch_daidata_availability.py >> "$LOGFILE" 2>&1; then
     log "データ取得完了"
     FETCH_SUCCESS=true
 else
