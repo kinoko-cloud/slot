@@ -235,8 +235,8 @@
         {% if rec.yesterday_rb and rec.yesterday_rb > 0 and not show_today %}
         <span class="rb-badge">RB <span class="rb-num">{{ rec.yesterday_rb }}</span></span>
         {% endif %}
-        {% if rensa and rensa >= 3 %}
-        <span class="rensa-badge">最大<span class="num">{{ rensa }}</span>連</span>
+        {% if rensa and rensa >= 2 %}
+        <span class="rensa-badge {% if rensa >= 8 %}rensa-8{% elif rensa >= 5 %}rensa-5{% elif rensa >= 3 %}rensa-3{% else %}rensa-2{% endif %}">最大<span class="num">{{ rensa }}</span>連</span>
         {% endif %}
         {% if games and games > 0 %}
         <span class="total-games-label">{{ '{:,}'.format(games) }}G</span>
@@ -286,8 +286,8 @@
         {% if rec.art_count > 0 %}
         <span class="art-badge">ART <span class="art-num">{{ rec.art_count }}</span></span>
         {% endif %}
-        {% if rec.today_max_rensa and rec.today_max_rensa >= 3 %}
-        <span class="rensa-badge">最大<span class="num">{{ rec.today_max_rensa }}</span>連</span>
+        {% if rec.today_max_rensa and rec.today_max_rensa >= 2 %}
+        <span class="rensa-badge {% if rec.today_max_rensa >= 8 %}rensa-8{% elif rec.today_max_rensa >= 5 %}rensa-5{% elif rec.today_max_rensa >= 3 %}rensa-3{% else %}rensa-2{% endif %}">最大<span class="num">{{ rec.today_max_rensa }}</span>連</span>
         {% endif %}
         {% if rec.total_games and rec.total_games > 0 %}
         <span class="total-games-label">{{ '{:,}'.format(rec.total_games) }}G</span>
