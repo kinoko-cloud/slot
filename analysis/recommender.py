@@ -2907,6 +2907,21 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
             pass
 
         final_score = raw_score + feedback_bonus
+        
+        # === 強化スコア適用（曜日パターン・連続傾向）===
+        enhance_reasons = []
+        try:
+            unit_days_for_enhance = unit_history.get('days', []) if unit_history else []
+            final_score, enhance_reasons = calculate_enhanced_score(
+                base_score=int(final_score),
+                unit_id=unit_id,
+                store_key=store_key,
+                machine_key=machine_key,
+                unit_history=unit_days_for_enhance,
+            )
+        except Exception:
+            pass
+        
         # 【改善3】ランクは後でまとめて相対評価で決定するため、ここでは仮ランク
         final_rank = get_rank(final_score)
 
@@ -2994,6 +3009,11 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
             cycle_analysis=cycle_analysis, weekday_pattern=weekday_pattern,
             analysis_phase=analysis_phase,
         )
+        
+        # 強化スコアの理由を追加
+        if enhance_reasons:
+            for er in enhance_reasons:
+                reasons.insert(0, f"🔮 {er}")
 
         # リアルタイム空き状況がある場合は上書き
         status = today_analysis.get('status', '不明')
