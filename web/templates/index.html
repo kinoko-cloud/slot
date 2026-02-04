@@ -940,7 +940,7 @@
         e.preventDefault();
         e.stopPropagation();
         // 親のカード内から.history-detailを探す
-        var card = el.closest('.rec-card, .top3-card, .sa-card');
+        var card = el.closest('.unit-card, .rec-card, .top3-card, .sa-card');
         if (!card) return;
         var detail = card.querySelector('.history-detail');
         if (!detail) return;
