@@ -3554,3 +3554,148 @@ if __name__ == "__main__":
         print("  理由:")
         for reason in rec.get('reasons', []):
             print(f"    - {reason}")
+
+
+# ============================================================
+# 予測ロジック強化（2026-02-04追加）
+# ============================================================
+
+def _analyze_weekday_pattern(store_key: str, machine_key: str) -> dict:
+    """店×機種の曜日別好調率を分析"""
+    import glob, os, json as _json
+    from datetime import datetime as _dt
+    
+    store_mk_key = f"{store_key}_{machine_key}" if machine_key else store_key
+    hist_dir = f"data/history/{store_mk_key}"
+    if not os.path.exists(hist_dir):
+        hist_dir = f"data/history/{store_key}"
+    if not os.path.exists(hist_dir):
+        return {}
+    
+    good_prob = get_machine_threshold(machine_key, 'good_prob')
+    weekday_stats = {i: {'total': 0, 'good': 0} for i in range(7)}
+    
+    for f in glob.glob(f"{hist_dir}/*.json"):
+        try:
+            data = _json.load(open(f))
+            for d in data.get('days', []):
+                date_str = d.get('date')
+                art = d.get('art', 0)
+                games = d.get('games', 0) or d.get('total_start', 0)
+                if not date_str or art <= 0 or games < 500:
+                    continue
+                
+                weekday = _dt.strptime(date_str, '%Y-%m-%d').weekday()
+                weekday_stats[weekday]['total'] += 1
+                
+                prob = games / art
+                if prob <= good_prob:
+                    weekday_stats[weekday]['good'] += 1
+        except:
+            pass
+    
+    result = {}
+    for i, stats in weekday_stats.items():
+        if stats['total'] >= 3:
+            result[i] = round(stats['good'] / stats['total'] * 100, 1)
+    
+    return result
+
+
+def _analyze_consecutive_pattern(unit_history: list) -> dict:
+    """連続好調/不調パターンを分析"""
+    if not unit_history or len(unit_history) < 2:
+        return {'consecutive_good': 0, 'consecutive_bad': 0, 'trend': 'neutral'}
+    
+    sorted_days = sorted(unit_history, key=lambda x: x.get('date', ''), reverse=True)
+    
+    consecutive_good = 0
+    consecutive_bad = 0
+    
+    for d in sorted_days:
+        art = d.get('art', 0)
+        games = d.get('games', 0) or d.get('total_start', 0)
+        if art <= 0 or games < 500:
+            break
+        
+        prob = games / art
+        if prob <= 130:
+            if consecutive_bad == 0:
+                consecutive_good += 1
+            else:
+                break
+        else:
+            if consecutive_good == 0:
+                consecutive_bad += 1
+            else:
+                break
+    
+    trend = 'neutral'
+    if consecutive_good >= 2:
+        trend = 'hot'
+    elif consecutive_bad >= 2:
+        trend = 'cold'
+    
+    return {
+        'consecutive_good': consecutive_good,
+        'consecutive_bad': consecutive_bad,
+        'trend': trend,
+    }
+
+
+def _load_zentai_predictions() -> dict:
+    """全台系予測データを読み込み"""
+    import json as _json
+    from pathlib import Path as _Path
+    
+    pred_file = _Path('data/analysis/zentai_predictions.json')
+    if pred_file.exists():
+        try:
+            return _json.load(open(pred_file))
+        except:
+            pass
+    return {}
+
+
+def calculate_enhanced_score(
+    base_score: int,
+    unit_id: str,
+    store_key: str,
+    machine_key: str,
+    target_date: str = None,
+    unit_history: list = None,
+) -> tuple:
+    """強化版スコア計算"""
+    from datetime import datetime as _dt
+    
+    enhanced_score = base_score
+    boost_reasons = []
+    
+    if not target_date:
+        target_date = _dt.now().strftime('%Y-%m-%d')
+    
+    target_weekday = _dt.strptime(target_date, '%Y-%m-%d').weekday()
+    weekday_names = ['月', '火', '水', '木', '金', '土', '日']
+    
+    weekday_pattern = _analyze_weekday_pattern(store_key, machine_key)
+    if weekday_pattern and target_weekday in weekday_pattern:
+        weekday_rate = weekday_pattern[target_weekday]
+        avg_rate = sum(weekday_pattern.values()) / len(weekday_pattern) if weekday_pattern else 30
+        
+        if weekday_rate > avg_rate + 10:
+            boost = int((weekday_rate - avg_rate) / 2)
+            enhanced_score += boost
+            boost_reasons.append(f'{weekday_names[target_weekday]}曜好調率{weekday_rate:.0f}%')
+    
+    if unit_history:
+        consecutive = _analyze_consecutive_pattern(unit_history)
+        if consecutive['trend'] == 'hot' and consecutive['consecutive_good'] >= 2:
+            boost = min(consecutive['consecutive_good'] * 5, 15)
+            enhanced_score += boost
+            boost_reasons.append(f'{consecutive["consecutive_good"]}日連続好調')
+        elif consecutive['trend'] == 'cold' and consecutive['consecutive_bad'] >= 3:
+            boost = 5
+            enhanced_score += boost
+            boost_reasons.append(f'{consecutive["consecutive_bad"]}日不調→変更期待')
+    
+    return enhanced_score, boost_reasons
