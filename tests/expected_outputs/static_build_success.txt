@@ -1,0 +1,54 @@
+# 静的ビルド成功時の期待される出力
+
+## generate_static.py 実行時
+
+✅ 正常終了の兆候:
+- "静的サイトを生成しました: docs/index.html" が表示される
+- exit code 0
+- docs/ ディレクトリに以下のファイルが生成される:
+  - index.html
+  - stores.html
+  - verify.html
+  - ranking_{machine_key}.html
+  - recommend_{store_key}.html (各店舗)
+  - unit_history_{store_key}_{unit_id}.html (各台)
+
+## validate_output.py 実行時
+
+✅ 正常終了の兆候:
+- "✓ 検証完了: エラーなし" が表示される
+- exit code 0
+- 以下のチェックが全てパス:
+  - HTML構造の検証
+  - リンク切れチェック
+  - 必須要素の存在確認
+  - リアルタイム機能の健全性
+
+❌ エラーパターン:
+- "エラー: XXX" が表示される
+- exit code 1
+- 具体的なエラー内容が出力される
+
+## 期待される実行時間
+
+- generate_static.py: 10-30秒（データ量により変動）
+- validate_output.py: 5-10秒
+
+## サンプル出力
+
+```
+$ python3 scripts/generate_static.py
+[INFO] 蓄積DBからデータ読み込み中...
+[INFO] 店舗別ページ生成中... (12店舗)
+[INFO] 台別ページ生成中... (200台)
+[INFO] ランキングページ生成中... (2機種)
+✓ 静的サイトを生成しました: docs/index.html
+```
+
+```
+$ python3 scripts/validate_output.py
+[INFO] HTML構造を検証中...
+[INFO] リンク切れをチェック中...
+[INFO] リアルタイム機能を検証中...
+✓ 検証完了: エラーなし
+```
