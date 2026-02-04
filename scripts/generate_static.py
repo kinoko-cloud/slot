@@ -403,12 +403,16 @@ def generate_index(env):
                         _mk = r.get('machine_key', '') or get_machine_from_store_key(store_key)
                         _hist_rensa = _calc_rensa(_hist, machine_key=_mk)
                         
-                        # art_countとhistory ART数が一致 → データソースが同じ日
-                        if _art > 0 and _art == _hist_art:
-                            # 一致してるのでhistoryからrensaを再計算
+                        # art_countとhistory ART数が近ければ同じ日のデータとみなす
+                        # （データ取得タイミングのズレで数回の差が出る）
+                        if _art > 0 and abs(_art - _hist_art) <= 5:
+                            # ほぼ一致 → historyからrensaを再計算
                             r['today_max_rensa'] = _hist_rensa
-                        elif _art > 0 and _art != _hist_art:
-                            # 不一致 → historyは別日のstale。art_countを信頼、historyは使わない
+                        elif _art > 0 and _hist_art > 0 and _art >= _hist_art:
+                            # art_countの方が多い → データ取得後に増えただけ、historyは有効
+                            r['today_max_rensa'] = _hist_rensa
+                        elif _art > 0 and _hist_art > _art + 10:
+                            # historyの方が大幅に多い → 別日のstale
                             r['today_history'] = []
                             r['today_max_rensa'] = 0
                         elif _art == 0 and _hist_art > 0:
