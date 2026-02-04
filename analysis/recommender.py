@@ -3973,47 +3973,30 @@ def _analyze_setting_quality(unit_history: list, machine_key: str = 'sbj') -> di
     
     quality_score, reason = 0, None
     
-    # 差枚による評価（細かい閾値）
-    if avg_diff >= 5000:
-        quality_score += 20
-        reason = f'好調日の平均差枚+{avg_diff:.0f}枚→高設定濃厚'
-    elif avg_diff >= 3000:
-        quality_score += 15
-        reason = f'好調日の平均差枚+{avg_diff:.0f}枚'
-    elif avg_diff >= 2000:
-        quality_score += 12
-    elif avg_diff >= 1000:
-        quality_score += 8
-    elif avg_diff >= 0:
-        quality_score += 5
-    elif avg_diff >= -1000:
-        quality_score += 0  # 微マイナスは許容
-    elif avg_diff >= -2000:
-        quality_score -= 5
-    elif avg_diff >= -3000:
-        quality_score -= 8
-        reason = f'好調日でも差枚{avg_diff:.0f}枚→引き強の可能性'
-    elif avg_diff >= -5000:
-        quality_score -= 12
-        reason = f'好調日でも差枚{avg_diff:.0f}枚→低設定の吐き出し'
-    else:
-        quality_score -= 15
-        reason = f'好調日でも差枚{avg_diff:.0f}枚→低設定確定的'
+    # === 過去データ分析に基づく係数（2312件から導出）===
     
-    # ハマリ回数による評価（細かい閾値）
+    # 差枚の影響は小さい（想定と逆の傾向あり）
+    # マイナスでも好調なら高設定据え置きの証拠
+    # プラスは低設定の爆発の可能性もある
+    if avg_diff >= 3000:
+        quality_score += 3  # 控えめに加点
+    elif avg_diff <= -3000:
+        quality_score += 5  # マイナスでも好調→本物の高設定
+        reason = f'差枚{avg_diff:.0f}枚でも好調→高設定据え置き'
+    elif 0 <= avg_diff < 1000:
+        quality_score -= 5  # 微プラスは低設定の爆発の可能性
+    
+    # ハマリ回数の影響（データに基づく）
+    # 0回: 55.7%（低い）、1回: 70.3%（最高）、5回+: 67.8%
     if avg_hama == 0:
-        quality_score += 12
-    elif avg_hama <= 1:
-        quality_score += 8
-    elif avg_hama <= 2:
-        quality_score += 3
-    elif avg_hama <= 3:
-        quality_score -= 5
-        if not reason:
-            reason = f'平均{avg_hama:.1f}回/日のハマリ'
-    else:
-        quality_score -= 10
-        reason = f'平均{avg_hama:.1f}回/日のハマリ→低設定の可能性大'
+        quality_score -= 8  # ハマリ0は逆に悪い
+        reason = f'ハマリ0回→浅い当たりのみ'
+    elif 0.5 <= avg_hama <= 1.5:
+        quality_score += 10  # 1回前後が最も良い
+        reason = f'ハマリ平均{avg_hama:.1f}回→高設定の典型パターン'
+    elif avg_hama >= 3:
+        quality_score += 5  # ハマリ多くても好調なら本物
+        reason = f'ハマリ{avg_hama:.1f}回でも好調→本物の高設定'
     
     return {'quality_score': quality_score, 'avg_diff_per_day': avg_diff, 'avg_deep_hama': avg_hama, 'quality_reason': reason}
 
