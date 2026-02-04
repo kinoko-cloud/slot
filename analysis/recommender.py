@@ -3739,6 +3739,22 @@ def calculate_enhanced_score(
             enhanced_score += 8
             boost_reasons.append('全台系でよく入る台')
     
+    # 4. 稼働率（回転数）パターン
+    if unit_history:
+        activity = _analyze_activity_pattern(unit_history)
+        
+        # 高稼働日の好調率が高い台 → 設定投入傾向
+        if activity['high_activity_good_rate'] >= 0.7:
+            enhanced_score += 12
+            boost_reasons.append(f'高稼働日好調率{activity["high_activity_good_rate"]*100:.0f}%')
+        elif activity['high_activity_good_rate'] >= 0.5:
+            enhanced_score += 6
+        
+        # 平均稼働が高い人気台
+        if activity['activity_trend'] == 'high':
+            enhanced_score += 5
+            boost_reasons.append(f'人気台(平均{activity["avg_games"]:.0f}G)')
+    
     return enhanced_score, boost_reasons
 
 
@@ -3797,3 +3813,57 @@ OPTIMIZED_SCORE_WEIGHTS = {
     'consec_bad_4': 8, 'consec_bad_2_penalty': 5,
     'yesterday_bonus': 25, 'recent_excellent': 18, 'recent_good': 8,
 }
+
+
+def _analyze_activity_pattern(unit_history: list) -> dict:
+    """稼働率（回転数）パターンを分析
+    
+    Returns:
+        {
+            'avg_games': 平均回転数,
+            'high_activity_good_rate': 高稼働日の好調率,
+            'activity_trend': 'high'/'normal'/'low',
+        }
+    """
+    if not unit_history or len(unit_history) < 3:
+        return {'avg_games': 0, 'high_activity_good_rate': 0, 'activity_trend': 'normal'}
+    
+    games_list = []
+    high_activity_days = 0
+    high_activity_good = 0
+    
+    for d in unit_history:
+        games = d.get('games', 0) or d.get('total_start', 0)
+        art = d.get('art', 0)
+        if games > 0:
+            games_list.append(games)
+    
+    if not games_list:
+        return {'avg_games': 0, 'high_activity_good_rate': 0, 'activity_trend': 'normal'}
+    
+    avg_games = sum(games_list) / len(games_list)
+    
+    # 高稼働日（平均+20%以上）の好調率
+    for d in unit_history:
+        games = d.get('games', 0) or d.get('total_start', 0)
+        art = d.get('art', 0)
+        if games > avg_games * 1.2:
+            high_activity_days += 1
+            if art > 0 and games > 0 and (games / art) <= 130:
+                high_activity_good += 1
+    
+    high_activity_good_rate = high_activity_good / high_activity_days if high_activity_days > 0 else 0
+    
+    # 稼働傾向
+    if avg_games > 6000:
+        trend = 'high'
+    elif avg_games < 3000:
+        trend = 'low'
+    else:
+        trend = 'normal'
+    
+    return {
+        'avg_games': avg_games,
+        'high_activity_good_rate': high_activity_good_rate,
+        'activity_trend': trend,
+    }
