@@ -286,17 +286,9 @@
 
                     {# === 設定推定 + 過去分析の結論 === #}
                     <div class="estimation-row">
-                        {% if rec.total_games >= 3000 and rec.estimated_setting %}
+                        {% if rec.total_games >= 1000 and rec.estimated_setting %}
                         <span class="setting-estimate setting-{{ rec.setting_num|default(0) }}">
                             {{ rec.estimated_setting }} <span class="payout">({{ rec.payout_estimate }}%)</span>
-                        </span>
-                        {% elif rec.total_games >= 1000 and rec.estimated_setting %}
-                        <span class="setting-estimate setting-{{ rec.setting_num|default(0) }} tentative">
-                            {{ rec.estimated_setting }}？ <span class="payout">(要様子見)</span>
-                        </span>
-                        {% elif rec.total_games > 0 and rec.total_games < 1000 %}
-                        <span class="setting-estimate tentative-weak">
-                            判別困難 <span class="payout">({{ rec.total_games }}G)</span>
                         </span>
                         {% endif %}
                         <span class="past-eval">
