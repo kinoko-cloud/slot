@@ -3788,6 +3788,22 @@ def calculate_enhanced_score(
                 enhanced_score += 15  # 穴場ボーナス
                 boost_reasons.append(f'低稼働でも好調率{good_days}/{total_days}日→穴場')
     
+    # 6. 店×機種の設定投入ポリシー
+    consecutive_bad = 0
+    if unit_history:
+        consec = _analyze_consecutive_pattern(unit_history)
+        consecutive_bad = consec.get('consecutive_bad', 0)
+    
+    policy_score, policy_reasons = calculate_policy_score(
+        unit_id=unit_id,
+        store_key=store_key,
+        machine_key=machine_key,
+        target_weekday=target_weekday,
+        consecutive_bad=consecutive_bad,
+    )
+    enhanced_score += policy_score
+    boost_reasons.extend(policy_reasons)
+    
     return enhanced_score, boost_reasons
 
 
@@ -4096,3 +4112,85 @@ def _analyze_today_pattern(today_history: list, machine_key: str = 'sbj') -> dic
         'score_adjust': score_adjust,
         'reason': reason,
     }
+
+
+def _load_store_policy(store_key: str) -> dict:
+    """店×機種の設定投入ポリシーを読み込み"""
+    import json as _json
+    from pathlib import Path as _Path
+    
+    policy_file = _Path('data/analysis/store_policies.json')
+    if not policy_file.exists():
+        return {}
+    
+    try:
+        data = _json.load(open(policy_file))
+        return data.get('policies', {}).get(store_key, {})
+    except:
+        return {}
+
+
+def calculate_policy_score(
+    unit_id: str,
+    store_key: str,
+    machine_key: str,
+    target_weekday: int,
+    consecutive_bad: int = 0,
+) -> tuple:
+    """店×機種ポリシーに基づくスコア計算
+    
+    店は毎日全台の設定を決め直している前提：
+    - 何台高設定を入れるか（店の方針）
+    - どの台番号を選びやすいか（店の好み）
+    - 曜日によって入れ方を変えるか（イベント曜日）
+    - 何日不調が続いたら上げるか（リセットポリシー）
+    
+    Returns:
+        (score_adjust, reasons)
+    """
+    policy = _load_store_policy(store_key)
+    if not policy:
+        return 0, []
+    
+    score = 0
+    reasons = []
+    
+    # 1. 店の高設定投入率（店の機種への力の入れ方）
+    good_rate = policy.get('good_rate', 0.5)
+    if good_rate >= 0.7:
+        score += 10
+        reasons.append(f'高設定率{good_rate*100:.0f}%の甘い店')
+    elif good_rate <= 0.3:
+        score -= 5
+    
+    # 2. 店がよく選ぶ台番号か（店の好み）
+    hot_units = [u[0] for u in policy.get('hot_units', [])]
+    cold_units = [u[0] for u in policy.get('cold_units', [])]
+    
+    if str(unit_id) in hot_units[:3]:
+        score += 15
+        reasons.append('店がよく高設定を入れる台')
+    elif str(unit_id) in cold_units[:3]:
+        score -= 10
+        reasons.append('店が高設定を入れにくい台')
+    
+    # 3. 曜日ポリシー（イベント曜日）
+    weekday_rates = policy.get('weekday_rates', {})
+    if str(target_weekday) in weekday_rates:
+        wd_rate = weekday_rates[str(target_weekday)]
+        avg_rate = sum(weekday_rates.values()) / len(weekday_rates) if weekday_rates else 0.5
+        
+        weekday_names = ['月', '火', '水', '木', '金', '土', '日']
+        if wd_rate > avg_rate + 0.15:
+            score += 12
+            reasons.append(f'{weekday_names[target_weekday]}曜は店のイベント曜日({wd_rate*100:.0f}%)')
+        elif wd_rate < avg_rate - 0.15:
+            score -= 8
+    
+    # 4. リセット傾向（店のリセット周期）
+    avg_reset = policy.get('avg_reset_days', 3)
+    if consecutive_bad >= avg_reset:
+        score += 15
+        reasons.append(f'{consecutive_bad}日連続不調→店のリセット周期({avg_reset:.0f}日)')
+    
+    return score, reasons
