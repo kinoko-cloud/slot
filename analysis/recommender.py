@@ -3726,10 +3726,12 @@ def calculate_enhanced_score(
             boost = min(consecutive['consecutive_good'] * 5, 15)
             enhanced_score += boost
             boost_reasons.append(f'{consecutive["consecutive_good"]}日連続好調')
-        elif consecutive['trend'] == 'cold' and consecutive['consecutive_bad'] >= 3:
-            boost = 5
-            enhanced_score += boost
-            boost_reasons.append(f'{consecutive["consecutive_bad"]}日不調→変更期待')
+        
+        # 連続不調→設定変更期待（強化版）
+        change_boost, change_reason = _calculate_change_expectation(unit_history)
+        if change_boost > 0 and change_reason:
+            enhanced_score += change_boost
+            boost_reasons.append(change_reason)
     
     # 3. 全台系イベント日ブースト
     is_zentai, confidence, hot_units = _is_zentai_day(store_key, target_date)
@@ -3885,3 +3887,41 @@ def _analyze_activity_pattern(unit_history: list) -> dict:
         'high_activity_good_rate': high_activity_good_rate,
         'activity_trend': trend,
     }
+
+
+# 見逃し対策: 連続不調→設定変更期待を強化
+def _calculate_change_expectation(unit_history: list, good_prob: int = 130) -> tuple:
+    """設定変更期待度を計算
+    
+    連続不調の後は設定変更の可能性が高い
+    
+    Returns:
+        (boost_score, reason)
+    """
+    if not unit_history or len(unit_history) < 3:
+        return 0, None
+    
+    # 日付でソート（新しい順）
+    sorted_days = sorted(unit_history, key=lambda x: x.get('date', ''), reverse=True)
+    
+    consecutive_bad = 0
+    for d in sorted_days:
+        art = d.get('art', 0)
+        games = d.get('games', 0) or d.get('total_start', 0)
+        if art <= 0 or games < 500:
+            continue
+        
+        prob = games / art
+        if prob > good_prob:
+            consecutive_bad += 1
+        else:
+            break
+    
+    if consecutive_bad >= 5:
+        return 20, f'{consecutive_bad}日連続不調→設定変更期待大'
+    elif consecutive_bad >= 4:
+        return 15, f'{consecutive_bad}日連続不調→設定変更期待'
+    elif consecutive_bad >= 3:
+        return 10, f'{consecutive_bad}日連続不調→変更期待'
+    
+    return 0, None
