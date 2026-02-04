@@ -35,11 +35,32 @@ fi
 
 log "=== 自動更新開始 ==="
 
-# 0. git pullして最新コードを取得（GitHub Actionsの変更を反映）
+# 0. 未コミット変更を退避してからgit pull
+STASHED=false
+if ! git diff --quiet || ! git diff --staged --quiet; then
+    git stash push -m "auto_update: temp stash" >> "$LOGFILE" 2>&1 && STASHED=true
+    log "未コミット変更をstash"
+fi
+
+# git pullして最新コードを取得（GitHub Actionsの変更を反映）
 if git pull --rebase origin main >> "$LOGFILE" 2>&1; then
     log "git pull完了"
 else
-    log "git pull失敗（続行）"
+    # rebaseコンフリクトの場合、docs/はローカル優先で解決
+    if [ -d .git/rebase-merge ] || [ -d .git/rebase-apply ]; then
+        git checkout --theirs docs/ >> "$LOGFILE" 2>&1 || true
+        git add docs/ >> "$LOGFILE" 2>&1 || true
+        GIT_EDITOR=true git rebase --continue >> "$LOGFILE" 2>&1 || git rebase --skip >> "$LOGFILE" 2>&1 || git rebase --abort >> "$LOGFILE" 2>&1 || true
+        log "git pull: コンフリクト解決試行"
+    else
+        log "git pull失敗（続行）"
+    fi
+fi
+
+# stashを復元（失敗しても無視）
+if [ "$STASHED" = true ]; then
+    git stash pop >> "$LOGFILE" 2>&1 || git stash drop >> "$LOGFILE" 2>&1 || true
+    log "stash復元"
 fi
 
 # 1. リアルタイムデータ取得（全9店舗: daidata 7店 + papimo 2店）
@@ -88,10 +109,14 @@ else
     # リトライ付きpush（最大5回、メイン→セカンダリフォールバック）
     PUSH_SUCCESS=false
     for i in 1 2 3 4 5; do
-        git pull --rebase origin main >> "$LOGFILE" 2>&1 || {
-            git rebase --abort 2>/dev/null || true
-            git pull --rebase origin main >> "$LOGFILE" 2>&1 || true
-        }
+        # pull --rebase でコンフリクトがあればdocs/はローカル優先
+        if ! git pull --rebase origin main >> "$LOGFILE" 2>&1; then
+            if [ -d .git/rebase-merge ] || [ -d .git/rebase-apply ]; then
+                git checkout --ours docs/ >> "$LOGFILE" 2>&1 || true
+                git add docs/ >> "$LOGFILE" 2>&1 || true
+                GIT_EDITOR=true git rebase --continue >> "$LOGFILE" 2>&1 || git rebase --skip >> "$LOGFILE" 2>&1 || git rebase --abort >> "$LOGFILE" 2>&1 || true
+            fi
+        fi
         if git push >> "$LOGFILE" 2>&1; then
             log "デプロイ完了 (attempt $i, origin)"
             PUSH_SUCCESS=true
