@@ -156,7 +156,8 @@ def generate_verify(predict_date: str) -> dict:
         mk = v['stores'][sk].get('machine_key', 'sbj')
         valid = [u for u in units if u['actual_prob'] > 0 and u['actual_games'] >= 500]
         sa = sum(1 for u in valid if u['predicted_rank'] in ('S', 'A'))
-        hit = sum(1 for u in valid if u['predicted_rank'] in ('S', 'A') and is_hit(u['predicted_rank'], u['result_level']))
+        # 確率ベース: 1/130以下なら的中（高設定の動き）
+        hit = sum(1 for u in valid if u['predicted_rank'] in ('S', 'A') and u['actual_prob'] <= 130)
         sur = sum(1 for u in valid if u['predicted_rank'] not in ('S', 'A') and u['verdict_class'] == 'surprise')
         v['stores'][sk].update({
             'sa_total': sa, 'sa_hit': hit,
