@@ -119,7 +119,7 @@
                         <span class="vb-title-lg">{% if verify_date_str %}{{ verify_date_str }}{% else %}昨日{% endif %}の的中率</span>
                         <span class="vb-subtitle">S/A予測 {{ verify_hit }}/{{ verify_total }}台が好調</span>
                     </div>
-                    <div class="vb-circle-big {% if verify_rate >= 100 %}rainbow{% elif verify_rate >= 85 %}hot{% elif verify_rate >= 70 %}good{% elif verify_rate >= 55 %}warm{% else %}ok{% endif %}">
+                    <div class="vb-circle-big {% if verify_rate >= 100 %}rainbow{% elif verify_rate >= 85 %}hot{% elif verify_rate >= 70 %}good{% elif verify_rate >= 55 %}warm{% elif verify_rate >= 40 %}ok{% elif verify_rate >= 25 %}cool{% elif verify_rate >= 10 %}cold{% else %}ice{% endif %}">
                         <span class="vb-rate-num">{{ verify_rate }}%</span>
                     </div>
                 </div>

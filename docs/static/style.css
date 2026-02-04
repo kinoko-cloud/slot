@@ -6193,10 +6193,19 @@ a.perfect-card:hover { background: rgba(255,215,0,0.18); }
     border: 4px solid #555;
     flex-shrink: 0;
 }
-.vb-circle-big.hot { border-color: #ff6600; }
-.vb-circle-big.good { border-color: #ff9900; }
+.vb-circle-big.rainbow {
+    border-color: transparent;
+    background:
+        linear-gradient(#1a1a2e, #1a1a2e) padding-box,
+        conic-gradient(#ff0000, #ff8800, #ffee00, #00ff88, #0088ff, #aa00ff, #ff0000) border-box;
+}
+.vb-circle-big.hot { border-color: #ff2222; }
+.vb-circle-big.good { border-color: #ff6600; }
 .vb-circle-big.warm { border-color: #ffaa00; }
 .vb-circle-big.ok { border-color: #cccc00; }
+.vb-circle-big.cool { border-color: #44aa44; }
+.vb-circle-big.cold { border-color: #3388bb; }
+.vb-circle-big.ice { border-color: #4466aa; }
 .vb-rate-num {
     font-size: 1.6em;
     font-weight: 900;
