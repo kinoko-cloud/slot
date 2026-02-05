@@ -957,6 +957,10 @@
         if (isHidden) {
             detail.classList.remove('hidden');
             el.textContent = '▲詳細';
+            // 詳細が見えるようにスクロール
+            setTimeout(function() {
+                detail.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 50);
         } else {
             detail.classList.add('hidden');
             el.textContent = '▼詳細';
