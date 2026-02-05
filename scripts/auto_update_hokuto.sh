@@ -23,7 +23,7 @@ fi
 log "=== 北斗高速更新開始 ==="
 
 # 北斗のみ取得
-if timeout 600 python3 scripts/fetch_daidata_availability.py --hokuto-only >> "$LOGFILE" 2>&1; then
+if timeout 900 python3 scripts/fetch_daidata_availability.py --hokuto-only >> "$LOGFILE" 2>&1; then
     log "北斗データ取得完了"
 else
     log "北斗データ取得失敗（exit: $?）"
