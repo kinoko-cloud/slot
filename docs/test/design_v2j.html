@@ -6594,45 +6594,38 @@ details.unit-card .unit-details {
 }
 .art-num-big.art-hot { color: #ff922b; }
 
-/* 1行目を表組みで下揃え */
+/* 1行目をflexでベースライン揃え */
 .top3-stats-main {
-    display: table !important;
-    width: 100% !important;
-}
-.top3-stats-main > * {
-    display: table-cell !important;
-    vertical-align: bottom !important;
-    padding-right: 12px !important;
+    display: flex !important;
+    align-items: baseline !important;
+    gap: 12px !important;
+    flex-wrap: wrap !important;
 }
 .art-main {
-    display: inline-flex !important;
-    align-items: flex-end !important;
-    vertical-align: bottom !important;
+    display: inline !important;
 }
 .art-num-big {
-    line-height: 0.8 !important;
-    margin-bottom: 0 !important;
+    font-size: 2.2em !important;
 }
 .art-label {
-    margin-bottom: 0 !important;
-    padding-bottom: 0 !important;
+    font-size: 0.8em !important;
+    color: #888 !important;
 }
 
 /* RB */
 .rb-badge-top {
     background: none !important;
     padding: 0 !important;
-    white-space: nowrap !important;
+    display: inline !important;
 }
 .rb-badge-top .rb-num {
-    font-size: 1.5em !important;
+    font-size: 1.6em !important;
     font-weight: bold !important;
     color: #fff !important;
 }
 .rb-badge-top .rb-label {
-    font-size: 0.7em !important;
+    font-size: 0.8em !important;
     color: #888 !important;
-    margin-left: 2px !important;
 }
 
 /* 2行目 */
