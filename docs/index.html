@@ -17,7 +17,7 @@
     <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
     <meta name="googlebot" content="noindex, nofollow">
     <title>本日のおすすめ台</title>
-    <link rel="stylesheet" href="/static/style.css?v=20260205163509">
+    <link rel="stylesheet" href="/static/style.css?v=20260205163608">
 </head>
 <body data-page-type="index">
     <div class="container">
@@ -31,7 +31,7 @@
         
     </div>
     <div class="top-bar-right">
-        <span class="version-info" id="build-ver" title="ビルド時刻">v0205_16:35</span>
+        <span class="version-info" id="build-ver" title="ビルド時刻">v0205_16:36</span>
         
         <button class="hamburger-btn" onclick="document.getElementById('hamburger-menu').classList.toggle('hidden')" aria-label="メニュー">☰</button>
         
@@ -4512,6 +4512,10 @@
                         
                     </div>
                     
+                    
+                    
+                    
+                    
                     <div class="top3-stats-main">
                         <span class="art-main"><span class="art-num-big">0</span><span class="art-label">ART</span></span>
                         
@@ -4522,7 +4526,7 @@
                         <span class="current-hama">現在: <span class="num">0</span>G</span>
                         <span class="total-games">累計<span class="num">0</span>G</span>
                         
-                        
+                        <span class="max-medals-top ">最大<span class="num">3</span>枚</span>
                         
                     </div>
                     
@@ -4548,17 +4552,25 @@
                         
                     </div>
                     
+                    
+                    
+                    
+                    
                     <div class="top3-stats-main">
                         <span class="art-main"><span class="art-num-big">27</span><span class="art-label">ART</span></span>
                         <span class="rb-badge-top">RB 9</span>
                         <span class="art-prob " title="合成確率"><span class="prob-label">合成</span>1/131</span>
-                        
+                        <span class="detail-trigger" onclick="toggleHistoryDetail(event, this)">▼詳細</span>
                     </div>
                     <div class="top3-stats-sub">
                         <span class="current-hama">現在: <span class="num">0</span>G</span>
                         <span class="total-games">累計<span class="num">3,550</span>G</span>
                         
+                        <span class="diff-medals-inline plus">+3,099枚</span>
                         
+                        <span class="max-medals-top medals-1k"><span class="medals-icon">👍</span>最大<span class="num">1,179</span>枚</span>
+                        
+                        <span class="rensa-badge rensa-8">最大<span class="num">8</span>連</span>
                         
                     </div>
                     
@@ -4569,8 +4581,350 @@
                     </div>
                     
                     
+                    <div class="sparkline-section">
+                        <div class="sparkline-label">2026-02-04 差枚推移</div>
+                        <svg class="sparkline" viewBox="0 0 220 45" preserveAspectRatio="xMidYMid meet"><line x1="0" y1="43.0" x2="220" y2="43.0" stroke="#555" stroke-width="0.5" stroke-dasharray="2,2"/><polyline points="0.0,43.0 6.1,31.0 12.2,32.9 18.3,35.7 24.4,26.0 30.6,27.7 36.7,29.1 42.8,30.5 48.9,32.4 55.0,34.5 61.1,36.3 67.2,36.3 73.3,37.5 79.4,39.3 85.6,31.4 91.7,33.5 97.8,29.0 103.9,30.9 110.0,32.4 116.1,33.9 122.2,35.5 128.3,37.1 134.4,39.1 140.6,40.8 146.7,16.9 152.8,18.5 158.9,20.5 165.0,16.5 171.1,18.2 177.2,19.7 183.3,21.7 189.4,19.1 195.6,20.9 201.7,2.0 207.8,3.4 213.9,4.5 220.0,6.1" fill="none" stroke="#2ed573" stroke-width="1.5"/></svg>
+                    </div>
+                    
                 </a>
                 
+                
+                
+
+<div class="history-detail hidden">
+    <table class="hit-detail-table compact">
+        <thead><tr><th>#</th><th>時刻</th><th>G数</th><th>種類</th><th>連</th><th>枚数</th></tr></thead>
+        <tbody>
+        
+        <tr class=" shallow">
+            <td>1</td>
+            <td>15:50</td>
+            <td class="">1G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>138</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>2</td>
+            <td>15:48</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>92</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>3</td>
+            <td>15:46</td>
+            <td class="">1G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>118</td>
+        </tr>
+        
+        <tr class="deep">
+            <td>4</td>
+            <td>15:46</td>
+            <td class="">532G</td>
+            <td class="reg">REG</td>
+            <td class="">-</td>
+            <td>10</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>5</td>
+            <td>15:07</td>
+            <td class="">1G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>156</td>
+        </tr>
+        
+        <tr class="">
+            <td>6</td>
+            <td>15:07</td>
+            <td class="">77G</td>
+            <td class="reg">REG</td>
+            <td class="">-</td>
+            <td>10</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>7</td>
+            <td>14:40</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>168</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>8</td>
+            <td>14:37</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>125</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>9</td>
+            <td>14:34</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>142</td>
+        </tr>
+        
+        <tr class="">
+            <td>10</td>
+            <td>14:34</td>
+            <td class="">112G</td>
+            <td class="reg">REG</td>
+            <td class="">-</td>
+            <td>-</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>11</td>
+            <td>14:23</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>172</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>12</td>
+            <td>14:21</td>
+            <td class="">1G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>132</td>
+        </tr>
+        
+        <tr class="deep">
+            <td>13</td>
+            <td>14:21</td>
+            <td class="">671G</td>
+            <td class="reg">REG</td>
+            <td class="">-</td>
+            <td>10</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>14</td>
+            <td>13:31</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>139</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>15</td>
+            <td>13:28</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>171</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>16</td>
+            <td>13:26</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>133</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>17</td>
+            <td>13:22</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>131</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>18</td>
+            <td>13:17</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>132</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>19</td>
+            <td>13:14</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>122</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>20</td>
+            <td>13:12</td>
+            <td class="">1G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>165</td>
+        </tr>
+        
+        <tr class="">
+            <td>21</td>
+            <td>13:12</td>
+            <td class="">131G</td>
+            <td class="reg">REG</td>
+            <td class="">-</td>
+            <td>10</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>22</td>
+            <td>12:59</td>
+            <td class="">1G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>185</td>
+        </tr>
+        
+        <tr class="">
+            <td>23</td>
+            <td>12:59</td>
+            <td class="">223G</td>
+            <td class="reg">REG</td>
+            <td class="">-</td>
+            <td>3</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>24</td>
+            <td>12:38</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>152</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>25</td>
+            <td>12:35</td>
+            <td class="">1G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>106</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>26</td>
+            <td>12:35</td>
+            <td class="">4G</td>
+            <td class="reg">REG</td>
+            <td class="">-</td>
+            <td>10</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>27</td>
+            <td>12:32</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>148</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>28</td>
+            <td>12:29</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>175</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>29</td>
+            <td>12:26</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>160</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>30</td>
+            <td>12:24</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>121</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>31</td>
+            <td>12:21</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>119</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>32</td>
+            <td>12:17</td>
+            <td class="">1G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>141</td>
+        </tr>
+        
+        <tr class="">
+            <td>33</td>
+            <td>12:17</td>
+            <td class="">273G</td>
+            <td class="reg">REG</td>
+            <td class="">-</td>
+            <td>10</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>34</td>
+            <td>11:17</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>230</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>35</td>
+            <td>11:15</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>164</td>
+        </tr>
+        
+        <tr class="">
+            <td>36</td>
+            <td>11:15</td>
+            <td class="">337G</td>
+            <td class="reg">REG</td>
+            <td class="">-</td>
+            <td>1</td>
+        </tr>
+        
+        </tbody>
+    </table>
+</div>
+
+
                 
                 
                 <a href="/recommend/shinjuku_espass_hokuto.html" class="unit-card rank-a" style="text-decoration: none; color: inherit;">
@@ -4591,6 +4945,10 @@
                         <span class="top3-avail empty">空き</span>
                         
                     </div>
+                    
+                    
+                    
+                    
                     
                     <div class="top3-stats-main">
                         <span class="art-main"><span class="art-num-big">8</span><span class="art-label">ART</span></span>
@@ -4749,23 +5107,229 @@
                         
                     </div>
                     
+                    
+                    
+                    
+                    
                     <div class="top3-stats-main">
                         <span class="art-main"><span class="art-num-big">0</span><span class="art-label">ART</span></span>
                         
                         
-                        
+                        <span class="detail-trigger" onclick="toggleHistoryDetail(event, this)">▼詳細</span>
                     </div>
                     <div class="top3-stats-sub">
                         <span class="current-hama">現在: <span class="num">0</span>G</span>
                         <span class="total-games">累計<span class="num">0</span>G</span>
                         
+                        <span class="diff-medals-inline plus">+1,672枚</span>
                         
+                        <span class="max-medals-top ">最大<span class="num">977</span>枚</span>
+                        
+                        <span class="rensa-badge rensa-5">最大<span class="num">7</span>連</span>
                         
                     </div>
                     
                     
+                    <div class="sparkline-section">
+                        <div class="sparkline-label">2026-02-04 差枚推移</div>
+                        <svg class="sparkline" viewBox="0 0 220 45" preserveAspectRatio="xMidYMid meet"><line x1="0" y1="35.8" x2="220" y2="35.8" stroke="#555" stroke-width="0.5" stroke-dasharray="2,2"/><polyline points="0.0,35.8 11.0,32.2 22.0,34.0 33.0,35.4 44.0,37.2 55.0,39.1 66.0,40.7 77.0,42.1 88.0,43.0 99.0,34.8 110.0,36.3 121.0,38.0 132.0,29.0 143.0,30.3 154.0,31.5 165.0,32.8 176.0,6.1 187.0,7.2 198.0,9.2 209.0,2.0 220.0,3.8" fill="none" stroke="#2ed573" stroke-width="1.5"/></svg>
+                    </div>
+                    
                 </a>
                 
+                
+                
+
+<div class="history-detail hidden">
+    <table class="hit-detail-table compact">
+        <thead><tr><th>#</th><th>時刻</th><th>G数</th><th>種類</th><th>連</th><th>枚数</th></tr></thead>
+        <tbody>
+        
+        <tr class=" shallow">
+            <td>1</td>
+            <td>15:10</td>
+            <td class="">1G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>164</td>
+        </tr>
+        
+        <tr class="">
+            <td>2</td>
+            <td>15:10</td>
+            <td class="">224G</td>
+            <td class="rb">RB</td>
+            <td class="">-</td>
+            <td>10</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>3</td>
+            <td>14:51</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>181</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>4</td>
+            <td>14:48</td>
+            <td class="">1G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>110</td>
+        </tr>
+        
+        <tr class="deep">
+            <td>5</td>
+            <td>14:48</td>
+            <td class="">819G</td>
+            <td class="rb">RB</td>
+            <td class="">-</td>
+            <td>10</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>6</td>
+            <td>13:45</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>120</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>7</td>
+            <td>13:42</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>106</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>8</td>
+            <td>13:40</td>
+            <td class="">1G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>124</td>
+        </tr>
+        
+        <tr class="">
+            <td>9</td>
+            <td>13:39</td>
+            <td class="">275G</td>
+            <td class="rb">RB</td>
+            <td class="">-</td>
+            <td>2</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>10</td>
+            <td>13:17</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>150</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>11</td>
+            <td>13:15</td>
+            <td class="">1G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>142</td>
+        </tr>
+        
+        <tr class="">
+            <td>12</td>
+            <td>13:15</td>
+            <td class="">254G</td>
+            <td class="rb">RB</td>
+            <td class="">-</td>
+            <td>10</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>13</td>
+            <td>12:55</td>
+            <td class="">1G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>87</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>14</td>
+            <td>12:52</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>129</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>15</td>
+            <td>12:49</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>149</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>16</td>
+            <td>12:46</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>167</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>17</td>
+            <td>12:42</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>166</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>18</td>
+            <td>12:40</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>127</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>19</td>
+            <td>12:36</td>
+            <td class="">1G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>172</td>
+        </tr>
+        
+        <tr class="">
+            <td>20</td>
+            <td>12:36</td>
+            <td class="">115G</td>
+            <td class="rb">RB</td>
+            <td class="">-</td>
+            <td>10</td>
+        </tr>
+        
+        </tbody>
+    </table>
+</div>
+
+
                 
                 
                 <a href="/recommend/shinjuku_espass_sbj.html" class="unit-card rank-a" style="text-decoration: none; color: inherit;">
@@ -4786,6 +5350,10 @@
                         <span class="top3-avail playing">稼働中</span>
                         
                     </div>
+                    
+                    
+                    
+                    
                     
                     <div class="top3-stats-main">
                         <span class="art-main"><span class="art-num-big">7</span><span class="art-label">ART</span></span>
@@ -4908,6 +5476,10 @@
                         
                     </div>
                     
+                    
+                    
+                    
+                    
                     <div class="top3-stats-main">
                         <span class="art-main"><span class="art-num-big">0</span><span class="art-label">ART</span></span>
                         
@@ -4917,6 +5489,8 @@
                     <div class="top3-stats-sub">
                         <span class="current-hama">現在: <span class="num">0</span>G</span>
                         <span class="total-games">累計<span class="num">0</span>G</span>
+                        
+                        <span class="diff-medals-inline plus">+3,010枚</span>
                         
                         
                         
@@ -4945,6 +5519,10 @@
                         <span class="top3-avail empty">空き</span>
                         
                     </div>
+                    
+                    
+                    
+                    
                     
                     <div class="top3-stats-main">
                         <span class="art-main"><span class="art-num-big">8</span><span class="art-label">ART</span></span>
@@ -5104,6 +5682,10 @@
                         <span class="top3-avail empty">空き</span>
                         
                     </div>
+                    
+                    
+                    
+                    
                     
                     <div class="top3-stats-main">
                         <span class="art-main"><span class="art-num-big">22</span><span class="art-label">ART</span></span>
@@ -5399,6 +5981,10 @@
                         
                     </div>
                     
+                    
+                    
+                    
+                    
                     <div class="top3-stats-main">
                         <span class="art-main"><span class="art-num-big">14</span><span class="art-label">ART</span></span>
                         <span class="rb-badge-top">RB 4</span>
@@ -5618,6 +6204,10 @@
 
                         
                     </div>
+                    
+                    
+                    
+                    
                     
                     <div class="top3-stats-main">
                         <span class="art-main"><span class="art-num-big">50</span><span class="art-label">ART</span></span>
@@ -6232,17 +6822,25 @@
                         
                     </div>
                     
+                    
+                    
+                    
+                    
                     <div class="top3-stats-main">
                         <span class="art-main"><span class="art-num-big">30</span><span class="art-label">ART</span></span>
                         <span class="rb-badge-top">RB 9</span>
                         <span class="art-prob good" title="合成確率"><span class="prob-label">合成</span>1/116</span>
-                        
+                        <span class="detail-trigger" onclick="toggleHistoryDetail(event, this)">▼詳細</span>
                     </div>
                     <div class="top3-stats-sub">
                         <span class="current-hama">現在: <span class="num">0</span>G</span>
                         <span class="total-games">累計<span class="num">3,500</span>G</span>
                         
+                        <span class="diff-medals-inline plus">+3,212枚</span>
                         
+                        <span class="max-medals-top medals-1k"><span class="medals-icon">👍</span>最大<span class="num">1,260</span>枚</span>
+                        
+                        <span class="rensa-badge rensa-8">最大<span class="num">9</span>連</span>
                         
                     </div>
                     
@@ -6253,8 +6851,368 @@
                     </div>
                     
                     
+                    <div class="sparkline-section">
+                        <div class="sparkline-label">2026-02-04 差枚推移</div>
+                        <svg class="sparkline" viewBox="0 0 220 45" preserveAspectRatio="xMidYMid meet"><line x1="0" y1="43.0" x2="220" y2="43.0" stroke="#555" stroke-width="0.5" stroke-dasharray="2,2"/><polyline points="0.0,43.0 5.8,27.4 11.6,28.5 17.4,29.7 23.2,21.6 28.9,23.2 34.7,12.4 40.5,13.5 46.3,14.1 52.1,15.3 57.9,16.2 63.7,16.4 69.5,17.0 75.3,17.9 81.1,19.7 86.8,9.3 92.6,10.5 98.4,4.4 104.2,5.4 110.0,6.4 115.8,4.5 121.6,5.7 127.4,6.8 133.2,2.7 138.9,3.9 144.7,2.0 150.5,3.5 156.3,5.4 162.1,6.4 167.9,7.6 173.7,8.9 179.5,10.1 185.3,11.3 191.1,7.6 196.8,8.7 202.6,10.2 208.4,11.5 214.2,12.2 220.0,12.2" fill="none" stroke="#2ed573" stroke-width="1.5"/></svg>
+                    </div>
+                    
                 </a>
                 
+                
+                
+
+<div class="history-detail hidden">
+    <table class="hit-detail-table compact">
+        <thead><tr><th>#</th><th>時刻</th><th>G数</th><th>種類</th><th>連</th><th>枚数</th></tr></thead>
+        <tbody>
+        
+        <tr class=" shallow">
+            <td>1</td>
+            <td>16:37</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>-</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>2</td>
+            <td>16:31</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>93</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>3</td>
+            <td>16:28</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>147</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>4</td>
+            <td>16:21</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>184</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>5</td>
+            <td>16:18</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>134</td>
+        </tr>
+        
+        <tr class="">
+            <td>6</td>
+            <td>16:18</td>
+            <td class="">148G</td>
+            <td class="reg">REG</td>
+            <td class="">-</td>
+            <td>-</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>7</td>
+            <td>16:00</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>146</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>8</td>
+            <td>15:57</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>146</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>9</td>
+            <td>15:54</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>151</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>10</td>
+            <td>15:51</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>147</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>11</td>
+            <td>15:48</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>119</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>12</td>
+            <td>15:42</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>236</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>13</td>
+            <td>15:37</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>181</td>
+        </tr>
+        
+        <tr class="">
+            <td>14</td>
+            <td>15:37</td>
+            <td class="">77G</td>
+            <td class="reg">REG</td>
+            <td class="">-</td>
+            <td>-</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>15</td>
+            <td>15:28</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>143</td>
+        </tr>
+        
+        <tr class="">
+            <td>16</td>
+            <td>15:28</td>
+            <td class="">165G</td>
+            <td class="reg">REG</td>
+            <td class="">-</td>
+            <td>-</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>17</td>
+            <td>15:09</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>135</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>18</td>
+            <td>15:06</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>142</td>
+        </tr>
+        
+        <tr class="">
+            <td>19</td>
+            <td>15:06</td>
+            <td class="">78G</td>
+            <td class="reg">REG</td>
+            <td class="">-</td>
+            <td>10</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>20</td>
+            <td>14:55</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>120</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>21</td>
+            <td>14:52</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>120</td>
+        </tr>
+        
+        <tr class="">
+            <td>22</td>
+            <td>14:52</td>
+            <td class="">247G</td>
+            <td class="reg">REG</td>
+            <td class="">-</td>
+            <td>-</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>23</td>
+            <td>14:30</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>150</td>
+        </tr>
+        
+        <tr class="">
+            <td>24</td>
+            <td>14:30</td>
+            <td class="">426G</td>
+            <td class="reg">REG</td>
+            <td class="">-</td>
+            <td>10</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>25</td>
+            <td>13:54</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>214</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>26</td>
+            <td>13:51</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>118</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>27</td>
+            <td>13:50</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>66</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>28</td>
+            <td>13:49</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>31</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>29</td>
+            <td>13:46</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>104</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>30</td>
+            <td>13:43</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>148</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>31</td>
+            <td>13:41</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>71</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>32</td>
+            <td>13:39</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>133</td>
+        </tr>
+        
+        <tr class="">
+            <td>33</td>
+            <td>13:38</td>
+            <td class="">440G</td>
+            <td class="reg">REG</td>
+            <td class="">-</td>
+            <td>10</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>34</td>
+            <td>13:02</td>
+            <td class="">1G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>195</td>
+        </tr>
+        
+        <tr class="">
+            <td>35</td>
+            <td>13:02</td>
+            <td class="">328G</td>
+            <td class="reg">REG</td>
+            <td class="">-</td>
+            <td>10</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>36</td>
+            <td>11:07</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>141</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>37</td>
+            <td>11:05</td>
+            <td class="">1G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>134</td>
+        </tr>
+        
+        <tr class="deep">
+            <td>38</td>
+            <td>11:05</td>
+            <td class="">634G</td>
+            <td class="reg">REG</td>
+            <td class="">-</td>
+            <td>10</td>
+        </tr>
+        
+        </tbody>
+    </table>
+</div>
+
+
                 
                 
                 <a href="/recommend/island_akihabara_hokuto_tensei2.html" class="unit-card rank-a" style="text-decoration: none; color: inherit;">
@@ -6274,17 +7232,25 @@
                         
                     </div>
                     
+                    
+                    
+                    
+                    
                     <div class="top3-stats-main">
                         <span class="art-main"><span class="art-num-big">33</span><span class="art-label">ART</span></span>
                         <span class="rb-badge-top">RB 6</span>
                         <span class="art-prob good" title="合成確率"><span class="prob-label">合成</span>1/106</span>
-                        
+                        <span class="detail-trigger" onclick="toggleHistoryDetail(event, this)">▼詳細</span>
                     </div>
                     <div class="top3-stats-sub">
                         <span class="current-hama">現在: <span class="num">0</span>G</span>
                         <span class="total-games">累計<span class="num">3,500</span>G</span>
                         
+                        <span class="diff-medals-inline plus">+3,317枚</span>
                         
+                        <span class="max-medals-top medals-2k"><span class="medals-icon">⭐</span>最大<span class="num">2,228</span>枚</span>
+                        
+                        <span class="rensa-badge rensa-8">最大<span class="num">20</span>連</span>
                         
                     </div>
                     
@@ -6295,8 +7261,377 @@
                     </div>
                     
                     
+                    <div class="sparkline-section">
+                        <div class="sparkline-label">2026-02-04 差枚推移</div>
+                        <svg class="sparkline" viewBox="0 0 220 45" preserveAspectRatio="xMidYMid meet"><line x1="0" y1="26.4" x2="220" y2="26.4" stroke="#555" stroke-width="0.5" stroke-dasharray="2,2"/><polyline points="0.0,26.4 5.6,23.8 11.3,25.0 16.9,26.1 22.6,27.1 28.2,28.7 33.8,29.9 39.5,30.8 45.1,31.6 50.8,32.2 56.4,32.5 62.1,32.8 67.7,33.1 73.3,33.4 79.0,33.6 84.6,34.1 90.3,35.7 95.9,37.4 101.5,38.5 107.2,39.6 112.8,41.4 118.5,43.0 124.1,29.7 129.7,31.0 135.4,32.1 141.0,8.0 146.7,9.1 152.3,10.1 157.9,11.8 163.6,5.1 169.2,6.2 174.9,7.8 180.5,8.9 186.2,3.3 191.8,4.6 197.4,5.8 203.1,7.2 208.7,8.3 214.4,2.0 220.0,3.3" fill="none" stroke="#2ed573" stroke-width="1.5"/></svg>
+                    </div>
+                    
                 </a>
                 
+                
+                
+
+<div class="history-detail hidden">
+    <table class="hit-detail-table compact">
+        <thead><tr><th>#</th><th>時刻</th><th>G数</th><th>種類</th><th>連</th><th>枚数</th></tr></thead>
+        <tbody>
+        
+        <tr class=" shallow">
+            <td>1</td>
+            <td>15:39</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>145</td>
+        </tr>
+        
+        <tr class="">
+            <td>2</td>
+            <td>15:39</td>
+            <td class="">244G</td>
+            <td class="reg">REG</td>
+            <td class="">-</td>
+            <td>2</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>3</td>
+            <td>15:19</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>131</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>4</td>
+            <td>15:17</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>155</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>5</td>
+            <td>15:14</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>148</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>6</td>
+            <td>15:11</td>
+            <td class="">1G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>152</td>
+        </tr>
+        
+        <tr class="">
+            <td>7</td>
+            <td>15:11</td>
+            <td class="">217G</td>
+            <td class="reg">REG</td>
+            <td class="">-</td>
+            <td>2</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>8</td>
+            <td>14:53</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>122</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>9</td>
+            <td>14:50</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>192</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>10</td>
+            <td>14:48</td>
+            <td class="">1G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>129</td>
+        </tr>
+        
+        <tr class="">
+            <td>11</td>
+            <td>14:48</td>
+            <td class="">263G</td>
+            <td class="reg">REG</td>
+            <td class="">-</td>
+            <td>10</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>12</td>
+            <td>14:27</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>202</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>13</td>
+            <td>14:24</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>115</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>14</td>
+            <td>14:21</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>126</td>
+        </tr>
+        
+        <tr class="deep">
+            <td>15</td>
+            <td>14:21</td>
+            <td class="">933G</td>
+            <td class="reg">REG</td>
+            <td class="">-</td>
+            <td>10</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>16</td>
+            <td>11:48</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>132</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>17</td>
+            <td>11:45</td>
+            <td class="">1G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>152</td>
+        </tr>
+        
+        <tr class="deep">
+            <td>18</td>
+            <td>11:45</td>
+            <td class="">513G</td>
+            <td class="reg">REG</td>
+            <td class="">-</td>
+            <td>2</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>19</td>
+            <td>11:04</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>182</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>20</td>
+            <td>11:01</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>213</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>21</td>
+            <td>10:59</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>125</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>22</td>
+            <td>10:57</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>131</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>23</td>
+            <td>10:53</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>196</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>24</td>
+            <td>10:51</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>176</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>25</td>
+            <td>10:49</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>59</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>26</td>
+            <td>10:48</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>31</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>27</td>
+            <td>10:48</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>31</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>28</td>
+            <td>10:47</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>37</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>29</td>
+            <td>10:46</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>32</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>30</td>
+            <td>10:46</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>32</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>31</td>
+            <td>10:42</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>70</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>32</td>
+            <td>10:40</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>93</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>33</td>
+            <td>10:37</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>105</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>34</td>
+            <td>10:35</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>134</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>35</td>
+            <td>10:31</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>188</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>36</td>
+            <td>10:26</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>113</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>37</td>
+            <td>10:23</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>126</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>38</td>
+            <td>10:20</td>
+            <td class="">1G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>148</td>
+        </tr>
+        
+        <tr class="">
+            <td>39</td>
+            <td>10:20</td>
+            <td class="">102G</td>
+            <td class="reg">REG</td>
+            <td class="">-</td>
+            <td>2</td>
+        </tr>
+        
+        </tbody>
+    </table>
+</div>
+
+
                 
                 
                 <a href="/recommend/akiba_espass_hokuto_tensei2.html" class="unit-card rank-a" style="text-decoration: none; color: inherit;">
@@ -6316,23 +7651,103 @@
                         
                     </div>
                     
+                    
+                    
+                    
+                    
                     <div class="top3-stats-main">
                         <span class="art-main"><span class="art-num-big">0</span><span class="art-label">ART</span></span>
                         
                         
-                        
+                        <span class="detail-trigger" onclick="toggleHistoryDetail(event, this)">▼詳細</span>
                     </div>
                     <div class="top3-stats-sub">
                         <span class="current-hama">現在: <span class="num">0</span>G</span>
                         <span class="total-games">累計<span class="num">0</span>G</span>
                         
+                        <span class="diff-medals-inline plus">+530枚</span>
                         
+                        <span class="max-medals-top ">最大<span class="num">395</span>枚</span>
+                        
+                        <span class="rensa-badge rensa-3">最大<span class="num">3</span>連</span>
                         
                     </div>
                     
                     
+                    <div class="sparkline-section">
+                        <div class="sparkline-label">2026-02-04 差枚推移</div>
+                        <svg class="sparkline" viewBox="0 0 220 45" preserveAspectRatio="xMidYMid meet"><line x1="0" y1="43.0" x2="220" y2="43.0" stroke="#555" stroke-width="0.5" stroke-dasharray="2,2"/><polyline points="0.0,43.0 36.7,13.9 73.3,19.8 110.0,26.3 146.7,32.5 183.3,2.0 220.0,6.3" fill="none" stroke="#2ed573" stroke-width="1.5"/></svg>
+                    </div>
+                    
                 </a>
                 
+                
+                
+
+<div class="history-detail hidden">
+    <table class="hit-detail-table compact">
+        <thead><tr><th>#</th><th>時刻</th><th>G数</th><th>種類</th><th>連</th><th>枚数</th></tr></thead>
+        <tbody>
+        
+        <tr class=" shallow">
+            <td>1</td>
+            <td>14:02</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>99</td>
+        </tr>
+        
+        <tr class="">
+            <td>2</td>
+            <td>14:02</td>
+            <td class="">235G</td>
+            <td class="rb">RB</td>
+            <td class="">-</td>
+            <td>2</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>3</td>
+            <td>13:42</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>144</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>4</td>
+            <td>13:40</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>150</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>5</td>
+            <td>13:38</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>136</td>
+        </tr>
+        
+        <tr class="">
+            <td>6</td>
+            <td>13:38</td>
+            <td class="">227G</td>
+            <td class="rb">RB</td>
+            <td class="">-</td>
+            <td>10</td>
+        </tr>
+        
+        </tbody>
+    </table>
+</div>
+
+
                 
                 
                 <a href="/recommend/seibu_shinjuku_espass_hokuto_tensei2.html" class="unit-card rank-a" style="text-decoration: none; color: inherit;">
@@ -6351,6 +7766,10 @@
 
                         
                     </div>
+                    
+                    
+                    
+                    
                     
                     <div class="top3-stats-main">
                         <span class="art-main"><span class="art-num-big">0</span><span class="art-label">ART</span></span>
@@ -6390,6 +7809,10 @@
                         
                     </div>
                     
+                    
+                    
+                    
+                    
                     <div class="top3-stats-main">
                         <span class="art-main"><span class="art-num-big">0</span><span class="art-label">ART</span></span>
                         
@@ -6426,23 +7849,328 @@
                         
                     </div>
                     
+                    
+                    
+                    
+                    
                     <div class="top3-stats-main">
                         <span class="art-main"><span class="art-num-big">0</span><span class="art-label">ART</span></span>
                         
                         
-                        
+                        <span class="detail-trigger" onclick="toggleHistoryDetail(event, this)">▼詳細</span>
                     </div>
                     <div class="top3-stats-sub">
                         <span class="current-hama">現在: <span class="num">0</span>G</span>
                         <span class="total-games">累計<span class="num">0</span>G</span>
                         
+                        <span class="diff-medals-inline plus">+494枚</span>
                         
+                        <span class="max-medals-top medals-3k"><span class="medals-icon">✨</span>最大<span class="num">4,721</span>枚</span>
+                        
+                        <span class="rensa-badge rensa-8">最大<span class="num">28</span>連</span>
                         
                     </div>
                     
                     
+                    <div class="sparkline-section">
+                        <div class="sparkline-label">2026-02-04 差枚推移</div>
+                        <svg class="sparkline" viewBox="0 0 220 45" preserveAspectRatio="xMidYMid meet"><line x1="0" y1="34.7" x2="220" y2="34.7" stroke="#555" stroke-width="0.5" stroke-dasharray="2,2"/><polyline points="0.0,34.7 7.1,43.0 14.2,42.8 21.3,42.4 28.4,41.0 35.5,39.3 42.6,38.1 49.7,36.4 56.8,35.0 63.9,33.9 71.0,32.3 78.1,31.5 85.2,29.8 92.3,28.8 99.4,27.6 106.5,26.6 113.5,25.5 120.6,24.5 127.7,23.4 134.8,21.8 141.9,20.2 149.0,19.2 156.1,16.8 163.2,14.2 170.3,11.4 177.4,10.2 184.5,9.0 191.6,7.1 198.7,4.2 205.8,2.0 212.9,3.7 220.0,2.2" fill="none" stroke="#2ed573" stroke-width="1.5"/></svg>
+                    </div>
+                    
                 </a>
                 
+                
+                
+
+<div class="history-detail hidden">
+    <table class="hit-detail-table compact">
+        <thead><tr><th>#</th><th>時刻</th><th>G数</th><th>種類</th><th>連</th><th>枚数</th></tr></thead>
+        <tbody>
+        
+        <tr class=" shallow">
+            <td>1</td>
+            <td>14:28</td>
+            <td class="">1G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>169</td>
+        </tr>
+        
+        <tr class="">
+            <td>2</td>
+            <td>14:28</td>
+            <td class="">66G</td>
+            <td class="rb">RB</td>
+            <td class="">-</td>
+            <td>10</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>3</td>
+            <td>14:06</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>241</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>4</td>
+            <td>14:00</td>
+            <td class="">6G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>338</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>5</td>
+            <td>13:53</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>208</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>6</td>
+            <td>13:50</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>139</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>7</td>
+            <td>13:46</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>128</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>8</td>
+            <td>13:38</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>315</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>9</td>
+            <td>13:27</td>
+            <td class="">6G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>299</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>10</td>
+            <td>13:20</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>266</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>11</td>
+            <td>13:16</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>115</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>12</td>
+            <td>13:11</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>173</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>13</td>
+            <td>13:04</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>177</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>14</td>
+            <td>13:02</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>126</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>15</td>
+            <td>12:59</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>106</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>16</td>
+            <td>12:56</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>119</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>17</td>
+            <td>12:53</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>110</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>18</td>
+            <td>12:49</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>131</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>19</td>
+            <td>12:47</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>121</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>20</td>
+            <td>12:43</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>183</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>21</td>
+            <td>12:40</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>93</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>22</td>
+            <td>12:37</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>173</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>23</td>
+            <td>12:34</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>123</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>24</td>
+            <td>12:30</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>149</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>25</td>
+            <td>12:25</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>187</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>26</td>
+            <td>12:20</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>132</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>27</td>
+            <td>12:14</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>194</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>28</td>
+            <td>12:11</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>156</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>29</td>
+            <td>12:10</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>40</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>30</td>
+            <td>12:08</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>23</td>
+        </tr>
+        
+        <tr class="">
+            <td>31</td>
+            <td>12:08</td>
+            <td class="">304G</td>
+            <td class="rb">RB</td>
+            <td class="">-</td>
+            <td>-</td>
+        </tr>
+        
+        </tbody>
+    </table>
+</div>
+
+
                 
                 
                 <a href="/recommend/shibuya_honkan_espass_hokuto.html" class="unit-card rank-a" style="text-decoration: none; color: inherit;">
@@ -6461,6 +8189,10 @@
 
                         
                     </div>
+                    
+                    
+                    
+                    
                     
                     <div class="top3-stats-main">
                         <span class="art-main"><span class="art-num-big">38</span><span class="art-label">ART</span></span>
@@ -6985,23 +8717,121 @@
                         
                     </div>
                     
+                    
+                    
+                    
+                    
                     <div class="top3-stats-main">
                         <span class="art-main"><span class="art-num-big">0</span><span class="art-label">ART</span></span>
                         
                         
-                        
+                        <span class="detail-trigger" onclick="toggleHistoryDetail(event, this)">▼詳細</span>
                     </div>
                     <div class="top3-stats-sub">
                         <span class="current-hama">現在: <span class="num">0</span>G</span>
                         <span class="total-games">累計<span class="num">0</span>G</span>
                         
+                        <span class="diff-medals-inline plus">+473枚</span>
                         
+                        <span class="max-medals-top ">最大<span class="num">921</span>枚</span>
+                        
+                        <span class="rensa-badge rensa-5">最大<span class="num">7</span>連</span>
                         
                     </div>
                     
                     
+                    <div class="sparkline-section">
+                        <div class="sparkline-label">2026-02-04 差枚推移</div>
+                        <svg class="sparkline" viewBox="0 0 220 45" preserveAspectRatio="xMidYMid meet"><line x1="0" y1="43.0" x2="220" y2="43.0" stroke="#555" stroke-width="0.5" stroke-dasharray="2,2"/><polyline points="0.0,43.0 27.5,2.0 55.0,6.7 82.5,10.3 110.0,14.7 137.5,19.0 165.0,22.8 192.5,26.2 220.0,31.9" fill="none" stroke="#2ed573" stroke-width="1.5"/></svg>
+                    </div>
+                    
                 </a>
                 
+                
+                
+
+<div class="history-detail hidden">
+    <table class="hit-detail-table compact">
+        <thead><tr><th>#</th><th>時刻</th><th>G数</th><th>種類</th><th>連</th><th>枚数</th></tr></thead>
+        <tbody>
+        
+        <tr class=" shallow">
+            <td>1</td>
+            <td>14:34</td>
+            <td class="">1G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>178</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>2</td>
+            <td>14:31</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>105</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>3</td>
+            <td>14:29</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>117</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>4</td>
+            <td>14:27</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>132</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>5</td>
+            <td>14:24</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>133</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>6</td>
+            <td>14:22</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>111</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>7</td>
+            <td>14:19</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>145</td>
+        </tr>
+        
+        <tr class="">
+            <td>8</td>
+            <td>14:18</td>
+            <td class="">421G</td>
+            <td class="rb">RB</td>
+            <td class="">-</td>
+            <td>3</td>
+        </tr>
+        
+        </tbody>
+    </table>
+</div>
+
+
                 
                 
                 <a href="/recommend/shibuya_honkan_espass_hokuto_tensei2.html" class="unit-card rank-a" style="text-decoration: none; color: inherit;">
@@ -7021,23 +8851,166 @@
                         
                     </div>
                     
+                    
+                    
+                    
+                    
                     <div class="top3-stats-main">
                         <span class="art-main"><span class="art-num-big">11</span><span class="art-label">ART</span></span>
                         <span class="rb-badge-top">RB 2</span>
                         <span class="art-prob excellent" title="合成確率"><span class="prob-label">合成</span>1/99</span>
-                        
+                        <span class="detail-trigger" onclick="toggleHistoryDetail(event, this)">▼詳細</span>
                     </div>
                     <div class="top3-stats-sub">
                         <span class="current-hama">現在: <span class="num">0</span>G</span>
                         <span class="total-games">累計<span class="num">1,098</span>G</span>
                         
+                        <span class="diff-medals-inline plus">+1,063枚</span>
                         
+                        <span class="max-medals-top ">最大<span class="num">977</span>枚</span>
+                        
+                        <span class="rensa-badge rensa-5">最大<span class="num">7</span>連</span>
                         
                     </div>
                     
                     
+                    <div class="sparkline-section">
+                        <div class="sparkline-label">2026-02-04 差枚推移</div>
+                        <svg class="sparkline" viewBox="0 0 220 45" preserveAspectRatio="xMidYMid meet"><line x1="0" y1="34.1" x2="220" y2="34.1" stroke="#555" stroke-width="0.5" stroke-dasharray="2,2"/><polyline points="0.0,34.1 16.9,23.8 33.8,25.8 50.8,28.7 67.7,31.7 84.6,33.0 101.5,35.6 118.5,37.4 135.4,40.3 152.3,43.0 169.2,2.0 186.2,4.2 203.1,5.8 220.0,8.5" fill="none" stroke="#2ed573" stroke-width="1.5"/></svg>
+                    </div>
+                    
                 </a>
                 
+                
+                
+
+<div class="history-detail hidden">
+    <table class="hit-detail-table compact">
+        <thead><tr><th>#</th><th>時刻</th><th>G数</th><th>種類</th><th>連</th><th>枚数</th></tr></thead>
+        <tbody>
+        
+        <tr class=" shallow">
+            <td>1</td>
+            <td>14:37</td>
+            <td class="">1G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>155</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>2</td>
+            <td>14:35</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>90</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>3</td>
+            <td>14:33</td>
+            <td class="">1G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>126</td>
+        </tr>
+        
+        <tr class="deep">
+            <td>4</td>
+            <td>14:32</td>
+            <td class="">769G</td>
+            <td class="rb">RB</td>
+            <td class="">-</td>
+            <td>3</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>5</td>
+            <td>13:36</td>
+            <td class="">1G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>155</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>6</td>
+            <td>13:33</td>
+            <td class="">1G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>166</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>7</td>
+            <td>13:31</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>102</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>8</td>
+            <td>13:28</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>146</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>9</td>
+            <td>13:26</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>73</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>10</td>
+            <td>13:23</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>166</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>11</td>
+            <td>13:20</td>
+            <td class="">1G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>166</td>
+        </tr>
+        
+        <tr class=" shallow">
+            <td>12</td>
+            <td>13:18</td>
+            <td class="">0G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>115</td>
+        </tr>
+        
+        <tr class="">
+            <td>13</td>
+            <td>13:18</td>
+            <td class="">197G</td>
+            <td class="rb">RB</td>
+            <td class="">-</td>
+            <td>10</td>
+        </tr>
+        
+        </tbody>
+    </table>
+</div>
+
+
                 
                 
                 <a href="/recommend/shibuya_honkan_espass_hokuto.html" class="unit-card rank-a" style="text-decoration: none; color: inherit;">
@@ -7056,6 +9029,10 @@
 
                         
                     </div>
+                    
+                    
+                    
+                    
                     
                     <div class="top3-stats-main">
                         <span class="art-main"><span class="art-num-big">54</span><span class="art-label">ART</span></span>
@@ -13883,7 +15860,7 @@
 
         <footer>
             <p><a href="/verify.html" class="footer-link">的中結果</a></p>
-            <p class="build-time">ビルド: 2026-02-05 16:35:09</p>
+            <p class="build-time">ビルド: 2026-02-05 16:36:08</p>
         </footer>
     </div>
     <script src="/static/realtime.js"></script>
