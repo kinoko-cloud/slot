@@ -1,0 +1,6921 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>v2j</title>
+    <style>
+/* ===================================================================
+   SBJ 台選びアシスタント - スタイルシート
+   ===================================================================
+   セクション構成:
+   1. 共通/レイアウト       — リセット, body, container, header, footer
+   2. 的中率ヒーロー       — accuracy-hero, hero-rate-card
+   3. モードバッジ          — mode-badge, realtime-bar
+   4. カード/ランク         — unit-card, rank-badge, rank-s/a/b/c/d
+   5. 直近データ/展開詳細   — recent-days, hit-detail, verify-detail
+   6. グラフ/差枚           — sparkline, diff-medals, medals badges
+   7. おすすめ/理由         — reasons, recommendation sections
+   8. ローディング          — loading-overlay, progress-bar
+   9. 店舗/機種/曜日        — store cards, schedule, day-cell
+  10. 答え合わせ(verify)    — verify-summary, verify-grid
+  11. 台履歴(unit_history)  — uh-day-card, uh-hit-wrapper
+  12. ナビゲーション        — top-bar, hamburger, dropdowns
+  13. レスポンシブ          — @media queries
+   =================================================================== */
+
+/* ===== 1. 共通/レイアウト ===== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: #1a1a2e;
+    color: #eee;
+    line-height: 1.5;
+    min-height: 100vh;
+}
+
+/* ===== 2. 的中率ヒーロー表示 ===== */
+.accuracy-hero {
+    background: linear-gradient(135deg, #1a1a3e 0%, #0a0a2e 100%);
+    border: 1px solid #2a3a5c;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+.hero-title {
+    font-size: 0.85em;
+    color: #888;
+    margin-bottom: 12px;
+}
+
+.hero-rates {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+.hero-rate-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    padding: 10px 8px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 10px;
+}
+
+.hero-icon {
+    font-size: 1.6em;
+    margin-bottom: 4px;
+}
+
+.hero-name {
+    font-size: 0.7em;
+    color: #aaa;
+    margin-bottom: 6px;
+    white-space: nowrap;
+}
+
+.hero-pct {
+    font-size: 2.2em;
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 4px;
+}
+.hero-pct.excellent { color: #2ed573; }
+.hero-pct.good { color: #ffa502; }
+.hero-pct.normal { color: #ccc; }
+
+.hero-detail {
+    font-size: 0.7em;
+    color: #888;
+}
+
+.hero-stores {
+    font-size: 0.65em;
+    color: #6ab04c;
+    margin-top: 4px;
+    line-height: 1.3;
+    text-align: center;
+}
+
+.accuracy-hero-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.hero-footer {
+    font-size: 0.75em;
+    color: #5f9ea0;
+    margin-top: 10px;
+    text-align: center;
+}
+
+.container {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 10px;
+}
+
+/* バージョン表示（右上） */
+.version-info {
+    text-align: right;
+    font-size: 0.7em;
+    color: #555;
+    padding: 2px 5px;
+}
+
+/* ヘッダー */
+header {
+    text-align: center;
+    padding: 15px 0;
+    border-bottom: 1px solid #333;
+    margin-bottom: 15px;
+}
+
+header h1 {
+    font-size: 1.4em;
+    font-weight: 600;
+    color: #fff;
+}
+
+/* タイトルの「本日」を大きく、日付を小さく */
+.title-main {
+    font-size: 1.2em;
+    font-weight: 700;
+}
+
+.title-date {
+    font-size: 0.85em;
+    color: #888;
+    margin-top: 2px;
+}
+
+.back-link {
+    display: inline-block;
+    color: #70a1ff;
+    text-decoration: underline;
+    font-size: 0.9em;
+    margin-bottom: 5px;
+}
+
+.update-info {
+    font-size: 0.8em;
+    color: #888;
+    margin-top: 5px;
+}
+
+/* ===== 3. モードバッジ（営業中/閉店後） ===== */
+.mode-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.75em;
+    font-weight: 600;
+    margin-top: 5px;
+}
+
+.mode-badge.result {
+    background: #4a3f70;
+    color: #c9b8ff;
+}
+
+.mode-badge.before-open {
+    background: #2a2a4a;
+    color: #9a9aff;
+}
+
+.mode-badge.after-close {
+    background: #3a2a20;
+    color: #ffb088;
+}
+
+.mode-badge.collecting {
+    background: #5a4a20;
+    color: #ffd700;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+.mode-badge.realtime {
+    background: #1e5128;
+    color: #a8e6a3;
+}
+
+/* リアルタイム更新バー */
+.realtime-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+    padding: 8px;
+    background: #1e1e3a;
+    border-radius: 8px;
+}
+
+.realtime-status {
+    font-size: 0.85em;
+    color: #888;
+}
+
+.realtime-status.loading {
+    color: #ffd700;
+}
+
+.realtime-status.success {
+    color: #a8e6a3;
+}
+
+.realtime-status.error {
+    color: #ff6b6b;
+}
+
+.realtime-status.stale {
+    color: #ff6b6b;
+    font-weight: bold;
+}
+
+.realtime-status.warning {
+    color: #ffa502;
+}
+
+/* 古いデータ警告 */
+.stale-warning {
+    color: #ff6b6b;
+    font-size: 0.8em;
+    font-weight: bold;
+    margin-top: 4px;
+}
+
+.stale-notice {
+    color: #ffa502;
+    font-size: 0.8em;
+    margin-top: 4px;
+}
+
+.stale-warning-banner {
+    background: linear-gradient(135deg, #8b0000, #a00000);
+    color: #fff;
+    padding: 10px 15px;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 0.85em;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.refresh-btn {
+    padding: 6px 12px;
+    background: #3a3a5c;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.85em;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.refresh-btn:hover {
+    background: #4a4a7c;
+}
+
+.refresh-btn:active {
+    background: #2a2a4c;
+}
+
+/* 機種リスト */
+.machine-list h2,
+.store-list h2 {
+    font-size: 1em;
+    color: #888;
+    margin-bottom: 10px;
+}
+
+.machine-card {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: #252541;
+    border-radius: 8px;
+    padding: 20px 15px;
+    margin-bottom: 10px;
+    text-decoration: none;
+    color: #fff;
+    transition: background 0.2s;
+}
+
+.machine-card:active {
+    background: #333355;
+}
+
+.machine-icon {
+    font-size: 2em;
+}
+
+.machine-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.machine-name {
+    font-size: 1.2em;
+    font-weight: 600;
+}
+
+.machine-detail {
+    font-size: 0.85em;
+    color: #888;
+    margin-top: 2px;
+}
+
+.arrow {
+    font-size: 1.5em;
+    color: #555;
+}
+
+/* 店舗リスト */
+.store-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #252541;
+    border-radius: 8px;
+    padding: 18px 15px;
+    margin-bottom: 10px;
+    text-decoration: none;
+    color: #fff;
+    transition: background 0.2s;
+}
+
+.store-card:active {
+    background: #333355;
+}
+
+.store-name {
+    font-size: 1.1em;
+    font-weight: 500;
+}
+
+.unit-count {
+    font-size: 0.9em;
+    color: #888;
+}
+
+/* ===== 7. おすすめ/理由 ===== */
+.recommendations {
+    margin-bottom: 15px;
+}
+
+.recommendations h2 {
+    font-size: 1em;
+    color: #ffa502;
+    margin-bottom: 8px;
+}
+
+.recommendations h2 .data-time {
+    font-size: 0.7em;
+    color: #888;
+    font-weight: normal;
+    margin-left: 8px;
+}
+
+.recommendations.top h2::before {
+    content: none;
+}
+
+/* TOP3 おすすめ台カード — 目立たせる */
+.recommendations.top .unit-card {
+    background: linear-gradient(135deg, #1e1e3a 0%, #2a2050 50%, #1e1e3a 100%);
+    border: 1px solid rgba(255, 165, 2, 0.3);
+    box-shadow: 0 2px 12px rgba(255, 165, 2, 0.1);
+    padding: 14px;
+}
+
+.recommendations.top .unit-card.rank-s {
+    border-left: 3px solid #ff6b6b;
+    border-color: rgba(255, 107, 107, 0.4);
+    box-shadow: 0 2px 16px rgba(255, 107, 107, 0.15);
+}
+
+.recommendations.top .unit-card.rank-a {
+    border-left: 3px solid #ffa502;
+    border-color: rgba(255, 165, 2, 0.4);
+    box-shadow: 0 2px 16px rgba(255, 165, 2, 0.15);
+}
+
+.recommendations.other h2 {
+    color: #888;
+}
+
+.recommendations.other h2::before {
+    content: "";
+}
+
+/* ===== 4. カード/ランク ===== */
+.unit-card {
+    background: #252541;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.unit-card:active {
+    background: #2a2a4a;
+}
+
+.unit-card * {
+    line-height: 1.4;
+}
+
+.unit-card.running {
+    opacity: 0.6;
+}
+
+.unit-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+    flex-wrap: nowrap;
+    overflow: hidden;
+}
+
+.unit-id {
+    font-size: 1.3em;
+    font-weight: 700;
+    color: #fff;
+}
+
+.rank-badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    font-weight: 600;
+    color: #fff;
+}
+
+.rank-badge.small {
+    padding: 1px 6px;
+    font-size: 0.8em;
+}
+
+.stars {
+    color: #ffd700;
+    font-size: 0.9em;
+}
+
+.unit-status {
+    margin: 5px 0;
+}
+
+.status {
+    font-size: 0.9em;
+    color: #2ed573;
+}
+
+.status.running {
+    color: #ff6b6b;
+}
+
+.unit-today {
+    font-size: 0.85em;
+    color: #70a1ff;
+}
+
+.unit-note {
+    font-size: 0.8em;
+    color: #888;
+    margin-top: 3px;
+}
+
+/* コンパクトカード */
+.unit-card.compact {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+}
+
+.unit-card.compact .unit-id {
+    font-size: 1.1em;
+    min-width: 50px;
+}
+
+.unit-card.compact .status {
+    flex: 1;
+    font-size: 0.85em;
+}
+
+.unit-card.compact .art-info {
+    font-size: 0.8em;
+    color: #70a1ff;
+}
+
+/* 推奨なし */
+.no-recommendation {
+    text-align: center;
+    padding: 30px;
+    background: #252541;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.no-recommendation p {
+    font-size: 1.1em;
+    color: #888;
+}
+
+.no-recommendation .sub {
+    font-size: 0.9em;
+    color: #666;
+    margin-top: 5px;
+}
+
+/* 本日の傾向セクション */
+.today-trend {
+    background: #1e1e3a;
+    border-radius: 10px;
+    padding: 15px;
+    margin-top: 20px;
+}
+
+.today-trend h2 {
+    font-size: 1em;
+    color: #888;
+    margin-bottom: 10px;
+}
+
+.trend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 0;
+    flex-wrap: wrap;
+}
+
+.trend-item.good .trend-label {
+    color: #2ed573;
+}
+
+.trend-item.bad .trend-label {
+    color: #ff6b6b;
+}
+
+.trend-label {
+    font-size: 0.9em;
+    font-weight: 600;
+}
+
+.trend-store {
+    color: #70a1ff;
+    text-decoration: underline;
+    font-size: 0.9em;
+}
+
+.trend-store-name {
+    color: #70a1ff;
+    font-size: 0.9em;
+    font-weight: 600;
+}
+
+/* フッター */
+footer {
+    text-align: center;
+    padding: 20px 0;
+    color: #666;
+    font-size: 0.8em;
+}
+
+.api-link {
+    color: #555;
+    text-decoration: none;
+}
+
+/* ランク別スタイル（左カラーライン 3px） */
+.unit-card.rank-s {
+    background: #252541;
+    border-left: 3px solid #ff6b6b;
+}
+
+.unit-card.rank-a {
+    background: #252541;
+    border-left: 3px solid #ffa502;
+}
+
+.unit-card.rank-b {
+    background: #252541;
+    border-left: 3px solid #2ed573;
+}
+
+.unit-card.rank-c {
+    background: #252541;
+    border-left: 3px solid #70a1ff;
+}
+
+.unit-card.rank-d {
+    background: #252541;
+    border-left: 3px solid #747d8c;
+}
+
+/* スクレイピングボタン */
+.scrape-btn {
+    background: #ff6b6b;
+    color: #fff;
+    border: none;
+    padding: 5px 12px;
+    border-radius: 4px;
+    margin-left: 5px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.scrape-btn:active {
+    background: #ee5a5a;
+}
+
+.scrape-btn:disabled {
+    background: #555;
+    cursor: not-allowed;
+}
+
+/* ===== 8. ローディング ===== */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(26, 26, 46, 0.95);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.loading-overlay.hidden {
+    display: none;
+}
+
+.loading-content {
+    text-align: center;
+    padding: 30px;
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid #333;
+    border-top-color: #ff6b6b;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.loading-text {
+    font-size: 1.3em;
+    color: #fff;
+    margin-bottom: 20px;
+}
+
+.loading-text::after {
+    content: '';
+    animation: dots 1.5s steps(4, end) infinite;
+}
+
+@keyframes dots {
+    0% { content: ''; }
+    25% { content: '.'; }
+    50% { content: '..'; }
+    75% { content: '...'; }
+    100% { content: ''; }
+}
+
+.loading-progress {
+    max-width: 250px;
+    margin: 0 auto;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: #333;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #ff6b6b, #ffa502);
+    width: 0;
+    transition: width 0.3s ease;
+}
+
+.progress-time {
+    font-size: 1.5em;
+    color: #ffa502;
+    font-weight: 700;
+}
+
+.loading-hint {
+    font-size: 0.85em;
+    color: #888;
+    margin-top: 15px;
+}
+
+/* キャッシュバッジ */
+.cache-badge {
+    background: #2ed573;
+    color: #000;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.75em;
+    font-weight: 600;
+    margin-left: 8px;
+}
+
+.data-source {
+    color: #888;
+    font-size: 0.85em;
+}
+
+.data-source.no-realtime {
+    color: #ff6b6b;
+    font-size: 0.75em;
+}
+
+.data-age {
+    font-size: 0.85em;
+    color: #666;
+}
+
+.data-age.stale {
+    color: #ff6b6b;
+}
+
+/* ソース別バッジカラー */
+.cache-badge.github {
+    background: #2ed573;
+    color: #000;
+}
+
+.cache-badge.gas {
+    background: #70a1ff;
+    color: #000;
+}
+
+.cache-badge.unknown {
+    background: #666;
+    color: #fff;
+}
+
+/* ボタンヒント */
+.button-hint {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 5px;
+    font-size: 0.7em;
+    color: #666;
+}
+
+.hint-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* アクションボタン */
+.action-buttons {
+    margin-top: 8px;
+}
+
+/* スコア表示 */
+.score {
+    font-size: 0.85em;
+    color: #888;
+    margin-left: auto;
+}
+
+/* 展開アイコン */
+.expand-icon {
+    color: #555;
+    font-size: 0.8em;
+    margin-left: 8px;
+    transition: transform 0.2s;
+}
+
+.expand-icon.small {
+    font-size: 0.7em;
+}
+
+/* 詳細トリガー（確率行の右端） */
+.detail-trigger {
+    color: #70a1ff;
+    font-size: 0.75em;
+    margin-left: 8px;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: rgba(112, 161, 255, 0.1);
+    transition: background 0.2s;
+}
+.detail-trigger:hover {
+    background: rgba(112, 161, 255, 0.25);
+}
+
+/* 本日ART表示 */
+.today-art {
+    font-size: 0.85em;
+    color: #70a1ff;
+    margin-left: 10px;
+}
+
+/* 詳細セクション */
+.unit-details {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #333;
+}
+
+.unit-details.hidden {
+    display: none;
+}
+
+/* 推奨理由セクション */
+.reasons-section {
+    margin-bottom: 12px;
+}
+
+.section-title {
+    font-size: 0.8em;
+    color: #ffa502;
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+
+.reason-item {
+    font-size: 0.85em;
+    color: #ddd;
+    padding: 4px 0;
+    padding-left: 12px;
+    border-left: 2px solid #ffa502;
+    margin-bottom: 4px;
+    background: rgba(255, 165, 2, 0.05);
+}
+
+.reason-item.small {
+    font-size: 0.8em;
+    padding: 3px 0 3px 10px;
+}
+
+/* 統計セクション */
+.stats-section {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+    padding: 10px;
+}
+
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    font-size: 0.85em;
+}
+
+.stat-label {
+    color: #888;
+}
+
+.stat-value {
+    color: #fff;
+    font-weight: 600;
+}
+
+.stat-value.plus {
+    color: #2ed573;
+}
+
+.stat-value.minus {
+    color: #ff6b6b;
+}
+
+/* コンパクトカード用 */
+.compact-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.stats-row {
+    display: flex;
+    gap: 15px;
+    font-size: 0.8em;
+    color: #888;
+    margin-top: 8px;
+}
+
+/* 当日データサマリー */
+.today-summary {
+    margin: 8px 0;
+    padding: 8px 10px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+}
+
+.today-stats {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.stat-item .label {
+    font-size: 0.7em;
+    color: #888;
+}
+
+.stat-item .value {
+    font-size: 1em;
+    font-weight: 600;
+    color: #fff;
+}
+
+.stat-item.highlight .value {
+    color: #ffa502;
+}
+
+.no-data {
+    font-size: 0.9em;
+    color: #2ed573;
+    font-weight: 500;
+}
+
+/* 未稼働表示 */
+.no-today-data {
+    font-size: 0.9em;
+    color: #888;
+    font-style: italic;
+}
+
+/* 推奨理由プレビュー */
+.reasons-preview {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 8px;
+    margin-top: 6px;
+    background: rgba(255, 165, 2, 0.08);
+    border-radius: 6px;
+}
+
+.reason-icon {
+    font-size: 0.9em;
+    flex-shrink: 0;
+}
+
+.reason-text {
+    font-size: 0.8em;
+    color: #ffa502;
+    flex: 1;
+}
+
+.reason-more {
+    font-size: 0.7em;
+    color: #888;
+    flex-shrink: 0;
+}
+
+/* TOP3: 理由全件表示 */
+.reasons-full {
+    margin-top: 6px;
+    padding: 6px 8px;
+    background: rgba(255, 165, 2, 0.08);
+    border-radius: 6px;
+}
+
+.reason-line-top {
+    font-size: 0.8em;
+    color: #ffa502;
+    padding: 2px 0;
+}
+
+.reason-line-top.reason-rank {
+    color: #7cb9e8;
+}
+
+.reason-line-top.reason-prev {
+    color: #ffa502;
+}
+
+.reason-line-top.reason-pattern {
+    color: #ff6b9d;
+}
+
+.reason-line-top.reason-today {
+    color: #2ed573;
+}
+
+.reason-line-top.reason-weekday {
+    color: #a0a0a0;
+}
+
+.reason-line-top.reason-stats {
+    color: #74b9ff;
+}
+
+.reason-line-top.reason-cycle {
+    color: #a29bfe;
+}
+
+.reason-line-top.reason-warn {
+    color: #e17055;
+}
+
+.reason-line-top .reason-icon {
+    font-size: 0.85em;
+    margin-right: 4px;
+}
+
+/* 空き状態 */
+.status.available {
+    color: #2ed573;
+    font-weight: 600;
+}
+
+/* 遊技中状態 */
+.status.playing {
+    color: #ff6b6b;
+    font-weight: 600;
+}
+
+.unit-card.available {
+    background: rgba(46, 213, 115, 0.1);
+}
+
+.unit-card.playing {
+    background: rgba(255, 107, 107, 0.1);
+    opacity: 0.7;
+}
+
+/* コンパクト用ゲーム数表示 */
+.games-info {
+    font-size: 0.8em;
+    color: #888;
+}
+
+/* コンパクト用当日統計 */
+.compact-stats {
+    display: flex;
+    gap: 10px;
+    font-size: 0.8em;
+    color: #aaa;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+}
+
+/* ランキングボタン */
+.ranking-section {
+    margin-bottom: 20px;
+}
+
+.ranking-button {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: linear-gradient(135deg, #ffa502, #ff6b6b);
+    border-radius: 10px;
+    padding: 16px 18px;
+    text-decoration: none;
+    color: #fff;
+    font-weight: 600;
+    transition: transform 0.2s;
+}
+
+.ranking-button:active {
+    transform: scale(0.98);
+}
+
+.ranking-icon {
+    font-size: 1.5em;
+}
+
+.ranking-text {
+    flex: 1;
+    font-size: 1.1em;
+}
+
+/* ランキング番号 */
+.ranking-num {
+    font-size: 0.9em;
+    font-weight: 700;
+    color: #ffa502;
+    min-width: 28px;
+}
+
+/* 店舗タグ */
+.unit-store {
+    font-size: 0.85em;
+    color: #70a1ff;
+    margin: 4px 0;
+    line-height: 1.5;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+}
+
+.unit-id-num-lg {
+    font-size: 1.4em;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: 1px;
+}
+
+.store-link-right {
+    color: #70a1ff;
+    text-align: right;
+    white-space: nowrap;
+    text-decoration: underline;
+}
+
+.unit-store a {
+    color: #70a1ff;
+    text-decoration: underline;
+}
+
+.store-tag {
+    font-size: 0.75em;
+    background: #333;
+    padding: 2px 6px;
+    border-radius: 3px;
+    color: #aaa;
+}
+
+/* 機種ラベル */
+.machine-label {
+    font-size: 0.9em;
+    color: #ffa502;
+    margin-top: 3px;
+}
+
+/* 最終当たり時間 */
+.last-hit {
+    font-size: 0.8em;
+    color: #70a1ff;
+    margin-left: 10px;
+}
+
+/* 時間情報 */
+.time-info {
+    font-size: 0.8em;
+    color: #888;
+    margin-top: 6px;
+}
+
+.time-info.small {
+    font-size: 0.75em;
+    margin-top: 4px;
+}
+
+/* 確率情報（コンパクト） */
+.prob-info {
+    font-size: 0.75em;
+    color: #ffa502;
+    font-weight: 600;
+}
+
+/* フッターリンク */
+.footer-link {
+    color: #70a1ff;
+    text-decoration: underline;
+    margin: 0 5px;
+}
+
+/* 非表示テキスト */
+.hidden-text {
+    color: #1a1a2e;
+    font-size: 1px;
+}
+
+/* サブタイトル */
+.subtitle {
+    font-size: 0.9em;
+    color: #888;
+    margin-top: 5px;
+}
+
+/* ===== 空き状況表示 ===== */
+
+/* ヘッダーの空き状況サマリ */
+.availability-summary {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 8px;
+    font-size: 0.9em;
+}
+
+.avail-empty {
+    color: #2ed573;
+    font-weight: 600;
+}
+
+.avail-playing {
+    color: #ff6b6b;
+    font-weight: 600;
+}
+
+/* 空き状況バッジ */
+.avail-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-size: 0.85em;
+    font-weight: 700;
+}
+
+.avail-badge.empty {
+    background: #2ed573;
+    color: #000;
+}
+
+.avail-badge.playing {
+    background: #ff6b6b;
+    color: #fff;
+}
+
+/* コンパクト用バッジ */
+.avail-badge-sm {
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 0.75em;
+    font-weight: 700;
+}
+
+.avail-badge-sm.empty {
+    background: #2ed573;
+    color: #000;
+}
+
+.avail-badge-sm.playing {
+    background: #ff6b6b;
+    color: #fff;
+}
+
+/* カードの空き状況スタイル */
+.avail-card-empty {
+    background: rgba(46, 213, 115, 0.15);
+    border-left-color: #2ed573 !important;
+}
+
+.avail-card-playing {
+    background: rgba(255, 107, 107, 0.1);
+    opacity: 0.75;
+}
+
+/* ===== 本日の状況セクション ===== */
+
+.today-section {
+    margin: 10px 0;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.25);
+    border-radius: 8px;
+    border-left: 3px solid #70a1ff;
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+.section-icon {
+    font-size: 0.9em;
+}
+
+.section-label {
+    font-size: 0.85em;
+    color: #aaa;
+    font-weight: 600;
+}
+
+/* 本日の統計グリッド */
+.today-stats-grid {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.stat-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 6px 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+    min-width: 60px;
+}
+
+.stat-box .stat-label {
+    font-size: 0.6em;
+    color: #999;
+    margin-bottom: 1px;
+}
+
+.stat-box .stat-value {
+    font-size: 1.3em;
+    font-weight: 800;
+    color: #fff;
+}
+
+.stat-box.highlight {
+    background: rgba(255, 165, 2, 0.2);
+}
+
+.stat-box.highlight .stat-value {
+    color: #ffa502;
+}
+
+.stat-box.excellent {
+    background: rgba(46, 213, 115, 0.2);
+}
+
+.stat-box.excellent .stat-value {
+    color: #2ed573;
+}
+
+.stat-box.good {
+    background: rgba(112, 161, 255, 0.2);
+}
+
+.stat-box.good .stat-value {
+    color: #70a1ff;
+}
+
+.stat-box.bad {
+    background: rgba(255, 107, 107, 0.2);
+}
+
+.stat-box.bad .stat-value {
+    color: #ff6b6b;
+}
+
+/* 時間レンジ */
+.time-range {
+    font-size: 0.8em;
+    color: #70a1ff;
+    margin-top: 8px;
+}
+
+/* データなし（本日） */
+.no-data-today {
+    font-size: 0.9em;
+    color: #888;
+    padding: 8px 0;
+}
+
+.target-badge {
+    display: inline-block;
+    background: #2ed573;
+    color: #000;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    font-weight: 700;
+    margin-right: 6px;
+}
+
+/* ===== 過去7日間セクション ===== */
+
+.history-section {
+    margin: 10px 0;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    border-left: 3px solid #ffa502;
+}
+
+.base-rank {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.75em;
+    font-weight: 700;
+    color: #fff;
+    margin-left: auto;
+}
+
+.history-stats {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    font-size: 0.85em;
+}
+
+.hist-item {
+    color: #aaa;
+}
+
+.hist-item strong {
+    color: #fff;
+    font-weight: 700;
+}
+
+.hist-item.plus {
+    color: #2ed573;
+}
+
+.hist-item.plus strong {
+    color: #2ed573;
+}
+
+.hist-item.minus {
+    color: #ff6b6b;
+}
+
+.hist-item.minus strong {
+    color: #ff6b6b;
+}
+
+/* ===== コンパクトカード改善 ===== */
+
+.compact-today {
+    display: flex;
+    gap: 8px;
+    flex: 1;
+    justify-content: flex-end;
+    font-size: 0.8em;
+}
+
+.compact-today.no-data {
+    color: #666;
+}
+
+/* 確率の色分け（コンパクト用） */
+.prob-info.excellent {
+    color: #2ed573;
+}
+
+.prob-info.good {
+    color: #70a1ff;
+}
+
+.prob-info.bad {
+    color: #ff6b6b;
+}
+
+/* 詳細セクション（コンパクト） */
+.compact-detail-section {
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #333;
+}
+
+.compact-detail-section:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.detail-label {
+    font-size: 0.75em;
+    color: #ffa502;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+/* 理由セクション（コンパクト） */
+.reasons-section.compact {
+    margin-top: 8px;
+}
+
+/* プラス/マイナス色 */
+strong.plus {
+    color: #2ed573;
+}
+
+strong.minus {
+    color: #ff6b6b;
+}
+
+/* ===== コンパクトセクション ===== */
+
+.today-section.compact,
+.history-section.compact {
+    margin: 6px 0;
+    padding: 8px;
+}
+
+.today-stats-grid.compact {
+    gap: 6px;
+}
+
+.today-stats-grid.compact .stat-box {
+    padding: 4px 10px;
+    min-width: 50px;
+}
+
+.today-stats-grid.compact .stat-box .stat-value {
+    font-size: 1em;
+}
+
+/* ===== 新UI: 推奨ページ改善 ===== */
+
+/* 店舗分析セクション */
+/* 台番号アラート */
+.unit-alerts {
+    margin-bottom: 12px;
+}
+
+.alert-item {
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.85em;
+    margin-bottom: 6px;
+}
+
+.alert-item.alert-warning {
+    background: rgba(255, 165, 2, 0.15);
+    border: 1px solid rgba(255, 165, 2, 0.4);
+    color: #ffa502;
+}
+
+.alert-item.alert-info {
+    background: rgba(46, 213, 115, 0.15);
+    border: 1px solid rgba(46, 213, 115, 0.4);
+    color: #2ed573;
+}
+
+.alert-item.alert-critical {
+    background: rgba(255, 107, 107, 0.15);
+    border: 1px solid rgba(255, 107, 107, 0.4);
+    color: #ff6b6b;
+}
+
+.alert-icon {
+    margin-right: 4px;
+}
+
+.store-analysis {
+    background: linear-gradient(135deg, rgba(30, 60, 114, 0.4), rgba(42, 82, 152, 0.3));
+    border: 1px solid rgba(100, 150, 255, 0.3);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 12px;
+    font-size: 0.85em;
+}
+
+.analysis-title {
+    font-weight: bold;
+    font-size: 1.05em;
+    color: #7cb9e8;
+    margin-bottom: 6px;
+}
+
+.analysis-rank-dist {
+    color: #ccc;
+    margin-bottom: 4px;
+}
+
+.analysis-overall {
+    color: #ffa502;
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.analysis-daily {
+    color: #aaa;
+    font-size: 0.9em;
+    margin-bottom: 4px;
+}
+
+.analysis-weekday {
+    color: #bbb;
+    font-size: 0.9em;
+}
+
+/* ランク説明 */
+.rank-legend {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px 15px;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    margin-bottom: 15px;
+    font-size: 0.75em;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: #aaa;
+    padding: 3px 8px;
+    border-radius: 4px;
+}
+
+.rank-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+/* メインヘッダー */
+.unit-main-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+.unit-id-large {
+    font-size: 0.9em;
+    font-weight: 600;
+    color: #fff;
+    min-width: auto;
+}
+
+.unit-id-link {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    color: #fff;
+}
+
+.unit-id-link:hover {
+    color: #70a1ff;
+}
+
+.avail-badge-lg {
+    padding: 2px 8px;
+    border-radius: 5px;
+    font-size: 0.75em;
+    font-weight: 700;
+}
+
+.avail-badge-lg.empty {
+    background: #2ed573;
+    color: #000;
+}
+
+.avail-badge-lg.playing {
+    background: #ff6b6b;
+    color: #fff;
+}
+
+.avail-badge-lg.closed {
+    background: #444;
+    color: #888;
+}
+
+/* 営業時間外通知 */
+.closed-notice {
+    text-align: center;
+    padding: 8px;
+    background: #333;
+    border-radius: 6px;
+    color: #888;
+    font-size: 0.85em;
+    margin-top: 8px;
+}
+
+.rank-badge-lg {
+    padding: 3px 10px;
+    border-radius: 5px;
+    font-size: 0.9em;
+    font-weight: 800;
+    color: #fff;
+    margin-left: auto;
+}
+
+/* 本日データ横並び */
+.today-data-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 8px 6px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    margin-bottom: 8px;
+    position: relative;
+}
+
+/* 1段目: ART + 確率 + 連チャン */
+.data-row-primary {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* 2段目: その他統計を均一に */
+.data-row-secondary {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+}
+
+.data-row-secondary .data-cell {
+    flex: 1;
+    min-width: 55px;
+}
+
+.data-row-secondary .data-cell .data-value {
+    font-size: 0.95em;
+}
+
+/* 連チャンセル */
+.rensa-cell .data-value {
+    color: #2ed573;
+    font-size: 0.95em;
+    font-weight: 700;
+}
+
+.data-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 5px 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+    min-width: 48px;
+}
+
+.data-cell .data-label {
+    font-size: 0.6em;
+    color: #999;
+    margin-bottom: 1px;
+    text-transform: uppercase;
+}
+
+.data-cell .data-value {
+    font-size: 1.1em;
+    font-weight: 800;
+    color: #fff;
+}
+
+.data-cell.highlight {
+    background: rgba(255, 165, 2, 0.2);
+}
+
+.data-cell.highlight .data-value {
+    color: #ffa502;
+}
+
+.data-cell.excellent {
+    background: rgba(46, 213, 115, 0.2);
+}
+
+.data-cell.excellent .data-value {
+    color: #2ed573;
+}
+
+.data-cell.good {
+    background: rgba(112, 161, 255, 0.2);
+}
+
+.data-cell.good .data-value {
+    color: #70a1ff;
+}
+
+.data-cell.bad {
+    background: rgba(255, 107, 107, 0.2);
+}
+
+.data-cell.bad .data-value {
+    color: #ff6b6b;
+}
+
+.data-cell.warn {
+    background: rgba(255, 165, 2, 0.15);
+}
+
+.data-cell.warn .data-value {
+    color: #ffa502;
+}
+
+/* 差枚見込み */
+.data-cell.profit-high {
+    background: rgba(46, 213, 115, 0.3);
+}
+
+.data-cell.profit-high .data-value {
+    color: #2ed573;
+    font-size: 1.1em;
+}
+
+.data-cell.profit-mid {
+    background: rgba(112, 161, 255, 0.2);
+}
+
+.data-cell.profit-mid .data-value {
+    color: #70a1ff;
+}
+
+.data-cell.profit-low {
+    background: rgba(255, 165, 2, 0.15);
+}
+
+.data-cell.profit-low .data-value {
+    color: #ffa502;
+}
+
+.data-cell.profit-minus {
+    background: rgba(255, 107, 107, 0.15);
+}
+
+.data-cell.profit-minus .data-value {
+    color: #ff6b6b;
+}
+
+.no-data-inline {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #888;
+    font-size: 0.9em;
+}
+
+/* 設定推定行 */
+.estimation-row {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 8px;
+    font-size: 0.85em;
+}
+
+.setting-estimate {
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-weight: 700;
+    font-size: 1.1em;
+}
+
+.setting-estimate .payout {
+    font-weight: 400;
+    font-size: 0.85em;
+    opacity: 0.8;
+}
+
+.payout-label {
+    font-size: 0.65em;
+    font-weight: 400;
+    opacity: 0.7;
+    margin-right: 2px;
+}
+
+.payout-num {
+    font-size: 1.15em;
+    font-weight: 800;
+}
+
+/* 設定別カラー: 6=赤, 5=オレンジ, 4=黄, 3=緑, 2=青, 1=白 */
+.setting-estimate.setting-6 {
+    background: rgba(255, 71, 87, 0.25);
+    color: #ff4757;
+    border: 1px solid rgba(255, 71, 87, 0.5);
+}
+
+.setting-estimate.setting-5 {
+    background: rgba(255, 165, 2, 0.25);
+    color: #ffa502;
+    border: 1px solid rgba(255, 165, 2, 0.5);
+}
+
+.setting-estimate.setting-4 {
+    background: rgba(255, 230, 0, 0.2);
+    color: #ffe600;
+    border: 1px solid rgba(255, 230, 0, 0.4);
+}
+
+.setting-estimate.setting-3 {
+    background: rgba(46, 213, 115, 0.2);
+    color: #2ed573;
+    border: 1px solid rgba(46, 213, 115, 0.4);
+}
+
+.setting-estimate.setting-2 {
+    background: rgba(112, 161, 255, 0.2);
+    color: #70a1ff;
+    border: 1px solid rgba(112, 161, 255, 0.4);
+}
+
+.setting-estimate.setting-1,
+.setting-estimate.setting-0 {
+    background: rgba(200, 200, 200, 0.15);
+    color: #ccc;
+    border: 1px solid rgba(200, 200, 200, 0.3);
+}
+
+/* 暫定的な設定推測（参考程度） */
+.setting-estimate.tentative {
+    opacity: 0.8;
+}
+
+.setting-estimate.tentative .payout {
+    font-size: 0.75em;
+}
+
+.setting-estimate.tentative-weak {
+    background: rgba(100, 100, 100, 0.2);
+    color: #888;
+    border: 1px solid rgba(100, 100, 100, 0.3);
+    font-size: 0.9em;
+}
+
+/* 詳細セクション強調 */
+.detail-item.highlight {
+    background: rgba(255, 215, 0, 0.1);
+    padding: 4px 6px;
+    border-radius: 4px;
+    margin: 2px 0;
+}
+
+/* 単位を小さく */
+.unit-small {
+    font-size: 0.7em;
+    opacity: 0.7;
+}
+
+/* トップページ: 機種名 */
+.machine-name-top {
+    font-weight: 600;
+    color: #fff;
+}
+
+/* トップページ: 最大枚数 */
+.max-medals-top {
+    color: #ffd700;
+    font-weight: 600;
+}
+
+.max-medals-top .num {
+    font-size: 1.1em;
+}
+
+/* ===== 最大枚数バッジ ===== */
+.medals-icon {
+    margin-right: 1px;
+    font-size: 0.85em;
+}
+
+.medals-icon-sm {
+    font-size: 0.8em;
+    margin-right: 1px;
+}
+
+/* data-cell内の絵文字を非表示にしてレイアウト崩れ防止 */
+.data-cell .medals-icon {
+    display: none;
+}
+
+.medals-10k {
+    color: #ff4757 !important;
+    text-shadow: 0 0 8px rgba(255, 71, 87, 0.5);
+}
+
+.medals-10k .num {
+    color: #ff4757;
+}
+
+.medals-5k {
+    color: #ffa502 !important;
+}
+
+.medals-5k .num {
+    color: #ffa502;
+}
+
+.medals-3k {
+    color: #ffd700 !important;
+}
+
+.medals-3k .num {
+    color: #ffd700;
+}
+
+.medals-2k {
+    color: #70a1ff !important;
+}
+
+.medals-2k .num {
+    color: #70a1ff;
+}
+
+.medals-1k {
+    color: #2ed573 !important;
+}
+
+.medals-1k .num {
+    color: #2ed573;
+}
+
+/* data-cell 内のバッジ */
+.data-cell.medals-10k {
+    background: rgba(255, 71, 87, 0.2);
+}
+
+.data-cell.medals-5k {
+    background: rgba(255, 165, 2, 0.2);
+}
+
+.data-cell.medals-3k {
+    background: rgba(255, 215, 0, 0.15);
+}
+
+.data-cell.medals-2k {
+    background: rgba(112, 161, 255, 0.15);
+}
+
+.data-cell.medals-1k {
+    background: rgba(46, 213, 115, 0.15);
+}
+
+/* トップ5の注釈 */
+.top5-note {
+    font-size: 0.75em;
+    color: #888;
+    margin-bottom: 10px;
+}
+
+.past-eval {
+    color: #888;
+}
+
+.past-eval strong {
+    font-size: 1.1em;
+}
+
+/* 推奨理由 */
+.reason-main {
+    padding: 8px;
+    background: rgba(255, 165, 2, 0.1);
+    border-left: 3px solid #ffa502;
+    border-radius: 0 6px 6px 0;
+    margin-bottom: 5px;
+}
+
+.reason-line {
+    font-size: 0.85em;
+    color: #ffa502;
+    padding: 2px 0;
+}
+
+.reason-line.reason-rank {
+    color: #7cb9e8;
+}
+
+.reason-line.reason-prev {
+    color: #ffa502;
+}
+
+.reason-line.reason-pattern {
+    color: #ff6b9d;
+}
+
+.reason-line.reason-today {
+    color: #2ed573;
+}
+
+.reason-line.reason-weekday {
+    color: #a0a0a0;
+}
+
+.reason-line.reason-warn {
+    color: #ff6348;
+    font-weight: 600;
+}
+
+/* ローテ傾向の記号色分け */
+.rot-good {
+    color: #2ed573;
+    font-weight: 700;
+    font-size: 1.1em;
+}
+.rot-bad {
+    color: #ff4757;
+    font-weight: 700;
+    font-size: 1.1em;
+}
+.rot-mid {
+    color: #ffa502;
+    font-weight: 700;
+    font-size: 1.1em;
+}
+
+.reason-line.reason-stats {
+    color: #7bed9f;
+}
+
+.reason-line.reason-confidence {
+    color: #2ed573;
+}
+
+/* 詳細グリッド */
+.detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.detail-section {
+    padding: 8px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+}
+
+.detail-title {
+    font-size: 0.75em;
+    color: #ffa502;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.detail-item {
+    font-size: 0.85em;
+    color: #ddd;
+    padding: 2px 0;
+}
+
+.detail-item.plus {
+    color: #2ed573;
+}
+
+.detail-item.minus {
+    color: #ff6b6b;
+}
+
+.all-reasons {
+    padding: 8px;
+    background: rgba(255, 165, 2, 0.05);
+    border-radius: 6px;
+}
+
+/* コンパクトカード */
+.unit-card-compact {
+    background: #252541;
+    border-radius: 6px;
+    padding: 10px;
+    margin-bottom: 6px;
+}
+
+.compact-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.avail-sm {
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 0.7em;
+    font-weight: 700;
+}
+
+.avail-sm.empty {
+    background: #2ed573;
+    color: #000;
+}
+
+.avail-sm.playing {
+    background: #ff6b6b;
+    color: #fff;
+}
+
+.rank-sm {
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    font-weight: 700;
+    color: #fff;
+}
+
+.compact-data {
+    font-size: 0.85em;
+    color: #aaa;
+}
+
+.compact-data .num {
+    font-size: 1.1em;
+    font-weight: 700;
+    color: #fff;
+}
+
+.compact-data .lbl {
+    font-size: 0.7em;
+    color: #999;
+}
+
+.compact-data.no-data {
+    color: #888;
+}
+
+.compact-data.past-data {
+    color: #70a1ff;
+    font-style: italic;
+}
+
+.compact-prob {
+    font-size: 0.75em;
+    font-weight: 600;
+}
+
+.compact-prob.excellent {
+    color: #2ed573;
+}
+
+.compact-prob.good {
+    color: #70a1ff;
+}
+
+.compact-prob.bad {
+    color: #ff6b6b;
+}
+
+.compact-rb {
+    font-size: 0.7em;
+    color: #a0a0a0;
+}
+
+.compact-rb .num {
+    font-weight: 600;
+    margin-left: 1px;
+}
+
+.compact-profit {
+    font-size: 0.8em;
+    font-weight: 600;
+    margin-left: auto;
+}
+
+.compact-profit.profit-high {
+    color: #2ed573;
+}
+
+.compact-profit.profit-mid {
+    color: #70a1ff;
+}
+
+.compact-profit.profit-minus {
+    color: #ff6b6b;
+}
+
+.compact-details {
+    font-size: 0.85em;
+    color: #ccc;
+    padding: 8px;
+    border-top: 1px solid #333;
+    margin-top: 8px;
+}
+
+.compact-details div {
+    padding: 2px 0;
+}
+
+.compact-reason {
+    color: #ffa502;
+    margin-top: 4px;
+}
+
+/* フィルタ */
+.availability-summary span {
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+.availability-summary span:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.availability-summary span.active {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.avail-all {
+    color: #888;
+    font-size: 0.85em;
+}
+
+/* ===== トップページ: 本日おすすめ店舗 ===== */
+
+.today-stores {
+    margin-bottom: 20px;
+}
+
+.store-recommend-card {
+    background: rgba(46, 213, 115, 0.15);
+    border-left: 4px solid #2ed573;
+    border-radius: 0 8px 8px 0;
+    padding: 12px 15px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.store-recommend-card .store-name {
+    font-weight: 700;
+    color: #fff;
+}
+
+.store-recommend-card .store-note {
+    font-size: 0.85em;
+    color: #2ed573;
+}
+
+/* ===== トップページ: トップ3 統計表示 ===== */
+
+.top3-stats {
+    display: flex;
+    gap: 10px;
+    font-size: 0.85em;
+    color: #aaa;
+    margin-top: 8px;
+    flex-wrap: wrap;
+    align-items: baseline;
+}
+
+.top3-stats .num {
+    font-size: 1.3em;
+    font-weight: 800;
+    color: #fff;
+}
+
+.top3-stats .label {
+    font-size: 0.7em;
+    color: #999;
+}
+
+.top3-stats .excellent {
+    color: #2ed573;
+    font-weight: 600;
+}
+
+.top3-stats .good {
+    color: #70a1ff;
+    font-weight: 600;
+}
+
+.top3-stats .bad {
+    color: #ff6b6b;
+}
+
+.top3-stats .profit {
+    font-weight: 600;
+}
+
+.top3-stats .profit.high {
+    color: #2ed573;
+}
+
+.top3-stats .profit.mid {
+    color: #70a1ff;
+}
+
+.top3-stats .profit.low {
+    color: #ffa502;
+}
+
+/* ===== トップページ: 本日の爆発台 ===== */
+
+.today-hot-section {
+    margin-bottom: 20px;
+}
+
+.today-hot-section h2 {
+    font-size: 1em;
+    color: #ff6b6b;
+    margin-bottom: 5px;
+}
+
+.today-hot-note {
+    font-size: 0.8em;
+    color: #888;
+    margin-bottom: 10px;
+}
+
+/* G数（ラベル付き） */
+.total-games-sm {
+    font-size: 0.85em;
+    color: #999;
+}
+
+.total-games-label {
+    font-size: 0.85em;
+    color: #aaa;
+}
+
+.total-games-label .num {
+    font-weight: 700;
+    color: #ccc;
+}
+
+/* ===== トップページ: 前日トップ10 ===== */
+
+.yesterday-section {
+    margin-bottom: 20px;
+}
+
+.yesterday-section h2 {
+    font-size: 1em;
+    color: #70a1ff;
+    margin-bottom: 5px;
+}
+
+.yesterday-note {
+    font-size: 0.8em;
+    color: #888;
+    margin-bottom: 10px;
+}
+
+.yesterday-card {
+    background: #252541;
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    text-decoration: none;
+    display: block;
+}
+
+.yesterday-header {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 4px;
+    flex-wrap: nowrap;
+}
+
+.machine-icon-sm {
+    font-size: 0.9em;
+}
+
+.unit-id-sm {
+    font-weight: 700;
+    color: #fff;
+    white-space: nowrap;
+}
+
+.store-name-sm {
+    font-size: 0.8em;
+    color: #aaa;
+    white-space: nowrap;
+}
+
+.yesterday-sub-header {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 6px;
+    font-size: 0.8em;
+    flex-wrap: nowrap;
+    overflow: hidden;
+}
+
+.yesterday-header .machine-name-sm {
+    margin-left: 0;
+    font-size: 0.85em;
+    color: #ccc;
+}
+
+.yesterday-stats {
+    display: flex;
+    gap: 6px;
+    font-size: 0.8em;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.yesterday-diff {
+    font-weight: 700;
+}
+
+.yesterday-diff.plus {
+    color: #2ed573;
+}
+
+.yesterday-diff.minus {
+    color: #ff6b6b;
+}
+
+.avg-art {
+    color: #aaa;
+}
+
+/* 最大枚数 */
+.max-medals {
+    color: #ffa502;
+    font-weight: 700;
+}
+
+.max-medals .num {
+    font-size: 1.2em;
+    color: #ffd700;
+}
+
+/* 差枚（小さめ） */
+.yesterday-diff-sm {
+    font-size: 0.85em;
+}
+
+.yesterday-diff-sm.plus {
+    color: #2ed573;
+}
+
+.yesterday-diff-sm.minus {
+    color: #ff6b6b;
+}
+
+/* ART/RB数字を強調 */
+.art-num {
+    color: #ff6b6b;
+    font-size: 1.2em;
+    font-weight: 700;
+}
+
+.rb-num {
+    color: #70a1ff;
+    font-size: 1.1em;
+    font-weight: 600;
+}
+
+/* ===== トップページ: 店舗別おすすめ曜日 ===== */
+
+.store-schedule {
+    margin-bottom: 20px;
+}
+
+.schedule-card {
+    background: #252541;
+    border-radius: 8px;
+    padding: 12px 15px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.schedule-store {
+    font-weight: 600;
+    color: #fff;
+    min-width: 140px;
+}
+
+.schedule-days {
+    display: flex;
+    gap: 5px;
+}
+
+.day-badge {
+    display: inline-block;
+    padding: 3px 8px;
+    background: #333;
+    border-radius: 4px;
+    font-size: 0.8em;
+    color: #aaa;
+}
+
+.day-badge.today {
+    background: #ffa502;
+    color: #000;
+    font-weight: 700;
+}
+
+.schedule-note {
+    font-size: 0.8em;
+    color: #888;
+    margin-left: auto;
+}
+
+/* ===== トップページ: 曜日表示 ===== */
+
+.today-info {
+    font-size: 1.1em;
+    color: #ffa502;
+    font-weight: 600;
+    margin-top: 5px;
+}
+
+/* ===== 星評価 ===== */
+.star-rating {
+    display: inline-block;
+    color: #ffd700;
+    letter-spacing: 1px;
+    font-size: 0.9em;
+}
+
+.star-rating .empty {
+    color: #444;
+}
+
+/* ===== 店舗リンク ===== */
+.store-link {
+    color: #70a1ff;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    margin-left: auto;
+}
+
+.store-link:hover {
+    color: #9ab8ff;
+}
+
+/* ===== 機種リンク ===== */
+.machine-link {
+    color: #ffa502;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.machine-link:hover {
+    color: #ffb833;
+}
+
+/* ===== 空き状況バッジ（トップ用） ===== */
+.top3-avail {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.75em;
+    font-weight: 700;
+    margin-left: 5px;
+}
+
+.top3-avail.empty {
+    background: #2ed573;
+    color: #000;
+}
+
+.top3-avail.playing {
+    background: #ff6b6b;
+    color: #fff;
+}
+
+.top3-avail.closed {
+    background: #555;
+    color: #999;
+}
+
+/* ===== データ日付バッジ ===== */
+.data-date-badge {
+    position: absolute;
+    top: -8px;
+    right: 10px;
+    background: #ffa502;
+    color: #000;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.7em;
+    font-weight: 700;
+}
+
+/* === RBバッジ（TOP3用） === */
+.rb-badge-top {
+    display: inline-block;
+    background: #5352ed;
+    color: #fff;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 0.8em;
+    font-weight: 700;
+}
+
+/* === 前日・前々日データ行 === */
+.top3-prev-days {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-top: 4px;
+    padding-top: 4px;
+    border-top: 1px solid #333;
+}
+
+.prev-day {
+    font-size: 0.8em;
+    color: #bbb;
+}
+
+.prev-art {
+    color: #ffa502;
+    font-weight: 700;
+    font-size: 1.05em;
+}
+
+/* 推奨台カード内の前日・前々日 */
+.rec-prev-days {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    margin-top: 4px;
+    padding-top: 4px;
+    border-top: 1px solid #333;
+}
+
+.prev-day-rec {
+    font-size: 0.8em;
+    color: #bbb;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+}
+
+.prev-day-rec .prev-art {
+    color: #ffa502;
+    font-weight: 700;
+}
+
+/* ===== 遊技中バッジ ===== */
+.playing-badge {
+    display: inline-block;
+    background: #ff6b6b;
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    font-weight: 700;
+}
+
+/* ===== ランキング番号（小） ===== */
+.ranking-num-sm {
+    font-size: 0.8em;
+    font-weight: 700;
+    color: #ffa502;
+    min-width: 20px;
+}
+
+/* ===== 機種名（小） ===== */
+.machine-name-sm {
+    font-size: 0.95em;
+    color: #74b9ff;
+    font-weight: 600;
+    margin-left: auto;
+}
+
+/* ===== トップページ: ART数メイン表示 ===== */
+.top3-stats-main {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 6px 0 4px 0;
+}
+
+.art-main {
+    display: flex;
+    align-items: baseline;
+    gap: 2px;
+}
+
+.art-main.past {
+    opacity: 0.7;
+}
+
+.art-num-big {
+    font-size: 2em;
+    font-weight: 900;
+    color: #ff6b6b;
+}
+
+.art-label {
+    font-size: 0.85em;
+    color: #ff6b6b;
+    font-weight: 600;
+}
+
+.art-prob {
+    font-size: 0.9em;
+    font-weight: 700;
+    color: #aaa;
+}
+
+.prob-label {
+    font-size: 0.8em;
+    font-weight: 400;
+    opacity: 0.7;
+    margin-right: 1px;
+}
+
+.art-prob.excellent {
+    color: #2ed573;
+}
+
+.art-prob.good {
+    color: #70a1ff;
+}
+
+.art-prob.bad {
+    color: #ff6b6b;
+}
+
+/* サブ情報行 */
+.top3-stats-sub {
+    display: flex;
+    gap: 12px;
+    font-size: 0.8em;
+    color: #888;
+    margin-top: 4px;
+    flex-wrap: wrap;
+}
+
+.top3-stats-sub .num {
+    font-weight: 700;
+    color: #ddd;
+    font-size: 1.05em;
+}
+
+.total-games .num {
+    color: #70a1ff;
+}
+
+.current-hama {
+    color: #ffa502;
+}
+
+.current-hama .num {
+    color: #ffa502;
+    font-size: 1.1em;
+}
+
+.total-games {
+    color: #999;
+}
+
+/* 台番号をサブ情報に */
+.unit-id-sub {
+    font-weight: 400;
+    color: #ccc;
+    font-size: 0.95em;
+}
+
+.unit-id-num {
+    font-weight: 700;
+    color: #fff;
+    font-size: 1.3em;
+}
+
+.unit-id-ban {
+    font-size: 0.75em;
+    color: #888;
+    margin-left: 1px;
+}
+
+/* ===== 6. グラフ/差枚 ===== */
+.diff-medals {
+    font-weight: 900;
+    font-size: 1.1em;
+    margin-right: 4px;
+}
+.diff-medals.plus { color: #2ed573; }
+.diff-medals.minus { color: #ff6b6b; }
+
+.diff-medals-inline {
+    font-weight: 700;
+    font-size: 0.85em;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: rgba(46, 213, 115, 0.15);
+}
+.diff-medals-inline.plus { color: #2ed573; background: rgba(46, 213, 115, 0.15); }
+.diff-medals-inline.minus { color: #ff6b6b; background: rgba(255, 107, 107, 0.15); }
+
+.yesterday-diff-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.diff-medals-lg {
+    font-size: 1.3em;
+    font-weight: 800;
+}
+.diff-medals-lg.plus { color: #2ed573; }
+.diff-medals-lg.minus { color: #ff6b6b; }
+
+.yesterday-card-inner {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.yesterday-card-left {
+    flex: 1;
+    min-width: 0;
+}
+
+.yesterday-card-right {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+}
+
+.sparkline {
+    display: block;
+}
+
+.yesterday-sub-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.rb-badge {
+    color: #70a1ff;
+    font-weight: 600;
+}
+.rb-badge .rb-num {
+    font-weight: 700;
+}
+
+.diff-medals-sm {
+    font-weight: 700;
+    font-size: 0.85em;
+    margin-left: 4px;
+}
+.diff-medals-sm.plus { color: #2ed573; }
+.diff-medals-sm.minus { color: #ff6b6b; }
+
+.prev-day-row {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    flex-wrap: wrap;
+    font-size: 0.82em;
+    color: #999;
+    line-height: 1.6;
+}
+.prev-day-label {
+    color: #777;
+    font-weight: 600;
+    min-width: 3.5em;
+}
+
+/* ===== 5. 直近データ/展開詳細 ===== */
+.recent-days {
+    margin-top: 8px;
+    padding: 8px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 6px;
+    border-left: 3px solid #444;
+}
+
+.recent-day-row {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    flex-wrap: wrap;
+    font-size: 0.8em;
+    color: #bbb;
+    padding: 2px 0;
+}
+
+.recent-label {
+    color: #888;
+    font-weight: 600;
+    min-width: 4em;
+    font-size: 0.9em;
+}
+
+.recent-art {
+    color: #ff6b6b;
+    font-weight: 700;
+}
+
+.recent-prob {
+    font-weight: 600;
+}
+.recent-prob.excellent { color: #2ed573; }
+.recent-prob.good { color: #ffa502; }
+.recent-prob.bad { color: #ff4757; }
+
+.recent-games {
+    color: #888;
+}
+
+/* 全おすすめリンク */
+.see-all-recs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid #333;
+}
+
+.see-all-link {
+    display: inline-block;
+    padding: 4px 10px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 12px;
+    color: #aaa;
+    text-decoration: none;
+    font-size: 0.8em;
+}
+
+.see-all-link:active {
+    background: rgba(255,255,255,0.12);
+}
+
+.recent-header {
+    font-size: 0.75em;
+    color: #666;
+    margin-bottom: 4px;
+    font-weight: 600;
+}
+
+.rensa-sm {
+    color: #fd79a8;
+    font-size: 0.9em;
+    font-weight: 600;
+}
+
+.low-activity {
+    color: #636e72;
+    font-size: 0.8em;
+    font-style: italic;
+}
+
+.max-medals-sm {
+    color: #ffeaa7;
+    font-size: 0.85em;
+}
+
+/* 天井バッジ */
+.ceiling-badge {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 2px;
+    color: #e17055;
+    font-size: 0.85em;
+    font-weight: 600;
+}
+.ceiling-badge .num {
+    font-size: 1.1em;
+    font-weight: 700;
+}
+
+.art-badge {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 3px;
+    color: #ff6b6b;
+    font-weight: 600;
+}
+
+.art-badge .art-num {
+    font-size: 1.3em;
+    font-weight: 800;
+}
+
+/* RBバッジ（小） */
+.rb-badge-sm {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 3px;
+    background: #5352ed;
+    color: #fff;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 0.75em;
+    font-weight: 700;
+}
+
+.rb-badge-sm .num {
+    font-size: 1.15em;
+    font-weight: 800;
+}
+
+/* 連チャンバッジ */
+.rensa-badge {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 3px;
+    background: #1a9a4a;
+    color: #fff;
+}
+/* 連チャン色グラデーション: 2連=青, 3連=緑, 5連=橙, 8連+=赤 */
+.rensa-badge.rensa-2 { background: #3388bb; }
+.rensa-badge.rensa-3, .rensa-badge.rensa-4 { background: #2ea043; }
+.rensa-badge.rensa-5, .rensa-badge.rensa-6, .rensa-badge.rensa-7 { background: #e08620; }
+.rensa-badge.rensa-8 { background: #d73a49;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 0.75em;
+    font-weight: 700;
+}
+
+.rensa-badge .num {
+    font-size: 1.15em;
+    font-weight: 800;
+}
+
+/* コンパクト用連チャンバッジ */
+.rensa-badge-sm {
+    display: inline-block;
+    background: #1a9a4a;
+    color: #fff;
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-size: 0.7em;
+    font-weight: 700;
+}
+
+/* 前日データ統計行 */
+.prev-day-stats {
+    font-size: 0.9em;
+}
+
+.day-label {
+    color: #70a1ff;
+    font-weight: 700;
+    font-size: 0.9em;
+}
+
+/* 前日ART（赤ではなくオレンジ系） */
+.art-badge.prev {
+    color: #ffa502;
+}
+
+.art-lbl-prev {
+    color: #ffa502;
+    font-weight: 600;
+}
+
+.art-num-prev {
+    color: #ffa502;
+    font-size: 1.2em;
+    font-weight: 800;
+}
+
+/* 前々日情報（爆発台セクション内） */
+.yesterday-prev {
+    font-size: 0.8em;
+    color: #aaa;
+    margin-top: 4px;
+    padding-left: 28px;
+}
+
+.prev-day-sub {
+    font-size: 0.8em;
+    color: #bbb;
+    margin-top: 4px;
+    padding-left: 28px;
+}
+
+.yesterday-prob-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-left: 28px;
+    margin-top: 2px;
+}
+
+.art-prob-sm {
+    font-size: 0.8em;
+    font-weight: bold;
+    color: #bbb;
+}
+.art-prob-sm.excellent { color: #2ed573; }
+.art-prob-sm.good { color: #70a1ff; }
+.art-prob-sm.bad { color: #747d8c; }
+
+/* コンパクトカード: ART強調 */
+.compact-art {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 2px;
+}
+
+.compact-art .art-num {
+    font-size: 1.2em;
+    font-weight: 900;
+    color: #ff6b6b;
+}
+
+.compact-art .art-lbl {
+    font-size: 0.7em;
+    color: #ff6b6b;
+}
+
+.compact-art.past .art-num {
+    color: #70a1ff;
+}
+
+.compact-art.past .art-lbl {
+    color: #70a1ff;
+}
+
+/* 最大枚数（コンパクト） */
+.compact-max {
+    color: #ffd700;
+    font-size: 0.8em;
+    font-weight: 600;
+}
+
+.compact-max .num {
+    font-size: 1.1em;
+}
+
+/* 回転数（小さく） */
+.compact-games {
+    color: #999;
+    font-size: 0.8em;
+}
+
+/* 推奨カード: ART大きく */
+.art-num-lg {
+    font-size: 1.6em;
+    font-weight: 900;
+    color: #ff6b6b;
+}
+
+/* ===================================
+   曜日別店舗評価 - 新スタイル
+   =================================== */
+
+/* 今日の曜日の店舗評価セクション */
+.today-stores h2 {
+    font-size: 1em;
+    color: #888;
+    margin-bottom: 10px;
+}
+
+.day-section {
+    margin-bottom: 15px;
+}
+
+.day-section-label {
+    font-size: 0.85em;
+    font-weight: 600;
+    margin-bottom: 8px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+.day-section.good .day-section-label {
+    background: #1e4620;
+    color: #4ade80;
+}
+
+.day-section.bad .day-section-label {
+    background: #4a2020;
+    color: #f87171;
+}
+
+.day-section.neutral .day-section-label {
+    background: #3a3a4a;
+    color: #999;
+}
+
+.neutral-note {
+    color: #666;
+    font-size: 0.85em;
+    padding: 10px;
+}
+
+/* 店舗カード（曜日評価用） */
+.store-day-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 15px;
+    background: #252541;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    text-decoration: none;
+    color: #fff;
+    border-left: 4px solid transparent;
+}
+
+.store-day-card.good {
+    border-left-color: #4ade80;
+}
+
+.store-day-card.bad {
+    border-left-color: #f87171;
+}
+
+.store-day-card .store-name {
+    flex: 1;
+    font-weight: 600;
+    font-size: 0.95em;
+}
+
+.store-day-card .day-rating {
+    color: #ffd700;
+    font-size: 0.85em;
+}
+
+.store-day-card .day-rating.dim {
+    color: #666;
+}
+
+.store-day-card .day-rating .empty {
+    color: #444;
+}
+
+.store-day-card .store-note {
+    font-size: 0.75em;
+    color: #888;
+    max-width: 120px;
+    text-align: right;
+}
+
+/* 店舗別曜日傾向（全曜日表示） */
+.store-schedule h2 {
+    font-size: 1em;
+    color: #888;
+    margin-bottom: 8px;
+}
+
+.schedule-legend {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+    font-size: 0.7em;
+}
+
+/* .legend-item: 重複定義を統合済み（元の定義はランク説明セクションにある） */
+
+.legend-item.best {
+    background: #3b2a00;
+    color: #ffd700;
+}
+
+.legend-item.good {
+    background: #1e3a1e;
+    color: #4ade80;
+}
+
+.legend-item.normal {
+    background: #2a2a3a;
+    color: #888;
+}
+
+.legend-item.weak {
+    background: #3a2020;
+    color: #f87171;
+}
+
+/* 店舗カード（全曜日） */
+.schedule-card-full {
+    display: block;
+    background: #252541;
+    border-radius: 8px;
+    padding: 12px 15px;
+    margin-bottom: 10px;
+    text-decoration: none;
+    color: #fff;
+}
+
+.schedule-store-name {
+    font-weight: 600;
+    font-size: 0.95em;
+    margin-bottom: 8px;
+}
+
+.schedule-week {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 8px;
+}
+
+.day-cell {
+    flex: 1;
+    text-align: center;
+    padding: 6px 2px;
+    border-radius: 4px;
+    background: #1a1a2e;
+}
+
+.day-cell .day-name {
+    display: block;
+    font-size: 0.7em;
+    color: #888;
+    margin-bottom: 2px;
+}
+
+.day-cell .day-stars {
+    font-size: 0.55em;
+    letter-spacing: -1px;
+}
+
+.day-cell.best {
+    background: #3b2a00;
+}
+
+.day-cell.best .day-stars {
+    color: #ffd700;
+}
+
+.day-cell.good {
+    background: #1e3a1e;
+}
+
+.day-cell.good .day-stars {
+    color: #4ade80;
+}
+
+.day-cell.normal .day-stars {
+    color: #888;
+}
+
+.day-cell.weak {
+    background: #3a2020;
+}
+
+.day-cell.weak .day-stars {
+    color: #f87171;
+}
+
+.day-cell.today {
+    border: 2px solid #70a1ff;
+}
+
+.day-cell.today .day-name {
+    color: #70a1ff;
+    font-weight: 600;
+}
+
+.schedule-notes {
+    font-size: 0.75em;
+    color: #888;
+}
+
+.schedule-links {
+    display: flex;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.schedule-machine-link {
+    display: inline-block;
+    padding: 4px 10px;
+    background: rgba(112, 161, 255, 0.15);
+    border: 1px solid rgba(112, 161, 255, 0.3);
+    border-radius: 5px;
+    color: #70a1ff;
+    font-size: 0.8em;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.schedule-machine-link:active {
+    background: rgba(112, 161, 255, 0.3);
+}
+
+.note-best {
+    color: #4ade80;
+}
+
+/* ===================================
+   法則コーナー (rules.html)
+   =================================== */
+
+.rules-section {
+    margin-bottom: 25px;
+}
+
+.rules-section h2 {
+    font-size: 1.1em;
+    color: #ffa502;
+    margin-bottom: 12px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #333;
+}
+
+.rule-card {
+    background: #252541;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 12px;
+}
+
+.rule-card.machine {
+    border-left: 4px solid #ffa502;
+}
+
+.rule-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.rule-store-name,
+.rule-machine-name {
+    font-weight: 700;
+    font-size: 1.1em;
+    color: #fff;
+}
+
+.rule-rating {
+    font-size: 0.85em;
+    color: #ffd700;
+    margin-left: auto;
+}
+
+.rule-weekday {
+    margin: 10px 0;
+}
+
+.weekday-grid {
+    display: flex;
+    gap: 4px;
+}
+
+.weekday-cell {
+    flex: 1;
+    text-align: center;
+    padding: 8px 4px;
+    background: #1a1a2e;
+    border-radius: 4px;
+}
+
+.weekday-cell .day {
+    display: block;
+    font-size: 0.75em;
+    color: #888;
+    margin-bottom: 2px;
+}
+
+.weekday-cell .stars {
+    font-size: 0.5em;
+    color: #666;
+}
+
+.weekday-cell.best {
+    background: #3b2a00;
+}
+
+.weekday-cell.best .stars {
+    color: #ffd700;
+}
+
+.weekday-cell.good {
+    background: #1e3a1e;
+}
+
+.weekday-cell.good .stars {
+    color: #4ade80;
+}
+
+.weekday-cell.weak {
+    background: #3a2020;
+}
+
+.weekday-cell.weak .stars {
+    color: #f87171;
+}
+
+.rule-tips {
+    margin: 10px 0;
+}
+
+.rule-tips .tip {
+    font-size: 0.85em;
+    padding: 4px 8px;
+    margin: 4px 0;
+    border-radius: 4px;
+}
+
+.rule-tips .tip.good {
+    background: rgba(74, 222, 128, 0.1);
+    color: #4ade80;
+}
+
+.rule-tips .tip.bad {
+    background: rgba(248, 113, 113, 0.1);
+    color: #f87171;
+}
+
+.rule-patterns {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #333;
+}
+
+.patterns-title {
+    font-size: 0.8em;
+    color: #888;
+    margin-bottom: 6px;
+}
+
+.pattern-item {
+    font-size: 0.85em;
+    color: #ccc;
+    padding: 3px 0;
+    padding-left: 12px;
+    border-left: 2px solid #70a1ff;
+    margin: 4px 0;
+}
+
+/* 機種スペック */
+.machine-specs {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+    padding: 10px;
+    margin: 10px 0;
+}
+
+.spec-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 3px 0;
+    font-size: 0.85em;
+}
+
+.spec-label {
+    color: #888;
+}
+
+.spec-value {
+    color: #fff;
+    font-weight: 600;
+}
+
+.machine-tips {
+    margin: 10px 0;
+}
+
+.tips-title {
+    font-size: 0.8em;
+    color: #ffa502;
+    margin-bottom: 6px;
+}
+
+.tip-item {
+    font-size: 0.85em;
+    color: #ccc;
+    padding: 4px 0;
+    padding-left: 12px;
+    border-left: 2px solid #ffa502;
+    margin: 4px 0;
+}
+
+.reset-info {
+    margin-top: 10px;
+    padding: 10px;
+    background: rgba(255, 165, 2, 0.1);
+    border-radius: 6px;
+}
+
+.reset-title {
+    font-size: 0.8em;
+    color: #ffa502;
+    margin-bottom: 4px;
+}
+
+.reset-content {
+    font-size: 0.85em;
+    color: #ffd700;
+}
+
+/* 一般的なTips */
+.general-tips {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.general-tip-card {
+    display: flex;
+    gap: 12px;
+    background: #252541;
+    border-radius: 8px;
+    padding: 12px;
+}
+
+.tip-number {
+    width: 30px;
+    height: 30px;
+    background: #ffa502;
+    color: #000;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.tip-content {
+    flex: 1;
+}
+
+.tip-title {
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.tip-text {
+    font-size: 0.85em;
+    color: #aaa;
+}
+
+.disclaimer {
+    font-size: 0.75em;
+    color: #666;
+    text-align: center;
+    padding: 15px;
+}
+
+/* ===================================
+   当たり履歴 (history.html)
+   =================================== */
+
+.history-summary {
+    background: #252541;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.summary-grid {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.summary-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px 15px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+    min-width: 70px;
+}
+
+.summary-item .summary-value {
+    font-size: 1.4em;
+    font-weight: 800;
+    color: #fff;
+}
+
+.summary-item .summary-label {
+    font-size: 0.7em;
+    color: #888;
+}
+
+.summary-item.excellent .summary-value {
+    color: #2ed573;
+}
+
+.summary-item.good .summary-value {
+    color: #70a1ff;
+}
+
+.summary-item.bad .summary-value {
+    color: #ff6b6b;
+}
+
+.summary-item.highlight {
+    background: rgba(255, 215, 0, 0.1);
+}
+
+.summary-item.highlight .summary-value {
+    color: #ffd700;
+}
+
+.summary-extra {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 10px;
+    font-size: 0.85em;
+    color: #aaa;
+    flex-wrap: wrap;
+}
+
+.summary-extra strong {
+    color: #fff;
+}
+
+.summary-extra .warning {
+    color: #ff6b6b;
+}
+
+/* 履歴テーブル */
+.history-table-section h2 {
+    font-size: 1em;
+    color: #888;
+    margin-bottom: 10px;
+}
+
+.history-table-wrapper {
+    overflow-x: auto;
+}
+
+.history-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85em;
+}
+
+.history-table th {
+    background: #1a1a2e;
+    color: #888;
+    padding: 8px 6px;
+    text-align: center;
+    font-weight: 600;
+}
+
+.history-table td {
+    padding: 8px 6px;
+    text-align: center;
+    border-bottom: 1px solid #333;
+}
+
+.history-table tr:nth-child(even) {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.history-table tr.tenjou {
+    background: rgba(255, 107, 107, 0.1);
+}
+
+.history-table tr.hot {
+    background: rgba(255, 165, 2, 0.1);
+}
+
+.history-table .num {
+    color: #666;
+    font-size: 0.85em;
+}
+
+.history-table .time {
+    color: #70a1ff;
+}
+
+.history-table .games {
+    font-weight: 600;
+}
+
+.history-table .games.deep {
+    color: #ff6b6b;
+}
+
+.history-table .games.shallow {
+    color: #2ed573;
+}
+
+.history-table .type {
+    font-weight: 600;
+}
+
+.history-table .type.art {
+    color: #ff6b6b;
+}
+
+.history-table .type.bb {
+    color: #ffd700;
+}
+
+.history-table .type.rb {
+    color: #70a1ff;
+}
+
+.history-table .rensa.hot {
+    color: #ffa502;
+    font-weight: 700;
+}
+
+.history-table .medals {
+    color: #aaa;
+}
+
+.no-history {
+    text-align: center;
+    padding: 30px;
+    background: #252541;
+    border-radius: 8px;
+    color: #888;
+}
+
+/* グラフ分析 */
+.history-analysis h2 {
+    font-size: 1em;
+    color: #888;
+    margin-bottom: 10px;
+}
+
+.analysis-card {
+    background: #252541;
+    border-radius: 8px;
+    padding: 15px;
+    border-left: 4px solid #ffa502;
+}
+
+.analysis-pattern {
+    font-size: 1.1em;
+    font-weight: 700;
+    color: #ffa502;
+    margin-bottom: 6px;
+}
+
+.analysis-desc {
+    font-size: 0.9em;
+    color: #ccc;
+    margin-bottom: 8px;
+}
+
+.analysis-rec {
+    font-size: 0.85em;
+    color: #2ed573;
+    padding: 8px;
+    background: rgba(46, 213, 115, 0.1);
+    border-radius: 4px;
+}
+
+/* ===================================
+   設定バッジ（コンパクト）
+   =================================== */
+.setting-badge-sm {
+    display: inline-block;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 0.7em;
+    font-weight: 800;
+    min-width: 18px;
+    text-align: center;
+}
+
+.setting-badge-sm.setting-6 {
+    background: rgba(255, 71, 87, 0.3);
+    color: #ff4757;
+    border: 1px solid rgba(255, 71, 87, 0.5);
+}
+
+.setting-badge-sm.setting-5 {
+    background: rgba(255, 165, 2, 0.3);
+    color: #ffa502;
+    border: 1px solid rgba(255, 165, 2, 0.5);
+}
+
+.setting-badge-sm.setting-4 {
+    background: rgba(255, 230, 0, 0.25);
+    color: #ffe600;
+    border: 1px solid rgba(255, 230, 0, 0.4);
+}
+
+.setting-badge-sm.setting-3 {
+    background: rgba(46, 213, 115, 0.25);
+    color: #2ed573;
+    border: 1px solid rgba(46, 213, 115, 0.4);
+}
+
+.setting-badge-sm.setting-2 {
+    background: rgba(112, 161, 255, 0.2);
+    color: #70a1ff;
+    border: 1px solid rgba(112, 161, 255, 0.4);
+}
+
+.setting-badge-sm.setting-1,
+.setting-badge-sm.setting-0 {
+    background: rgba(200, 200, 200, 0.15);
+    color: #999;
+    border: 1px solid rgba(200, 200, 200, 0.3);
+}
+
+/* ランキング番号（コンパクト行） */
+.compact-rank-num {
+    font-size: 0.7em;
+    font-weight: 700;
+    color: #666;
+    min-width: 20px;
+}
+
+/* TOP3設定推定行 */
+.top3-setting {
+    margin-top: 4px;
+}
+
+/* RB/G数など重要度の低いdata-cell */
+.data-cell-minor {
+    min-width: 40px;
+    padding: 4px 6px;
+}
+
+.data-cell-minor .data-value {
+    font-size: 0.9em;
+    font-weight: 700;
+}
+
+/* ===== 答え合わせページ ===== */
+.verify-top-header {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: center;
+    padding: 16px 8px;
+    margin-bottom: 8px;
+}
+.verify-top-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    min-width: 80px;
+}
+.verify-top-rate {
+    font-size: 2em;
+    font-weight: 900;
+    line-height: 1;
+}
+.verify-top-rate.rainbow {
+    background: linear-gradient(90deg, #ff0000, #ff8800, #ffee00, #00ff88, #0088ff, #aa00ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+.verify-top-rate.hot { color: #ff2222; }
+.verify-top-rate.good { color: #ff6600; }
+.verify-top-rate.ok { color: #cccc00; }
+.verify-top-rate.cold { color: #4466aa; }
+.verify-top-machine {
+    font-size: 0.85em;
+    font-weight: 700;
+    color: #fff;
+}
+.verify-top-store {
+    font-size: 0.7em;
+    color: #aaa;
+}
+.verify-summary {
+    margin: 15px 0;
+    padding: 15px;
+    background: #1a1a2e;
+    border-radius: 12px;
+}
+
+.verify-accuracy {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.accuracy-circle {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid #555;
+    flex-shrink: 0;
+}
+
+.accuracy-circle.good { border-color: #2ed573; }
+.accuracy-circle.ok { border-color: #ffa502; }
+.accuracy-circle.bad { border-color: #ff6b6b; }
+
+.accuracy-num {
+    font-size: 1.6em;
+    font-weight: 700;
+    color: #fff;
+}
+
+.accuracy-label {
+    font-size: 0.7em;
+    color: #aaa;
+}
+
+.accuracy-detail {
+    flex: 1;
+}
+
+.accuracy-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 3px 0;
+    font-size: 0.85em;
+}
+
+.acc-label { color: #aaa; }
+.acc-value { color: #fff; font-weight: 700; }
+.acc-value.hit { color: #2ed573; }
+.acc-value.surprise { color: #ffd700; }
+
+/* 機種別的中率 */
+.machine-accuracy-breakdown {
+    margin-top: 15px;
+    padding-top: 12px;
+    border-top: 1px solid #2a3a5c;
+}
+
+.machine-acc-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 0;
+    font-size: 0.85em;
+}
+
+.ma-icon { font-size: 1.1em; }
+.ma-name { color: #ccc; flex: 1; }
+.ma-rate {
+    font-weight: 700;
+    font-size: 1em;
+    min-width: 40px;
+    text-align: right;
+}
+.ma-rate.good { color: #2ed573; }
+.ma-rate.ok { color: #ffa502; }
+.ma-rate.bad { color: #ff6b6b; }
+.ma-detail { color: #888; font-size: 0.85em; }
+.ma-surprise { color: #ffd700; font-size: 0.8em; }
+
+.machine-acc-card {
+    background: rgba(30, 40, 60, 0.5);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+}
+.mac-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+.mac-body {
+    padding-left: 4px;
+}
+.mac-row {
+    color: #aaa;
+    font-size: 0.82em;
+    padding: 2px 0;
+}
+.mac-miss {
+    color: #ffa502;
+}
+
+.verify-section {
+    margin: 20px 0;
+}
+
+.verify-section h2 {
+    font-size: 1.1em;
+    margin-bottom: 10px;
+    color: #fff;
+}
+
+.verify-store {
+    margin-bottom: 15px;
+}
+
+.verify-store-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.verify-store-name {
+    font-size: 0.9em;
+    color: #aaa;
+    margin-bottom: 0;
+    font-weight: 400;
+}
+
+.store-acc {
+    font-size: 0.75em;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 10px;
+    white-space: nowrap;
+}
+.store-acc.good { background: rgba(46,213,115,0.2); color: #2ed573; }
+.store-acc.ok { background: rgba(255,165,2,0.2); color: #ffa502; }
+.store-acc.bad { background: rgba(255,107,107,0.2); color: #ff6b6b; }
+
+/* (旧verifyレイアウト — 統合済み) */
+
+/* ===================================
+   波グラフ・当たり履歴（recommend詳細内）
+   =================================== */
+
+.line-chart-container {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 6px;
+    padding: 8px 4px;
+    overflow: hidden;
+}
+.line-chart-container svg {
+    width: 100%;
+    height: auto;
+    display: block;
+    max-width: 100%;
+}
+.line-chart {
+    width: 100%;
+    height: 120px;
+}
+.sparkline-section {
+    padding: 6px 8px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+}
+.sparkline-label {
+    font-size: 0.7em;
+    color: #888;
+    margin-bottom: 4px;
+}
+.sparkline-chart {
+    width: 100%;
+    height: 45px;
+}
+
+/* 当たり履歴テーブル */
+.hit-history-table {
+    max-height: 300px;
+    overflow-y: auto;
+    border-radius: 6px;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.hit-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    font-size: 0.85em;
+}
+
+.hit-row:last-child {
+    border-bottom: none;
+}
+
+.hit-row.deep {
+    background: rgba(255, 107, 107, 0.08);
+}
+
+.hit-row.rensa {
+    background: rgba(46, 213, 115, 0.08);
+}
+
+.hit-time {
+    color: #70a1ff;
+    font-size: 0.9em;
+    min-width: 42px;
+}
+
+.hit-type {
+    font-weight: 700;
+    color: #fff;
+    min-width: 30px;
+}
+
+.hit-games {
+    color: #aaa;
+    margin-left: auto;
+}
+
+.hit-games.bad {
+    color: #ff6b6b;
+    font-weight: 700;
+}
+
+.hit-games.good {
+    color: #2ed573;
+    font-weight: 700;
+}
+
+/* ===================================
+   答え合わせ - 当たり履歴展開セクション
+   =================================== */
+
+/* 行ラッパー */
+.verify-row-wrapper {
+    /* 個々の行＋展開部分を包む */
+}
+
+/* クリック可能な行 */
+.verify-row.has-detail {
+    cursor: pointer;
+    -webkit-tap-highlight-color: rgba(112, 161, 255, 0.15);
+    transition: background 0.15s;
+}
+
+.verify-row.has-detail:active {
+    background: rgba(112, 161, 255, 0.1);
+}
+
+.verify-row.expanded {
+    background: rgba(112, 161, 255, 0.08);
+    border-bottom: none;
+}
+
+/* 展開アイコン */
+.vr-expand-icon {
+    font-size: 0.6em;
+    color: #555;
+    margin-left: 2px;
+    display: inline-block;
+    transition: transform 0.2s;
+}
+
+.verify-row.expanded .vr-expand-icon {
+    transform: rotate(180deg);
+    color: #70a1ff;
+}
+
+/* 展開詳細セクション */
+.verify-detail {
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.25);
+    border-bottom: 1px solid #1a1a2e;
+}
+
+.verify-detail.hidden {
+    display: none;
+}
+
+/* サマリ統計グリッド */
+.vd-summary {
+    margin-bottom: 10px;
+}
+
+.vd-stat-grid {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.vd-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 5px 8px;
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 5px;
+    min-width: 52px;
+}
+
+.vd-stat-value {
+    font-size: 0.95em;
+    font-weight: 700;
+    color: #fff;
+}
+
+.vd-stat-label {
+    font-size: 0.6em;
+    color: #666;
+    margin-top: 1px;
+}
+
+.vd-stat.hot .vd-stat-value {
+    color: #ffa502;
+}
+
+.vd-stat.hot {
+    background: rgba(255, 165, 2, 0.15);
+}
+
+.vd-stat.warn .vd-stat-value {
+    color: #ff6b6b;
+}
+
+.vd-stat.warn {
+    background: rgba(255, 107, 107, 0.1);
+}
+
+.vd-stat.deep .vd-stat-value {
+    color: #ff6b6b;
+}
+
+.vd-stat.deep {
+    background: rgba(255, 107, 107, 0.08);
+}
+
+/* 当たり履歴テーブル */
+.vd-history-table {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.vd-history-table table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.78em;
+}
+
+.vd-history-table th {
+    background: rgba(0, 0, 0, 0.3);
+    color: #888;
+    padding: 5px 4px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.9em;
+    position: sticky;
+    top: 0;
+}
+
+.vd-history-table td {
+    padding: 4px 3px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.vd-history-table tbody tr:nth-child(even) {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+/* 天井行 */
+.vd-history-table tr.tenjou {
+    background: rgba(255, 107, 107, 0.12) !important;
+}
+
+/* 深いハマり行 */
+.vd-history-table tr.deep {
+    background: rgba(255, 107, 107, 0.06);
+}
+
+/* 連チャンホット行 */
+.vd-history-table tr.hot-chain {
+    background: rgba(255, 165, 2, 0.1) !important;
+}
+
+/* 各カラムスタイル */
+.vd-num {
+    color: #555;
+    font-size: 0.85em;
+}
+
+.vd-time {
+    color: #70a1ff;
+}
+
+.vd-games {
+    font-weight: 600;
+    color: #ccc;
+}
+
+.vd-games.deep {
+    color: #ff6b6b;
+    font-weight: 800;
+}
+
+.vd-games.shallow {
+    color: #2ed573;
+}
+
+.vd-type {
+    font-weight: 600;
+}
+
+.vd-type.art {
+    color: #ff6b6b;
+}
+
+.vd-type.bb {
+    color: #ffd700;
+}
+
+.vd-type.rb {
+    color: #70a1ff;
+}
+
+.vd-chain {
+    color: #888;
+}
+.vd-chain.chain-2 {
+    color: #70a1ff;
+    font-weight: 600;
+}
+.vd-chain.chain-3 {
+    color: #2ed573;
+    font-weight: 600;
+}
+.vd-chain.chain-5 {
+    color: #ffa502;
+    font-weight: 700;
+}
+.vd-chain.chain-8 {
+    color: #ff4757;
+    font-weight: 700;
+}
+
+.vd-medals {
+    color: #aaa;
+}
+
+/* ===================================
+   店舗別曜日傾向: 改善スタイル
+   =================================== */
+
+/* 店舗名リンク */
+.schedule-store-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.schedule-store-link {
+    font-weight: 600;
+    font-size: 0.95em;
+    color: #70a1ff;
+    text-decoration: underline;
+}
+
+.schedule-store-link:active {
+    color: #9ab8ff;
+}
+
+/* 今日の評価ラベル */
+.schedule-today-rating {
+    font-size: 0.7em;
+    color: #ffd700;
+    font-weight: 600;
+}
+
+.schedule-today-rating.good {
+    color: #4ade80;
+}
+
+.schedule-today-rating.weak {
+    color: #f87171;
+}
+
+/* 推奨/回避のカード装飾 */
+.schedule-card-full.schedule-recommended {
+    border-left: 3px solid #4ade80;
+}
+
+.schedule-card-full.schedule-avoid {
+    border-left: 3px solid #f87171;
+    opacity: 0.85;
+}
+
+/* ===================================
+   店舗一覧（ディレクトリ）
+   =================================== */
+
+.store-directory {
+    margin-bottom: 20px;
+}
+
+.store-directory h2 {
+    font-size: 1em;
+    color: #888;
+    margin-bottom: 8px;
+}
+
+.store-directory-note {
+    font-size: 0.8em;
+    color: #666;
+    margin-bottom: 12px;
+}
+
+.store-directory-card {
+    background: #252541;
+    border-radius: 8px;
+    padding: 12px 15px;
+    margin-bottom: 8px;
+}
+
+.store-directory-card.store-dir-good {
+    border-left: 3px solid #4ade80;
+}
+
+.store-directory-card.store-dir-weak {
+    border-left: 3px solid #f87171;
+    opacity: 0.85;
+}
+
+.store-dir-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.store-dir-name {
+    font-weight: 600;
+    font-size: 0.95em;
+    color: #fff;
+}
+
+.store-dir-rating {
+    font-size: 0.75em;
+    color: #ffd700;
+}
+
+.store-dir-rating.good {
+    color: #4ade80;
+}
+
+.store-dir-rating.weak {
+    color: #f87171;
+}
+
+.store-dir-machines {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.store-dir-machine-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 12px;
+    background: rgba(112, 161, 255, 0.12);
+    border: 1px solid rgba(112, 161, 255, 0.25);
+    border-radius: 6px;
+    color: #70a1ff;
+    font-size: 0.85em;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.store-dir-machine-link:active {
+    background: rgba(112, 161, 255, 0.3);
+}
+
+.store-dir-icon {
+    font-size: 1.1em;
+}
+
+.store-dir-machine-name {
+    font-size: 0.9em;
+}
+
+/* ===================================
+   夜間モード（22:45以降 翌日予想）
+   =================================== */
+
+/* 明日予想モードバッジ */
+.mode-badge.tomorrow {
+    background: linear-gradient(135deg, #2d1b69, #44337a);
+    color: #c9b8ff;
+    border: 1px solid rgba(124, 93, 250, 0.4);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+/* 明日の予想セクション */
+.tomorrow-section {
+    margin: 8px 0;
+    padding: 8px;
+    background: rgba(0, 0, 0, 0.25);
+    border-radius: 8px;
+}
+
+.tomorrow-prediction {
+    margin: 8px 0;
+    padding: 10px;
+    background: linear-gradient(135deg, rgba(45, 27, 105, 0.3), rgba(68, 51, 122, 0.2));
+    border: 1px solid rgba(124, 93, 250, 0.25);
+    border-radius: 8px;
+}
+
+/* 設定推移行 */
+.setting-history-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 6px 0;
+    font-size: 0.85em;
+    flex-wrap: wrap;
+}
+
+.setting-history-label {
+    color: #aaa;
+    font-weight: 600;
+    font-size: 0.85em;
+}
+
+.setting-trend {
+    font-weight: 700;
+    font-size: 0.9em;
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+.setting-trend.minus {
+    background: rgba(255, 107, 107, 0.15);
+    color: #ff6b6b;
+}
+
+.setting-trend.plus {
+    background: rgba(46, 213, 115, 0.15);
+    color: #2ed573;
+}
+
+.setting-trend.improving {
+    background: rgba(112, 161, 255, 0.15);
+    color: #70a1ff;
+}
+
+.setting-trend.flat {
+    background: rgba(100, 100, 100, 0.2);
+    color: #999;
+}
+
+/* 過去分析評価行 */
+.past-eval-row {
+    margin-top: 6px;
+    font-size: 0.85em;
+}
+
+/* ランク別スタイル: unit-card-compact にも適用 */
+.unit-card-compact.rank-s {
+    border-left: 3px solid #ff6b6b;
+}
+
+.unit-card-compact.rank-a {
+    border-left: 3px solid #ffa502;
+}
+
+.unit-card-compact.rank-b {
+    border-left: 3px solid #2ed573;
+}
+
+.unit-card-compact.rank-c {
+    border-left: 3px solid #70a1ff;
+}
+
+.unit-card-compact.rank-d {
+    border-left: 3px solid #747d8c;
+}
+
+/* unit-card-compact に空き状況スタイル適用 */
+.unit-card-compact.avail-card-empty {
+    background: rgba(46, 213, 115, 0.15);
+    border-left-color: #2ed573 !important;
+}
+
+.unit-card-compact.avail-card-playing {
+    background: rgba(255, 107, 107, 0.1);
+    opacity: 0.75;
+}
+.prev-day-rec.no-data {
+    color: #666;
+    font-style: italic;
+}
+
+.prev-prob {
+    font-weight: 600;
+}
+.prev-prob.excellent { color: #ffd700; }
+.prev-prob.good { color: #2ed573; }
+.prev-prob.bad { color: #ff6b6b; }
+
+/* === v2 台カード === */
+.unit-card-v2 {
+    background: rgba(255,255,255,0.04);
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    border-left: 3px solid #555;
+    cursor: pointer;
+}
+.unit-card-v2.rank-s { border-left-color: #ff6b6b; }
+.unit-card-v2.rank-a { border-left-color: #ffa502; }
+.unit-card-v2.rank-b { border-left-color: #2ed573; }
+.unit-card-v2.rank-c { border-left-color: #70a1ff; }
+.unit-card-v2.rank-d { border-left-color: #747d8c; }
+
+.v2-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 6px;
+}
+.v2-rank-num { color: #888; font-size: 0.85em; font-weight: 700; }
+.v2-unit-id {
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.9em;
+    text-decoration: none;
+}
+.v2-machine {
+    color: #74b9ff;
+    font-size: 0.9em;
+    font-weight: 600;
+}
+.v2-store {
+    color: #ffd700;
+    font-size: 0.85em;
+    text-decoration: none;
+    font-weight: 500;
+}
+.v2-rank {
+    padding: 1px 8px;
+    border-radius: 4px;
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.85em;
+    margin-left: auto;
+}
+
+.v2-reason {
+    font-size: 0.85em;
+    color: #ddd;
+    margin-bottom: 6px;
+    padding: 4px 8px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 6px;
+}
+
+.v2-days {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+.v2-day {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.82em;
+}
+.v2-day.no-data {
+    color: #666;
+    font-style: italic;
+}
+.v2-day-label {
+    color: #888;
+    min-width: 52px;
+    font-size: 0.9em;
+}
+.v2-day-art { color: #ffd700; font-weight: 600; }
+.v2-day-rb { color: #70a1ff; }
+.v2-day-prob { font-weight: 600; }
+.v2-day-prob.excellent { color: #ffd700; }
+.v2-day-prob.good { color: #2ed573; }
+.v2-day-prob.bad { color: #ff6b6b; }
+
+.v2-setting { margin-top: 4px; }
+
+.v2-detail-reasons { margin-bottom: 6px; }
+.v2-detail-today {
+    font-size: 0.85em;
+    color: #aaa;
+    margin-bottom: 4px;
+}
+.v2-detail-trend {
+    font-size: 0.82em;
+    color: #888;
+}
+
+.build-time { font-size: 0.7em; color: #555; }
+
+
+/* ===================================
+   台履歴ページ (unit_history.html)
+   =================================== */
+
+/* メタ情報 */
+.uh-meta {
+    font-size: 0.8em;
+    color: #888;
+    margin-top: 4px;
+}
+.uh-meta-range {
+    color: #666;
+}
+
+/* 全期間サマリー */
+.uh-total-summary {
+    background: linear-gradient(135deg, #1a1a3e 0%, #151530 100%);
+    border: 1px solid #2a3a5c;
+    border-radius: 10px;
+    padding: 14px;
+    margin-bottom: 16px;
+}
+.uh-total-title {
+    font-size: 0.8em;
+    color: #888;
+    margin-bottom: 10px;
+    text-align: center;
+}
+.uh-total-grid {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.uh-total-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px 12px;
+    background: rgba(0, 0, 0, 0.25);
+    border-radius: 6px;
+    min-width: 60px;
+}
+.uh-total-value {
+    font-size: 1.2em;
+    font-weight: 800;
+    color: #fff;
+}
+.uh-total-label {
+    font-size: 0.65em;
+    color: #888;
+    margin-top: 2px;
+}
+.uh-total-item.excellent .uh-total-value { color: #2ed573; }
+.uh-total-item.good .uh-total-value { color: #70a1ff; }
+.uh-total-item.bad .uh-total-value { color: #ff6b6b; }
+.uh-total-item.plus .uh-total-value { color: #2ed573; }
+.uh-total-item.minus .uh-total-value { color: #ff6b6b; }
+
+/* 日別アコーディオン */
+.uh-days {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.uh-day-card {
+    background: #252541;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #333;
+    transition: border-color 0.2s;
+}
+.uh-day-card.open {
+    border-color: #4a5aac;
+}
+
+/* 日付ヘッダー */
+.uh-day-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 14px;
+    cursor: pointer;
+    user-select: none;
+    flex-wrap: wrap;
+}
+.uh-day-header:active {
+    background: rgba(255,255,255,0.03);
+}
+.uh-day-date {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.uh-date-text {
+    font-weight: 700;
+    font-size: 0.95em;
+    color: #ddd;
+}
+.uh-day-badge {
+    font-size: 0.65em;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-weight: 700;
+}
+.uh-day-badge.good {
+    background: rgba(46, 213, 115, 0.2);
+    color: #2ed573;
+}
+.uh-day-badge.bad {
+    background: rgba(255, 107, 107, 0.2);
+    color: #ff6b6b;
+}
+.uh-day-quick {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8em;
+    color: #aaa;
+    flex: 1;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+}
+.uh-q-art strong {
+    color: #fff;
+    font-size: 1.1em;
+}
+.uh-q-rb {
+    color: #70a1ff;
+}
+.uh-q-prob {
+    font-weight: 600;
+}
+.uh-q-prob.excellent { color: #2ed573; }
+.uh-q-prob.good { color: #70a1ff; }
+.uh-q-prob.bad { color: #ff6b6b; }
+.uh-q-diff {
+    font-weight: 700;
+    font-size: 0.9em;
+}
+.uh-q-diff.plus { color: #2ed573; }
+.uh-q-diff.minus { color: #ff6b6b; }
+.uh-day-toggle {
+    color: #666;
+    font-size: 0.8em;
+    min-width: 16px;
+    text-align: center;
+}
+
+/* 展開ボディ */
+.uh-day-body {
+    padding: 0 14px 14px;
+}
+
+/* 日サマリーグリッド */
+.uh-day-summary {
+    margin-bottom: 12px;
+}
+.uh-ds-grid {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+.uh-ds-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 6px 10px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    min-width: 55px;
+}
+.uh-ds-val {
+    font-size: 1em;
+    font-weight: 700;
+    color: #fff;
+}
+.uh-ds-lbl {
+    font-size: 0.6em;
+    color: #777;
+    margin-top: 1px;
+}
+.uh-ds-item.excellent .uh-ds-val { color: #2ed573; }
+.uh-ds-item.good .uh-ds-val { color: #70a1ff; }
+.uh-ds-item.bad .uh-ds-val { color: #ff6b6b; }
+.uh-ds-item.plus .uh-ds-val { color: #2ed573; }
+.uh-ds-item.minus .uh-ds-val { color: #ff6b6b; }
+.uh-ds-item.highlight {
+    background: rgba(255, 215, 0, 0.1);
+}
+.uh-ds-item.highlight .uh-ds-val {
+    color: #ffd700;
+}
+
+/* 当たり履歴テーブル */
+.uh-hit-table {
+    margin-top: 8px;
+}
+.uh-hit-title {
+    font-size: 0.8em;
+    color: #888;
+    margin-bottom: 6px;
+}
+.uh-hit-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+.uh-hit-wrapper table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82em;
+}
+.uh-hit-wrapper th {
+    background: #1a1a2e;
+    color: #888;
+    padding: 6px 5px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.9em;
+    position: sticky;
+    top: 0;
+}
+.uh-hit-wrapper td {
+    padding: 6px 5px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.uh-hit-wrapper tr:nth-child(even) {
+    background: rgba(0, 0, 0, 0.1);
+}
+.uh-hit-wrapper tr.tenjou {
+    background: rgba(255, 107, 107, 0.15);
+}
+.uh-hit-wrapper tr.deep {
+    background: rgba(255, 107, 107, 0.08);
+}
+.uh-hit-wrapper tr.rensa {
+    background: rgba(46, 213, 115, 0.08);
+}
+.uh-hit-wrapper .num {
+    color: #555;
+    font-size: 0.85em;
+}
+.uh-hit-wrapper .time {
+    color: #70a1ff;
+    white-space: nowrap;
+}
+.uh-hit-wrapper .games {
+    font-weight: 600;
+}
+.uh-hit-wrapper .games.deep {
+    color: #ff6b6b;
+}
+.uh-hit-wrapper .games.shallow {
+    color: #2ed573;
+}
+.uh-hit-wrapper .type {
+    font-weight: 600;
+}
+.uh-hit-wrapper .type.art,
+.uh-hit-wrapper .type.at,
+.uh-hit-wrapper .type.big {
+    color: #ff6b6b;
+}
+.uh-hit-wrapper .type.reg,
+.uh-hit-wrapper .type.rb {
+    color: #70a1ff;
+}
+.uh-hit-wrapper .medals {
+    color: #bbb;
+}
+
+/* 履歴なし */
+.uh-no-hist {
+    font-size: 0.8em;
+    color: #666;
+    text-align: center;
+    padding: 12px 0;
+}
+.uh-no-data {
+    text-align: center;
+    padding: 40px 20px;
+    background: #252541;
+    border-radius: 8px;
+    color: #888;
+}
+
+/* スマホ最適化 */
+@media (max-width: 480px) {
+    .uh-day-header {
+        padding: 10px 10px;
+        gap: 6px;
+    }
+    .uh-day-body {
+        padding: 0 10px 12px;
+    }
+    .uh-ds-item {
+        padding: 5px 7px;
+        min-width: 48px;
+    }
+    .uh-ds-val {
+        font-size: 0.9em;
+    }
+    .uh-hit-wrapper table {
+        font-size: 0.78em;
+    }
+    .uh-hit-wrapper th,
+    .uh-hit-wrapper td {
+        padding: 5px 3px;
+    }
+    .uh-total-item {
+        padding: 6px 8px;
+        min-width: 50px;
+    }
+    .uh-total-value {
+        font-size: 1em;
+    }
+}
+
+/* ===================================
+   フィルターバー
+   =================================== */
+
+.filter-bar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.filter-select {
+    flex: 1;
+    padding: 8px 12px;
+    background: #1a2332;
+    color: #ddd;
+    border: 1px solid #2a3a5c;
+    border-radius: 6px;
+    font-size: 0.85em;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 30px;
+    min-width: 0;
+}
+
+.filter-select:focus {
+    outline: none;
+    border-color: #70a1ff;
+}
+
+.filter-machine,
+.filter-store {
+    /* JS hook classes — inherit from .filter-select */
+}
+
+.filter-bar-links {
+    width: 100%;
+    flex-basis: 100%;
+    margin-bottom: 8px;
+}
+
+/* ===================================
+   爆発台カード - 当たり履歴展開
+   =================================== */
+
+/* トグルボタン */
+.yh-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px;
+    margin-top: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+    color: #888;
+    font-size: 0.8em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.yh-toggle:active {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.yh-toggle.active {
+    color: #70a1ff;
+    background: rgba(112, 161, 255, 0.1);
+}
+
+.yh-toggle-arrow {
+    font-size: 0.85em;
+    display: inline-block;
+    transition: transform 0.2s;
+}
+
+.yh-toggle.active .yh-toggle-arrow {
+    transform: rotate(180deg);
+}
+
+/* 展開パネル */
+.yh-panel {
+    margin-top: 6px;
+    padding: 8px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 6px;
+    max-height: 400px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.yh-panel.hidden {
+    display: none;
+}
+
+/* 履歴リスト */
+.yh-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+/* 履歴行 */
+.yh-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 8px;
+    border-radius: 4px;
+    font-size: 0.82em;
+}
+
+/* ART/AT/BIG → 緑系 */
+.yh-row.yh-art {
+    background: rgba(46, 213, 115, 0.08);
+    border-left: 2px solid #2ed573;
+}
+
+/* RB/REG → 青系 */
+.yh-row.yh-rb {
+    background: rgba(112, 161, 255, 0.08);
+    border-left: 2px solid #70a1ff;
+}
+
+/* 連チャン行 → オレンジ系 */
+.yh-row.yh-chain {
+    background: rgba(255, 165, 2, 0.12);
+    border-left: 2px solid #ffa502;
+}
+
+/* 連チャンマーカー */
+.yh-chain-marker {
+    font-size: 0.8em;
+    flex-shrink: 0;
+    display: inline-block;
+    width: 1.2em;
+    text-align: center;
+}
+
+/* 時刻 */
+.yh-time {
+    color: #70a1ff;
+    min-width: 40px;
+    font-size: 0.95em;
+}
+
+/* 開始G数 */
+.yh-start {
+    color: #ccc;
+    min-width: 45px;
+    font-weight: 600;
+}
+
+.yh-start.deep {
+    color: #ff6b6b;
+}
+
+.yh-start.shallow {
+    color: #2ed573;
+}
+
+/* タイプ表示 */
+.yh-type {
+    font-weight: 700;
+    min-width: 32px;
+}
+
+.yh-row.yh-art .yh-type {
+    color: #2ed573;
+}
+
+.yh-row.yh-rb .yh-type {
+    color: #70a1ff;
+}
+
+/* 連チャン行のタイプも緑で */
+.yh-row.yh-chain .yh-type {
+    color: #ffa502;
+}
+
+/* 獲得枚数 */
+.yh-medals {
+    color: #aaa;
+    margin-left: auto;
+    font-weight: 600;
+}
+
+/* === 初当たり表示 === */
+/* 初当たり行 */
+.yh-row.yh-first-hit {
+    background: rgba(255, 215, 0, 0.12);
+    border-left: 2px solid #ffd700;
+}
+
+/* 初当たりバッジ（履歴行内） */
+.yh-first-hit-badge {
+    display: inline-block;
+    padding: 0 3px;
+    border-radius: 3px;
+    font-size: 0.65em;
+    font-weight: 700;
+    background: rgba(255, 215, 0, 0.25);
+    color: #ffd700;
+    white-space: nowrap;
+    margin-left: 2px;
+    vertical-align: middle;
+}
+
+/* 初当たり回数（爆発台カード内） */
+.first-hit-count {
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: 6px;
+    font-size: 0.78em;
+    font-weight: 600;
+    background: rgba(255, 215, 0, 0.15);
+    color: #ffd700;
+    white-space: nowrap;
+}
+.first-hit-count .num {
+    font-weight: 700;
+}
+
+/* 初当たり回数（TOP3の直近データ行内、小さめ） */
+.first-hit-count-sm {
+    display: inline-block;
+    padding: 1px 4px;
+    border-radius: 4px;
+    font-size: 0.72em;
+    font-weight: 600;
+    background: rgba(255, 215, 0, 0.12);
+    color: #ffd700;
+    white-space: nowrap;
+}
+
+/* 仮説セクション */
+.hypotheses-section {
+    margin-bottom: 20px;
+}
+.hypotheses-section h2 {
+    font-size: 1.1em;
+    margin-bottom: 12px;
+}
+.hypothesis-card {
+    background: rgba(30, 40, 60, 0.6);
+    border-left: 3px solid #ffa502;
+    border-radius: 0 8px 8px 0;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+}
+.hyp-title {
+    font-weight: 700;
+    color: #ffa502;
+    margin-bottom: 6px;
+    font-size: 0.95em;
+}
+.hyp-evidence {
+    color: #aaa;
+    font-size: 0.82em;
+    margin-bottom: 4px;
+    line-height: 1.4;
+}
+.hyp-action {
+    color: #2ed573;
+    font-size: 0.82em;
+    margin-bottom: 4px;
+    line-height: 1.4;
+}
+.hyp-confidence {
+    color: #666;
+    font-size: 0.75em;
+    text-align: right;
+}
+
+/* 予想結果バッジ */
+.prediction-badge {
+    display: inline-block;
+    padding: 1px 5px;
+    border-radius: 6px;
+    font-size: 0.65em;
+    font-weight: 600;
+    margin-left: 4px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+.prediction-badge.hit {
+    background: #1e5128;
+    color: #a8e6a3;
+}
+.prediction-badge.missed {
+    background: #5a2020;
+    color: #ff9999;
+}
+.prediction-badge.miss {
+    background: #4a3f20;
+    color: #ffd700;
+}
+
+/* 当たり履歴展開パネル（推薦ページ用） */
+.hit-detail-panel {
+    margin: 4px 0 8px 0;
+    padding: 8px;
+    background: var(--card-bg, #1a1a2e);
+    border-radius: 6px;
+    border: 1px solid rgba(255,255,255,0.1);
+    font-size: 0.8em;
+}
+.hit-summary-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 6px;
+    color: #aaa;
+    font-size: 0.9em;
+}
+.hit-summary-row .deep { color: #ff6b6b; }
+.hit-detail-table { width: 100%; border-collapse: collapse; }
+.hit-detail-table th {
+    font-size: 0.75em;
+    color: #888;
+    padding: 2px 4px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.hit-detail-table td {
+    padding: 2px 4px;
+    text-align: center;
+    font-size: 0.85em;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.hit-detail-table tr.tenjou { background: rgba(255,100,100,0.15); }
+.hit-detail-table tr.tenjou td { color: #ff6b6b; font-weight: 700; }
+.hit-detail-table tr.hot-chain { background: rgba(255,200,0,0.1); }
+.hit-detail-table tr.deep { background: rgba(255,107,107,0.08); }
+.hit-detail-table tr.deep td { color: #ff6b6b; font-weight: 700; }
+.hit-detail-table td.deep { color: #ff6b6b; font-weight: 700; }
+.hit-detail-table td.shallow { color: #4ecdc4; }
+.prev-day-rec.has-detail { cursor: pointer; }
+.prev-day-rec .expand-icon {
+    font-size: 0.7em;
+    margin-left: 4px;
+    opacity: 0.6;
+}
+
+/* S/Aフィルターセクション（トップページ） */
+.sa-filter-section { margin-top: 16px; }
+.sa-filter-section h3 { font-size: 0.95em; color: #aaa; margin-bottom: 8px; }
+.sa-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 10px;
+}
+.sa-filter-btn {
+    padding: 4px 10px;
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 16px;
+    background: transparent;
+    color: #ccc;
+    font-size: 0.8em;
+    cursor: pointer;
+    white-space: nowrap;
+}
+.sa-filter-btn.active {
+    background: rgba(100,200,255,0.2);
+    border-color: rgba(100,200,255,0.5);
+    color: #fff;
+}
+.sa-recs-list { display: flex; flex-direction: column; gap: 8px; }
+.sa-rec-card {
+    display: block;
+    padding: 10px 12px;
+    background: var(--card-bg, #1a1a2e);
+    border-radius: 8px;
+    border-left: 3px solid rgba(255,255,255,0.1);
+}
+.sa-rec-card.rank-s { border-left-color: #ff6b6b; }
+.sa-rec-card.rank-a { border-left-color: #ffa502; }
+.sa-rec-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+}
+.sa-rec-store { font-size: 0.85em; color: #ccc; }
+.sa-rec-unit { font-size: 0.85em; font-weight: bold; color: #fff; }
+.sa-rec-data {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: 0.8em;
+    color: #aaa;
+}
+.sa-art { color: #4ecdc4; font-weight: bold; }
+.sa-prob { font-size: 0.9em; }
+.sa-prev { color: #888; }
+.sa-rec-reason {
+    margin-top: 4px;
+    font-size: 0.75em;
+    color: #777;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* verify: 結果列のART回数サブテキスト */
+.vr-art-sub {
+    display: block;
+    font-size: 0.7em;
+    color: #888;
+    margin-top: 1px;
+}
+
+/* verify: 予想/結果の◯✕マーク */
+.vr-mark {
+    font-size: 1.1em;
+    font-weight: bold;
+    margin-right: 3px;
+}
+.vr-mark.excellent { color: #ff6b6b; }
+.vr-mark.good { color: #4ecdc4; }
+.vr-mark.neutral { color: #666; }
+.vr-mark.bad { color: #aaa; }
+.vr-mark.nodata { color: #555; }
+.vr-result-cell {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.vr-prob-num { font-size: 0.85em; }
+/* 凡例グループ */
+.legend-group { margin-bottom: 10px; }
+.legend-title { font-size: 0.85em; color: #aaa; margin-bottom: 4px; font-weight: bold; }
+
+/* verify カード型レイアウト */
+.verify-list { display: flex; flex-direction: column; gap: 4px; }
+.verify-card {
+    padding: 8px 10px;
+    background: var(--card-bg, #1a1a2e);
+    border-radius: 6px;
+    border-left: 3px solid transparent;
+    cursor: pointer;
+}
+.verify-card.verdict-perfect { border-left-color: #ff6b6b; }
+.verify-card.verdict-hit { border-left-color: #4ecdc4; }
+.verify-card.verdict-miss { border-left-color: #666; }
+.verify-card.verdict-surprise { border-left-color: #ffa502; }
+.vc-data-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+.vc-unit { font-weight: bold; font-size: 0.9em; min-width: 50px; }
+.vc-art { color: #4ecdc4; font-size: 0.85em; font-weight: bold; }
+.vc-prob { font-size: 0.85em; font-weight: bold; }
+.vc-prob.excellent { color: #ff6b6b; }
+.vc-prob.good { color: #4ecdc4; }
+.vc-prob.bad { color: #888; }
+.vc-games { font-size: 0.75em; color: #777; }
+.vc-verdict-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85em;
+}
+.vc-pred-mark, .vc-result-mark {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+.vc-arrow { color: #555; font-size: 0.8em; }
+.vc-label { font-weight: bold; font-size: 0.9em; }
+.verdict-label-perfect { color: #ff6b6b; }
+.verdict-label-hit { color: #4ecdc4; }
+.verdict-label-miss { color: #888; }
+.verdict-label-surprise { color: #ffa502; }
+.verdict-label-neutral { color: #666; }
+.verdict-label-nodata { color: #555; }
+
+/* 予想→結果バッジ（爆発台TOP10用） */
+.pred-result-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    font-size: 0.75em;
+    background: rgba(255,255,255,0.05);
+    padding: 2px 6px;
+    border-radius: 10px;
+    margin-left: 4px;
+}
+.pr-pred, .pr-result { font-weight: bold; }
+.pr-pred.good { color: #4ecdc4; }
+.pr-pred.bad { color: #888; }
+.pr-result.good { color: #ff6b6b; }
+.pr-result.bad { color: #888; }
+.pr-label { font-weight: bold; margin-left: 2px; }
+.pr-label.hit { color: #4ecdc4; }
+.pr-label.miss { color: #ff6b6b; }
+
+/* 🏆 全台的中ハイライト */
+.perfect-highlight {
+    margin-bottom: 20px;
+}
+.perfect-highlight h2 {
+    text-align: center;
+    color: #ffd700;
+    margin-bottom: 10px;
+}
+.perfect-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.perfect-card {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    background: linear-gradient(135deg, rgba(255,215,0,0.12), rgba(255,107,107,0.08));
+    border: 1px solid rgba(255,215,0,0.3);
+    border-radius: 8px;
+}
+.perfect-icon { font-size: 1.3em; }
+.perfect-store { font-weight: bold; color: #fff; }
+.perfect-machine { color: #aaa; font-size: 0.85em; }
+.perfect-badge {
+    margin-left: auto;
+    background: rgba(255,215,0,0.2);
+    color: #ffd700;
+    font-weight: bold;
+    font-size: 0.85em;
+    padding: 3px 10px;
+    border-radius: 12px;
+    white-space: nowrap;
+}
+
+/* (古いverifyモバイル定義 — 下部で統合済み) */
+
+/* perfect-card をリンク化 */
+a.perfect-card {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    background: linear-gradient(135deg, rgba(255,215,0,0.12), rgba(255,107,107,0.08));
+    border: 1px solid rgba(255,215,0,0.3);
+    border-radius: 8px;
+    transition: background 0.15s;
+}
+a.perfect-card:hover { background: rgba(255,215,0,0.18); }
+.perfect-arrow { margin-left: auto; color: #ffd700; font-size: 1.2em; }
+
+/* サマリセクション モバイル対応 */
+@media (max-width: 600px) {
+    .verify-accuracy {
+        flex-direction: column;
+        gap: 10px;
+    }
+    .accuracy-circle {
+        width: 70px;
+        height: 70px;
+    }
+    .accuracy-num { font-size: 1.3em; }
+    .accuracy-row {
+        flex-wrap: wrap;
+        gap: 2px 8px;
+        font-size: 0.8em;
+    }
+    .acc-label { min-width: 0; }
+    /* 的中率コーナー モバイル対応 */
+    .vb-header {
+        gap: 12px;
+    }
+    .vb-circle-big {
+        width: 60px;
+        height: 60px;
+    }
+    .vb-rate-num {
+        font-size: 1.4em;
+    }
+    .vb-example-row {
+        font-size: 0.75em;
+    }
+}
+
+/* 答え合わせバナー（トップページ上部） */
+.verify-banner {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, rgba(255,215,0,0.15), rgba(255,107,107,0.1));
+    border: 1px solid rgba(255,215,0,0.35);
+    border-radius: 10px;
+    text-decoration: none;
+    color: #fff;
+    transition: background 0.15s;
+}
+.verify-banner:hover { background: rgba(255,215,0,0.22); }
+.vb-icon { font-size: 1.4em; }
+.vb-text { flex: 1; font-weight: bold; font-size: 0.9em; }
+.vb-arrow { color: #ffd700; font-size: 1.3em; }
+
+/* トップナビ */
+.top-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 14px;
+}
+.top-nav-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 12px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    color: #ccc;
+    text-decoration: none;
+    font-size: 0.8em;
+    white-space: nowrap;
+    transition: background 0.15s;
+}
+.top-nav-link:hover { background: rgba(255,255,255,0.12); }
+.top-nav-link.verify-link {
+    background: rgba(255,215,0,0.12);
+    border-color: rgba(255,215,0,0.3);
+    color: #ffd700;
+    font-weight: bold;
+}
+
+/* もっと見るトグル */
+.more-recs-toggle {
+    text-align: center;
+    padding: 10px;
+    color: #4ecdc4;
+    font-weight: bold;
+    font-size: 0.9em;
+    cursor: pointer;
+    border: 1px dashed rgba(78,205,196,0.3);
+    border-radius: 8px;
+    margin: 8px 0;
+}
+.more-recs-toggle:hover { background: rgba(78,205,196,0.08); }
+.compact-card { padding: 8px 10px !important; }
+.compact-card .reasons-full { font-size: 0.85em; }
+
+/* 的中率バッジ（バナー内） */
+.vb-rate {
+    display: inline-block;
+    background: rgba(255,215,0,0.25);
+    color: #ffd700;
+    font-weight: bold;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-left: 4px;
+    font-size: 0.95em;
+}
+
+/* トップバー */
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+}
+.top-bar .version-info {
+    font-size: 0.7em;
+    color: #555;
+    position: static;
+    text-align: left;
+}
+.hamburger-btn {
+    background: none;
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 6px;
+    color: #ccc;
+    font-size: 1.4em;
+    padding: 4px 10px;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+.hamburger-btn:hover { background: rgba(255,255,255,0.08); }
+
+/* ハンバーガーメニュー */
+.hamburger-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    background: #1a1a2e;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 6px;
+    margin-bottom: 10px;
+}
+.hamburger-menu.hidden { display: none; }
+.hamburger-menu a {
+    display: block;
+    padding: 10px 14px;
+    color: #ddd;
+    text-decoration: none;
+    font-size: 0.9em;
+    border-radius: 6px;
+    transition: background 0.15s;
+}
+.hamburger-menu a:hover { background: rgba(255,255,255,0.06); }
+
+/* verify テーブル改善 */
+.vt-medals { color: #ffa502; font-size: 0.85em; }
+
+/* ナビ プルダウン */
+.nav-dropdowns {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 14px;
+}
+.nav-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    color: #ccc;
+    text-decoration: none;
+    font-size: 0.8em;
+    white-space: nowrap;
+    cursor: pointer;
+}
+.nav-pill:hover { background: rgba(255,255,255,0.12); }
+.nav-dropdown { position: relative; }
+.dropdown-toggle { font-family: inherit; }
+.dropdown-content {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 100;
+    background: #1a1a2e;
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 8px;
+    padding: 4px;
+    min-width: 180px;
+    margin-top: 4px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+.nav-dropdown.open .dropdown-content { display: block; }
+.dropdown-content a {
+    display: block;
+    padding: 8px 12px;
+    color: #ddd;
+    text-decoration: none;
+    font-size: 0.85em;
+    border-radius: 4px;
+}
+.dropdown-content a:hover { background: rgba(255,255,255,0.06); }
+
+/* 汎用hidden */
+.hidden { display: none !important; }
+
+/* verify グリッド（カード型） */
+.verify-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+.vg-row {
+    padding: 8px 10px;
+    background: rgba(255,255,255,0.02);
+    border-radius: 6px;
+    border-left: 3px solid transparent;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+.vg-row:hover { background: rgba(255,255,255,0.05); }
+.verdict-border-perfect { border-left-color: #ff6b6b; }
+.verdict-border-hit { border-left-color: #4ecdc4; }
+.verdict-border-miss { border-left-color: #666; }
+.verdict-border-neutral { border-left-color: #444; }
+.verdict-border-nodata { border-left-color: #333; }
+
+.vg-top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+.vg-unit {
+    font-weight: bold;
+    font-size: 1em;
+    min-width: 45px;
+}
+.vg-verdict {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    font-weight: bold;
+    font-size: 0.95em;
+}
+.vg-verdict-perfect, .vg-verdict-hit { color: #4ecdc4; }
+.vg-verdict-miss { color: #ff6b6b; }
+.vg-verdict-neutral { color: #777; }
+.vg-expand { margin-left: auto; color: #555; font-size: 0.7em; }
+
+.vg-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 12px;
+    font-size: 0.9em;
+}
+.vg-art { color: #4ecdc4; font-weight: bold; }
+.vg-prob { font-weight: bold; }
+.vg-prob.excellent { color: #ff6b6b; }
+.vg-prob.good { color: #4ecdc4; }
+.vg-prob.bad { color: #888; }
+.vg-games { color: #888; }
+.vg-medals { color: #ffa502; }
+
+.verify-detail { margin-top: 8px; }
+.verify-detail-inner { padding: 8px; background: rgba(0,0,0,0.2); border-radius: 6px; }
+
+/* サイトロゴ */
+.site-logo { height: 28px; }
+.top-bar-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.top-bar-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.top-bar-right .version-info {
+    font-size: 0.65em;
+    color: #555;
+    position: static;
+    white-space: nowrap;
+}
+.data-date-label {
+    font-size: 0.78em;
+    color: #8a8aaa;
+    margin: 4px 0 0;
+}
+.mode-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 4px;
+}
+.current-time {
+    font-size: 0.82em;
+    color: #8a8aaa;
+    font-variant-numeric: tabular-nums;
+}
+#build-ver {
+    font-size: 0.62em;
+    color: #444;
+    opacity: 0.7;
+}
+.recent-day-block {
+    margin-bottom: 2px;
+}
+.recent-day-row.has-detail {
+    cursor: pointer;
+}
+.recent-day-row.has-detail:hover {
+    background: rgba(255,255,255,0.04);
+}
+.recent-day-detail {
+    margin: 2px 0 6px 0;
+    max-height: 300px;
+    overflow-y: auto;
+}
+.recent-day-detail .hit-detail-table.compact {
+    font-size: 0.72em;
+}
+.recent-day-detail .hit-detail-table.compact td,
+.recent-day-detail .hit-detail-table.compact th {
+    padding: 1px 4px;
+}
+.acc-games {
+    color: #ff4444;
+    font-weight: bold;
+    font-size: 0.85em;
+}
+
+/* プルダウン店舗メニュー */
+.dd-store { padding: 4px 0; }
+.dd-store-name {
+    display: block;
+    padding: 4px 12px;
+    color: #fff;
+    font-weight: bold;
+    font-size: 0.85em;
+}
+.dd-machines { padding-left: 12px; }
+.dd-machines a {
+    display: block;
+    padding: 5px 12px;
+    color: #aaa;
+    text-decoration: none;
+    font-size: 0.8em;
+    border-radius: 4px;
+}
+.dd-machines a:hover { background: rgba(255,255,255,0.06); color: #ddd; }
+
+/* ハンバーガー店舗メニュー */
+.hm-divider { border-top: 1px solid rgba(255,255,255,0.08); margin: 4px 0; }
+.hm-label { padding: 6px 14px; color: #888; font-size: 0.75em; font-weight: bold; text-transform: uppercase; }
+.hm-store { padding: 2px 0; }
+.hm-store-name {
+    display: block;
+    padding: 6px 14px;
+    color: #fff;
+    font-weight: bold;
+    font-size: 0.9em;
+}
+.hm-machine {
+    display: block;
+    padding: 5px 14px 5px 28px;
+    color: #aaa;
+    text-decoration: none;
+    font-size: 0.85em;
+}
+.hm-machine:hover { color: #ddd; background: rgba(255,255,255,0.04); }
+
+/* バナー内サークル */
+.verify-banner-lg {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: linear-gradient(135deg, rgba(255,215,0,0.15) 0%, rgba(255,165,0,0.1) 100%);
+    border: 2px solid rgba(255,215,0,0.4);
+    border-radius: 10px;
+    padding: 10px 16px;
+    margin-bottom: 16px;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+.verify-banner-lg:hover {
+    background: linear-gradient(135deg, rgba(255,215,0,0.25) 0%, rgba(255,165,0,0.2) 100%);
+    border-color: rgba(255,215,0,0.6);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255,215,0,0.2);
+}
+.vb-circles-row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-shrink: 0;
+}
+/* 新レイアウト: 大きな的中率 */
+.verify-banner-lg {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.vb-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+.vb-circle-big {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 4px solid #555;
+    flex-shrink: 0;
+}
+.vb-circle-big.rainbow {
+    border-color: transparent;
+    background:
+        linear-gradient(#1a1a2e, #1a1a2e) padding-box,
+        conic-gradient(#ff0000, #ff8800, #ffee00, #00ff88, #0088ff, #aa00ff, #ff0000) border-box;
+}
+.vb-circle-big.hot { border-color: #ff2222; }
+.vb-circle-big.good { border-color: #ff6600; }
+.vb-circle-big.warm { border-color: #ffaa00; }
+.vb-circle-big.ok { border-color: #cccc00; }
+.vb-circle-big.cool { border-color: #44aa44; }
+.vb-circle-big.cold { border-color: #3388bb; }
+.vb-circle-big.ice { border-color: #4466aa; }
+.vb-rate-num {
+    font-size: 1.6em;
+    font-weight: 900;
+    color: #fff;
+}
+.vb-header-text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.vb-title-lg {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #fff;
+}
+.vb-subtitle {
+    font-size: 0.8em;
+    color: #aaa;
+}
+.vb-examples {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 10px;
+    background: rgba(0,0,0,0.2);
+    border-radius: 8px;
+}
+.vb-example-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8em;
+}
+.vb-ex-rank {
+    background: rgba(255,215,0,0.2);
+    color: #ffd700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 0.9em;
+}
+.vb-ex-store {
+    color: #ccc;
+    flex: 1;
+}
+.vb-ex-unit {
+    color: #888;
+}
+.vb-ex-prob {
+    color: #4fc3f7;
+    font-weight: bold;
+}
+.vb-detail-lg {
+    text-align: center;
+    color: #aaa;
+    font-size: 0.8em;
+}
+.vb-circle-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+.vb-circle-label {
+    font-size: 0.65em;
+    color: #aaa;
+    white-space: nowrap;
+    text-align: center;
+    line-height: 1.4;
+}
+.vb-circle-label .vb-mk {
+    color: #fff;
+    font-weight: 700;
+}
+.vb-circle {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid #555;
+    flex-shrink: 0;
+}
+.vb-circle.rainbow {
+    border-color: transparent;
+    background:
+        linear-gradient(#1a1a2e, #1a1a2e) padding-box,
+        conic-gradient(#ff0000, #ff8800, #ffee00, #00ff88, #0088ff, #aa00ff, #ff0000) border-box;
+}
+.vb-circle.hot { border-color: #ff2222; }
+.vb-circle.good { border-color: #ff6600; }
+.vb-circle.warm { border-color: #ffaa00; }
+.vb-circle.ok { border-color: #cccc00; }
+.vb-circle.cool { border-color: #44aa44; }
+.vb-circle.cold { border-color: #3388bb; }
+.vb-circle.ice { border-color: #4466aa; }
+.vb-circle-num {
+    font-size: 1.15em;
+    font-weight: 800;
+    color: #fff;
+}
+.vb-lg-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+    text-align: center;
+}
+.vb-title-lg { font-weight: bold; font-size: 1.1em; color: #fff; display: block; }
+.vb-detail-lg {
+    color: #aaa;
+    font-size: 0.75em;
+    background: none;
+    padding: 0;
+    border-radius: 0;
+    font-weight: 400;
+    margin-top: 4px;
+    text-decoration: underline;
+    display: inline-block;
+    transition: all 0.2s ease;
+    text-shadow: none;
+    letter-spacing: 0;
+}
+.verify-banner-lg:hover .vb-detail-lg {
+    color: #ffd700;
+}
+
+/* トピック */
+.topics-section { margin-bottom: 20px; }
+.topics-section h2 { margin-bottom: 10px; }
+.topic-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 12px;
+    margin-bottom: 6px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 8px;
+    border-left: 3px solid #444;
+}
+.topic-explosion { border-left-color: #ff6b6b; background: rgba(255,107,107,0.06); }
+.topic-hit { border-left-color: #2ed573; background: rgba(46,213,115,0.06); }
+.topic-icon { font-size: 1.4em; flex-shrink: 0; }
+.topic-title { font-weight: bold; font-size: 0.95em; }
+.topic-explosion .topic-title { color: #ff6b6b; }
+.topic-hit .topic-title { color: #2ed573; }
+.topic-detail { font-size: 0.82em; color: #ccc; margin-top: 3px; line-height: 1.4; }
+.topic-detail .td-machine { color: #70a1ff; }
+.topic-detail .td-art { color: #ffa502; }
+.topic-detail .td-prob { color: #ff6b6b; font-weight: bold; }
+.topic-detail .td-diff { font-weight: bold; }
+.topic-detail .td-diff.plus { color: #2ed573; }
+.topic-detail .td-diff.minus { color: #ff4757; }
+.topic-detail .td-max { color: #dfe6e9; }
+
+/* verify テーブル */
+.verify-table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+.verify-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82em;
+}
+.verify-table th {
+    padding: 4px 3px;
+    text-align: center;
+    color: #888;
+    font-size: 0.75em;
+    border-bottom: 1px solid #333;
+    white-space: nowrap;
+}
+.verify-table td {
+    padding: 5px 3px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.vt-unit  { font-weight: bold; text-align: left; }
+.vt-pred, .vt-result { text-align: center; }
+.vt-label { font-size: 0.85em; }
+.vt-art   { text-align: center; }
+.vt-prob  { text-align: center; }
+.vt-diff  { text-align: right; }
+.verify-row { cursor: pointer; transition: background 0.15s; }
+.verify-row:hover { background: rgba(255,255,255,0.04); }
+.vt-diff.plus { color: #2ed573; font-weight: bold; }
+.vt-diff.minus { color: #ff6b6b; }
+.verdict-label-perfect { color: #ff6b6b; font-weight: bold; }
+.verdict-label-hit { color: #4ecdc4; font-weight: bold; }
+.verdict-label-miss { color: #888; }
+.verdict-label-neutral { color: #666; }
+.verdict-label-nodata { color: #444; }
+.verify-detail-row td { padding: 0; }
+.verify-detail-inner { padding: 8px; background: rgba(0,0,0,0.2); }
+
+/* 本日の当たり履歴 */
+.v2-today-history {
+    margin-top: 12px;
+    padding: 10px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 8px;
+}
+.v2-today-history .history-header {
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #ffd700;
+}
+.v2-today-history .history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 0.85em;
+}
+.v2-today-history .history-item {
+    display: flex;
+    gap: 8px;
+    padding: 4px 8px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 4px;
+}
+.v2-today-history .history-item.big-hit {
+    background: rgba(255, 215, 0, 0.2);
+    border-left: 3px solid #ffd700;
+}
+.v2-today-history .history-item.medium-hit {
+    background: rgba(100, 200, 100, 0.15);
+    border-left: 3px solid #64c864;
+}
+.v2-today-history .hit-num {
+    color: #888;
+    min-width: 30px;
+}
+.v2-today-history .hit-time {
+    color: #aaa;
+    min-width: 45px;
+}
+.v2-today-history .hit-start {
+    color: #888;
+    min-width: 50px;
+}
+.v2-today-history .hit-medals {
+    color: #4fc3f7;
+    min-width: 55px;
+    text-align: right;
+}
+.v2-today-history .hit-medals.big {
+    color: #ffd700;
+    font-weight: bold;
+}
+.v2-today-history .hit-medals.medium {
+    color: #81c784;
+}
+.v2-today-history .hit-rensa {
+    color: #ff9800;
+}
+.v2-today-history .history-more {
+    color: #888;
+    font-size: 0.9em;
+    text-align: center;
+    padding: 4px;
+}
+
+/* 特筆事項 */
+.vb-highlights-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 4px;
+    flex-wrap: wrap;
+}
+.vb-highlight {
+    font-size: 0.8em;
+    color: #ffd700;
+    line-height: 1.3;
+}
+
+/* 波グラフセクション（TOP10カード内） */
+.wave-section {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+}
+.wave-label {
+    font-size: 0.75em;
+    color: #888;
+    margin-bottom: 4px;
+}
+
+/* 店舗分析タイトル */
+.analysis-store {
+    color: #ffd700;
+    font-weight: 700;
+}
+.analysis-machine {
+    color: #74b9ff;
+    font-weight: 600;
+}
+/* .analysis-title: 重複定義を統合済み（元の定義は店舗分析セクションにある） */
+
+/* カードヘッダー2行構成 */
+.v2-header-row1 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.v2-header-row2 {
+    margin-top: 4px;
+}
+
+/* details/summary展開 */
+details.unit-card {
+    cursor: pointer;
+}
+details.unit-card > summary {
+    list-style: none;
+}
+details.unit-card > summary::-webkit-details-marker {
+    display: none;
+}
+details.unit-card[open] .expand-icon {
+    transform: rotate(180deg);
+}
+details.unit-card .unit-details {
+    display: block;
+}
+
+/* === データ状況バッジ === */
+.data-status-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    font-weight: bold;
+    margin-left: 8px;
+}
+.data-status-badge.renumbered {
+    background: #f39c12;
+    color: #000;
+}
+.data-status-badge.new-unit {
+    background: #3498db;
+    color: #fff;
+}
+.data-status-badge.missing {
+    background: #e74c3c;
+    color: #fff;
+}
+.data-status-badge.stopped {
+    background: #95a5a6;
+    color: #fff;
+}
+
+    </style>
+    <style>
+/* === v2j: 下揃え修正版 === */
+
+.art-num-big.art-rainbow { 
+    background: linear-gradient(90deg, #ff6b6b, #ffa94d, #ffd43b, #69db7c, #4dabf7, #9775fa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.art-num-big.art-gold { 
+    background: linear-gradient(135deg, #ffd700, #ffec80, #ffd700);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.art-num-big.art-hot { color: #ff922b; }
+
+/* 1行目を表組みで下揃え */
+.top3-stats-main {
+    display: table !important;
+    width: 100% !important;
+}
+.top3-stats-main > * {
+    display: table-cell !important;
+    vertical-align: bottom !important;
+    padding-right: 12px !important;
+}
+
+/* RB */
+.rb-badge-top {
+    background: none !important;
+    padding: 0 !important;
+    white-space: nowrap !important;
+}
+.rb-badge-top .rb-num {
+    font-size: 1.5em !important;
+    font-weight: bold !important;
+    color: #fff !important;
+}
+.rb-badge-top .rb-label {
+    font-size: 0.7em !important;
+    color: #888 !important;
+    margin-left: 2px !important;
+}
+
+/* 2行目 */
+.top3-stats-sub {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    align-items: baseline !important;
+}
+.current-hama {
+    display: inline-flex !important;
+    align-items: baseline !important;
+    gap: 4px !important;
+}
+.current-hama .start-num {
+    font-size: 1.5em !important;
+    font-weight: bold !important;
+    color: #4dabf7 !important;
+}
+.current-hama .start-label {
+    font-size: 0.85em !important;
+    color: #888 !important;
+}
+
+.total-games {
+    color: #555 !important;
+    font-size: 0.8em !important;
+}
+
+body { padding: 16px; max-width: 600px; margin: 0 auto; }
+h1 { font-size: 1em; color: #fff; margin-bottom: 8px; }
+    </style>
+</head>
+<body>
+    <h1>v2j (table-cell下揃え)</h1>
+    <a class="unit-card rank-s" href="/recommend/island_akihabara_sbj.html" style="text-decoration: none; color: inherit;">
+<div class="unit-header">
+<span class="ranking-num">#1</span>
+<span class="machine-icon">🃏</span>
+<span class="machine-name-top">スーパーブラックジャック</span>
+<span class="rank-badge" style="background-color: #ff6b6b">S</span>
+</div>
+<div class="unit-store">
+<span class="unit-id-sub"><span class="unit-id-num">1022</span><span class="unit-id-ban">番</span></span>
+<span class="store-link">アイランド秋葉原</span>
+<span class="top3-avail playing">稼働中</span>
+</div>
+<div class="top3-stats-main">
+<span class="art-main"><span class="art-num-big art-rainbow">96</span><span class="art-label">ART</span></span>
+<span class="rb-badge-top"><span class="rb-num">4</span><span class="rb-label">RB</span></span>
+<span class="art-prob excellent" title="合成確率"><span class="prob-label">合成</span>1/86</span>
+<span class="detail-trigger" onclick="toggleHistoryDetail(event, this)">▼詳細</span>
+</div>
+<div class="top3-stats-sub"><span class="current-hama"><span class="start-num">0</span><span class="start-label">スタート回数</span></span><span class="max-medals-top medals-3k"><span class="medals-icon">✨</span>最大<span class="num">4,051</span>枚</span><span class="diff-medals-inline minus">-4,236枚</span><span class="total-games">累計<span class="num">8,311</span>G</span></div>
+<div class="top3-setting">
+<span class="setting-estimate setting-6">
+<small class="payout-label">機械割</small><span class="payout-num">122.2%</span>
+</span>
+</div>
+<div class="sparkline-section">
+<div class="sparkline-label">本日 差枚推移</div>
+<svg class="sparkline" preserveaspectratio="xMidYMid meet" viewbox="0 0 220 45"><line stroke="#555" stroke-dasharray="2,2" stroke-width="0.5" x1="0" x2="220" y1="2.5" y2="2.5"></line><polyline fill="none" points="0.0,2.5 2.2,5.3 4.4,5.8 6.7,5.1 8.9,5.5 11.1,5.2 13.3,5.0 15.6,5.7 17.8,5.8 20.0,6.2 22.2,7.0 24.4,8.0 26.7,7.0 28.9,6.0 31.1,13.1 33.3,11.5 35.6,10.7 37.8,11.9 40.0,11.2 42.2,11.1 44.4,10.1 46.7,19.2 48.9,18.9 51.1,21.9 53.3,24.7 55.6,24.6 57.8,24.7 60.0,24.7 62.2,23.0 64.4,22.3 66.7,22.0 68.9,18.2 71.1,16.8 73.3,15.0 75.6,15.0 77.8,14.7 80.0,12.9 82.2,11.0 84.4,10.9 86.7,9.7 88.9,9.4 91.1,9.2 93.3,8.8 95.6,8.5 97.8,2.0 100.0,2.1 102.2,6.0 104.4,5.1 106.7,7.1 108.9,7.8 111.1,6.8 113.3,6.8 115.6,6.8 117.8,5.2 120.0,10.5 122.2,10.7 124.4,11.1 126.7,12.2 128.9,11.7 131.1,10.9 133.3,8.6 135.6,8.6 137.8,7.1 140.0,6.9 142.2,6.6 144.4,6.3 146.7,5.2 148.9,4.9 151.1,3.7 153.3,2.5 155.6,13.6 157.8,13.4 160.0,15.0 162.2,15.5 164.4,15.4 166.7,24.3 168.9,25.2 171.1,25.3 173.3,24.1 175.6,23.0 177.8,27.5 180.0,33.0 182.2,31.3 184.4,31.3 186.7,30.7 188.9,28.2 191.1,28.0 193.3,27.7 195.6,26.5 197.8,25.5 200.0,26.8 202.2,26.4 204.4,39.2 206.7,41.5 208.9,40.8 211.1,43.0 213.3,40.7 215.6,40.5 217.8,38.7 220.0,38.8" stroke="#ff6b6b" stroke-width="1.5"></polyline></svg>
+</div>
+<div class="top3-prev-days">
+<div class="prev-day-row has-detail" onclick="toggleHitDetail(event, this)">
+<span class="prev-day-label">2/4(水):</span>
+<span class="prev-art">ART 40</span>
+                             / RB 4
+                             / 5,222G
+                            
+                            <span class="diff-medals-sm plus">+2,788枚</span>
+<span class="rensa-sm">9連</span>
+<span class="expand-icon small">▼</span>
+</div>
+<div class="hit-detail-panel" style="display:none;">
+<div class="hit-summary-row"><span>44当たり</span><span>最大9連</span><span>平均95G</span></div>
+<table class="hit-detail-table"><thead><tr><th>#</th><th>時刻</th><th>G数</th><th>種類</th><th>連</th><th>枚数</th></tr></thead><tbody>
+<tr class=""><td>1</td><td>16:36</td><td class="">22G</td><td class="art">ART</td><td class="">3連</td><td>154</td></tr><tr class=""><td>2</td><td>16:33</td><td class="shallow">7G</td><td class="art">ART</td><td class="">↑</td><td>46</td></tr><tr class=""><td>3</td><td>16:30</td><td class="">128G</td><td class="art">ART</td><td class="">↑</td><td>83</td></tr><tr class=""><td>4</td><td>16:20</td><td class="">35G<br/><small class="acc-games">（累計153G）</small></td><td class="art">ART</td><td class="">-</td><td>81</td></tr><tr class=""><td>5</td><td>16:17</td><td class="">118G</td><td class="reg">REG</td><td class="">-</td><td>51</td></tr><tr class=""><td>6</td><td>16:07</td><td class="">15G</td><td class="art">ART</td><td class="">3連</td><td>43</td></tr><tr class=""><td>7</td><td>16:03</td><td class="shallow">8G</td><td class="art">ART</td><td class="">↑</td><td>148</td></tr><tr class=""><td>8</td><td>15:59</td><td class="">38G</td><td class="art">ART</td><td class="">↑</td><td>133</td></tr><tr class=""><td>9</td><td>15:54</td><td class="">26G</td><td class="art">ART</td><td class="">2連</td><td>141</td></tr><tr class=""><td>10</td><td>15:49</td><td class="">54G</td><td class="art">ART</td><td class="">↑</td><td>147</td></tr><tr class=""><td>11</td><td>15:43</td><td class="">19G</td><td class="art">ART</td><td class="">2連</td><td>37</td></tr><tr class=""><td>12</td><td>15:41</td><td class="">416G<br/><small class="acc-games">（累計818G）</small></td><td class="art">ART</td><td class="">↑</td><td>81</td></tr><tr class=""><td>13</td><td>15:11</td><td class="">402G</td><td class="reg">REG</td><td class="">-</td><td>51</td></tr><tr class=""><td>14</td><td>14:40</td><td class="">23G</td><td class="art">ART</td><td class="">2連</td><td>39</td></tr><tr class="deep"><td>15</td><td>14:35</td><td class="deep">707G</td><td class="art">ART</td><td class="">↑</td><td>227</td></tr><tr class=""><td>16</td><td>13:29</td><td class="">31G</td><td class="art">ART</td><td class="">-</td><td>45</td></tr><tr class="hot-chain"><td>17</td><td>13:25</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">9連</td><td>31</td></tr><tr class="hot-chain"><td>18</td><td>13:22</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">↑</td><td>21</td></tr><tr class="hot-chain"><td>19</td><td>13:14</td><td class="shallow">6G</td><td class="art">ART</td><td class="hot">↑</td><td>297</td></tr><tr class="hot-chain"><td>20</td><td>13:10</td><td class="shallow">9G</td><td class="art">ART</td><td class="hot">↑</td><td>229</td></tr><tr class="hot-chain"><td>21</td><td>13:08</td><td class="shallow">2G</td><td class="art">ART</td><td class="hot">↑</td><td>39</td></tr><tr class="hot-chain"><td>22</td><td>13:04</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">↑</td><td>139</td></tr><tr class="hot-chain"><td>23</td><td>13:00</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">↑</td><td>21</td></tr><tr class="hot-chain"><td>24</td><td>12:57</td><td class="">11G</td><td class="art">ART</td><td class="hot">↑</td><td>217</td></tr><tr class="hot-chain"><td>25</td><td>12:54</td><td class="">355G<br/><small class="acc-games">（累計842G）</small></td><td class="art">ART</td><td class="hot">↑</td><td>81</td></tr><tr class=""><td>26</td><td>12:28</td><td class="">157G<br/><small class="acc-games">（累計487G）</small></td><td class="reg">REG</td><td class="">-</td><td>51</td></tr><tr class=""><td>27</td><td>12:17</td><td class="">330G</td><td class="reg">REG</td><td class="">-</td><td>51</td></tr><tr class=""><td>28</td><td>11:50</td><td class="">16G</td><td class="art">ART</td><td class="">3連</td><td>224</td></tr><tr class=""><td>29</td><td>11:45</td><td class="shallow">5G</td><td class="art">ART</td><td class="">↑</td><td>134</td></tr><tr class=""><td>30</td><td>11:44</td><td class="">83G</td><td class="art">ART</td><td class="">↑</td><td>83</td></tr><tr class="hot-chain"><td>31</td><td>11:35</td><td class="shallow">6G</td><td class="art">ART</td><td class="hot">6連</td><td>154</td></tr><tr class="hot-chain"><td>32</td><td>11:32</td><td class="shallow">2G</td><td class="art">ART</td><td class="hot">↑</td><td>150</td></tr><tr class="hot-chain"><td>33</td><td>11:30</td><td class="shallow">2G</td><td class="art">ART</td><td class="hot">↑</td><td>41</td></tr><tr class="hot-chain"><td>34</td><td>11:28</td><td class="shallow">2G</td><td class="art">ART</td><td class="hot">↑</td><td>31</td></tr><tr class="hot-chain"><td>35</td><td>11:27</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">↑</td><td>43</td></tr><tr class="hot-chain"><td>36</td><td>11:23</td><td class="">149G</td><td class="art">ART</td><td class="hot">↑</td><td>21</td></tr><tr class=""><td>37</td><td>11:12</td><td class="shallow">6G</td><td class="art">ART</td><td class="">3連</td><td>45</td></tr><tr class=""><td>38</td><td>11:07</td><td class="shallow">3G</td><td class="art">ART</td><td class="">↑</td><td>219</td></tr><tr class=""><td>39</td><td>11:06</td><td class="">153G</td><td class="art">ART</td><td class="">↑</td><td>83</td></tr><tr class=""><td>40</td><td>10:53</td><td class="">46G</td><td class="art">ART</td><td class="">-</td><td>145</td></tr><tr class=""><td>41</td><td>10:48</td><td class="">31G</td><td class="art">ART</td><td class="">-</td><td>37</td></tr><tr class=""><td>42</td><td>10:43</td><td class="">16G</td><td class="art">ART</td><td class="">3連</td><td>156</td></tr><tr class=""><td>43</td><td>10:41</td><td class="">20G</td><td class="art">ART</td><td class="">↑</td><td>41</td></tr><tr class=""><td>44</td><td>10:36</td><td class="">357G</td><td class="art">ART</td><td class="">↑</td><td>227</td></tr>
+</tbody></table>
+</div>
+<div class="prev-day-row has-detail" onclick="toggleHitDetail(event, this)">
+<span class="prev-day-label">2/3(火):</span>
+<span class="prev-art">ART 71</span>
+                            
+                             / 4,271G
+                            
+                            <span class="diff-medals-sm plus">+3,177枚</span>
+<span class="expand-icon small">▼</span>
+</div>
+<div class="hit-detail-panel" style="display:none;">
+<div class="hit-summary-row"><span>77当たり</span><span>最大16連</span><span>平均60G</span></div>
+<table class="hit-detail-table"><thead><tr><th>#</th><th>時刻</th><th>G数</th><th>種類</th><th>連</th><th>枚数</th></tr></thead><tbody>
+<tr class=""><td>1</td><td>18:57</td><td class="">45G</td><td class="art">ART</td><td class="">-</td><td>43</td></tr><tr class=""><td>2</td><td>18:53</td><td class="">226G<br/><small class="acc-games">（累計896G）</small></td><td class="art">ART</td><td class="">-</td><td>83</td></tr><tr class="deep"><td>3</td><td>18:37</td><td class="deep">670G</td><td class="reg">REG</td><td class="">-</td><td>51</td></tr><tr class=""><td>4</td><td>17:48</td><td class="">16G</td><td class="art">ART</td><td class="">2連</td><td>35</td></tr><tr class=""><td>5</td><td>17:44</td><td class="">100G<br/><small class="acc-games">（累計838G）</small></td><td class="art">ART</td><td class="">↑</td><td>232</td></tr><tr class="deep"><td>6</td><td>17:36</td><td class="deep">443G<br/><small class="acc-games">（累計738G）</small></td><td class="reg">REG</td><td class="">-</td><td>51</td></tr><tr class=""><td>7</td><td>17:05</td><td class="">295G</td><td class="reg">REG</td><td class="">-</td><td>51</td></tr><tr class=""><td>8</td><td>16:41</td><td class="">15G</td><td class="art">ART</td><td class="">4連</td><td>148</td></tr><tr class=""><td>9</td><td>16:39</td><td class="shallow">6G</td><td class="art">ART</td><td class="">↑</td><td>41</td></tr><tr class=""><td>10</td><td>16:34</td><td class="">21G</td><td class="art">ART</td><td class="">↑</td><td>140</td></tr><tr class=""><td>11</td><td>16:32</td><td class="">56G<br/><small class="acc-games">（累計322G）</small></td><td class="art">ART</td><td class="">↑</td><td>83</td></tr><tr class=""><td>12</td><td>16:27</td><td class="">266G</td><td class="reg">REG</td><td class="">-</td><td>51</td></tr><tr class=""><td>13</td><td>16:05</td><td class="shallow">4G</td><td class="art">ART</td><td class="">4連</td><td>139</td></tr><tr class=""><td>14</td><td>16:02</td><td class="shallow">1G</td><td class="art">ART</td><td class="">↑</td><td>145</td></tr><tr class=""><td>15</td><td>15:58</td><td class="shallow">1G</td><td class="art">ART</td><td class="">↑</td><td>42</td></tr><tr class=""><td>16</td><td>15:53</td><td class="">41G</td><td class="art">ART</td><td class="">↑</td><td>288</td></tr><tr class=""><td>17</td><td>15:49</td><td class="">358G<br/><small class="acc-games">（累計688G）</small></td><td class="art">ART</td><td class="">-</td><td>83</td></tr><tr class=""><td>18</td><td>15:23</td><td class="">330G</td><td class="reg">REG</td><td class="">-</td><td>51</td></tr><tr class=""><td>19</td><td>14:57</td><td class="">142G</td><td class="art">ART</td><td class="">-</td><td>83</td></tr><tr class=""><td>20</td><td>14:44</td><td class="">11G</td><td class="art">ART</td><td class="">2連</td><td>139</td></tr><tr class=""><td>21</td><td>14:40</td><td class="">31G</td><td class="art">ART</td><td class="">↑</td><td>139</td></tr><tr class=""><td>22</td><td>14:37</td><td class="">184G<br/><small class="acc-games">（累計280G）</small></td><td class="art">ART</td><td class="">-</td><td>81</td></tr><tr class=""><td>23</td><td>14:23</td><td class="">96G</td><td class="reg">REG</td><td class="">-</td><td>58</td></tr><tr class=""><td>24</td><td>14:15</td><td class="">26G</td><td class="art">ART</td><td class="">3連</td><td>37</td></tr><tr class=""><td>25</td><td>14:09</td><td class="">26G</td><td class="art">ART</td><td class="">↑</td><td>139</td></tr><tr class=""><td>26</td><td>14:06</td><td class="">90G</td><td class="art">ART</td><td class="">↑</td><td>81</td></tr><tr class=""><td>27</td><td>13:58</td><td class="shallow">9G</td><td class="art">ART</td><td class="">4連</td><td>24</td></tr><tr class=""><td>28</td><td>13:55</td><td class="shallow">10G</td><td class="art">ART</td><td class="">↑</td><td>43</td></tr><tr class=""><td>29</td><td>13:49</td><td class="">14G</td><td class="art">ART</td><td class="">↑</td><td>35</td></tr><tr class=""><td>30</td><td>13:45</td><td class="">33G</td><td class="art">ART</td><td class="">↑</td><td>131</td></tr><tr class="hot-chain"><td>31</td><td>13:41</td><td class="">14G</td><td class="art">ART</td><td class="hot">6連</td><td>39</td></tr><tr class="hot-chain"><td>32</td><td>13:38</td><td class="shallow">9G</td><td class="art">ART</td><td class="hot">↑</td><td>152</td></tr><tr class="hot-chain"><td>33</td><td>13:30</td><td class="">25G</td><td class="art">ART</td><td class="hot">↑</td><td>277</td></tr><tr class="hot-chain"><td>34</td><td>13:27</td><td class="">28G</td><td class="art">ART</td><td class="hot">↑</td><td>43</td></tr><tr class="hot-chain"><td>35</td><td>13:21</td><td class="shallow">8G</td><td class="art">ART</td><td class="hot">↑</td><td>136</td></tr><tr class="hot-chain"><td>36</td><td>13:19</td><td class="">58G</td><td class="art">ART</td><td class="hot">↑</td><td>41</td></tr><tr class=""><td>37</td><td>13:11</td><td class="">29G</td><td class="art">ART</td><td class="">3連</td><td>219</td></tr><tr class=""><td>38</td><td>13:05</td><td class="shallow">1G</td><td class="art">ART</td><td class="">↑</td><td>17</td></tr><tr class=""><td>39</td><td>12:59</td><td class="">60G</td><td class="art">ART</td><td class="">↑</td><td>284</td></tr><tr class=""><td>40</td><td>12:50</td><td class="">33G</td><td class="art">ART</td><td class="">-</td><td>215</td></tr><tr class="hot-chain"><td>41</td><td>12:44</td><td class="shallow">3G</td><td class="art">ART</td><td class="hot">7連</td><td>220</td></tr><tr class="hot-chain"><td>42</td><td>12:38</td><td class="shallow">2G</td><td class="art">ART</td><td class="hot">↑</td><td>206</td></tr><tr class="hot-chain"><td>43</td><td>12:36</td><td class="">16G</td><td class="art">ART</td><td class="hot">↑</td><td>37</td></tr><tr class="hot-chain"><td>44</td><td>12:34</td><td class="shallow">2G</td><td class="art">ART</td><td class="hot">↑</td><td>43</td></tr><tr class="hot-chain"><td>45</td><td>12:29</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">↑</td><td>227</td></tr><tr class="hot-chain"><td>46</td><td>12:25</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">↑</td><td>24</td></tr><tr class="hot-chain"><td>47</td><td>12:20</td><td class="">31G</td><td class="art">ART</td><td class="hot">↑</td><td>232</td></tr><tr class="hot-chain"><td>48</td><td>12:12</td><td class="">24G</td><td class="art">ART</td><td class="hot">16連</td><td>39</td></tr><tr class="hot-chain"><td>49</td><td>12:10</td><td class="shallow">3G</td><td class="art">ART</td><td class="hot">↑</td><td>43</td></tr><tr class="hot-chain"><td>50</td><td>12:08</td><td class="">22G</td><td class="art">ART</td><td class="hot">↑</td><td>31</td></tr><tr class="hot-chain"><td>51</td><td>12:05</td><td class="shallow">5G</td><td class="art">ART</td><td class="hot">↑</td><td>37</td></tr><tr class="hot-chain"><td>52</td><td>12:01</td><td class="shallow">10G</td><td class="art">ART</td><td class="hot">↑</td><td>139</td></tr><tr class="hot-chain"><td>53</td><td>11:57</td><td class="">15G</td><td class="art">ART</td><td class="hot">↑</td><td>150</td></tr><tr class="hot-chain"><td>54</td><td>11:55</td><td class="">20G</td><td class="art">ART</td><td class="hot">↑</td><td>43</td></tr><tr class="hot-chain"><td>55</td><td>11:51</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">↑</td><td>210</td></tr><tr class="hot-chain"><td>56</td><td>11:48</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">↑</td><td>226</td></tr><tr class="hot-chain"><td>57</td><td>11:40</td><td class="shallow">2G</td><td class="art">ART</td><td class="hot">↑</td><td>284</td></tr><tr class="hot-chain"><td>58</td><td>11:38</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">↑</td><td>43</td></tr><tr class="hot-chain"><td>59</td><td>11:35</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">↑</td><td>34</td></tr><tr class="hot-chain"><td>60</td><td>11:30</td><td class="shallow">2G</td><td class="art">ART</td><td class="hot">↑</td><td>297</td></tr><tr class="hot-chain"><td>61</td><td>11:26</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">↑</td><td>142</td></tr><tr class="hot-chain"><td>62</td><td>11:18</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">↑</td><td>577</td></tr><tr class="hot-chain"><td>63</td><td>11:13</td><td class="">35G</td><td class="art">ART</td><td class="hot">↑</td><td>209</td></tr><tr class=""><td>64</td><td>11:09</td><td class="">64G</td><td class="art">ART</td><td class="">-</td><td>83</td></tr><tr class=""><td>65</td><td>11:00</td><td class="">32G</td><td class="art">ART</td><td class="">-</td><td>291</td></tr><tr class="hot-chain"><td>66</td><td>10:53</td><td class="">19G</td><td class="art">ART</td><td class="hot">11連</td><td>217</td></tr><tr class="hot-chain"><td>67</td><td>10:50</td><td class="shallow">4G</td><td class="art">ART</td><td class="hot">↑</td><td>43</td></tr><tr class="hot-chain"><td>68</td><td>10:47</td><td class="shallow">2G</td><td class="art">ART</td><td class="hot">↑</td><td>152</td></tr><tr class="hot-chain"><td>69</td><td>10:44</td><td class="shallow">2G</td><td class="art">ART</td><td class="hot">↑</td><td>145</td></tr><tr class="hot-chain"><td>70</td><td>10:42</td><td class="shallow">2G</td><td class="art">ART</td><td class="hot">↑</td><td>41</td></tr><tr class="hot-chain"><td>71</td><td>10:39</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">↑</td><td>145</td></tr><tr class="hot-chain"><td>72</td><td>10:35</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">↑</td><td>46</td></tr><tr class="hot-chain"><td>73</td><td>10:28</td><td class="shallow">3G</td><td class="art">ART</td><td class="hot">↑</td><td>281</td></tr><tr class="hot-chain"><td>74</td><td>10:24</td><td class="">12G</td><td class="art">ART</td><td class="hot">↑</td><td>150</td></tr><tr class="hot-chain"><td>75</td><td>10:20</td><td class="">11G</td><td class="art">ART</td><td class="hot">↑</td><td>151</td></tr><tr class="hot-chain"><td>76</td><td>10:16</td><td class="">31G</td><td class="art">ART</td><td class="hot">↑</td><td>139</td></tr><tr class=""><td>77</td><td>10:11</td><td class="">56G</td><td class="art">ART</td><td class="">-</td><td>227</td></tr>
+</tbody></table>
+</div>
+<div class="prev-day-row has-detail" onclick="toggleHitDetail(event, this)">
+<span class="prev-day-label">2/2(月):</span>
+<span class="prev-art">ART 37</span>
+                             / RB 3
+                             / 4,376G
+                            
+                            <span class="diff-medals-sm plus">+2,494枚</span>
+<span class="rensa-sm">12連</span>
+<span class="expand-icon small">▼</span>
+</div>
+<div class="hit-detail-panel" style="display:none;">
+<div class="hit-summary-row"><span>40当たり</span><span>最大11連</span><span>平均82G</span></div>
+<table class="hit-detail-table"><thead><tr><th>#</th><th>時刻</th><th>G数</th><th>種類</th><th>連</th><th>枚数</th></tr></thead><tbody>
+<tr class=""><td>1</td><td>18:15</td><td class="">79G</td><td class="reg">REG</td><td class="">-</td><td>51</td></tr><tr class=""><td>2</td><td>18:07</td><td class="">33G</td><td class="art">ART</td><td class="">-</td><td>42</td></tr><tr class=""><td>3</td><td>18:03</td><td class="">62G<br/><small class="acc-games">（累計661G）</small></td><td class="art">ART</td><td class="">-</td><td>83</td></tr><tr class="deep"><td>4</td><td>17:58</td><td class="deep">599G</td><td class="reg">REG</td><td class="">-</td><td>51</td></tr><tr class="hot-chain"><td>5</td><td>16:57</td><td class="">24G</td><td class="art">ART</td><td class="hot">6連</td><td>43</td></tr><tr class="hot-chain"><td>6</td><td>16:54</td><td class="shallow">2G</td><td class="art">ART</td><td class="hot">↑</td><td>37</td></tr><tr class="hot-chain"><td>7</td><td>16:52</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">↑</td><td>37</td></tr><tr class="hot-chain"><td>8</td><td>16:48</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">↑</td><td>30</td></tr><tr class="hot-chain"><td>9</td><td>16:31</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">↑</td><td>252</td></tr><tr class="hot-chain"><td>10</td><td>16:27</td><td class="">220G<br/><small class="acc-games">（累計738G）</small></td><td class="art">ART</td><td class="hot">↑</td><td>21</td></tr><tr class="deep"><td>11</td><td>16:10</td><td class="deep">518G</td><td class="reg">REG</td><td class="">-</td><td>51</td></tr><tr class="hot-chain"><td>12</td><td>15:22</td><td class="">19G</td><td class="art">ART</td><td class="hot">6連</td><td>139</td></tr><tr class="hot-chain"><td>13</td><td>15:18</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">↑</td><td>33</td></tr><tr class="hot-chain"><td>14</td><td>15:07</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">↑</td><td>15</td></tr><tr class="hot-chain"><td>15</td><td>14:59</td><td class="shallow">10G</td><td class="art">ART</td><td class="hot">↑</td><td>286</td></tr><tr class="hot-chain"><td>16</td><td>14:57</td><td class="shallow">8G</td><td class="art">ART</td><td class="hot">↑</td><td>39</td></tr><tr class="hot-chain"><td>17</td><td>14:55</td><td class="">278G</td><td class="art">ART</td><td class="hot">↑</td><td>83</td></tr><tr class="hot-chain"><td>18</td><td>14:16</td><td class="shallow">7G</td><td class="art">ART</td><td class="hot">11連</td><td>135</td></tr><tr class="hot-chain"><td>19</td><td>14:11</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">↑</td><td>156</td></tr><tr class="hot-chain"><td>20</td><td>14:06</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">↑</td><td>42</td></tr><tr class="hot-chain"><td>21</td><td>14:03</td><td class="shallow">2G</td><td class="art">ART</td><td class="hot">↑</td><td>35</td></tr><tr class="hot-chain"><td>22</td><td>13:57</td><td class="shallow">2G</td><td class="art">ART</td><td class="hot">↑</td><td>285</td></tr><tr class="hot-chain"><td>23</td><td>13:55</td><td class="shallow">2G</td><td class="art">ART</td><td class="hot">↑</td><td>48</td></tr><tr class="hot-chain"><td>24</td><td>13:50</td><td class="shallow">2G</td><td class="art">ART</td><td class="hot">↑</td><td>145</td></tr><tr class="hot-chain"><td>25</td><td>13:48</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">↑</td><td>35</td></tr><tr class="hot-chain"><td>26</td><td>13:28</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">↑</td><td>36</td></tr><tr class="hot-chain"><td>27</td><td>13:20</td><td class="shallow">8G</td><td class="art">ART</td><td class="hot">↑</td><td>222</td></tr><tr class="hot-chain"><td>28</td><td>13:14</td><td class="">90G</td><td class="art">ART</td><td class="hot">↑</td><td>83</td></tr><tr class=""><td>29</td><td>13:04</td><td class="">220G</td><td class="art">ART</td><td class="">-</td><td>83</td></tr><tr class=""><td>30</td><td>12:35</td><td class="shallow">5G</td><td class="art">ART</td><td class="">2連</td><td>137</td></tr><tr class=""><td>31</td><td>12:25</td><td class="">431G</td><td class="art">ART</td><td class="">↑</td><td>83</td></tr><tr class="hot-chain"><td>32</td><td>11:39</td><td class="shallow">3G</td><td class="art">ART</td><td class="hot">5連</td><td>145</td></tr><tr class="hot-chain"><td>33</td><td>11:32</td><td class="shallow">9G</td><td class="art">ART</td><td class="hot">↑</td><td>133</td></tr><tr class="hot-chain"><td>34</td><td>11:18</td><td class="">30G</td><td class="art">ART</td><td class="hot">↑</td><td>147</td></tr><tr class="hot-chain"><td>35</td><td>11:10</td><td class="">23G</td><td class="art">ART</td><td class="hot">↑</td><td>296</td></tr><tr class="hot-chain"><td>36</td><td>11:08</td><td class="">88G</td><td class="art">ART</td><td class="hot">↑</td><td>83</td></tr><tr class=""><td>37</td><td>10:56</td><td class="">23G</td><td class="art">ART</td><td class="">2連</td><td>141</td></tr><tr class=""><td>38</td><td>10:43</td><td class="">67G</td><td class="art">ART</td><td class="">↑</td><td>83</td></tr><tr class=""><td>39</td><td>10:34</td><td class="">33G</td><td class="art">ART</td><td class="">-</td><td>154</td></tr><tr class=""><td>40</td><td>10:28</td><td class="">213G</td><td class="art">ART</td><td class="">-</td><td>83</td></tr>
+</tbody></table>
+</div>
+</div>
+<div class="reasons-full">
+<div class="reason-line-top">🔮 店がよく高設定を入れる台</div>
+<div class="reason-line-top">🔮 高稼働日好調率100%</div>
+<div class="reason-line-top reason-pattern">🔄 7日連続好調 → 据え置き期待（ただし転落警戒も）</div>
+<div class="reason-line-top">🔥 直近の推移: 大→大→小→中→小（ART80回以上の大爆発がなく3日経過。過去の傾向では中/小の後に大が来やすい）</div>
+<div class="reason-line-top">🔥 本日ART確率1/86 (8,311G消化) → 高機械割域</div>
+<div class="reason-line-top">🔥 本日22連の爆発あり</div>
+<div class="reason-line-top reason-weekday">📅 この台の木曜好調率: 3/3回(100%) → 期待大</div>
+</div>
+</a>
+    <a class="unit-card rank-s" href="/recommend/island_akihabara_sbj.html" style="text-decoration: none; color: inherit;">
+<div class="unit-header">
+<span class="ranking-num">#2</span>
+<span class="machine-icon">🃏</span>
+<span class="machine-name-top">スーパーブラックジャック</span>
+<span class="rank-badge" style="background-color: #ff6b6b">S</span>
+</div>
+<div class="unit-store">
+<span class="unit-id-sub"><span class="unit-id-num">1025</span><span class="unit-id-ban">番</span></span>
+<span class="store-link">アイランド秋葉原</span>
+<span class="top3-avail empty">空き</span>
+</div>
+<div class="top3-stats-main">
+<span class="art-main"><span class="art-num-big art-gold">85</span><span class="art-label">ART</span></span>
+<span class="rb-badge-top"><span class="rb-num">8</span><span class="rb-label">RB</span></span>
+<span class="art-prob excellent" title="合成確率"><span class="prob-label">合成</span>1/93</span>
+<span class="detail-trigger" onclick="toggleHistoryDetail(event, this)">▼詳細</span>
+</div>
+<div class="top3-stats-sub"><span class="current-hama"><span class="start-num">120</span><span class="start-label">スタート回数</span></span><span class="max-medals-top medals-3k"><span class="medals-icon">✨</span>最大<span class="num">4,955</span>枚</span><span class="diff-medals-inline minus">-4,861枚</span><span class="total-games">累計<span class="num">7,932</span>G</span></div>
+<div class="top3-setting">
+<span class="setting-estimate setting-6">
+<small class="payout-label">機械割</small><span class="payout-num">121.5%</span>
+</span>
+</div>
+<div class="sparkline-section">
+<div class="sparkline-label">本日 差枚推移</div>
+<svg class="sparkline" preserveaspectratio="xMidYMid meet" viewbox="0 0 220 45"><line stroke="#555" stroke-dasharray="2,2" stroke-width="0.5" x1="0" x2="220" y1="3.1" y2="3.1"></line><polyline fill="none" points="0.0,3.1 2.4,4.2 4.7,4.1 7.1,3.0 9.5,3.4 11.8,3.4 14.2,2.0 16.6,2.5 18.9,2.8 21.3,11.9 23.7,12.5 26.0,11.1 28.4,11.5 30.8,12.8 33.1,15.8 35.5,22.7 37.8,26.2 40.2,26.0 42.6,25.5 44.9,35.4 47.3,39.9 49.7,40.4 52.0,41.6 54.4,43.0 56.8,43.0 59.1,42.4 61.5,42.3 63.9,41.2 66.2,40.4 68.6,39.9 71.0,39.8 73.3,42.9 75.7,42.0 78.1,41.1 80.4,41.0 82.8,40.2 85.2,39.0 87.5,38.8 89.9,37.6 92.3,37.5 94.6,37.3 97.0,37.1 99.4,36.9 101.7,36.2 104.1,36.0 106.5,35.3 108.8,34.4 111.2,34.4 113.5,34.7 115.9,34.3 118.3,34.1 120.6,34.1 123.0,34.0 125.4,33.9 127.7,31.3 130.1,30.2 132.5,29.4 134.8,28.7 137.2,28.0 139.6,27.2 141.9,27.1 144.3,26.9 146.7,26.7 149.0,26.5 151.4,26.3 153.8,26.4 156.1,35.6 158.5,37.6 160.9,36.6 163.2,36.5 165.6,37.6 168.0,38.7 170.3,38.5 172.7,37.3 175.1,37.2 177.4,36.0 179.8,35.9 182.2,35.1 184.5,33.7 186.9,33.6 189.2,32.8 191.6,32.6 194.0,31.4 196.3,31.3 198.7,30.6 201.1,30.4 203.4,29.8 205.8,30.2 208.2,30.3 210.5,30.6 212.9,30.6 215.3,30.2 217.6,30.1 220.0,29.3" stroke="#ff6b6b" stroke-width="1.5"></polyline></svg>
+</div>
+<div class="top3-prev-days">
+<div class="prev-day-row has-detail" onclick="toggleHitDetail(event, this)">
+<span class="prev-day-label">2/4(水):</span>
+<span class="prev-art">ART 50</span>
+                             / RB 4
+                             / 5,065G
+                            
+                            <span class="diff-medals-sm plus">+3,145枚</span>
+<span class="rensa-sm">19連</span>
+<span class="expand-icon small">▼</span>
+</div>
+<div class="hit-detail-panel" style="display:none;">
+<div class="hit-summary-row"><span>54当たり</span><span>最大19連</span><span>平均63G</span></div>
+<table class="hit-detail-table"><thead><tr><th>#</th><th>時刻</th><th>G数</th><th>種類</th><th>連</th><th>枚数</th></tr></thead><tbody>
+<tr class=""><td>1</td><td>17:26</td><td class="">111G</td><td class="reg">REG</td><td class="">-</td><td>58</td></tr><tr class=""><td>2</td><td>17:16</td><td class="shallow">8G</td><td class="art">ART</td><td class="">2連</td><td>45</td></tr><tr class=""><td>3</td><td>17:12</td><td class="">36G</td><td class="art">ART</td><td class="">↑</td><td>143</td></tr><tr class="hot-chain"><td>4</td><td>17:06</td><td class="">26G</td><td class="art">ART</td><td class="hot">19連</td><td>143</td></tr><tr class="hot-chain"><td>5</td><td>17:01</td><td class="shallow">7G</td><td class="art">ART</td><td class="hot">↑</td><td>139</td></tr><tr class="hot-chain"><td>6</td><td>16:59</td><td class="">25G</td><td class="art">ART</td><td class="hot">↑</td><td>39</td></tr><tr class="hot-chain"><td>7</td><td>16:56</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">↑</td><td>43</td></tr><tr class="hot-chain"><td>8</td><td>16:51</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">↑</td><td>26</td></tr><tr class="hot-chain"><td>9</td><td>16:45</td><td class="shallow">10G</td><td class="art">ART</td><td class="hot">↑</td><td>267</td></tr><tr class="hot-chain"><td>10</td><td>16:41</td><td class="shallow">7G</td><td class="art">ART</td><td class="hot">↑</td><td>139</td></tr><tr class="hot-chain"><td>11</td><td>16:36</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">↑</td><td>145</td></tr><tr class="hot-chain"><td>12</td><td>16:32</td><td class="shallow">2G</td><td class="art">ART</td><td class="hot">↑</td><td>30</td></tr><tr class="hot-chain"><td>13</td><td>16:28</td><td class="">21G</td><td class="art">ART</td><td class="hot">↑</td><td>138</td></tr><tr class="hot-chain"><td>14</td><td>16:25</td><td class="shallow">2G</td><td class="art">ART</td><td class="hot">↑</td><td>39</td></tr><tr class="hot-chain"><td>15</td><td>16:22</td><td class="shallow">2G</td><td class="art">ART</td><td class="hot">↑</td><td>137</td></tr><tr class="hot-chain"><td>16</td><td>16:20</td><td class="shallow">2G</td><td class="art">ART</td><td class="hot">↑</td><td>37</td></tr><tr class="hot-chain"><td>17</td><td>16:15</td><td class="shallow">2G</td><td class="art">ART</td><td class="hot">↑</td><td>240</td></tr><tr class="hot-chain"><td>18</td><td>16:14</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">↑</td><td>41</td></tr><tr class="hot-chain"><td>19</td><td>16:09</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">↑</td><td>22</td></tr><tr class="hot-chain"><td>20</td><td>16:04</td><td class="">25G</td><td class="art">ART</td><td class="hot">↑</td><td>308</td></tr><tr class="hot-chain"><td>21</td><td>15:59</td><td class="shallow">7G</td><td class="art">ART</td><td class="hot">↑</td><td>139</td></tr><tr class="hot-chain"><td>22</td><td>15:57</td><td class="">90G</td><td class="art">ART</td><td class="hot">↑</td><td>83</td></tr><tr class=""><td>23</td><td>15:47</td><td class="">18G</td><td class="art">ART</td><td class="">2連</td><td>143</td></tr><tr class=""><td>24</td><td>15:44</td><td class="">32G</td><td class="art">ART</td><td class="">↑</td><td>43</td></tr><tr class=""><td>25</td><td>15:41</td><td class="">20G</td><td class="art">ART</td><td class="">2連</td><td>48</td></tr><tr class="deep"><td>26</td><td>15:38</td><td class="deep">826G<br/><small class="acc-games">（累計894G）</small></td><td class="art">ART</td><td class="">↑</td><td>90</td></tr><tr class=""><td>27</td><td>14:24</td><td class="">68G</td><td class="reg">REG</td><td class="">-</td><td>51</td></tr><tr class=""><td>28</td><td>14:15</td><td class="">19G</td><td class="art">ART</td><td class="">2連</td><td>218</td></tr><tr class=""><td>29</td><td>14:11</td><td class="">385G</td><td class="art">ART</td><td class="">↑</td><td>225</td></tr><tr class=""><td>30</td><td>13:40</td><td class="">91G</td><td class="art">ART</td><td class="">-</td><td>83</td></tr><tr class=""><td>31</td><td>13:28</td><td class="">20G</td><td class="art">ART</td><td class="">3連</td><td>143</td></tr><tr class=""><td>32</td><td>13:25</td><td class="">16G</td><td class="art">ART</td><td class="">↑</td><td>46</td></tr><tr class=""><td>33</td><td>13:23</td><td class="">119G<br/><small class="acc-games">（累計180G）</small></td><td class="art">ART</td><td class="">↑</td><td>83</td></tr><tr class=""><td>34</td><td>13:13</td><td class="">61G</td><td class="reg">REG</td><td class="">-</td><td>51</td></tr><tr class="hot-chain"><td>35</td><td>13:07</td><td class="shallow">7G</td><td class="art">ART</td><td class="hot">13連</td><td>39</td></tr><tr class="hot-chain"><td>36</td><td>13:04</td><td class="shallow">2G</td><td class="art">ART</td><td class="hot">↑</td><td>149</td></tr><tr class="hot-chain"><td>37</td><td>13:00</td><td class="shallow">2G</td><td class="art">ART</td><td class="hot">↑</td><td>150</td></tr><tr class="hot-chain"><td>38</td><td>12:57</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">↑</td><td>149</td></tr><tr class="hot-chain"><td>39</td><td>12:53</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">↑</td><td>17</td></tr><tr class="hot-chain"><td>40</td><td>12:49</td><td class="shallow">2G</td><td class="art">ART</td><td class="hot">↑</td><td>275</td></tr><tr class="hot-chain"><td>41</td><td>12:47</td><td class="shallow">2G</td><td class="art">ART</td><td class="hot">↑</td><td>36</td></tr><tr class="hot-chain"><td>42</td><td>12:46</td><td class="shallow">2G</td><td class="art">ART</td><td class="hot">↑</td><td>39</td></tr><tr class="hot-chain"><td>43</td><td>12:40</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">↑</td><td>135</td></tr><tr class="hot-chain"><td>44</td><td>12:36</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">↑</td><td>32</td></tr><tr class="hot-chain"><td>45</td><td>12:30</td><td class="">24G</td><td class="art">ART</td><td class="hot">↑</td><td>291</td></tr><tr class="hot-chain"><td>46</td><td>12:27</td><td class="shallow">7G</td><td class="art">ART</td><td class="hot">↑</td><td>39</td></tr><tr class="hot-chain"><td>47</td><td>12:25</td><td class="">340G<br/><small class="acc-games">（累計399G）</small></td><td class="art">ART</td><td class="hot">↑</td><td>90</td></tr><tr class=""><td>48</td><td>11:24</td><td class="">59G</td><td class="reg">REG</td><td class="">-</td><td>51</td></tr><tr class=""><td>49</td><td>11:17</td><td class="">13G</td><td class="art">ART</td><td class="">2連</td><td>139</td></tr><tr class=""><td>50</td><td>11:15</td><td class="">58G</td><td class="art">ART</td><td class="">↑</td><td>83</td></tr><tr class=""><td>51</td><td>11:07</td><td class="shallow">1G</td><td class="art">ART</td><td class="">4連</td><td>29</td></tr><tr class=""><td>52</td><td>11:01</td><td class="">18G</td><td class="art">ART</td><td class="">↑</td><td>284</td></tr><tr class=""><td>53</td><td>10:59</td><td class="">11G</td><td class="art">ART</td><td class="">↑</td><td>41</td></tr><tr class="deep"><td>54</td><td>10:57</td><td class="deep">684G</td><td class="art">ART</td><td class="">↑</td><td>90</td></tr>
+</tbody></table>
+</div>
+<div class="prev-day-row has-detail" onclick="toggleHitDetail(event, this)">
+<span class="prev-day-label">2/3(火):</span>
+<span class="prev-art">ART 47</span>
+                            
+                             / 4,374G
+                            
+                            <span class="diff-medals-sm plus">+2,821枚</span>
+<span class="expand-icon small">▼</span>
+</div>
+<div class="hit-detail-panel" style="display:none;">
+<div class="hit-summary-row"><span>54当たり</span><span>最大18連</span><span>平均93G</span></div>
+<table class="hit-detail-table"><thead><tr><th>#</th><th>時刻</th><th>G数</th><th>種類</th><th>連</th><th>枚数</th></tr></thead><tbody>
+<tr class=""><td>1</td><td>18:55</td><td class="">28G</td><td class="art">ART</td><td class="">3連</td><td>207</td></tr><tr class=""><td>2</td><td>18:48</td><td class="">18G</td><td class="art">ART</td><td class="">↑</td><td>287</td></tr><tr class=""><td>3</td><td>18:45</td><td class="">41G</td><td class="art">ART</td><td class="">↑</td><td>33</td></tr><tr class=""><td>4</td><td>18:41</td><td class="">225G</td><td class="art">ART</td><td class="">-</td><td>83</td></tr><tr class=""><td>5</td><td>18:09</td><td class="">14G</td><td class="art">ART</td><td class="">2連</td><td>219</td></tr><tr class=""><td>6</td><td>18:07</td><td class="">28G<br/><small class="acc-games">（累計565G）</small></td><td class="art">ART</td><td class="">↑</td><td>90</td></tr><tr class="deep"><td>7</td><td>18:04</td><td class="deep">254G<br/><small class="acc-games">（累計537G）</small></td><td class="reg">REG</td><td class="">-</td><td>51</td></tr><tr class=""><td>8</td><td>17:46</td><td class="">283G</td><td class="reg">REG</td><td class="">-</td><td>51</td></tr><tr class=""><td>9</td><td>17:21</td><td class="shallow">7G</td><td class="art">ART</td><td class="">2連</td><td>48</td></tr><tr class=""><td>10</td><td>17:20</td><td class="">67G</td><td class="art">ART</td><td class="">↑</td><td>81</td></tr><tr class=""><td>11</td><td>17:11</td><td class="shallow">2G</td><td class="art">ART</td><td class="">4連</td><td>215</td></tr><tr class=""><td>12</td><td>17:07</td><td class="shallow">1G</td><td class="art">ART</td><td class="">↑</td><td>231</td></tr><tr class=""><td>13</td><td>17:03</td><td class="shallow">1G</td><td class="art">ART</td><td class="">↑</td><td>19</td></tr><tr class="deep"><td>14</td><td>17:00</td><td class="deep">569G</td><td class="art">ART</td><td class="">↑</td><td>241</td></tr><tr class="hot-chain"><td>15</td><td>16:19</td><td class="shallow">2G</td><td class="art">ART</td><td class="hot">18連</td><td>43</td></tr><tr class="hot-chain"><td>16</td><td>16:14</td><td class="shallow">2G</td><td class="art">ART</td><td class="hot">↑</td><td>229</td></tr><tr class="hot-chain"><td>17</td><td>16:10</td><td class="shallow">2G</td><td class="art">ART</td><td class="hot">↑</td><td>155</td></tr><tr class="hot-chain"><td>18</td><td>16:06</td><td class="shallow">2G</td><td class="art">ART</td><td class="hot">↑</td><td>154</td></tr><tr class="hot-chain"><td>19</td><td>16:05</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">↑</td><td>55</td></tr><tr class="hot-chain"><td>20</td><td>15:55</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">↑</td><td>26</td></tr><tr class="hot-chain"><td>21</td><td>15:51</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">↑</td><td>134</td></tr><tr class="hot-chain"><td>22</td><td>15:47</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">↑</td><td>30</td></tr><tr class="hot-chain"><td>23</td><td>15:42</td><td class="shallow">2G</td><td class="art">ART</td><td class="hot">↑</td><td>279</td></tr><tr class="hot-chain"><td>24</td><td>15:35</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">↑</td><td>285</td></tr><tr class="hot-chain"><td>25</td><td>15:30</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">↑</td><td>31</td></tr><tr class="hot-chain"><td>26</td><td>15:24</td><td class="shallow">2G</td><td class="art">ART</td><td class="hot">↑</td><td>270</td></tr><tr class="hot-chain"><td>27</td><td>15:22</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">↑</td><td>31</td></tr><tr class="hot-chain"><td>28</td><td>15:19</td><td class="shallow">2G</td><td class="art">ART</td><td class="hot">↑</td><td>29</td></tr><tr class="hot-chain"><td>29</td><td>15:14</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">↑</td><td>142</td></tr><tr class="hot-chain"><td>30</td><td>15:10</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">↑</td><td>34</td></tr><tr class="hot-chain"><td>31</td><td>15:04</td><td class="">21G</td><td class="art">ART</td><td class="hot">↑</td><td>305</td></tr><tr class="hot-chain"><td>32</td><td>14:55</td><td class="">44G</td><td class="art">ART</td><td class="hot">↑</td><td>147</td></tr><tr class=""><td>33</td><td>14:51</td><td class="">19G</td><td class="art">ART</td><td class="">2連</td><td>39</td></tr><tr class=""><td>34</td><td>14:48</td><td class="">420G<br/><small class="acc-games">（累計821G）</small></td><td class="art">ART</td><td class="">↑</td><td>83</td></tr><tr class=""><td>35</td><td>14:17</td><td class="">268G<br/><small class="acc-games">（累計401G）</small></td><td class="reg">REG</td><td class="">-</td><td>51</td></tr><tr class=""><td>36</td><td>13:57</td><td class="">133G</td><td class="reg">REG</td><td class="">-</td><td>51</td></tr><tr class=""><td>37</td><td>13:46</td><td class="">13G</td><td class="art">ART</td><td class="">2連</td><td>39</td></tr><tr class=""><td>38</td><td>13:44</td><td class="">203G<br/><small class="acc-games">（累計447G）</small></td><td class="art">ART</td><td class="">↑</td><td>83</td></tr><tr class=""><td>39</td><td>13:25</td><td class="">244G</td><td class="reg">REG</td><td class="">-</td><td>51</td></tr><tr class=""><td>40</td><td>13:04</td><td class="shallow">6G</td><td class="art">ART</td><td class="">4連</td><td>145</td></tr><tr class=""><td>41</td><td>13:00</td><td class="">18G</td><td class="art">ART</td><td class="">↑</td><td>215</td></tr><tr class=""><td>42</td><td>12:56</td><td class="">15G</td><td class="art">ART</td><td class="">↑</td><td>145</td></tr><tr class="tenjou"><td>43</td><td>12:54</td><td class="">300G<br/><small class="acc-games">（累計1018G）</small></td><td class="art">ART</td><td class="">↑</td><td>90</td></tr><tr class="deep"><td>44</td><td>12:32</td><td class="deep">718G</td><td class="reg">REG</td><td class="">-</td><td>51</td></tr><tr class="hot-chain"><td>45</td><td>11:38</td><td class="shallow">4G</td><td class="art">ART</td><td class="hot">9連</td><td>141</td></tr><tr class="hot-chain"><td>46</td><td>11:35</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">↑</td><td>139</td></tr><tr class="hot-chain"><td>47</td><td>11:27</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">↑</td><td>17</td></tr><tr class="hot-chain"><td>48</td><td>11:19</td><td class="shallow">8G</td><td class="art">ART</td><td class="hot">↑</td><td>317</td></tr><tr class="hot-chain"><td>49</td><td>11:14</td><td class="">26G</td><td class="art">ART</td><td class="hot">↑</td><td>219</td></tr><tr class="hot-chain"><td>50</td><td>11:07</td><td class="">13G</td><td class="art">ART</td><td class="hot">↑</td><td>280</td></tr><tr class="hot-chain"><td>51</td><td>11:02</td><td class="shallow">4G</td><td class="art">ART</td><td class="hot">↑</td><td>148</td></tr><tr class="hot-chain"><td>52</td><td>11:01</td><td class="shallow">6G</td><td class="art">ART</td><td class="hot">↑</td><td>41</td></tr><tr class="hot-chain"><td>53</td><td>10:57</td><td class="">43G<br/><small class="acc-games">（累計328G）</small></td><td class="art">ART</td><td class="hot">↑</td><td>225</td></tr><tr class=""><td>54</td><td>10:53</td><td class="">285G</td><td class="reg">REG</td><td class="">-</td><td>51</td></tr>
+</tbody></table>
+</div>
+<div class="prev-day-row has-detail" onclick="toggleHitDetail(event, this)">
+<span class="prev-day-label">2/2(月):</span>
+<span class="prev-art">ART 27</span>
+                             / RB 5
+                             / 4,111G
+                            
+                            <span class="diff-medals-sm plus">+1,923枚</span>
+<span class="rensa-sm">12連</span>
+<span class="expand-icon small">▼</span>
+</div>
+<div class="hit-detail-panel" style="display:none;">
+<div class="hit-summary-row"><span>32当たり</span><span>最大6連</span><span>平均122G</span></div>
+<table class="hit-detail-table"><thead><tr><th>#</th><th>時刻</th><th>G数</th><th>種類</th><th>連</th><th>枚数</th></tr></thead><tbody>
+<tr class="hot-chain"><td>1</td><td>15:22</td><td class="">30G</td><td class="art">ART</td><td class="hot">6連</td><td>45</td></tr><tr class="hot-chain"><td>2</td><td>15:16</td><td class="">24G</td><td class="art">ART</td><td class="hot">↑</td><td>139</td></tr><tr class="hot-chain"><td>3</td><td>15:12</td><td class="shallow">5G</td><td class="art">ART</td><td class="hot">↑</td><td>143</td></tr><tr class="hot-chain"><td>4</td><td>15:08</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">↑</td><td>39</td></tr><tr class="hot-chain"><td>5</td><td>15:04</td><td class="">25G</td><td class="art">ART</td><td class="hot">↑</td><td>196</td></tr><tr class="hot-chain"><td>6</td><td>15:01</td><td class="">109G</td><td class="art">ART</td><td class="hot">↑</td><td>83</td></tr><tr class=""><td>7</td><td>14:52</td><td class="">62G</td><td class="art">ART</td><td class="">-</td><td>50</td></tr><tr class="hot-chain"><td>8</td><td>14:47</td><td class="shallow">9G</td><td class="art">ART</td><td class="hot">6連</td><td>33</td></tr><tr class="hot-chain"><td>9</td><td>14:45</td><td class="shallow">2G</td><td class="art">ART</td><td class="hot">↑</td><td>33</td></tr><tr class="hot-chain"><td>10</td><td>14:41</td><td class="shallow">2G</td><td class="art">ART</td><td class="hot">↑</td><td>150</td></tr><tr class="hot-chain"><td>11</td><td>14:37</td><td class="shallow">2G</td><td class="art">ART</td><td class="hot">↑</td><td>224</td></tr><tr class="hot-chain"><td>12</td><td>14:36</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">↑</td><td>39</td></tr><tr class="hot-chain"><td>13</td><td>14:32</td><td class="">48G</td><td class="art">ART</td><td class="hot">↑</td><td>21</td></tr><tr class="hot-chain"><td>14</td><td>14:26</td><td class="">24G</td><td class="art">ART</td><td class="hot">5連</td><td>139</td></tr><tr class="hot-chain"><td>15</td><td>14:23</td><td class="shallow">3G</td><td class="art">ART</td><td class="hot">↑</td><td>41</td></tr><tr class="hot-chain"><td>16</td><td>14:22</td><td class="">18G</td><td class="art">ART</td><td class="hot">↑</td><td>45</td></tr><tr class="hot-chain"><td>17</td><td>14:19</td><td class="shallow">4G</td><td class="art">ART</td><td class="hot">↑</td><td>41</td></tr><tr class="hot-chain"><td>18</td><td>14:18</td><td class="">128G<br/><small class="acc-games">（累計540G）</small></td><td class="art">ART</td><td class="hot">↑</td><td>83</td></tr><tr class=""><td>19</td><td>14:08</td><td class="">412G</td><td class="reg">REG</td><td class="">-</td><td>51</td></tr><tr class="deep"><td>20</td><td>13:37</td><td class="deep">570G</td><td class="art">ART</td><td class="">-</td><td>83</td></tr><tr class=""><td>21</td><td>12:56</td><td class="">53G</td><td class="art">ART</td><td class="">-</td><td>39</td></tr><tr class="tenjou"><td>22</td><td>12:51</td><td class="deep">769G<br/><small class="acc-games">（累計1024G）</small></td><td class="art">ART</td><td class="">-</td><td>83</td></tr><tr class=""><td>23</td><td>11:55</td><td class="">255G</td><td class="reg">REG</td><td class="">-</td><td>51</td></tr><tr class=""><td>24</td><td>11:31</td><td class="shallow">5G</td><td class="art">ART</td><td class="">2連</td><td>145</td></tr><tr class=""><td>25</td><td>11:28</td><td class="">95G<br/><small class="acc-games">（累計319G）</small></td><td class="art">ART</td><td class="">↑</td><td>227</td></tr><tr class=""><td>26</td><td>11:20</td><td class="">36G<br/><small class="acc-games">（累計224G）</small></td><td class="reg">REG</td><td class="">-</td><td>51</td></tr><tr class=""><td>27</td><td>11:17</td><td class="">188G</td><td class="reg">REG</td><td class="">-</td><td>58</td></tr><tr class=""><td>28</td><td>10:49</td><td class="">13G</td><td class="art">ART</td><td class="">4連</td><td>41</td></tr><tr class=""><td>29</td><td>10:47</td><td class="shallow">3G</td><td class="art">ART</td><td class="">↑</td><td>41</td></tr><tr class=""><td>30</td><td>10:42</td><td class="">19G</td><td class="art">ART</td><td class="">↑</td><td>292</td></tr><tr class=""><td>31</td><td>10:40</td><td class="">52G<br/><small class="acc-games">（累計383G）</small></td><td class="art">ART</td><td class="">↑</td><td>83</td></tr><tr class=""><td>32</td><td>10:35</td><td class="">331G</td><td class="reg">REG</td><td class="">-</td><td>51</td></tr>
+</tbody></table>
+</div>
+</div>
+<div class="reasons-full">
+<div class="reason-line-top">⏱️ 本日-4,861枚でハマリ3回→低設定の可能性</div>
+<div class="reason-line-top">🔮 店がよく高設定を入れる台</div>
+<div class="reason-line-top">🔮 高稼働日好調率100%</div>
+<div class="reason-line-top reason-pattern">🔄 4日連続好調 → 据え置き期待（ただし転落警戒も）</div>
+<div class="reason-line-top">🔥 直近の推移: 中→大→大→小→中（ART80回以上の大爆発がなく2日経過。過去の傾向では中/小の後に大が来やすい）</div>
+<div class="reason-line-top">🔥 本日ART確率1/93 (7,932G消化) → 高機械割域</div>
+<div class="reason-line-top">🔥 本日35連の爆発あり</div>
+<div class="reason-line-top">💰 好調日の平均ART 69回（1/103）→ 打てば出やすい台</div>
+</div>
+</a>
+    <a class="unit-card rank-s" href="/recommend/island_akihabara_sbj.html" style="text-decoration: none; color: inherit;">
+<div class="unit-header">
+<span class="ranking-num">#3</span>
+<span class="machine-icon">🃏</span>
+<span class="machine-name-top">スーパーブラックジャック</span>
+<span class="rank-badge" style="background-color: #ff6b6b">S</span>
+</div>
+<div class="unit-store">
+<span class="unit-id-sub"><span class="unit-id-num">1017</span><span class="unit-id-ban">番</span></span>
+<span class="store-link">アイランド秋葉原</span>
+<span class="top3-avail playing">稼働中</span>
+</div>
+<div class="top3-stats-main">
+<span class="art-main"><span class="art-num-big art-hot">69</span><span class="art-label">ART</span></span>
+<span class="rb-badge-top"><span class="rb-num">6</span><span class="rb-label">RB</span></span>
+<span class="art-prob good" title="合成確率"><span class="prob-label">合成</span>1/105</span>
+<span class="detail-trigger" onclick="toggleHistoryDetail(event, this)">▼詳細</span>
+</div>
+<div class="top3-stats-sub"><span class="current-hama"><span class="start-num">0</span><span class="start-label">スタート回数</span></span><span class="max-medals-top medals-2k"><span class="medals-icon">⭐</span>最大<span class="num">2,303</span>枚</span><span class="diff-medals-inline minus">-5,820枚</span><span class="total-games">累計<span class="num">7,304</span>G</span></div>
+<div class="top3-setting">
+<span class="setting-estimate setting-6">
+<small class="payout-label">機械割</small><span class="payout-num">120.3%</span>
+</span>
+</div>
+<div class="sparkline-section">
+<div class="sparkline-label">本日 差枚推移</div>
+<svg class="sparkline" preserveaspectratio="xMidYMid meet" viewbox="0 0 220 45"><line stroke="#555" stroke-dasharray="2,2" stroke-width="0.5" x1="0" x2="220" y1="2.0" y2="2.0"></line><polyline fill="none" points="0.0,2.0 2.9,6.3 5.9,5.6 8.8,4.4 11.7,3.6 14.7,6.0 17.6,5.1 20.5,5.0 23.5,4.3 26.4,4.6 29.3,4.0 32.3,10.5 35.2,9.6 38.1,9.5 41.1,9.3 44.0,7.9 46.9,7.1 49.9,7.0 52.8,6.8 55.7,13.6 58.7,12.6 61.6,12.5 64.5,12.2 67.5,11.3 70.4,14.0 73.3,13.5 76.3,13.3 79.2,12.5 82.1,12.5 85.1,24.9 88.0,25.7 90.9,25.5 93.9,25.8 96.8,25.0 99.7,23.5 102.7,23.3 105.6,21.5 108.5,21.4 111.5,24.2 114.4,24.7 117.3,29.0 120.3,31.7 123.2,30.7 126.1,30.6 129.1,28.7 132.0,28.6 134.9,27.7 137.9,27.5 140.8,26.8 143.7,25.7 146.7,26.1 149.6,25.0 152.5,24.9 155.5,24.0 158.4,23.8 161.3,22.4 164.3,24.7 167.2,23.3 170.1,23.2 173.1,21.8 176.0,21.7 178.9,20.7 181.9,20.1 184.8,24.4 187.7,23.2 190.7,22.3 193.6,24.4 196.5,32.6 199.5,41.4 202.4,41.0 205.3,42.9 208.3,42.1 211.2,43.0 214.1,41.7 217.1,40.2 220.0,40.5" stroke="#ff6b6b" stroke-width="1.5"></polyline></svg>
+</div>
+<div class="top3-prev-days">
+<div class="prev-day-row has-detail" onclick="toggleHitDetail(event, this)">
+<span class="prev-day-label">2/4(水):</span>
+<span class="prev-art">ART 44</span>
+                             / RB 10
+                             / 5,868G
+                            
+                            <span class="diff-medals-sm plus">+3,080枚</span>
+<span class="rensa-sm">8連</span>
+<span class="expand-icon small">▼</span>
+</div>
+<div class="hit-detail-panel" style="display:none;">
+<div class="hit-summary-row"><span>54当たり</span><span>最大8連</span><span>平均87G</span></div>
+<table class="hit-detail-table"><thead><tr><th>#</th><th>時刻</th><th>G数</th><th>種類</th><th>連</th><th>枚数</th></tr></thead><tbody>
+<tr class=""><td>1</td><td>16:58</td><td class="">64G<br/><small class="acc-games">（累計314G）</small></td><td class="reg">REG</td><td class="">-</td><td>58</td></tr><tr class=""><td>2</td><td>16:53</td><td class="">250G</td><td class="reg">REG</td><td class="">-</td><td>51</td></tr><tr class=""><td>3</td><td>16:24</td><td class="">12G</td><td class="art">ART</td><td class="">2連</td><td>287</td></tr><tr class=""><td>4</td><td>16:22</td><td class="">136G</td><td class="art">ART</td><td class="">↑</td><td>83</td></tr><tr class=""><td>5</td><td>16:08</td><td class="shallow">2G</td><td class="art">ART</td><td class="">2連</td><td>215</td></tr><tr class=""><td>6</td><td>16:07</td><td class="">250G<br/><small class="acc-games">（累計559G）</small></td><td class="art">ART</td><td class="">↑</td><td>81</td></tr><tr class=""><td>7</td><td>15:49</td><td class="">38G<br/><small class="acc-games">（累計309G）</small></td><td class="reg">REG</td><td class="">-</td><td>51</td></tr><tr class=""><td>8</td><td>15:46</td><td class="">271G</td><td class="reg">REG</td><td class="">-</td><td>51</td></tr><tr class="hot-chain"><td>9</td><td>15:26</td><td class="shallow">10G</td><td class="art">ART</td><td class="hot">5連</td><td>46</td></tr><tr class="hot-chain"><td>10</td><td>15:24</td><td class="">11G</td><td class="art">ART</td><td class="hot">↑</td><td>37</td></tr><tr class="hot-chain"><td>11</td><td>15:22</td><td class="shallow">5G</td><td class="art">ART</td><td class="hot">↑</td><td>46</td></tr><tr class="hot-chain"><td>12</td><td>15:19</td><td class="">19G</td><td class="art">ART</td><td class="hot">↑</td><td>154</td></tr><tr class="hot-chain"><td>13</td><td>15:17</td><td class="">376G</td><td class="art">ART</td><td class="hot">↑</td><td>83</td></tr><tr class=""><td>14</td><td>14:48</td><td class="">29G</td><td class="art">ART</td><td class="">2連</td><td>141</td></tr><tr class=""><td>15</td><td>14:44</td><td class="">32G</td><td class="art">ART</td><td class="">↑</td><td>35</td></tr><tr class="hot-chain"><td>16</td><td>14:40</td><td class="">13G</td><td class="art">ART</td><td class="hot">6連</td><td>141</td></tr><tr class="hot-chain"><td>17</td><td>14:36</td><td class="">18G</td><td class="art">ART</td><td class="hot">↑</td><td>129</td></tr><tr class="hot-chain"><td>18</td><td>14:34</td><td class="">12G</td><td class="art">ART</td><td class="hot">↑</td><td>43</td></tr><tr class="hot-chain"><td>19</td><td>14:31</td><td class="">20G</td><td class="art">ART</td><td class="hot">↑</td><td>43</td></tr><tr class="hot-chain"><td>20</td><td>14:29</td><td class="">27G</td><td class="art">ART</td><td class="hot">↑</td><td>39</td></tr><tr class="hot-chain"><td>21</td><td>14:26</td><td class="">85G</td><td class="art">ART</td><td class="hot">↑</td><td>83</td></tr><tr class=""><td>22</td><td>14:17</td><td class="">35G</td><td class="art">ART</td><td class="">-</td><td>141</td></tr><tr class=""><td>23</td><td>14:13</td><td class="">31G</td><td class="art">ART</td><td class="">-</td><td>39</td></tr><tr class=""><td>24</td><td>14:10</td><td class="">261G</td><td class="art">ART</td><td class="">-</td><td>81</td></tr><tr class="hot-chain"><td>25</td><td>13:49</td><td class="">21G</td><td class="art">ART</td><td class="hot">7連</td><td>141</td></tr><tr class="hot-chain"><td>26</td><td>13:46</td><td class="">17G</td><td class="art">ART</td><td class="hot">↑</td><td>38</td></tr><tr class="hot-chain"><td>27</td><td>13:40</td><td class="">20G</td><td class="art">ART</td><td class="hot">↑</td><td>292</td></tr><tr class="hot-chain"><td>28</td><td>13:38</td><td class="">14G</td><td class="art">ART</td><td class="hot">↑</td><td>41</td></tr><tr class="hot-chain"><td>29</td><td>13:31</td><td class="">12G</td><td class="art">ART</td><td class="hot">↑</td><td>275</td></tr><tr class="hot-chain"><td>30</td><td>13:29</td><td class="">27G</td><td class="art">ART</td><td class="hot">↑</td><td>41</td></tr><tr class="hot-chain"><td>31</td><td>13:26</td><td class="">192G</td><td class="art">ART</td><td class="hot">↑</td><td>83</td></tr><tr class="hot-chain"><td>32</td><td>13:10</td><td class="">26G</td><td class="art">ART</td><td class="hot">5連</td><td>148</td></tr><tr class="hot-chain"><td>33</td><td>13:04</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">↑</td><td>25</td></tr><tr class="hot-chain"><td>34</td><td>12:58</td><td class="shallow">6G</td><td class="art">ART</td><td class="hot">↑</td><td>295</td></tr><tr class="hot-chain"><td>35</td><td>12:57</td><td class="">11G</td><td class="art">ART</td><td class="hot">↑</td><td>39</td></tr><tr class="hot-chain"><td>36</td><td>12:55</td><td class="">367G</td><td class="art">ART</td><td class="hot">↑</td><td>83</td></tr><tr class=""><td>37</td><td>12:22</td><td class="">34G</td><td class="art">ART</td><td class="">-</td><td>143</td></tr><tr class=""><td>38</td><td>12:19</td><td class="">14G</td><td class="art">ART</td><td class="">2連</td><td>35</td></tr><tr class=""><td>39</td><td>12:16</td><td class="">43G</td><td class="art">ART</td><td class="">↑</td><td>33</td></tr><tr class=""><td>40</td><td>12:12</td><td class="">151G<br/><small class="acc-games">（累計576G）</small></td><td class="art">ART</td><td class="">-</td><td>90</td></tr><tr class=""><td>41</td><td>12:01</td><td class="">56G<br/><small class="acc-games">（累計425G）</small></td><td class="reg">REG</td><td class="">-</td><td>51</td></tr><tr class=""><td>42</td><td>11:57</td><td class="">41G<br/><small class="acc-games">（累計369G）</small></td><td class="reg">REG</td><td class="">-</td><td>51</td></tr><tr class=""><td>43</td><td>11:53</td><td class="">328G</td><td class="reg">REG</td><td class="">-</td><td>51</td></tr><tr class="hot-chain"><td>44</td><td>11:29</td><td class="">11G</td><td class="art">ART</td><td class="hot">8連</td><td>41</td></tr><tr class="hot-chain"><td>45</td><td>11:27</td><td class="shallow">10G</td><td class="art">ART</td><td class="hot">↑</td><td>45</td></tr><tr class="hot-chain"><td>46</td><td>11:23</td><td class="shallow">8G</td><td class="art">ART</td><td class="hot">↑</td><td>152</td></tr><tr class="hot-chain"><td>47</td><td>11:20</td><td class="">13G</td><td class="art">ART</td><td class="hot">↑</td><td>148</td></tr><tr class="hot-chain"><td>48</td><td>11:16</td><td class="shallow">9G</td><td class="art">ART</td><td class="hot">↑</td><td>139</td></tr><tr class="hot-chain"><td>49</td><td>11:14</td><td class="">14G</td><td class="art">ART</td><td class="hot">↑</td><td>39</td></tr><tr class="hot-chain"><td>50</td><td>11:09</td><td class="">11G</td><td class="art">ART</td><td class="hot">↑</td><td>215</td></tr><tr class="hot-chain"><td>51</td><td>11:07</td><td class="">44G<br/><small class="acc-games">（累計697G）</small></td><td class="art">ART</td><td class="hot">↑</td><td>81</td></tr><tr class="deep"><td>52</td><td>11:03</td><td class="deep">33G<br/><small class="acc-games">（累計653G）</small></td><td class="reg">REG</td><td class="">-</td><td>51</td></tr><tr class="deep"><td>53</td><td>11:00</td><td class="deep">145G<br/><small class="acc-games">（累計620G）</small></td><td class="reg">REG</td><td class="">-</td><td>51</td></tr><tr class=""><td>54</td><td>10:49</td><td class="">475G</td><td class="reg">REG</td><td class="">-</td><td>51</td></tr>
+</tbody></table>
+</div>
+<div class="prev-day-row has-detail" onclick="toggleHitDetail(event, this)">
+<span class="prev-day-label">2/3(火):</span>
+<span class="prev-art">ART 59</span>
+                            
+                             / 2,998G
+                            
+                            <span class="diff-medals-sm plus">+2,320枚</span>
+<span class="expand-icon small">▼</span>
+</div>
+<div class="hit-detail-panel" style="display:none;">
+<div class="hit-summary-row"><span>62当たり</span><span>最大10連</span><span>平均50G</span></div>
+<table class="hit-detail-table"><thead><tr><th>#</th><th>時刻</th><th>G数</th><th>種類</th><th>連</th><th>枚数</th></tr></thead><tbody>
+<tr class=""><td>1</td><td>18:58</td><td class="">115G</td><td class="art">ART</td><td class="">-</td><td>-</td></tr><tr class="hot-chain"><td>2</td><td>18:31</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">9連</td><td>771</td></tr><tr class="hot-chain"><td>3</td><td>18:25</td><td class="shallow">2G</td><td class="art">ART</td><td class="hot">↑</td><td>143</td></tr><tr class="hot-chain"><td>4</td><td>18:17</td><td class="shallow">2G</td><td class="art">ART</td><td class="hot">↑</td><td>37</td></tr><tr class="hot-chain"><td>5</td><td>18:14</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">↑</td><td>41</td></tr><tr class="hot-chain"><td>6</td><td>18:10</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">↑</td><td>36</td></tr><tr class="hot-chain"><td>7</td><td>18:05</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">↑</td><td>216</td></tr><tr class="hot-chain"><td>8</td><td>17:54</td><td class="shallow">2G</td><td class="art">ART</td><td class="hot">↑</td><td>495</td></tr><tr class="hot-chain"><td>9</td><td>17:52</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">↑</td><td>37</td></tr><tr class="hot-chain"><td>10</td><td>17:41</td><td class="">33G</td><td class="art">ART</td><td class="hot">↑</td><td>477</td></tr><tr class="hot-chain"><td>11</td><td>17:36</td><td class="">26G</td><td class="art">ART</td><td class="hot">9連</td><td>41</td></tr><tr class="hot-chain"><td>12</td><td>17:23</td><td class="shallow">8G</td><td class="art">ART</td><td class="hot">↑</td><td>46</td></tr><tr class="hot-chain"><td>13</td><td>17:20</td><td class="">15G</td><td class="art">ART</td><td class="hot">↑</td><td>39</td></tr><tr class="hot-chain"><td>14</td><td>17:14</td><td class="">26G</td><td class="art">ART</td><td class="hot">↑</td><td>217</td></tr><tr class="hot-chain"><td>15</td><td>17:10</td><td class="">11G</td><td class="art">ART</td><td class="hot">↑</td><td>43</td></tr><tr class="hot-chain"><td>16</td><td>17:03</td><td class="shallow">4G</td><td class="art">ART</td><td class="hot">↑</td><td>277</td></tr><tr class="hot-chain"><td>17</td><td>16:59</td><td class="">25G</td><td class="art">ART</td><td class="hot">↑</td><td>37</td></tr><tr class="hot-chain"><td>18</td><td>16:54</td><td class="">20G</td><td class="art">ART</td><td class="hot">↑</td><td>149</td></tr><tr class="hot-chain"><td>19</td><td>16:49</td><td class="">34G</td><td class="art">ART</td><td class="hot">↑</td><td>137</td></tr><tr class="hot-chain"><td>20</td><td>16:43</td><td class="">29G</td><td class="art">ART</td><td class="hot">5連</td><td>147</td></tr><tr class="hot-chain"><td>21</td><td>16:37</td><td class="">15G</td><td class="art">ART</td><td class="hot">↑</td><td>145</td></tr><tr class="hot-chain"><td>22</td><td>16:30</td><td class="shallow">10G</td><td class="art">ART</td><td class="hot">↑</td><td>225</td></tr><tr class="hot-chain"><td>23</td><td>16:25</td><td class="">22G</td><td class="art">ART</td><td class="hot">↑</td><td>217</td></tr><tr class="hot-chain"><td>24</td><td>16:19</td><td class="">59G</td><td class="art">ART</td><td class="hot">↑</td><td>143</td></tr><tr class="hot-chain"><td>25</td><td>16:10</td><td class="shallow">6G</td><td class="art">ART</td><td class="hot">5連</td><td>147</td></tr><tr class="hot-chain"><td>26</td><td>16:04</td><td class="">26G</td><td class="art">ART</td><td class="hot">↑</td><td>139</td></tr><tr class="hot-chain"><td>27</td><td>15:57</td><td class="shallow">4G</td><td class="art">ART</td><td class="hot">↑</td><td>152</td></tr><tr class="hot-chain"><td>28</td><td>15:54</td><td class="">14G</td><td class="art">ART</td><td class="hot">↑</td><td>41</td></tr><tr class="hot-chain"><td>29</td><td>15:49</td><td class="">33G</td><td class="art">ART</td><td class="hot">↑</td><td>150</td></tr><tr class="hot-chain"><td>30</td><td>15:41</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">10連</td><td>25</td></tr><tr class="hot-chain"><td>31</td><td>15:35</td><td class="shallow">4G</td><td class="art">ART</td><td class="hot">↑</td><td>292</td></tr><tr class="hot-chain"><td>32</td><td>15:29</td><td class="shallow">2G</td><td class="art">ART</td><td class="hot">↑</td><td>141</td></tr><tr class="hot-chain"><td>33</td><td>15:28</td><td class="shallow">2G</td><td class="art">ART</td><td class="hot">↑</td><td>37</td></tr><tr class="hot-chain"><td>34</td><td>15:24</td><td class="shallow">2G</td><td class="art">ART</td><td class="hot">↑</td><td>143</td></tr><tr class="hot-chain"><td>35</td><td>15:22</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">↑</td><td>35</td></tr><tr class="hot-chain"><td>36</td><td>15:11</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">↑</td><td>21</td></tr><tr class="hot-chain"><td>37</td><td>15:05</td><td class="shallow">7G</td><td class="art">ART</td><td class="hot">↑</td><td>222</td></tr><tr class="hot-chain"><td>38</td><td>15:01</td><td class="">16G</td><td class="art">ART</td><td class="hot">↑</td><td>150</td></tr><tr class="hot-chain"><td>39</td><td>14:56</td><td class="">106G<br/><small class="acc-games">（累計925G）</small></td><td class="art">ART</td><td class="hot">↑</td><td>232</td></tr><tr class="deep"><td>40</td><td>14:46</td><td class="deep">819G</td><td class="reg">REG</td><td class="">-</td><td>51</td></tr><tr class=""><td>41</td><td>13:32</td><td class="">14G</td><td class="art">ART</td><td class="">2連</td><td>150</td></tr><tr class=""><td>42</td><td>13:27</td><td class="">31G</td><td class="art">ART</td><td class="">↑</td><td>135</td></tr><tr class="deep"><td>43</td><td>13:18</td><td class="deep">607G</td><td class="art">ART</td><td class="">-</td><td>227</td></tr><tr class="hot-chain"><td>44</td><td>12:20</td><td class="">11G</td><td class="art">ART</td><td class="hot">10連</td><td>129</td></tr><tr class="hot-chain"><td>45</td><td>12:15</td><td class="shallow">2G</td><td class="art">ART</td><td class="hot">↑</td><td>213</td></tr><tr class="hot-chain"><td>46</td><td>12:10</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">↑</td><td>222</td></tr><tr class="hot-chain"><td>47</td><td>12:06</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">↑</td><td>20</td></tr><tr class="hot-chain"><td>48</td><td>12:01</td><td class="shallow">9G</td><td class="art">ART</td><td class="hot">↑</td><td>229</td></tr><tr class="hot-chain"><td>49</td><td>11:56</td><td class="">15G</td><td class="art">ART</td><td class="hot">↑</td><td>149</td></tr><tr class="hot-chain"><td>50</td><td>11:51</td><td class="">21G</td><td class="art">ART</td><td class="hot">↑</td><td>141</td></tr><tr class="hot-chain"><td>51</td><td>11:46</td><td class="shallow">6G</td><td class="art">ART</td><td class="hot">↑</td><td>141</td></tr><tr class="hot-chain"><td>52</td><td>11:42</td><td class="">26G</td><td class="art">ART</td><td class="hot">↑</td><td>139</td></tr><tr class="hot-chain"><td>53</td><td>11:39</td><td class="">333G</td><td class="art">ART</td><td class="hot">↑</td><td>83</td></tr><tr class="hot-chain"><td>54</td><td>11:02</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">5連</td><td>145</td></tr><tr class="hot-chain"><td>55</td><td>10:57</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">↑</td><td>23</td></tr><tr class="hot-chain"><td>56</td><td>10:53</td><td class="shallow">5G</td><td class="art">ART</td><td class="hot">↑</td><td>215</td></tr><tr class="hot-chain"><td>57</td><td>10:50</td><td class="shallow">8G</td><td class="art">ART</td><td class="hot">↑</td><td>31</td></tr><tr class="hot-chain"><td>58</td><td>10:48</td><td class="">42G<br/><small class="acc-games">（累計282G）</small></td><td class="art">ART</td><td class="hot">↑</td><td>90</td></tr><tr class=""><td>59</td><td>10:44</td><td class="">50G<br/><small class="acc-games">（累計240G）</small></td><td class="reg">REG</td><td class="">-</td><td>51</td></tr><tr class=""><td>60</td><td>10:39</td><td class="">190G</td><td class="reg">REG</td><td class="">-</td><td>51</td></tr><tr class=""><td>61</td><td>10:20</td><td class="">14G</td><td class="art">ART</td><td class="">2連</td><td>42</td></tr><tr class=""><td>62</td><td>10:18</td><td class="">103G</td><td class="art">ART</td><td class="">↑</td><td>90</td></tr>
+</tbody></table>
+</div>
+<div class="prev-day-row has-detail" onclick="toggleHitDetail(event, this)">
+<span class="prev-day-label">2/2(月):</span>
+<span class="prev-art">ART 17</span>
+                             / RB 5
+                             / 3,499G
+                            
+                            <span class="diff-medals-sm plus">+724枚</span>
+<span class="rensa-sm">8連</span>
+<span class="expand-icon small">▼</span>
+</div>
+<div class="hit-detail-panel" style="display:none;">
+<div class="hit-summary-row"><span>22当たり</span><span>最大8連</span><span>平均157G</span></div>
+<table class="hit-detail-table"><thead><tr><th>#</th><th>時刻</th><th>G数</th><th>種類</th><th>連</th><th>枚数</th></tr></thead><tbody>
+<tr class="hot-chain"><td>1</td><td>17:40</td><td class="shallow">2G</td><td class="art">ART</td><td class="hot">8連</td><td>37</td></tr><tr class="hot-chain"><td>2</td><td>17:37</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">↑</td><td>145</td></tr><tr class="hot-chain"><td>3</td><td>17:33</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">↑</td><td>21</td></tr><tr class="hot-chain"><td>4</td><td>17:29</td><td class="">12G</td><td class="art">ART</td><td class="hot">↑</td><td>220</td></tr><tr class="hot-chain"><td>5</td><td>17:24</td><td class="shallow">9G</td><td class="art">ART</td><td class="hot">↑</td><td>211</td></tr><tr class="hot-chain"><td>6</td><td>17:20</td><td class="">29G</td><td class="art">ART</td><td class="hot">↑</td><td>143</td></tr><tr class="hot-chain"><td>7</td><td>17:15</td><td class="shallow">5G</td><td class="art">ART</td><td class="hot">↑</td><td>136</td></tr><tr class="hot-chain"><td>8</td><td>17:13</td><td class="">486G<br/><small class="acc-games">（累計671G）</small></td><td class="art">ART</td><td class="hot">↑</td><td>83</td></tr><tr class=""><td>9</td><td>16:38</td><td class="">39G<br/><small class="acc-games">（累計185G）</small></td><td class="reg">REG</td><td class="">-</td><td>51</td></tr><tr class=""><td>10</td><td>16:34</td><td class="">146G</td><td class="reg">REG</td><td class="">-</td><td>49</td></tr><tr class="hot-chain"><td>11</td><td>13:03</td><td class="shallow">2G</td><td class="art">ART</td><td class="hot">5連</td><td>141</td></tr><tr class="hot-chain"><td>12</td><td>12:59</td><td class="shallow">2G</td><td class="art">ART</td><td class="hot">↑</td><td>222</td></tr><tr class="hot-chain"><td>13</td><td>12:57</td><td class="shallow">1G</td><td class="art">ART</td><td class="hot">↑</td><td>39</td></tr><tr class="hot-chain"><td>14</td><td>12:46</td><td class="shallow">6G</td><td class="art">ART</td><td class="hot">↑</td><td>504</td></tr><tr class="hot-chain"><td>15</td><td>12:42</td><td class="">429G<br/><small class="acc-games">（累計992G）</small></td><td class="art">ART</td><td class="hot">↑</td><td>90</td></tr><tr class="deep"><td>16</td><td>12:11</td><td class="deep">563G</td><td class="reg">REG</td><td class="">-</td><td>51</td></tr><tr class=""><td>17</td><td>11:30</td><td class="">24G</td><td class="art">ART</td><td class="">2連</td><td>39</td></tr><tr class="deep"><td>18</td><td>11:27</td><td class="deep">510G<br/><small class="acc-games">（累計620G）</small></td><td class="art">ART</td><td class="">↑</td><td>83</td></tr><tr class=""><td>19</td><td>10:47</td><td class="">110G</td><td class="reg">REG</td><td class="">-</td><td>49</td></tr><tr class=""><td>20</td><td>10:38</td><td class="">22G</td><td class="art">ART</td><td class="">2連</td><td>41</td></tr><tr class=""><td>21</td><td>10:34</td><td class="">163G<br/><small class="acc-games">（累計276G）</small></td><td class="art">ART</td><td class="">↑</td><td>81</td></tr><tr class=""><td>22</td><td>10:21</td><td class="">113G</td><td class="reg">REG</td><td class="">-</td><td>65</td></tr>
+</tbody></table>
+</div>
+</div>
+<div class="reasons-full">
+<div class="reason-line-top">🔮 店がよく高設定を入れる台</div>
+<div class="reason-line-top">🔮 高稼働日好調率100%</div>
+<div class="reason-line-top reason-pattern">🔄 4日連続好調 → 据え置き期待（ただし転落警戒も）</div>
+<div class="reason-line-top">🔥 直近の推移: 中→大→大→中→中（ART80回以上の大爆発がなく2日経過。過去の傾向では中/小の後に大が来やすい）</div>
+<div class="reason-line-top">🔥 本日1/105で安定稼働中 (7,304G消化)</div>
+<div class="reason-line-top">🔥 本日天井到達1回 → 低機械割の可能性に注意</div>
+<div class="reason-line-top">🔥 本日15連の爆発あり</div>
+</div>
+</a>
+</body>
+</html>
