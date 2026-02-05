@@ -51,6 +51,41 @@ DAIDATA_STORES = {
         'model_encoded': 'L%EF%BD%BD%EF%BD%B0%EF%BE%8A%EF%BE%9F%EF%BD%B0%EF%BE%8C%EF%BE%9E%EF%BE%97%EF%BD%AF%EF%BD%B8%EF%BD%BC%EF%BE%9E%EF%BD%AC%EF%BD%AF%EF%BD%B8',
         'units': ['3110', '3111', '3112', '3113'],
     },
+    # === エスパス上野本館 (hall_id=100947) ===
+    'ueno_honkan_espass_sbj': {
+        'hall_id': '100947',
+        'name': 'エスパス上野本館',
+        'model_encoded': 'L%EF%BD%BD%EF%BD%B0%EF%BE%8A%EF%BE%9F%EF%BD%B0%EF%BE%8C%EF%BE%9E%EF%BE%97%EF%BD%AF%EF%BD%B8%EF%BD%BC%EF%BE%9E%EF%BD%AC%EF%BD%AF%EF%BD%B8',
+        'units': ['3125', '3126', '3127'],
+    },
+    # === エスパス高田馬場 (hall_id=100915) ===
+    'takadanobaba_espass_sbj': {
+        'hall_id': '100915',
+        'name': 'エスパス高田馬場',
+        'model_encoded': 'L%EF%BD%BD%EF%BD%B0%EF%BE%8A%EF%BE%9F%EF%BD%B0%EF%BE%8C%EF%BE%9E%EF%BE%97%EF%BD%AF%EF%BD%B8%EF%BD%BC%EF%BE%9E%EF%BD%AC%EF%BD%AF%EF%BD%B8',
+        'units': ['2060', '2061', '2062'],
+    },
+    # === エスパス赤坂見附 (hall_id=100952) ===
+    'akasaka_espass_sbj': {
+        'hall_id': '100952',
+        'name': 'エスパス赤坂見附',
+        'model_encoded': 'L%EF%BD%BD%EF%BD%B0%EF%BE%8A%EF%BE%9F%EF%BD%B0%EF%BE%8C%EF%BE%9E%EF%BE%97%EF%BD%AF%EF%BD%B8%EF%BD%BC%EF%BE%9E%EF%BD%AC%EF%BD%AF%EF%BD%B8',
+        'units': ['2039', '2040', '2041'],
+    },
+    # === エスパス新大久保 (hall_id=100951) ===
+    'shinokubo_espass_sbj': {
+        'hall_id': '100951',
+        'name': 'エスパス新大久保',
+        'model_encoded': 'L%EF%BD%BD%EF%BD%B0%EF%BE%8A%EF%BE%9F%EF%BD%B0%EF%BE%8C%EF%BE%9E%EF%BE%97%EF%BD%AF%EF%BD%B8%EF%BD%BC%EF%BE%9E%EF%BD%AC%EF%BD%AF%EF%BD%B8',
+        'units': ['3141', '3142', '3143', '3144'],
+    },
+    # === エスパス新小岩 (hall_id=100260) ===
+    'shinkoiwa_espass_sbj': {
+        'hall_id': '100260',
+        'name': 'エスパス新小岩',
+        'model_encoded': 'L%EF%BD%BD%EF%BD%B0%EF%BE%8A%EF%BE%9F%EF%BD%B0%EF%BE%8C%EF%BE%9E%EF%BE%97%EF%BD%AF%EF%BD%B8%EF%BD%BC%EF%BE%9E%EF%BD%AC%EF%BD%AF%EF%BD%B8',
+        'units': ['2050', '2051', '2052'],
+    },
     'seibu_shinjuku_espass_hokuto': {
         'hall_id': '100950',
         'name': 'エスパス西武新宿(北斗)',
