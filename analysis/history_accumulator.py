@@ -89,6 +89,78 @@ def accumulate_from_daily(daily_data: dict, machine_key: str = 'sbj'):
     return {'new_entries': new_entries, 'updated_units': updated_units}
 
 
+def accumulate_from_availability(avail_data: dict, target_date: str = None):
+    """availability.jsonからtoday_historyを蓄積する
+
+    当日のtoday_historyを蓄積DBに保存。
+    閉店後に実行すると、その日のhistoryが保存される。
+
+    Args:
+        avail_data: availability.jsonの内容
+        target_date: 保存先の日付（YYYY-MM-DD形式）。Noneの場合はfetched_atから取得
+
+    Returns:
+        {'new_entries': int, 'updated_units': int}
+    """
+    from datetime import datetime
+    import pytz
+    JST = pytz.timezone('Asia/Tokyo')
+    
+    # 日付を決定
+    if not target_date:
+        fetched_at = avail_data.get('fetched_at', '')
+        if fetched_at:
+            try:
+                dt = datetime.fromisoformat(fetched_at.replace('Z', '+00:00'))
+                target_date = dt.astimezone(JST).strftime('%Y-%m-%d')
+            except Exception:
+                target_date = datetime.now(JST).strftime('%Y-%m-%d')
+        else:
+            target_date = datetime.now(JST).strftime('%Y-%m-%d')
+    
+    stores = avail_data.get('stores', {})
+    new_entries = 0
+    updated_units = 0
+    
+    for store_key, store_data in stores.items():
+        units = store_data.get('units', [])
+        # store_keyから機種キーを推測
+        machine_key = 'hokuto_tensei2' if 'hokuto_tensei2' in store_key else ('hokuto' if 'hokuto' in store_key else 'sbj')
+        
+        for unit_data in units:
+            unit_id = str(unit_data.get('unit_id', ''))
+            today_history = unit_data.get('today_history', [])
+            
+            if not unit_id:
+                continue
+            
+            # 日別データを作成
+            art = unit_data.get('art', 0)
+            games = unit_data.get('total_start', 0)
+            
+            # artもgamesもなければスキップ
+            if art == 0 and (games is None or games == 0):
+                continue
+            
+            day_entry = {
+                'date': target_date,
+                'art': art,
+                'rb': unit_data.get('rb', 0),
+                'total_start': games,
+                'games': games,
+                'history': today_history,
+                'max_medals': unit_data.get('max_medals', 0),
+                'max_rensa': unit_data.get('today_max_rensa', 0),
+            }
+            
+            added = _accumulate_unit(store_key, unit_id, [day_entry], machine_key)
+            if added > 0:
+                updated_units += 1
+                new_entries += added
+    
+    return {'new_entries': new_entries, 'updated_units': updated_units}
+
+
 def _accumulate_unit(store_key: str, unit_id: str, days: list, machine_key: str) -> int:
     """1台分のデータを蓄積する"""
     store_dir = HISTORY_DIR / store_key
@@ -105,16 +177,32 @@ def _accumulate_unit(store_key: str, unit_id: str, days: list, machine_key: str)
         except (json.JSONDecodeError, IOError):
             pass
 
-    # 既存日付のセット
-    existing_dates = {d.get('date') for d in existing.get('days', [])}
+    # 既存日付のマップ（更新用）
+    existing_days_map = {d.get('date'): d for d in existing.get('days', []) if d.get('date')}
 
-    # 新規日付のみ追加
+    # 新規日付の追加 + 既存日付のhistory更新
     added = 0
+    updated = 0
     good_prob = 130 if machine_key == 'sbj' else 330
 
     for day in days:
         date = day.get('date', '')
-        if not date or date in existing_dates:
+        if not date:
+            continue
+        
+        # 既存データがあり、historyが空で、新データにhistoryがある場合は更新
+        if date in existing_days_map:
+            existing_day = existing_days_map[date]
+            new_history = day.get('history', [])
+            if new_history and not existing_day.get('history'):
+                existing_day['history'] = new_history
+                # max_rensa, max_medalsも更新
+                max_rensa, max_medals = _calc_history_stats(new_history)
+                if max_rensa > 0:
+                    existing_day['max_rensa'] = max_rensa
+                if max_medals > 0:
+                    existing_day['max_medals'] = max_medals
+                updated += 1
             continue
 
         art = day.get('art', 0)
@@ -155,10 +243,9 @@ def _accumulate_unit(store_key: str, unit_id: str, days: list, machine_key: str)
                 entry['max_medals'] = max_medals
 
         existing['days'].append(entry)
-        existing_dates.add(date)
         added += 1
 
-    if added > 0:
+    if added > 0 or updated > 0:
         # 日付順ソート（古い順）
         existing['days'].sort(key=lambda x: x.get('date', ''))
         existing['last_updated'] = datetime.now().isoformat()
@@ -166,7 +253,7 @@ def _accumulate_unit(store_key: str, unit_id: str, days: list, machine_key: str)
         with open(file_path, 'w', encoding='utf-8') as f:
             json.dump(existing, f, ensure_ascii=False, indent=1)
 
-    return added
+    return added + updated
 
 
 def load_unit_history(store_key: str, unit_id: str) -> dict:
