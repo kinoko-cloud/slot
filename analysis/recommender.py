@@ -1198,6 +1198,7 @@ def analyze_today_data(unit_data: dict, current_hour: int = None, machine_key: s
         'diff_medals': 0,
         'max_medals': 0,
         'today_max_rensa': 0,
+        'today_history': [],  # 当日の履歴データ
         'last_hit_time': None,
         'first_hit_time': None,
         'is_running': False,
@@ -1267,6 +1268,7 @@ def analyze_today_data(unit_data: dict, current_hour: int = None, machine_key: s
 
     # 履歴から時間情報を取得
     history = today_data.get('history', [])
+    result['today_history'] = history  # 当日履歴を設定
     if history:
         # 時間順でソート
         sorted_history = sorted(history, key=lambda x: x.get('time', '00:00'))
