@@ -44,6 +44,13 @@ DAIDATA_STORES = {
         'model_encoded': 'L%EF%BD%BD%EF%BD%B0%EF%BE%8A%EF%BE%9F%EF%BD%B0%EF%BE%8C%EF%BE%9E%EF%BE%97%EF%BD%AF%EF%BD%B8%EF%BD%BC%EF%BE%9E%EF%BD%AC%EF%BD%AF%EF%BD%B8',
         'units': ['3185', '3186', '3187'],  # 4000番台は全て低貸のため除外
     },
+    # === エスパス上野新館 (hall_id=100196) ===
+    'ueno_espass_sbj': {
+        'hall_id': '100196',
+        'name': 'エスパス上野新館',
+        'model_encoded': 'L%EF%BD%BD%EF%BD%B0%EF%BE%8A%EF%BE%9F%EF%BD%B0%EF%BE%8C%EF%BE%9E%EF%BE%97%EF%BD%AF%EF%BD%B8%EF%BD%BC%EF%BE%9E%EF%BD%AC%EF%BD%AF%EF%BD%B8',
+        'units': ['3110', '3111', '3112', '3113'],
+    },
     'seibu_shinjuku_espass_hokuto': {
         'hall_id': '100950',
         'name': 'エスパス西武新宿(北斗)',
