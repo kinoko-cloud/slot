@@ -42,10 +42,27 @@ else
 fi
 
 # デプロイ（変更があれば）
-if ! git diff --quiet docs/; then
+if ! git diff --quiet docs/ || ! git diff --quiet data/; then
+    # コンフリクトがあれば自動解消（ローカル優先）
+    if git status | grep -q "Unmerged\|both modified"; then
+        log "コンフリクト検出 - 自動解消中..."
+        git checkout --theirs docs/ data/availability.json 2>/dev/null || true
+        git add docs/ data/availability.json
+    fi
+    
     git add docs/ data/availability.json data/history/
-    git commit -m "auto: SBJ更新 $(date '+%H:%M')" >> "$LOGFILE" 2>&1
-    git pull --rebase origin main >> "$LOGFILE" 2>&1 || true
+    git commit -m "auto: SBJ更新 $(date '+%H:%M')" >> "$LOGFILE" 2>&1 || true
+    
+    # pull時のコンフリクトも自動解消
+    if ! git pull --rebase origin main >> "$LOGFILE" 2>&1; then
+        log "pull失敗 - コンフリクト自動解消..."
+        git rebase --abort 2>/dev/null || true
+        git checkout --theirs docs/ data/availability.json 2>/dev/null || true
+        git add -A
+        git commit -m "auto: コンフリクト解消 $(date '+%H:%M')" >> "$LOGFILE" 2>&1 || true
+        git pull --rebase origin main >> "$LOGFILE" 2>&1 || git pull origin main >> "$LOGFILE" 2>&1 || true
+    fi
+    
     git push origin main >> "$LOGFILE" 2>&1 && log "デプロイ完了"
 fi
 
