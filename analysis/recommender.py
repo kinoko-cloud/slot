@@ -1374,22 +1374,28 @@ def analyze_today_data(unit_data: dict, current_hour: int = None, machine_key: s
         )
         
         if is_rs_target:
-            # RSさん狙い目条件に合致 → 大幅ボーナス
+            # RSさん狙い目条件に合致 → 大幅ボーナス（G数ベース）
+            total_games = result['total_games']
             rs_bonus = 30  # 基本ボーナス
-            if current_hour >= 17:
-                rs_bonus = 40  # 17時以降はさらにボーナス（勝率73-78%）
+            if total_games >= 5000:
+                rs_bonus = 45  # 5000G以上でさらにボーナス
+            elif total_games >= 3000:
+                rs_bonus = 40
             result['today_score_bonus'] += rs_bonus
             result['today_reasons'].append(
-                f'🎯 狙い目台: 確率1/{prob:.0f}+差枚{diff:+.0f}+最大{max_med}枚 → 爆発前の可能性大'
+                f'🎯 狙い目台: 確率1/{prob:.0f}+差枚{diff:+.0f}+最大{max_med}枚 ({total_games}G) → 爆発前の可能性大'
             )
         elif is_potential_high:
             # 確率良い+マイナス+最大小 → ボーナス（勝率58%）
-            ph_bonus = 20
-            if current_hour >= 17:
+            total_games = result['total_games']
+            ph_bonus = 20  # 基本ボーナス
+            if total_games >= 5000:
+                ph_bonus = 30
+            elif total_games >= 3000:
                 ph_bonus = 25
             result['today_score_bonus'] += ph_bonus
             result['today_reasons'].append(
-                f'🔥 高設定候補: 確率1/{prob:.0f}+差枚{diff:+.0f}+最大{max_med}枚 → まだ爆発してない'
+                f'🔥 高設定候補: 確率1/{prob:.0f}+差枚{diff:+.0f}+最大{max_med}枚 ({total_games}G) → まだ爆発してない'
             )
         
         # 確率良い + プラス = すでに出た台（勝率36-44%で危険）
@@ -1397,6 +1403,27 @@ def analyze_today_data(unit_data: dict, current_hour: int = None, machine_key: s
             result['today_score_bonus'] -= 10
             result['today_reasons'].append(
                 f'⚠️ 既に出た台: 確率1/{prob:.0f}+差枚{diff:+.0f} → 以降は期待薄'
+            )
+        
+        # 【新条件】ちょいプラス(0〜+1000) + 8連以下 = 勝率67-75%、平均+6000枚超え
+        # G数ベースで3000G以上なら狙い目
+        total_games = result['total_games']
+        max_rensa = result.get('today_max_rensa', 0)
+        is_choi_plus_low_chain = (
+            0 <= diff < 1000 and
+            max_rensa <= 8 and
+            total_games >= 3000
+        )
+        
+        if is_choi_plus_low_chain:
+            choi_bonus = 55  # 基本ボーナス（勝率75%）
+            if total_games >= 7000:
+                choi_bonus = 65  # 7000G以上で勝率67%維持
+            elif total_games >= 5000:
+                choi_bonus = 60
+            result['today_score_bonus'] += choi_bonus
+            result['today_reasons'].append(
+                f'🎯 ちょいプラス狙い目: 差枚{diff:+.0f}+{max_rensa}連以下 ({total_games}G) → 連チャンしてないので大爆発期待！'
             )
     
     # --- 【RSさん仮説2】当たるけど伸びない台 = 爆発前の高設定 ---
@@ -1427,12 +1454,18 @@ def analyze_today_data(unit_data: dict, current_hour: int = None, machine_key: s
         )
         
         if is_super_best:
+            # 超最強条件（G数ベース）
+            total_games = result['total_games']
             super_bonus = 50  # 基本ボーナス
-            if current_hour >= 17:
-                super_bonus = 60  # 17時以降はさらにボーナス（勝率75%）
+            if total_games >= 7000:
+                super_bonus = 70  # 7000G以上で最大ボーナス
+            elif total_games >= 5000:
+                super_bonus = 65
+            elif total_games >= 3000:
+                super_bonus = 60
             result['today_score_bonus'] += super_bonus
             result['today_reasons'].append(
-                f'🏆 超狙い目: 確率1/{prob:.0f}+{max_rensa}連+天井{ceiling_count}回 → 連チャン力あるのに伸びてない！勝率75%'
+                f'🏆 超狙い目: 確率1/{prob:.0f}+{max_rensa}連+天井{ceiling_count}回 ({total_games}G) → 連チャン力あるのに伸びてない！'
             )
         else:
             # RSさん仮説2: 当たる+ハマり軽め+連チャン伸びず+マイナス
@@ -1446,12 +1479,15 @@ def analyze_today_data(unit_data: dict, current_hour: int = None, machine_key: s
             )
             
             if is_rs_hypothesis2:
+                total_games = result['total_games']
                 rs2_bonus = 35  # 基本ボーナス
-                if current_hour >= 17:
-                    rs2_bonus = 45  # 17時以降はさらにボーナス（勝率66%）
+                if total_games >= 5000:
+                    rs2_bonus = 50
+                elif total_games >= 3000:
+                    rs2_bonus = 45
                 result['today_score_bonus'] += rs2_bonus
                 result['today_reasons'].append(
-                    f'🎯 爆発前候補: 確率1/{prob:.0f}+最大{max_rensa}連+最大{max_med}枚+マイナス → 伸び悩み台は爆発前'
+                    f'🎯 爆発前候補: 確率1/{prob:.0f}+最大{max_rensa}連+最大{max_med}枚+マイナス ({total_games}G) → 伸び悩み台は爆発前'
                 )
 
     # --- 【北斗転生2】差枚ベースの狙い目条件 ---
@@ -1470,21 +1506,30 @@ def analyze_today_data(unit_data: dict, current_hour: int = None, machine_key: s
         )
         
         if is_hokuto_super:
-            hokuto_bonus = 60
-            if current_hour >= 17:
+            # 北斗超最強条件（G数ベース）
+            total_games = result['total_games']
+            hokuto_bonus = 60  # 基本ボーナス
+            if total_games >= 7000:
+                hokuto_bonus = 80
+            elif total_games >= 5000:
+                hokuto_bonus = 75
+            elif total_games >= 3000:
                 hokuto_bonus = 70
             result['today_score_bonus'] += hokuto_bonus
             result['today_reasons'].append(
-                f'🏆 北斗超狙い目: 差枚{diff:+.0f}+最大{max_med}枚+{max_rensa}連 → 連チャン力あるのにマイナス！'
+                f'🏆 北斗超狙い目: 差枚{diff:+.0f}+最大{max_med}枚+{max_rensa}連 ({total_games}G) → 連チャン力あるのにマイナス！'
             )
         elif diff < 0:
             # マイナス台は基本的に狙い目（勝率64%）
-            minus_bonus = 20
-            if current_hour >= 17:
+            total_games = result['total_games']
+            minus_bonus = 20  # 基本ボーナス
+            if total_games >= 5000:
+                minus_bonus = 35
+            elif total_games >= 3000:
                 minus_bonus = 30
             result['today_score_bonus'] += minus_bonus
             result['today_reasons'].append(
-                f'🎯 北斗マイナス台: 差枚{diff:+.0f} → 勝率64%'
+                f'🎯 北斗マイナス台: 差枚{diff:+.0f} ({total_games}G) → 勝率64%'
             )
         elif diff > 0:
             # プラス台は超危険（勝率12%）
