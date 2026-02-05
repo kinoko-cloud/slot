@@ -996,6 +996,20 @@
     }
 
     {% include '_common_js.html' %}
+    
+    // スマホでdetail-triggerをタップした時にリンク遷移を防ぐ
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.detail-trigger').forEach(function(el) {
+            el.addEventListener('touchstart', function(e) {
+                e.stopPropagation();
+            }, { passive: false });
+            el.addEventListener('touchend', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                toggleHistoryDetail(e, el);
+            }, { passive: false });
+        });
+    });
     </script>
 </body>
 </html>
