@@ -76,16 +76,31 @@ def _enrich_day_prefix(rec, days_by_date, prefix, date_key):
         db_history = day_data.get('history', [])
         if db_history:
             rec[f'{prefix}history'] = db_history
-            # max_rensaも補完
-            if not rec.get(f'{prefix}max_rensa'):
-                db_rensa = day_data.get('max_rensa')
-                if db_rensa:
-                    rec[f'{prefix}max_rensa'] = db_rensa
-            # max_medalsも補完
-            if not rec.get(f'{prefix}max_medals'):
-                db_max = day_data.get('max_medals')
-                if db_max:
-                    rec[f'{prefix}max_medals'] = db_max
+    
+    # max_rensa/max_medalsの補完（蓄積DB → historyから計算）
+    hist = rec.get(f'{prefix}history', []) or day_data.get('history', [])
+    if not rec.get(f'{prefix}max_rensa') or rec.get(f'{prefix}max_rensa') == 0:
+        db_rensa = day_data.get('max_rensa')
+        if db_rensa:
+            rec[f'{prefix}max_rensa'] = db_rensa
+        elif hist:
+            # historyから計算
+            from analysis.history_accumulator import _calc_history_stats
+            max_rensa, max_medals = _calc_history_stats(hist)
+            if max_rensa > 0:
+                rec[f'{prefix}max_rensa'] = max_rensa
+            if max_medals > 0 and (not rec.get(f'{prefix}max_medals') or rec.get(f'{prefix}max_medals') == 0):
+                rec[f'{prefix}max_medals'] = max_medals
+    
+    if not rec.get(f'{prefix}max_medals') or rec.get(f'{prefix}max_medals') == 0:
+        db_max = day_data.get('max_medals')
+        if db_max:
+            rec[f'{prefix}max_medals'] = db_max
+        elif hist:
+            # historyから最大枚数を計算
+            max_medals = max((h.get('medals', 0) for h in hist), default=0)
+            if max_medals > 0:
+                rec[f'{prefix}max_medals'] = max_medals
 
     # gamesの補完（historyから計算）
     if not rec.get(f'{prefix}games') or rec.get(f'{prefix}games') == 0:
