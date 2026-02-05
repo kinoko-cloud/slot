@@ -38,6 +38,18 @@ WEEKDAY_NAMES = ['月', '火', '水', '木', '金', '土', '日']
 # 出力ディレクトリ
 OUTPUT_DIR = PROJECT_ROOT / 'docs'  # GitHub Pages互換
 
+# 隠し店舗（サイトに表示しない、データ収集のみ）
+HIDDEN_STORES = set()
+_hidden_config_path = PROJECT_ROOT / 'config' / 'hidden_stores.json'
+if _hidden_config_path.exists():
+    try:
+        with open(_hidden_config_path) as f:
+            _hidden_config = json.load(f)
+            HIDDEN_STORES = set(_hidden_config.get('hidden_store_keys', []))
+        print(f"隠し店舗: {len(HIDDEN_STORES)}件")
+    except Exception as e:
+        print(f"隠し店舗設定読込エラー: {e}")
+
 
 def get_display_mode():
     """現在時刻から表示モードを決定
@@ -457,11 +469,14 @@ def generate_index(env):
                     else:
                         rec['first_hit_count'] = 0
 
-                # TOP3候補（上位3台/店舗）
-                for rec in recs[:3]:
-                    top3_all.append(rec)
+                # TOP3候補（上位3台/店舗）- 隠し店舗は除外
+                if store_key not in HIDDEN_STORES:
+                    for rec in recs[:3]:
+                        top3_all.append(rec)
 
-                # 前日の爆発台（全台から収集、yesterday_art > 0）
+                # 前日の爆発台（全台から収集、yesterday_art > 0）- 隠し店舗は除外
+                if store_key in HIDDEN_STORES:
+                    continue  # 隠し店舗はスキップ
                 for rec in recs:
                     y_art = rec.get('yesterday_art', 0)
                     if y_art and y_art > 0:

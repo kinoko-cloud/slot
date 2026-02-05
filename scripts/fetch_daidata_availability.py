@@ -486,6 +486,18 @@ def main():
     # オプション解析
     sbj_only = '--sbj-only' in sys.argv
     hokuto_only = '--hokuto-only' in sys.argv
+    include_hidden = '--include-hidden' in sys.argv  # 隠し店舗も含める（日次収集用）
+    
+    # 隠し店舗（リアルタイム更新対象外）を読み込み
+    hidden_stores = set()
+    hidden_config_path = Path(__file__).parent.parent / 'config' / 'hidden_stores.json'
+    if hidden_config_path.exists():
+        try:
+            with open(hidden_config_path) as f:
+                hidden_config = json.load(f)
+                hidden_stores = set(hidden_config.get('hidden_store_keys', []))
+        except:
+            pass
     
     # 対象店舗をフィルタリング
     daidata_stores = DAIDATA_STORES
@@ -494,6 +506,10 @@ def main():
     if sbj_only:
         daidata_stores = {k: v for k, v in DAIDATA_STORES.items() if 'sbj' in k}
         papimo_stores = {k: v for k, v in PAPIMO_STORES.items() if 'sbj' in k}
+        # リアルタイム更新では隠し店舗を除外（--include-hiddenがない場合）
+        if not include_hidden:
+            daidata_stores = {k: v for k, v in daidata_stores.items() if k not in hidden_stores}
+            papimo_stores = {k: v for k, v in papimo_stores.items() if k not in hidden_stores}
         print(f"SBJのみモード: {len(daidata_stores) + len(papimo_stores)}店舗")
     elif hokuto_only:
         daidata_stores = {k: v for k, v in DAIDATA_STORES.items() if 'hokuto' in k}
