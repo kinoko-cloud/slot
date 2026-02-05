@@ -142,7 +142,7 @@
                             </td>
                             <td class="vt-art">{{ unit.actual_art if unit.actual_prob > 0 else '-' }}</td>
                             <td class="vt-prob {{ unit.result_mark_class|default('') }}">{% if unit.actual_prob > 0 %}1/{{ unit.actual_prob|int }}{% else %}-{% endif %}</td>
-                            <td class="vt-diff {% if unit.diff_medals > 0 %}plus{% elif unit.diff_medals < 0 %}minus{% endif %}">{% if unit.diff_medals %}{{ '{:+,}'.format(unit.diff_medals|int) }}{% else %}-{% endif %}</td>
+                            <td class="vt-diff {% if unit.diff_medals and unit.diff_medals > 0 %}plus{% elif unit.diff_medals and unit.diff_medals < 0 %}minus{% endif %}">{% if unit.diff_medals %}{{ '{:+,}'.format(unit.diff_medals|int) }}{% else %}-{% endif %}</td>
                             <td class="vt-max">{% if unit.max_medals %}{{ '{:,}'.format(unit.max_medals|int) }}{% else %}-{% endif %}</td>
                         </tr>
                             {# 展開可能な当たり履歴セクション #}
