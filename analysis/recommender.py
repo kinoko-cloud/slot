@@ -2869,8 +2869,9 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
                         today_analysis = analyze_today_data(unit, machine_key=machine_key)
                         break
 
-        # data/history/ からも直接読み込み（daily_dataに最新データがない場合の補完）
-        if today_analysis.get('status') == '-' or today_analysis.get('art_count', 0) == 0:
+        # data/history/ からも直接読み込み（リアルタイムデータがない場合のみ補完）
+        # リアルタイムデータがある場合は、ART=0でもそのまま使用（今日まだ稼働開始していないケース）
+        if not (realtime_data and realtime_is_today) and today_analysis.get('status') == '-':
             _hist_file_for_today = Path(__file__).parent.parent / 'data' / 'history' / data_store_key / f'{unit_id}.json'
             if not _hist_file_for_today.exists():
                 _hist_file_for_today = Path(__file__).parent.parent / 'data' / 'history' / store_key / f'{unit_id}.json'
