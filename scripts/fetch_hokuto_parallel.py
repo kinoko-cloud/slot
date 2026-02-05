@@ -43,7 +43,7 @@ HOKUTO_STORES = {
     'seibu_shinjuku_espass_hokuto': {
         'hall_id': '100950',
         'name': 'エスパス西武新宿(北斗)',
-        'units': [str(i) for i in range(3138, 3152)] + ['3165', '3166', '3185', '3186', '3187'],
+        'units': [str(i) for i in range(3138, 3152)] + ['3165', '3166'],  # 3185-3187撤去
     },
 }
 

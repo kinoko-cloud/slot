@@ -119,7 +119,7 @@ STORES = {
         'short_name': 'エスパス西武新宿',
         'hall_id': '100950',
         'machine': 'sbj',
-        'units': ['3185', '3186', '3187'],  # 4000番台は全て低貸のため除外
+        'units': ['4168'],  # 減台により4168のみ（3185-3187撤去）
         'data_source': 'daidata',
     },
     'seibu_shinjuku_espass_hokuto': {
@@ -127,7 +127,7 @@ STORES = {
         'short_name': 'エスパス西武新宿',
         'hall_id': '100950',
         'machine': 'hokuto_tensei2',
-        'units': [str(i) for i in range(3138, 3152)] + ['3165', '3166', '3185', '3186', '3187'],
+        'units': [str(i) for i in range(3138, 3152)] + ['3165', '3166'],  # 3185-3187撤去
         'data_source': 'daidata',
     },
     'akiba_espass_sbj': {
