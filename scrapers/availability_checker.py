@@ -32,6 +32,10 @@ GITHUB_STORES = [
     # 北斗転生2
     'shibuya_espass_hokuto', 'shinjuku_espass_hokuto', 'akiba_espass_hokuto',
     'island_akihabara_hokuto',
+    # _tensei2サフィックスのエイリアス
+    'shibuya_espass_hokuto_tensei2', 'shinjuku_espass_hokuto_tensei2', 'akiba_espass_hokuto_tensei2',
+    'island_akihabara_hokuto_tensei2', 'seibu_shinjuku_espass_hokuto_tensei2',
+    'shibuya_honkan_espass_hokuto_tensei2',
 ]
 
 
@@ -124,10 +128,12 @@ def get_availability(store_key: str) -> Dict[str, str]:
     store_data = {}
 
     # availability.json（ローカル優先、GitHub fallback）から取得
+    # store_keyのエイリアス対応（_tensei2サフィックスを除去）
+    data_store_key = store_key.replace('_tensei2', '') if '_tensei2' in store_key else store_key
     if store_key in GITHUB_STORES:
         try:
             data = get_daidata_availability()
-            store_data = data.get('stores', {}).get(store_key, {})
+            store_data = data.get('stores', {}).get(data_store_key, {}) or data.get('stores', {}).get(store_key, {})
         except Exception as e:
             print(f"Error getting availability from JSON: {e}")
 
@@ -202,10 +208,12 @@ def get_realtime_data(store_key: str) -> Dict:
         }
     """
     # availability.json対応店舗（daidata + papimo）
+    # store_keyのエイリアス対応（_tensei2サフィックスを除去）
+    data_store_key = store_key.replace('_tensei2', '') if '_tensei2' in store_key else store_key
     if store_key in GITHUB_STORES:
         try:
             data = get_daidata_availability()
-            store_data = data.get('stores', {}).get(store_key, {})
+            store_data = data.get('stores', {}).get(data_store_key, {}) or data.get('stores', {}).get(store_key, {})
 
             if store_data and store_data.get('units'):
                 return {
