@@ -128,6 +128,9 @@ def _accumulate_unit(store_key: str, unit_id: str, days: list, machine_key: str)
 
         prob = games / art if art > 0 and games > 0 else 0
 
+        # diff_medalsの取得（複数キー対応）
+        diff_medals = day.get('diff_medals') or day.get('diff') or day.get('sashi') or 0
+        
         entry = {
             'date': date,
             'art': art,
@@ -135,6 +138,7 @@ def _accumulate_unit(store_key: str, unit_id: str, days: list, machine_key: str)
             'total_start': games,
             'games': games,
             'prob': round(prob, 1) if prob > 0 else 0,
+            'diff_medals': diff_medals if diff_medals else None,
             # 試行回数が少ない日は信頼性が低いため好調判定しない
             # SBJ: ART 20回以上、北斗: ART 10回以上
             'is_good': prob > 0 and prob <= good_prob and art >= (20 if machine_key == 'sbj' else 10),

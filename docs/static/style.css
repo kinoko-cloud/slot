@@ -6570,3 +6570,180 @@ details.unit-card .unit-details {
     background: #95a5a6;
     color: #fff;
 }
+
+/* ===================================================================
+   v2l レイアウト（2026-02-06 固定）
+   =================================================================== */
+
+/* ART数字の色変化 */
+.art-num-big.art-rainbow { 
+    background: linear-gradient(90deg, #ff6b6b, #ffa94d, #ffd43b, #69db7c, #4dabf7, #9775fa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.art-num-big.art-gold { 
+    background: linear-gradient(135deg, #ffd700, #ffec80, #ffd700);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.art-num-big.art-hot { color: #ff922b; }
+
+/* 1行目: ベースライン揃え */
+.top3-stats-main {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+.art-main { display: inline; }
+.art-label {
+    font-size: 0.9em;
+    color: #888;
+}
+.art-num-big {
+    font-size: 2.2em;
+}
+
+/* RB */
+.rb-badge-top {
+    background: none;
+    padding: 0;
+    display: inline;
+}
+.rb-badge-top .rb-label {
+    font-size: 0.9em;
+    color: #888;
+}
+.rb-badge-top .rb-num {
+    font-size: 1.6em;
+    font-weight: bold;
+    color: #fff;
+}
+
+/* 累計（1行目） */
+.total-games-inline { display: inline; }
+.total-games-inline .total-label {
+    font-size: 0.85em;
+    color: #888;
+}
+.total-games-inline .total-num {
+    font-size: 0.95em;
+    font-weight: bold;
+    color: #fff;
+}
+.total-games-inline .total-g {
+    font-size: 0.85em;
+    color: #888;
+}
+
+/* 2行目 */
+.top3-stats-sub {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: baseline;
+}
+
+/* スタート数 */
+.current-hama { display: inline; }
+.current-hama .start-label {
+    font-size: 0.85em;
+    color: #888;
+}
+.current-hama .start-num {
+    font-size: 1.6em;
+    font-weight: bold;
+    color: #4dabf7;
+}
+.current-hama .start-g {
+    font-size: 0.85em;
+    color: #888;
+}
+
+/* 最大枚数 */
+.max-medals-top {
+    background: none;
+    padding: 0;
+}
+.max-medals-top .max-label {
+    font-size: 0.85em;
+    color: #888;
+}
+.max-medals-top .max-num {
+    font-size: 1.6em;
+    font-weight: bold;
+    color: #2ed573;
+}
+.max-medals-top .max-unit {
+    font-size: 0.85em;
+    color: #888;
+}
+
+/* 差枚 */
+.diff-medals-inline {
+    background: none;
+    padding: 0;
+    border-radius: 0;
+}
+.diff-medals-inline .diff-label {
+    font-size: 0.85em;
+    color: #888;
+}
+.diff-medals-inline .diff-num {
+    font-size: 1.6em;
+    font-weight: bold;
+}
+.diff-medals-inline.plus .diff-num { color: #2ed573; }
+.diff-medals-inline.minus .diff-num { color: #ff6b6b; }
+.diff-medals-inline .diff-unit {
+    font-size: 0.85em;
+    color: #888;
+}
+
+/* 機械割の%を小さく */
+.payout-num .payout-pct {
+    font-size: 0.7em;
+}
+
+/* 最大連チャン数（機械割の横） */
+.rensa-inline {
+    display: inline;
+    margin-left: 12px;
+}
+.rensa-inline .rensa-label {
+    font-size: 0.85em;
+    color: #888;
+}
+.rensa-inline .rensa-num {
+    font-size: 1.6em;
+    font-weight: bold;
+    color: #ffa502;
+}
+.rensa-inline .rensa-unit {
+    font-size: 0.85em;
+    color: #888;
+}
+
+/* 詳細ボタン（最大連チャンの横） */
+.detail-trigger-inline {
+    margin-left: 12px;
+    padding: 4px 8px;
+    background: #3a3a5a;
+    border-radius: 4px;
+    color: #70a1ff;
+    font-size: 0.85em;
+    cursor: pointer;
+}
+
+/* 機械割の行をflexに */
+.top3-setting {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+/* 台番号の数字を大きく */
+.unit-id-num {
+    font-size: 1.6em;
+}

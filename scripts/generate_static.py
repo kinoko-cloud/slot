@@ -1791,7 +1791,7 @@ def _get_verify_highlights():
             for u in units:
                 rank = u.get('predicted_rank', 'C')
                 prob = u.get('actual_prob', 999)
-                diff = u.get('diff_medals', 0)
+                diff = (u.get('diff_medals') or 0)
                 if rank in ('S', 'A') and u.get('verdict_class') in ('perfect', 'hit'):
                     if prob <= 100 and diff >= 3000:
                         big_hits.append({
@@ -1892,7 +1892,7 @@ def _generate_verify_from_backtest(env, results):
             avail_info = avail_lookup.get((store_key, uid), {})
             # バックテスト結果のデータを優先（availability.jsonは当日データなので混在させない）
             max_medals = u.get('max_medals', 0)
-            diff_medals = u.get('diff_medals', 0)
+            diff_medals = (u.get('diff_medals') or 0)
             # 蓄積DBから差枚・最大枚数を補完
             if max_medals == 0 or diff_medals == 0:
                 try:
@@ -2074,7 +2074,7 @@ def _generate_verify_from_backtest(env, results):
                 prob = u.get('actual_prob', 0)
                 if prob > 0:
                     parts.append(f'<span class="td-prob">1/{prob:.0f}</span>')
-                diff = u.get('diff_medals', 0)
+                diff = (u.get('diff_medals') or 0)
                 if diff:
                     cls = 'plus' if diff > 0 else 'minus'
                     parts.append(f'<span class="td-diff {cls}">差枚{diff:+,}</span>')
@@ -2087,8 +2087,8 @@ def _generate_verify_from_backtest(env, results):
             
             # 1. 大的中（S/A予測 × 確率1/100以下 × 差枚+3,000以上）
             for u in sa_units:
-                diff = u.get('diff_medals', 0)
-                mx = u.get('max_medals', 0)
+                diff = u.get('diff_medals') or 0
+                mx = u.get('max_medals') or 0
                 if u.get('actual_prob', 999) <= 100 and diff >= 3000:
                     topics.append({
                         'icon': '💥',
@@ -2101,9 +2101,9 @@ def _generate_verify_from_backtest(env, results):
                     })
             
             # 2. 的中（S/A予測 × 差枚+5,000以上）— 大的中と重複しない台
-            explosion_ids = {u.get('unit_id') for u in sa_units if u.get('actual_prob', 999) <= 100 and u.get('diff_medals', 0) >= 3000}
+            explosion_ids = {u.get('unit_id') for u in sa_units if u.get('actual_prob', 999) <= 100 and (u.get('diff_medals') or 0) >= 3000}
             for u in sa_units:
-                diff = u.get('diff_medals', 0)
+                diff = (u.get('diff_medals') or 0)
                 mx = u.get('max_medals', 0)
                 uid = u.get('unit_id')
                 if diff >= 5000 and uid not in explosion_ids:

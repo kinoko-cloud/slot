@@ -71,10 +71,37 @@ def _enrich_day_prefix(rec, days_by_date, prefix, date_key):
     if not day_data:
         return
 
+    # gamesの補完（historyから計算）
+    if not rec.get(f'{prefix}games') or rec.get(f'{prefix}games') == 0:
+        db_games = day_data.get('games') or day_data.get('total_start')
+        if db_games and db_games > 0:
+            rec[f'{prefix}games'] = int(db_games)
+        else:
+            # historyからstart合計を計算
+            hist = rec.get(f'{prefix}history', []) or day_data.get('history', [])
+            if hist:
+                total_start = sum(h.get('start', 0) for h in hist)
+                if total_start > 0:
+                    rec[f'{prefix}games'] = total_start
+
     if not rec.get(f'{prefix}diff_medals'):
         db_diff = day_data.get('diff_medals')
         if db_diff is not None and db_diff != 0:
             rec[f'{prefix}diff_medals'] = int(db_diff)
+        else:
+            # historyから差枚を推定
+            hist = rec.get(f'{prefix}history', []) or day_data.get('history', [])
+            games = rec.get(f'{prefix}games', 0)
+            if hist and games > 0:
+                try:
+                    from analysis.diff_medals_estimator import estimate_diff_medals
+                    medals_total = sum(h.get('medals', 0) for h in hist)
+                    machine_key = rec.get('machine_key', 'sbj')
+                    estimated = estimate_diff_medals(medals_total, games, machine_key)
+                    if estimated != 0:
+                        rec[f'{prefix}diff_medals'] = int(estimated)
+                except Exception:
+                    pass
 
     if not rec.get(f'{prefix}max_rensa'):
         db_rensa = day_data.get('max_rensa')
