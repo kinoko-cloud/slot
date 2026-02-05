@@ -642,6 +642,33 @@
                         {{ sparkline(_hist, width=220, height=45, diff_medals=_diff if _diff != 0 else none)|safe }}
                     </div>
                     {% endif %}
+                    {# === 前日・前々日データ === #}
+                    {% if rec.yesterday_art or rec.day_before_art %}
+                    <div class="top3-prev-days">
+                        {% if rec.yesterday_art %}
+                        <div class="prev-day-row">
+                            <span class="prev-day-label">{{ short_date(rec.yesterday_date) or '前日' }}:</span>
+                            <span class="prev-art">ART {{ rec.yesterday_art }}</span>
+                            {% if rec.yesterday_rb %} / RB {{ rec.yesterday_rb }}{% endif %}
+                            {% if rec.yesterday_games %} / {{ '{:,}'.format(rec.yesterday_games) }}G{% endif %}
+                            {% if rec.yesterday_diff_medals is defined and rec.yesterday_diff_medals != 0 %}
+                            <span class="diff-medals-sm {% if rec.yesterday_diff_medals > 0 %}plus{% else %}minus{% endif %}">{{ '{:+,}'.format(rec.yesterday_diff_medals) }}枚</span>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                        {% if rec.day_before_art %}
+                        <div class="prev-day-row">
+                            <span class="prev-day-label">{{ short_date(rec.day_before_date) or '前々日' }}:</span>
+                            <span class="prev-art">ART {{ rec.day_before_art }}</span>
+                            {% if rec.day_before_rb %} / RB {{ rec.day_before_rb }}{% endif %}
+                            {% if rec.day_before_games %} / {{ '{:,}'.format(rec.day_before_games) }}G{% endif %}
+                            {% if rec.day_before_diff_medals is defined and rec.day_before_diff_medals != 0 %}
+                            <span class="diff-medals-sm {% if rec.day_before_diff_medals > 0 %}plus{% else %}minus{% endif %}">{{ '{:+,}'.format(rec.day_before_diff_medals) }}枚</span>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
                 </a>
                 {# history-detail for more-recs #}
                 {% if _hist|length > 0 %}
