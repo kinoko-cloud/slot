@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>デザインテスト v2b - 現行ベース</title>
+    <link rel="stylesheet" href="style_current.css">
+    <style>
+        /* ART回数で色変化 */
+        .art-cold { color: #4dabf7 !important; } /* 0-19: 青 */
+        .art-cool { color: #69db7c !important; } /* 20-39: 緑 */
+        .art-warm { color: #ffd43b !important; } /* 40-59: 黄 */
+        .art-hot { color: #ff922b !important; } /* 60-79: オレンジ */
+        .art-rainbow { 
+            background: linear-gradient(90deg, #ff6b6b, #ffa94d, #ffd43b, #69db7c, #4dabf7, #9775fa) !important;
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+            background-clip: text !important;
+        } /* 80-99: レインボー */
+        .art-gold { 
+            background: linear-gradient(135deg, #ffd700, #ffec80, #ffd700) !important;
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+            background-clip: text !important;
+        } /* 100+: 金 */
+        
+        /* RBシンプル化（バッジ外す） */
+        .rb-simple {
+            font-size: 0.9em;
+            color: #888;
+            margin-left: 8px;
+        }
+        
+        /* 現在G数を大きく */
+        .current-games-lg {
+            font-size: 1.2em !important;
+            font-weight: 600;
+        }
+        
+        /* データ行の順番調整用 */
+        .data-reorder {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: baseline;
+            gap: 8px;
+        }
+        .data-reorder .order-1 { order: 1; } /* ART */
+        .data-reorder .order-2 { order: 2; } /* RB */
+        .data-reorder .order-3 { order: 3; } /* 現在G */
+        .data-reorder .order-4 { order: 4; } /* 最大枚数 */
+        .data-reorder .order-5 { order: 5; } /* 合成 */
+        .data-reorder .order-6 { order: 6; } /* 差枚 */
+        .data-reorder .order-7 { order: 7; margin-left: auto; } /* 累計G */
+        
+        body { padding: 16px; }
+        h2 { margin: 24px 0 12px; font-size: 1.1em; color: #888; }
+        .test-card { margin-bottom: 16px; }
+    </style>
+</head>
+<body>
+    <h1>デザインテスト v2b</h1>
+    <p style="color:#888;margin-bottom:20px;">現行デザインベース + 順番入替 + ART色変化</p>
+    
+    <h2>ART色サンプル</h2>
+    
+    <!-- サンプルカード -->
+    <div class="test-card top3-card rank-s">
+        <div class="top3-header">
+            <span class="top3-rank">#1</span>
+            <span class="top3-unit">1025</span>
+            <span class="top3-store">アイランド秋葉原</span>
+            <span class="rank-badge" style="background:#ff6b6b">S</span>
+        </div>
+        <div class="top3-body data-reorder">
+            <span class="order-1"><span class="art-label">ART</span> <span class="art-num art-cold">15</span></span>
+            <span class="order-2 rb-simple">RB 3</span>
+            <span class="order-3 current-games-lg" style="color:#4dabf7">450G</span>
+            <span class="order-4">最大 2,400枚</span>
+            <span class="order-5 art-prob good">1/98</span>
+            <span class="order-6 diff-medals plus">+1,200枚</span>
+            <span class="order-7" style="color:#666;font-size:0.85em">累計 4,500G</span>
+        </div>
+    </div>
+    
+    <div class="test-card top3-card rank-s">
+        <div class="top3-header">
+            <span class="top3-rank">#2</span>
+            <span class="top3-unit">1022</span>
+            <span class="top3-store">アイランド秋葉原</span>
+            <span class="rank-badge" style="background:#ff6b6b">S</span>
+        </div>
+        <div class="top3-body data-reorder">
+            <span class="order-1"><span class="art-label">ART</span> <span class="art-num art-cool">35</span></span>
+            <span class="order-2 rb-simple">RB 8</span>
+            <span class="order-3 current-games-lg" style="color:#4dabf7">280G</span>
+            <span class="order-4">最大 3,100枚</span>
+            <span class="order-5 art-prob good">1/85</span>
+            <span class="order-6 diff-medals plus">+2,800枚</span>
+            <span class="order-7" style="color:#666;font-size:0.85em">累計 6,200G</span>
+        </div>
+    </div>
+    
+    <div class="test-card top3-card rank-a">
+        <div class="top3-header">
+            <span class="top3-rank">#3</span>
+            <span class="top3-unit">3011</span>
+            <span class="top3-store">渋谷エスパス</span>
+            <span class="rank-badge" style="background:#ffa94d">A</span>
+        </div>
+        <div class="top3-body data-reorder">
+            <span class="order-1"><span class="art-label">ART</span> <span class="art-num art-warm">52</span></span>
+            <span class="order-2 rb-simple">RB 12</span>
+            <span class="order-3 current-games-lg" style="color:#4dabf7">120G</span>
+            <span class="order-4">最大 4,200枚</span>
+            <span class="order-5 art-prob good">1/110</span>
+            <span class="order-6 diff-medals plus">+4,500枚</span>
+            <span class="order-7" style="color:#666;font-size:0.85em">累計 8,400G</span>
+        </div>
+    </div>
+    
+    <div class="test-card top3-card rank-s">
+        <div class="top3-header">
+            <span class="top3-rank">#4</span>
+            <span class="top3-unit">2056</span>
+            <span class="top3-store">渋谷エスパス</span>
+            <span class="rank-badge" style="background:#ff6b6b">S</span>
+        </div>
+        <div class="top3-body data-reorder">
+            <span class="order-1"><span class="art-label">ART</span> <span class="art-num art-hot">72</span></span>
+            <span class="order-2 rb-simple">RB 15</span>
+            <span class="order-3 current-games-lg" style="color:#4dabf7">85G</span>
+            <span class="order-4">最大 5,800枚</span>
+            <span class="order-5 art-prob good">1/92</span>
+            <span class="order-6 diff-medals plus">+6,200枚</span>
+            <span class="order-7" style="color:#666;font-size:0.85em">累計 10,500G</span>
+        </div>
+    </div>
+    
+    <div class="test-card top3-card rank-s">
+        <div class="top3-header">
+            <span class="top3-rank">#5</span>
+            <span class="top3-unit">682</span>
+            <span class="top3-store">新宿エスパス</span>
+            <span class="rank-badge" style="background:#ff6b6b">S</span>
+        </div>
+        <div class="top3-body data-reorder">
+            <span class="order-1"><span class="art-label">ART</span> <span class="art-num art-rainbow">88</span></span>
+            <span class="order-2 rb-simple">RB 18</span>
+            <span class="order-3 current-games-lg" style="color:#4dabf7">320G</span>
+            <span class="order-4">最大 7,200枚</span>
+            <span class="order-5 art-prob good">1/78</span>
+            <span class="order-6 diff-medals plus">+8,500枚</span>
+            <span class="order-7" style="color:#666;font-size:0.85em">累計 12,800G</span>
+        </div>
+    </div>
+    
+    <div class="test-card top3-card rank-s">
+        <div class="top3-header">
+            <span class="top3-rank">#6</span>
+            <span class="top3-unit">1027</span>
+            <span class="top3-store">アイランド秋葉原</span>
+            <span class="rank-badge" style="background:#ff6b6b">S</span>
+        </div>
+        <div class="top3-body data-reorder">
+            <span class="order-1"><span class="art-label">ART</span> <span class="art-num art-gold">112</span></span>
+            <span class="order-2 rb-simple">RB 22</span>
+            <span class="order-3 current-games-lg" style="color:#4dabf7">180G</span>
+            <span class="order-4">最大 9,500枚</span>
+            <span class="order-5 art-prob good">1/72</span>
+            <span class="order-6 diff-medals plus">+12,000枚</span>
+            <span class="order-7" style="color:#666;font-size:0.85em">累計 15,200G</span>
+        </div>
+    </div>
+</body>
+</html>
