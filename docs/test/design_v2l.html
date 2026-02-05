@@ -6580,7 +6580,7 @@ details.unit-card .unit-details {
 
     </style>
     <style>
-/* === v2l === */
+/* === v2l 修正版 === */
 
 .art-num-big.art-rainbow { 
     background: linear-gradient(90deg, #ff6b6b, #ffa94d, #ffd43b, #69db7c, #4dabf7, #9775fa);
@@ -6594,20 +6594,17 @@ details.unit-card .unit-details {
 }
 .art-num-big.art-hot { color: #ff922b; }
 
-/* 1行目: ベースライン揃え */
+/* 1行目: ベースライン揃え、詳細は右端 */
 .top3-stats-main {
     display: flex !important;
     align-items: baseline !important;
-    gap: 12px !important;
+    gap: 10px !important;
     flex-wrap: wrap !important;
 }
-.art-main {
-    display: inline !important;
-}
+.art-main { display: inline !important; }
 .art-label {
     font-size: 0.8em !important;
     color: #888 !important;
-    margin-right: 2px !important;
 }
 .art-num-big {
     font-size: 2.2em !important;
@@ -6622,7 +6619,6 @@ details.unit-card .unit-details {
 .rb-badge-top .rb-label {
     font-size: 0.8em !important;
     color: #888 !important;
-    margin-right: 2px !important;
 }
 .rb-badge-top .rb-num {
     font-size: 1.6em !important;
@@ -6630,10 +6626,8 @@ details.unit-card .unit-details {
     color: #fff !important;
 }
 
-/* 累計（1行目に移動） */
-.total-games-inline {
-    display: inline !important;
-}
+/* 累計（1行目） */
+.total-games-inline { display: inline !important; }
 .total-games-inline .total-label {
     font-size: 0.85em !important;
     color: #888 !important;
@@ -6649,29 +6643,29 @@ details.unit-card .unit-details {
 }
 
 /* 詳細: 右端 */
-.detail-trigger {
+.detail-wrapper {
     margin-left: auto !important;
+}
+.detail-trigger {
+    padding: 4px 8px !important;
 }
 
 /* 2行目 */
 .top3-stats-sub {
     display: flex !important;
     flex-wrap: wrap !important;
-    gap: 8px !important;
+    gap: 10px !important;
     align-items: baseline !important;
 }
 
 /* スタート数 */
-.current-hama {
-    display: inline !important;
-}
+.current-hama { display: inline !important; }
 .current-hama .start-label {
     font-size: 0.85em !important;
     color: #888 !important;
-    margin-right: 2px !important;
 }
 .current-hama .start-num {
-    font-size: 1.5em !important;
+    font-size: 1.6em !important;
     font-weight: bold !important;
     color: #4dabf7 !important;
 }
@@ -6713,12 +6707,8 @@ details.unit-card .unit-details {
     font-size: 1.6em !important;
     font-weight: bold !important;
 }
-.diff-medals-inline.plus .diff-num {
-    color: #2ed573 !important;
-}
-.diff-medals-inline.minus .diff-num {
-    color: #ff6b6b !important;
-}
+.diff-medals-inline.plus .diff-num { color: #2ed573 !important; }
+.diff-medals-inline.minus .diff-num { color: #ff6b6b !important; }
 .diff-medals-inline .diff-unit {
     font-size: 0.85em !important;
     color: #888 !important;
@@ -6730,23 +6720,16 @@ details.unit-card .unit-details {
 }
 
 /* 元の累計を非表示 */
-.top3-stats-sub .total-games {
-    display: none !important;
-}
+.top3-stats-sub .total-games { display: none !important; }
 
 body { padding: 16px; max-width: 600px; margin: 0 auto; }
 h1 { font-size: 1em; color: #fff; margin-bottom: 6px; }
-p.note { color: #555; font-size: 0.6em; margin-bottom: 10px; line-height: 1.4; }
+p.note { color: #555; font-size: 0.6em; margin-bottom: 10px; }
     </style>
 </head>
 <body>
     <h1>v2l</h1>
-    <p class="note">
-        1行目: ART→RB→合成→累計G→詳細(右端)<br>
-        2行目: スタート数G→最大枚→差枚<br>
-        数字サイズ統一、%小さく
-    </p>
-    
+    <p class="note">1行目: ART→RB→合成→累計G→詳細(右端) / 2行目: スタート数G→最大枚→差枚</p>
     <a class="unit-card rank-s" href="/recommend/island_akihabara_sbj.html" style="text-decoration: none; color: inherit;">
 <div class="unit-header">
 <span class="ranking-num">#1</span>
@@ -6759,13 +6742,8 @@ p.note { color: #555; font-size: 0.6em; margin-bottom: 10px; line-height: 1.4; }
 <span class="store-link">アイランド秋葉原</span>
 <span class="top3-avail playing">稼働中</span>
 </div>
-<div class="top3-stats-main">
-<span class="art-main"><span class="art-label">ART</span><span class="art-num-big art-rainbow">96</span></span>
-<span class="rb-badge-top"><span class="rb-label">RB</span><span class="rb-num">4</span></span>
-<span class="art-prob excellent" title="合成確率"><span class="prob-label">合成</span>1/86</span>
-<span class="total-games-inline"><span class="total-label">累計</span><span class="total-num">8,311</span><span class="total-g">G</span></span><span class="detail-trigger" onclick="toggleHistoryDetail(event, this)">▼詳細 </span>
-</div>
-<div class="top3-stats-sub"><span class="current-hama"><span class="start-label">スタート数</span><span class="start-num">0</span><span class="start-g">G</span></span><span class="max-medals-top medals-3k">✨<span class="max-label">最大</span><span class="max-num">4,051</span><span class="max-unit">枚</span></span><span class="diff-medals-inline minus"><span class="diff-label">差枚</span><span class="diff-num">-4,236</span><span class="diff-unit">枚</span></span></div>
+<div class="top3-stats-main"><span class="art-main"><span class="art-label">ART</span> <span class="art-num-big art-rainbow">96</span></span> <span class="rb-badge-top"><span class="rb-label">RB</span> <span class="rb-num">4</span></span> <span class="art-prob excellent" title="合成確率"><span class="prob-label">合成</span>1/86</span> <span class="total-games-inline"><span class="total-label">累計</span> <span class="total-num">8,311</span><span class="total-g">G</span></span> <span class="detail-wrapper"><span class="detail-trigger">▼詳細 </span></span></div>
+<div class="top3-stats-sub"><span class="current-hama"><span class="start-label">スタート数</span> <span class="start-num">0</span><span class="start-g">G</span></span><span class="max-medals-top medals-3k">✨<span class="max-label">最大</span> <span class="max-num">4,051</span><span class="max-unit">枚</span></span><span class="diff-medals-inline minus"><span class="diff-label">差枚</span> <span class="diff-num">-4,236</span><span class="diff-unit">枚</span></span></div>
 <div class="top3-setting">
 <span class="setting-estimate setting-6">
 <small class="payout-label">機械割</small><span class="payout-num">122.2<span class="payout-pct">%</span></span>
@@ -6846,13 +6824,8 @@ p.note { color: #555; font-size: 0.6em; margin-bottom: 10px; line-height: 1.4; }
 <span class="store-link">アイランド秋葉原</span>
 <span class="top3-avail empty">空き</span>
 </div>
-<div class="top3-stats-main">
-<span class="art-main"><span class="art-label">ART</span><span class="art-num-big art-gold">85</span></span>
-<span class="rb-badge-top"><span class="rb-label">RB</span><span class="rb-num">8</span></span>
-<span class="art-prob excellent" title="合成確率"><span class="prob-label">合成</span>1/93</span>
-<span class="total-games-inline"><span class="total-label">累計</span><span class="total-num">7,932</span><span class="total-g">G</span></span><span class="detail-trigger" onclick="toggleHistoryDetail(event, this)">▼詳細 </span>
-</div>
-<div class="top3-stats-sub"><span class="current-hama"><span class="start-label">スタート数</span><span class="start-num">120</span><span class="start-g">G</span></span><span class="max-medals-top medals-3k">✨<span class="max-label">最大</span><span class="max-num">4,955</span><span class="max-unit">枚</span></span><span class="diff-medals-inline minus"><span class="diff-label">差枚</span><span class="diff-num">-4,861</span><span class="diff-unit">枚</span></span></div>
+<div class="top3-stats-main"><span class="art-main"><span class="art-label">ART</span> <span class="art-num-big art-gold">85</span></span> <span class="rb-badge-top"><span class="rb-label">RB</span> <span class="rb-num">8</span></span> <span class="art-prob excellent" title="合成確率"><span class="prob-label">合成</span>1/93</span> <span class="total-games-inline"><span class="total-label">累計</span> <span class="total-num">7,932</span><span class="total-g">G</span></span> <span class="detail-wrapper"><span class="detail-trigger">▼詳細 </span></span></div>
+<div class="top3-stats-sub"><span class="current-hama"><span class="start-label">スタート数</span> <span class="start-num">120</span><span class="start-g">G</span></span><span class="max-medals-top medals-3k">✨<span class="max-label">最大</span> <span class="max-num">4,955</span><span class="max-unit">枚</span></span><span class="diff-medals-inline minus"><span class="diff-label">差枚</span> <span class="diff-num">-4,861</span><span class="diff-unit">枚</span></span></div>
 <div class="top3-setting">
 <span class="setting-estimate setting-6">
 <small class="payout-label">機械割</small><span class="payout-num">121.5<span class="payout-pct">%</span></span>
@@ -6934,13 +6907,8 @@ p.note { color: #555; font-size: 0.6em; margin-bottom: 10px; line-height: 1.4; }
 <span class="store-link">アイランド秋葉原</span>
 <span class="top3-avail playing">稼働中</span>
 </div>
-<div class="top3-stats-main">
-<span class="art-main"><span class="art-label">ART</span><span class="art-num-big art-hot">69</span></span>
-<span class="rb-badge-top"><span class="rb-label">RB</span><span class="rb-num">6</span></span>
-<span class="art-prob good" title="合成確率"><span class="prob-label">合成</span>1/105</span>
-<span class="total-games-inline"><span class="total-label">累計</span><span class="total-num">7,304</span><span class="total-g">G</span></span><span class="detail-trigger" onclick="toggleHistoryDetail(event, this)">▼詳細 </span>
-</div>
-<div class="top3-stats-sub"><span class="current-hama"><span class="start-label">スタート数</span><span class="start-num">0</span><span class="start-g">G</span></span><span class="max-medals-top medals-2k">⭐<span class="max-label">最大</span><span class="max-num">2,303</span><span class="max-unit">枚</span></span><span class="diff-medals-inline minus"><span class="diff-label">差枚</span><span class="diff-num">-5,820</span><span class="diff-unit">枚</span></span></div>
+<div class="top3-stats-main"><span class="art-main"><span class="art-label">ART</span> <span class="art-num-big art-hot">69</span></span> <span class="rb-badge-top"><span class="rb-label">RB</span> <span class="rb-num">6</span></span> <span class="art-prob good" title="合成確率"><span class="prob-label">合成</span>1/105</span> <span class="total-games-inline"><span class="total-label">累計</span> <span class="total-num">7,304</span><span class="total-g">G</span></span> <span class="detail-wrapper"><span class="detail-trigger">▼詳細 </span></span></div>
+<div class="top3-stats-sub"><span class="current-hama"><span class="start-label">スタート数</span> <span class="start-num">0</span><span class="start-g">G</span></span><span class="max-medals-top medals-2k">⭐<span class="max-label">最大</span> <span class="max-num">2,303</span><span class="max-unit">枚</span></span><span class="diff-medals-inline minus"><span class="diff-label">差枚</span> <span class="diff-num">-5,820</span><span class="diff-unit">枚</span></span></div>
 <div class="top3-setting">
 <span class="setting-estimate setting-6">
 <small class="payout-label">機械割</small><span class="payout-num">120.3<span class="payout-pct">%</span></span>
