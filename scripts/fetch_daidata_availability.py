@@ -42,7 +42,7 @@ DAIDATA_STORES = {
         'hall_id': '100950',
         'name': '西武新宿駅前エスパス',
         'model_encoded': 'L%EF%BD%BD%EF%BD%B0%EF%BE%8A%EF%BE%9F%EF%BD%B0%EF%BE%8C%EF%BE%9E%EF%BE%97%EF%BD%AF%EF%BD%B8%EF%BD%BC%EF%BE%9E%EF%BD%AC%EF%BD%AF%EF%BD%B8',
-        'units': ['3185', '3186', '3187'],  # 4000番台は全て低貸のため除外
+        'units': ['4168'],  # 減台により4168のみ稼働（3185,3186,3187は撤去）
     },
     # === エスパス上野新館 (hall_id=100196) ===
     'ueno_espass_sbj': {
