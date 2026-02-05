@@ -502,7 +502,7 @@
                     </div>
                     {% endif %}
                     {# === 前日・前々日・3日前データ（営業中のみ） === #}
-                    {% if is_open and (rec.yesterday_art or rec.day_before_art or rec.three_days_ago_art) %}
+                    {% if rec.yesterday_art or rec.day_before_art or rec.three_days_ago_art %}
                     <div class="top3-prev-days">
                         {% if rec.yesterday_art %}
                         <div class="prev-day-row{% if rec.yesterday_history_processed %} has-detail{% endif %}" onclick="toggleHitDetail(event, this)">
