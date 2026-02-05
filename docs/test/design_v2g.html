@@ -6598,9 +6598,26 @@ details.unit-card .unit-details {
     -webkit-text-fill-color: transparent;
 }
 
-/* 1行目: 下揃え */
+/* 1行目: 下揃え（強化版） */
 .top3-stats-main {
+    display: flex !important;
     align-items: flex-end !important;
+}
+.top3-stats-main > * {
+    align-self: flex-end !important;
+}
+.art-main {
+    display: inline-flex !important;
+    align-items: flex-end !important;
+}
+.art-num-big {
+    line-height: 1 !important;
+}
+.art-label {
+    margin-bottom: 4px !important;
+}
+.art-prob, .detail-trigger {
+    margin-bottom: 4px !important;
 }
 
 /* RB: 数字大きめ + ラベル小さめ */
@@ -6620,7 +6637,7 @@ details.unit-card .unit-details {
 .rb-badge-top .rb-label {
     font-size: 0.7em;
     color: #888;
-    margin-bottom: 2px;
+    margin-bottom: 4px;
 }
 
 /* 2行目: スタートG */
