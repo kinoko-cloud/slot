@@ -1,10 +1,11 @@
 <!DOCTYPE html>
+
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>v2l</title>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>v2l</title>
+<style>
 /* ===================================================================
    SBJ 台選びアシスタント - スタイルシート
    ===================================================================
@@ -6579,7 +6580,7 @@ details.unit-card .unit-details {
 }
 
     </style>
-    <style>
+<style>
 /* === v2l 修正版 === */
 
 .art-num-big.art-rainbow { 
@@ -6725,12 +6726,64 @@ details.unit-card .unit-details {
 body { padding: 16px; max-width: 600px; margin: 0 auto; }
 h1 { font-size: 1em; color: #fff; margin-bottom: 6px; }
 p.note { color: #555; font-size: 0.6em; margin-bottom: 10px; }
-    </style>
+    
+/* 最大連チャン数（機械割の横） */
+.rensa-inline {
+    display: inline !important;
+    margin-left: 12px !important;
+}
+.rensa-inline .rensa-label {
+    font-size: 0.85em !important;
+    color: #888 !important;
+}
+.rensa-inline .rensa-num {
+    font-size: 1.6em !important;
+    font-weight: bold !important;
+    color: #ffa502 !important;
+}
+.rensa-inline .rensa-unit {
+    font-size: 0.85em !important;
+    color: #888 !important;
+}
+
+/* 詳細ボタン（最大連チャンの横） */
+.detail-trigger-inline {
+    margin-left: 12px !important;
+    padding: 4px 8px !important;
+    background: #3a3a5a !important;
+    border-radius: 4px !important;
+    color: #70a1ff !important;
+    font-size: 0.85em !important;
+    cursor: pointer !important;
+}
+
+/* 機械割の行をflexに */
+.top3-setting {
+    display: flex !important;
+    align-items: baseline !important;
+    gap: 8px !important;
+    flex-wrap: wrap !important;
+}
+
+/* 累計の数字 = RBと同じサイズ */
+.total-games-inline .total-num {
+    font-size: 1.6em !important;
+}
+
+/* 合成の数字 = RBと同じサイズ */
+.art-prob {
+    font-size: 1.0em !important;
+}
+.art-prob .prob-label {
+    font-size: 0.85em !important;
+    color: #888 !important;
+}
+</style>
 </head>
 <body>
-    <h1>v2l</h1>
-    <p class="note">1行目: ART→RB→合成→累計G→詳細(右端) / 2行目: スタート数G→最大枚→差枚</p>
-    <a class="unit-card rank-s" href="/recommend/island_akihabara_sbj.html" style="text-decoration: none; color: inherit;">
+<h1>v2l</h1>
+<p class="note">1行目: ART→RB→合成→累計G→詳細(右端) / 2行目: スタート数G→最大枚→差枚</p>
+<a class="unit-card rank-s" href="/recommend/island_akihabara_sbj.html" style="text-decoration: none; color: inherit;">
 <div class="unit-header">
 <span class="ranking-num">#1</span>
 <span class="machine-icon">🃏</span>
@@ -6742,12 +6795,12 @@ p.note { color: #555; font-size: 0.6em; margin-bottom: 10px; }
 <span class="store-link">アイランド秋葉原</span>
 <span class="top3-avail playing">稼働中</span>
 </div>
-<div class="top3-stats-main"><span class="art-main"><span class="art-label">ART</span> <span class="art-num-big art-rainbow">96</span></span> <span class="rb-badge-top"><span class="rb-label">RB</span> <span class="rb-num">4</span></span> <span class="art-prob excellent" title="合成確率"><span class="prob-label">合成</span>1/86</span> <span class="total-games-inline"><span class="total-label">累計</span> <span class="total-num">8,311</span><span class="total-g">G</span></span> <span class="detail-wrapper"><span class="detail-trigger">▼詳細 </span></span></div>
+<div class="top3-stats-main"><span class="art-main"><span class="art-label">ART</span> <span class="art-num-big art-rainbow">96</span></span> <span class="rb-badge-top"><span class="rb-label">RB</span> <span class="rb-num">4</span></span> <span class="art-prob excellent" title="合成確率"><span class="prob-label">合成</span>1/86</span> <span class="total-games-inline"><span class="total-label">累計</span> <span class="total-num">8,311</span><span class="total-g">G</span></span> </div>
 <div class="top3-stats-sub"><span class="current-hama"><span class="start-label">スタート数</span> <span class="start-num">0</span><span class="start-g">G</span></span><span class="max-medals-top medals-3k">✨<span class="max-label">最大</span> <span class="max-num">4,051</span><span class="max-unit">枚</span></span><span class="diff-medals-inline minus"><span class="diff-label">差枚</span> <span class="diff-num">-4,236</span><span class="diff-unit">枚</span></span></div>
 <div class="top3-setting">
 <span class="setting-estimate setting-6">
 <small class="payout-label">機械割</small><span class="payout-num">122.2<span class="payout-pct">%</span></span>
-</span>
+</span><span class="rensa-inline"><span class="rensa-label">最大</span> <span class="rensa-num">22</span><span class="rensa-unit">連</span></span><span class="detail-trigger-inline">▼詳細 </span>
 </div>
 <div class="sparkline-section">
 <div class="sparkline-label">本日 差枚推移</div>
@@ -6812,7 +6865,7 @@ p.note { color: #555; font-size: 0.6em; margin-bottom: 10px; }
 <div class="reason-line-top reason-weekday">📅 この台の木曜好調率: 3/3回(100%) → 期待大</div>
 </div>
 </a>
-    <a class="unit-card rank-s" href="/recommend/island_akihabara_sbj.html" style="text-decoration: none; color: inherit;">
+<a class="unit-card rank-s" href="/recommend/island_akihabara_sbj.html" style="text-decoration: none; color: inherit;">
 <div class="unit-header">
 <span class="ranking-num">#2</span>
 <span class="machine-icon">🃏</span>
@@ -6824,12 +6877,12 @@ p.note { color: #555; font-size: 0.6em; margin-bottom: 10px; }
 <span class="store-link">アイランド秋葉原</span>
 <span class="top3-avail empty">空き</span>
 </div>
-<div class="top3-stats-main"><span class="art-main"><span class="art-label">ART</span> <span class="art-num-big art-gold">85</span></span> <span class="rb-badge-top"><span class="rb-label">RB</span> <span class="rb-num">8</span></span> <span class="art-prob excellent" title="合成確率"><span class="prob-label">合成</span>1/93</span> <span class="total-games-inline"><span class="total-label">累計</span> <span class="total-num">7,932</span><span class="total-g">G</span></span> <span class="detail-wrapper"><span class="detail-trigger">▼詳細 </span></span></div>
+<div class="top3-stats-main"><span class="art-main"><span class="art-label">ART</span> <span class="art-num-big art-gold">85</span></span> <span class="rb-badge-top"><span class="rb-label">RB</span> <span class="rb-num">8</span></span> <span class="art-prob excellent" title="合成確率"><span class="prob-label">合成</span>1/93</span> <span class="total-games-inline"><span class="total-label">累計</span> <span class="total-num">7,932</span><span class="total-g">G</span></span> </div>
 <div class="top3-stats-sub"><span class="current-hama"><span class="start-label">スタート数</span> <span class="start-num">120</span><span class="start-g">G</span></span><span class="max-medals-top medals-3k">✨<span class="max-label">最大</span> <span class="max-num">4,955</span><span class="max-unit">枚</span></span><span class="diff-medals-inline minus"><span class="diff-label">差枚</span> <span class="diff-num">-4,861</span><span class="diff-unit">枚</span></span></div>
 <div class="top3-setting">
 <span class="setting-estimate setting-6">
 <small class="payout-label">機械割</small><span class="payout-num">121.5<span class="payout-pct">%</span></span>
-</span>
+</span><span class="rensa-inline"><span class="rensa-label">最大</span> <span class="rensa-num">35</span><span class="rensa-unit">連</span></span><span class="detail-trigger-inline">▼詳細 </span>
 </div>
 <div class="sparkline-section">
 <div class="sparkline-label">本日 差枚推移</div>
@@ -6895,7 +6948,7 @@ p.note { color: #555; font-size: 0.6em; margin-bottom: 10px; }
 <div class="reason-line-top">💰 好調日の平均ART 69回（1/103）→ 打てば出やすい台</div>
 </div>
 </a>
-    <a class="unit-card rank-s" href="/recommend/island_akihabara_sbj.html" style="text-decoration: none; color: inherit;">
+<a class="unit-card rank-s" href="/recommend/island_akihabara_sbj.html" style="text-decoration: none; color: inherit;">
 <div class="unit-header">
 <span class="ranking-num">#3</span>
 <span class="machine-icon">🃏</span>
@@ -6907,12 +6960,12 @@ p.note { color: #555; font-size: 0.6em; margin-bottom: 10px; }
 <span class="store-link">アイランド秋葉原</span>
 <span class="top3-avail playing">稼働中</span>
 </div>
-<div class="top3-stats-main"><span class="art-main"><span class="art-label">ART</span> <span class="art-num-big art-hot">69</span></span> <span class="rb-badge-top"><span class="rb-label">RB</span> <span class="rb-num">6</span></span> <span class="art-prob good" title="合成確率"><span class="prob-label">合成</span>1/105</span> <span class="total-games-inline"><span class="total-label">累計</span> <span class="total-num">7,304</span><span class="total-g">G</span></span> <span class="detail-wrapper"><span class="detail-trigger">▼詳細 </span></span></div>
+<div class="top3-stats-main"><span class="art-main"><span class="art-label">ART</span> <span class="art-num-big art-hot">69</span></span> <span class="rb-badge-top"><span class="rb-label">RB</span> <span class="rb-num">6</span></span> <span class="art-prob good" title="合成確率"><span class="prob-label">合成</span>1/105</span> <span class="total-games-inline"><span class="total-label">累計</span> <span class="total-num">7,304</span><span class="total-g">G</span></span> </div>
 <div class="top3-stats-sub"><span class="current-hama"><span class="start-label">スタート数</span> <span class="start-num">0</span><span class="start-g">G</span></span><span class="max-medals-top medals-2k">⭐<span class="max-label">最大</span> <span class="max-num">2,303</span><span class="max-unit">枚</span></span><span class="diff-medals-inline minus"><span class="diff-label">差枚</span> <span class="diff-num">-5,820</span><span class="diff-unit">枚</span></span></div>
 <div class="top3-setting">
 <span class="setting-estimate setting-6">
 <small class="payout-label">機械割</small><span class="payout-num">120.3<span class="payout-pct">%</span></span>
-</span>
+</span><span class="rensa-inline"><span class="rensa-label">最大</span> <span class="rensa-num">15</span><span class="rensa-unit">連</span></span><span class="detail-trigger-inline">▼詳細 </span>
 </div>
 <div class="sparkline-section">
 <div class="sparkline-label">本日 差枚推移</div>
