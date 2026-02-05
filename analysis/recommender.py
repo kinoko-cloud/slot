@@ -1352,6 +1352,147 @@ def analyze_today_data(unit_data: dict, current_hour: int = None, machine_key: s
             if actual_rate < 0.3:
                 result['today_reasons'].append(f'稼働少なめ（期待値の{actual_rate*100:.0f}%）')
 
+    # --- 【RSさん狙い目条件】確率そこそこ + 微マイナス + 最大連チャン小 = 爆発前の高設定台 ---
+    # 分析結果: この条件で17時以降に座ると勝率70-78%
+    if machine_key == 'sbj' and result['art_prob'] > 0 and result['total_games'] >= 2000:
+        prob = result['art_prob']
+        diff = result['diff_medals']
+        max_med = result['max_medals']
+        
+        # RSさん狙い目: 確率130-170 + 差枚-3000〜0 + 最大1500以下
+        is_rs_target = (
+            130 < prob <= 170 and
+            -3000 < diff < 0 and
+            0 < max_med < 1500
+        )
+        
+        # 確率良い + マイナス + 最大小 = 高設定っぽいのにまだ爆発してない
+        is_potential_high = (
+            prob <= 130 and
+            diff < 0 and
+            0 < max_med < 1000
+        )
+        
+        if is_rs_target:
+            # RSさん狙い目条件に合致 → 大幅ボーナス
+            rs_bonus = 30  # 基本ボーナス
+            if current_hour >= 17:
+                rs_bonus = 40  # 17時以降はさらにボーナス（勝率73-78%）
+            result['today_score_bonus'] += rs_bonus
+            result['today_reasons'].append(
+                f'🎯 狙い目台: 確率1/{prob:.0f}+差枚{diff:+.0f}+最大{max_med}枚 → 爆発前の可能性大'
+            )
+        elif is_potential_high:
+            # 確率良い+マイナス+最大小 → ボーナス（勝率58%）
+            ph_bonus = 20
+            if current_hour >= 17:
+                ph_bonus = 25
+            result['today_score_bonus'] += ph_bonus
+            result['today_reasons'].append(
+                f'🔥 高設定候補: 確率1/{prob:.0f}+差枚{diff:+.0f}+最大{max_med}枚 → まだ爆発してない'
+            )
+        
+        # 確率良い + プラス = すでに出た台（勝率36-44%で危険）
+        if prob <= 130 and diff > 0:
+            result['today_score_bonus'] -= 10
+            result['today_reasons'].append(
+                f'⚠️ 既に出た台: 確率1/{prob:.0f}+差枚{diff:+.0f} → 以降は期待薄'
+            )
+    
+    # --- 【RSさん仮説2】当たるけど伸びない台 = 爆発前の高設定 ---
+    # 条件: 確率良い + ハマり軽め + 連チャン伸びず + マイナス
+    # 分析結果: 17時以降で勝率66%、3000枚以上50%、平均+2000枚超え
+    if machine_key == 'sbj' and result['art_prob'] > 0 and result['total_games'] >= 2000:
+        prob = result['art_prob']
+        diff = result['diff_medals']
+        max_med = result['max_medals']
+        max_rensa = result.get('today_max_rensa', 0)
+        
+        # 履歴から最大ハマリと天井回数を計算
+        history = today_data.get('history', [])
+        if history:
+            starts = [h.get('start', 0) or 0 for h in history if h.get('type') == 'ART']
+            max_hama = max(starts) if starts else 0
+            ceiling_count = sum(1 for s in starts if s >= 600)
+        else:
+            max_hama = 0
+            ceiling_count = 0
+        
+        # 【超最強条件】確率100-170 + 10-15連 + 天井0-1回 = 勝率75%
+        # 「連チャン力あるけどまだ爆発してない+ハマってない」台
+        is_super_best = (
+            100 <= prob <= 170 and
+            10 <= max_rensa <= 15 and
+            ceiling_count <= 1
+        )
+        
+        if is_super_best:
+            super_bonus = 50  # 基本ボーナス
+            if current_hour >= 17:
+                super_bonus = 60  # 17時以降はさらにボーナス（勝率75%）
+            result['today_score_bonus'] += super_bonus
+            result['today_reasons'].append(
+                f'🏆 超狙い目: 確率1/{prob:.0f}+{max_rensa}連+天井{ceiling_count}回 → 連チャン力あるのに伸びてない！勝率75%'
+            )
+        else:
+            # RSさん仮説2: 当たる+ハマり軽め+連チャン伸びず+マイナス
+            is_rs_hypothesis2 = (
+                prob <= 150 and
+                max_hama <= 700 and
+                ceiling_count <= 1 and
+                max_rensa <= 15 and
+                0 < max_med < 2000 and
+                diff < 0
+            )
+            
+            if is_rs_hypothesis2:
+                rs2_bonus = 35  # 基本ボーナス
+                if current_hour >= 17:
+                    rs2_bonus = 45  # 17時以降はさらにボーナス（勝率66%）
+                result['today_score_bonus'] += rs2_bonus
+                result['today_reasons'].append(
+                    f'🎯 爆発前候補: 確率1/{prob:.0f}+最大{max_rensa}連+最大{max_med}枚+マイナス → 伸び悩み台は爆発前'
+                )
+
+    # --- 【北斗転生2】差枚ベースの狙い目条件 ---
+    # 分析結果: マイナス台=勝率64%、プラス台=勝率12%（超危険）
+    # 超最強: マイナス+最大2000枚以下+10連以上 = 勝率100%
+    if machine_key == 'hokuto_tensei2' and result['total_games'] >= 2000:
+        diff = result['diff_medals']
+        max_med = result['max_medals']
+        max_rensa = result.get('today_max_rensa', 0)
+        
+        # 【北斗超最強条件】マイナス+最大2000枚以下+10連以上 = 勝率100%
+        is_hokuto_super = (
+            diff < 0 and
+            0 < max_med <= 2000 and
+            max_rensa >= 10
+        )
+        
+        if is_hokuto_super:
+            hokuto_bonus = 60
+            if current_hour >= 17:
+                hokuto_bonus = 70
+            result['today_score_bonus'] += hokuto_bonus
+            result['today_reasons'].append(
+                f'🏆 北斗超狙い目: 差枚{diff:+.0f}+最大{max_med}枚+{max_rensa}連 → 連チャン力あるのにマイナス！'
+            )
+        elif diff < 0:
+            # マイナス台は基本的に狙い目（勝率64%）
+            minus_bonus = 20
+            if current_hour >= 17:
+                minus_bonus = 30
+            result['today_score_bonus'] += minus_bonus
+            result['today_reasons'].append(
+                f'🎯 北斗マイナス台: 差枚{diff:+.0f} → 勝率64%'
+            )
+        elif diff > 0:
+            # プラス台は超危険（勝率12%）
+            result['today_score_bonus'] -= 30
+            result['today_reasons'].append(
+                f'⚠️ 北斗プラス台: 差枚{diff:+.0f} → 勝率12%で超危険！'
+            )
+
     return result
 
 
