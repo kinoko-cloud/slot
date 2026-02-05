@@ -71,6 +71,22 @@ def _enrich_day_prefix(rec, days_by_date, prefix, date_key):
     if not day_data:
         return
 
+    # historyの補完（蓄積DBから）
+    if not rec.get(f'{prefix}history') or len(rec.get(f'{prefix}history', [])) == 0:
+        db_history = day_data.get('history', [])
+        if db_history:
+            rec[f'{prefix}history'] = db_history
+            # max_rensaも補完
+            if not rec.get(f'{prefix}max_rensa'):
+                db_rensa = day_data.get('max_rensa')
+                if db_rensa:
+                    rec[f'{prefix}max_rensa'] = db_rensa
+            # max_medalsも補完
+            if not rec.get(f'{prefix}max_medals'):
+                db_max = day_data.get('max_medals')
+                if db_max:
+                    rec[f'{prefix}max_medals'] = db_max
+
     # gamesの補完（historyから計算）
     if not rec.get(f'{prefix}games') or rec.get(f'{prefix}games') == 0:
         db_games = day_data.get('games') or day_data.get('total_start')

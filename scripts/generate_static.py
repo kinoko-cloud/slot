@@ -2742,13 +2742,27 @@ def main():
 
     # 日次データ蓄積（history DB更新）
     try:
-        from analysis.history_accumulator import accumulate_from_daily
+        from analysis.history_accumulator import accumulate_from_daily, accumulate_from_availability
+        # 1. daily JSONからの蓄積（従来）
         for mk in MACHINES:
             daily = load_daily_data(machine_key=mk)
             if daily:
                 result = accumulate_from_daily(daily, mk)
                 if result['new_entries'] > 0:
                     print(f"  📦 {mk}: {result['new_entries']}件蓄積 ({result['updated_units']}台)")
+        
+        # 2. availability.jsonからの蓄積（today_history → 蓄積DB）
+        try:
+            avail_path = Path('data/availability.json')
+            if avail_path.exists():
+                import json
+                with open(avail_path, 'r', encoding='utf-8') as f:
+                    avail_data = json.load(f)
+                result = accumulate_from_availability(avail_data)
+                if result['new_entries'] > 0:
+                    print(f"  📦 availability: {result['new_entries']}件蓄積 ({result['updated_units']}台)")
+        except Exception as e:
+            print(f"  ⚠ availability蓄積エラー: {e}")
     except Exception as e:
         print(f"  ⚠ 蓄積エラー: {e}")
 
