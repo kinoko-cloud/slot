@@ -124,8 +124,15 @@ def accumulate_from_availability(avail_data: dict, target_date: str = None):
     
     for store_key, store_data in stores.items():
         units = store_data.get('units', [])
+        
+        # store_keyのマッピング（_hokuto → _hokuto_tensei2）
+        # availability.jsonでは_hokutoだが、蓄積DBでは_hokuto_tensei2を使う
+        acc_store_key = store_key
+        if '_hokuto' in store_key and '_hokuto_tensei2' not in store_key:
+            acc_store_key = store_key.replace('_hokuto', '_hokuto_tensei2')
+        
         # store_keyから機種キーを推測
-        machine_key = 'hokuto_tensei2' if 'hokuto_tensei2' in store_key else ('hokuto' if 'hokuto' in store_key else 'sbj')
+        machine_key = 'hokuto_tensei2' if 'hokuto' in store_key else 'sbj'
         
         for unit_data in units:
             unit_id = str(unit_data.get('unit_id', ''))
@@ -138,8 +145,8 @@ def accumulate_from_availability(avail_data: dict, target_date: str = None):
             art = unit_data.get('art', 0)
             games = unit_data.get('total_start', 0)
             
-            # artもgamesもなければスキップ
-            if art == 0 and (games is None or games == 0):
+            # historyがあればスキップしない（art=0でもhistoryがあれば蓄積価値あり）
+            if art == 0 and (games is None or games == 0) and not today_history:
                 continue
             
             day_entry = {
@@ -153,7 +160,7 @@ def accumulate_from_availability(avail_data: dict, target_date: str = None):
                 'max_rensa': unit_data.get('today_max_rensa', 0),
             }
             
-            added = _accumulate_unit(store_key, unit_id, [day_entry], machine_key)
+            added = _accumulate_unit(acc_store_key, unit_id, [day_entry], machine_key)
             if added > 0:
                 updated_units += 1
                 new_entries += added
