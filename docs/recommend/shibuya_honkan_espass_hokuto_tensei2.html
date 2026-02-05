@@ -9,7 +9,7 @@
     <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
     <meta name="googlebot" content="noindex, nofollow">
     <title>エスパス日拓渋谷本館</title>
-    <link rel="stylesheet" href="/static/style.css?v=20260205130731">
+    <link rel="stylesheet" href="/static/style.css?v=20260205230027">
 </head>
 <body data-page-type="recommend" data-store-key="shibuya_honkan_espass_hokuto_tensei2">
     <div class="container">
@@ -27,7 +27,7 @@
         
     </div>
     <div class="top-bar-right">
-        <span class="version-info" id="build-ver" title="ビルド時刻">v0205_22:07</span>
+        <span class="version-info" id="build-ver" title="ビルド時刻">v0205_23:01</span>
         
     </div>
 </div>
@@ -48,18 +48,14 @@
                 </span>
                 <span class="cache-badge github">GITHUB</span>
                 
-                <div class="stale-notice">12分前のデータです</div>
+                <div class="stale-warning">データが1時間6分前のものです</div>
                 
                 
             </div>
 
             <!-- 空き状況サマリ -->
             
-            <div class="availability-summary">
-                <span class="avail-empty" onclick="filterUnits('empty')">空き 15台</span>
-                <span class="avail-playing" onclick="filterUnits('playing')">遊技中 0台</span>
-                <span class="avail-all" onclick="filterUnits('all')">全て</span>
-            </div>
+            <div class="closed-notice">現在営業時間外です</div>
             
 
             <div class="action-buttons">
@@ -124,67 +120,41 @@
                         <span class="unit-id-large">2036番台</span>
                         <span class="machine-name-sm">北斗の拳 転生の章2</span>
                         
-                            
-                            <span class="avail-badge-lg empty">空き</span>
-                            
-                        
                         <span class="rank-badge-lg" style="background-color: #ffa502">A</span>
                         <span class="expand-icon">▼</span>
                     </div>
 
                     
-                    <!-- 営業中: リアルタイムデータ -->
-                    <div class="today-data-row">
-                        <div class="data-row-primary">
-                            <div class="data-cell highlight">
-                                <span class="data-value"><span class="art-num-lg">10</span></span>
-                                <span class="data-label">ART</span>
-                            </div>
-                            
-                            <div class="data-cell bad">
-                                <span class="data-value">1/206</span>
-                                <span class="data-label">ART確率</span>
-                            </div>
-                            
-                            
-                            <div class="data-cell rensa-cell good">
-                                <span class="data-value">最大7連</span>
-                            </div>
-                            
-                        </div>
-                        <div class="data-row-secondary">
-                            
-                            
-                            <div class="data-cell ">
-                                <span class="data-value">789</span>
-                                <span class="data-label">最大枚</span>
-                            </div>
-                            
-                            <div class="data-cell">
-                                <span class="data-value"><span class="rb-num">3</span></span>
-                                <span class="data-label">RB</span>
-                            </div>
-                            <div class="data-cell ">
-                                <span class="data-value">60</span>
-                                <span class="data-label">現在G</span>
-                            </div>
-                            
-                            <div class="data-cell bad">
-                                <span class="data-value">2回</span>
-                                <span class="data-label">500G超</span>
-                            </div>
-                            
-                            <div class="data-cell">
-                                <span class="data-value">2,061</span>
-                                <span class="data-label">累計G</span>
-                            </div>
-                            
-                            <div class="data-cell minus">
-                                <span class="data-value diff-medals-inline minus">-4,606枚</span>
-                                <span class="data-label">差枚</span>
-                            </div>
-                            
-                        </div>
+                    
+                    
+                    <div class="reasons-full">
+                        
+                        
+                        
+                        <div class="reason-line-top">⏱️ 本日-4,606枚でハマリ2回→低設定の可能性</div>
+                        
+                        
+                        
+                        <div class="reason-line-top">🔮 高稼働日好調率100%</div>
+                        
+                        
+                        
+                        <div class="reason-line-top">🔮 3日連続好調</div>
+                        
+                        
+                        
+                        <div class="reason-line-top reason-pattern">🔄 3日連続好調 → 据え置き期待（ただし転落警戒も）</div>
+                        
+                        
+                        
+                        <div class="reason-line-top">🔥 直近の推移: 小→小→小（好調3日中、大0/中0/小3日）</div>
+                        
+                        
+                        
+                        <div class="reason-line-top reason-warn">🚨 2/5(木)ART確率1/206 (2,061G消化) → 低機械割域の挙動</div>
+                        
+                        
+                        
                     </div>
                     
 
@@ -1017,14 +987,6 @@
 
                     <!-- 推奨理由（営業中のみ — 閉店後は上に表示済み） -->
                     
-                    <div class="reason-main">
-                        
-                        <div class="reason-line ">⏱️ 本日-4,606枚でハマリ2回→低設定の可能性</div>
-                        
-                        <div class="reason-line ">🔮 高稼働日好調率100%</div>
-                        
-                    </div>
-                    
 
                     </summary>
                     <!-- 詳細（展開） -->
@@ -1171,7 +1133,7 @@
                             
                             <div class="reason-item">🔥 直近の推移: 小→小→小（好調3日中、大0/中0/小3日）</div>
                             
-                            <div class="reason-item">🚨 本日ART確率1/206 (2,061G消化) → 低機械割域の挙動</div>
+                            <div class="reason-item">🚨 2/5(木)ART確率1/206 (2,061G消化) → 低機械割域の挙動</div>
                             
                         </div>
                         
@@ -1185,67 +1147,41 @@
                         <span class="unit-id-large">2032番台</span>
                         <span class="machine-name-sm">北斗の拳 転生の章2</span>
                         
-                            
-                            <span class="avail-badge-lg empty">空き</span>
-                            
-                        
                         <span class="rank-badge-lg" style="background-color: #ffa502">A</span>
                         <span class="expand-icon">▼</span>
                     </div>
 
                     
-                    <!-- 営業中: リアルタイムデータ -->
-                    <div class="today-data-row">
-                        <div class="data-row-primary">
-                            <div class="data-cell highlight">
-                                <span class="data-value"><span class="art-num-lg">26</span></span>
-                                <span class="data-label">ART</span>
-                            </div>
-                            
-                            <div class="data-cell excellent">
-                                <span class="data-value">1/75</span>
-                                <span class="data-label">ART確率</span>
-                            </div>
-                            
-                            
-                            <div class="data-cell rensa-cell excellent">
-                                <span class="data-value">最大13連</span>
-                            </div>
-                            
-                        </div>
-                        <div class="data-row-secondary">
-                            
-                            
-                            <div class="data-cell medals-2k">
-                                <span class="data-value">2,046</span>
-                                <span class="data-label">最大枚 2千枚OVER</span>
-                            </div>
-                            
-                            <div class="data-cell">
-                                <span class="data-value"><span class="rb-num">7</span></span>
-                                <span class="data-label">RB</span>
-                            </div>
-                            <div class="data-cell ">
-                                <span class="data-value">0</span>
-                                <span class="data-label">現在G</span>
-                            </div>
-                            
-                            <div class="data-cell bad">
-                                <span class="data-value">1回</span>
-                                <span class="data-label">500G超</span>
-                            </div>
-                            
-                            <div class="data-cell">
-                                <span class="data-value">1,972</span>
-                                <span class="data-label">累計G</span>
-                            </div>
-                            
-                            <div class="data-cell minus">
-                                <span class="data-value diff-medals-inline minus">-2,556枚</span>
-                                <span class="data-label">差枚</span>
-                            </div>
-                            
-                        </div>
+                    
+                    
+                    <div class="reasons-full">
+                        
+                        
+                        
+                        <div class="reason-line-top">🔮 2日連続不調→店のリセット周期(2日)</div>
+                        
+                        
+                        
+                        <div class="reason-line-top">🔮 高稼働日好調率100%</div>
+                        
+                        
+                        
+                        <div class="reason-line-top">🔥 2/5(木)ART確率1/75 (1,972G消化) → 高機械割域の挙動</div>
+                        
+                        
+                        
+                        <div class="reason-line-top">🔥 2/5(木)12連の爆発あり</div>
+                        
+                        
+                        
+                        <div class="reason-line-top reason-rank">📊 3日間中1日好調（好調率33%）→ 低機械割が入りやすい台</div>
+                        
+                        
+                        
+                        <div class="reason-line-top reason-warn">🚨 前日はART確率1/275で低機械割域（全台中央値1/100）</div>
+                        
+                        
+                        
                     </div>
                     
 
@@ -1871,14 +1807,6 @@
 
                     <!-- 推奨理由（営業中のみ — 閉店後は上に表示済み） -->
                     
-                    <div class="reason-main">
-                        
-                        <div class="reason-line ">🔮 2日連続不調→店のリセット周期(2日)</div>
-                        
-                        <div class="reason-line ">🔮 高稼働日好調率100%</div>
-                        
-                    </div>
-                    
 
                     </summary>
                     <!-- 詳細（展開） -->
@@ -2137,9 +2065,9 @@
                             
                             <div class="reason-item">🔮 高稼働日好調率100%</div>
                             
-                            <div class="reason-item">🔥 本日ART確率1/75 (1,972G消化) → 高機械割域の挙動</div>
+                            <div class="reason-item">🔥 2/5(木)ART確率1/75 (1,972G消化) → 高機械割域の挙動</div>
                             
-                            <div class="reason-item">🔥 本日12連の爆発あり</div>
+                            <div class="reason-item">🔥 2/5(木)12連の爆発あり</div>
                             
                             <div class="reason-item">📊 3日間中1日好調（好調率33%）→ 低機械割が入りやすい台</div>
                             
@@ -2157,67 +2085,37 @@
                         <span class="unit-id-large">2019番台</span>
                         <span class="machine-name-sm">北斗の拳 転生の章2</span>
                         
-                            
-                            <span class="avail-badge-lg empty">空き</span>
-                            
-                        
                         <span class="rank-badge-lg" style="background-color: #ffa502">A</span>
                         <span class="expand-icon">▼</span>
                     </div>
 
                     
-                    <!-- 営業中: リアルタイムデータ -->
-                    <div class="today-data-row">
-                        <div class="data-row-primary">
-                            <div class="data-cell highlight">
-                                <span class="data-value"><span class="art-num-lg">16</span></span>
-                                <span class="data-label">ART</span>
-                            </div>
-                            
-                            <div class="data-cell ">
-                                <span class="data-value">1/146</span>
-                                <span class="data-label">ART確率</span>
-                            </div>
-                            
-                            
-                            <div class="data-cell rensa-cell excellent">
-                                <span class="data-value">最大14連</span>
-                            </div>
-                            
-                        </div>
-                        <div class="data-row-secondary">
-                            
-                            
-                            <div class="data-cell medals-1k">
-                                <span class="data-value">1,548</span>
-                                <span class="data-label">最大枚 1千枚OVER</span>
-                            </div>
-                            
-                            <div class="data-cell">
-                                <span class="data-value"><span class="rb-num">6</span></span>
-                                <span class="data-label">RB</span>
-                            </div>
-                            <div class="data-cell warn">
-                                <span class="data-value">418</span>
-                                <span class="data-label">現在G</span>
-                            </div>
-                            
-                            <div class="data-cell bad">
-                                <span class="data-value">1回</span>
-                                <span class="data-label">500G超</span>
-                            </div>
-                            
-                            <div class="data-cell">
-                                <span class="data-value">2,338</span>
-                                <span class="data-label">累計G</span>
-                            </div>
-                            
-                            <div class="data-cell minus">
-                                <span class="data-value diff-medals-inline minus">-3,377枚</span>
-                                <span class="data-label">差枚</span>
-                            </div>
-                            
-                        </div>
+                    
+                    
+                    <div class="reasons-full">
+                        
+                        
+                        
+                        <div class="reason-line-top">🔮 高稼働日好調率100%</div>
+                        
+                        
+                        
+                        <div class="reason-line-top reason-pattern">🔄 2日連続好調 → 据え置き期待</div>
+                        
+                        
+                        
+                        <div class="reason-line-top">🔥 直近の推移: 中→小→小（好調3日中、大0/中1/小2日）</div>
+                        
+                        
+                        
+                        <div class="reason-line-top">🔥 2/5(木)11連の爆発あり</div>
+                        
+                        
+                        
+                        <div class="reason-line-top reason-rank">📊 3日間中3日好調（好調率100%）→ 高機械割が入りやすい台</div>
+                        
+                        
+                        
                     </div>
                     
 
@@ -3122,14 +3020,6 @@
 
                     <!-- 推奨理由（営業中のみ — 閉店後は上に表示済み） -->
                     
-                    <div class="reason-main">
-                        
-                        <div class="reason-line ">🔮 高稼働日好調率100%</div>
-                        
-                        <div class="reason-line reason-pattern">🔄 2日連続好調 → 据え置き期待</div>
-                        
-                    </div>
-                    
 
                     </summary>
                     <!-- 詳細（展開） -->
@@ -3326,7 +3216,7 @@
                             
                             <div class="reason-item">🔥 直近の推移: 中→小→小（好調3日中、大0/中1/小2日）</div>
                             
-                            <div class="reason-item">🔥 本日11連の爆発あり</div>
+                            <div class="reason-item">🔥 2/5(木)11連の爆発あり</div>
                             
                             <div class="reason-item">📊 3日間中3日好調（好調率100%）→ 高機械割が入りやすい台</div>
                             
@@ -3342,62 +3232,33 @@
                         <span class="unit-id-large">2014番台</span>
                         <span class="machine-name-sm">北斗の拳 転生の章2</span>
                         
-                            
-                            <span class="avail-badge-lg empty">空き</span>
-                            
-                        
                         <span class="rank-badge-lg" style="background-color: #ffa502">A</span>
                         <span class="expand-icon">▼</span>
                     </div>
 
                     
-                    <!-- 営業中: リアルタイムデータ -->
-                    <div class="today-data-row">
-                        <div class="data-row-primary">
-                            <div class="data-cell highlight">
-                                <span class="data-value"><span class="art-num-lg">15</span></span>
-                                <span class="data-label">ART</span>
-                            </div>
-                            
-                            <div class="data-cell good">
-                                <span class="data-value">1/118</span>
-                                <span class="data-label">ART確率</span>
-                            </div>
-                            
-                            
-                            <div class="data-cell rensa-cell good">
-                                <span class="data-value">最大9連</span>
-                            </div>
-                            
-                        </div>
-                        <div class="data-row-secondary">
-                            
-                            
-                            <div class="data-cell medals-1k">
-                                <span class="data-value">1,148</span>
-                                <span class="data-label">最大枚 1千枚OVER</span>
-                            </div>
-                            
-                            <div class="data-cell">
-                                <span class="data-value"><span class="rb-num">6</span></span>
-                                <span class="data-label">RB</span>
-                            </div>
-                            <div class="data-cell ">
-                                <span class="data-value">75</span>
-                                <span class="data-label">現在G</span>
-                            </div>
-                            
-                            <div class="data-cell">
-                                <span class="data-value">1,773</span>
-                                <span class="data-label">累計G</span>
-                            </div>
-                            
-                            <div class="data-cell minus">
-                                <span class="data-value diff-medals-inline minus">-2,951枚</span>
-                                <span class="data-label">差枚</span>
-                            </div>
-                            
-                        </div>
+                    
+                    
+                    <div class="reasons-full">
+                        
+                        
+                        
+                        <div class="reason-line-top">🔮 高稼働日好調率100%</div>
+                        
+                        
+                        
+                        <div class="reason-line-top reason-rank">📊 現在1,773G消化・1/118で推移中</div>
+                        
+                        
+                        
+                        <div class="reason-line-top reason-rank">📊 前日実績: ART11回・877G（1/79）</div>
+                        
+                        
+                        
+                        <div class="reason-line-top reason-rank">📊 過去データSランク: 高設定が入りやすい台</div>
+                        
+                        
+                        
                     </div>
                     
 
@@ -4572,14 +4433,6 @@
 
                     <!-- 推奨理由（営業中のみ — 閉店後は上に表示済み） -->
                     
-                    <div class="reason-main">
-                        
-                        <div class="reason-line ">🔮 高稼働日好調率100%</div>
-                        
-                        <div class="reason-line reason-rank">📊 現在1,773G消化・1/118で推移中</div>
-                        
-                    </div>
-                    
 
                     </summary>
                     <!-- 詳細（展開） -->
@@ -4782,67 +4635,41 @@
                         <span class="unit-id-large">2015番台</span>
                         <span class="machine-name-sm">北斗の拳 転生の章2</span>
                         
-                            
-                            <span class="avail-badge-lg empty">空き</span>
-                            
-                        
                         <span class="rank-badge-lg" style="background-color: #ffa502">A</span>
                         <span class="expand-icon">▼</span>
                     </div>
 
                     
-                    <!-- 営業中: リアルタイムデータ -->
-                    <div class="today-data-row">
-                        <div class="data-row-primary">
-                            <div class="data-cell highlight">
-                                <span class="data-value"><span class="art-num-lg">13</span></span>
-                                <span class="data-label">ART</span>
-                            </div>
-                            
-                            <div class="data-cell ">
-                                <span class="data-value">1/132</span>
-                                <span class="data-label">ART確率</span>
-                            </div>
-                            
-                            
-                            <div class="data-cell rensa-cell good">
-                                <span class="data-value">最大9連</span>
-                            </div>
-                            
-                        </div>
-                        <div class="data-row-secondary">
-                            
-                            
-                            <div class="data-cell medals-1k">
-                                <span class="data-value">1,024</span>
-                                <span class="data-label">最大枚 1千枚OVER</span>
-                            </div>
-                            
-                            <div class="data-cell">
-                                <span class="data-value"><span class="rb-num">3</span></span>
-                                <span class="data-label">RB</span>
-                            </div>
-                            <div class="data-cell ">
-                                <span class="data-value">222</span>
-                                <span class="data-label">現在G</span>
-                            </div>
-                            
-                            <div class="data-cell bad">
-                                <span class="data-value">2回</span>
-                                <span class="data-label">500G超</span>
-                            </div>
-                            
-                            <div class="data-cell">
-                                <span class="data-value">1,726</span>
-                                <span class="data-label">累計G</span>
-                            </div>
-                            
-                            <div class="data-cell minus">
-                                <span class="data-value diff-medals-inline minus">-2,834枚</span>
-                                <span class="data-label">差枚</span>
-                            </div>
-                            
-                        </div>
+                    
+                    
+                    <div class="reasons-full">
+                        
+                        
+                        
+                        <div class="reason-line-top">⏱️ 現在682Gハマリ→天井狙い圏内</div>
+                        
+                        
+                        
+                        <div class="reason-line-top">🔮 高稼働日好調率100%</div>
+                        
+                        
+                        
+                        <div class="reason-line-top reason-pattern">🔄 2日連続好調 → 据え置き期待</div>
+                        
+                        
+                        
+                        <div class="reason-line-top reason-rank">📊 現在1,726G消化・1/132で推移中</div>
+                        
+                        
+                        
+                        <div class="reason-line-top reason-rank">📊 前日実績: ART2回・266G（1/133）</div>
+                        
+                        
+                        
+                        <div class="reason-line-top reason-warn">🚨 前日は266G消化で低稼働 → 好調でも数字が伸びにくい稼働量</div>
+                        
+                        
+                        
                     </div>
                     
 
@@ -5531,14 +5358,6 @@
 
                     <!-- 推奨理由（営業中のみ — 閉店後は上に表示済み） -->
                     
-                    <div class="reason-main">
-                        
-                        <div class="reason-line ">⏱️ 現在682Gハマリ→天井狙い圏内</div>
-                        
-                        <div class="reason-line ">🔮 高稼働日好調率100%</div>
-                        
-                    </div>
-                    
 
                     </summary>
                     <!-- 詳細（展開） -->
@@ -5717,67 +5536,37 @@
                         <span class="unit-id-large">2013番台</span>
                         <span class="machine-name-sm">北斗の拳 転生の章2</span>
                         
-                            
-                            <span class="avail-badge-lg empty">空き</span>
-                            
-                        
                         <span class="rank-badge-lg" style="background-color: #ffa502">A</span>
                         <span class="expand-icon">▼</span>
                     </div>
 
                     
-                    <!-- 営業中: リアルタイムデータ -->
-                    <div class="today-data-row">
-                        <div class="data-row-primary">
-                            <div class="data-cell highlight">
-                                <span class="data-value"><span class="art-num-lg">26</span></span>
-                                <span class="data-label">ART</span>
-                            </div>
-                            
-                            <div class="data-cell excellent">
-                                <span class="data-value">1/86</span>
-                                <span class="data-label">ART確率</span>
-                            </div>
-                            
-                            
-                            <div class="data-cell rensa-cell excellent">
-                                <span class="data-value">最大11連</span>
-                            </div>
-                            
-                        </div>
-                        <div class="data-row-secondary">
-                            
-                            
-                            <div class="data-cell medals-2k">
-                                <span class="data-value">2,051</span>
-                                <span class="data-label">最大枚 2千枚OVER</span>
-                            </div>
-                            
-                            <div class="data-cell">
-                                <span class="data-value"><span class="rb-num">8</span></span>
-                                <span class="data-label">RB</span>
-                            </div>
-                            <div class="data-cell ">
-                                <span class="data-value">61</span>
-                                <span class="data-label">現在G</span>
-                            </div>
-                            
-                            <div class="data-cell bad">
-                                <span class="data-value">2回</span>
-                                <span class="data-label">500G超</span>
-                            </div>
-                            
-                            <div class="data-cell">
-                                <span class="data-value">2,250</span>
-                                <span class="data-label">累計G</span>
-                            </div>
-                            
-                            <div class="data-cell minus">
-                                <span class="data-value diff-medals-inline minus">-3,008枚</span>
-                                <span class="data-label">差枚</span>
-                            </div>
-                            
-                        </div>
+                    
+                    
+                    <div class="reasons-full">
+                        
+                        
+                        
+                        <div class="reason-line-top">⏱️ 現在674Gハマリ→天井狙い圏内</div>
+                        
+                        
+                        
+                        <div class="reason-line-top">🔮 高稼働日好調率100%</div>
+                        
+                        
+                        
+                        <div class="reason-line-top reason-pattern">🔄 2日連続好調 → 据え置き期待</div>
+                        
+                        
+                        
+                        <div class="reason-line-top">🔥 2/5(木)ART確率1/86 (2,250G消化) → 高機械割域</div>
+                        
+                        
+                        
+                        <div class="reason-line-top">🔥 2/5(木)10連の爆発あり</div>
+                        
+                        
+                        
                     </div>
                     
 
@@ -6790,14 +6579,6 @@
 
                     <!-- 推奨理由（営業中のみ — 閉店後は上に表示済み） -->
                     
-                    <div class="reason-main">
-                        
-                        <div class="reason-line ">⏱️ 現在674Gハマリ→天井狙い圏内</div>
-                        
-                        <div class="reason-line ">🔮 高稼働日好調率100%</div>
-                        
-                    </div>
-                    
 
                     </summary>
                     <!-- 詳細（展開） -->
@@ -7066,9 +6847,9 @@
                             
                             <div class="reason-item">🔄 2日連続好調 → 据え置き期待</div>
                             
-                            <div class="reason-item">🔥 本日ART確率1/86 (2,250G消化) → 高機械割域</div>
+                            <div class="reason-item">🔥 2/5(木)ART確率1/86 (2,250G消化) → 高機械割域</div>
                             
-                            <div class="reason-item">🔥 本日10連の爆発あり</div>
+                            <div class="reason-item">🔥 2/5(木)10連の爆発あり</div>
                             
                         </div>
                         
@@ -7082,67 +6863,33 @@
                         <span class="unit-id-large">2017番台</span>
                         <span class="machine-name-sm">北斗の拳 転生の章2</span>
                         
-                            
-                            <span class="avail-badge-lg empty">空き</span>
-                            
-                        
                         <span class="rank-badge-lg" style="background-color: #ffa502">A</span>
                         <span class="expand-icon">▼</span>
                     </div>
 
                     
-                    <!-- 営業中: リアルタイムデータ -->
-                    <div class="today-data-row">
-                        <div class="data-row-primary">
-                            <div class="data-cell highlight">
-                                <span class="data-value"><span class="art-num-lg">9</span></span>
-                                <span class="data-label">ART</span>
-                            </div>
-                            
-                            <div class="data-cell ">
-                                <span class="data-value">1/151</span>
-                                <span class="data-label">ART確率</span>
-                            </div>
-                            
-                            
-                            <div class="data-cell rensa-cell good">
-                                <span class="data-value">最大7連</span>
-                            </div>
-                            
-                        </div>
-                        <div class="data-row-secondary">
-                            
-                            
-                            <div class="data-cell medals-1k">
-                                <span class="data-value">1,012</span>
-                                <span class="data-label">最大枚 1千枚OVER</span>
-                            </div>
-                            
-                            <div class="data-cell">
-                                <span class="data-value"><span class="rb-num">2</span></span>
-                                <span class="data-label">RB</span>
-                            </div>
-                            <div class="data-cell warn">
-                                <span class="data-value">301</span>
-                                <span class="data-label">現在G</span>
-                            </div>
-                            
-                            <div class="data-cell bad">
-                                <span class="data-value">1回</span>
-                                <span class="data-label">500G超</span>
-                            </div>
-                            
-                            <div class="data-cell">
-                                <span class="data-value">1,359</span>
-                                <span class="data-label">累計G</span>
-                            </div>
-                            
-                            <div class="data-cell minus">
-                                <span class="data-value diff-medals-inline minus">-1,822枚</span>
-                                <span class="data-label">差枚</span>
-                            </div>
-                            
-                        </div>
+                    
+                    
+                    <div class="reasons-full">
+                        
+                        
+                        
+                        <div class="reason-line-top">🔮 2日連続好調</div>
+                        
+                        
+                        
+                        <div class="reason-line-top reason-rank">📊 現在1,359G消化・1/151で推移中</div>
+                        
+                        
+                        
+                        <div class="reason-line-top reason-rank">📊 前日実績: ART10回・951G（1/95）</div>
+                        
+                        
+                        
+                        <div class="reason-line-top reason-rank">📊 過去データSランク: 高設定が入りやすい台</div>
+                        
+                        
+                        
                     </div>
                     
 
@@ -7849,14 +7596,6 @@
 
                     <!-- 推奨理由（営業中のみ — 閉店後は上に表示済み） -->
                     
-                    <div class="reason-main">
-                        
-                        <div class="reason-line ">🔮 2日連続好調</div>
-                        
-                        <div class="reason-line reason-rank">📊 現在1,359G消化・1/151で推移中</div>
-                        
-                    </div>
-                    
 
                     </summary>
                     <!-- 詳細（展開） -->
@@ -8163,7 +7902,7 @@
 
     
     
-    <div class="v2-reason">🔥 本日ART確率1/62 (1,249G消化) → 高機械割域の挙動</div>
+    <div class="v2-reason">🔥 2/5(木)ART確率1/62 (1,249G消化) → 高機械割域の挙動</div>
     
 
     
@@ -8210,9 +7949,9 @@
     <div class="unit-details hidden">
         <div class="v2-detail-reasons">
             
-            <div class="reason-item">🔥 本日ART確率1/62 (1,249G消化) → 高機械割域の挙動</div>
+            <div class="reason-item">🔥 2/5(木)ART確率1/62 (1,249G消化) → 高機械割域の挙動</div>
             
-            <div class="reason-item">🔥 本日16連の爆発あり</div>
+            <div class="reason-item">🔥 2/5(木)16連の爆発あり</div>
             
             <div class="reason-item">📊 現在1,249G消化・1/62で推移中</div>
             
@@ -8486,9 +8225,9 @@
             
             <div class="reason-item">🔮 高稼働日好調率100%</div>
             
-            <div class="reason-item">🔥 本日天井到達1回 → 低機械割の可能性に注意</div>
+            <div class="reason-item">🔥 2/5(木)天井到達1回 → 低機械割の可能性に注意</div>
             
-            <div class="reason-item">🚨 本日ART確率1/231 (2,315G消化) → 低機械割域の挙動</div>
+            <div class="reason-item">🚨 2/5(木)ART確率1/231 (2,315G消化) → 低機械割域の挙動</div>
             
             <div class="reason-item">📊 現在2,315G消化・1/231で推移中</div>
             
@@ -8720,9 +8459,9 @@
             
             <div class="reason-item">⏱️ 本日+2,678枚で安定稼働</div>
             
-            <div class="reason-item">🔥 本日ART確率1/29 (1,169G消化) → 高機械割域の挙動</div>
+            <div class="reason-item">🔥 2/5(木)ART確率1/29 (1,169G消化) → 高機械割域の挙動</div>
             
-            <div class="reason-item">🔥 本日27連の爆発あり</div>
+            <div class="reason-item">🔥 2/5(木)27連の爆発あり</div>
             
             <div class="reason-item">📊 3日間中1日好調（好調率33%）→ 低機械割が入りやすい台</div>
             
@@ -9294,7 +9033,7 @@
             
             <div class="reason-item">⏱️ 現在643Gハマリ→天井狙い圏内</div>
             
-            <div class="reason-item">🚨 本日ART確率1/419 (839G消化) → 低機械割域の挙動</div>
+            <div class="reason-item">🚨 2/5(木)ART確率1/419 (839G消化) → 低機械割域の挙動</div>
             
             <div class="reason-item">📊 3日間中1日好調（好調率33%）→ 低機械割が入りやすい台</div>
             
@@ -9432,7 +9171,7 @@
             
             <div class="reason-item">🔄 2日連続好調 → 据え置き期待</div>
             
-            <div class="reason-item">🚨 本日ART確率1/512 (1,024G消化) → 低機械割域の挙動</div>
+            <div class="reason-item">🚨 2/5(木)ART確率1/512 (1,024G消化) → 低機械割域の挙動</div>
             
             <div class="reason-item">📊 現在1,024G消化・1/512で推移中</div>
             
