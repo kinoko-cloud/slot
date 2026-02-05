@@ -29,7 +29,7 @@
 
 {# 前日・前々日・3日前用のマクロ（ラベル+詳細ボタン+履歴テーブル） #}
 {% macro recent_day_expandable(day_art, day_prob, day_date, day_label, day_diff, day_rensa, day_max_m, day_hist) %}
-{% if day_art > 0 %}
+{% if day_art > 0 or (day_hist and day_hist|length > 0) %}
 <div class="recent-day-block">
     <div class="recent-day-row {% if day_hist and day_hist|length > 0 %}has-detail{% endif %}" onclick="{% if day_hist and day_hist|length > 0 %}toggleRecentDayDetail(event, this){% endif %}">
         <span class="recent-label">{{ short_date(day_date) or day_label }}</span>
