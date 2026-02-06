@@ -224,23 +224,27 @@ def fetch_store_availability(page, hall_id: str, model_encoded: str, expected_un
         }
 
 
-def fetch_unit_detail(page, hall_id: str, unit_id: str) -> dict:
-    """daidata: 台詳細ページからリアルタイムデータを取得"""
+def fetch_unit_detail(page, hall_id: str, unit_id: str, last_hit_time: str = None) -> dict:
+    """daidata: 台詳細ページからリアルタイムデータを取得（差分対応）
+    
+    Args:
+        last_hit_time: 前回取得時の最新当たり時刻（例: "14:23"）。これ以降の履歴のみ取得
+    """
     url = f"https://daidata.goraggio.com/{hall_id}/detail?unit={unit_id}"
 
     try:
         page.goto(url, timeout=60000, wait_until='domcontentloaded')
-        page.wait_for_timeout(3000)
+        page.wait_for_timeout(1500)
 
         # 規約同意ボタンがある場合（店舗ごとに別セッション）
         try:
             accept_btn = page.locator('button:has-text("利用規約に同意する")')
             if accept_btn.count() > 0:
                 accept_btn.click()
-                page.wait_for_timeout(3000)
+                page.wait_for_timeout(2000)
                 # 規約同意後、元のdetailページに戻る
                 page.goto(url, timeout=60000, wait_until='domcontentloaded')
-                page.wait_for_timeout(3000)
+                page.wait_for_timeout(1500)
                 print(f"  unit {unit_id}: 規約同意完了")
         except:
             pass
@@ -312,9 +316,13 @@ def fetch_unit_detail(page, hall_id: str, unit_id: str) -> dict:
             )
 
             for i, match in enumerate(hits):
+                hit_time = match[3]
+                # 差分取得: last_hit_time以降の履歴のみ取得
+                if last_hit_time and hit_time <= last_hit_time:
+                    break  # 時刻降順なので、ここで終了
                 history.append({
                     'hit_num': i + 1,
-                    'time': match[3],
+                    'time': hit_time,
                     'start': int(match[0]),
                     'medals': int(match[1]),
                     'type': match[2],
@@ -619,15 +627,34 @@ def main():
                     'total': len(config['units']),
                 }
 
-            # 各台の詳細データを取得
+            # 各台の詳細データを取得（差分取得）
             units_data = []
-            print(f"  Fetching unit details...")
+            print(f"  Fetching unit details (incremental)...")
+            
+            # 前回データから最新hit時刻を取得
+            prev_store = prev_data.get('stores', {}).get(store_key, {})
+            prev_units = {u['unit_id']: u for u in prev_store.get('units', [])}
+            
             for unit_id in config['units']:
-                unit_data = fetch_unit_detail(page, config['hall_id'], unit_id)
+                # 前回の最新hit時刻を取得
+                prev_unit = prev_units.get(unit_id, {})
+                prev_history = prev_unit.get('today_history', [])
+                last_hit_time = prev_history[0]['time'] if prev_history else None
+                
+                # 差分取得
+                unit_data = fetch_unit_detail(page, config['hall_id'], unit_id, last_hit_time=last_hit_time)
+                
+                # 差分を既存履歴にマージ
+                new_history = unit_data.get('today_history', [])
+                if new_history and prev_history:
+                    merged = new_history + [h for h in prev_history if h['time'] < new_history[-1]['time']] if new_history else prev_history
+                    unit_data['today_history'] = merged
+                elif prev_history and not new_history:
+                    unit_data['today_history'] = prev_history
+                
                 # model_encoded無しの場合、稼働データから空き判定
                 if not config.get('model_encoded'):
                     if unit_data.get('total_start', 0) > 0 or unit_data.get('art', 0) > 0:
-                        # データがあれば遊技中の可能性（detail pageでは正確に判定不可）
                         unit_data['availability'] = '不明'
                     else:
                         unit_data['availability'] = '空き'
