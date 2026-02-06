@@ -2,11 +2,8 @@ name: Fetch Availability
 
 on:
   schedule:
-    # 毎日 10:00-23:00 JST の間、15分ごとに実行
-    # GitHub Actionsのcronは正確ではない（数分の遅延あり）が、
-    # 15分間隔であれば実用上問題ない
-    - cron: '0 1-14 * * *'  # UTC 毎時00分 = 1時間ごと (JST 10:00-23:00)。リアルタイム取得はページアクセスがトリガー。Actionsはキャッシュ事前準備
-  workflow_dispatch:  # 手動実行も可能
+    - cron: '0 1-14 * * *'  # UTC毎時00分 (JST 10:00-23:00)
+  workflow_dispatch:
 
 concurrency:
   group: slot-data-update
@@ -17,16 +14,12 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -39,35 +32,35 @@ jobs:
           playwright install chromium
           playwright install-deps chromium
 
-      - name: Fetch daidata availability
-        timeout-minutes: 15
+      - name: Fetch daidata availability (with retry)
         run: |
-          echo "Attempt 1"
-          if python scripts/fetch_daidata_availability.py; then
-            echo "Success!"
-          else
-            echo "Failed, retrying in 10 seconds..."
-            sleep 10
-            echo "Attempt 2"
-            python scripts/fetch_daidata_availability.py || true
-          fi
-
+          MAX_ATTEMPTS=3
+          for attempt in $(seq 1 $MAX_ATTEMPTS); do
+            echo "=== Attempt $attempt / $MAX_ATTEMPTS ==="
+            if timeout 600 python scripts/fetch_daidata_availability.py; then
+              echo "✅ Success on attempt $attempt"
+              break
+            else
+              echo "❌ Failed on attempt $attempt"
+              if [ $attempt -lt $MAX_ATTEMPTS ]; then
+                echo "Waiting 30 seconds before retry..."
+                sleep 30
+              fi
+            fi
+          done
+          
+          # availability.jsonが存在すれば成功扱い
           if [ -f data/availability.json ]; then
-            echo "Data file exists"
+            echo "✅ Data file exists"
           else
-            echo "Warning: Data file not created"
+            echo "❌ Data file not created after $MAX_ATTEMPTS attempts"
             exit 1
           fi
 
       - name: Regenerate static site
-        run: |
-          # post_build_checkの失敗は警告のみ（データ遅延時もデプロイを継続）
-          python scripts/generate_static.py || {
-            echo "Warning: generate_static.py failed, but continuing..."
-            true
-          }
+        run: python scripts/generate_static.py || true
 
-      - name: Commit and push (with rebase retry)
+      - name: Commit and push
         run: |
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
@@ -82,26 +75,12 @@ jobs:
           TIMESTAMP=$(TZ='Asia/Tokyo' date +'%H:%M')
           git commit -m "auto: リアルタイム更新 ${TIMESTAMP}"
           
-          # シンプルなpush戦略: pull --rebase + push（最大5回）
           for i in 1 2 3 4 5; do
-            echo "=== Attempt $i ==="
-            
-            # 最新を取得してマージ（コンフリクト時はローカル優先）
-            git pull origin main --no-rebase -X ours || {
-              echo "Pull failed, trying reset approach..."
-              git fetch origin main
-              git reset --soft origin/main
-              git add data/availability.json docs/
-              git commit -m "auto: リアルタイム更新 ${TIMESTAMP}" || true
-            }
-            
+            git pull origin main --no-rebase -X ours 2>/dev/null || true
             if git push origin main; then
-              echo "Push succeeded (attempt $i)"
+              echo "✅ Push succeeded"
               exit 0
             fi
-            echo "Push failed, retrying in 5s..."
             sleep 5
           done
-          
-          echo "Push failed after 5 attempts, but data was fetched successfully"
           exit 0  # データ取得成功なら全体は成功扱い
