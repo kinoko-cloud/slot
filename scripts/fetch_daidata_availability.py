@@ -157,18 +157,18 @@ def fetch_store_availability(page, hall_id: str, model_encoded: str, expected_un
 
     try:
         page.goto(url, timeout=30000, wait_until='domcontentloaded')
-        page.wait_for_timeout(5000)  # JSレンダリング待ち
+        page.wait_for_timeout(3000)  # JSレンダリング待ち
 
         # 規約同意ボタンをクリック（daidataがスクレイピング対策で追加）
         try:
             accept_btn = page.locator('button:has-text("利用規約に同意する")')
             if accept_btn.count() > 0:
                 accept_btn.click()
-                page.wait_for_timeout(5000)  # 同意後のリダイレクト待ち（増加）
+                page.wait_for_timeout(3000)  # 同意後のリダイレクト待ち（増加）
                 print("  Accepted terms, re-navigating...")
                 # 同意後はトップページにリダイレクトされるため、再度unit_listに遷移
                 page.goto(url, timeout=60000, wait_until='domcontentloaded')
-                page.wait_for_timeout(5000)  # JSレンダリング待ち（増加）
+                page.wait_for_timeout(3000)  # JSレンダリング待ち（増加）
         except Exception as e:
             print(f"  Terms button: {e}")
             pass
@@ -237,7 +237,7 @@ def fetch_unit_detail(page, hall_id: str, unit_id: str) -> dict:
             accept_btn = page.locator('button:has-text("利用規約に同意する")')
             if accept_btn.count() > 0:
                 accept_btn.click()
-                page.wait_for_timeout(5000)
+                page.wait_for_timeout(3000)
                 # 規約同意後、元のdetailページに戻る
                 page.goto(url, timeout=60000, wait_until='domcontentloaded')
                 page.wait_for_timeout(3000)
@@ -561,12 +561,12 @@ def main():
                 continue
             try:
                 page.goto(f'https://daidata.goraggio.com/{hall_id}/all_list?ps=S', wait_until='domcontentloaded', timeout=30000)
-                page.wait_for_timeout(5000)  # JSレンダリング完了待ち
+                page.wait_for_timeout(3000)  # JSレンダリング完了待ち
                 # ボタンクリックで同意
                 agree_btn = page.locator('button:has-text("利用規約に同意する")')
                 if agree_btn.count() > 0:
                     agree_btn.click()
-                    page.wait_for_timeout(5000)  # 同意後のページ更新待ち
+                    page.wait_for_timeout(3000)  # 同意後のページ更新待ち
                     print(f"daidata規約同意完了（ボタンクリック）: {hall_id} ({config['name']})")
                 else:
                     # ボタンがない場合はformサブミットを試行

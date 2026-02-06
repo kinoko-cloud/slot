@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-    timeout-minutes: 30
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
         with:
@@ -32,15 +32,28 @@ jobs:
           playwright install chromium
           playwright install-deps chromium
 
-      - name: Fetch daidata availability
+      - name: Fetch daidata availability (with retry)
         run: |
-          # タイムアウト25分で1回実行
-          timeout 1500 python scripts/fetch_daidata_availability.py || true
+          MAX_ATTEMPTS=3
+          for attempt in $(seq 1 $MAX_ATTEMPTS); do
+            echo "=== Attempt $attempt / $MAX_ATTEMPTS ==="
+            if timeout 600 python scripts/fetch_daidata_availability.py; then
+              echo "✅ Success on attempt $attempt"
+              break
+            else
+              echo "❌ Failed on attempt $attempt"
+              if [ $attempt -lt $MAX_ATTEMPTS ]; then
+                echo "Waiting 30 seconds before retry..."
+                sleep 30
+              fi
+            fi
+          done
           
+          # availability.jsonが存在すれば成功扱い
           if [ -f data/availability.json ]; then
             echo "✅ Data file exists"
           else
-            echo "❌ Data file not created"
+            echo "❌ Data file not created after $MAX_ATTEMPTS attempts"
             exit 1
           fi
 
@@ -70,4 +83,4 @@ jobs:
             fi
             sleep 5
           done
-          exit 0
+          exit 0  # データ取得成功なら全体は成功扱い
