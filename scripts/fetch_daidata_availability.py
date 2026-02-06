@@ -164,11 +164,11 @@ def fetch_store_availability(page, hall_id: str, model_encoded: str, expected_un
             accept_btn = page.locator('button:has-text("利用規約に同意する")')
             if accept_btn.count() > 0:
                 accept_btn.click()
-                page.wait_for_timeout(3000)  # 同意後のリダイレクト待ち
+                page.wait_for_timeout(5000)  # 同意後のリダイレクト待ち（増加）
                 print("  Accepted terms, re-navigating...")
                 # 同意後はトップページにリダイレクトされるため、再度unit_listに遷移
-                page.goto(url, timeout=30000, wait_until='domcontentloaded')
-                page.wait_for_timeout(3000)
+                page.goto(url, timeout=60000, wait_until='domcontentloaded')
+                page.wait_for_timeout(5000)  # JSレンダリング待ち（増加）
         except Exception as e:
             print(f"  Terms button: {e}")
             pass
