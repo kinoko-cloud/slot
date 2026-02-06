@@ -18,6 +18,11 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -25,7 +30,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install playwright jinja2
+          pip install 'playwright==1.49.1' jinja2 requests
           playwright install chromium
           playwright install-deps chromium
 
