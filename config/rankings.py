@@ -32,7 +32,7 @@ MACHINES = {
                                        # 30G以上空いたら通常に戻った可能性 → 新規初当たり扱い。
                                        # 実績: 閾値30Gで最大20連程度（現実的な範囲）
     },
-    'hokuto_tensei2': {
+    'hokuto2': {
         'name': 'L北斗の拳 転生の章2',
         'short_name': '北斗の拳 転生の章2',
         'display_name': '北斗転生2',
@@ -126,7 +126,7 @@ STORES = {
         'name': 'エスパス日拓西武新宿駅前店',
         'short_name': 'エスパス西武新宿',
         'hall_id': '100950',
-        'machine': 'hokuto_tensei2',
+        'machine': 'hokuto2',
         'units': [str(i) for i in range(3138, 3152)] + ['3165', '3166'],  # 3185-3187撤去
         'data_source': 'daidata',
     },
@@ -151,7 +151,7 @@ STORES = {
         'name': 'エスパス日拓渋谷本館',
         'short_name': 'エスパス渋谷本館',
         'hall_id': '100930',
-        'machine': 'hokuto_tensei2',
+        'machine': 'hokuto2',
         'units': [str(i) for i in range(2013, 2020)] + [str(i) for i in range(2030, 2038)],  # 2013-2019, 2030-2037
         'data_source': 'daidata',
     },
@@ -160,7 +160,7 @@ STORES = {
         'name': 'エスパス日拓渋谷新館',
         'short_name': 'エスパス渋谷新館',
         'hall_id': '100860',
-        'machine': 'hokuto_tensei2',
+        'machine': 'hokuto2',
         'units': [str(i) for i in range(2046, 2068)] + [str(i) for i in range(2233, 2241)],  # 2046-2067, 2233-2240
         'data_source': 'daidata',
     },
@@ -168,7 +168,7 @@ STORES = {
         'name': 'エスパス日拓新宿歌舞伎町店',
         'short_name': 'エスパス歌舞伎町',
         'hall_id': '100949',
-        'machine': 'hokuto_tensei2',
+        'machine': 'hokuto2',
         'units': [str(i) for i in range(1, 38)] + [str(i) for i in range(125, 129)],  # 1-37, 125-128
         'data_source': 'daidata',
     },
@@ -176,7 +176,7 @@ STORES = {
         'name': 'エスパス日拓秋葉原駅前店',
         'short_name': 'エスパス秋葉原',
         'hall_id': '100928',
-        'machine': 'hokuto_tensei2',
+        'machine': 'hokuto2',
         'units': [str(i) for i in range(2011, 2020)] + [str(i) for i in range(2056, 2069)],  # 2011-2019, 2056-2068
         'data_source': 'daidata',
     },
@@ -184,7 +184,7 @@ STORES = {
         'name': 'アイランド秋葉原',
         'short_name': 'アイランド秋葉原',
         'hall_id': None,
-        'machine': 'hokuto_tensei2',
+        'machine': 'hokuto2',
         'units': [f'{i:04d}' for i in range(811, 819)] + [f'{i:04d}' for i in range(820, 826)],  # 0811-0818, 0820-0825 (0819減台: 2026-02-03)
         'data_source': 'papimo',
     },
@@ -194,13 +194,13 @@ STORES = {
 STORES['island_akihabara'] = STORES['island_akihabara_sbj']
 STORES['shibuya_espass'] = STORES['shibuya_espass_sbj']
 
-# _hokuto_tensei2 サフィックスのエイリアス（historyディレクトリ名との互換性）
-STORES['shibuya_espass_hokuto_tensei2'] = STORES['shibuya_espass_hokuto']
-STORES['shinjuku_espass_hokuto_tensei2'] = STORES['shinjuku_espass_hokuto']
-STORES['akiba_espass_hokuto_tensei2'] = STORES['akiba_espass_hokuto']
-STORES['shibuya_honkan_espass_hokuto_tensei2'] = STORES['shibuya_honkan_espass_hokuto']
-STORES['seibu_shinjuku_espass_hokuto_tensei2'] = STORES.get('seibu_shinjuku_espass_hokuto', {})
-STORES['island_akihabara_hokuto_tensei2'] = STORES['island_akihabara_hokuto']
+# _hokuto2 サフィックスのエイリアス（historyディレクトリ名との互換性）
+STORES['shibuya_espass_hokuto2'] = STORES['shibuya_espass_hokuto']
+STORES['shinjuku_espass_hokuto2'] = STORES['shinjuku_espass_hokuto']
+STORES['akiba_espass_hokuto2'] = STORES['akiba_espass_hokuto']
+STORES['shibuya_honkan_espass_hokuto2'] = STORES['shibuya_honkan_espass_hokuto']
+STORES['seibu_shinjuku_espass_hokuto2'] = STORES.get('seibu_shinjuku_espass_hokuto', {})
+STORES['island_akihabara_hokuto2'] = STORES['island_akihabara_hokuto']
 
 
 def get_stores_by_machine(machine_key: str) -> dict:
@@ -286,7 +286,7 @@ def get_unit_ranking(store_key: str, unit_id: str) -> dict:
     store_rankings = RANKINGS.get(store_key, {})
     if not store_rankings:
         # 機種サフィックスなしのキーでも検索
-        for suffix in ['_sbj', '_hokuto', '_hokuto_tensei2']:
+        for suffix in ['_sbj', '_hokuto', '_hokuto2']:
             if store_key.endswith(suffix):
                 alt_key = store_key[:-len(suffix)]
                 store_rankings = RANKINGS.get(alt_key, {})

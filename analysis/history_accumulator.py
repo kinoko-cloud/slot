@@ -125,14 +125,14 @@ def accumulate_from_availability(avail_data: dict, target_date: str = None):
     for store_key, store_data in stores.items():
         units = store_data.get('units', [])
         
-        # store_keyのマッピング（_hokuto → _hokuto_tensei2）
-        # availability.jsonでは_hokutoだが、蓄積DBでは_hokuto_tensei2を使う
+        # store_keyのマッピング（_hokuto → _hokuto2）
+        # availability.jsonでは_hokutoだが、蓄積DBでは_hokuto2を使う
         acc_store_key = store_key
-        if '_hokuto' in store_key and '_hokuto_tensei2' not in store_key:
-            acc_store_key = store_key.replace('_hokuto', '_hokuto_tensei2')
+        if '_hokuto' in store_key and '_hokuto2' not in store_key:
+            acc_store_key = store_key.replace('_hokuto', '_hokuto2')
         
         # store_keyから機種キーを推測
-        machine_key = 'hokuto_tensei2' if 'hokuto' in store_key else 'sbj'
+        machine_key = 'hokuto2' if 'hokuto' in store_key else 'sbj'
         
         for unit_data in units:
             unit_id = str(unit_data.get('unit_id', ''))
@@ -267,7 +267,7 @@ def load_unit_history(store_key: str, unit_id: str) -> dict:
     """蓄積済みの台履歴を読み込む
 
     store_keyが完全一致しない場合、サフィックス違いも試す
-    例: island_akihabara_hokuto → island_akihabara_hokuto_tensei2
+    例: island_akihabara_hokuto → island_akihabara_hokuto2
     """
     # 完全一致
     file_path = HISTORY_DIR / store_key / f'{unit_id}.json'
