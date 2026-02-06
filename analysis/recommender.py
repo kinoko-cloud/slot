@@ -21,6 +21,7 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from config.rankings import STORES, RANKINGS, get_rank, get_unit_ranking, MACHINES, get_machine_threshold, rank_up, rank_down
+from config.stores import resolve_history_store_key, get_machine_key_from_store
 from analysis.analyzer import calculate_at_intervals, calculate_current_at_games, calculate_max_rensa
 
 # 機種別の設定情報
@@ -2597,7 +2598,7 @@ def generate_store_analysis(store_key: str, daily_data: dict = None) -> dict:
     # 日別データからの分析
     daily_summary = ""
     if daily_data:
-        data_store_key = STORE_KEY_MAPPING.get(store_key, store_key)
+        data_store_key = resolve_history_store_key(store_key)
         store_data = None
         for key in [data_store_key, store_key]:
             store_data = daily_data.get('stores', {}).get(key, {})
@@ -2706,7 +2707,7 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
     machine_info = MACHINES.get(machine_key, {})
 
     # JSONデータ内の店舗キーを取得
-    data_store_key = STORE_KEY_MAPPING.get(store_key, store_key)
+    data_store_key = resolve_history_store_key(store_key)
 
     store_rankings = RANKINGS.get(store_key, {})
     recommendations = []

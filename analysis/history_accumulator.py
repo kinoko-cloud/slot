@@ -6,8 +6,12 @@ data/history/{store_key}/{unit_id}.json に追記していく。
 """
 import json
 import os
+import sys
 from datetime import datetime
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from config.stores import resolve_history_store_key, get_machine_key_from_store
 
 HISTORY_DIR = Path(__file__).parent.parent / 'data' / 'history'
 
@@ -75,13 +79,15 @@ def accumulate_from_daily(daily_data: dict, machine_key: str = 'sbj'):
 
     for store_key, store_data in stores.items():
         units = store_data.get('units', [])
+        acc_store_key = resolve_history_store_key(store_key)
+        
         for unit_data in units:
             unit_id = str(unit_data.get('unit_id', ''))
             days = unit_data.get('days', [])
             if not unit_id or not days:
                 continue
 
-            added = _accumulate_unit(store_key, unit_id, days, machine_key)
+            added = _accumulate_unit(acc_store_key, unit_id, days, machine_key)
             if added > 0:
                 updated_units += 1
                 new_entries += added
@@ -124,15 +130,8 @@ def accumulate_from_availability(avail_data: dict, target_date: str = None):
     
     for store_key, store_data in stores.items():
         units = store_data.get('units', [])
-        
-        # store_keyのマッピング（_hokuto → _hokuto2）
-        # availability.jsonでは_hokutoだが、蓄積DBでは_hokuto2を使う
-        acc_store_key = store_key
-        if '_hokuto' in store_key and '_hokuto2' not in store_key:
-            acc_store_key = store_key.replace('_hokuto', '_hokuto2')
-        
-        # store_keyから機種キーを推測
-        machine_key = 'hokuto2' if 'hokuto' in store_key else 'sbj'
+        acc_store_key = resolve_history_store_key(store_key)
+        machine_key = get_machine_key_from_store(store_key)
         
         for unit_data in units:
             unit_id = str(unit_data.get('unit_id', ''))
@@ -266,19 +265,22 @@ def _accumulate_unit(store_key: str, unit_id: str, days: list, machine_key: str)
 def load_unit_history(store_key: str, unit_id: str) -> dict:
     """蓄積済みの台履歴を読み込む
 
-    store_keyが完全一致しない場合、サフィックス違いも試す
+    store_keyが完全一致しない場合、マッピング後のキーも試す
     例: island_akihabara_hokuto → island_akihabara_hokuto2
     """
-    # 完全一致
-    file_path = HISTORY_DIR / store_key / f'{unit_id}.json'
-    if file_path.exists():
-        try:
-            with open(file_path, 'r', encoding='utf-8') as f:
-                return json.load(f)
-        except (json.JSONDecodeError, IOError):
-            pass
+    # マッピング後のキーを優先して検索
+    mapped_key = resolve_history_store_key(store_key)
+    
+    for key_to_try in [mapped_key, store_key]:
+        file_path = HISTORY_DIR / key_to_try / f'{unit_id}.json'
+        if file_path.exists():
+            try:
+                with open(file_path, 'r', encoding='utf-8') as f:
+                    return json.load(f)
+            except (json.JSONDecodeError, IOError):
+                pass
 
-    # store_keyが部分一致するディレクトリを探す
+    # store_keyが部分一致するディレクトリを探す（フォールバック）
     if HISTORY_DIR.exists():
         for d in HISTORY_DIR.iterdir():
             if d.is_dir() and (d.name.startswith(store_key) or store_key.startswith(d.name)):

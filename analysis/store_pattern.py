@@ -20,20 +20,13 @@ from functools import lru_cache
 import sys
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from config.rankings import MACHINES, STORES, get_machine_threshold
+from config.stores import resolve_history_store_key
 
 # =============================================================================
 # 定数
 # =============================================================================
 
 HISTORY_DIR = Path(__file__).parent.parent / 'data' / 'history'
-
-# 店舗キー → 履歴ディレクトリ名マッピング
-_STORE_KEY_TO_HISTORY_DIR = {
-    'shibuya_espass_hokuto': 'shibuya_espass_hokuto2',
-    'shinjuku_espass_hokuto': 'shinjuku_espass_hokuto2',
-    'akiba_espass_hokuto': 'akiba_espass_hokuto2',
-    'island_akihabara_hokuto': 'island_akihabara_hokuto2',
-}
 
 # 曜日名
 WEEKDAY_NAMES = ['月', '火', '水', '木', '金', '土', '日']
@@ -121,7 +114,7 @@ def _estimate_setting_tier(day: dict, machine_key: str) -> int:
 
 def _resolve_history_dir(store_key: str) -> str:
     """store_key から履歴ディレクトリ名を解決"""
-    return _STORE_KEY_TO_HISTORY_DIR.get(store_key, store_key)
+    return resolve_history_store_key(store_key)
 
 
 def _is_good_day(day: dict, machine_key: str) -> bool:

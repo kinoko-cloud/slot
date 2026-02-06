@@ -118,7 +118,7 @@ def check_claude_md_specs():
     if sbj.get('good_prob') != 130:
         issues.append(f'WARN: SBJ好調閾値が1/{sbj.get("good_prob")}（CLAUDE.md確認必要）')
 
-    hokuto = MACHINES.get('hokuto_tensei2', {})
+    hokuto = MACHINES.get('hokuto2', {})
     if hokuto.get('normal_ceiling_abeshi') != 1536:
         issues.append(f'ERROR: 北斗モードA天井が{hokuto.get("normal_ceiling_abeshi")}あべしだがCLAUDE.mdでは1536')
     if hokuto.get('reset_ceiling_abeshi') != 1280:
@@ -245,7 +245,7 @@ def check_renchain_sanity():
     import json
     from analysis.analyzer import calculate_max_rensa
     
-    MAX_SANE_RENSA = {'sbj': 25, 'hokuto_tensei2': 20}  # 機種別の現実的な上限
+    MAX_SANE_RENSA = {'sbj': 25, 'hokuto2': 20}  # 機種別の現実的な上限
     DEFAULT_MAX = 20
     
     history_dir = BASE / 'data' / 'history'
@@ -255,7 +255,7 @@ def check_renchain_sanity():
     for hdir in history_dir.iterdir():
         if not hdir.is_dir():
             continue
-        mk = 'sbj' if 'sbj' in hdir.name else 'hokuto_tensei2'
+        mk = 'sbj' if 'sbj' in hdir.name else 'hokuto2'
         max_sane = MAX_SANE_RENSA.get(mk, DEFAULT_MAX)
         
         for hf in hdir.glob('*.json'):

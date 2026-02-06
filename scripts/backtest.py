@@ -122,7 +122,7 @@ def build_filtered_daily_data(all_data, cutoff_date, original_data_template):
     """
     filtered = {
         'collected_at': f'{cutoff_date}T23:59:59',
-        'machines': ['sbj', 'hokuto_tensei2'],
+        'machines': ['sbj', 'hokuto2'],
         'stores': {},
     }
 
@@ -226,7 +226,7 @@ def run_backtest(predict_date, machine_filter='all'):
 
     Args:
         predict_date: 予測対象日（YYYY-MM-DD形式）
-        machine_filter: 対象機種（'sbj', 'hokuto_tensei2', 'all'）
+        machine_filter: 対象機種（'sbj', 'hokuto2', 'all'）
 
     Returns:
         結果サマリー
@@ -415,7 +415,7 @@ def main():
     parser = argparse.ArgumentParser(description='予測精度のバックテスト')
     parser.add_argument('--predict-date', nargs='+', required=True,
                        help='予測対象日（YYYY-MM-DD形式、複数指定可）')
-    parser.add_argument('--machine', choices=['sbj', 'hokuto_tensei2', 'all'], default='all',
+    parser.add_argument('--machine', choices=['sbj', 'hokuto2', 'all'], default='all',
                        help='対象機種（デフォルト: all）')
     args = parser.parse_args()
 

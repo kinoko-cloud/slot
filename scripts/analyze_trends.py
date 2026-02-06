@@ -45,7 +45,7 @@ def detect_machine_key(store_dir_name: str) -> tuple:
     
     # フォールバック：旧形式対応
     if 'hokuto' in store_dir_name and 'tensei' in store_dir_name:
-        return store_dir_name.replace('_hokuto_tensei2', ''), 'hokuto_tensei2'
+        return store_dir_name.replace('_hokuto2', ''), 'hokuto2'
     elif 'sbj' in store_dir_name:
         return store_dir_name.replace('_sbj', ''), 'sbj'
     

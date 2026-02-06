@@ -15,7 +15,7 @@ from analysis.history_accumulator import _accumulate_unit, load_unit_history
 HALL_ID = '100860'
 HALL_NAME = '渋谷エスパス新館'
 STORE_KEYS = {
-    'hokuto_tensei2': 'shibuya_espass_hokuto_tensei2',
+    'hokuto2': 'shibuya_espass_hokuto2',
     'sbj': 'shibuya_espass_sbj',
 }
 
