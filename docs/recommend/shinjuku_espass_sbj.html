@@ -9,7 +9,7 @@
     <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
     <meta name="googlebot" content="noindex, nofollow">
     <title>エスパス日拓新宿歌舞伎町店</title>
-    <link rel="stylesheet" href="/static/style.css?v=20260206151147">
+    <link rel="stylesheet" href="/static/style.css?v=20260206222006">
 </head>
 <body data-page-type="recommend" data-store-key="shinjuku_espass_sbj">
     <div class="container">
@@ -27,7 +27,7 @@
         
     </div>
     <div class="top-bar-right">
-        <span class="version-info" id="build-ver" title="ビルド時刻">v0207_00:12</span>
+        <span class="version-info" id="build-ver" title="ビルド時刻">v0206_22:20</span>
         
     </div>
 </div>
@@ -48,14 +48,18 @@
                 </span>
                 <span class="cache-badge github">GITHUB</span>
                 
-                <div class="stale-warning">データが2時間7分前のものです</div>
+                <div class="stale-notice">15分前のデータです</div>
                 
                 
             </div>
 
             <!-- 空き状況サマリ -->
             
-            <div class="closed-notice">現在営業時間外です</div>
+            <div class="availability-summary">
+                <span class="avail-empty" onclick="filterUnits('empty')">空き 2台</span>
+                <span class="avail-playing" onclick="filterUnits('playing')">遊技中 2台</span>
+                <span class="avail-all" onclick="filterUnits('all')">全て</span>
+            </div>
             
 
             <div class="action-buttons">
@@ -126,53 +130,67 @@
                         <span class="unit-id-large">0683番台</span>
                         <span class="machine-name-sm">スーパーブラックジャック</span>
                         
+                            
+                            <span class="avail-badge-lg empty">空き</span>
+                            
+                        
                         <span class="rank-badge-lg" style="background-color: #ffa502">A</span>
                         <span class="expand-icon">▼</span>
                     </div>
 
                     
-                    
-                    
-                    <div class="reasons-full">
-                        
-                        
-                        
-                        <div class="reason-line-top">🔮 店がよく高設定を入れる台</div>
-                        
-                        
-                        
-                        <div class="reason-line-top">🔮 高設定率77%の甘い店</div>
-                        
-                        
-                        
-                        <div class="reason-line-top">🔮 高稼働日好調率100%</div>
-                        
-                        
-                        
-                        <div class="reason-line-top">🔮 全台系でよく入る台</div>
-                        
-                        
-                        
-                        <div class="reason-line-top">🔮 全台系予測日(high)</div>
-                        
-                        
-                        
-                        <div class="reason-line-top">🔮 7日連続好調</div>
-                        
-                        
-                        
-                        <div class="reason-line-top reason-pattern">🔄 6日連続好調 + エスパス歌舞伎町は金曜が狙い目 → 据え置き濃厚</div>
-                        
-                        
-                        
-                        <div class="reason-line-top">🔥 2/6(金)ART確率1/50 (1,356G消化) → 高機械割域の挙動</div>
-                        
-                        
-                        
-                        <div class="reason-line-top">🔥 2/6(金)14連の爆発あり</div>
-                        
-                        
-                        
+                    <!-- 営業中: リアルタイムデータ -->
+                    <div class="today-data-row">
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">27</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            <div class="data-cell excellent">
+                                <span class="data-value">1/50</span>
+                                <span class="data-label">ART確率</span>
+                            </div>
+                            
+                            
+                            <div class="data-cell rensa-cell excellent">
+                                <span class="data-value">最大12連</span>
+                            </div>
+                            
+                        </div>
+                        <div class="data-row-secondary">
+                            
+                            
+                            <div class="data-cell medals-2k">
+                                <span class="data-value">2,877</span>
+                                <span class="data-label">最大枚 2千枚OVER</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">3</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell ">
+                                <span class="data-value">231</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell bad">
+                                <span class="data-value">1回</span>
+                                <span class="data-label">500G超</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">1,356</span>
+                                <span class="data-label">累計G</span>
+                            </div>
+                            
+                            <div class="data-cell minus">
+                                <span class="data-value diff-medals-inline minus">-165枚</span>
+                                <span class="data-label">差枚</span>
+                            </div>
+                            
+                        </div>
                     </div>
                     
 
@@ -1302,6 +1320,14 @@
 
                     <!-- 推奨理由（営業中のみ — 閉店後は上に表示済み） -->
                     
+                    <div class="reason-main">
+                        
+                        <div class="reason-line ">🔮 店がよく高設定を入れる台</div>
+                        
+                        <div class="reason-line ">🔮 高設定率77%の甘い店</div>
+                        
+                    </div>
+                    
 
                     </summary>
                     <!-- 詳細（展開） -->
@@ -1554,9 +1580,9 @@
                             
                             <div class="reason-item">🔄 6日連続好調 + エスパス歌舞伎町は金曜が狙い目 → 据え置き濃厚</div>
                             
-                            <div class="reason-item">🔥 2/6(金)ART確率1/50 (1,356G消化) → 高機械割域の挙動</div>
+                            <div class="reason-item">🔥 本日ART確率1/50 (1,356G消化) → 高機械割域の挙動</div>
                             
-                            <div class="reason-item">🔥 2/6(金)14連の爆発あり</div>
+                            <div class="reason-item">🔥 本日14連の爆発あり</div>
                             
                         </div>
                         
@@ -1570,61 +1596,63 @@
                         <span class="unit-id-large">0682番台</span>
                         <span class="machine-name-sm">スーパーブラックジャック</span>
                         
+                            
+                            <span class="avail-badge-lg empty">空き</span>
+                            
+                        
                         <span class="rank-badge-lg" style="background-color: #ffa502">A</span>
                         <span class="expand-icon">▼</span>
                     </div>
 
                     
-                    
-                    
-                    <div class="reasons-full">
-                        
-                        
-                        
-                        <div class="reason-line-top">🔮 店がよく高設定を入れる台</div>
-                        
-                        
-                        
-                        <div class="reason-line-top">🔮 高設定率77%の甘い店</div>
-                        
-                        
-                        
-                        <div class="reason-line-top">🔮 高稼働日好調率100%</div>
-                        
-                        
-                        
-                        <div class="reason-line-top">🔮 全台系でよく入る台</div>
-                        
-                        
-                        
-                        <div class="reason-line-top">🔮 全台系予測日(high)</div>
-                        
-                        
-                        
-                        <div class="reason-line-top">🔮 3日連続好調</div>
-                        
-                        
-                        
-                        <div class="reason-line-top reason-pattern">🔄 4日連続好調 + エスパス歌舞伎町は金曜が狙い目 → 据え置き濃厚</div>
-                        
-                        
-                        
-                        <div class="reason-line-top">🔥 直近の推移: 中→大→中→大→小（大小交互 → 2/6(金)は大爆発の可能性）</div>
-                        
-                        
-                        
-                        <div class="reason-line-top">🔥 2/6(金)14連の爆発あり</div>
-                        
-                        
-                        
-                        <div class="reason-line-top reason-weekday">📅 この台の金曜好調率: 3/3回(100%) → 期待大</div>
-                        
-                        
-                        
-                        <div class="reason-line-top reason-weekday">📅 この台の金曜実績: 3/3回好調（100%）</div>
-                        
-                        
-                        
+                    <!-- 営業中: リアルタイムデータ -->
+                    <div class="today-data-row">
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">24</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            <div class="data-cell good">
+                                <span class="data-value">1/124</span>
+                                <span class="data-label">ART確率</span>
+                            </div>
+                            
+                            
+                        </div>
+                        <div class="data-row-secondary">
+                            
+                            
+                            <div class="data-cell medals-1k">
+                                <span class="data-value">1,274</span>
+                                <span class="data-label">最大枚 1千枚OVER</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">5</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell ">
+                                <span class="data-value">128</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell bad">
+                                <span class="data-value">2回</span>
+                                <span class="data-label">500G超</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">2,990</span>
+                                <span class="data-label">累計G</span>
+                            </div>
+                            
+                            <div class="data-cell minus">
+                                <span class="data-value diff-medals-inline minus">-5,540枚</span>
+                                <span class="data-label">差枚</span>
+                            </div>
+                            
+                        </div>
                     </div>
                     
 
@@ -2601,6 +2629,14 @@
 
                     <!-- 推奨理由（営業中のみ — 閉店後は上に表示済み） -->
                     
+                    <div class="reason-main">
+                        
+                        <div class="reason-line ">🔮 店がよく高設定を入れる台</div>
+                        
+                        <div class="reason-line ">🔮 高設定率77%の甘い店</div>
+                        
+                    </div>
+                    
 
                     </summary>
                     <!-- 詳細（展開） -->
@@ -2847,9 +2883,9 @@
                             
                             <div class="reason-item">🔄 4日連続好調 + エスパス歌舞伎町は金曜が狙い目 → 据え置き濃厚</div>
                             
-                            <div class="reason-item">🔥 直近の推移: 中→大→中→大→小（大小交互 → 2/6(金)は大爆発の可能性）</div>
+                            <div class="reason-item">🔥 直近の推移: 中→大→中→大→小（大小交互 → 本日は大爆発の可能性）</div>
                             
-                            <div class="reason-item">🔥 2/6(金)14連の爆発あり</div>
+                            <div class="reason-item">🔥 本日14連の爆発あり</div>
                             
                             <div class="reason-item">📅 この台の金曜好調率: 3/3回(100%) → 期待大</div>
                             
@@ -2949,9 +2985,9 @@
             
             <div class="reason-item">🔮 全台系予測日(high)</div>
             
-            <div class="reason-item">🔥 2/6(金)天井到達1回 → 低機械割の可能性に注意</div>
+            <div class="reason-item">🔥 本日天井到達1回 → 低機械割の可能性に注意</div>
             
-            <div class="reason-item">🔥 2/6(金)18連の爆発あり</div>
+            <div class="reason-item">🔥 本日18連の爆発あり</div>
             
             <div class="reason-item">📊 現在2,063G消化・1/103で推移中</div>
             
@@ -3229,7 +3265,7 @@
             
             <div class="reason-item">🔮 3日連続好調</div>
             
-            <div class="reason-item">🔥 2/6(金)天井到達1回 → 低機械割の可能性に注意</div>
+            <div class="reason-item">🔥 本日天井到達1回 → 低機械割の可能性に注意</div>
             
             <div class="reason-item">🔥 連チャン中 → 高機械割継続の期待</div>
             
