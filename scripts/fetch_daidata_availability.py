@@ -386,25 +386,31 @@ def fetch_papimo_availability(page, hall_id: str, machine_id: str, expected_unit
         }
 
 
-def fetch_papimo_unit_detail(page, hall_id: str, unit_id: str) -> dict:
-    """papimo.jp: 台詳細ページから当日リアルタイムデータ+全当たり履歴を取得"""
+def fetch_papimo_unit_detail(page, hall_id: str, unit_id: str, last_hit_time: str = None, full_history: bool = False) -> dict:
+    """papimo.jp: 台詳細ページから当日リアルタイムデータ+当たり履歴を取得（差分対応）
+    
+    Args:
+        last_hit_time: 前回取得時の最新当たり時刻（例: "14:23"）。これ以降の履歴のみ取得
+        full_history: Trueの場合は全履歴取得（日次収集用）
+    """
     url = f"https://papimo.jp/h/{hall_id}/hit/view/{unit_id}"
 
     try:
         page.goto(url, timeout=20000, wait_until='domcontentloaded')
-        page.wait_for_timeout(2000)
+        page.wait_for_timeout(1500)
 
-        # 「もっと見る」ボタンをクリックして全当たり履歴を表示
-        for _ in range(50):  # 最大50回クリック（安全弁）
-            try:
-                more_btn = page.query_selector('text=もっと見る')
-                if more_btn and more_btn.is_visible():
-                    more_btn.click()
-                    page.wait_for_timeout(300)
-                else:
+        # 全履歴が必要な場合のみ「もっと見る」をクリック
+        if full_history:
+            for _ in range(50):
+                try:
+                    more_btn = page.query_selector('text=もっと見る')
+                    if more_btn and more_btn.is_visible():
+                        more_btn.click()
+                        page.wait_for_timeout(300)
+                    else:
+                        break
+                except:
                     break
-            except:
-                break
 
         text = page.inner_text('body')
 
@@ -453,9 +459,13 @@ def fetch_papimo_unit_detail(page, hall_id: str, unit_id: str) -> dict:
             re.MULTILINE
         )
         for i, match in enumerate(history_pattern):
+            hit_time = match[0]
+            # 差分取得: last_hit_time以降の履歴のみ取得
+            if last_hit_time and hit_time <= last_hit_time:
+                break  # 時刻降順なので、ここで終了
             history.append({
                 'hit_num': i + 1,
-                'time': match[0],
+                'time': hit_time,
                 'start': parse_num(match[1]),
                 'medals': parse_num(match[2]),
                 'type': match[3],
@@ -518,6 +528,17 @@ def main():
         daidata_stores = {k: v for k, v in DAIDATA_STORES.items() if 'hokuto' in k}
         papimo_stores = {k: v for k, v in PAPIMO_STORES.items() if 'hokuto' in k}
         print(f"北斗のみモード: {len(daidata_stores) + len(papimo_stores)}店舗")
+    
+    # 前回データを読み込み（差分取得用）
+    prev_data = {'stores': {}}
+    availability_path = Path(__file__).parent.parent / 'data' / 'availability.json'
+    if availability_path.exists():
+        try:
+            with open(availability_path) as f:
+                prev_data = json.load(f)
+            print(f"前回データ読み込み: {len(prev_data.get('stores', {}))}店舗")
+        except Exception as e:
+            print(f"前回データ読み込みエラー（新規取得）: {e}")
     
     result = {
         'stores': {},
@@ -640,11 +661,36 @@ def main():
                 config['units']
             )
 
-            # 各台の詳細データを取得
+            # 各台の詳細データを取得（差分取得）
             units_data = []
-            print(f"  Fetching unit details...")
+            print(f"  Fetching unit details (incremental)...")
+            
+            # 前回データから最新hit時刻を取得
+            prev_store = prev_data.get('stores', {}).get(store_key, {})
+            prev_units = {u['unit_id']: u for u in prev_store.get('units', [])}
+            
             for unit_id in config['units']:
-                unit_data = fetch_papimo_unit_detail(page, config['hall_id'], unit_id)
+                # 前回の最新hit時刻を取得
+                prev_unit = prev_units.get(unit_id, {})
+                prev_history = prev_unit.get('today_history', [])
+                last_hit_time = prev_history[0]['time'] if prev_history else None
+                
+                # 差分取得
+                unit_data = fetch_papimo_unit_detail(
+                    page, config['hall_id'], unit_id,
+                    last_hit_time=last_hit_time,
+                    full_history=include_hidden  # 日次収集時は全履歴
+                )
+                
+                # 差分を既存履歴にマージ
+                new_history = unit_data.get('today_history', [])
+                if new_history and prev_history:
+                    # 新しい履歴 + 既存履歴（重複除去）
+                    merged = new_history + [h for h in prev_history if h['time'] < new_history[-1]['time']] if new_history else prev_history
+                    unit_data['today_history'] = merged
+                elif prev_history and not new_history:
+                    unit_data['today_history'] = prev_history
+                
                 # 空き状況を追加
                 if unit_id in avail_data.get('playing', []):
                     unit_data['availability'] = '遊技中'
