@@ -9,7 +9,7 @@
     <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
     <meta name="googlebot" content="noindex, nofollow">
     <title>アイランド秋葉原</title>
-    <link rel="stylesheet" href="/static/style.css?v=20260206131423">
+    <link rel="stylesheet" href="/static/style.css?v=20260206230033">
 </head>
 <body data-page-type="recommend" data-store-key="island_akihabara_hokuto">
     <div class="container">
@@ -27,7 +27,7 @@
         
     </div>
     <div class="top-bar-right">
-        <span class="version-info" id="build-ver" title="ビルド時刻">v0206_22:14</span>
+        <span class="version-info" id="build-ver" title="ビルド時刻">v0206_23:01</span>
         
     </div>
 </div>
@@ -48,16 +48,14 @@
                 </span>
                 <span class="cache-badge github">GITHUB</span>
                 
+                <div class="stale-warning">データが0時間56分前のものです</div>
+                
                 
             </div>
 
             <!-- 空き状況サマリ -->
             
-            <div class="availability-summary">
-                <span class="avail-empty" onclick="filterUnits('empty')">空き 8台</span>
-                <span class="avail-playing" onclick="filterUnits('playing')">遊技中 6台</span>
-                <span class="avail-all" onclick="filterUnits('all')">全て</span>
-            </div>
+            <div class="closed-notice">現在営業時間外です</div>
             
 
             <div class="action-buttons">
@@ -128,67 +126,45 @@
                         <span class="unit-id-large">0825番台</span>
                         <span class="machine-name-sm">北斗の拳 転生の章2</span>
                         
-                            
-                            <span class="avail-badge-lg empty">空き</span>
-                            
-                        
                         <span class="rank-badge-lg" style="background-color: #ffa502">A</span>
                         <span class="expand-icon">▼</span>
                     </div>
 
                     
-                    <!-- 営業中: リアルタイムデータ -->
-                    <div class="today-data-row">
-                        <div class="data-row-primary">
-                            <div class="data-cell highlight">
-                                <span class="data-value"><span class="art-num-lg">100</span></span>
-                                <span class="data-label">ART</span>
-                            </div>
-                            
-                            <div class="data-cell excellent">
-                                <span class="data-value">1/93</span>
-                                <span class="data-label">ART確率</span>
-                            </div>
-                            
-                            
-                            <div class="data-cell rensa-cell excellent">
-                                <span class="data-value">最大27連</span>
-                            </div>
-                            
-                        </div>
-                        <div class="data-row-secondary">
-                            
-                            
-                            <div class="data-cell medals-5k">
-                                <span class="data-value">9,232</span>
-                                <span class="data-label">最大枚 5千枚OVER</span>
-                            </div>
-                            
-                            <div class="data-cell">
-                                <span class="data-value"><span class="rb-num">23</span></span>
-                                <span class="data-label">RB</span>
-                            </div>
-                            <div class="data-cell ">
-                                <span class="data-value">0</span>
-                                <span class="data-label">現在G</span>
-                            </div>
-                            
-                            <div class="data-cell bad">
-                                <span class="data-value">2回</span>
-                                <span class="data-label">500G超</span>
-                            </div>
-                            
-                            <div class="data-cell">
-                                <span class="data-value">9,382</span>
-                                <span class="data-label">累計G</span>
-                            </div>
-                            
-                            <div class="data-cell minus">
-                                <span class="data-value diff-medals-inline minus">-3,335枚</span>
-                                <span class="data-label">差枚</span>
-                            </div>
-                            
-                        </div>
+                    
+                    
+                    <div class="reasons-full">
+                        
+                        
+                        
+                        <div class="reason-line-top">⏱️ 本日-3,335枚でハマリ3回→低設定の可能性</div>
+                        
+                        
+                        
+                        <div class="reason-line-top">🔥 2/6(金)ART確率1/93 (9,382G消化) → 高機械割域</div>
+                        
+                        
+                        
+                        <div class="reason-line-top">🔥 2/6(金)天井到達1回 → 低機械割の可能性に注意</div>
+                        
+                        
+                        
+                        <div class="reason-line-top">🔥 2/6(金)34連の爆発あり</div>
+                        
+                        
+                        
+                        <div class="reason-line-top reason-pattern">🔄 直近2日とも不調（1/229→1/180）→ 翌日入替期待大（SBJ全店舗実績: 34/54回=63%で翌日回復）</div>
+                        
+                        
+                        
+                        <div class="reason-line-top reason-rank">📊 6日間中1日好調（好調率17%）→ 低機械割が入りやすい台</div>
+                        
+                        
+                        
+                        <div class="reason-line-top reason-warn">🚨 前日はART確率1/180でやや不調（全台中央値1/129）</div>
+                        
+                        
+                        
                     </div>
                     
 
@@ -750,14 +726,6 @@
                     </div>
 
                     <!-- 推奨理由（営業中のみ — 閉店後は上に表示済み） -->
-                    
-                    <div class="reason-main">
-                        
-                        <div class="reason-line ">⏱️ 本日-3,335枚でハマリ3回→低設定の可能性</div>
-                        
-                        <div class="reason-line ">🔥 本日ART確率1/93 (9,382G消化) → 高機械割域</div>
-                        
-                    </div>
                     
 
                     </summary>
@@ -1369,11 +1337,11 @@
                             
                             <div class="reason-item">⏱️ 本日-3,335枚でハマリ3回→低設定の可能性</div>
                             
-                            <div class="reason-item">🔥 本日ART確率1/93 (9,382G消化) → 高機械割域</div>
+                            <div class="reason-item">🔥 2/6(金)ART確率1/93 (9,382G消化) → 高機械割域</div>
                             
-                            <div class="reason-item">🔥 本日天井到達1回 → 低機械割の可能性に注意</div>
+                            <div class="reason-item">🔥 2/6(金)天井到達1回 → 低機械割の可能性に注意</div>
                             
-                            <div class="reason-item">🔥 本日34連の爆発あり</div>
+                            <div class="reason-item">🔥 2/6(金)34連の爆発あり</div>
                             
                             <div class="reason-item">🔄 直近2日とも不調（1/229→1/180）→ 翌日入替期待大（SBJ全店舗実績: 34/54回=63%で翌日回復）</div>
                             
@@ -1471,7 +1439,7 @@
             
             <div class="reason-item">⏱️ 本日-9,730枚でハマリ4回→低設定の可能性</div>
             
-            <div class="reason-item">🔥 本日10連の爆発あり</div>
+            <div class="reason-item">🔥 2/6(金)10連の爆発あり</div>
             
             <div class="reason-item">🚨 出玉バランス悪い: ART多いが最大枚数少ない（低機械割の可能性）</div>
             
@@ -1745,11 +1713,11 @@
             
             <div class="reason-item">⏱️ 本日-6,075枚でハマリ2回→低設定の可能性</div>
             
-            <div class="reason-item">🔥 本日1/120で安定稼働中 (8,683G消化)</div>
+            <div class="reason-item">🔥 2/6(金)1/120で安定稼働中 (8,683G消化)</div>
             
-            <div class="reason-item">🔥 本日天井到達1回 → 低機械割の可能性に注意</div>
+            <div class="reason-item">🔥 2/6(金)天井到達1回 → 低機械割の可能性に注意</div>
             
-            <div class="reason-item">🔥 本日17連の爆発あり</div>
+            <div class="reason-item">🔥 2/6(金)17連の爆発あり</div>
             
             <div class="reason-item">🚨 出玉バランス悪い: ART多いが最大枚数少ない（低機械割の可能性）</div>
             
@@ -2297,9 +2265,9 @@
             
             <div class="reason-item">⏱️ 本日-5,712枚でハマリ3回→低設定の可能性</div>
             
-            <div class="reason-item">🔥 本日1/105で安定稼働中 (8,683G消化)</div>
+            <div class="reason-item">🔥 2/6(金)1/105で安定稼働中 (8,683G消化)</div>
             
-            <div class="reason-item">🔥 本日19連の爆発あり</div>
+            <div class="reason-item">🔥 2/6(金)19連の爆発あり</div>
             
             <div class="reason-item">🔄 直近2日とも不調（1/175→1/167）→ 翌日入替期待大（SBJ全店舗実績: 34/54回=63%で翌日回復）</div>
             
@@ -2577,9 +2545,9 @@
             
             <div class="reason-item">🔥 直近の推移: 大→小→小→中→中（ART80回以上の大爆発がなく4日経過。過去の傾向では中/小の後に大が来やすい）</div>
             
-            <div class="reason-item">🔥 本日1/105で安定稼働中 (9,181G消化)</div>
+            <div class="reason-item">🔥 2/6(金)1/105で安定稼働中 (9,181G消化)</div>
             
-            <div class="reason-item">🔥 本日12連の爆発あり</div>
+            <div class="reason-item">🔥 2/6(金)12連の爆発あり</div>
             
             <div class="reason-item">💰 好調日の平均ART 65回（1/87）→ 打てば出やすい台</div>
             
@@ -2853,9 +2821,9 @@
             
             <div class="reason-item">⏱️ 本日-7,277枚でハマリ5回→低設定の可能性</div>
             
-            <div class="reason-item">🔥 本日1/120で安定稼働中 (7,933G消化)</div>
+            <div class="reason-item">🔥 2/6(金)1/120で安定稼働中 (7,933G消化)</div>
             
-            <div class="reason-item">🔥 本日13連の爆発あり</div>
+            <div class="reason-item">🔥 2/6(金)13連の爆発あり</div>
             
             <div class="reason-item">🚨 出玉バランス悪い: ART多いが最大枚数少ない（低機械割の可能性）</div>
             
@@ -3131,9 +3099,9 @@
             
             <div class="reason-item">⏱️ 本日-8,767枚でハマリ4回→低設定の可能性</div>
             
-            <div class="reason-item">🔥 本日天井到達1回 → 低機械割の可能性に注意</div>
+            <div class="reason-item">🔥 2/6(金)天井到達1回 → 低機械割の可能性に注意</div>
             
-            <div class="reason-item">🔥 本日13連の爆発あり</div>
+            <div class="reason-item">🔥 2/6(金)13連の爆発あり</div>
             
             <div class="reason-item">🚨 出玉バランス悪い: ART多いが最大枚数少ない（低機械割の可能性）</div>
             
@@ -3409,7 +3377,7 @@
             
             <div class="reason-item">⏱️ 現在625Gハマリ→天井狙い圏内</div>
             
-            <div class="reason-item">🚨 本日ART確率1/203 (7,533G消化) → 低機械割域の挙動</div>
+            <div class="reason-item">🚨 2/6(金)ART確率1/203 (7,533G消化) → 低機械割域の挙動</div>
             
             <div class="reason-item">🚨 ART回数の割に出玉が伸びていない</div>
             
@@ -3683,9 +3651,9 @@
             
             <div class="reason-item">⏱️ 本日-3,975枚でハマリ3回→低設定の可能性</div>
             
-            <div class="reason-item">🔥 本日1/101で安定稼働中 (9,133G消化)</div>
+            <div class="reason-item">🔥 2/6(金)1/101で安定稼働中 (9,133G消化)</div>
             
-            <div class="reason-item">🔥 本日11連の爆発あり</div>
+            <div class="reason-item">🔥 2/6(金)11連の爆発あり</div>
             
             <div class="reason-item">📊 6日間中2日好調（好調率33%）→ 低機械割が入りやすい台</div>
             
@@ -4083,9 +4051,9 @@
             
             <div class="reason-item">⏱️ 本日-5,979枚でハマリ4回→低設定の可能性</div>
             
-            <div class="reason-item">🔥 本日天井到達1回 → 低機械割の可能性に注意</div>
+            <div class="reason-item">🔥 2/6(金)天井到達1回 → 低機械割の可能性に注意</div>
             
-            <div class="reason-item">🔥 本日14連の爆発あり</div>
+            <div class="reason-item">🔥 2/6(金)14連の爆発あり</div>
             
             <div class="reason-item">🚨 出玉バランス悪い: ART多いが最大枚数少ない（低機械割の可能性）</div>
             
