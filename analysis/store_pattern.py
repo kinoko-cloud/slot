@@ -29,10 +29,10 @@ HISTORY_DIR = Path(__file__).parent.parent / 'data' / 'history'
 
 # 店舗キー → 履歴ディレクトリ名マッピング
 _STORE_KEY_TO_HISTORY_DIR = {
-    'shibuya_espass_hokuto': 'shibuya_espass_hokuto_tensei2',
-    'shinjuku_espass_hokuto': 'shinjuku_espass_hokuto_tensei2',
-    'akiba_espass_hokuto': 'akiba_espass_hokuto_tensei2',
-    'island_akihabara_hokuto': 'island_akihabara_hokuto_tensei2',
+    'shibuya_espass_hokuto': 'shibuya_espass_hokuto2',
+    'shinjuku_espass_hokuto': 'shinjuku_espass_hokuto2',
+    'akiba_espass_hokuto': 'akiba_espass_hokuto2',
+    'island_akihabara_hokuto': 'island_akihabara_hokuto2',
 }
 
 # 曜日名
@@ -75,7 +75,7 @@ SETTING_TIERS = {
         4: 140,   # 設定4域: 1/110〜1/140
         # 3以下: 1/140以上
     },
-    'hokuto_tensei2': {
+    'hokuto2': {
         6: 60,    # 設定6域: 1/60以下
         5: 80,    # 設定5域: 1/60〜1/80
         4: 110,   # 設定4域: 1/80〜1/110
@@ -780,7 +780,7 @@ def analyze_store_patterns(store_key: str, machine_key: str) -> dict:
 
     Args:
         store_key: 店舗キー（例: 'shibuya_espass_hokuto'）
-        machine_key: 機種キー（例: 'hokuto_tensei2'）
+        machine_key: 機種キー（例: 'hokuto2'）
 
     Returns:
         {
@@ -1282,9 +1282,9 @@ if __name__ == '__main__':
 
     # 全店舗のパターンをテスト
     test_cases = [
-        ('shibuya_espass_hokuto', 'hokuto_tensei2'),
+        ('shibuya_espass_hokuto', 'hokuto2'),
         ('shibuya_espass_sbj', 'sbj'),
-        ('shinjuku_espass_hokuto', 'hokuto_tensei2'),
+        ('shinjuku_espass_hokuto', 'hokuto2'),
         ('island_akihabara_sbj', 'sbj'),
     ]
 
@@ -1325,8 +1325,8 @@ if __name__ == '__main__':
     print('=' * 60)
 
     bonus_tests = [
-        ('shibuya_espass_hokuto', 'hokuto_tensei2', 2233, '2026-01-28'),
-        ('shibuya_espass_hokuto', 'hokuto_tensei2', 2046, '2026-01-28'),
+        ('shibuya_espass_hokuto', 'hokuto2', 2233, '2026-01-28'),
+        ('shibuya_espass_hokuto', 'hokuto2', 2046, '2026-01-28'),
         ('shibuya_espass_sbj', 'sbj', 3011, '2026-01-28'),
         ('island_akihabara_sbj', 'sbj', 1023, '2026-01-28'),
     ]

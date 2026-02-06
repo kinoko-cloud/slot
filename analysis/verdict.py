@@ -30,7 +30,7 @@ RESULT_THRESHOLDS = {
         'excellent_max': 3000,   # ◎: 最大3000枚以上
         'good_max': 2000,        # ◯: 最大2000枚以上（1000前後は△）
     },
-    'hokuto_tensei2': {
+    'hokuto2': {
         'excellent_prob': 80,
         'good_prob': 120,       # 確率基準
         'bad_prob': 160,

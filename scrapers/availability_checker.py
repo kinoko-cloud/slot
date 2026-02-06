@@ -33,9 +33,9 @@ GITHUB_STORES = [
     'shibuya_espass_hokuto', 'shinjuku_espass_hokuto', 'akiba_espass_hokuto',
     'island_akihabara_hokuto',
     # _tensei2サフィックスのエイリアス
-    'shibuya_espass_hokuto_tensei2', 'shinjuku_espass_hokuto_tensei2', 'akiba_espass_hokuto_tensei2',
-    'island_akihabara_hokuto_tensei2', 'seibu_shinjuku_espass_hokuto_tensei2',
-    'shibuya_honkan_espass_hokuto_tensei2',
+    'shibuya_espass_hokuto2', 'shinjuku_espass_hokuto2', 'akiba_espass_hokuto2',
+    'island_akihabara_hokuto2', 'seibu_shinjuku_espass_hokuto2',
+    'shibuya_honkan_espass_hokuto2',
 ]
 
 

@@ -291,7 +291,7 @@ def scrape_island_machine(machine_key: str = 'hokuto', days_back: int = 7) -> li
     hall_id = config['hall_id']
     hall_name = config['hall_name']
 
-    if machine_key in ('hokuto', 'hokuto_tensei2'):
+    if machine_key in ('hokuto', 'hokuto2'):
         units = config['hokuto_units']
         machine_name = 'L北斗の拳 転生の章2'
     else:
@@ -340,7 +340,7 @@ if __name__ == '__main__':
     import sys
     machine = sys.argv[1] if len(sys.argv) > 1 else 'sbj'
     days = int(sys.argv[2]) if len(sys.argv) > 2 else 7
-    if machine in ('hokuto', 'hokuto_tensei2'):
+    if machine in ('hokuto', 'hokuto2'):
         scrape_island_machine('hokuto', days)
     else:
         scrape_sbj_island(days)

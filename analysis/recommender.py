@@ -39,7 +39,7 @@ MACHINE_SPECS = {
         'low_prob': 180,        # 低機械割域境界
         'very_low_prob': 250,   # 低機械割域
     },
-    'hokuto_tensei2': {
+    'hokuto2': {
         'setting6_at_prob': 273.1,
         'setting1_at_prob': 366.0,
         'setting6_payout': 114.9,
@@ -61,7 +61,7 @@ MACHINE_THRESHOLDS = {
         'low_at_prob': 180,
         'very_low_at_prob': 250,
     },
-    'hokuto_tensei2': {
+    'hokuto2': {
         'setting6_at_prob': 273,
         'high_at_prob': 300,
         'mid_at_prob': 340,
@@ -204,10 +204,10 @@ STORE_KEY_MAPPING = {
     'shibuya_espass': 'shibuya_espass_sbj',
     'shinjuku_espass_sbj': 'shinjuku_espass_sbj',
     # 北斗転生2
-    'shibuya_espass_hokuto': 'shibuya_espass_hokuto_tensei2',
-    'shinjuku_espass_hokuto': 'shinjuku_espass_hokuto_tensei2',
-    'akiba_espass_hokuto': 'akiba_espass_hokuto_tensei2',
-    'island_akihabara_hokuto': 'island_akihabara_hokuto_tensei2',
+    'shibuya_espass_hokuto': 'shibuya_espass_hokuto2',
+    'shinjuku_espass_hokuto': 'shinjuku_espass_hokuto2',
+    'akiba_espass_hokuto': 'akiba_espass_hokuto2',
+    'island_akihabara_hokuto': 'island_akihabara_hokuto2',
 }
 
 # 店舗別曜日傾向データ（★評価 1-5）
@@ -276,7 +276,7 @@ def get_machine_from_store_key(store_key: str) -> str:
         return store.get('machine', 'sbj')
     # 店舗キーから推測
     if 'hokuto' in store_key:
-        return 'hokuto_tensei2'
+        return 'hokuto2'
     return 'sbj'
 
 
@@ -290,7 +290,7 @@ def load_daily_data(date_str: str = None, machine_key: str = None) -> dict:
 
     Args:
         date_str: 日付文字列（YYYYMMDD形式）。Noneの場合は今日
-        machine_key: 機種キー（'sbj', 'hokuto_tensei2'）。Noneの場合は全機種を含むファイルを優先
+        machine_key: 機種キー（'sbj', 'hokuto2'）。Noneの場合は全機種を含むファイルを優先
 
     Returns:
         読み込んだデータ辞書
@@ -303,13 +303,13 @@ def load_daily_data(date_str: str = None, machine_key: str = None) -> dict:
     # 最新のデータファイルを探す（優先順位順）
     patterns = [
         # 複数機種を含むファイル（最優先）
-        f'daily_sbj_hokuto_tensei2_{date_str}.json',
+        f'daily_sbj_hokuto2_{date_str}.json',
         f'daily_all_{date_str}.json',
         # SBJ専用
         f'daily_sbj_{date_str}.json',
         f'sbj_daily_{date_str}.json',
         # 北斗転生2専用
-        f'daily_hokuto_tensei2_{date_str}.json',
+        f'daily_hokuto2_{date_str}.json',
     ]
 
     # 全日付のデータを統合（最新を優先しつつ、古い日付のデータも取り込む）
@@ -379,7 +379,7 @@ def _merge_raw_data(daily_data: dict, date_str: str) -> dict:
     # --- papimo rawデータ（リスト形式）---
     for papimo_pattern, store_key in [
         (f'papimo_island_sbj_{date_str}_*.json', 'island_akihabara_sbj'),
-        (f'papimo_island_hokuto_{date_str}_*.json', 'island_akihabara_hokuto_tensei2'),
+        (f'papimo_island_hokuto_{date_str}_*.json', 'island_akihabara_hokuto2'),
     ]:
         papimo_files = sorted(raw_dir.glob(papimo_pattern), reverse=True)
         if not papimo_files:
@@ -410,10 +410,10 @@ def _merge_raw_data(daily_data: dict, date_str: str) -> dict:
     # --- daidata rawデータ（個別ファイル: sbj_UNITID_history_DATE_TIME.json）---
     # hall_id → store_keyのマッピング
     HALL_STORE_MAP = {
-        '100860': {'sbj': 'shibuya_espass_sbj', 'hokuto_tensei2': 'shibuya_espass_hokuto_tensei2'},
-        '100949': {'sbj': 'shinjuku_espass_sbj', 'hokuto_tensei2': 'shinjuku_espass_hokuto_tensei2'},
-        '100928': {'sbj': 'akiba_espass_sbj', 'hokuto_tensei2': 'akiba_espass_hokuto_tensei2'},
-        '100950': {'sbj': 'seibu_shinjuku_espass_sbj', 'hokuto_tensei2': 'seibu_shinjuku_espass_hokuto_tensei2'},
+        '100860': {'sbj': 'shibuya_espass_sbj', 'hokuto2': 'shibuya_espass_hokuto2'},
+        '100949': {'sbj': 'shinjuku_espass_sbj', 'hokuto2': 'shinjuku_espass_hokuto2'},
+        '100928': {'sbj': 'akiba_espass_sbj', 'hokuto2': 'akiba_espass_hokuto2'},
+        '100950': {'sbj': 'seibu_shinjuku_espass_sbj', 'hokuto2': 'seibu_shinjuku_espass_hokuto2'},
     }
     from collections import defaultdict
     raw_by_store = defaultdict(list)  # store_key -> [unit_data, ...]
@@ -432,7 +432,7 @@ def _merge_raw_data(daily_data: dict, date_str: str) -> dict:
                 continue
             # 機種判定: BB=0なら北斗転生2、BB>0ならSBJ
             bb_total = sum(d.get('bb', 0) for d in days)
-            machine_key = 'sbj' if bb_total > 0 else 'hokuto_tensei2'
+            machine_key = 'sbj' if bb_total > 0 else 'hokuto2'
             hall_map = HALL_STORE_MAP.get(hall_id)
             if not hall_map:
                 continue
@@ -526,7 +526,7 @@ def calculate_unit_historical_performance(days: List[dict], machine_key: str = '
     # 好調判定の出玉品質チェック用閾値（機種別に調整）
     # SBJ: 天井999Gだが通常はハマりにくい → ハマリ3回で除外
     # 北斗: 天井が深くハマりやすい → ハマリ5回で除外
-    if machine_key == 'hokuto_tensei2':
+    if machine_key == 'hokuto2':
         deep_hama_limit = 5   # 北斗はハマりやすいので緩め
         min_max_medals = 0    # 北斗はmax_medalsチェック不要（ハマリだけで判定）
     else:
@@ -1185,7 +1185,7 @@ def analyze_today_data(unit_data: dict, current_hour: int = None, machine_key: s
         unit_data: 台データ。'days'キーがある場合は日別データ、
                    ない場合はリアルタイムデータ（直接当日データ）として扱う
         current_hour: 現在時刻（テスト用）
-        machine_key: 機種キー（'sbj', 'hokuto_tensei2'）- 閾値判定に使用
+        machine_key: 機種キー（'sbj', 'hokuto2'）- 閾値判定に使用
     """
     if current_hour is None:
         current_hour = datetime.now().hour
@@ -1496,7 +1496,7 @@ def analyze_today_data(unit_data: dict, current_hour: int = None, machine_key: s
     # --- 【北斗転生2】差枚ベースの狙い目条件 ---
     # 分析結果: マイナス台=勝率64%、プラス台=勝率12%（超危険）
     # 超最強: マイナス+最大2000枚以下+10連以上 = 勝率100%
-    if machine_key == 'hokuto_tensei2' and result['total_games'] >= 2000:
+    if machine_key == 'hokuto2' and result['total_games'] >= 2000:
         diff = result['diff_medals']
         max_med = result['max_medals']
         max_rensa = result.get('today_max_rensa', 0)
@@ -2554,7 +2554,7 @@ def generate_store_analysis(store_key: str, daily_data: dict = None) -> dict:
     # ランク分布（キーのミスマッチを考慮）
     rankings = RANKINGS.get(store_key, {})
     if not rankings:
-        for suffix in ['_sbj', '_hokuto', '_hokuto_tensei2']:
+        for suffix in ['_sbj', '_hokuto', '_hokuto2']:
             if store_key.endswith(suffix):
                 alt_key = store_key[:-len(suffix)]
                 rankings = RANKINGS.get(alt_key, {})
@@ -3001,7 +3001,7 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
                             medal_balance_penalty = -8  # ART50回以上で最大5000枚未満
                         elif _art >= 30 and _max_medals > 0 and _max_medals < 3000:
                             medal_balance_penalty = -5  # ART30回以上で最大3000枚未満
-                    elif machine_key == 'hokuto_tensei2':
+                    elif machine_key == 'hokuto2':
                         if _art >= 50 and _max_medals > 0 and _max_medals < 3000:
                             medal_balance_penalty = -10  # AT50回以上で最大3000枚未満
                         elif _art >= 30 and _max_medals > 0 and _max_medals < 3000:
@@ -4010,9 +4010,9 @@ def _is_zentai_day(store_key: str, target_date: str) -> tuple:
     predictions = _load_zentai_predictions()
     
     for sk, pred in predictions.get('predictions', {}).items():
-        # store_keyのマッチング（_sbj, _hokuto_tensei2を除去して比較）
-        sk_base = sk.replace('_sbj', '').replace('_hokuto_tensei2', '')
-        store_base = store_key.replace('_sbj', '').replace('_hokuto_tensei2', '')
+        # store_keyのマッチング（_sbj, _hokuto2を除去して比較）
+        sk_base = sk.replace('_sbj', '').replace('_hokuto2', '')
+        store_base = store_key.replace('_sbj', '').replace('_hokuto2', '')
         
         if sk_base == store_base or store_key.startswith(sk_base):
             predicted_date = pred.get('predicted_date')
@@ -4045,9 +4045,9 @@ def _get_store_dynamic_good_rate(store_key: str, machine_key: str, target_weekda
 STORE_OPTIMAL_TOP_N = {
     'akiba_espass_sbj': 12, 'shibuya_espass_sbj': 5, 'shibuya_honkan_espass_sbj': 5,
     'seibu_shinjuku_espass_sbj': 12, 'shinjuku_espass_sbj': 12, 'island_akihabara_sbj': 12,
-    'akiba_espass_hokuto_tensei2': 12, 'island_akihabara_hokuto_tensei2': 12,
-    'seibu_shinjuku_espass_hokuto_tensei2': 12, 'shibuya_espass_hokuto_tensei2': 12,
-    'shinjuku_espass_hokuto_tensei2': 12,
+    'akiba_espass_hokuto2': 12, 'island_akihabara_hokuto2': 12,
+    'seibu_shinjuku_espass_hokuto2': 12, 'shibuya_espass_hokuto2': 12,
+    'shinjuku_espass_hokuto2': 12,
 }
 
 OPTIMIZED_SCORE_WEIGHTS = {

@@ -74,7 +74,7 @@ def get_all_history(hall_id: str = "100860", unit_id: str = "3011", hall_name: s
                     KEYWORD_MAP = {
                         'sbj': ['ブラックジャック', 'ﾌﾞﾗｯｸｼﾞｬｯｸ'],
                         'hokuto': ['北斗', 'ホクト'],
-                        'hokuto_tensei2': ['北斗', '転生'],
+                        'hokuto2': ['北斗', '転生'],
                     }
                     keywords = expected_machine if isinstance(expected_machine, list) else [expected_machine]
                     # マッピングを適用

@@ -45,7 +45,7 @@ SLOREPO_STORES = {
 # 対象機種
 TARGET_MACHINES = {
     'sbj': 'Lスーパーブラックジャック',
-    'hokuto_tensei2': '北斗の拳 転生の章2',
+    'hokuto2': '北斗の拳 転生の章2',
 }
 
 

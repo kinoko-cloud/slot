@@ -24,7 +24,7 @@ SITE777_STORES = {
         'urt': '-1',
         'machines': {
             'sbj': '120273',
-            'hokuto_tensei2': '120343',
+            'hokuto2': '120343',
         },
     },
     'shinjuku_espass': {
@@ -33,7 +33,7 @@ SITE777_STORES = {
         'urt': '-1',
         'machines': {
             'sbj': '120273',
-            'hokuto_tensei2': '120343',
+            'hokuto2': '120343',
         },
     },
     'seibu_shinjuku_espass': {
@@ -42,7 +42,7 @@ SITE777_STORES = {
         'urt': '-1',
         'machines': {
             'sbj': '120273',
-            'hokuto_tensei2': '120343',
+            'hokuto2': '120343',
         },
     },
     'akiba_espass': {
@@ -51,7 +51,7 @@ SITE777_STORES = {
         'urt': '-1',
         'machines': {
             'sbj': '120273',
-            'hokuto_tensei2': '120343',
+            'hokuto2': '120343',
         },
     },
     'island_akihabara': {
@@ -60,7 +60,7 @@ SITE777_STORES = {
         'urt': '-1',
         'machines': {
             'sbj': '120273',
-            'hokuto_tensei2': '120343',
+            'hokuto2': '120343',
         },
     },
     'shibuya_honkan': {
@@ -69,7 +69,7 @@ SITE777_STORES = {
         'urt': '-1',
         'machines': {
             'sbj': '120273',
-            'hokuto_tensei2': '120343',
+            'hokuto2': '120343',
         },
     },
 }
@@ -198,7 +198,7 @@ def merge_to_history(store_key: str = None):
     STORE_TO_HISTORY = {
         'shibuya_espass': {
             'sbj': 'shibuya_espass_sbj',
-            'hokuto_tensei2': 'shibuya_espass_hokuto_tensei2',
+            'hokuto2': 'shibuya_espass_hokuto2',
         },
     }
 
