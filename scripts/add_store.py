@@ -99,7 +99,7 @@ def main():
     parser.add_argument('--name', required=True, help='店舗名（例: マルハン新宿）')
     parser.add_argument('--key', required=True, help='店舗キー（例: maruhan_shinjuku）')
     parser.add_argument('--short', help='短縮名（省略時: nameを使用）')
-    parser.add_argument('--machine', required=True, choices=['sbj', 'hokuto_tensei2'], help='機種')
+    parser.add_argument('--machine', required=True, choices=['sbj', 'hokuto2'], help='機種')
     parser.add_argument('--units', required=True, help='台番号（例: 1001-1020 or 1001,1002,1003）')
     parser.add_argument('--site7-id', help='サイトセブンの店舗ID')
     parser.add_argument('--papimo-url', help='パピモURL')

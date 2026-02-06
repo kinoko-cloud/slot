@@ -1410,11 +1410,11 @@ def _get_machine_key(store_key):
     if store_key.endswith('_sbj') or '_sbj_' in store_key:
         return 'sbj'
     if store_key.endswith('_hokuto') or '_hokuto_' in store_key:
-        return 'hokuto_tensei2'
+        return 'hokuto2'
     if 'sbj' in store_key:
         return 'sbj'
     if 'hokuto' in store_key:
-        return 'hokuto_tensei2'
+        return 'hokuto2'
     return None
 
 
@@ -1428,7 +1428,7 @@ def _process_history_for_verify(history, machine_key=None):
     
     Args:
         history: 当たり履歴リスト
-        machine_key: 機種キー（'sbj', 'hokuto_tensei2'等）。天井閾値の決定に使用
+        machine_key: 機種キー（'sbj', 'hokuto2'等）。天井閾値の決定に使用
     """
     from analysis.analyzer import is_big_hit, RENCHAIN_THRESHOLD
     from config.rankings import MACHINES, MACHINE_DEFAULTS, get_machine_threshold
@@ -2776,7 +2776,7 @@ def main():
             if '_sbj' in store_dir:
                 mk = 'sbj'
             elif '_hokuto' in store_dir:
-                mk = 'hokuto_tensei2'
+                mk = 'hokuto2'
             else:
                 continue
             n = record_from_history(store_dir, mk)
@@ -2809,6 +2809,52 @@ def main():
 
     # ビルド後検証（既存）
     print("\n--- ビルド後検証 ---")
+    
+    # 3日分データ検証（TOP10の台に3日分データが揃っているか）
+    from scripts.enrich_rec import enrich_recs
+    from analysis.recommender import recommend_units
+    
+    data_check_errors = 0
+    print("\n📊 TOP10 3日分データ検証:")
+    for sk in ['shinjuku_espass_sbj', 'shinjuku_espass_hokuto', 'shibuya_espass_sbj', 'shibuya_espass_hokuto']:
+        try:
+            recs = recommend_units(sk)[:10]
+            machine_key = 'hokuto2' if 'hokuto' in sk else 'sbj'
+            for r in recs:
+                r['store_key'] = sk
+                r['machine_key'] = machine_key
+            enrich_recs(recs)
+            
+            for r in recs[:5]:  # TOP5だけ検証
+                uid = r.get('unit_id')
+                y_date = r.get('yesterday_date', '')
+                db_date = r.get('day_before_date', '')
+                td_date = r.get('three_days_ago_date', '')
+                y_hist = len(r.get('yesterday_history', []))
+                db_hist = len(r.get('day_before_history', []))
+                td_hist = len(r.get('three_days_ago_history', []))
+                
+                issues = []
+                if not y_date:
+                    issues.append("前日なし")
+                if not db_date:
+                    issues.append("前々日なし")
+                if not td_date:
+                    issues.append("3日前なし")
+                if y_hist == 0 and r.get('yesterday_art', 0) == 0:
+                    issues.append("前日データ空")
+                
+                if issues:
+                    data_check_errors += 1
+                    print(f"  ⚠️ {sk}/{uid}: {', '.join(issues)}")
+        except Exception as e:
+            print(f"  ERROR {sk}: {e}")
+    
+    if data_check_errors == 0:
+        print("  ✅ 全店舗TOP5で3日分データ確認OK")
+    else:
+        print(f"  ❌ {data_check_errors}件のデータ欠損")
+    
     from scripts.validate_output import validate_all
     if not validate_all():
         print("⚠️ validate_output: ERRORが検出されました")

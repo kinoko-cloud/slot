@@ -23,7 +23,7 @@ def detect_zentai_events():
     for store_dir in HISTORY_DIR.iterdir():
         if not store_dir.is_dir() or 'backup' in store_dir.name: continue
         sk = store_dir.name
-        mk = 'sbj' if 'sbj' in sk else ('hokuto_tensei2' if 'hokuto' in sk or 'tensei' in sk else None)
+        mk = 'sbj' if 'sbj' in sk else ('hokuto2' if 'hokuto' in sk or 'tensei' in sk else None)
         if not mk: continue
         for uf in store_dir.glob('*.json'):
             try:
@@ -37,7 +37,7 @@ def detect_zentai_events():
     
     events = []
     for sk, du in store_date_units.items():
-        mk = 'sbj' if 'sbj' in sk else 'hokuto_tensei2'
+        mk = 'sbj' if 'sbj' in sk else 'hokuto2'
         for dt, units in du.items():
             if len(units) < 3: continue
             good_cnt = sum(1 for u in units if is_good_day(u, mk))

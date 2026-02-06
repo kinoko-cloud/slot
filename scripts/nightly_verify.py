@@ -266,7 +266,7 @@ def generate_report(fetched_at, store_summaries, all_results,
         
         # B以下で実は高設定だった台（サプライズ）
         # 機種に応じた閾値
-        mk = s.get('machine_key', 'sbj') if 'machine_key' in s else ('sbj' if 'sbj' in s.get('store_key', '') else 'hokuto_tensei2')
+        mk = s.get('machine_key', 'sbj') if 'machine_key' in s else ('sbj' if 'sbj' in s.get('store_key', '') else 'hokuto2')
         _surprise_th = 145 if 'sbj' in s.get('store_key', '') else 100
         surprises = [u for u in other_units if u['actual_prob'] > 0 and u['actual_prob'] <= _surprise_th]
         if surprises:

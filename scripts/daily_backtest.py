@@ -187,7 +187,7 @@ def main():
     for sd in HISTORY_DIR.iterdir():
         if sd.is_dir() and 'backup' not in sd.name:
             sk = sd.name
-            stores.append((sk, 'sbj' if 'sbj' in sk else 'hokuto_tensei2'))
+            stores.append((sk, 'sbj' if 'sbj' in sk else 'hokuto2'))
     
     patterns = {}
     for sk, mk in stores:

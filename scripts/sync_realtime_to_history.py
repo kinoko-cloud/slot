@@ -25,7 +25,7 @@ def get_machine_key_from_store(store_key: str) -> str:
     if '_sbj' in store_key:
         return 'sbj'
     elif '_hokuto' in store_key:
-        return 'hokuto_tensei2'
+        return 'hokuto2'
     return 'sbj'
 
 

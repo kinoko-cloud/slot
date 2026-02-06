@@ -43,7 +43,7 @@ def collect_daily_data(machine_keys: list = None, max_units_per_store: int = Non
     data_dir.mkdir(parents=True, exist_ok=True)
 
     if machine_keys is None:
-        machine_keys = ['sbj', 'hokuto_tensei2']
+        machine_keys = ['sbj', 'hokuto2']
 
     results = {
         'collected_at': datetime.now().isoformat(),
@@ -246,7 +246,7 @@ def main():
     import argparse
     parser = argparse.ArgumentParser(description='パチスロ デイリーデータ収集')
     parser.add_argument('--merge', action='store_true', help='過去データを統合')
-    parser.add_argument('--machine', '-m', nargs='+', choices=['sbj', 'hokuto_tensei2', 'all'],
+    parser.add_argument('--machine', '-m', nargs='+', choices=['sbj', 'hokuto2', 'all'],
                         default=['all'], help='取得する機種 (default: all)')
     parser.add_argument('--max-units', type=int, default=None,
                         help='店舗あたりの最大台数(テスト用)')
@@ -257,7 +257,7 @@ def main():
     else:
         # 機種指定
         if 'all' in args.machine:
-            machine_keys = ['sbj', 'hokuto_tensei2']
+            machine_keys = ['sbj', 'hokuto2']
         else:
             machine_keys = args.machine
 

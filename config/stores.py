@@ -7,6 +7,41 @@
 - papimo: PAPIMO-NET (papimo.jp)
 """
 
+# =============================================================================
+# store_key マッピング（一元管理）
+# =============================================================================
+# availability.jsonやrecommenderでは `_hokuto` を使うが、
+# 蓄積DBでは `_hokuto2` として保存する。
+# 全モジュールでこの関数を使うことで、マッピングの分散を防ぐ。
+
+def resolve_history_store_key(store_key: str) -> str:
+    """store_keyを蓄積DB用のキーに変換する
+    
+    Args:
+        store_key: 元のstore_key (例: 'shinjuku_espass_hokuto')
+    
+    Returns:
+        蓄積DB用のstore_key (例: 'shinjuku_espass_hokuto2')
+    """
+    if '_hokuto' in store_key and '_hokuto2' not in store_key:
+        return store_key.replace('_hokuto', '_hokuto2')
+    return store_key
+
+
+def get_machine_key_from_store(store_key: str) -> str:
+    """store_keyから機種キーを取得する
+    
+    Args:
+        store_key: 店舗キー
+    
+    Returns:
+        機種キー ('sbj' or 'hokuto2')
+    """
+    if 'hokuto' in store_key:
+        return 'hokuto2'
+    return 'sbj'
+
+
 # 機種情報
 MACHINES = {
     'sbj': {

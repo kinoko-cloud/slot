@@ -558,7 +558,7 @@ def main():
         filepath = Path(args.file)
     elif args.latest:
         daily_dir = PROJECT_ROOT / 'data' / 'daily'
-        files = sorted(daily_dir.glob('daily_sbj_hokuto_tensei2_*.json'), reverse=True)
+        files = sorted(daily_dir.glob('daily_sbj_hokuto2_*.json'), reverse=True)
         if not files:
             files = sorted(daily_dir.glob('daily_*.json'), reverse=True)
         if not files:
