@@ -276,7 +276,7 @@ def auto_repair(results):
     hist_check = results['checks'].get('history', {})
     if hist_check.get('status') == 'error':
         issues = hist_check.get('issues', [])
-        if len(issues) > 3:  # 4店舗以上古い場合のみ
+        if len(issues) >= 1:  # 1店舗以上古い場合に自動復旧
             try:
                 import subprocess
                 # バックグラウンドで実行
@@ -286,7 +286,7 @@ def auto_repair(results):
                     stdout=open('/tmp/fetch_all.log', 'w'),
                     stderr=subprocess.STDOUT
                 )
-                repairs.append('🔧 全店舗データ取得を開始（バックグラウンド）')
+                repairs.append(f'🔧 {len(issues)}店舗のデータ取得を開始（バックグラウンド）')
             except Exception as e:
                 repairs.append(f'⚠️ データ取得開始失敗: {e}')
     
