@@ -423,8 +423,8 @@ def generate_index(env):
                         elif _art > 0 and _hist_art > 0 and _art >= _hist_art:
                             # art_countの方が多い → データ取得後に増えただけ、historyは有効
                             r['today_max_rensa'] = _hist_rensa
-                        elif _art > 0 and _hist_art > _art + 10:
-                            # historyの方が大幅に多い → 別日のstale
+                        elif _art > 0 and _hist_art > _art * 2:
+                            # historyの方が大幅に多い（2倍以上） → 別日のstale
                             r['today_history'] = []
                             r['today_max_rensa'] = 0
                         elif _art == 0 and _hist_art > 0:
