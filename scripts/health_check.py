@@ -78,8 +78,9 @@ def check_history_freshness():
         store_key = store_dir.name
         latest_date = None
         
-        # サンプル5台で最新日付を確認
-        for unit_file in list(store_dir.glob('*.json'))[:5]:
+        # サンプル5台で最新日付を確認（ファイル更新日時が新しい順）
+        unit_files = sorted(store_dir.glob('*.json'), key=lambda f: f.stat().st_mtime, reverse=True)
+        for unit_file in unit_files[:5]:
             try:
                 with open(unit_file) as f:
                     data = json.load(f)
