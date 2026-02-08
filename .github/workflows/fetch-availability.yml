@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: slot-data-update
+  group: slot-fetch-availability
   cancel-in-progress: false
 
 jobs:
