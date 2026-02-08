@@ -17,7 +17,7 @@ on:
     - cron: '0 1,5,9,13 * * *'  # UTC
 
 concurrency:
-  group: slot-data-update
+  group: slot-deploy-static
   cancel-in-progress: false
 
 jobs:
