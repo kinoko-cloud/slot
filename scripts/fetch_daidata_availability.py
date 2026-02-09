@@ -734,11 +734,11 @@ def main():
                 prev_history = prev_unit.get('today_history', [])
                 last_hit_time = prev_history[0]['time'] if prev_history else None
                 
-                # 差分取得
+                # papimoは常に全履歴取得（差分マージが複雑なため）
                 unit_data = fetch_papimo_unit_detail(
                     page, config['hall_id'], unit_id,
-                    last_hit_time=last_hit_time,
-                    full_history=include_hidden  # 日次収集時は全履歴
+                    last_hit_time=None,  # 差分取得しない
+                    full_history=True    # 常に全履歴
                 )
                 
                 # 差分を既存履歴にマージ（昨日のデータを検出してスキップ）
