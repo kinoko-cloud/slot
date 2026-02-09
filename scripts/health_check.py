@@ -400,10 +400,10 @@ def check_history_freshness_realtime():
                 except:
                     continue
         
-        if len(stale_units) > 10:  # 10台以上で警告（全体的に履歴が取れていない）
+        if len(stale_units) > 30:  # 30台以上でエラー（システム的な問題の可能性）
             return {
                 'status': 'error',
-                'message': f'{len(stale_units)}台で履歴が2時間以上古い',
+                'message': f'{len(stale_units)}台で履歴が古い（システム問題の可能性）',
                 'issues': stale_units[:5],
                 'total_issues': len(stale_units)
             }
