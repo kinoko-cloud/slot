@@ -10,6 +10,10 @@ on:
         description: '検証対象日（YYYY-MM-DD）省略時は当日'
         required: false
 
+concurrency:
+  group: slot-daily-verify
+  cancel-in-progress: false
+
 jobs:
   verify-and-rebuild:
     runs-on: ubuntu-latest
