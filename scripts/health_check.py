@@ -449,10 +449,19 @@ def format_alert_message(results):
         # エラー詳細
         if status == 'error' and 'issues' in check:
             for issue in check['issues'][:3]:  # 最大3件
-                if 'store' in issue:
+                if 'workflow' in issue:
+                    lines.append(f"   - {issue['workflow']}: {issue.get('conclusion', '')}")
+                elif 'unit' in issue:
+                    # data_consistency: ART/履歴矛盾
+                    lines.append(f"   - {issue['store']} #{issue['unit']}: ART{issue['art']}/履歴{issue['history']}")
+                elif 'latest_hit' in issue:
+                    # history_realtime: 履歴が古い
+                    lines.append(f"   - {issue['store']} #{issue['unit']}: 最新{issue['latest_hit']}")
+                elif 'latest' in issue:
+                    # history: 店舗データが古い
                     lines.append(f"   - {issue['store']}: {issue['latest']}")
-                elif 'workflow' in issue:
-                    lines.append(f"   - {issue['workflow']}")
+                elif 'store' in issue:
+                    lines.append(f"   - {issue['store']}")
     
     return '\n'.join(lines)
 
