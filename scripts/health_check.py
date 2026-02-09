@@ -381,8 +381,13 @@ def check_history_freshness_realtime():
                     # 最新履歴の古さ
                     age_hours = (now - latest_dt).total_seconds() / 3600
                     
-                    # 21時以降は閾値を3時間に緩和（閉店間際で当たりが出ない台が多い）
-                    threshold_hours = 3 if hour >= 21 else 2
+                    # 時間帯で閾値を調整（閉店間際は緩和）
+                    if hour >= 21:
+                        threshold_hours = 6  # 21時以降は6時間
+                    elif hour >= 19:
+                        threshold_hours = 4  # 19時以降は4時間
+                    else:
+                        threshold_hours = 2  # 日中は2時間
                     
                     if age_hours > threshold_hours:
                         stale_units.append({
