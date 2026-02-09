@@ -295,8 +295,16 @@ def check_data_consistency():
                 history = unit.get('today_history', [])
                 history_count = len(history)
                 
-                # ART回数が履歴件数の2倍以上 → 履歴が取れていない
-                if art > 0 and history_count > 0 and art > history_count * 2:
+                # 履歴内でhit_numがリセット（1に戻る）されている場合はスキップ
+                # （データソースの履歴分断の問題）
+                if history_count > 1:
+                    hit_nums = [h.get('hit_num', 0) for h in history]
+                    reset_count = sum(1 for i in range(1, len(hit_nums)) if hit_nums[i] == 1 and hit_nums[i-1] > 1)
+                    if reset_count > 0:
+                        continue  # 履歴分断台はスキップ
+                
+                # ART回数が履歴件数の2.5倍以上 → 履歴が取れていない（閾値緩和）
+                if art > 0 and history_count > 0 and art > history_count * 2.5:
                     issues.append({
                         'store': store_key,
                         'unit': unit_id,
@@ -336,9 +344,10 @@ def check_history_freshness_realtime():
     """営業時間中の履歴更新チェック（最新履歴が古すぎないか）"""
     now = now_jst()
     hour = now.hour
+    minute = now.minute
     
-    # 営業時間外（23時〜10時）はスキップ
-    if hour >= 23 or hour < 10:
+    # 営業時間外（22:45〜10:00）はスキップ
+    if hour >= 23 or hour < 10 or (hour == 22 and minute >= 45):
         return {'status': 'ok', 'message': '営業時間外のためスキップ'}
     
     avail_file = DATA_DIR / 'availability.json'
@@ -369,9 +378,13 @@ def check_history_freshness_realtime():
                     latest_hour, latest_min = map(int, latest_time.split(':'))
                     latest_dt = now.replace(hour=latest_hour, minute=latest_min, second=0, microsecond=0)
                     
-                    # 最新履歴が2時間以上前
+                    # 最新履歴の古さ
                     age_hours = (now - latest_dt).total_seconds() / 3600
-                    if age_hours > 2:
+                    
+                    # 21時以降は閾値を3時間に緩和（閉店間際で当たりが出ない台が多い）
+                    threshold_hours = 3 if hour >= 21 else 2
+                    
+                    if age_hours > threshold_hours:
                         stale_units.append({
                             'store': store_key,
                             'unit': unit_id,
