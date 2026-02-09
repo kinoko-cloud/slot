@@ -35,32 +35,36 @@ fi
 
 log "=== 自動更新開始 ==="
 
-# 0. 未コミット変更を退避してからgit pull
-STASHED=false
-if ! git diff --quiet || ! git diff --staged --quiet; then
-    git stash push -m "auto_update: temp stash" >> "$LOGFILE" 2>&1 && STASHED=true
-    log "未コミット変更をstash"
+# 0. Git状態をクリーンにしてからfetch
+# rebase/merge中なら強制的にabort
+if [ -d .git/rebase-merge ] || [ -d .git/rebase-apply ]; then
+    git rebase --abort >> "$LOGFILE" 2>&1 || true
+    log "rebase abort"
 fi
+if [ -f .git/MERGE_HEAD ]; then
+    git merge --abort >> "$LOGFILE" 2>&1 || true
+    log "merge abort"
+fi
+rm -f .git/index.lock 2>/dev/null || true
 
-# git pullして最新コードを取得（GitHub Actionsの変更を反映）
-if git pull --rebase origin main >> "$LOGFILE" 2>&1; then
-    log "git pull完了"
-else
-    # rebaseコンフリクトの場合、docs/はローカル優先で解決
-    if [ -d .git/rebase-merge ] || [ -d .git/rebase-apply ]; then
-        git checkout --theirs docs/ >> "$LOGFILE" 2>&1 || true
-        git add docs/ >> "$LOGFILE" 2>&1 || true
-        GIT_EDITOR=true git rebase --continue >> "$LOGFILE" 2>&1 || git rebase --skip >> "$LOGFILE" 2>&1 || git rebase --abort >> "$LOGFILE" 2>&1 || true
-        log "git pull: コンフリクト解決試行"
+# 未コミット変更はdata/とdocs/以外を保持、data/docs/は捨てる
+git checkout -- data/ docs/ >> "$LOGFILE" 2>&1 || true
+
+# git fetchしてリモートとの差分を確認
+git fetch origin >> "$LOGFILE" 2>&1 || true
+
+# ローカルがリモートより進んでいる場合はそのまま（後でpushする）
+# ローカルがリモートより遅れている場合はpull
+BEHIND=$(git rev-list --count HEAD..origin/main 2>/dev/null || echo "0")
+if [ "$BEHIND" -gt 0 ]; then
+    # リモートが先に進んでいる → pull（no-rebase、コンフリクト時はoursを優先）
+    if git pull --no-rebase -X ours origin main >> "$LOGFILE" 2>&1; then
+        log "git pull完了（$BEHIND コミット取得）"
     else
-        log "git pull失敗（続行）"
+        # 失敗したらreset
+        git reset --hard origin/main >> "$LOGFILE" 2>&1 || true
+        log "git reset --hard origin/main（pull失敗のため強制リセット）"
     fi
-fi
-
-# stashを復元（失敗しても無視）
-if [ "$STASHED" = true ]; then
-    git stash pop >> "$LOGFILE" 2>&1 || git stash drop >> "$LOGFILE" 2>&1 || true
-    log "stash復元"
 fi
 
 # 1. リアルタイムデータ取得（全9店舗: daidata 7店 + papimo 2店）
