@@ -464,12 +464,12 @@ def format_alert_message(results):
             for issue in check['issues'][:3]:  # 最大3件
                 if 'workflow' in issue:
                     lines.append(f"   - {issue['workflow']}: {issue.get('conclusion', '')}")
-                elif 'unit' in issue:
+                elif 'latest_hit' in issue:
+                    # history_realtime: 履歴が古い（'unit'より先にチェック）
+                    lines.append(f"   - {issue['store']} #{issue['unit']}: 最新{issue['latest_hit']} ({issue.get('age_hours', '?')}h前)")
+                elif 'unit' in issue and 'history' in issue:
                     # data_consistency: ART/履歴矛盾
                     lines.append(f"   - {issue['store']} #{issue['unit']}: ART{issue['art']}/履歴{issue['history']}")
-                elif 'latest_hit' in issue:
-                    # history_realtime: 履歴が古い
-                    lines.append(f"   - {issue['store']} #{issue['unit']}: 最新{issue['latest_hit']}")
                 elif 'latest' in issue:
                     # history: 店舗データが古い
                     lines.append(f"   - {issue['store']}: {issue['latest']}")
