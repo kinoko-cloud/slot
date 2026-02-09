@@ -43,27 +43,36 @@ fi
 
 # デプロイ（変更があれば）
 if ! git diff --quiet docs/ || ! git diff --quiet data/; then
-    # コンフリクトがあれば自動解消（ローカル優先）
-    if git status | grep -q "Unmerged\|both modified"; then
-        log "コンフリクト検出 - 自動解消中..."
-        git checkout --theirs docs/ data/availability.json 2>/dev/null || true
-        git add docs/ data/availability.json
+    # rebase/merge中なら強制abort
+    if [ -d .git/rebase-merge ] || [ -d .git/rebase-apply ]; then
+        git rebase --abort >> "$LOGFILE" 2>&1 || true
     fi
+    if [ -f .git/MERGE_HEAD ]; then
+        git merge --abort >> "$LOGFILE" 2>&1 || true
+    fi
+    rm -f .git/index.lock 2>/dev/null || true
     
     git add docs/ data/availability.json data/history/
     git commit -m "auto: 北斗更新 $(date '+%H:%M')" >> "$LOGFILE" 2>&1 || true
     
-    # pull時のコンフリクトも自動解消
-    if ! git pull --rebase origin main >> "$LOGFILE" 2>&1; then
-        log "pull失敗 - コンフリクト自動解消..."
-        git rebase --abort 2>/dev/null || true
-        git checkout --theirs docs/ data/availability.json 2>/dev/null || true
-        git add -A
-        git commit -m "auto: コンフリクト解消 $(date '+%H:%M')" >> "$LOGFILE" 2>&1 || true
-        git pull --rebase origin main >> "$LOGFILE" 2>&1 || git pull origin main >> "$LOGFILE" 2>&1 || true
+    # fetchしてリモートとの差分を確認
+    git fetch origin >> "$LOGFILE" 2>&1 || true
+    
+    # pull（no-rebase、コンフリクト時はours優先）
+    if ! git pull --no-rebase -X ours origin main >> "$LOGFILE" 2>&1; then
+        log "pull失敗 - 強制リセット後再試行..."
+        git reset --hard origin/main >> "$LOGFILE" 2>&1 || true
     fi
     
-    git push origin main >> "$LOGFILE" 2>&1 && log "デプロイ完了"
+    # push（最大3回リトライ）
+    for i in 1 2 3; do
+        if git push origin main >> "$LOGFILE" 2>&1; then
+            log "デプロイ完了"
+            break
+        fi
+        sleep 5
+        git pull --no-rebase -X ours origin main >> "$LOGFILE" 2>&1 || true
+    done
 fi
 
 log "=== 北斗高速更新完了 ==="
