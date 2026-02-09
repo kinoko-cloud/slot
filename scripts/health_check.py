@@ -151,30 +151,48 @@ def check_github_actions():
         
         runs = data.get('workflow_runs', [])
         
-        # ワークフロー別に最新を取得
+        # ワークフロー別に最新5件を取得
         by_workflow = {}
         for run in runs:
             name = run.get('name', '')
             if name not in by_workflow:
-                by_workflow[name] = run
+                by_workflow[name] = []
+            if len(by_workflow[name]) < 5:
+                by_workflow[name].append(run)
         
         issues = []
-        for name, run in by_workflow.items():
+        for name, workflow_runs in by_workflow.items():
             if 'PythonAnywhere' in name:
                 continue  # デプロイは別
             
-            conclusion = run.get('conclusion', '')
+            # 最新の状態
+            latest = workflow_runs[0] if workflow_runs else None
+            if not latest:
+                continue
+                
+            conclusion = latest.get('conclusion', '')
+            
+            # failure または cancelled を検出
             if conclusion == 'failure':
                 issues.append({
                     'workflow': name,
                     'conclusion': conclusion,
-                    'url': run.get('html_url', '')
+                    'url': latest.get('html_url', '')
+                })
+            
+            # 連続cancelled（3回以上）を検出
+            cancelled_count = sum(1 for r in workflow_runs if r.get('conclusion') == 'cancelled')
+            if cancelled_count >= 3:
+                issues.append({
+                    'workflow': name,
+                    'conclusion': f'連続cancelled({cancelled_count}回)',
+                    'url': latest.get('html_url', '')
                 })
         
         if issues:
             return {
                 'status': 'error',
-                'message': f'{len(issues)}件のワークフローが失敗',
+                'message': f'{len(issues)}件のワークフローに問題',
                 'issues': issues
             }
         else:
@@ -188,6 +206,203 @@ def check_github_actions():
             'message': f'GitHub API確認失敗: {e}'
         }
 
+
+def check_git_status():
+    """Gitリポジトリの状態チェック"""
+    import subprocess
+    
+    issues = []
+    
+    try:
+        # rebase/merge中かチェック
+        git_dir = PROJECT_ROOT / '.git'
+        if (git_dir / 'rebase-merge').exists() or (git_dir / 'rebase-apply').exists():
+            issues.append('rebase中')
+        if (git_dir / 'MERGE_HEAD').exists():
+            issues.append('merge中')
+        
+        # index.lockが残っていないか
+        if (git_dir / 'index.lock').exists():
+            issues.append('index.lockが残っている')
+        
+        # ローカルとリモートの差分
+        result = subprocess.run(
+            ['git', 'status', '--porcelain'],
+            cwd=str(PROJECT_ROOT),
+            capture_output=True,
+            text=True,
+            timeout=10
+        )
+        uncommitted = len([l for l in result.stdout.strip().split('\n') if l.strip()])
+        
+        # リモートとの差分
+        subprocess.run(['git', 'fetch', 'origin', '--quiet'], cwd=str(PROJECT_ROOT), timeout=30)
+        result = subprocess.run(
+            ['git', 'rev-list', '--count', 'HEAD..origin/main'],
+            cwd=str(PROJECT_ROOT),
+            capture_output=True,
+            text=True,
+            timeout=10
+        )
+        behind = int(result.stdout.strip() or '0')
+        
+        result = subprocess.run(
+            ['git', 'rev-list', '--count', 'origin/main..HEAD'],
+            cwd=str(PROJECT_ROOT),
+            capture_output=True,
+            text=True,
+            timeout=10
+        )
+        ahead = int(result.stdout.strip() or '0')
+        
+        if behind > 5:
+            issues.append(f'リモートより{behind}コミット遅れ')
+        if ahead > 10:
+            issues.append(f'未プッシュ{ahead}コミット')
+            
+    except Exception as e:
+        return {'status': 'warning', 'message': f'Git状態確認失敗: {e}'}
+    
+    if issues:
+        return {
+            'status': 'error',
+            'message': f'Git異常: {", ".join(issues)}',
+            'issues': issues
+        }
+    else:
+        return {
+            'status': 'ok',
+            'message': 'Git状態正常'
+        }
+
+
+def check_data_consistency():
+    """データ整合性チェック（ART回数 vs 履歴件数）"""
+    avail_file = DATA_DIR / 'availability.json'
+    if not avail_file.exists():
+        return {'status': 'warning', 'message': 'availability.jsonなし'}
+    
+    try:
+        with open(avail_file) as f:
+            data = json.load(f)
+        
+        issues = []
+        
+        for store_key, store in data.get('stores', {}).items():
+            for unit in store.get('units', []):
+                unit_id = unit.get('unit_id', '?')
+                art = unit.get('art', 0)
+                history = unit.get('today_history', [])
+                history_count = len(history)
+                
+                # ART回数が履歴件数の2倍以上 → 履歴が取れていない
+                if art > 0 and history_count > 0 and art > history_count * 2:
+                    issues.append({
+                        'store': store_key,
+                        'unit': unit_id,
+                        'art': art,
+                        'history': history_count,
+                        'ratio': round(art / history_count, 1)
+                    })
+                
+                # ART > 0 なのに履歴0件
+                if art > 10 and history_count == 0:
+                    issues.append({
+                        'store': store_key,
+                        'unit': unit_id,
+                        'art': art,
+                        'history': 0,
+                        'ratio': 'inf'
+                    })
+        
+        if issues:
+            # 上位5件のみ報告
+            return {
+                'status': 'error',
+                'message': f'{len(issues)}台でART/履歴矛盾',
+                'issues': issues[:5],
+                'total_issues': len(issues)
+            }
+        else:
+            return {
+                'status': 'ok',
+                'message': 'データ整合性OK'
+            }
+    except Exception as e:
+        return {'status': 'warning', 'message': f'整合性チェック失敗: {e}'}
+
+
+def check_history_freshness_realtime():
+    """営業時間中の履歴更新チェック（最新履歴が古すぎないか）"""
+    now = now_jst()
+    hour = now.hour
+    
+    # 営業時間外（23時〜10時）はスキップ
+    if hour >= 23 or hour < 10:
+        return {'status': 'ok', 'message': '営業時間外のためスキップ'}
+    
+    avail_file = DATA_DIR / 'availability.json'
+    if not avail_file.exists():
+        return {'status': 'warning', 'message': 'availability.jsonなし'}
+    
+    try:
+        with open(avail_file) as f:
+            data = json.load(f)
+        
+        stale_units = []
+        
+        for store_key, store in data.get('stores', {}).items():
+            for unit in store.get('units', []):
+                unit_id = unit.get('unit_id', '?')
+                art = unit.get('art', 0)
+                history = unit.get('today_history', [])
+                
+                if art < 5 or not history:
+                    continue  # 稼働していない台はスキップ
+                
+                # 最新履歴の時刻
+                latest_time = history[0].get('time', '')
+                if not latest_time:
+                    continue
+                
+                try:
+                    latest_hour, latest_min = map(int, latest_time.split(':'))
+                    latest_dt = now.replace(hour=latest_hour, minute=latest_min, second=0, microsecond=0)
+                    
+                    # 最新履歴が2時間以上前
+                    age_hours = (now - latest_dt).total_seconds() / 3600
+                    if age_hours > 2:
+                        stale_units.append({
+                            'store': store_key,
+                            'unit': unit_id,
+                            'art': art,
+                            'latest_hit': latest_time,
+                            'age_hours': round(age_hours, 1)
+                        })
+                except:
+                    continue
+        
+        if len(stale_units) > 10:  # 10台以上で警告（全体的に履歴が取れていない）
+            return {
+                'status': 'error',
+                'message': f'{len(stale_units)}台で履歴が2時間以上古い',
+                'issues': stale_units[:5],
+                'total_issues': len(stale_units)
+            }
+        elif stale_units:
+            return {
+                'status': 'warning',
+                'message': f'{len(stale_units)}台で履歴が古い',
+                'issues': stale_units[:3]
+            }
+        else:
+            return {
+                'status': 'ok',
+                'message': '履歴更新正常'
+            }
+    except Exception as e:
+        return {'status': 'warning', 'message': f'履歴鮮度チェック失敗: {e}'}
+
 def run_all_checks():
     """全チェック実行"""
     results = {
@@ -200,6 +415,9 @@ def run_all_checks():
     results['checks']['history'] = check_history_freshness()
     results['checks']['unit_changes'] = check_unit_changes()
     results['checks']['github_actions'] = check_github_actions()
+    results['checks']['git_status'] = check_git_status()
+    results['checks']['data_consistency'] = check_data_consistency()
+    results['checks']['history_realtime'] = check_history_freshness_realtime()
     
     # 全体ステータス判定
     has_error = any(c.get('status') == 'error' for c in results['checks'].values())
@@ -240,18 +458,55 @@ def format_alert_message(results):
 
 def auto_repair(results):
     """自己修復を試みる"""
+    import subprocess
     repairs = []
     
     # 1. ロックファイルが残っていたら削除
-    lock_file = Path('/tmp/slot_fetch.lock')
-    if lock_file.exists():
+    for lock_pattern in ['/tmp/slot_fetch.lock', '/tmp/slot_sbj_update.lock', '/tmp/slot_hokuto_update.lock']:
+        lock_file = Path(lock_pattern)
+        if lock_file.exists():
+            try:
+                lock_file.unlink()
+                repairs.append(f'🔧 {lock_file.name}削除')
+            except:
+                pass
+    
+    # 1.5. Git index.lock削除
+    git_lock = PROJECT_ROOT / '.git' / 'index.lock'
+    if git_lock.exists():
         try:
-            lock_file.unlink()
-            repairs.append('🔧 ロックファイル削除')
+            git_lock.unlink()
+            repairs.append('🔧 git index.lock削除')
         except:
             pass
     
-    # 2. availabilityが古い → fetch実行
+    # 2. Git rebase/merge中なら abort
+    git_check = results['checks'].get('git_status', {})
+    if git_check.get('status') == 'error':
+        issues = git_check.get('issues', [])
+        if 'rebase中' in issues:
+            try:
+                subprocess.run(['git', 'rebase', '--abort'], cwd=str(PROJECT_ROOT), timeout=30)
+                repairs.append('🔧 git rebase --abort')
+            except:
+                pass
+        if 'merge中' in issues:
+            try:
+                subprocess.run(['git', 'merge', '--abort'], cwd=str(PROJECT_ROOT), timeout=30)
+                repairs.append('🔧 git merge --abort')
+            except:
+                pass
+        
+        # リモートに同期
+        if any(x in issues for x in ['rebase中', 'merge中', 'リモートより']):
+            try:
+                subprocess.run(['git', 'fetch', 'origin'], cwd=str(PROJECT_ROOT), timeout=30)
+                subprocess.run(['git', 'reset', '--hard', 'origin/main'], cwd=str(PROJECT_ROOT), timeout=30)
+                repairs.append('🔧 git reset --hard origin/main')
+            except:
+                pass
+    
+    # 3. availabilityが古い → fetch実行
     avail_check = results['checks'].get('availability', {})
     if avail_check.get('status') == 'error' and avail_check.get('age_hours', 0) > 2:
         try:
