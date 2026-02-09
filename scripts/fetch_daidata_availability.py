@@ -644,13 +644,45 @@ def main():
                 # 差分取得
                 unit_data = fetch_unit_detail(page, config['hall_id'], unit_id, last_hit_time=last_hit_time)
                 
-                # 差分を既存履歴にマージ
+                # 差分を既存履歴にマージ（昨日のデータを検出してスキップ）
                 new_history = unit_data.get('today_history', [])
+                now_hour = datetime.now(JST).hour
+                now_minute = datetime.now(JST).minute
+                
+                def is_stale_history(history):
+                    """履歴が昨日のデータか判定（時刻が現在より未来なら昨日）"""
+                    if not history:
+                        return False
+                    first_time = history[0].get('time', '')
+                    if ':' in first_time:
+                        h, m = map(int, first_time.split(':'))
+                        # 取得時刻より1時間以上未来なら昨日のデータ
+                        if h > now_hour + 1 or (h == now_hour + 1 and m > now_minute):
+                            return True
+                    return False
+                
                 if new_history and prev_history:
-                    merged = new_history + [h for h in prev_history if h['time'] < new_history[-1]['time']] if new_history else prev_history
-                    unit_data['today_history'] = merged
+                    # 新しい履歴が昨日のデータならスキップ
+                    if is_stale_history(new_history):
+                        print(f"    {unit_id}: 昨日のデータを検出、履歴をスキップ")
+                        unit_data['today_history'] = []
+                        unit_data['is_stale'] = True
+                    else:
+                        merged = new_history + [h for h in prev_history if h['time'] < new_history[-1]['time']] if new_history else prev_history
+                        unit_data['today_history'] = merged
                 elif prev_history and not new_history:
-                    unit_data['today_history'] = prev_history
+                    # 前回履歴が昨日のデータならスキップ
+                    if is_stale_history(prev_history):
+                        print(f"    {unit_id}: 前回履歴が昨日のデータ、スキップ")
+                        unit_data['today_history'] = []
+                        unit_data['is_stale'] = True
+                    else:
+                        unit_data['today_history'] = prev_history
+                elif new_history:
+                    if is_stale_history(new_history):
+                        print(f"    {unit_id}: 新規履歴が昨日のデータ、スキップ")
+                        unit_data['today_history'] = []
+                        unit_data['is_stale'] = True
                 
                 # model_encoded無しの場合、稼働データから空き判定
                 if not config.get('model_encoded'):
@@ -709,14 +741,42 @@ def main():
                     full_history=include_hidden  # 日次収集時は全履歴
                 )
                 
-                # 差分を既存履歴にマージ
+                # 差分を既存履歴にマージ（昨日のデータを検出してスキップ）
                 new_history = unit_data.get('today_history', [])
+                now_hour = datetime.now(JST).hour
+                now_minute = datetime.now(JST).minute
+                
+                def is_stale_history(history):
+                    """履歴が昨日のデータか判定（時刻が現在より未来なら昨日）"""
+                    if not history:
+                        return False
+                    first_time = history[0].get('time', '')
+                    if ':' in first_time:
+                        h, m = map(int, first_time.split(':'))
+                        if h > now_hour + 1 or (h == now_hour + 1 and m > now_minute):
+                            return True
+                    return False
+                
                 if new_history and prev_history:
-                    # 新しい履歴 + 既存履歴（重複除去）
-                    merged = new_history + [h for h in prev_history if h['time'] < new_history[-1]['time']] if new_history else prev_history
-                    unit_data['today_history'] = merged
+                    if is_stale_history(new_history):
+                        print(f"    {unit_id}: 昨日のデータを検出、履歴をスキップ")
+                        unit_data['today_history'] = []
+                        unit_data['is_stale'] = True
+                    else:
+                        merged = new_history + [h for h in prev_history if h['time'] < new_history[-1]['time']] if new_history else prev_history
+                        unit_data['today_history'] = merged
                 elif prev_history and not new_history:
-                    unit_data['today_history'] = prev_history
+                    if is_stale_history(prev_history):
+                        print(f"    {unit_id}: 前回履歴が昨日のデータ、スキップ")
+                        unit_data['today_history'] = []
+                        unit_data['is_stale'] = True
+                    else:
+                        unit_data['today_history'] = prev_history
+                elif new_history:
+                    if is_stale_history(new_history):
+                        print(f"    {unit_id}: 新規履歴が昨日のデータ、スキップ")
+                        unit_data['today_history'] = []
+                        unit_data['is_stale'] = True
                 
                 # 空き状況を追加
                 if unit_id in avail_data.get('playing', []):
