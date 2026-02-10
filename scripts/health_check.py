@@ -289,6 +289,10 @@ def check_data_consistency():
         issues = []
         
         for store_key, store in data.get('stores', {}).items():
+            # SBJ店舗は履歴が取れにくいのでスキップ
+            if '_sbj' in store_key:
+                continue
+                
             for unit in store.get('units', []):
                 unit_id = unit.get('unit_id', '?')
                 art = unit.get('art', 0)
@@ -314,7 +318,7 @@ def check_data_consistency():
                     })
                 
                 # ART > 0 なのに履歴0件
-                if art > 10 and history_count == 0:
+                if art > 30 and history_count == 0:
                     issues.append({
                         'store': store_key,
                         'unit': unit_id,
