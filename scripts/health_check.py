@@ -385,13 +385,15 @@ def check_history_freshness_realtime():
                     # 最新履歴の古さ
                     age_hours = (now - latest_dt).total_seconds() / 3600
                     
-                    # 時間帯で閾値を調整（閉店間際は緩和）
+                    # 時間帯で閾値を調整（夕方以降は緩和）
                     if hour >= 21:
-                        threshold_hours = 6  # 21時以降は6時間
-                    elif hour >= 19:
-                        threshold_hours = 4  # 19時以降は4時間
+                        threshold_hours = 8  # 21時以降は8時間
+                    elif hour >= 18:
+                        threshold_hours = 6  # 18時以降は6時間
+                    elif hour >= 15:
+                        threshold_hours = 4  # 15時以降は4時間
                     else:
-                        threshold_hours = 2  # 日中は2時間
+                        threshold_hours = 3  # 日中は3時間
                     
                     if age_hours > threshold_hours:
                         stale_units.append({
