@@ -265,7 +265,6 @@
               "type": "RB"
             }
           ],
-          "today_max_rensa": 3,
           "availability": "不明"
         },
         {
@@ -292,7 +291,6 @@
               "type": "RB"
             }
           ],
-          "today_max_rensa": 1,
           "availability": "不明"
         },
         {
@@ -549,7 +547,6 @@
               "type": "RB"
             }
           ],
-          "today_max_rensa": 2,
           "availability": "不明"
         },
         {
@@ -1500,16 +1497,16 @@
       "hall_id": "00031715",
       "playing": [
         "0811",
+        "0813",
+        "0815",
+        "0817",
         "0822",
         "0825"
       ],
       "empty": [
         "0812",
-        "0813",
         "0814",
-        "0815",
         "0816",
-        "0817",
         "0818",
         "0820",
         "0821",
@@ -1521,11 +1518,29 @@
         {
           "unit_id": "0811",
           "bb": 0,
-          "rb": 0,
-          "art": 0,
-          "total_start": 66,
-          "final_start": 66,
-          "max_medals": 3,
+          "rb": 1,
+          "art": 1,
+          "total_start": 283,
+          "final_start": 49,
+          "max_medals": 172,
+          "combined_prob": 283,
+          "today_history": [
+            {
+              "hit_num": 1,
+              "time": "10:22",
+              "start": 1,
+              "medals": 165,
+              "type": "ART"
+            },
+            {
+              "hit_num": 2,
+              "time": "10:22",
+              "start": 184,
+              "medals": 10,
+              "type": "REG"
+            }
+          ],
+          "today_max_rensa": 1,
           "availability": "遊技中"
         },
         {
@@ -1543,10 +1558,10 @@
           "bb": 0,
           "rb": 0,
           "art": 0,
-          "total_start": 0,
-          "final_start": 0,
-          "max_medals": 0,
-          "availability": "空き"
+          "total_start": 50,
+          "final_start": 48,
+          "max_medals": 4,
+          "availability": "遊技中"
         },
         {
           "unit_id": "0814",
@@ -1562,10 +1577,10 @@
           "bb": 0,
           "rb": 0,
           "art": 0,
-          "total_start": 0,
-          "final_start": 0,
-          "max_medals": 0,
-          "availability": "空き"
+          "total_start": 50,
+          "final_start": 39,
+          "max_medals": 3,
+          "availability": "遊技中"
         },
         {
           "unit_id": "0816",
@@ -1580,12 +1595,37 @@
         {
           "unit_id": "0817",
           "bb": 0,
-          "rb": 0,
-          "art": 0,
-          "total_start": 0,
+          "rb": 1,
+          "art": 2,
+          "total_start": 116,
           "final_start": 0,
-          "max_medals": 0,
-          "availability": "空き"
+          "max_medals": 227,
+          "combined_prob": 116,
+          "today_history": [
+            {
+              "hit_num": 1,
+              "time": "10:27",
+              "start": 0,
+              "medals": 0,
+              "type": "ART"
+            },
+            {
+              "hit_num": 2,
+              "time": "10:24",
+              "start": 1,
+              "medals": 138,
+              "type": "ART"
+            },
+            {
+              "hit_num": 3,
+              "time": "10:24",
+              "start": 62,
+              "medals": 10,
+              "type": "REG"
+            }
+          ],
+          "today_max_rensa": 3,
+          "availability": "遊技中"
         },
         {
           "unit_id": "0818",
@@ -1602,9 +1642,9 @@
           "bb": 0,
           "rb": 0,
           "art": 0,
-          "total_start": 0,
-          "final_start": 0,
-          "max_medals": 0,
+          "total_start": 33,
+          "final_start": 35,
+          "max_medals": 3,
           "availability": "空き"
         },
         {
@@ -1622,8 +1662,8 @@
           "bb": 0,
           "rb": 0,
           "art": 0,
-          "total_start": 66,
-          "final_start": 59,
+          "total_start": 266,
+          "final_start": 269,
           "max_medals": 3,
           "availability": "遊技中"
         },
@@ -1649,11 +1689,64 @@
         {
           "unit_id": "0825",
           "bb": 0,
-          "rb": 0,
-          "art": 0,
-          "total_start": 33,
-          "final_start": 38,
-          "max_medals": 3,
+          "rb": 1,
+          "art": 6,
+          "total_start": 250,
+          "final_start": 0,
+          "max_medals": 821,
+          "combined_prob": 250,
+          "today_history": [
+            {
+              "hit_num": 1,
+              "time": "10:27",
+              "start": 0,
+              "medals": 0,
+              "type": "ART"
+            },
+            {
+              "hit_num": 2,
+              "time": "10:24",
+              "start": 0,
+              "medals": 109,
+              "type": "ART"
+            },
+            {
+              "hit_num": 3,
+              "time": "10:22",
+              "start": 0,
+              "medals": 152,
+              "type": "ART"
+            },
+            {
+              "hit_num": 4,
+              "time": "10:20",
+              "start": 0,
+              "medals": 117,
+              "type": "ART"
+            },
+            {
+              "hit_num": 5,
+              "time": "10:17",
+              "start": 0,
+              "medals": 103,
+              "type": "ART"
+            },
+            {
+              "hit_num": 6,
+              "time": "10:15",
+              "start": 1,
+              "medals": 135,
+              "type": "ART"
+            },
+            {
+              "hit_num": 7,
+              "time": "10:15",
+              "start": 51,
+              "medals": 10,
+              "type": "REG"
+            }
+          ],
+          "today_max_rensa": 7,
           "availability": "遊技中"
         }
       ]
@@ -2146,5 +2239,5 @@
       ]
     }
   },
-  "fetched_at": "2026-02-10T10:35:03.681490+09:00"
+  "fetched_at": "2026-02-10T10:45:03.924368+09:00"
 }
