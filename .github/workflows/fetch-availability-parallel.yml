@@ -102,7 +102,7 @@ jobs:
 
       - name: Generate static site
         run: |
-          pip install jinja2
+          pip install jinja2 requests
           HOUR=$(TZ='Asia/Tokyo' date +'%H')
           if [ "$HOUR" -ge 10 ] && [ "$HOUR" -le 22 ]; then
             python3 scripts/generate_static.py || echo "⚠️ Static site generation failed"
