@@ -2681,9 +2681,21 @@ def generate_metadata():
     """メタデータファイルを生成"""
     print("Generating metadata...")
 
+    # availability.jsonからfetched_atを読み込む
+    avail_path = PROJECT_ROOT / 'data' / 'availability.json'
+    fetched_at = None
+    if avail_path.exists():
+        try:
+            with open(avail_path, 'r', encoding='utf-8') as f:
+                avail_data = json.load(f)
+                fetched_at = avail_data.get('fetched_at')
+        except Exception as e:
+            print(f"  ⚠️ Failed to read fetched_at from availability.json: {e}")
+
     metadata = {
         'generated_at': datetime.now(JST).isoformat(),
         'version': '2026-01-27-static',
+        'fetched_at': fetched_at,
     }
 
     output_path = OUTPUT_DIR / 'metadata.json'
