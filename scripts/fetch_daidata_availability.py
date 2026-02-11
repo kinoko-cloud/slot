@@ -18,6 +18,16 @@ from playwright.sync_api import sync_playwright
 
 JST = timezone(timedelta(hours=9))
 
+# 広告・ポップアップ削除スクリプト
+REMOVE_ADS_SCRIPT = """
+() => {
+    // インタースティシャル広告を削除
+    document.querySelectorAll('#gn_interstitial_outer_area, .gn_interstitial_outer_area').forEach(el => el.remove());
+    // その他の広告要素を削除
+    document.querySelectorAll('.yads_ad_item, [id*="google_ads"], [class*="ad-"]').forEach(el => el.remove());
+}
+"""
+
 # 店舗設定 (modelは半角カナでURLエンコード済み)
 DAIDATA_STORES = {
     'shibuya_espass_sbj': {
@@ -158,17 +168,19 @@ def fetch_store_availability(page, hall_id: str, model_encoded: str, expected_un
     try:
         page.goto(url, timeout=15000, wait_until='domcontentloaded')
         page.wait_for_timeout(2000)  # JSレンダリング待ち
+        page.evaluate(REMOVE_ADS_SCRIPT)  # 広告削除
 
         # 規約同意ボタンをクリック（daidataがスクレイピング対策で追加）
         try:
             accept_btn = page.locator('button:has-text("利用規約に同意する")')
             if accept_btn.count() > 0:
                 accept_btn.click()
-                page.wait_for_timeout(2000)  # 同意後のリダイレクト待ち
+                page.wait_for_timeout(3000)  # 同意後のリダイレクト待ち（長めに）
                 print("  Accepted terms, re-navigating...")
                 # 同意後はトップページにリダイレクトされるため、再度unit_listに遷移
                 page.goto(url, timeout=20000, wait_until='domcontentloaded')
                 page.wait_for_timeout(2000)  # JSレンダリング待ち
+                page.evaluate(REMOVE_ADS_SCRIPT)  # 広告削除（再度）
         except Exception as e:
             print(f"  Terms button: {e}")
             pass
@@ -235,16 +247,18 @@ def fetch_unit_detail(page, hall_id: str, unit_id: str, last_hit_time: str = Non
     try:
         page.goto(url, timeout=20000, wait_until='domcontentloaded')
         page.wait_for_timeout(1500)
+        page.evaluate(REMOVE_ADS_SCRIPT)  # 広告削除
 
         # 規約同意ボタンがある場合（店舗ごとに別セッション）
         try:
             accept_btn = page.locator('button:has-text("利用規約に同意する")')
             if accept_btn.count() > 0:
                 accept_btn.click()
-                page.wait_for_timeout(2000)
+                page.wait_for_timeout(3000)  # 同意後のリダイレクト待ち（長めに）
                 # 規約同意後、元のdetailページに戻る
                 page.goto(url, timeout=20000, wait_until='domcontentloaded')
                 page.wait_for_timeout(1500)
+                page.evaluate(REMOVE_ADS_SCRIPT)  # 広告削除（再度）
                 print(f"  unit {unit_id}: 規約同意完了")
         except:
             pass
@@ -262,12 +276,15 @@ def fetch_unit_detail(page, hall_id: str, unit_id: str, last_hit_time: str = Non
         if not match:
             try:
                 page.goto(url, timeout=20000, wait_until='domcontentloaded')
+                page.wait_for_timeout(1500)
+                page.evaluate(REMOVE_ADS_SCRIPT)  # 広告削除
                 accept_btn = page.locator('text="利用規約に同意する"')
                 if accept_btn.count() > 0:
                     accept_btn.click()
-                    page.wait_for_timeout(2000)
+                    page.wait_for_timeout(3000)
                 page.goto(url, timeout=20000, wait_until='domcontentloaded')
                 page.wait_for_timeout(2000)
+                page.evaluate(REMOVE_ADS_SCRIPT)  # 広告削除
                 text = page.inner_text('body', timeout=20000)
                 match = re.search(r'BB\s+RB\s+ART\s+スタート回数\s*\n?\s*(\d+)\s+(\d+)\s+(\d+)\s+(\d+)', text)
             except:
