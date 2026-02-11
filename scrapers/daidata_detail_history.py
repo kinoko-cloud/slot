@@ -29,30 +29,23 @@ def get_all_history(hall_id: str = "100860", unit_id: str = "3011", hall_name: s
         page = browser.new_page(viewport={'width': 1280, 'height': 900})
 
         try:
-            # 規約同意
-            page.goto(f"https://daidata.goraggio.com/{hall_id}/accept", wait_until='load', timeout=60000)
-            page.wait_for_timeout(2000)
-            page.evaluate(REMOVE_ADS_SCRIPT)
-            # 「利用規約に同意する」ボタンをクリック
-            try:
-                agree_btn = page.locator('button:has-text("利用規約に同意する")')
-                if agree_btn.count() > 0:
-                    agree_btn.first.click()
-                    page.wait_for_timeout(3000)
-                else:
-                    # フォールバック: formをsubmit
-                    page.evaluate('() => { const form = document.querySelector("form"); if (form) form.submit(); }')
-                    page.wait_for_timeout(3000)
-            except Exception as e:
-                print(f"  規約同意の処理でエラー（続行）: {e}")
-                page.wait_for_timeout(1000)
-
-            # 台詳細ページ
+            # 台詳細ページに直接アクセス（規約同意もここで処理）
             url = f"https://daidata.goraggio.com/{hall_id}/detail?unit={unit_id}"
             print(f"\nアクセス: {url}")
             page.goto(url, wait_until='load', timeout=60000)
             page.wait_for_timeout(3000)
             page.evaluate(REMOVE_ADS_SCRIPT)
+            
+            # 規約同意が必要な場合はボタンをクリック
+            try:
+                agree_btn = page.locator('button:has-text("利用規約に同意する")')
+                if agree_btn.count() > 0:
+                    print("  規約同意ボタンをクリック")
+                    agree_btn.first.click()
+                    page.wait_for_timeout(5000)
+                    page.evaluate(REMOVE_ADS_SCRIPT)
+            except Exception as e:
+                print(f"  規約同意の処理でエラー（続行）: {e}")
 
             result = {
                 'unit_id': unit_id,
