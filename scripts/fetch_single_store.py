@@ -18,8 +18,8 @@ JST = timezone(timedelta(hours=9))
 # 店舗設定をインポート
 from scripts.fetch_daidata_availability import (
     DAIDATA_STORES,
-    fetch_daidata_store,
-    fetch_daidata_unit_detail
+    fetch_store_availability,
+    fetch_unit_detail
 )
 
 def main():
@@ -48,13 +48,13 @@ def main():
             page = context.new_page()
 
             # 店舗データ取得
-            avail_data = fetch_daidata_store(page, config['hall_id'], config.get('model_encoded'))
+            avail_data = fetch_store_availability(page, config['hall_id'], config.get('model_encoded'), config['units'])
 
             # 各台の詳細取得
             units = []
             for unit_id in config['units']:
                 try:
-                    unit_data = fetch_daidata_unit_detail(
+                    unit_data = fetch_unit_detail(
                         page,
                         config['hall_id'],
                         unit_id,
