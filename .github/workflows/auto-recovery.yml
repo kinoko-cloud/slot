@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-    timeout-minutes: 25
+    timeout-minutes: 18
     steps:
       - uses: actions/checkout@v4
         with:
@@ -75,14 +75,14 @@ jobs:
           MAX_ATTEMPTS=3
           for attempt in $(seq 1 $MAX_ATTEMPTS); do
             echo "=== Recovery attempt $attempt / $MAX_ATTEMPTS ==="
-            if timeout 600 python scripts/fetch_daidata_availability.py; then
+            if timeout 300 python scripts/fetch_daidata_availability.py; then
               echo "✅ Data fetch succeeded on attempt $attempt"
               break
             else
               echo "❌ Data fetch failed on attempt $attempt"
               if [ $attempt -lt $MAX_ATTEMPTS ]; then
-                echo "Waiting 30 seconds before retry..."
-                sleep 30
+                echo "Waiting 20 seconds before retry..."
+                sleep 20
               fi
             fi
           done

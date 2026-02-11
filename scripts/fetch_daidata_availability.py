@@ -156,19 +156,19 @@ def fetch_store_availability(page, hall_id: str, model_encoded: str, expected_un
     print(f"  URL: {url}")
 
     try:
-        page.goto(url, timeout=30000, wait_until='domcontentloaded')
-        page.wait_for_timeout(3000)  # JSレンダリング待ち
+        page.goto(url, timeout=15000, wait_until='domcontentloaded')
+        page.wait_for_timeout(2000)  # JSレンダリング待ち
 
         # 規約同意ボタンをクリック（daidataがスクレイピング対策で追加）
         try:
             accept_btn = page.locator('button:has-text("利用規約に同意する")')
             if accept_btn.count() > 0:
                 accept_btn.click()
-                page.wait_for_timeout(3000)  # 同意後のリダイレクト待ち（増加）
+                page.wait_for_timeout(2000)  # 同意後のリダイレクト待ち
                 print("  Accepted terms, re-navigating...")
                 # 同意後はトップページにリダイレクトされるため、再度unit_listに遷移
-                page.goto(url, timeout=60000, wait_until='domcontentloaded')
-                page.wait_for_timeout(3000)  # JSレンダリング待ち（増加）
+                page.goto(url, timeout=20000, wait_until='domcontentloaded')
+                page.wait_for_timeout(2000)  # JSレンダリング待ち
         except Exception as e:
             print(f"  Terms button: {e}")
             pass
@@ -233,7 +233,7 @@ def fetch_unit_detail(page, hall_id: str, unit_id: str, last_hit_time: str = Non
     url = f"https://daidata.goraggio.com/{hall_id}/detail?unit={unit_id}"
 
     try:
-        page.goto(url, timeout=60000, wait_until='domcontentloaded')
+        page.goto(url, timeout=20000, wait_until='domcontentloaded')
         page.wait_for_timeout(1500)
 
         # 規約同意ボタンがある場合（店舗ごとに別セッション）
@@ -243,14 +243,14 @@ def fetch_unit_detail(page, hall_id: str, unit_id: str, last_hit_time: str = Non
                 accept_btn.click()
                 page.wait_for_timeout(2000)
                 # 規約同意後、元のdetailページに戻る
-                page.goto(url, timeout=60000, wait_until='domcontentloaded')
+                page.goto(url, timeout=20000, wait_until='domcontentloaded')
                 page.wait_for_timeout(1500)
                 print(f"  unit {unit_id}: 規約同意完了")
         except:
             pass
 
         # テキストからデータを抽出（最大2回試行）
-        text = page.inner_text('body', timeout=60000)
+        text = page.inner_text('body', timeout=20000)
 
         data = {'unit_id': unit_id, 'bb': 0, 'rb': 0, 'art': 0, 'total_start': 0, 'final_start': 0}
 
@@ -261,14 +261,14 @@ def fetch_unit_detail(page, hall_id: str, unit_id: str, last_hit_time: str = Non
         # マッチしない場合、規約ページが表示されてる可能性 → リトライ
         if not match:
             try:
-                page.goto(url, timeout=60000, wait_until='domcontentloaded')
+                page.goto(url, timeout=20000, wait_until='domcontentloaded')
                 accept_btn = page.locator('text="利用規約に同意する"')
                 if accept_btn.count() > 0:
                     accept_btn.click()
                     page.wait_for_timeout(2000)
-                page.goto(url, timeout=60000, wait_until='domcontentloaded')
+                page.goto(url, timeout=20000, wait_until='domcontentloaded')
                 page.wait_for_timeout(2000)
-                text = page.inner_text('body', timeout=60000)
+                text = page.inner_text('body', timeout=20000)
                 match = re.search(r'BB\s+RB\s+ART\s+スタート回数\s*\n?\s*(\d+)\s+(\d+)\s+(\d+)\s+(\d+)', text)
             except:
                 pass
@@ -610,17 +610,17 @@ def main():
                 continue
             try:
                 page.goto(f'https://daidata.goraggio.com/{hall_id}/all_list?ps=S', wait_until='domcontentloaded', timeout=30000)
-                page.wait_for_timeout(3000)  # JSレンダリング完了待ち
+                page.wait_for_timeout(2000)  # JSレンダリング完了待ち
                 # ボタンクリックで同意
                 agree_btn = page.locator('button:has-text("利用規約に同意する")')
                 if agree_btn.count() > 0:
                     agree_btn.click()
-                    page.wait_for_timeout(3000)  # 同意後のページ更新待ち
+                    page.wait_for_timeout(2000)  # 同意後のページ更新待ち
                     print(f"daidata規約同意完了（ボタンクリック）: {hall_id} ({config['name']})")
                 else:
                     # ボタンがない場合はformサブミットを試行
                     page.evaluate('() => { const form = document.querySelector("form"); if (form) form.submit(); }')
-                    page.wait_for_timeout(3000)
+                    page.wait_for_timeout(2000)
                     print(f"daidata規約同意完了（formサブミット）: {hall_id} ({config['name']})")
                 agreed_halls.add(hall_id)
             except Exception as e:
