@@ -43,6 +43,10 @@ jobs:
         run: |
           python scripts/fetch_daidata_availability.py || echo "Fetch failed (using existing data)"
 
+      - name: Sync realtime to history (nightly update)
+        run: |
+          python scripts/sync_realtime_to_history.py || echo "Sync failed (continue)"
+
       - name: Generate verify results
         run: |
           TARGET_DATE="${{ github.event.inputs.date }}"
