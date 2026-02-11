@@ -7,6 +7,7 @@ iPhoneから店舗でアクセスして、推奨台を確認するためのWeb�
 
 import json
 import sys
+import time
 import threading
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
@@ -45,6 +46,7 @@ DEPLOY_SECRET = 'slot_deploy_2026'
 # リアルタイムデータキャッシュ
 REALTIME_CACHE = {}
 SCRAPING_STATUS = {}
+CACHE_DURATION = 300  # 5分キャッシュ（秒）
 
 # バージョン確認用
 APP_VERSION = '2026-01-31-v14-realtime-integration'
@@ -1101,7 +1103,21 @@ def api_scrape_status(store_key: str):
 
 @app.route('/api/v2/index')
 def api_v2_index():
-    """API v2: トップページ用データをJSON形式で返す"""
+    """API v2: トップページ用データをJSON形式で返す（5分キャッシュ）"""
+    cache_key = 'api_v2_index'
+    current_time = time.time()
+
+    # キャッシュチェック（5分以内なら返す）
+    if cache_key in REALTIME_CACHE:
+        cached_data, cached_time = REALTIME_CACHE[cache_key]
+        age_seconds = current_time - cached_time
+        if age_seconds < CACHE_DURATION:
+            # キャッシュヒット（年齢情報を追加）
+            cached_data['cache_hit'] = True
+            cached_data['cache_age_seconds'] = int(age_seconds)
+            return jsonify(cached_data)
+
+    # キャッシュミス → リアルタイムデータ取得
     now = datetime.now(JST)
     display_mode = get_display_mode()
     is_open = is_business_hours()
@@ -1181,7 +1197,8 @@ def api_v2_index():
         })
     today_store_ranking.sort(key=lambda x: -x['today_rating'])
 
-    return jsonify({
+    # レスポンスデータ作成
+    response_data = {
         'updated_at': now.isoformat(),
         'display_mode': display_mode,
         'is_open': is_open,
@@ -1189,7 +1206,14 @@ def api_v2_index():
         'today_date': format_date_with_weekday(now),
         'top3': top3,
         'today_store_ranking': today_store_ranking,
-    })
+        'cache_hit': False,
+        'cache_age_seconds': 0,
+    }
+
+    # キャッシュに保存（5分間）
+    REALTIME_CACHE[cache_key] = (response_data, current_time)
+
+    return jsonify(response_data)
 
 
 @app.route('/api/v2/recommend/<store_key>')
