@@ -18,10 +18,11 @@ jobs:
       contents: read
     timeout-minutes: 8
     strategy:
-      max-parallel: 14  # 全店舗同時実行
+      max-parallel: 18  # 全店舗同時実行（エスパス16 + アイランド2）
       fail-fast: false  # 1店舗が失敗しても他は続行
       matrix:
         store:
+          # エスパス系（DaiData）
           - shibuya_espass_sbj
           - shinjuku_espass_sbj
           - akiba_espass_sbj
@@ -38,6 +39,9 @@ jobs:
           - akiba_espass_hokuto
           - seibu_shinjuku_espass_hokuto
           - shibuya_honkan_espass_hokuto
+          # アイランド系（Papimo）
+          - island_akihabara_sbj
+          - island_akihabara_hokuto
 
     steps:
       - uses: actions/checkout@v4

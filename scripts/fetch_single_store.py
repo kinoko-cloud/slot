@@ -18,8 +18,11 @@ JST = timezone(timedelta(hours=9))
 # 店舗設定をインポート
 from scripts.fetch_daidata_availability import (
     DAIDATA_STORES,
+    PAPIMO_STORES,
     fetch_store_availability,
-    fetch_unit_detail
+    fetch_unit_detail,
+    fetch_papimo_availability,
+    fetch_papimo_unit_detail
 )
 
 def main():
@@ -29,12 +32,16 @@ def main():
 
     store_key = sys.argv[1]
 
-    if store_key not in DAIDATA_STORES:
+    # DAIDATA_STORESとPAPIMO_STORESの両方をチェック
+    all_stores = {**DAIDATA_STORES, **PAPIMO_STORES}
+
+    if store_key not in all_stores:
         print(f"Unknown store: {store_key}")
         sys.exit(1)
 
-    config = DAIDATA_STORES[store_key]
-    print(f"Fetching data for {config['name']}...")
+    config = all_stores[store_key]
+    is_papimo = store_key in PAPIMO_STORES
+    print(f"Fetching data for {config['name']} ({'Papimo' if is_papimo else 'DaiData'})...")
 
     # データ取得
     store_data = None
@@ -47,19 +54,40 @@ def main():
             )
             page = context.new_page()
 
-            # 店舗データ取得
-            avail_data = fetch_store_availability(page, config['hall_id'], config.get('model_encoded'), config['units'])
+            # 店舗データ取得（DaiDataかPapimoで関数を使い分け）
+            if is_papimo:
+                avail_data = fetch_papimo_availability(
+                    page,
+                    config['hall_id'],
+                    config['machine_id'],
+                    config['units']
+                )
+            else:
+                avail_data = fetch_store_availability(
+                    page,
+                    config['hall_id'],
+                    config.get('model_encoded'),
+                    config['units']
+                )
 
             # 各台の詳細取得
             units = []
             for unit_id in config['units']:
                 try:
-                    unit_data = fetch_unit_detail(
-                        page,
-                        config['hall_id'],
-                        unit_id,
-                        last_hit_time=None
-                    )
+                    if is_papimo:
+                        unit_data = fetch_papimo_unit_detail(
+                            page,
+                            config['hall_id'],
+                            unit_id,
+                            last_hit_time=None
+                        )
+                    else:
+                        unit_data = fetch_unit_detail(
+                            page,
+                            config['hall_id'],
+                            unit_id,
+                            last_hit_time=None
+                        )
                     units.append(unit_data)
                     print(f"  {unit_id}: OK")
                 except Exception as e:
