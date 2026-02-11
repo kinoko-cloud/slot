@@ -1,27 +1,23 @@
-name: Daily Verify (Answer Check)
+name: Nightly Update
 
 on:
   schedule:
-    # 毎日 JST 23:30 = UTC 14:30 に実行（nightly-updateの後）
-    - cron: '30 14 * * *'
+    # 毎日 JST 23:00 = UTC 14:00
+    - cron: '0 14 * * *'
   workflow_dispatch:
-    inputs:
-      date:
-        description: '検証対象日（YYYY-MM-DD）省略時は当日'
-        required: false
 
 concurrency:
-  group: slot-daily-verify
+  group: slot-nightly-update
   cancel-in-progress: false
 
 jobs:
-  verify:
+  nightly-update:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 1
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -32,24 +28,26 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-verify
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
 
       - name: Install dependencies
         run: |
-          pip install jinja2 requests
+          pip install 'playwright==1.49.1' flask jinja2 requests
+          playwright install chromium
+          playwright install-deps chromium
 
-      - name: Generate verify results (答え合わせ)
+      - name: Fetch latest data (final scrape of the day)
+        timeout-minutes: 15
         run: |
-          TARGET_DATE="${{ github.event.inputs.date }}"
-          if [ -z "$TARGET_DATE" ]; then
-            TARGET_DATE=$(TZ='Asia/Tokyo' date +'%Y-%m-%d')
-          fi
-          echo "Verifying: $TARGET_DATE"
-          python scripts/generate_verify.py --date "$TARGET_DATE"
+          python scripts/fetch_daidata_availability.py || echo "⚠️ Fetch failed (will use existing data)"
 
-      - name: Update static site (verify page only)
+      - name: Sync availability to history (確定データ移行)
+        run: |
+          python scripts/sync_realtime_to_history.py
+
+      - name: Generate static site
         run: |
           python scripts/generate_static.py
 
@@ -58,7 +56,7 @@ jobs:
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
 
-          git add data/analysis/ docs/verify.html
+          git add data/history/ docs/
 
           if git diff --staged --quiet; then
             echo "No changes to commit"
@@ -66,14 +64,14 @@ jobs:
           fi
 
           TIMESTAMP=$(TZ='Asia/Tokyo' date +'%Y-%m-%d %H:%M')
-          git commit -m "auto: 答え合わせ ${TIMESTAMP}"
+          git commit -m "auto: 夜間更新 ${TIMESTAMP}"
 
           for i in 1 2 3; do
+            git pull origin main --no-rebase -X ours 2>/dev/null || true
             if git push origin main; then
               echo "✅ Push succeeded"
               exit 0
             fi
-            echo "Push failed (attempt $i/3), rebasing..."
-            git pull --rebase origin main
+            sleep 5
           done
           exit 0

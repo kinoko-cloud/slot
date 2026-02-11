@@ -1,14 +1,15 @@
-name: Fetch Availability
+name: Fetch Availability (Real-time)
 
 on:
   schedule:
-    # ローカルPCとコンフリクト回避のため、2時間おきに変更
-    - cron: '0 1,3,5,7,9,11,13 * * *'  # UTC 01,03,05... (JST 10,12,14,16,18,20,22時)
+    # JST 10:00-22:00 の間、2時間おきに実行
+    # UTC 1,3,5,7,9,11,13 = JST 10,12,14,16,18,20,22時
+    - cron: '0 1,3,5,7,9,11,13 * * *'
   workflow_dispatch:
 
 concurrency:
   group: slot-fetch-availability
-  cancel-in-progress: false
+  cancel-in-progress: true  # 前回実行が残っていたらキャンセル
 
 jobs:
   fetch:
@@ -19,13 +20,28 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 1  # 最新のみ取得（軽量化）
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+
+      - name: Cache Python dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-minimal
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-1.49.1
+          restore-keys: |
+            ${{ runner.os }}-playwright-
 
       - name: Install dependencies
         run: |
@@ -49,7 +65,7 @@ jobs:
               fi
             fi
           done
-          
+
           # availability.jsonが存在すれば成功扱い
           if [ -f data/availability.json ]; then
             echo "✅ Data file exists"
@@ -58,30 +74,37 @@ jobs:
             exit 1
           fi
 
-      - name: Regenerate static site
-        run: python scripts/generate_static.py || true
+      - name: Generate static site (営業中のみ)
+        run: |
+          # 営業時間中なら静的サイト再生成
+          HOUR=$(TZ='Asia/Tokyo' date +'%H')
+          if [ "$HOUR" -ge 10 ] && [ "$HOUR" -le 22 ]; then
+            python scripts/generate_static.py || echo "⚠️ Static site generation failed (continue)"
+          else
+            echo "Skip: Outside business hours"
+          fi
 
       - name: Commit and push
         run: |
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
-          
+
           git add data/availability.json docs/
-          
+
           if git diff --staged --quiet; then
             echo "No changes to commit"
             exit 0
           fi
-          
+
           TIMESTAMP=$(TZ='Asia/Tokyo' date +'%H:%M')
           git commit -m "auto: リアルタイム更新 ${TIMESTAMP}"
-          
-          for i in 1 2 3 4 5; do
+
+          for i in 1 2 3; do
             git pull origin main --no-rebase -X ours 2>/dev/null || true
             if git push origin main; then
               echo "✅ Push succeeded"
               exit 0
             fi
-            sleep 5
+            sleep 3
           done
           exit 0  # データ取得成功なら全体は成功扱い
