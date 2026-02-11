@@ -997,8 +997,13 @@ def analyze_trend(days: List[dict], machine_key: str = 'sbj') -> dict:
             calc_max = calculate_max_chain_medals(yesterday_history, machine_key=machine_key)
             result['yesterday_max_medals'] = max(site_max_medals, calc_max)
             result['yesterday_history'] = yesterday_history
+            # 昨日の天井到達回数
+            yesterday_at_intervals = calculate_at_intervals(yesterday_history)
+            ceiling_threshold = 999 if machine_key == 'sbj' else 600
+            result['yesterday_ceilings'] = sum(1 for g in yesterday_at_intervals if g >= ceiling_threshold)
         else:
             result['yesterday_max_medals'] = site_max_medals
+            result['yesterday_ceilings'] = 0
 
     # 前々日の結果
     if len(daily_results) >= 2:
@@ -3281,7 +3286,11 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
         today_max_at_interval = max(today_at_intervals) if today_at_intervals else 0
         # today_max_rensaはリアルタイムデータの値を優先、なければ計算
         today_max_rensa = today_max_rensa_from_rt if today_max_rensa_from_rt > 0 else (calculate_max_rensa(today_history, machine_key=machine_key) if _use_today_history else 0)
-        
+
+        # 本日の天井到達回数（SBJ: 999G以上、北斗転生: 600G以上）
+        ceiling_threshold = 999 if machine_key == 'sbj' else 600
+        today_ceilings = sum(1 for g in today_at_intervals if g >= ceiling_threshold)
+
         # 本日の差枚を計算（履歴から）
         today_diff_medals = 0
         if _use_today_history and today_history:
@@ -3330,6 +3339,7 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
             'day_before_prob': trend_data.get('day_before_prob', 0),
             'yesterday_max_rensa': trend_data.get('yesterday_max_rensa', 0),
             'yesterday_max_medals': trend_data.get('yesterday_max_medals', 0),
+            'yesterday_ceilings': trend_data.get('yesterday_ceilings', 0),
             'max_medals': max_medals,
             'diff_medals': today_diff_medals,  # 本日の差枚（履歴から計算）
             # 3日目のデータ（蓄積DBから取得）
@@ -3347,6 +3357,7 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
             'today_deep_hama': today_deep_hama_count,  # 500G以上のハマり回数
             'today_max_at_interval': today_max_at_interval,  # 本日最大AT間
             'today_max_rensa': today_max_rensa,  # 本日最大連チャン数
+            'today_ceilings': today_ceilings,  # 本日の天井到達回数
             'today_diff_medals': today_diff_medals,  # 本日の差枚（履歴から計算）
             # スコア内訳（デバッグ・分析用）
             'score_breakdown': {
