@@ -9,7 +9,7 @@
     <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
     <meta name="googlebot" content="noindex, nofollow">
     <title>エスパス日拓西武新宿駅前店</title>
-    <link rel="stylesheet" href="/static/style.css?v=20260210230201">
+    <link rel="stylesheet" href="/static/style.css?v=20260211112248">
 </head>
 <body data-page-type="recommend" data-store-key="seibu_shinjuku_espass_sbj">
     <div class="container">
@@ -27,7 +27,7 @@
         
     </div>
     <div class="top-bar-right">
-        <span class="version-info" id="build-ver" title="ビルド時刻">v0210_23:02</span>
+        <span class="version-info" id="build-ver" title="ビルド時刻">v0211_11:23</span>
         
     </div>
 </div>
@@ -35,7 +35,7 @@
             <h1>エスパス日拓西武新宿駅前店</h1>
             <div class="machine-label">🃏 スーパーブラックジャック</div>
             
-            <div class="data-date-label">📅 データ: 2/10(火)まで</div>
+            <div class="data-date-label">📅 データ: 2/11(水)まで</div>
             
             <div class="realtime-bar">
                 <span id="realtime-status" class="realtime-status">読込中...</span>
@@ -44,7 +44,7 @@
             <div class="update-info">
                 
                 <span class="data-source">
-                    データ取得: <span id="update-time">22:55</span>
+                    データ取得: <span id="update-time">11:20</span>
                 </span>
                 <span class="cache-badge github">GITHUB</span>
                 
@@ -53,7 +53,11 @@
 
             <!-- 空き状況サマリ -->
             
-            <div class="closed-notice">現在営業時間外です</div>
+            <div class="availability-summary">
+                <span class="avail-empty" onclick="filterUnits('empty')">空き 1台</span>
+                <span class="avail-playing" onclick="filterUnits('playing')">遊技中 0台</span>
+                <span class="avail-all" onclick="filterUnits('all')">全て</span>
+            </div>
             
 
             <div class="action-buttons">
@@ -74,14 +78,14 @@
         <div class="store-analysis">
             <div class="analysis-title"><span class="analysis-machine">スーパーブラックジャック</span>（<span class="analysis-store">エスパス西武新宿</span>）分析</div>
             <div class="analysis-rank-dist">
-                全1台: C:1台
+                全1台: D:1台
             </div>
             <div class="analysis-overall">好調台が少ない（全1台中0台がA以上）</div>
             
             
             <div class="analysis-weekday">
-                火曜の店舗傾向:
-                弱い日（回収傾向）
+                水曜の店舗傾向:
+                普通
                 （金土が狙い目）
             </div>
             
@@ -117,36 +121,49 @@
             <section class="recommendations top">
                 <h2>推奨台</h2>
                 
-                <details class="unit-card rank-c avail-card-empty" data-availability="空き">
+                <details class="unit-card rank-d avail-card-empty" data-availability="空き">
                     <summary class="unit-card-summary">
                     <!-- メインヘッダー: 台番号 + 機種名 + 空き状況 + ランク -->
                     <div class="unit-main-header">
                         <span class="unit-id-large">4168番台</span>
                         <span class="machine-name-sm">スーパーブラックジャック</span>
                         
-                        <span class="rank-badge-lg" style="background-color: #70a1ff">C</span>
+                            
+                            <span class="avail-badge-lg empty">空き</span>
+                            
+                        
+                        <span class="rank-badge-lg" style="background-color: #747d8c">D</span>
                         <span class="expand-icon">▼</span>
                     </div>
 
                     
-                    
-                    
-                    <div class="reasons-full">
-                        
-                        
-                        
-                        <div class="reason-line-top">🔥 2/10(火)11連の爆発あり</div>
-                        
-                        
-                        
-                        <div class="reason-line-top">⚠️ エスパス西武新宿の火曜は出玉が少ない傾向（注意）</div>
-                        
-                        
-                        
-                        <div class="reason-line-top reason-rank">📊 7日間中1日好調（好調率14%）→ 低機械割が入りやすい台</div>
-                        
-                        
-                        
+                    <!-- 営業中: リアルタイムデータ -->
+                    <div class="today-data-row">
+                        <div class="data-row-primary">
+                            <div class="data-cell highlight">
+                                <span class="data-value"><span class="art-num-lg">0</span></span>
+                                <span class="data-label">ART</span>
+                            </div>
+                            
+                            
+                        </div>
+                        <div class="data-row-secondary">
+                            
+                            <div class="data-cell">
+                                <span class="data-value"><span class="rb-num">1</span></span>
+                                <span class="data-label">RB</span>
+                            </div>
+                            <div class="data-cell warn">
+                                <span class="data-value">338</span>
+                                <span class="data-label">現在G</span>
+                            </div>
+                            
+                            <div class="data-cell">
+                                <span class="data-value">379</span>
+                                <span class="data-label">累計G</span>
+                            </div>
+                            
+                        </div>
                     </div>
                     
 
@@ -154,7 +171,201 @@
                     
                     <div class="rec-prev-days">
                         
-                        <span class="prev-day-rec has-detail" onclick="toggleHitDetail(this, event)">2/9(月): <span class="prev-art">ART 35</span> <span class="prev-prob ">1/151</span> <span class="diff-medals-sm plus">+2,499枚</span> <span class="max-medals-sm">最大867枚</span> <span class="rensa-sm">5連</span><span class="expand-icon">▼</span></span>
+                        <span class="prev-day-rec has-detail" onclick="toggleHitDetail(this, event)">2/10(火): <span class="prev-art">ART 48</span> <span class="prev-prob ">1/140</span> <span class="diff-medals-sm plus">+3,399枚</span> <span class="max-medals-sm">最大1,458枚</span> <span class="rensa-sm">11連</span><span class="expand-icon">▼</span></span>
+                        
+
+<div class="hit-detail-panel" style="display:none;">
+    
+    <div class="hit-summary-row">
+        <span>19当たり</span>
+        <span>最大11連</span>
+        <span>平均125G</span>
+        
+    </div>
+    
+    <table class="hit-detail-table">
+        <thead><tr><th>#</th><th>時刻</th><th>G数</th><th>種類</th><th>連</th><th>枚数</th></tr></thead>
+        <tbody>
+        
+        <tr class="deep">
+            <td>1</td>
+            <td>17:07</td>
+            <td class="deep">519G</td>
+            <td class="art">ART</td>
+            <td class="">-</td>
+            <td>83</td>
+        </tr>
+        
+        <tr class="">
+            <td>2</td>
+            <td>16:30</td>
+            <td class="">253G</td>
+            <td class="rb">RB</td>
+            <td class="">-</td>
+            <td>51</td>
+        </tr>
+        
+        <tr class="">
+            <td>3</td>
+            <td>16:07</td>
+            <td class="">12G</td>
+            <td class="art">ART</td>
+            <td class="">4連</td>
+            <td>39</td>
+        </tr>
+        
+        <tr class="">
+            <td>4</td>
+            <td>16:04</td>
+            <td class="">12G</td>
+            <td class="art">ART</td>
+            <td class="">↑</td>
+            <td>43</td>
+        </tr>
+        
+        <tr class="">
+            <td>5</td>
+            <td>16:01</td>
+            <td class="">14G</td>
+            <td class="art">ART</td>
+            <td class="">↑</td>
+            <td>41</td>
+        </tr>
+        
+        <tr class="">
+            <td>6</td>
+            <td>15:59</td>
+            <td class="">498G</td>
+            <td class="art">ART</td>
+            <td class="">↑</td>
+            <td>83</td>
+        </tr>
+        
+        <tr class="hot-chain">
+            <td>7</td>
+            <td>13:41</td>
+            <td class=" shallow">2G</td>
+            <td class="art">ART</td>
+            <td class="hot">11連</td>
+            <td>154</td>
+        </tr>
+        
+        <tr class="hot-chain">
+            <td>8</td>
+            <td>13:38</td>
+            <td class=" shallow">1G</td>
+            <td class="art">ART</td>
+            <td class="hot">↑</td>
+            <td>23</td>
+        </tr>
+        
+        <tr class="hot-chain">
+            <td>9</td>
+            <td>13:33</td>
+            <td class=" shallow">1G</td>
+            <td class="art">ART</td>
+            <td class="hot">↑</td>
+            <td>213</td>
+        </tr>
+        
+        <tr class="hot-chain">
+            <td>10</td>
+            <td>13:30</td>
+            <td class=" shallow">1G</td>
+            <td class="art">ART</td>
+            <td class="hot">↑</td>
+            <td>19</td>
+        </tr>
+        
+        <tr class="hot-chain">
+            <td>11</td>
+            <td>13:27</td>
+            <td class=" shallow">2G</td>
+            <td class="art">ART</td>
+            <td class="hot">↑</td>
+            <td>147</td>
+        </tr>
+        
+        <tr class="hot-chain">
+            <td>12</td>
+            <td>13:24</td>
+            <td class=" shallow">2G</td>
+            <td class="art">ART</td>
+            <td class="hot">↑</td>
+            <td>145</td>
+        </tr>
+        
+        <tr class="hot-chain">
+            <td>13</td>
+            <td>13:21</td>
+            <td class=" shallow">1G</td>
+            <td class="art">ART</td>
+            <td class="hot">↑</td>
+            <td>153</td>
+        </tr>
+        
+        <tr class="hot-chain">
+            <td>14</td>
+            <td>13:17</td>
+            <td class=" shallow">1G</td>
+            <td class="art">ART</td>
+            <td class="hot">↑</td>
+            <td>23</td>
+        </tr>
+        
+        <tr class="hot-chain">
+            <td>15</td>
+            <td>13:09</td>
+            <td class="">12G</td>
+            <td class="art">ART</td>
+            <td class="hot">↑</td>
+            <td>272</td>
+        </tr>
+        
+        <tr class="hot-chain">
+            <td>16</td>
+            <td>13:03</td>
+            <td class="">16G</td>
+            <td class="art">ART</td>
+            <td class="hot">↑</td>
+            <td>226</td>
+        </tr>
+        
+        <tr class="hot-chain">
+            <td>17</td>
+            <td>13:00</td>
+            <td class="">117G</td>
+            <td class="art">ART</td>
+            <td class="hot">↑</td>
+            <td>83</td>
+        </tr>
+        
+        <tr class="deep">
+            <td>18</td>
+            <td>12:51</td>
+            <td class="deep">364G</td>
+            <td class="rb">RB</td>
+            <td class="">-</td>
+            <td>51</td>
+        </tr>
+        
+        <tr class="">
+            <td>19</td>
+            <td>12:25</td>
+            <td class="">174G</td>
+            <td class="rb">RB</td>
+            <td class="">-</td>
+            <td>51</td>
+        </tr>
+        
+        </tbody>
+    </table>
+</div>
+
+
+                        
+                        
+                        <span class="prev-day-rec has-detail" onclick="toggleHitDetail(this, event)">2/9(月): <span class="prev-art">ART 35</span> <span class="prev-prob ">1/151</span> <span class="diff-medals-sm plus">+2,499枚</span> <span class="max-medals-sm">最大867枚</span> <span class="rensa-sm">7連</span><span class="expand-icon">▼</span></span>
                         
 
 <div class="hit-detail-panel" style="display:none;">
@@ -528,336 +739,7 @@
 
                         
                         
-                        <span class="prev-day-rec has-detail" onclick="toggleHitDetail(this, event)">2/8(日): <span class="prev-art">ART 52</span> <span class="prev-prob excellent">1/98</span> <span class="diff-medals-sm plus">+3,227枚</span> <span class="max-medals-sm">最大867枚</span> <span class="rensa-sm">7連</span><span class="expand-icon">▼</span></span>
-                        
-
-<div class="hit-detail-panel" style="display:none;">
-    
-    <div class="hit-summary-row">
-        <span>34当たり</span>
-        <span>最大5連</span>
-        <span>平均128G</span>
-        <span class="deep">天井1回</span>
-    </div>
-    
-    <table class="hit-detail-table">
-        <thead><tr><th>#</th><th>時刻</th><th>G数</th><th>種類</th><th>連</th><th>枚数</th></tr></thead>
-        <tbody>
-        
-        <tr class="">
-            <td>1</td>
-            <td>18:09</td>
-            <td class="">132G</td>
-            <td class="rb">RB</td>
-            <td class="">-</td>
-            <td>51</td>
-        </tr>
-        
-        <tr class="hot-chain">
-            <td>2</td>
-            <td>17:58</td>
-            <td class=" shallow">7G</td>
-            <td class="art">ART</td>
-            <td class="hot">5連</td>
-            <td>33</td>
-        </tr>
-        
-        <tr class="hot-chain">
-            <td>3</td>
-            <td>17:53</td>
-            <td class="">17G</td>
-            <td class="art">ART</td>
-            <td class="hot">↑</td>
-            <td>215</td>
-        </tr>
-        
-        <tr class="hot-chain">
-            <td>4</td>
-            <td>17:49</td>
-            <td class="">28G</td>
-            <td class="art">ART</td>
-            <td class="hot">↑</td>
-            <td>45</td>
-        </tr>
-        
-        <tr class="hot-chain">
-            <td>5</td>
-            <td>17:40</td>
-            <td class="">21G</td>
-            <td class="art">ART</td>
-            <td class="hot">↑</td>
-            <td>291</td>
-        </tr>
-        
-        <tr class="hot-chain">
-            <td>6</td>
-            <td>17:37</td>
-            <td class="">40G</td>
-            <td class="art">ART</td>
-            <td class="hot">↑</td>
-            <td>33</td>
-        </tr>
-        
-        <tr class="">
-            <td>7</td>
-            <td>17:29</td>
-            <td class=" shallow">7G</td>
-            <td class="art">ART</td>
-            <td class="">2連</td>
-            <td>25</td>
-        </tr>
-        
-        <tr class="">
-            <td>8</td>
-            <td>17:25</td>
-            <td class="">167G</td>
-            <td class="art">ART</td>
-            <td class="">↑</td>
-            <td>225</td>
-        </tr>
-        
-        <tr class="">
-            <td>9</td>
-            <td>17:05</td>
-            <td class="">44G</td>
-            <td class="art">ART</td>
-            <td class="">-</td>
-            <td>141</td>
-        </tr>
-        
-        <tr class="hot-chain">
-            <td>10</td>
-            <td>17:00</td>
-            <td class=" shallow">2G</td>
-            <td class="art">ART</td>
-            <td class="hot">5連</td>
-            <td>39</td>
-        </tr>
-        
-        <tr class="hot-chain">
-            <td>11</td>
-            <td>16:55</td>
-            <td class=" shallow">2G</td>
-            <td class="art">ART</td>
-            <td class="hot">↑</td>
-            <td>219</td>
-        </tr>
-        
-        <tr class="hot-chain">
-            <td>12</td>
-            <td>16:53</td>
-            <td class=" shallow">1G</td>
-            <td class="art">ART</td>
-            <td class="hot">↑</td>
-            <td>149</td>
-        </tr>
-        
-        <tr class="hot-chain">
-            <td>13</td>
-            <td>16:47</td>
-            <td class=" shallow">1G</td>
-            <td class="art">ART</td>
-            <td class="hot">↑</td>
-            <td>15</td>
-        </tr>
-        
-        <tr class="hot-chain">
-            <td>14</td>
-            <td>16:44</td>
-            <td class="">181G</td>
-            <td class="art">ART</td>
-            <td class="hot">↑</td>
-            <td>83</td>
-        </tr>
-        
-        <tr class="">
-            <td>15</td>
-            <td>16:25</td>
-            <td class="">100G</td>
-            <td class="art">ART</td>
-            <td class="">-</td>
-            <td>83</td>
-        </tr>
-        
-        <tr class="deep">
-            <td>16</td>
-            <td>16:07</td>
-            <td class="deep">377G</td>
-            <td class="rb">RB</td>
-            <td class="">-</td>
-            <td>51</td>
-        </tr>
-        
-        <tr class="">
-            <td>17</td>
-            <td>15:37</td>
-            <td class="">319G</td>
-            <td class="rb">RB</td>
-            <td class="">-</td>
-            <td>51</td>
-        </tr>
-        
-        <tr class="">
-            <td>18</td>
-            <td>15:12</td>
-            <td class="">74G</td>
-            <td class="rb">RB</td>
-            <td class="">-</td>
-            <td>51</td>
-        </tr>
-        
-        <tr class="">
-            <td>19</td>
-            <td>15:05</td>
-            <td class="">88G</td>
-            <td class="rb">RB</td>
-            <td class="">-</td>
-            <td>51</td>
-        </tr>
-        
-        <tr class="">
-            <td>20</td>
-            <td>14:48</td>
-            <td class="">35G</td>
-            <td class="art">ART</td>
-            <td class="">-</td>
-            <td>137</td>
-        </tr>
-        
-        <tr class="">
-            <td>21</td>
-            <td>14:42</td>
-            <td class=" shallow">9G</td>
-            <td class="art">ART</td>
-            <td class="">3連</td>
-            <td>137</td>
-        </tr>
-        
-        <tr class="">
-            <td>22</td>
-            <td>14:40</td>
-            <td class="">18G</td>
-            <td class="art">ART</td>
-            <td class="">↑</td>
-            <td>48</td>
-        </tr>
-        
-        <tr class="">
-            <td>23</td>
-            <td>14:35</td>
-            <td class="">31G</td>
-            <td class="art">ART</td>
-            <td class="">↑</td>
-            <td>141</td>
-        </tr>
-        
-        <tr class="">
-            <td>24</td>
-            <td>14:31</td>
-            <td class="">278G</td>
-            <td class="art">ART</td>
-            <td class="">-</td>
-            <td>77</td>
-        </tr>
-        
-        <tr class="tenjou">
-            <td>25</td>
-            <td>13:11</td>
-            <td class="tenjou">402G<br><small class="acc-games">累計1006G</small></td>
-            <td class="art">ART</td>
-            <td class="">-</td>
-            <td>81</td>
-        </tr>
-        
-        <tr class="deep">
-            <td>26</td>
-            <td>12:39</td>
-            <td class="deep">23G</td>
-            <td class="rb">RB</td>
-            <td class="">-</td>
-            <td>51</td>
-        </tr>
-        
-        <tr class="deep">
-            <td>27</td>
-            <td>12:37</td>
-            <td class="deep">581G</td>
-            <td class="rb">RB</td>
-            <td class="">-</td>
-            <td>49</td>
-        </tr>
-        
-        <tr class="">
-            <td>28</td>
-            <td>11:52</td>
-            <td class="">13G</td>
-            <td class="art">ART</td>
-            <td class="">3連</td>
-            <td>37</td>
-        </tr>
-        
-        <tr class="">
-            <td>29</td>
-            <td>11:49</td>
-            <td class=" shallow">3G</td>
-            <td class="art">ART</td>
-            <td class="">↑</td>
-            <td>42</td>
-        </tr>
-        
-        <tr class="">
-            <td>30</td>
-            <td>11:46</td>
-            <td class="">32G</td>
-            <td class="art">ART</td>
-            <td class="">↑</td>
-            <td>154</td>
-        </tr>
-        
-        <tr class="">
-            <td>31</td>
-            <td>11:42</td>
-            <td class="">146G</td>
-            <td class="art">ART</td>
-            <td class="">-</td>
-            <td>83</td>
-        </tr>
-        
-        <tr class="">
-            <td>32</td>
-            <td>11:17</td>
-            <td class="">24G</td>
-            <td class="art">ART</td>
-            <td class="">3連</td>
-            <td>152</td>
-        </tr>
-        
-        <tr class="">
-            <td>33</td>
-            <td>11:12</td>
-            <td class="">14G</td>
-            <td class="art">ART</td>
-            <td class="">↑</td>
-            <td>151</td>
-        </tr>
-        
-        <tr class="">
-            <td>34</td>
-            <td>11:09</td>
-            <td class="">386G</td>
-            <td class="art">ART</td>
-            <td class="">↑</td>
-            <td>83</td>
-        </tr>
-        
-        </tbody>
-    </table>
-</div>
-
-
-                        
-                        
-                        <span class="prev-day-rec has-detail" onclick="toggleHitDetail(this, event)">2/7(土): <span class="prev-art">ART 27</span> <span class="prev-prob ">1/142</span> <span class="diff-medals-sm plus">+1,914枚</span> <span class="max-medals-sm">最大867枚</span> <span class="rensa-sm">7連</span><span class="expand-icon">▼</span></span>
+                        <span class="prev-day-rec has-detail" onclick="toggleHitDetail(this, event)">2/8(日): <span class="prev-art">ART 52</span> <span class="prev-prob excellent">1/99</span> <span class="diff-medals-sm plus">+3,227枚</span> <span class="max-medals-sm">最大867枚</span> <span class="rensa-sm">7連</span><span class="expand-icon">▼</span></span>
                         
 
 <div class="hit-detail-panel" style="display:none;">
@@ -1191,18 +1073,22 @@
                     
                     <div class="estimation-row">
                         
-                        <span class="setting-estimate setting-6">
-                            高機械割 <span class="payout">(118.3%)</span>
-                        </span>
-                        
                         <span class="past-eval">
                             
-                            蓄積傾向: <strong style="color: #70a1ff">Cランク</strong>
+                            直近ART改善傾向
                             
                         </span>
                     </div>
 
                     <!-- 推奨理由（営業中のみ — 閉店後は上に表示済み） -->
+                    
+                    <div class="reason-main">
+                        
+                        <div class="reason-line ">🔥 本日11連の爆発あり</div>
+                        
+                        <div class="reason-line reason-rank">📊 7日間中1日好調（好調率14%）→ 低機械割が入りやすい台</div>
+                        
+                    </div>
                     
 
                     </summary>
@@ -1213,150 +1099,20 @@
                                 <div class="detail-title">本日詳細</div>
                                 
                                 
-                                <div class="detail-item highlight">最大持ち玉: <strong class="plus">1,408枚</strong></div>
+                                <div class="detail-item highlight">最大持ち玉: <strong class="plus">51枚</strong></div>
                                 
                                 
-                                <div class="detail-item">現在のスタート: <strong>519G</strong>（最終大当たり後）</div>
+                                <div class="detail-item">現在のスタート: <strong>338G</strong>（最終大当たり後）</div>
                                 
                                 
-                                <div class="detail-item minus">本日ハマり: 500G超 <strong>2回</strong> (最大772G)</div>
                                 
-                                
-                                <div class="detail-item">RB: 3回</div>
+                                <div class="detail-item">RB: 1回</div>
                                 
                                 
                                 
                             </div>
 
                             
-                            
-                            <div class="detail-section">
-                                <div class="detail-title">2026-02-10 差枚推移</div>
-                                <div class="line-chart-container">
-                                    <svg class="sparkline" viewBox="0 0 300 100" preserveAspectRatio="xMidYMid meet"><line x1="0" y1="2.0" x2="300" y2="2.0" stroke="#555" stroke-width="0.5" stroke-dasharray="2,2"/><polyline points="0.0,2.0 15.8,26.3 31.6,32.6 47.4,28.4 63.2,22.9 78.9,22.5 94.7,19.0 110.5,15.7 126.3,12.4 142.1,12.0 157.9,45.0 173.7,40.1 189.5,40.1 205.3,39.7 221.1,39.5 236.8,56.1 252.6,67.1 268.4,63.6 284.2,63.5 300.0,98.0" fill="none" stroke="#ff6b6b" stroke-width="1.5"/></svg>
-                                </div>
-                            </div>
-                            
-                            <div class="detail-section">
-                                <div class="detail-title">2026-02-10 当たり履歴</div>
-                                <div class="hit-history-table">
-                                    
-                                    <div class="hit-row deep">
-                                        <span class="hit-time">17:07</span>
-                                        <span class="hit-type">ART</span>
-                                        <span class="hit-games bad">519G</span>
-                                    </div>
-                                    
-                                    <div class="hit-row ">
-                                        <span class="hit-time">16:30</span>
-                                        <span class="hit-type">RB</span>
-                                        <span class="hit-games ">253G</span>
-                                    </div>
-                                    
-                                    <div class="hit-row rensa">
-                                        <span class="hit-time">16:07</span>
-                                        <span class="hit-type">ART</span>
-                                        <span class="hit-games good">12G</span>
-                                    </div>
-                                    
-                                    <div class="hit-row rensa">
-                                        <span class="hit-time">16:04</span>
-                                        <span class="hit-type">ART</span>
-                                        <span class="hit-games good">12G</span>
-                                    </div>
-                                    
-                                    <div class="hit-row rensa">
-                                        <span class="hit-time">16:01</span>
-                                        <span class="hit-type">ART</span>
-                                        <span class="hit-games good">14G</span>
-                                    </div>
-                                    
-                                    <div class="hit-row ">
-                                        <span class="hit-time">15:59</span>
-                                        <span class="hit-type">ART</span>
-                                        <span class="hit-games ">498G</span>
-                                    </div>
-                                    
-                                    <div class="hit-row rensa">
-                                        <span class="hit-time">13:41</span>
-                                        <span class="hit-type">ART</span>
-                                        <span class="hit-games good">2G</span>
-                                    </div>
-                                    
-                                    <div class="hit-row rensa">
-                                        <span class="hit-time">13:38</span>
-                                        <span class="hit-type">ART</span>
-                                        <span class="hit-games good">1G</span>
-                                    </div>
-                                    
-                                    <div class="hit-row rensa">
-                                        <span class="hit-time">13:33</span>
-                                        <span class="hit-type">ART</span>
-                                        <span class="hit-games good">1G</span>
-                                    </div>
-                                    
-                                    <div class="hit-row rensa">
-                                        <span class="hit-time">13:30</span>
-                                        <span class="hit-type">ART</span>
-                                        <span class="hit-games good">1G</span>
-                                    </div>
-                                    
-                                    <div class="hit-row rensa">
-                                        <span class="hit-time">13:27</span>
-                                        <span class="hit-type">ART</span>
-                                        <span class="hit-games good">2G</span>
-                                    </div>
-                                    
-                                    <div class="hit-row rensa">
-                                        <span class="hit-time">13:24</span>
-                                        <span class="hit-type">ART</span>
-                                        <span class="hit-games good">2G</span>
-                                    </div>
-                                    
-                                    <div class="hit-row rensa">
-                                        <span class="hit-time">13:21</span>
-                                        <span class="hit-type">ART</span>
-                                        <span class="hit-games good">1G</span>
-                                    </div>
-                                    
-                                    <div class="hit-row rensa">
-                                        <span class="hit-time">13:17</span>
-                                        <span class="hit-type">ART</span>
-                                        <span class="hit-games good">1G</span>
-                                    </div>
-                                    
-                                    <div class="hit-row rensa">
-                                        <span class="hit-time">13:09</span>
-                                        <span class="hit-type">ART</span>
-                                        <span class="hit-games good">12G</span>
-                                    </div>
-                                    
-                                    <div class="hit-row rensa">
-                                        <span class="hit-time">13:03</span>
-                                        <span class="hit-type">ART</span>
-                                        <span class="hit-games good">16G</span>
-                                    </div>
-                                    
-                                    <div class="hit-row ">
-                                        <span class="hit-time">13:00</span>
-                                        <span class="hit-type">ART</span>
-                                        <span class="hit-games ">117G</span>
-                                    </div>
-                                    
-                                    <div class="hit-row ">
-                                        <span class="hit-time">12:51</span>
-                                        <span class="hit-type">RB</span>
-                                        <span class="hit-games ">364G</span>
-                                    </div>
-                                    
-                                    <div class="hit-row ">
-                                        <span class="hit-time">12:25</span>
-                                        <span class="hit-type">RB</span>
-                                        <span class="hit-games ">174G</span>
-                                    </div>
-                                    
-                                </div>
-                            </div>
                             
 
                             <div class="detail-section">
@@ -1365,10 +1121,10 @@
                                 <div class="detail-item plus">1日連続プラス推定 → 据え置き期待</div>
                                 
                                 
-                                <div class="detail-item">前日ART 35回 (5,306G)</div>
+                                <div class="detail-item">前日ART 48回 (6,746G)</div>
                                 
                                 
-                                <div class="detail-item">前々日ART 52回 (5,123G)</div>
+                                <div class="detail-item">前々日ART 35回 (5,306G)</div>
                                 
                             </div>
                         </div>
@@ -1376,11 +1132,11 @@
                         <div class="all-reasons">
                             <div class="detail-title">全ての根拠</div>
                             
-                            <div class="reason-item">🔥 2/10(火)11連の爆発あり</div>
-                            
-                            <div class="reason-item">⚠️ エスパス西武新宿の火曜は出玉が少ない傾向（注意）</div>
+                            <div class="reason-item">🔥 本日11連の爆発あり</div>
                             
                             <div class="reason-item">📊 7日間中1日好調（好調率14%）→ 低機械割が入りやすい台</div>
+                            
+                            <div class="reason-item">📊 前日実績: ART48回・6,746G（1/140）</div>
                             
                         </div>
                         
