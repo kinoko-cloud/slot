@@ -318,8 +318,28 @@ def fetch_unit_detail(page, hall_id: str, unit_id: str, last_hit_time: str = Non
             for i, match in enumerate(hits):
                 hit_time = match[3]
                 # 差分取得: last_hit_time以降の履歴のみ取得
-                if last_hit_time and hit_time <= last_hit_time:
-                    break  # 時刻降順なので、ここで終了
+                # 日付変更を考慮した時刻比較
+                if last_hit_time:
+                    # 時刻を時・分に分解して数値比較
+                    try:
+                        hit_h, hit_m = map(int, hit_time.split(':'))
+                        last_h, last_m = map(int, last_hit_time.split(':'))
+                        hit_minutes = hit_h * 60 + hit_m
+                        last_minutes = last_h * 60 + last_m
+
+                        # last_hit_timeが未来の時刻（＝昨日のデータ）かチェック
+                        # 現在時刻より2時間以上未来なら昨日のデータと判断してスキップしない
+                        now = datetime.now(JST)
+                        current_minutes = now.hour * 60 + now.minute
+                        is_last_from_yesterday = (last_minutes > current_minutes + 120)
+
+                        # 昨日のデータでない場合のみ比較
+                        if not is_last_from_yesterday and hit_minutes <= last_minutes:
+                            break  # 時刻降順なので、ここで終了
+                    except (ValueError, AttributeError):
+                        # パースエラー時は比較せず全て取得
+                        pass
+
                 history.append({
                     'hit_num': i + 1,
                     'time': hit_time,
@@ -650,14 +670,15 @@ def main():
                 now_minute = datetime.now(JST).minute
                 
                 def is_stale_history(history):
-                    """履歴が昨日のデータか判定（時刻が現在より未来なら昨日）"""
+                    """履歴が昨日のデータか判定（22時以降のデータを昨日と判定）"""
                     if not history:
                         return False
                     first_time = history[0].get('time', '')
                     if ':' in first_time:
                         h, m = map(int, first_time.split(':'))
-                        # 取得時刻より1時間以上未来なら昨日のデータ
-                        if h > now_hour + 1 or (h == now_hour + 1 and m > now_minute):
+                        # 22時台以降のデータを昨日と判定（閉店時間22:50考慮）
+                        # ただし、現在時刻が22時以降の場合は今日のデータと判定
+                        if now_hour < 22 and h >= 22:
                             return True
                     return False
                 
