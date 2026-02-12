@@ -1037,8 +1037,10 @@ def generate_index(env):
                 filter_stores_by_name[sn].append({'key': sk, 'name': sn})
     filter_stores = [{'name': name, 'store_keys': [x['key'] for x in stores]} for name, stores in filter_stores_by_name.items()]
 
-    # データ取得時刻を取得
+    # データ取得時刻を取得 + 古いデータ警告
     data_fetched_at = ''
+    is_data_stale = False
+    data_stale_reason = ''
     try:
         from scrapers.availability_checker import get_daidata_availability
         avail_data = get_daidata_availability()
@@ -1046,6 +1048,21 @@ def generate_index(env):
         if fetched_at_str:
             fetched_dt = datetime.fromisoformat(fetched_at_str)
             data_fetched_at = f"{fetched_dt.month}/{fetched_dt.day} {fetched_dt.strftime('%H:%M')}"
+            
+            # 古いデータチェック
+            now_jst = datetime.now(JST)
+            fetched_date = fetched_dt.strftime('%Y-%m-%d')
+            today_date_check = now_jst.strftime('%Y-%m-%d')
+            age_minutes = (now_jst - fetched_dt).total_seconds() / 60
+            
+            # 営業時間中（10:00-23:00）のみチェック
+            if 10 <= now_jst.hour < 23:
+                if fetched_date != today_date_check:
+                    is_data_stale = True
+                    data_stale_reason = f'データが{fetched_dt.month}/{fetched_dt.day}のものです'
+                elif age_minutes > 60:
+                    is_data_stale = True
+                    data_stale_reason = f'データが{int(age_minutes)}分前のものです'
     except:
         pass
 
@@ -1062,6 +1079,8 @@ def generate_index(env):
         today_date_formatted=today_date_formatted,
         now_time=now.strftime('%H:%M'),
         data_fetched_at=data_fetched_at,
+        is_data_stale=is_data_stale,
+        data_stale_reason=data_stale_reason,
         now_short=now.strftime('%m%d_%H:%M'),
         store_recommendations={},
         today_recommended_stores=today_recommended_stores,

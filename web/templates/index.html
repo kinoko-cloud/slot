@@ -109,6 +109,11 @@
                 <span id="realtime-status" class="realtime-status">読込中...</span>
                 <button onclick="refreshData()" class="refresh-btn">🔄 更新</button>
             </div>
+            {% if is_data_stale %}
+            <div class="stale-warning-banner">
+                ⚠️ {{ data_stale_reason }} - 自動更新を待つか、🔄更新ボタンを押してください
+            </div>
+            {% endif %}
         </header>
 
         <main>

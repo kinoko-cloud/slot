@@ -6,6 +6,10 @@ on:
     # データ取得失敗を早期検出し自動復旧
     - cron: '15 1-13 * * *'  # 毎時15分
     - cron: '45 1-13 * * *'  # 毎時45分
+    # 朝9:55にプリフェッチ（営業開始10:00に間に合うように）
+    - cron: '55 0 * * *'     # JST 9:55
+    # 朝10:05に強制チェック（営業開始直後、前日データ残り防止）
+    - cron: '5 1 * * *'      # JST 10:05
   workflow_dispatch:
     inputs:
       force_fetch:
@@ -91,8 +95,15 @@ jobs:
           print(f"データ取得: {fetched_time.strftime('%H:%M')}")
           print(f"経過時間: {age_minutes:.0f}分")
 
+          # 日付チェック：fetched_atが今日でなければ即エラー
+          today = now.strftime('%Y-%m-%d')
+          fetched_date = fetched_time.strftime('%Y-%m-%d')
+          
+          if fetched_date != today:
+              print(f"⚠️ Data is from {fetched_date}, not today ({today})!")
+              print("RESULT:true")
           # 30分以上古い場合は復旧が必要
-          if age_minutes > 30:
+          elif age_minutes > 30:
               print(f"⚠️ Data is {age_minutes:.0f} minutes old (> 30 min)")
               print("RESULT:true")
           else:
