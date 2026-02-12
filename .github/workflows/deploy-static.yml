@@ -12,9 +12,10 @@ on:
       - 'data/availability.json'
       - 'data/daily/**'
 
-  # 定期実行（毎日9:00, 10:00, 14:00, 18:00, 22:00 JST）
+  # 定期実行（営業時間帯は1時間おき）
+  # JST: 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22時
   schedule:
-    - cron: '0 0,1,5,9,13 * * *'  # UTC (0=9:00JST, 1=10:00JST, 5=14:00JST, 9=18:00JST, 13=22:00JST)
+    - cron: '0 0-13 * * *'  # UTC 0-13 = JST 9-22時
 
 concurrency:
   group: slot-deploy-static
@@ -40,7 +41,47 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install flask jinja2 requests
+          pip install flask jinja2 requests playwright
+          playwright install chromium
+
+      - name: Check data freshness and fetch if needed
+        env:
+          TZ: Asia/Tokyo
+        run: |
+          python3 << 'EOF'
+          import json
+          import subprocess
+          from datetime import datetime, timedelta, timezone
+          from pathlib import Path
+
+          JST = timezone(timedelta(hours=9))
+          now = datetime.now(JST)
+          
+          # 営業時間チェック（10:00-22:45 JST）
+          is_business_hours = 10 <= now.hour < 23
+          
+          # availability.jsonの更新時刻を確認
+          avail_path = Path('data/availability.json')
+          if avail_path.exists():
+              with open(avail_path) as f:
+                  data = json.load(f)
+              fetched_at = data.get('fetched_at', '')
+              if fetched_at:
+                  fetched_time = datetime.fromisoformat(fetched_at)
+                  age_minutes = (now - fetched_time).total_seconds() / 60
+                  print(f"Data age: {age_minutes:.0f} minutes")
+                  
+                  # 営業時間中で2時間以上古い場合は再取得
+                  if is_business_hours and age_minutes > 120:
+                      print("Data is stale during business hours, fetching...")
+                      subprocess.run(['python', 'scripts/fetch_daidata_availability.py'], check=True)
+                  else:
+                      print("Data is fresh enough")
+              else:
+                  print("No fetched_at in data")
+          else:
+              print("No availability.json found")
+          EOF
 
       - name: Generate static site
         run: |
@@ -55,7 +96,7 @@ jobs:
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add docs/
+          git add docs/ data/
           git diff --staged --quiet || git commit -m "chore: update static site $(TZ='Asia/Tokyo' date +'%Y-%m-%d %H:%M')"
           
           for i in 1 2 3 4 5; do
@@ -70,7 +111,7 @@ jobs:
           echo "Push failed after 5 attempts"
           exit 1
 
-  # GitHub Pages へのデプロイ（Cloudflare Pagesの代替/バックアップ）
+  # GitHub Pages へのデプロイ
   deploy-github-pages:
     needs: generate-and-deploy
     runs-on: ubuntu-latest
