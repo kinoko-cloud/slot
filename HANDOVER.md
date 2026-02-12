@@ -141,11 +141,27 @@ for uf in list(Path('data/history/shibuya_espass_hokuto2').glob('*.json'))[:3]:
 
 RSさん指摘:
 > 2件未満はほぼないよ、ありえない、ただデータ取得できてないのを疑って
+> なんで途切れているのに気づかないで時が過ぎてるの？検知できてないのがおかしい
 
-**調査ポイント:**
-1. batch_update_history.pyが途中で止まるタイミング
-2. daidataからの取得タイミング（前日データがいつ消えるか）
-3. GitHub Actionsのnightly-updateの実行ログ
+---
+
+## 実装した対策（2/13 0:35）
+
+### 1. health_check.py に完全性チェック追加
+`check_history_completeness()` を追加：
+- **閉店後（23時以降）**: 当日データの最終時刻が20:00以降かチェック
+- **営業中（12時以降）**: 当日データの最終時刻が現在時刻-2時間以降かチェック
+- **開店前（0-10時）**: 前日データの最終時刻が20:00以降かチェック
+- 10%以上の台で問題があればエラー
+
+### 2. nightly-update.yml に batch_update 追加
+- 23:00のnightly-updateでbatch_update_history.pyを実行
+- リトライ3回、タイムアウト10分
+- 完了後に完全性検証
+
+### 残りの課題
+- auto-recoveryで履歴データ異常時に再取得する仕組み
+- 営業中の定期チェック強化
 
 ## 的中率
 
