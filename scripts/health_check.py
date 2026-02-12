@@ -366,13 +366,17 @@ def check_history_freshness_realtime():
         stale_units = []
         
         for store_key, store in data.get('stores', {}).items():
+            # island_akihabara（papimoソース）は履歴取得が不安定なのでスキップ
+            if store_key.startswith('island_akihabara'):
+                continue
+            
             for unit in store.get('units', []):
                 unit_id = unit.get('unit_id', '?')
                 art = unit.get('art', 0)
                 history = unit.get('today_history', [])
                 
-                if art < 5 or not history:
-                    continue  # 稼働していない台はスキップ
+                if art < 10 or not history:
+                    continue  # 稼働が少ない台はスキップ（閾値を5→10に）
                 
                 # 最新履歴の時刻
                 latest_time = history[0].get('time', '')
@@ -387,12 +391,13 @@ def check_history_freshness_realtime():
                     age_hours = (now - latest_dt).total_seconds() / 3600
                     
                     # 時間帯で閾値を調整（閉店間際は緩和）
+                    # 北斗系は当たりが重いので閾値を緩和
                     if hour >= 21:
-                        threshold_hours = 6  # 21時以降は6時間
+                        threshold_hours = 8  # 21時以降は8時間
                     elif hour >= 19:
-                        threshold_hours = 4  # 19時以降は4時間
+                        threshold_hours = 6  # 19時以降は6時間
                     else:
-                        threshold_hours = 2  # 日中は2時間
+                        threshold_hours = 4  # 日中は4時間
                     
                     if age_hours > threshold_hours:
                         stale_units.append({
