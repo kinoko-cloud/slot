@@ -290,7 +290,8 @@ def check_data_consistency():
         
         for store_key, store in data.get('stores', {}).items():
             # SBJ店舗は履歴が取れにくいのでスキップ
-            if '_sbj' in store_key:
+            # island_akihabara（papimoソース）は履歴が8件までしか取得できないのでスキップ
+            if '_sbj' in store_key or store_key.startswith('island_akihabara'):
                 continue
                 
             for unit in store.get('units', []):
