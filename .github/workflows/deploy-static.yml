@@ -12,9 +12,9 @@ on:
       - 'data/availability.json'
       - 'data/daily/**'
 
-  # 定期実行（毎日10:00, 14:00, 18:00, 22:00 JST）
+  # 定期実行（毎日9:00, 10:00, 14:00, 18:00, 22:00 JST）
   schedule:
-    - cron: '0 1,5,9,13 * * *'  # UTC
+    - cron: '0 0,1,5,9,13 * * *'  # UTC (0=9:00JST, 1=10:00JST, 5=14:00JST, 9=18:00JST, 13=22:00JST)
 
 concurrency:
   group: slot-deploy-static
