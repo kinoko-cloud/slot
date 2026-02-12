@@ -262,8 +262,12 @@ def extract_day_history(text: str, unit_id: str) -> dict:
     history = []
 
     # 履歴を取得
-    # 方法1: セクションから取得
-    history_section_match = re.search(r'大当たり\s+スタート\s+出玉\s+種別\s+時間(.+?)(?:過去\d+日|ページ先頭|台データオンライン|$)', text, re.DOTALL)
+    # 方法1: セクションから取得（「大当たり スタート 出玉 種別 時間」以降を取得）
+    # 終了マーカー: 次のセクション開始 or ページ終端
+    history_section_match = re.search(
+        r'大当たり\s+スタート\s+出玉\s+種別\s+時間(.+?)(?:グラフ表示|差枚数推移|データを表示中|関連台|機種名|ページ先頭へ|$)', 
+        text, re.DOTALL
+    )
     if history_section_match:
         section = history_section_match.group(1)
     else:
