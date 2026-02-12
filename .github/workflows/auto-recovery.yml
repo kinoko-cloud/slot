@@ -156,8 +156,86 @@ jobs:
             exit 1
           fi
 
+      - name: Check history completeness
+        id: history_check
+        run: |
+          python3 << 'EOF'
+          import json
+          from pathlib import Path
+          from datetime import datetime, timedelta, timezone
+          
+          JST = timezone(timedelta(hours=9))
+          now = datetime.now(JST)
+          hour = now.hour
+          today = now.strftime('%Y-%m-%d')
+          yesterday = (now - timedelta(days=1)).strftime('%Y-%m-%d')
+          
+          # 対象日と期待する最終時刻
+          if hour >= 23:
+              target_date, min_time = today, '20:00'
+          elif hour >= 12:
+              target_date, min_time = today, f'{hour-2:02d}:00'
+          else:
+              target_date, min_time = yesterday, '20:00'
+          
+          issues = 0
+          checked = 0
+          
+          for store_dir in Path('data/history').iterdir():
+              if not store_dir.is_dir():
+                  continue
+              for unit_file in list(store_dir.glob('*.json'))[:3]:
+                  try:
+                      data = json.load(open(unit_file))
+                      for day in data.get('days', []):
+                          if day.get('date') == target_date:
+                              hist = day.get('history', [])
+                              if hist:
+                                  checked += 1
+                                  last = hist[-1].get('time', '')
+                                  if last and last < min_time:
+                                      issues += 1
+                              break
+                  except:
+                      pass
+          
+          rate = issues / max(checked, 1) * 100
+          print(f"History check: {issues}/{checked} incomplete ({rate:.0f}%)")
+          
+          # 10%以上で問題あり
+          with open('history_issues.txt', 'w') as f:
+              f.write('true' if rate >= 10 else 'false')
+          EOF
+          
+          if grep -q "true" history_issues.txt; then
+            echo "history_issues=true" >> $GITHUB_OUTPUT
+            echo "⚠️ History data incomplete - need batch update"
+          else
+            echo "history_issues=false" >> $GITHUB_OUTPUT
+            echo "✅ History data OK"
+          fi
+
+      - name: Auto recovery - Fetch history (batch_update)
+        if: steps.history_check.outputs.history_issues == 'true'
+        continue-on-error: true
+        timeout-minutes: 12
+        run: |
+          echo "🔧 Fetching incomplete history data..."
+          TARGET_DATE=$(TZ='Asia/Tokyo' date +'%Y-%m-%d')
+          
+          for attempt in 1 2 3; do
+            echo "=== History fetch attempt $attempt / 3 ==="
+            if timeout 300 python scripts/batch_update_history.py --target-date $TARGET_DATE; then
+              echo "✅ Batch update succeeded"
+              break
+            else
+              echo "❌ Batch update failed"
+              sleep 15
+            fi
+          done
+
       - name: Regenerate static site
-        if: steps.health_check.outputs.issues_found == 'true' || github.event.inputs.force_fetch == 'true'
+        if: steps.health_check.outputs.issues_found == 'true' || steps.history_check.outputs.history_issues == 'true' || github.event.inputs.force_fetch == 'true'
         run: |
           HOUR=$(TZ='Asia/Tokyo' date +'%H')
           if [ "$HOUR" -ge 10 ] && [ "$HOUR" -le 22 ]; then
