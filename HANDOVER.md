@@ -4,6 +4,20 @@
 
 **2/12の履歴データ取得中**（バックグラウンドで実行中）
 
+## 直近の修正（2/13 0:20）
+
+### 問題: 0:00過ぎても日付が古いまま
+- 的中率が2/11のまま（2/12であるべき）
+- 3日分の履歴も古い日付
+
+### 原因
+静的サイト（docs/）が23:00に生成されたまま。
+日付変更後に再生成されていなかった。
+
+### 対策（実装済み）
+deploy-static.ymlに0:05と0:30の実行を追加。
+これで毎日0:00過ぎに日付が正しく更新される。
+
 確認コマンド：
 ```bash
 ps aux | grep batch_update | grep -v grep
@@ -87,6 +101,51 @@ data/
   availability.json  ← リアルタイムデータ
   history/  ← 履歴データ（店舗別/台番号.json）
 ```
+
+## 未解決の問題（重要度順）
+
+### 1. 履歴データが途中で切れている（深刻）
+**症状:** 2/11, 2/12の履歴データが10時〜12時台で終わっている（59件）
+- shibuya_espass_hokuto2: 10:06〜10:27で終了
+- akiba_espass_hokuto2: 11:05〜12:22で終了
+- 本来は閉店（22:00-23:00）まであるべき
+
+**原因候補:**
+1. batch_update_history.pyが途中で止まった
+2. データソース（daidata）の前日データ消失タイミング
+3. 取得処理のバグ
+
+**確認コマンド:**
+```bash
+python3 -c "
+import json
+from pathlib import Path
+for uf in list(Path('data/history/shibuya_espass_hokuto2').glob('*.json'))[:3]:
+    d = json.load(open(uf))
+    for day in d.get('days',[]):
+        if day.get('date') == '2026-02-11':
+            hist = day.get('history',[])
+            print(f\"{uf.stem}: 最後={hist[-1].get('time') if hist else 'N/A'}\")
+"
+```
+
+### 2. 「もっと見る」のグラフが直線
+**症状:** 営業前モードで「もっと見る」の台のグラフが全部まっすぐの線
+**原因:** 上記と同じ。履歴データが取得できていない。
+
+---
+
+## 根本原因
+
+**全ての問題は「履歴データ取得の失敗」が原因**
+
+RSさん指摘:
+> 2件未満はほぼないよ、ありえない、ただデータ取得できてないのを疑って
+
+**調査ポイント:**
+1. batch_update_history.pyが途中で止まるタイミング
+2. daidataからの取得タイミング（前日データがいつ消えるか）
+3. GitHub Actionsのnightly-updateの実行ログ
 
 ## 的中率
 
