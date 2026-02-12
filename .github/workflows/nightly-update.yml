@@ -2,8 +2,11 @@ name: Nightly Update
 
 on:
   schedule:
-    # 毎日 JST 23:00 = UTC 14:00
+    # 毎日 JST 23:00 = UTC 14:00 (閉店後の速報)
     - cron: '0 14 * * *'
+    # 毎日 JST 8:00 = UTC 23:00 (前日データ確定版)
+    # DAIDATAは翌朝にならないと前日の詳細履歴が取れない
+    - cron: '0 23 * * *'
   workflow_dispatch:
 
 concurrency:
