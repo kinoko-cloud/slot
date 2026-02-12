@@ -261,22 +261,29 @@ def extract_day_history(text: str, unit_id: str) -> dict:
     # 例: 9 970 105 ART 23:47
     history = []
 
-    # 履歴セクションを探す
-    history_section_match = re.search(r'本日の大当たり履歴詳細.*?大当たり\s+スタート\s+出玉\s+種別\s+時間(.+?)(?:過去|ページ|$)', text, re.DOTALL)
+    # 履歴を取得
+    # 方法1: セクションから取得
+    history_section_match = re.search(r'大当たり\s+スタート\s+出玉\s+種別\s+時間(.+?)(?:過去\d+日|ページ先頭|台データオンライン|$)', text, re.DOTALL)
     if history_section_match:
         section = history_section_match.group(1)
+    else:
+        # 方法2: テキスト全体から取得（フォールバック）
+        section = text
 
-        # 各行を解析
-        # 数字 数字 数字 (ART|BB|RB) 時間
-        matches = re.findall(r'(\d+)\s+(\d+)\s+(\d+)\s+(ART|BB|RB|AT)\s+(\d{1,2}:\d{2})', section)
-        for match in matches:
-            history.append({
-                'hit_num': int(match[0]),
-                'start': int(match[1]),      # この当たりまでの回転数（重要！）
-                'medals': int(match[2]),     # 獲得枚数
-                'type': match[3],            # ART/BB/RB
-                'time': match[4],            # 時間
-            })
+    # 履歴パターンを抽出: 数字 数字 数字 (ART|BB|RB|AT) 時間
+    matches = re.findall(r'(\d+)\s+(\d+)\s+(\d+)\s+(ART|BB|RB|AT)\s+(\d{1,2}:\d{2})', section)
+    for match in matches:
+        history.append({
+            'hit_num': int(match[0]),
+            'start': int(match[1]),      # この当たりまでの回転数（重要！）
+            'medals': int(match[2]),     # 獲得枚数
+            'type': match[3],            # ART/BB/RB
+            'time': match[4],            # 時間
+        })
+    
+    # 履歴を時間順（古い→新しい）にソート
+    if history:
+        history.sort(key=lambda h: h['time'])
 
     if history:
         data['history'] = history
