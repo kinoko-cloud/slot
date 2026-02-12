@@ -1,0 +1,10 @@
+name = "slot-workflow-trigger"
+main = "trigger-workflow.js"
+compatibility_date = "2024-01-01"
+
+# Cron Triggers: 毎時15分と45分に実行（GitHub Actionsの補完）
+[triggers]
+crons = ["15 0-13 * * *", "45 0-13 * * *"]  # UTC = JST 9:15-22:15, 9:45-22:45
+
+# 環境変数（Cloudflareダッシュボードで設定）
+# GITHUB_PAT = "ghp_xxxx"
