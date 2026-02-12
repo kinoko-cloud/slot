@@ -45,20 +45,69 @@ jobs:
         run: |
           pip install requests jinja2
 
-      - name: Health check
+      - name: Check data freshness
         id: health_check
+        env:
+          TZ: Asia/Tokyo
         run: |
-          # デフォルトでチェックのみ実行（--repairなし）
-          python scripts/health_check.py > health_check_result.txt 2>&1 || true
-          cat health_check_result.txt
+          python3 << 'PYEOF' > check_result.txt
+          import json
+          import sys
+          from datetime import datetime, timedelta, timezone
+          from pathlib import Path
 
-          # エラーメッセージの有無をチェック
-          if grep -q "ERROR" health_check_result.txt || grep -q "WARNING.*データ未取得" health_check_result.txt; then
+          JST = timezone(timedelta(hours=9))
+          now = datetime.now(JST)
+
+          # 営業時間チェック（10:00-22:59 JST）
+          is_business_hours = 10 <= now.hour < 23
+
+          if not is_business_hours:
+              print("✅ Outside business hours, skip check")
+              print("RESULT:false")
+              sys.exit(0)
+
+          # availability.jsonの更新時刻を確認
+          avail_path = Path('data/availability.json')
+          if not avail_path.exists():
+              print("⚠️ No availability.json found")
+              print("RESULT:true")
+              sys.exit(0)
+
+          with open(avail_path) as f:
+              data = json.load(f)
+
+          fetched_at = data.get('fetched_at', '')
+          if not fetched_at:
+              print("⚠️ No fetched_at in data")
+              print("RESULT:true")
+              sys.exit(0)
+
+          fetched_time = datetime.fromisoformat(fetched_at)
+          age_minutes = (now - fetched_time).total_seconds() / 60
+
+          print(f"現在時刻: {now.strftime('%H:%M')}")
+          print(f"データ取得: {fetched_time.strftime('%H:%M')}")
+          print(f"経過時間: {age_minutes:.0f}分")
+
+          # 30分以上古い場合は復旧が必要
+          if age_minutes > 30:
+              print(f"⚠️ Data is {age_minutes:.0f} minutes old (> 30 min)")
+              print("RESULT:true")
+          else:
+              print("✅ Data is fresh")
+              print("RESULT:false")
+          PYEOF
+
+          cat check_result.txt
+
+          # 結果をGITHUB_OUTPUTに出力
+          if grep -q "RESULT:true" check_result.txt; then
             echo "issues_found=true" >> $GITHUB_OUTPUT
-            echo "⚠️ Issues detected, will attempt auto-recovery"
+            echo "⚠️ Auto-recovery needed"
           else
             echo "issues_found=false" >> $GITHUB_OUTPUT
-            echo "✅ No issues detected"
+            echo "✅ No recovery needed"
           fi
 
       - name: Auto recovery - Fetch data

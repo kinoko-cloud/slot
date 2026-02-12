@@ -1,11 +1,8 @@
 name: Fetch Availability (Secondary Account - Odd Hours)
 
 on:
-  schedule:
-    # 【セカンダリアカウント】奇数時刻のみ実行（負荷分散）
-    # UTC 2,4,6,8,10,12 = JST 11,13,15,17,19,21時
-    # メインアカウントが偶数時刻（10,12,14,16,18,20,22時）を担当
-    - cron: '0 2,4,6,8,10,12 * * *'
+  # スケジュール実行は無効化（メインの並列ワークフローに統一）
+  # 手動実行のみ有効
   workflow_dispatch:
 
 concurrency:
