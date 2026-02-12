@@ -12,7 +12,11 @@ on:
       - 'data/availability.json'
       - 'data/daily/**'
 
-  # 定期実行は削除（availability.json更新時のみ実行）
+  # 定期実行: 毎時5分と35分（バックアップ）
+  # データが古い場合は先にfetchを実行
+  schedule:
+    - cron: '5 1-13 * * *'   # 毎時5分（JST 10:05-22:05）
+    - cron: '35 1-13 * * *'  # 毎時35分（JST 10:35-22:35）
 
 concurrency:
   group: slot-deploy-static
@@ -39,6 +43,106 @@ jobs:
       - name: Install dependencies
         run: |
           pip install flask jinja2 requests
+
+      - name: Check data freshness and fetch if needed
+        id: check_data
+        env:
+          TZ: Asia/Tokyo
+        run: |
+          python3 << 'EOF'
+          import json
+          import sys
+          from datetime import datetime, timedelta, timezone
+          from pathlib import Path
+
+          JST = timezone(timedelta(hours=9))
+          now = datetime.now(JST)
+          
+          # 営業時間チェック（10:00-22:45 JST）
+          is_business_hours = 10 <= now.hour < 23
+          
+          # availability.jsonの更新時刻を確認
+          avail_path = Path('data/availability.json')
+          if not avail_path.exists():
+              print("NEEDS_FETCH=true")
+              sys.exit(0)
+          
+          with open(avail_path) as f:
+              data = json.load(f)
+          
+          fetched_at = data.get('fetched_at', '')
+          if not fetched_at:
+              print("NEEDS_FETCH=true")
+              sys.exit(0)
+          
+          fetched_time = datetime.fromisoformat(fetched_at)
+          age_minutes = (now - fetched_time).total_seconds() / 60
+          print(f"Data age: {age_minutes:.0f} minutes")
+          
+          # 営業時間中で45分以上古い場合は再取得
+          if is_business_hours and age_minutes > 45:
+              print("NEEDS_FETCH=true")
+          else:
+              print("NEEDS_FETCH=false")
+          EOF
+
+          # 結果を取得
+          if python3 -c "
+          import json
+          from datetime import datetime, timedelta, timezone
+          from pathlib import Path
+
+          JST = timezone(timedelta(hours=9))
+          now = datetime.now(JST)
+          is_business_hours = 10 <= now.hour < 23
+
+          avail_path = Path('data/availability.json')
+          if not avail_path.exists():
+              exit(0)
+
+          with open(avail_path) as f:
+              data = json.load(f)
+          
+          fetched_at = data.get('fetched_at', '')
+          if not fetched_at:
+              exit(0)
+          
+          fetched_time = datetime.fromisoformat(fetched_at)
+          age_minutes = (now - fetched_time).total_seconds() / 60
+          
+          if is_business_hours and age_minutes > 45:
+              exit(0)
+          else:
+              exit(1)
+          "; then
+            echo "needs_fetch=true" >> $GITHUB_OUTPUT
+          else
+            echo "needs_fetch=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Install Playwright (if fetch needed)
+        if: steps.check_data.outputs.needs_fetch == 'true'
+        run: |
+          pip install 'playwright==1.49.1'
+          playwright install chromium
+          playwright install-deps chromium
+
+      - name: Fetch fresh data
+        if: steps.check_data.outputs.needs_fetch == 'true'
+        run: |
+          echo "🔄 Data is stale, fetching fresh data..."
+          for attempt in 1 2 3; do
+            echo "=== Attempt $attempt / 3 ==="
+            if timeout 300 python scripts/fetch_daidata_availability.py; then
+              echo "✅ Fetch succeeded"
+              break
+            else
+              echo "❌ Fetch failed"
+              if [ $attempt -lt 3 ]; then
+                sleep 20
+              fi
+            fi
+          done
 
       - name: Generate static site
         run: |
