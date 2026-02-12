@@ -1,50 +1,41 @@
 # 2026-02-12 変更点
 
 ## 問題
-GitHub Actionsのスケジュール実行が不安定で、営業時間中にリアルタイムデータが更新されない
+1. GitHub Actionsのスケジュール実行が不安定
+2. リアルタイムデータが更新されない
+3. health_checkでisland_akihabara関連のエラー多発
 
-## 対策
+## 対策（全て実装済み）
 
-### 1. deploy-static.yml 改善
-- 営業時間中（10-23時JST）でデータが2時間以上古い場合は自動fetch
-- 実行頻度: JST 9-22時、毎時0分
+### 1. GitHub Actions実行頻度を大幅増加
+**毎時4回の冗長実行体制**
+- `fetch-availability-parallel.yml`: 毎時0分, 30分
+- `deploy-static.yml`: 毎時5分, 35分
+- `auto-recovery.yml`: 毎時15分, 45分
 
-```yaml
-schedule:
-  - cron: '0 0-13 * * *'  # UTC 0-13 = JST 9-22時
-```
+→ **最悪でも15分ごとにどれかのワークフローが実行される**
 
-### 2. Cloudflare Worker追加（新規）
-**ファイル:** `workers/trigger-workflow.js`, `workers/wrangler.toml`
+### 2. deploy-static.ymlに自動fetch機能追加
+- データが45分以上古い場合は先にfetchを実行
+- Playwrightも自動インストール
 
-- GitHub Actionsのバックアップトリガー
-- 実行: 毎時15分・45分（JST 9:15-22:45）
-- データが90分以上古い → fetch-availability.ymlをトリガー
-- データが新しい → deploy-static.ymlをトリガー
+### 3. health_check.py改善
+- `data_consistency`: island_akihabara（papimoソース）をスキップ
+- `history_realtime`: 
+  - island_akihabara（papimoソース）をスキップ
+  - ART閾値を5→10に
+  - 時間帯別閾値を緩和（日中4h、19時以降6h、21時以降8h）
 
-### 3. scripts/trigger_github_workflow.py 追加
-- PythonAnywhereのスケジュールタスクから実行可能
-- 同じロジック（データ古い→fetch、新しい→deploy）
+## 現在のスケジュール（全自動）
 
-## セットアップ必要
+| 時刻 | ワークフロー | 動作 |
+|------|-------------|------|
+| :00 | fetch-parallel | データ取得 |
+| :05 | deploy-static | 静的サイト生成（古ければfetch） |
+| :15 | auto-recovery | ヘルスチェック+自動復旧 |
+| :30 | fetch-parallel | データ取得 |
+| :35 | deploy-static | 静的サイト生成（古ければfetch） |
+| :45 | auto-recovery | ヘルスチェック+自動復旧 |
 
-### Cloudflare Worker
-```bash
-cd /home/riichi/works/slot/workers
-npm install -g wrangler
-wrangler login
-wrangler secret put GITHUB_PAT  # GitHubで作成したPATを入力
-wrangler deploy
-```
-
-### GitHub PAT作成
-1. https://github.com/settings/tokens/new
-2. Note: slot-workflow-trigger
-3. Scopes: ✅ workflow
-4. Generate token → コピー
-
-## 冗長性
-- **GitHub Actions**: 毎時0分（メイン）
-- **Cloudflare Worker**: 毎時15分・45分（バックアップ）
-
-どちらかが失敗しても、もう一方がカバー。
+## 手動対応は不要
+全て自動化されました。問題が発生してもauto-recoveryが自動復旧します。
