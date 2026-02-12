@@ -47,6 +47,70 @@ jobs:
         run: |
           python scripts/sync_realtime_to_history.py
 
+      - name: Fetch detailed history (batch_update)
+        timeout-minutes: 20
+        continue-on-error: true
+        run: |
+          echo "📊 Fetching detailed history data..."
+          # 前日のデータを取得
+          YESTERDAY=$(TZ='Asia/Tokyo' date -d 'yesterday' +'%Y-%m-%d')
+          
+          # リトライ付きで実行
+          MAX_ATTEMPTS=3
+          for attempt in $(seq 1 $MAX_ATTEMPTS); do
+            echo "=== Attempt $attempt / $MAX_ATTEMPTS ==="
+            if timeout 600 python scripts/batch_update_history.py --target-date $YESTERDAY; then
+              echo "✅ Batch update succeeded"
+              break
+            else
+              echo "❌ Batch update failed on attempt $attempt"
+              if [ $attempt -lt $MAX_ATTEMPTS ]; then
+                echo "Waiting 30 seconds before retry..."
+                sleep 30
+              fi
+            fi
+          done
+
+      - name: Verify history completeness
+        run: |
+          python3 << 'EOF'
+          import json
+          from pathlib import Path
+          from datetime import datetime, timedelta, timezone
+          
+          JST = timezone(timedelta(hours=9))
+          yesterday = (datetime.now(JST) - timedelta(days=1)).strftime('%Y-%m-%d')
+          
+          issues = []
+          checked = 0
+          
+          for store_dir in Path('data/history').iterdir():
+              if not store_dir.is_dir():
+                  continue
+              for unit_file in list(store_dir.glob('*.json'))[:3]:
+                  try:
+                      data = json.load(open(unit_file))
+                      for day in data.get('days', []):
+                          if day.get('date') == yesterday:
+                              hist = day.get('history', [])
+                              if hist:
+                                  last_time = hist[-1].get('time', '')
+                                  checked += 1
+                                  if last_time and last_time < '20:00':
+                                      issues.append(f"{store_dir.name}/{unit_file.stem}: {last_time}")
+                              break
+                  except:
+                      pass
+          
+          print(f"Checked: {checked} units")
+          if issues:
+              print(f"⚠️ {len(issues)} units have incomplete data:")
+              for issue in issues[:10]:
+                  print(f"  {issue}")
+          else:
+              print("✅ All history data complete")
+          EOF
+
       - name: Generate static site
         run: |
           python scripts/generate_static.py

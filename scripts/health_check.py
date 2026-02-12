@@ -114,6 +114,95 @@ def check_history_freshness():
             'all_stores': results
         }
 
+def check_history_completeness():
+    """履歴データの完全性チェック（途中で切れていないか）
+    
+    営業時間（10:00-23:00）を考慮して:
+    - 閉店後（23:00以降）: 前日データの最終時刻が20:00以降であるべき
+    - 営業中（12:00以降）: 当日データの最終時刻が現在時刻-2時間以降であるべき
+    - 開店前（0:00-10:00）: 前日データの最終時刻が20:00以降であるべき
+    """
+    now = now_jst()
+    current_hour = now.hour
+    today = now.strftime('%Y-%m-%d')
+    yesterday = (now - timedelta(days=1)).strftime('%Y-%m-%d')
+    
+    # チェック対象日と期待する最終時刻を決定
+    if current_hour >= 23:  # 閉店後
+        target_date = today
+        min_last_time = '20:00'
+        context = '閉店後チェック'
+    elif current_hour >= 12:  # 営業中（12時以降）
+        target_date = today
+        expected_hour = current_hour - 2
+        min_last_time = f'{expected_hour:02d}:00'
+        context = '営業中チェック'
+    elif current_hour >= 10:  # 営業中（10-12時）
+        # 開店直後はスキップ
+        return {'status': 'ok', 'message': '開店直後のためスキップ'}
+    else:  # 開店前（0-10時）
+        target_date = yesterday
+        min_last_time = '20:00'
+        context = '開店前チェック'
+    
+    issues = []
+    checked = 0
+    
+    for store_dir in HISTORY_DIR.iterdir():
+        if not store_dir.is_dir():
+            continue
+        
+        # 各店舗からサンプル3台をチェック
+        unit_files = sorted(store_dir.glob('*.json'), key=lambda f: f.stat().st_mtime, reverse=True)
+        for unit_file in unit_files[:3]:
+            try:
+                with open(unit_file) as f:
+                    data = json.load(f)
+                for day in data.get('days', []):
+                    if day.get('date') == target_date:
+                        hist = day.get('history', [])
+                        if hist:
+                            last_time = hist[-1].get('time', '')
+                            checked += 1
+                            if last_time and last_time < min_last_time:
+                                issues.append({
+                                    'store': store_dir.name,
+                                    'unit': unit_file.stem,
+                                    'date': target_date,
+                                    'last_time': last_time,
+                                    'expected': f'{min_last_time}以降'
+                                })
+                        break
+            except:
+                continue
+    
+    if issues:
+        # 10%以上の台で問題があればエラー
+        error_rate = len(issues) / max(checked, 1) * 100
+        if error_rate >= 10:
+            return {
+                'status': 'error',
+                'message': f'{context}: {len(issues)}台の履歴データが途中で切れている（{error_rate:.0f}%）',
+                'issues': issues[:10],  # 最大10件
+                'total_issues': len(issues),
+                'checked': checked
+            }
+        else:
+            return {
+                'status': 'warning',
+                'message': f'{context}: {len(issues)}台の履歴データが途中で切れている',
+                'issues': issues[:5],
+                'total_issues': len(issues),
+                'checked': checked
+            }
+    else:
+        return {
+            'status': 'ok',
+            'message': f'{context}: 履歴データ完全性OK（{checked}台確認）',
+            'checked': checked
+        }
+
+
 def check_unit_changes():
     """台変動チェック（増台/減台/台移動/撤去）"""
     try:
@@ -446,6 +535,7 @@ def run_all_checks():
     results['checks']['git_status'] = check_git_status()
     results['checks']['data_consistency'] = check_data_consistency()
     results['checks']['history_realtime'] = check_history_freshness_realtime()
+    results['checks']['history_completeness'] = check_history_completeness()
     
     # 全体ステータス判定
     has_error = any(c.get('status') == 'error' for c in results['checks'].values())
