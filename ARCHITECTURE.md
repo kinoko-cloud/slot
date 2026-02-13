@@ -44,7 +44,7 @@
 
 | サフィックス | 機種 | 例 |
 |-------------|------|-----|
-| `_sbj` | スマスロ北斗の拳 | `shinjuku_espass_sbj` |
+| `_sbj` | スーパーブラックジャック | `shinjuku_espass_sbj` |
 | `_hokuto2` | 北斗の拳 転生2 | `shinjuku_espass_hokuto2` |
 
 - **`_hokuto` は使わない** → 必ず `_hokuto2` を使う
