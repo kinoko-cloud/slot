@@ -268,7 +268,7 @@ def generate_index(env):
             'overall_rating': 4,
             'machine_links': [
                 {'store_key': 'island_akihabara_sbj', 'icon': '🃏', 'short_name': 'SBJ'},
-                {'store_key': 'island_akihabara_hokuto', 'icon': '👊', 'short_name': '北斗転生2'},
+                {'store_key': 'island_akihabara_hokuto2', 'icon': '👊', 'short_name': '北斗転生2'},
             ],
         },
         'shibuya_espass': {
@@ -280,7 +280,7 @@ def generate_index(env):
             'overall_rating': 3,
             'machine_links': [
                 {'store_key': 'shibuya_espass_sbj', 'icon': '🃏', 'short_name': 'SBJ'},
-                {'store_key': 'shibuya_espass_hokuto', 'icon': '👊', 'short_name': '北斗転生2'},
+                {'store_key': 'shibuya_espass_hokuto2', 'icon': '👊', 'short_name': '北斗転生2'},
             ],
         },
         'shibuya_honkan_espass': {
@@ -292,7 +292,7 @@ def generate_index(env):
             'overall_rating': 3,
             'machine_links': [
                 {'store_key': 'shibuya_honkan_espass_sbj', 'icon': '🃏', 'short_name': 'SBJ'},
-                {'store_key': 'shibuya_honkan_espass_hokuto', 'icon': '👊', 'short_name': '北斗転生2'},
+                {'store_key': 'shibuya_honkan_espass_hokuto2', 'icon': '👊', 'short_name': '北斗転生2'},
             ],
         },
         'shinjuku_espass': {
@@ -304,7 +304,7 @@ def generate_index(env):
             'overall_rating': 3,
             'machine_links': [
                 {'store_key': 'shinjuku_espass_sbj', 'icon': '🃏', 'short_name': 'SBJ'},
-                {'store_key': 'shinjuku_espass_hokuto', 'icon': '👊', 'short_name': '北斗転生2'},
+                {'store_key': 'shinjuku_espass_hokuto2', 'icon': '👊', 'short_name': '北斗転生2'},
             ],
         },
         'akiba_espass': {
@@ -316,7 +316,7 @@ def generate_index(env):
             'overall_rating': 3,
             'machine_links': [
                 {'store_key': 'akiba_espass_sbj', 'icon': '🃏', 'short_name': 'SBJ'},
-                {'store_key': 'akiba_espass_hokuto', 'icon': '👊', 'short_name': '北斗転生2'},
+                {'store_key': 'akiba_espass_hokuto2', 'icon': '👊', 'short_name': '北斗転生2'},
             ],
         },
         'seibu_shinjuku_espass': {
@@ -2927,7 +2927,7 @@ def main():
     
     data_check_errors = 0
     print("\n📊 TOP10 3日分データ検証:")
-    for sk in ['shinjuku_espass_sbj', 'shinjuku_espass_hokuto', 'shibuya_espass_sbj', 'shibuya_espass_hokuto']:
+    for sk in ['shinjuku_espass_sbj', 'shinjuku_espass_hokuto2', 'shibuya_espass_sbj', 'shibuya_espass_hokuto2']:
         try:
             recs = recommend_units(sk)[:10]
             machine_key = 'hokuto2' if 'hokuto' in sk else 'sbj'
