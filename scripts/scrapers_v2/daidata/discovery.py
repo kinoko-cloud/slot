@@ -33,7 +33,7 @@ REMOVE_ADS_SCRIPT = """
 # ※ hokuto（無印）は現状店舗にないため未定義
 MACHINE_NAMES = {
     'sbj': {
-        'include': ['ブラックジャック', 'SBJ', 'ﾌﾞﾗｯｸ'],
+        'include': ['ブラックジャック', 'SBJ', 'ﾌﾞﾗｯｸｼﾞｬｯｸ'],
         'exclude': [],
     },
     'hokuto2': {
