@@ -1,9 +1,10 @@
 """
-scrapers_v2/papimo/scraper.py - papimoスクレイパー
+scrapers_v2/papimo/scraper.py - papimoスクレイパー v2
 
-機能:
-- papimo.jpからのデータ取得（アイランド秋葉原用）
-- 機種別ランキング/詳細データ取得
+既存scrapers/papimo.pyのリファクタリング版
+- 共通基盤(BaseScraper)を使用
+- 設定を外部化
+- エラー処理を標準化
 """
 import re
 from typing import Dict, Any, List, Optional
@@ -12,7 +13,38 @@ from pathlib import Path
 import sys
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from common.base import BaseScraper, setup_logger, now_jst
+from common.base import BaseScraper, DataStore, setup_logger, now_jst, today_str
+
+# 店舗設定
+PAPIMO_STORES = {
+    'island_akihabara': {
+        'hall_id': '00031715',
+        'hall_name': 'アイランド秋葉原店',
+        'machines': {
+            'sbj': {
+                'machine_id': '225010000',
+                'machine_name': 'Lスーパーブラックジャック',
+                'units': ['1015', '1016', '1017', '1018', '1020', '1021', '1022', '1023',
+                          '1025', '1026', '1027', '1028', '1030', '1031'],
+                'expected_keywords': ['ブラックジャック', 'SBJ'],
+            },
+            'hokuto2': {
+                'machine_id': '225110007',
+                'machine_name': 'L北斗の拳 転生の章2',
+                'units': ['0811', '0812', '0813', '0814', '0815', '0816', '0817', '0818',
+                          '0820', '0821', '0822', '0823', '0824', '0825'],
+                'expected_keywords': ['北斗'],
+            },
+            'hokuto': {
+                'machine_id': '225110007',
+                'machine_name': 'L北斗の拳 転生の章',
+                'units': ['0811', '0812', '0813', '0814', '0815', '0816', '0817', '0818',
+                          '0820', '0821', '0822', '0823', '0824', '0825'],
+                'expected_keywords': ['北斗'],
+            },
+        }
+    }
+}
 
 
 class PapimoScraper(BaseScraper):
@@ -20,152 +52,256 @@ class PapimoScraper(BaseScraper):
     
     BASE_URL = "https://papimo.jp"
     
-    # 店舗設定
-    STORES = {
-        'island_akihabara': {
-            'url_path': '/akihabara',
-            'name': 'アイランド秋葉原',
-        }
-    }
-    
-    # 機種設定
-    MACHINES = {
-        'sbj': {
-            'search_name': 'Lスーパーブラックジャック',
-            'aliases': ['ブラックジャック', 'SBJ'],
-        },
-        'hokuto': {
-            'search_name': '北斗の拳',
-            'aliases': ['北斗', 'ホクト'],
-        },
-        'hokuto2': {
-            'search_name': '北斗の拳 転生の章',
-            'aliases': ['転生', '北斗2'],
-        },
-    }
-    
     def __init__(self, headless: bool = True):
         super().__init__(headless=headless, timeout=30000)
     
-    def fetch_machine_data(self, store_key: str, machine_key: str) -> Dict[str, Any]:
-        """機種別データ取得"""
-        store = self.STORES.get(store_key)
-        machine = self.MACHINES.get(machine_key)
+    def _parse_number(self, s: str) -> int:
+        """カンマ区切りの数値を解析"""
+        try:
+            return int(s.replace(',', ''))
+        except:
+            return 0
+    
+    def _validate_machine(self, expected_keywords: List[str]) -> bool:
+        """機種名バリデーション"""
+        if not expected_keywords:
+            return True
         
-        if not store or not machine:
-            return {'error': 'invalid_store_or_machine'}
+        try:
+            text = self.get_text()
+            for line in text.split('\n')[:30]:
+                line = line.strip()
+                if len(line) > 3:
+                    for kw in expected_keywords:
+                        if kw in line:
+                            return True
+        except:
+            pass
         
-        url = f"{self.BASE_URL}{store['url_path']}"
+        return False
+    
+    def _click_more_buttons(self):
+        """「もっと見る」ボタンをクリックして全履歴表示"""
+        max_clicks = 20
+        for _ in range(max_clicks):
+            try:
+                btn = self.page.query_selector('text=もっと見る')
+                if btn and btn.is_visible():
+                    btn.click()
+                    self.wait(500)
+                else:
+                    break
+            except:
+                break
+    
+    def fetch_unit_history(self, hall_id: str, unit_id: str, 
+                          days_back: int = 14, 
+                          expected_keywords: List[str] = None) -> Dict[str, Any]:
+        """1台分の履歴を取得"""
+        url = f"{self.BASE_URL}/h/{hall_id}/hit/view/{unit_id}"
         
-        if not self.navigate(url):
-            return {'error': 'navigation_failed'}
-        
-        self.wait(2000)
-        
-        # 機種検索
-        search_name = machine['search_name']
-        data = {
-            'store_key': store_key,
-            'machine_key': machine_key,
-            'store_name': store['name'],
-            'units': [],
+        result = {
+            'unit_id': unit_id,
+            'days': [],
             'fetched_at': now_jst().isoformat()
         }
         
-        # 機種リンクを探す
-        try:
-            links = self.page.locator(f'a:has-text("{search_name}")').all()
-            if links:
-                links[0].click()
-                self.wait(2000)
-                data['units'] = self._parse_machine_page()
-        except Exception as e:
-            self.logger.error(f"Machine search failed: {e}")
-            data['error'] = str(e)
+        if not self.navigate(url):
+            result['error'] = 'navigation_failed'
+            return result
         
-        return data
-    
-    def _parse_machine_page(self) -> List[Dict]:
-        """機種ページのパース"""
-        units = []
+        self.wait(2000)
         
-        try:
-            # テーブル行を取得
-            rows = self.page.locator('table tr, .unit-row').all()
+        # 機種バリデーション
+        if expected_keywords and not self._validate_machine(expected_keywords):
+            self.logger.warning(f"Machine mismatch for unit {unit_id}")
+            result['machine_mismatch'] = True
+            return result
+        
+        # 利用可能な日付を取得
+        available_dates = self.page.evaluate('''() => {
+            const select = document.querySelector('#display-date');
+            if (!select) return [];
+            return Array.from(select.options).map(o => o.value);
+        }''')
+        
+        if not available_dates:
+            self.logger.debug(f"No date selector for unit {unit_id}")
+            return result
+        
+        # 日付ごとにデータ取得
+        for date_value in available_dates[:days_back]:
+            date_str = f"{date_value[:4]}-{date_value[4:6]}-{date_value[6:8]}"
             
-            for row in rows:
-                try:
-                    text = row.inner_text()
+            try:
+                self.page.select_option('#display-date', date_value)
+                self.wait(1500)
+                self._click_more_buttons()
+                
+                day_data = self._parse_day_data(unit_id, date_str)
+                if day_data and day_data.get('total_start', 0) > 0:
+                    result['days'].append(day_data)
+                    self.logger.debug(f"  {date_str}: ART={day_data.get('art', 0)}")
                     
-                    # 台番号
-                    unit_match = re.search(r'(\d{3,4})', text)
-                    if not unit_match:
-                        continue
-                    
-                    unit = {'unit_id': unit_match.group(1)}
-                    
-                    # G数/BB/RB/ART等
-                    numbers = re.findall(r'\d+', text)
-                    if len(numbers) >= 4:
-                        unit['games'] = int(numbers[1]) if len(numbers) > 1 else 0
-                        unit['bb'] = int(numbers[2]) if len(numbers) > 2 else 0
-                        unit['rb'] = int(numbers[3]) if len(numbers) > 3 else 0
-                    
-                    # 差枚
-                    diff_match = re.search(r'([+-]?\d{1,5})枚', text)
-                    if diff_match:
-                        unit['diff_medals'] = int(diff_match.group(1))
-                    
-                    units.append(unit)
-                    
-                except Exception as e:
-                    self.logger.debug(f"Row parse error: {e}")
-                    continue
-                    
-        except Exception as e:
-            self.logger.error(f"Page parse failed: {e}")
+            except Exception as e:
+                self.logger.debug(f"  {date_str}: error - {e}")
         
+        return result
+    
+    def _parse_day_data(self, unit_id: str, date_str: str) -> Optional[Dict]:
+        """1日分のデータをパース"""
+        text = self.get_text()
+        
+        data = {
+            'unit_id': unit_id,
+            'date': date_str,
+        }
+        
+        # BB/RB/ART回数
+        patterns = [
+            (r'BB回数\s*(\d+)', 'bb'),
+            (r'RB回数\s*(\d+)', 'rb'),
+            (r'ART回数\s*(\d+)', 'art'),
+            (r'総スタート\s*([\d,]+)', 'total_start'),
+            (r'最終スタート\s*([\d,]+)', 'final_start'),
+            (r'ARTゲーム数\s*([\d,]+)', 'art_games'),
+            (r'最大出メダル\s*([\d,]+)', 'max_medals'),
+            (r'合成確率\s*1/([\d,]+)', 'combined_prob'),
+        ]
+        
+        for pattern, key in patterns:
+            match = re.search(pattern, text)
+            if match:
+                data[key] = self._parse_number(match.group(1))
+        
+        # 当たり履歴
+        history = []
+        history_pattern = re.findall(
+            r'(\d{1,2}:\d{2})\s+([\d,]+)\s+([\d,]+)\s*\n?\s*(ART|BB|RB|AT|REG)',
+            text,
+            re.MULTILINE
+        )
+        
+        for i, match in enumerate(history_pattern):
+            history.append({
+                'hit_num': i + 1,
+                'time': match[0],
+                'start': self._parse_number(match[1]),
+                'medals': self._parse_number(match[2]),
+                'type': match[3],
+            })
+        
+        if history:
+            data['history'] = history
+            art_starts = [h['start'] for h in history if h['type'] == 'ART']
+            if art_starts:
+                data['avg_art_start'] = sum(art_starts) / len(art_starts)
+                data['max_art_start'] = max(art_starts)
+        
+        # 確率計算
+        art = data.get('art', 0)
+        total_start = data.get('total_start', 0)
+        if art > 0 and total_start > 0:
+            data['prob'] = round(total_start / art, 1)
+            data['is_good_sbj'] = data['prob'] <= 130
+            data['is_good_hokuto'] = data['prob'] <= 330
+        
+        return data if data.get('total_start', 0) > 0 else None
+    
+    def discover_units(self, hall_id: str, machine_id: str) -> List[str]:
+        """一覧ページから現在の台番号を自動取得"""
+        url = f"{self.BASE_URL}/h/{hall_id}/hit/index_sort/{machine_id}/1-20-1290529/83/1/0/0"
+        
+        if not self.navigate(url):
+            return []
+        
+        self.wait(2000)
+        
+        text = self.get_text()
+        matches = re.findall(r'No\.(\d{4})', text)
+        units = sorted(set(matches)) if matches else []
+        
+        self.logger.info(f"Discovered {len(units)} units: {units}")
         return units
     
-    def fetch_unit_history(self, store_key: str, unit_id: str) -> List[Dict]:
-        """台別履歴取得"""
-        # TODO: papimoの台別履歴ページの構造に合わせて実装
-        return []
-    
-    def fetch(self, store_key: str = 'island_akihabara', 
-              machine_keys: List[str] = None) -> Dict[str, Any]:
+    def fetch(self, store_key: str = 'island_akihabara',
+              machine_key: str = 'sbj',
+              days_back: int = 7) -> Dict[str, Any]:
         """
         一括取得
         
         Args:
             store_key: 店舗キー
-            machine_keys: 機種キーリスト（Noneで全機種）
+            machine_key: 機種キー (sbj/hokuto/hokuto2)
+            days_back: 取得日数
         """
-        if machine_keys is None:
-            machine_keys = list(self.MACHINES.keys())
+        store = PAPIMO_STORES.get(store_key)
+        if not store:
+            return {'error': f'Unknown store: {store_key}'}
+        
+        machine = store['machines'].get(machine_key)
+        if not machine:
+            return {'error': f'Unknown machine: {machine_key}'}
+        
+        hall_id = store['hall_id']
+        units = machine['units']
+        expected_keywords = machine.get('expected_keywords', [])
         
         results = {
             'store_key': store_key,
-            'machines': {},
+            'machine_key': machine_key,
+            'hall_id': hall_id,
+            'hall_name': store['hall_name'],
+            'machine_name': machine['machine_name'],
+            'units': [],
             'fetched_at': now_jst().isoformat()
         }
         
+        self.logger.info(f"Fetching {store_key}/{machine_key}: {len(units)} units, {days_back} days")
+        
         with self.browser_session():
-            for machine_key in machine_keys:
-                self.logger.info(f"Fetching {store_key}/{machine_key}")
-                data = self.fetch_machine_data(store_key, machine_key)
-                results['machines'][machine_key] = data
+            for i, unit_id in enumerate(units, 1):
+                self.logger.info(f"[{i}/{len(units)}] Unit {unit_id}")
+                
+                unit_data = self.fetch_unit_history(
+                    hall_id, unit_id, days_back, expected_keywords
+                )
+                results['units'].append(unit_data)
         
         return results
 
 
-# 使用例
+# CLI
 if __name__ == '__main__':
+    import sys
+    
     scraper = PapimoScraper(headless=True)
     
-    # アイランド秋葉原のSBJデータ
-    result = scraper.fetch(
-        store_key='island_akihabara',
-        machine_keys=['sbj']
-    )
-    print(result)
+    # 引数パース
+    machine = sys.argv[1] if len(sys.argv) > 1 else 'sbj'
+    days = int(sys.argv[2]) if len(sys.argv) > 2 else 7
+    
+    if machine == 'discover':
+        # 台番号探索モード
+        with scraper.browser_session():
+            units = scraper.discover_units('00031715', '225110007')
+            print(f"発見: {units}")
+    else:
+        # データ取得
+        result = scraper.fetch(
+            store_key='island_akihabara',
+            machine_key=machine,
+            days_back=days
+        )
+        
+        # サマリー表示
+        print(f"\n{'='*60}")
+        print(f"取得結果: {result['hall_name']} {result['machine_name']}")
+        print(f"{'='*60}")
+        
+        for unit in result['units']:
+            unit_id = unit.get('unit_id')
+            days_data = unit.get('days', [])
+            total_art = sum(d.get('art', 0) for d in days_data)
+            total_games = sum(d.get('total_start', 0) for d in days_data)
+            print(f"台{unit_id}: {len(days_data)}日, ART={total_art}, G数={total_games:,}")
