@@ -51,22 +51,64 @@ def enrich_recs(recs):
         _enrich_day_prefix(rec, days_by_date, 'day_before_', 'day_before_date')
         _enrich_day_prefix(rec, days_by_date, 'three_days_ago_', 'three_days_ago_date')
 
-        # 2. recent_daysの補完
-        for rd in rec.get('recent_days', []):
-            rd_date = rd.get('date', '')
-            if not rd_date:
-                continue
-            day_data = days_by_date.get(rd_date)
-            if not day_data:
-                continue
-            _enrich_day_dict(rd, day_data)
+        # 2. recent_daysの補完（空なら蓄積DBから構築）
+        if not rec.get('recent_days'):
+            # 蓄積DBから過去7日分を構築
+            from datetime import datetime, timedelta
+            recent_days = []
+            for i in range(1, 8):
+                d = (datetime.now() - timedelta(days=i)).strftime('%Y-%m-%d')
+                day_data = days_by_date.get(d)
+                if day_data and day_data.get('art', 0) > 0:
+                    recent_days.append({
+                        'date': d,
+                        'art': day_data.get('art', 0),
+                        'diff_medals': day_data.get('diff_medals'),
+                        'max_rensa': day_data.get('max_rensa'),
+                        'max_medals': day_data.get('max_medals'),
+                        'history': day_data.get('history', []),
+                    })
+            rec['recent_days'] = recent_days
+        else:
+            for rd in rec.get('recent_days', []):
+                rd_date = rd.get('date', '')
+                if not rd_date:
+                    continue
+                day_data = days_by_date.get(rd_date)
+                if not day_data:
+                    continue
+                _enrich_day_dict(rd, day_data)
 
 
 def _enrich_day_prefix(rec, days_by_date, prefix, date_key):
     """rec[prefix + 'diff_medals'] 等を蓄積DBから補完"""
+    from datetime import datetime, timedelta
+    
     target_date = rec.get(date_key, '')
+    
+    # 日付が空の場合、蓄積DBから正しい日付を設定
     if not target_date:
-        return
+        # prefixから何日前かを判定
+        if prefix == 'yesterday_':
+            days_ago = 1
+        elif prefix == 'day_before_':
+            days_ago = 2
+        elif prefix == 'three_days_ago_':
+            days_ago = 3
+        else:
+            return
+        
+        target_date = (datetime.now() - timedelta(days=days_ago)).strftime('%Y-%m-%d')
+        day_data = days_by_date.get(target_date)
+        if day_data and day_data.get('art', 0) > 0:
+            # 日付とARTを設定
+            rec[date_key] = target_date
+            rec[f'{prefix}art'] = day_data.get('art', 0)
+            rec[f'{prefix}rb'] = day_data.get('rb', 0)
+            rec[f'{prefix}games'] = day_data.get('games') or day_data.get('total_start', 0)
+        else:
+            return
+    
     day_data = days_by_date.get(target_date)
     if not day_data:
         return
