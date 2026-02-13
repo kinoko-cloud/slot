@@ -772,11 +772,9 @@ def generate_index(env):
                     if day.get('date') == fixed_date:
                         matching_day = day
                         break
-                if matching_day:
+                if matching_day and matching_day.get('art', 0) > 0:
                     new_recent_days.append(matching_day)
-                else:
-                    # データなしの場合は空エントリ
-                    new_recent_days.append({'date': fixed_date, 'art': 0, 'games': 0})
+                # データなしまたはART=0の場合はスキップ（表示しない）
             rec['recent_days'] = new_recent_days
 
     # TOP3 + 全S/A候補 + 爆発台の過去3日分+当日の当たり履歴を加工
