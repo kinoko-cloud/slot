@@ -715,11 +715,13 @@ def generate_index(env):
     fixed_day_before = fixed_dates[1]
     fixed_three_days = fixed_dates[2]
     
+    # 古すぎるデータをクリア（7日以上前のデータは除外）
+    cutoff_date = (datetime.now() - timedelta(days=7)).strftime('%Y-%m-%d')
+
     for rec in top3 + top3_candidates + yesterday_top10 + today_top10:
-        # 前日データのチェック（正しい日付のデータのみ使用）
+        # 前日データのチェック（7日以上前は除外）
         y_date = rec.get('yesterday_date', '')
-        if y_date and y_date != fixed_yesterday:
-            # 日付がずれている場合はクリア（データがない場合はスキップ）
+        if y_date and y_date < cutoff_date:
             rec['yesterday_art'] = 0
             rec['yesterday_rb'] = 0
             rec['yesterday_games'] = 0
@@ -727,12 +729,11 @@ def generate_index(env):
             rec['yesterday_max_rensa'] = 0
             rec['yesterday_max_medals'] = 0
             rec['yesterday_history'] = []
-            rec['yesterday_date'] = fixed_yesterday
+            rec['yesterday_date'] = ''
 
-        # 2日前データのチェック
+        # 2日前データのチェック（7日以上前は除外）
         db_date = rec.get('day_before_date', '')
-        if db_date and db_date != fixed_day_before:
-            # 日付がずれている場合はクリア（データがない場合はスキップ）
+        if db_date and db_date < cutoff_date:
             rec['day_before_art'] = 0
             rec['day_before_rb'] = 0
             rec['day_before_games'] = 0
@@ -740,12 +741,11 @@ def generate_index(env):
             rec['day_before_max_rensa'] = 0
             rec['day_before_max_medals'] = 0
             rec['day_before_history'] = []
-            rec['day_before_date'] = fixed_day_before
+            rec['day_before_date'] = ''
 
-        # 3日前データのチェック
+        # 3日前データのチェック（7日以上前は除外）
         td_date = rec.get('three_days_ago_date', '')
-        if td_date and td_date != fixed_three_days:
-            # 日付がずれている場合はクリア（データがない場合はスキップ）
+        if td_date and td_date < cutoff_date:
             rec['three_days_ago_art'] = 0
             rec['three_days_ago_rb'] = 0
             rec['three_days_ago_games'] = 0
@@ -1368,10 +1368,13 @@ def generate_recommend_pages(env):
         fixed_day_before = fixed_dates[1]
         fixed_three_days = fixed_dates[2]
 
+        # 古すぎるデータをクリア（7日以上前のデータは除外）
+        cutoff_date = (datetime.now() - timedelta(days=7)).strftime('%Y-%m-%d')
+
         for rec in recommendations:
-            # 前日データのチェック
+            # 前日データのチェック（7日以上前は除外）
             y_date = rec.get('yesterday_date', '')
-            if y_date and y_date != fixed_yesterday:
+            if y_date and y_date < cutoff_date:
                 rec['yesterday_art'] = 0
                 rec['yesterday_rb'] = 0
                 rec['yesterday_games'] = 0
@@ -1379,11 +1382,11 @@ def generate_recommend_pages(env):
                 rec['yesterday_max_rensa'] = 0
                 rec['yesterday_max_medals'] = 0
                 rec['yesterday_history'] = []
-                rec['yesterday_date'] = fixed_yesterday
+                rec['yesterday_date'] = ''
 
-            # 前々日データのチェック
+            # 前々日データのチェック（7日以上前は除外）
             db_date = rec.get('day_before_date', '')
-            if db_date and db_date != fixed_day_before:
+            if db_date and db_date < cutoff_date:
                 rec['day_before_art'] = 0
                 rec['day_before_rb'] = 0
                 rec['day_before_games'] = 0
@@ -1391,11 +1394,11 @@ def generate_recommend_pages(env):
                 rec['day_before_max_rensa'] = 0
                 rec['day_before_max_medals'] = 0
                 rec['day_before_history'] = []
-                rec['day_before_date'] = fixed_day_before
+                rec['day_before_date'] = ''
 
-            # 3日前データのチェック
+            # 3日前データのチェック（7日以上前は除外）
             td_date = rec.get('three_days_ago_date', '')
-            if td_date and td_date != fixed_three_days:
+            if td_date and td_date < cutoff_date:
                 rec['three_days_ago_art'] = 0
                 rec['three_days_ago_rb'] = 0
                 rec['three_days_ago_games'] = 0
@@ -1403,7 +1406,7 @@ def generate_recommend_pages(env):
                 rec['three_days_ago_max_rensa'] = 0
                 rec['three_days_ago_max_medals'] = 0
                 rec['three_days_ago_history'] = []
-                rec['three_days_ago_date'] = fixed_three_days
+                rec['three_days_ago_date'] = ''
 
             # recent_daysも日付固定化
             if rec.get('recent_days'):
