@@ -40,16 +40,25 @@
 
 ### 命名規則（store_key）
 
-**⚠️ 重要: _hokuto と _hokuto2 の違い**
+**⚠️ 重要: 機種キーと機種名は `config/rankings.py` の `MACHINES` 辞書を参照**
+
+```python
+# config/rankings.py より
+MACHINES = {
+    'sbj': {'name': 'Lスーパーブラックジャック', ...},
+    'hokuto2': {'name': 'L北斗の拳 転生の章2', ...},
+}
+```
 
 | サフィックス | 機種 | 例 |
 |-------------|------|-----|
-| `_sbj` | スーパーブラックジャック | `shinjuku_espass_sbj` |
-| `_hokuto2` | 北斗の拳 転生2 | `shinjuku_espass_hokuto2` |
+| `_sbj` | Lスーパーブラックジャック | `shinjuku_espass_sbj` |
+| `_hokuto2` | L北斗の拳 転生の章2 | `shinjuku_espass_hokuto2` |
 
 - **`_hokuto` は使わない** → 必ず `_hokuto2` を使う
 - 歴史的経緯で `_hokuto` が残っている場合、`stores.py` が自動で `_hokuto2` に変換
 - 新規追加時は必ず `_hokuto2` で登録
+- **機種名・閾値等は全て `config/rankings.py` の `MACHINES` を参照**
 
 **store_keyの構成:**
 ```
