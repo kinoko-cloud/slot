@@ -28,11 +28,42 @@ REMOVE_ADS_SCRIPT = """
 """
 
 # 機種名（検索用）
+# 重要: 「スマスロ北斗」と「北斗転生2」は別機種！
+# - hokuto2: 「転生」が含まれていること必須
+# - hokuto: 無印北斗（転生を含まない）
+# - sbj: ブラックジャック
 MACHINE_NAMES = {
-    'sbj': ['スーパーブラックジャック', 'ブラックジャック', 'SBJ'],
-    'hokuto': ['北斗の拳', '北斗'],
-    'hokuto2': ['北斗の拳 転生', '転生の章', '北斗転生'],
+    'sbj': {
+        'include': ['ブラックジャック', 'SBJ', 'ﾌﾞﾗｯｸ'],
+        'exclude': [],
+    },
+    'hokuto2': {
+        'include': ['転生'],  # 「転生」必須
+        'exclude': [],
+    },
+    'hokuto': {
+        'include': ['北斗'],
+        'exclude': ['転生'],  # 「転生」を含む場合は除外
+    },
 }
+
+def match_machine_name(text: str, machine_key: str) -> bool:
+    """機種名マッチング（include/exclude判定）"""
+    config = MACHINE_NAMES.get(machine_key)
+    if not config:
+        return False
+    
+    # include: いずれかを含む
+    has_include = any(kw in text for kw in config['include'])
+    if not has_include:
+        return False
+    
+    # exclude: いずれも含まない
+    has_exclude = any(kw in text for kw in config.get('exclude', []))
+    if has_exclude:
+        return False
+    
+    return True
 
 
 class DaidataDiscovery(BaseScraper):
@@ -155,24 +186,30 @@ class DaidataDiscovery(BaseScraper):
             self.logger.error(f"Failed to navigate to model list: {e}")
             return result
         
-        # Step 3: 機種リンクを探す
-        search_names = MACHINE_NAMES.get(machine_key, [machine_name] if machine_name else [])
+        # Step 3: 機種リンクを探す（include/excludeロジック使用）
         unit_list_url = None
         
-        for name in search_names:
-            try:
-                links = self.page.locator('a').all()
-                for link in links:
-                    txt = link.inner_text()
-                    href = link.get_attribute('href') or ''
-                    if name in txt and 'unit_list' in href:
-                        unit_list_url = href if href.startswith('http') else f"{self.BASE_URL}{href}"
-                        result['machine_name'] = name
-                        break
-                if unit_list_url:
+        try:
+            links = self.page.locator('a').all()
+            for link in links:
+                txt = link.inner_text()
+                href = link.get_attribute('href') or ''
+                
+                if 'unit_list' not in href:
+                    continue
+                
+                # 機種名マッチング
+                if machine_key and match_machine_name(txt, machine_key):
+                    unit_list_url = href if href.startswith('http') else f"{self.BASE_URL}{href}"
+                    result['machine_name'] = txt.split('\n')[0].strip()
+                    self.logger.info(f"  Matched: {result['machine_name']}")
                     break
-            except:
-                continue
+                elif machine_name and machine_name in txt:
+                    unit_list_url = href if href.startswith('http') else f"{self.BASE_URL}{href}"
+                    result['machine_name'] = txt.split('\n')[0].strip()
+                    break
+        except Exception as e:
+            self.logger.error(f"Machine search error: {e}")
         
         if not unit_list_url:
             result['error'] = 'machine_not_found'
