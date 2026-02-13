@@ -3411,6 +3411,18 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
             y_date = rec.get('yesterday_date', '')
             db_date = rec.get('day_before_date', '')
 
+            # 3日前の日付を明示的に計算
+            three_days_ago_date_expected = ''
+            if y_date:
+                try:
+                    y_dt = datetime.strptime(y_date, '%Y-%m-%d')
+                    three_days_ago_date_expected = (y_dt - timedelta(days=2)).strftime('%Y-%m-%d')
+                except:
+                    pass
+            if not three_days_ago_date_expected:
+                # y_dateがない場合は現在日付から計算
+                three_days_ago_date_expected = (datetime.now() - timedelta(days=3)).strftime('%Y-%m-%d')
+
             # 各日の最大連チャン・最大枚数を蓄積DBから補完
             for ad in acc_days:
                 d = ad.get('date', '')
@@ -3426,7 +3438,7 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
                     rec['day_before_max_medals'] = ad.get('max_medals', 0)
                     if ad.get('history'):
                         rec['day_before_history'] = ad['history']
-                elif d and d < (db_date or y_date or '9999') and not rec.get('three_days_ago_date'):
+                elif d == three_days_ago_date_expected and not rec.get('three_days_ago_date'):
                     rec['three_days_ago_art'] = ad.get('art', 0)
                     rec['three_days_ago_rb'] = ad.get('rb', 0)
                     rec['three_days_ago_games'] = ad.get('games', 0)

@@ -716,12 +716,10 @@ def generate_index(env):
     fixed_three_days = fixed_dates[2]
     
     for rec in top3 + top3_candidates + yesterday_top10 + today_top10:
-        # 前日データのチェック（データがあれば保持、日付表示のみ修正）
+        # 前日データのチェック（正しい日付のデータのみ使用）
         y_date = rec.get('yesterday_date', '')
-        if y_date and y_date != fixed_yesterday:
-            # 日付がずれているが、データがあればそのまま使用（表示日付のみ修正）
-            pass
-        elif not y_date:
+        if y_date != fixed_yesterday:
+            # 日付がずれている、またはデータがない場合はクリア
             rec['yesterday_art'] = 0
             rec['yesterday_rb'] = 0
             rec['yesterday_games'] = 0
@@ -729,14 +727,12 @@ def generate_index(env):
             rec['yesterday_max_rensa'] = 0
             rec['yesterday_max_medals'] = 0
             rec['yesterday_history'] = []
-        if not y_date:
             rec['yesterday_date'] = fixed_yesterday
-        
+
         # 2日前データのチェック
         db_date = rec.get('day_before_date', '')
-        if db_date and db_date != fixed_day_before:
-            pass
-        elif not db_date:
+        if db_date != fixed_day_before:
+            # 日付がずれている、またはデータがない場合はクリア
             rec['day_before_art'] = 0
             rec['day_before_rb'] = 0
             rec['day_before_games'] = 0
@@ -744,14 +740,12 @@ def generate_index(env):
             rec['day_before_max_rensa'] = 0
             rec['day_before_max_medals'] = 0
             rec['day_before_history'] = []
-        if not db_date:
             rec['day_before_date'] = fixed_day_before
-        
+
         # 3日前データのチェック
         td_date = rec.get('three_days_ago_date', '')
-        if td_date and td_date != fixed_three_days:
-            pass
-        elif not td_date:
+        if td_date != fixed_three_days:
+            # 日付がずれている、またはデータがない場合はクリア
             rec['three_days_ago_art'] = 0
             rec['three_days_ago_rb'] = 0
             rec['three_days_ago_games'] = 0
@@ -759,7 +753,6 @@ def generate_index(env):
             rec['three_days_ago_max_rensa'] = 0
             rec['three_days_ago_max_medals'] = 0
             rec['three_days_ago_history'] = []
-        if not td_date:
             rec['three_days_ago_date'] = fixed_three_days
         
         # recent_daysも日付固定化
@@ -924,10 +917,14 @@ def generate_index(env):
     yesterday_str = format_date_with_weekday(yesterday)
 
     # 「本日」「前日」を日付付きに
-    # データの日付は常に「前日」を表示（データの有無に関係なく）
-    # 今日が2/2なら「2/1の的中率」「2/1の爆発台」と表示
-    data_date_str = format_date_with_weekday(yesterday)  # 前日
-    prev_date_str = format_date_with_weekday(yesterday - timedelta(days=1))  # 前々日
+    # 営業中: 本日の日付を表示（リアルタイムデータ）
+    # 開店前/閉店後: 前日の日付を表示（蓄積データ）
+    if is_open:
+        data_date_str = format_date_with_weekday(now)  # 本日
+        prev_date_str = format_date_with_weekday(yesterday)  # 前日
+    else:
+        data_date_str = format_date_with_weekday(yesterday)  # 前日
+        prev_date_str = format_date_with_weekday(yesterday - timedelta(days=1))  # 前々日
 
     # 機種別的中率（ヒーロー表示用: verifyデータから取得）
     accuracy_hero = []
