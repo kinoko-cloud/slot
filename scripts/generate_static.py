@@ -718,8 +718,8 @@ def generate_index(env):
     for rec in top3 + top3_candidates + yesterday_top10 + today_top10:
         # 前日データのチェック（正しい日付のデータのみ使用）
         y_date = rec.get('yesterday_date', '')
-        if y_date != fixed_yesterday:
-            # 日付がずれている、またはデータがない場合はクリア
+        if y_date and y_date != fixed_yesterday:
+            # 日付がずれている場合はクリア（データがない場合はスキップ）
             rec['yesterday_art'] = 0
             rec['yesterday_rb'] = 0
             rec['yesterday_games'] = 0
@@ -731,8 +731,8 @@ def generate_index(env):
 
         # 2日前データのチェック
         db_date = rec.get('day_before_date', '')
-        if db_date != fixed_day_before:
-            # 日付がずれている、またはデータがない場合はクリア
+        if db_date and db_date != fixed_day_before:
+            # 日付がずれている場合はクリア（データがない場合はスキップ）
             rec['day_before_art'] = 0
             rec['day_before_rb'] = 0
             rec['day_before_games'] = 0
@@ -744,8 +744,8 @@ def generate_index(env):
 
         # 3日前データのチェック
         td_date = rec.get('three_days_ago_date', '')
-        if td_date != fixed_three_days:
-            # 日付がずれている、またはデータがない場合はクリア
+        if td_date and td_date != fixed_three_days:
+            # 日付がずれている場合はクリア（データがない場合はスキップ）
             rec['three_days_ago_art'] = 0
             rec['three_days_ago_rb'] = 0
             rec['three_days_ago_games'] = 0
@@ -1371,7 +1371,7 @@ def generate_recommend_pages(env):
         for rec in recommendations:
             # 前日データのチェック
             y_date = rec.get('yesterday_date', '')
-            if y_date != fixed_yesterday:
+            if y_date and y_date != fixed_yesterday:
                 rec['yesterday_art'] = 0
                 rec['yesterday_rb'] = 0
                 rec['yesterday_games'] = 0
@@ -1383,7 +1383,7 @@ def generate_recommend_pages(env):
 
             # 前々日データのチェック
             db_date = rec.get('day_before_date', '')
-            if db_date != fixed_day_before:
+            if db_date and db_date != fixed_day_before:
                 rec['day_before_art'] = 0
                 rec['day_before_rb'] = 0
                 rec['day_before_games'] = 0
@@ -1395,7 +1395,7 @@ def generate_recommend_pages(env):
 
             # 3日前データのチェック
             td_date = rec.get('three_days_ago_date', '')
-            if td_date != fixed_three_days:
+            if td_date and td_date != fixed_three_days:
                 rec['three_days_ago_art'] = 0
                 rec['three_days_ago_rb'] = 0
                 rec['three_days_ago_games'] = 0
