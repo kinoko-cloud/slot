@@ -3408,48 +3408,62 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
         # 蓄積DBから3日目+各日の最大連チャン・最大枚数を取得
         if accumulated and accumulated.get('days'):
             acc_days = sorted(accumulated['days'], key=lambda x: x.get('date', ''), reverse=True)
+
+            # 日付を明示的に計算（データの有無に関わらず）
+            now = datetime.now()
+            expected_yesterday = (now - timedelta(days=1)).strftime('%Y-%m-%d')
+            expected_day_before = (now - timedelta(days=2)).strftime('%Y-%m-%d')
+            expected_three_days = (now - timedelta(days=3)).strftime('%Y-%m-%d')
+
             y_date = rec.get('yesterday_date', '')
             db_date = rec.get('day_before_date', '')
-
-            # 3日前の日付を明示的に計算
-            three_days_ago_date_expected = ''
-            if y_date:
-                try:
-                    y_dt = datetime.strptime(y_date, '%Y-%m-%d')
-                    three_days_ago_date_expected = (y_dt - timedelta(days=2)).strftime('%Y-%m-%d')
-                except:
-                    pass
-            if not three_days_ago_date_expected:
-                # y_dateがない場合は現在日付から計算
-                three_days_ago_date_expected = (datetime.now() - timedelta(days=3)).strftime('%Y-%m-%d')
 
             # 各日の最大連チャン・最大枚数を蓄積DBから補完
             for ad in acc_days:
                 d = ad.get('date', '')
-                if d == y_date:
+
+                # 前日のデータ
+                if d == expected_yesterday:
+                    if not rec.get('yesterday_art'):
+                        rec['yesterday_art'] = ad.get('art', 0)
+                        rec['yesterday_rb'] = ad.get('rb', 0)
+                        rec['yesterday_games'] = ad.get('games', 0)
+                        rec['yesterday_date'] = d
                     if not rec.get('yesterday_max_rensa'):
                         rec['yesterday_max_rensa'] = ad.get('max_rensa', 0)
                     if not rec.get('yesterday_max_medals'):
                         rec['yesterday_max_medals'] = ad.get('max_medals', 0)
                     if not rec.get('yesterday_history') and ad.get('history'):
                         rec['yesterday_history'] = ad['history']
-                elif d == db_date:
-                    rec['day_before_max_rensa'] = ad.get('max_rensa', 0)
-                    rec['day_before_max_medals'] = ad.get('max_medals', 0)
-                    if ad.get('history'):
+
+                # 前々日のデータ
+                elif d == expected_day_before:
+                    if not rec.get('day_before_art'):
+                        rec['day_before_art'] = ad.get('art', 0)
+                        rec['day_before_rb'] = ad.get('rb', 0)
+                        rec['day_before_games'] = ad.get('games', 0)
+                        rec['day_before_date'] = d
+                    if not rec.get('day_before_max_rensa'):
+                        rec['day_before_max_rensa'] = ad.get('max_rensa', 0)
+                    if not rec.get('day_before_max_medals'):
+                        rec['day_before_max_medals'] = ad.get('max_medals', 0)
+                    if not rec.get('day_before_history') and ad.get('history'):
                         rec['day_before_history'] = ad['history']
-                elif d == three_days_ago_date_expected and not rec.get('three_days_ago_date'):
-                    rec['three_days_ago_art'] = ad.get('art', 0)
-                    rec['three_days_ago_rb'] = ad.get('rb', 0)
-                    rec['three_days_ago_games'] = ad.get('games', 0)
-                    rec['three_days_ago_date'] = d
-                    rec['three_days_ago_max_rensa'] = ad.get('max_rensa', 0)
-                    rec['three_days_ago_max_medals'] = ad.get('max_medals', 0)
-                    if ad.get('history'):
-                        rec['three_days_ago_history'] = ad['history']
-                    _3d_art = ad.get('art', 0)
-                    _3d_games = ad.get('games', 0)
-                    rec['three_days_ago_prob'] = round(_3d_games / _3d_art) if _3d_art > 0 and _3d_games > 0 else 0
+
+                # 3日前のデータ
+                elif d == expected_three_days:
+                    if not rec.get('three_days_ago_art'):
+                        rec['three_days_ago_art'] = ad.get('art', 0)
+                        rec['three_days_ago_rb'] = ad.get('rb', 0)
+                        rec['three_days_ago_games'] = ad.get('games', 0)
+                        rec['three_days_ago_date'] = d
+                        rec['three_days_ago_max_rensa'] = ad.get('max_rensa', 0)
+                        rec['three_days_ago_max_medals'] = ad.get('max_medals', 0)
+                        if ad.get('history'):
+                            rec['three_days_ago_history'] = ad['history']
+                        _3d_art = ad.get('art', 0)
+                        _3d_games = ad.get('games', 0)
+                        rec['three_days_ago_prob'] = round(_3d_games / _3d_art) if _3d_art > 0 and _3d_games > 0 else 0
 
         # 閉店後: availabilityのデータを補完
         # 注意: availabilityのtoday_historyの日付と蓄積DBのyesterday_dateが異なる場合がある
