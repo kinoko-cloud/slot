@@ -51,6 +51,13 @@
 - art_count, rensa, diff_medals は同じソースから取得
 - 古いデータ（stale）と新しいデータを混ぜない
 
+### 6. store_keyの命名規則
+- **`_hokuto` は使わない** → 必ず **`_hokuto2`** を使う
+- `_sbj` = スマスロ北斗の拳
+- `_hokuto2` = 北斗の拳 転生2
+- 例: `shinjuku_espass_sbj`, `shinjuku_espass_hokuto2`
+- 詳細は `ARCHITECTURE.md` の「命名規則」セクション参照
+
 ---
 
 ## 🎰 機種仕様（推測不可能）

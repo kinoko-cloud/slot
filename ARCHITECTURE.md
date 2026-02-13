@@ -38,6 +38,25 @@
 
 ## ファイル構成
 
+### 命名規則（store_key）
+
+**⚠️ 重要: _hokuto と _hokuto2 の違い**
+
+| サフィックス | 機種 | 例 |
+|-------------|------|-----|
+| `_sbj` | スマスロ北斗の拳 | `shinjuku_espass_sbj` |
+| `_hokuto2` | 北斗の拳 転生2 | `shinjuku_espass_hokuto2` |
+
+- **`_hokuto` は使わない** → 必ず `_hokuto2` を使う
+- 歴史的経緯で `_hokuto` が残っている場合、`stores.py` が自動で `_hokuto2` に変換
+- 新規追加時は必ず `_hokuto2` で登録
+
+**store_keyの構成:**
+```
+{店舗名}_{機種サフィックス}
+例: shinjuku_espass_sbj, shibuya_espass_hokuto2
+```
+
 ### データ層
 | ファイル | 役割 |
 |---------|------|
