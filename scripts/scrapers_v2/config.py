@@ -1,0 +1,83 @@
+"""
+scrapers_v2/config.py - スクレイパー設定
+
+店舗・機種の定義を一元管理
+既存のconfig/stores.pyと連携
+"""
+from pathlib import Path
+import sys
+
+# 既存の設定をインポート
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+from config.stores import ESPASS_STORES, PAPIMO_STORES
+
+# daidata用設定
+DAIDATA_CONFIG = {
+    # 店舗ID → store_key のマッピング
+    'hall_mapping': {
+        '100949': 'shinjuku_espass',      # 新宿エスパス歌舞伎町
+        '100860': 'shibuya_espass',       # 渋谷エスパス新館
+        '100928': 'akiba_espass',         # 秋葉原エスパス駅前
+        '100950': 'seibu_shinjuku_espass', # 西武新宿駅前エスパス
+        '100196': 'ueno_espass',          # エスパス上野新館
+        '100947': 'ueno_honkan_espass',   # エスパス上野本館
+        '100915': 'takadanobaba_espass',  # エスパス高田馬場
+        '100952': 'akasaka_espass',       # エスパス赤坂見附
+        '100951': 'shinokubo_espass',     # エスパス新大久保
+        '100260': 'shinkoiwa_espass',     # エスパス新小岩
+        '100856': 'shibuya_honkan_espass', # 渋谷エスパス本館
+    },
+    
+    # 機種名（URLエンコード済み）
+    'machine_encoding': {
+        'sbj': 'L%EF%BD%BD%EF%BD%B0%EF%BE%8A%EF%BE%9F%EF%BD%B0%EF%BE%8C%EF%BE%9E%EF%BE%97%EF%BD%AF%EF%BD%B8%EF%BD%BC%EF%BE%9E%EF%BD%AC%EF%BD%AF%EF%BD%B8',
+        'hokuto': '%E5%8C%97%E6%96%97%E3%81%AE%E6%8B%B3',
+        'hokuto2': '%E5%8C%97%E6%96%97%E3%81%AE%E6%8B%B3%20%E8%BB%A2%E7%94%9F%E3%81%AE%E7%AB%A0',
+    },
+}
+
+# papimo用設定
+PAPIMO_CONFIG = {
+    'stores': {
+        'island_akihabara': {
+            'url': 'https://papimo.jp/akihabara',
+            'name': 'アイランド秋葉原店',
+        }
+    },
+    'machines': {
+        'sbj': 'Lスーパーブラックジャック',
+        'hokuto': '北斗の拳',
+        'hokuto2': '北斗の拳 転生の章',
+    }
+}
+
+# 取得対象の店舗×機種
+SCRAPE_TARGETS = {
+    'daidata': {
+        'shinjuku_espass': ['sbj', 'hokuto', 'hokuto2'],
+        'shibuya_espass': ['sbj', 'hokuto', 'hokuto2'],
+        'akiba_espass': ['sbj', 'hokuto', 'hokuto2'],
+        'seibu_shinjuku_espass': ['sbj', 'hokuto', 'hokuto2'],
+        'shibuya_honkan_espass': ['sbj', 'hokuto', 'hokuto2'],
+        'ueno_espass': ['sbj'],
+        'ueno_honkan_espass': ['sbj'],
+        'takadanobaba_espass': ['sbj'],
+        'akasaka_espass': ['sbj'],
+        'shinokubo_espass': ['sbj'],
+        'shinkoiwa_espass': ['sbj'],
+    },
+    'papimo': {
+        'island_akihabara': ['sbj', 'hokuto', 'hokuto2'],
+    }
+}
+
+def get_hall_id(store_key: str) -> str:
+    """store_keyからhall_idを取得"""
+    for hall_id, key in DAIDATA_CONFIG['hall_mapping'].items():
+        if key == store_key:
+            return hall_id
+    return None
+
+def get_store_key(hall_id: str) -> str:
+    """hall_idからstore_keyを取得"""
+    return DAIDATA_CONFIG['hall_mapping'].get(hall_id)
