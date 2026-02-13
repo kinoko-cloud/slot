@@ -114,6 +114,76 @@ def check_history_freshness():
             'all_stores': results
         }
 
+def check_art_zero_anomaly():
+    """ART=0異常検知（前日に比べて極端に低いART値を検知）
+    
+    例: 2/10 ART=50, 2/11 ART=0 → 異常
+    """
+    now = now_jst()
+    yesterday = (now - timedelta(days=1)).strftime('%Y-%m-%d')
+    day_before = (now - timedelta(days=2)).strftime('%Y-%m-%d')
+    
+    issues = []
+    checked_stores = 0
+    
+    for store_dir in HISTORY_DIR.iterdir():
+        if not store_dir.is_dir():
+            continue
+        
+        store_key = store_dir.name
+        store_issues = []
+        
+        # サンプル台をチェック
+        unit_files = sorted(store_dir.glob('*.json'), key=lambda f: f.stat().st_mtime, reverse=True)
+        for unit_file in unit_files[:10]:  # 店舗あたり最大10台
+            try:
+                with open(unit_file) as f:
+                    data = json.load(f)
+                
+                days = data.get('days', [])
+                art_by_date = {d.get('date'): d.get('art', 0) for d in days}
+                
+                # 昨日と一昨日を比較
+                art_yesterday = art_by_date.get(yesterday, -1)
+                art_day_before = art_by_date.get(day_before, -1)
+                
+                # 一昨日ART >= 20 で 昨日ART <= 2 → 異常
+                if art_day_before >= 20 and 0 <= art_yesterday <= 2:
+                    store_issues.append({
+                        'unit': unit_file.stem,
+                        'date': yesterday,
+                        'art': art_yesterday,
+                        'prev_art': art_day_before
+                    })
+            except:
+                continue
+        
+        if store_issues:
+            # 店舗の50%以上の台で異常 → 全体的な問題
+            if len(store_issues) >= 5:
+                issues.append({
+                    'store': store_key,
+                    'affected_units': len(store_issues),
+                    'sample': store_issues[:3]
+                })
+        
+        checked_stores += 1
+    
+    if issues:
+        return {
+            'status': 'error',
+            'message': f'{len(issues)}店舗でART=0異常を検知',
+            'issues': issues,
+            'checked_stores': checked_stores
+        }
+    else:
+        return {
+            'status': 'ok',
+            'message': f'ART異常なし（{checked_stores}店舗確認）',
+            'checked_stores': checked_stores
+        }
+
+
 def check_history_completeness():
     """履歴データの完全性チェック（途中で切れていないか）
     
@@ -530,6 +600,7 @@ def run_all_checks():
     # 各チェック実行
     results['checks']['availability'] = check_availability_freshness()
     results['checks']['history'] = check_history_freshness()
+    results['checks']['art_zero'] = check_art_zero_anomaly()
     results['checks']['unit_changes'] = check_unit_changes()
     results['checks']['github_actions'] = check_github_actions()
     results['checks']['git_status'] = check_git_status()
