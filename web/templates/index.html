@@ -584,7 +584,6 @@
                         {{ recent_day_expandable(_td_art, _td_prob, rec.three_days_ago_date|default(''), '3日前', rec.three_days_ago_diff_medals|default(0), rec.three_days_ago_max_rensa|default(0), rec.three_days_ago_max_medals|default(0), rec.three_days_ago_history_processed|default(rec.three_days_ago_history|default([]))) }}
                     </div>
                     {% endif %}
-                    {% endif %}
                     {# === 推奨理由（全件表示・カテゴリ色分け） === #}
                     <div class="reasons-full">
                         {{ reasons_list(rec.reasons) }}
