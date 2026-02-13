@@ -3,13 +3,23 @@ scrapers_v2/config.py - スクレイパー設定
 
 店舗・機種の定義を一元管理
 既存のconfig/stores.pyと連携
+
+【CLAUDE.md記載の仕様】
+- SBJ: 天井999G+α、RBリセットなし、好調閾値1/130
+- 北斗2: あべしシステム、好調閾値1/120
+- 確率は整数表示
+- 設定Xは使わない（機械割で表現）
 """
 from pathlib import Path
 import sys
 
 # 既存の設定をインポート
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
-from config.stores import ESPASS_STORES, PAPIMO_STORES
+try:
+    from config.stores import ESPASS_STORES, PAPIMO_STORES
+except ImportError:
+    ESPASS_STORES = {}
+    PAPIMO_STORES = {}
 
 # daidata用設定
 DAIDATA_CONFIG = {
@@ -71,6 +81,36 @@ SCRAPE_TARGETS = {
     }
 }
 
+# 機種設定（CLAUDE.md準拠）
+MACHINE_CONFIG = {
+    'sbj': {
+        'name': 'Lスーパーブラックジャック',
+        'threshold': 130,        # 好調閾値: 1/130以下
+        'ceiling': 999,          # 天井: 999G+α
+        'reset_ceiling': 666,    # リセット時天井: 666G+α
+        'rb_resets_games': False, # RBでG数リセットされない
+    },
+    'hokuto': {
+        'name': 'L北斗の拳 転生の章',
+        'threshold': 120,        # 好調閾値: 1/120以下
+        'ceiling_type': 'abeshi', # あべしシステム
+        'ceiling_a': 1536,       # モードA天井
+        'ceiling_b': 896,        # モードB天井
+        'ceiling_c': 576,        # モードC天井
+        'ceiling_heaven': 128,   # 天国天井
+    },
+    'hokuto2': {
+        'name': 'L北斗の拳 転生の章2',
+        'threshold': 120,
+        'ceiling_type': 'abeshi',
+        'ceiling_a': 1536,
+        'ceiling_b': 896,
+        'ceiling_c': 576,
+        'ceiling_heaven': 128,
+    },
+}
+
+
 def get_hall_id(store_key: str) -> str:
     """store_keyからhall_idを取得"""
     for hall_id, key in DAIDATA_CONFIG['hall_mapping'].items():
@@ -81,3 +121,20 @@ def get_hall_id(store_key: str) -> str:
 def get_store_key(hall_id: str) -> str:
     """hall_idからstore_keyを取得"""
     return DAIDATA_CONFIG['hall_mapping'].get(hall_id)
+
+def is_good_condition(machine_key: str, art: int, total_start: int) -> bool:
+    """好調判定（機種別閾値ベース）"""
+    if art <= 0 or total_start <= 0:
+        return False
+    
+    config = MACHINE_CONFIG.get(machine_key, {})
+    threshold = config.get('threshold', 130)
+    prob = total_start / art
+    
+    return prob <= threshold
+
+def calc_prob(art: int, total_start: int) -> int:
+    """確率計算（整数表示）"""
+    if art <= 0:
+        return 0
+    return int(total_start / art)
