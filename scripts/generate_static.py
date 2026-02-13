@@ -719,6 +719,58 @@ def generate_index(env):
     cutoff_date = (datetime.now() - timedelta(days=7)).strftime('%Y-%m-%d')
 
     for rec in top3 + top3_candidates + yesterday_top10 + today_top10:
+        # 日付を強制的に固定化（recommenderが「最新データ」を返す問題の対策）
+        # yesterday_dateが実際の「昨日」と異なる場合、蓄積DBから正しい日付のデータを取得
+        store_key = rec.get('store_key', '')
+        unit_id = str(rec.get('unit_id', ''))
+        y_date = rec.get('yesterday_date', '')
+        
+        if y_date and y_date != fixed_yesterday and store_key and unit_id:
+            # yesterday_dateが昨日でない場合、蓄積DBから正しいデータを取得
+            try:
+                from analysis.history_accumulator import load_unit_history
+                acc = load_unit_history(store_key, unit_id)
+                if acc and acc.get('days'):
+                    days_by_date = {d['date']: d for d in acc['days'] if d.get('date')}
+                    
+                    # 昨日のデータ
+                    if fixed_yesterday in days_by_date:
+                        yd = days_by_date[fixed_yesterday]
+                        rec['yesterday_date'] = fixed_yesterday
+                        rec['yesterday_art'] = yd.get('art', 0)
+                        rec['yesterday_rb'] = yd.get('rb', 0)
+                        rec['yesterday_games'] = yd.get('games', 0) or yd.get('total_start', 0)
+                        rec['yesterday_diff_medals'] = yd.get('diff_medals', 0)
+                        rec['yesterday_max_rensa'] = yd.get('max_rensa', 0)
+                        rec['yesterday_max_medals'] = yd.get('max_medals', 0)
+                        rec['yesterday_history'] = yd.get('history', [])
+                    
+                    # 前々日のデータ
+                    if fixed_day_before in days_by_date:
+                        dbd = days_by_date[fixed_day_before]
+                        rec['day_before_date'] = fixed_day_before
+                        rec['day_before_art'] = dbd.get('art', 0)
+                        rec['day_before_rb'] = dbd.get('rb', 0)
+                        rec['day_before_games'] = dbd.get('games', 0) or dbd.get('total_start', 0)
+                        rec['day_before_diff_medals'] = dbd.get('diff_medals', 0)
+                        rec['day_before_max_rensa'] = dbd.get('max_rensa', 0)
+                        rec['day_before_max_medals'] = dbd.get('max_medals', 0)
+                        rec['day_before_history'] = dbd.get('history', [])
+                    
+                    # 3日前のデータ
+                    if fixed_three_days in days_by_date:
+                        tdd = days_by_date[fixed_three_days]
+                        rec['three_days_ago_date'] = fixed_three_days
+                        rec['three_days_ago_art'] = tdd.get('art', 0)
+                        rec['three_days_ago_rb'] = tdd.get('rb', 0)
+                        rec['three_days_ago_games'] = tdd.get('games', 0) or tdd.get('total_start', 0)
+                        rec['three_days_ago_diff_medals'] = tdd.get('diff_medals', 0)
+                        rec['three_days_ago_max_rensa'] = tdd.get('max_rensa', 0)
+                        rec['three_days_ago_max_medals'] = tdd.get('max_medals', 0)
+                        rec['three_days_ago_history'] = tdd.get('history', [])
+            except Exception:
+                pass
+        
         # 前日データのチェック（7日以上前は除外）
         y_date = rec.get('yesterday_date', '')
         if y_date and y_date < cutoff_date:

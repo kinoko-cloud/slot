@@ -90,7 +90,7 @@ def check_claude_md_specs():
     sbj_specs = {
         '999G+α': 'SBJ天井（999G+α）',
         'RBではゲーム数天井がリセットされない': 'SBJ RBリセットなし',
-        '666G+α': 'SBJリセット時天井短縮',
+        '600G': 'SBJリセット時天井短縮',
     }
     for text, desc in sbj_specs.items():
         if text not in content:
