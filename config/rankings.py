@@ -122,7 +122,7 @@ STORES = {
         'units': ['4168'],  # 減台により4168のみ（3185-3187撤去）
         'data_source': 'daidata',
     },
-    'seibu_shinjuku_espass_hokuto': {
+    'seibu_shinjuku_espass_hokuto2': {
         'name': 'エスパス日拓西武新宿駅前店',
         'short_name': 'エスパス西武新宿',
         'hall_id': '100950',
@@ -147,7 +147,7 @@ STORES = {
         'units': ['3095', '3096', '3097'],
         'data_source': 'daidata',
     },
-    'shibuya_honkan_espass_hokuto': {
+    'shibuya_honkan_espass_hokuto2': {
         'name': 'エスパス日拓渋谷本館',
         'short_name': 'エスパス渋谷本館',
         'hall_id': '100930',
@@ -156,7 +156,7 @@ STORES = {
         'data_source': 'daidata',
     },
     # === 北斗転生2 ===
-    'shibuya_espass_hokuto': {
+    'shibuya_espass_hokuto2': {
         'name': 'エスパス日拓渋谷新館',
         'short_name': 'エスパス渋谷新館',
         'hall_id': '100860',
@@ -164,7 +164,7 @@ STORES = {
         'units': [str(i) for i in range(2046, 2068)] + [str(i) for i in range(2233, 2241)],  # 2046-2067, 2233-2240
         'data_source': 'daidata',
     },
-    'shinjuku_espass_hokuto': {
+    'shinjuku_espass_hokuto2': {
         'name': 'エスパス日拓新宿歌舞伎町店',
         'short_name': 'エスパス歌舞伎町',
         'hall_id': '100949',
@@ -172,7 +172,7 @@ STORES = {
         'units': [str(i) for i in range(1, 38)] + [str(i) for i in range(125, 129)],  # 1-37, 125-128
         'data_source': 'daidata',
     },
-    'akiba_espass_hokuto': {
+    'akiba_espass_hokuto2': {
         'name': 'エスパス日拓秋葉原駅前店',
         'short_name': 'エスパス秋葉原',
         'hall_id': '100928',
@@ -180,7 +180,7 @@ STORES = {
         'units': [str(i) for i in range(2011, 2020)] + [str(i) for i in range(2056, 2069)],  # 2011-2019, 2056-2068
         'data_source': 'daidata',
     },
-    'island_akihabara_hokuto': {
+    'island_akihabara_hokuto2': {
         'name': 'アイランド秋葉原',
         'short_name': 'アイランド秋葉原',
         'hall_id': None,
@@ -194,13 +194,6 @@ STORES = {
 STORES['island_akihabara'] = STORES['island_akihabara_sbj']
 STORES['shibuya_espass'] = STORES['shibuya_espass_sbj']
 
-# _hokuto2 サフィックスのエイリアス（historyディレクトリ名との互換性）
-STORES['shibuya_espass_hokuto2'] = STORES['shibuya_espass_hokuto']
-STORES['shinjuku_espass_hokuto2'] = STORES['shinjuku_espass_hokuto']
-STORES['akiba_espass_hokuto2'] = STORES['akiba_espass_hokuto']
-STORES['shibuya_honkan_espass_hokuto2'] = STORES['shibuya_honkan_espass_hokuto']
-STORES['seibu_shinjuku_espass_hokuto2'] = STORES.get('seibu_shinjuku_espass_hokuto', {})
-STORES['island_akihabara_hokuto2'] = STORES['island_akihabara_hokuto']
 
 
 def get_stores_by_machine(machine_key: str) -> dict:

@@ -96,7 +96,7 @@ DAIDATA_STORES = {
         'model_encoded': 'L%EF%BD%BD%EF%BD%B0%EF%BE%8A%EF%BE%9F%EF%BD%B0%EF%BE%8C%EF%BE%9E%EF%BE%97%EF%BD%AF%EF%BD%B8%EF%BD%BC%EF%BE%9E%EF%BD%AC%EF%BD%AF%EF%BD%B8',
         'units': ['2050', '2051', '2052'],
     },
-    'seibu_shinjuku_espass_hokuto': {
+    'seibu_shinjuku_espass_hokuto2': {
         'hall_id': '100950',
         'name': 'エスパス西武新宿(北斗)',
         'model_encoded': None,
@@ -111,25 +111,25 @@ DAIDATA_STORES = {
     },
     # === 北斗転生2 (detail page only, model_encoded不要) ===
     # Note: 台数が多いためタイムアウト時間を延長して取得
-    'shibuya_espass_hokuto': {
+    'shibuya_espass_hokuto2': {
         'hall_id': '100860',
         'name': 'エスパス渋谷新館(北斗)',
         'model_encoded': None,  # detail pageのみで取得
         'units': [str(i) for i in range(2046, 2068)] + [str(i) for i in range(2233, 2241)],
     },
-    'shibuya_honkan_espass_hokuto': {
+    'shibuya_honkan_espass_hokuto2': {
         'hall_id': '100930',
         'name': 'エスパス渋谷本館(北斗)',
         'model_encoded': None,
         'units': [str(i) for i in range(2013, 2020)] + [str(i) for i in range(2030, 2038)],
     },
-    'shinjuku_espass_hokuto': {
+    'shinjuku_espass_hokuto2': {
         'hall_id': '100949',
         'name': 'エスパス歌舞伎町(北斗)',
         'model_encoded': None,
         'units': [str(i) for i in range(1, 38)] + [str(i) for i in range(125, 129)],
     },
-    'akiba_espass_hokuto': {
+    'akiba_espass_hokuto2': {
         'hall_id': '100928',
         'name': 'エスパス秋葉原(北斗)',
         'model_encoded': None,
@@ -148,7 +148,7 @@ PAPIMO_STORES = {
             '1025', '1026', '1027', '1028', '1030', '1031',
         ],
     },
-    'island_akihabara_hokuto': {
+    'island_akihabara_hokuto2': {
         'hall_id': '00031715',
         'name': 'アイランド秋葉原(北斗)',
         'machine_id': '225110007',

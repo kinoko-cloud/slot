@@ -18,7 +18,7 @@ def resolve_history_store_key(store_key: str) -> str:
     """store_keyを蓄積DB用のキーに変換する
     
     Args:
-        store_key: 元のstore_key (例: 'shinjuku_espass_hokuto')
+        store_key: 元のstore_key (例: 'shinjuku_espass_hokuto2')
     
     Returns:
         蓄積DB用のstore_key (例: 'shinjuku_espass_hokuto2')
