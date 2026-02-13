@@ -285,7 +285,7 @@ if __name__ == "__main__":
     main()
 
 
-def scrape_island_machine(machine_key: str = 'hokuto', days_back: int = 7) -> list:
+def scrape_island_machine(machine_key: str = 'hokuto2', days_back: int = 7) -> list:
     """アイランド秋葉原の指定機種の全台データを取得"""
     config = PAPIMO_CONFIG['island_akihabara']
     hall_id = config['hall_id']
@@ -341,7 +341,7 @@ if __name__ == '__main__':
     machine = sys.argv[1] if len(sys.argv) > 1 else 'sbj'
     days = int(sys.argv[2]) if len(sys.argv) > 2 else 7
     if machine in ('hokuto', 'hokuto2'):
-        scrape_island_machine('hokuto', days)
+        scrape_island_machine('hokuto2', days)
     else:
         scrape_sbj_island(days)
 

@@ -160,7 +160,6 @@ def run_analysis():
     results = {
         'sbj': {'high': [], 'low': []},
         'hokuto2': {'high': [], 'low': []},
-        'hokuto': {'high': [], 'low': []},
     }
     
     for store_dir in sorted(DATA_DIR.iterdir()):
@@ -174,8 +173,6 @@ def run_analysis():
             machine = 'sbj'
         elif 'hokuto2' in store_key:
             machine = 'hokuto2'
-        elif 'hokuto' in store_key:
-            machine = 'hokuto'
         else:
             continue
         

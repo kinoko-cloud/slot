@@ -64,9 +64,9 @@ def get_all_history(hall_id: str = "100860", unit_id: str = "3011", hall_name: s
                 # 期待する機種名と照合（verify_keywordsは文字列またはリスト）
                 if expected_machine:
                     # キーワードマッピング（短縮名 → 実際の機種名キーワード）
+                    # ※ hokuto（無印）は店舗にないため未定義
                     KEYWORD_MAP = {
                         'sbj': ['ブラックジャック', 'ﾌﾞﾗｯｸｼﾞｬｯｸ'],
-                        'hokuto': ['北斗', 'ホクト'],
                         'hokuto2': ['北斗', '転生'],
                     }
                     keywords = expected_machine if isinstance(expected_machine, list) else [expected_machine]

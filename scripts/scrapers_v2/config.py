@@ -30,7 +30,7 @@ def _build_hall_mapping():
         hall_id = cfg.get('hall_id')
         if hall_id:
             # store_keyから機種部分を除去（shibuya_espass_sbj → shibuya_espass）
-            base_key = '_'.join(store_key.split('_')[:-1]) if '_sbj' in store_key or '_hokuto' in store_key else store_key
+            base_key = '_'.join(store_key.split('_')[:-1]) if '_sbj' in store_key or '_hokuto2' in store_key else store_key
             if hall_id not in mapping:
                 mapping[hall_id] = base_key
     return mapping
@@ -51,19 +51,18 @@ PAPIMO_CONFIG = {
     },
     'machines': {
         'sbj': 'Lスーパーブラックジャック',
-        'hokuto': '北斗の拳',
-        'hokuto2': '北斗の拳 転生の章',
+        'hokuto2': 'L北斗の拳 転生の章2',
     }
 }
 
 # 取得対象の店舗×機種
 SCRAPE_TARGETS = {
     'daidata': {
-        'shinjuku_espass': ['sbj', 'hokuto', 'hokuto2'],
-        'shibuya_espass': ['sbj', 'hokuto', 'hokuto2'],
-        'akiba_espass': ['sbj', 'hokuto', 'hokuto2'],
-        'seibu_shinjuku_espass': ['sbj', 'hokuto', 'hokuto2'],
-        'shibuya_honkan_espass': ['sbj', 'hokuto', 'hokuto2'],
+        'shinjuku_espass': ['sbj', 'hokuto2'],
+        'shibuya_espass': ['sbj', 'hokuto2'],
+        'akiba_espass': ['sbj', 'hokuto2'],
+        'seibu_shinjuku_espass': ['sbj', 'hokuto2'],
+        'shibuya_honkan_espass': ['sbj', 'hokuto2'],
         'ueno_espass': ['sbj'],
         'ueno_honkan_espass': ['sbj'],
         'takadanobaba_espass': ['sbj'],
@@ -72,36 +71,27 @@ SCRAPE_TARGETS = {
         'shinkoiwa_espass': ['sbj'],
     },
     'papimo': {
-        'island_akihabara': ['sbj', 'hokuto', 'hokuto2'],
+        'island_akihabara': ['sbj', 'hokuto2'],
     }
 }
 
-# 機種設定（CLAUDE.md準拠）
+# 機種設定（config/rankings.py の MACHINES と同期）
 MACHINE_CONFIG = {
     'sbj': {
         'name': 'Lスーパーブラックジャック',
         'threshold': 130,        # 好調閾値: 1/130以下
         'ceiling': 999,          # 天井: 999G+α
-        'reset_ceiling': 666,    # リセット時天井: 666G+α
+        'reset_ceiling': 600,    # リセット時天井: 600G
         'rb_resets_games': False, # RBでG数リセットされない
     },
-    'hokuto': {
-        'name': 'L北斗の拳 転生の章',
+    'hokuto2': {
+        'name': 'L北斗の拳 転生の章2',
         'threshold': 120,        # 好調閾値: 1/120以下
-        'ceiling_type': 'abeshi', # あべしシステム
+        'ceiling_type': 'abeshi', # あべしシステム（G数≠あべし）
         'ceiling_a': 1536,       # モードA天井
         'ceiling_b': 896,        # モードB天井
         'ceiling_c': 576,        # モードC天井
         'ceiling_heaven': 128,   # 天国天井
-    },
-    'hokuto2': {
-        'name': 'L北斗の拳 転生の章2',
-        'threshold': 120,
-        'ceiling_type': 'abeshi',
-        'ceiling_a': 1536,
-        'ceiling_b': 896,
-        'ceiling_c': 576,
-        'ceiling_heaven': 128,
     },
 }
 

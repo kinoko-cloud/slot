@@ -28,10 +28,9 @@ REMOVE_ADS_SCRIPT = """
 """
 
 # 機種名（検索用）
-# 重要: 「スマスロ北斗」と「北斗転生2」は別機種！
-# - hokuto2: 「転生」が含まれていること必須
-# - hokuto: 無印北斗（転生を含まない）
-# - sbj: ブラックジャック
+# - sbj: Lスーパーブラックジャック
+# - hokuto2: L北斗の拳 転生の章2
+# ※ hokuto（無印）は現状店舗にないため未定義
 MACHINE_NAMES = {
     'sbj': {
         'include': ['ブラックジャック', 'SBJ', 'ﾌﾞﾗｯｸ'],
@@ -40,10 +39,6 @@ MACHINE_NAMES = {
     'hokuto2': {
         'include': ['転生'],  # 「転生」必須
         'exclude': [],
-    },
-    'hokuto': {
-        'include': ['北斗'],
-        'exclude': ['転生'],  # 「転生」を含む場合は除外
     },
 }
 
