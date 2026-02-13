@@ -1361,6 +1361,63 @@ def generate_recommend_pages(env):
         from scripts.enrich_rec import enrich_recs as _enrich_recs
         _enrich_recs(recommendations)
 
+        # 日付固定化：正しい日付のデータのみ使用
+        now_date = datetime.now(JST)
+        fixed_dates = [(now_date - timedelta(days=i)).strftime('%Y-%m-%d') for i in range(1, 8)]
+        fixed_yesterday = fixed_dates[0]
+        fixed_day_before = fixed_dates[1]
+        fixed_three_days = fixed_dates[2]
+
+        for rec in recommendations:
+            # 前日データのチェック
+            y_date = rec.get('yesterday_date', '')
+            if y_date != fixed_yesterday:
+                rec['yesterday_art'] = 0
+                rec['yesterday_rb'] = 0
+                rec['yesterday_games'] = 0
+                rec['yesterday_diff_medals'] = 0
+                rec['yesterday_max_rensa'] = 0
+                rec['yesterday_max_medals'] = 0
+                rec['yesterday_history'] = []
+                rec['yesterday_date'] = fixed_yesterday
+
+            # 前々日データのチェック
+            db_date = rec.get('day_before_date', '')
+            if db_date != fixed_day_before:
+                rec['day_before_art'] = 0
+                rec['day_before_rb'] = 0
+                rec['day_before_games'] = 0
+                rec['day_before_diff_medals'] = 0
+                rec['day_before_max_rensa'] = 0
+                rec['day_before_max_medals'] = 0
+                rec['day_before_history'] = []
+                rec['day_before_date'] = fixed_day_before
+
+            # 3日前データのチェック
+            td_date = rec.get('three_days_ago_date', '')
+            if td_date != fixed_three_days:
+                rec['three_days_ago_art'] = 0
+                rec['three_days_ago_rb'] = 0
+                rec['three_days_ago_games'] = 0
+                rec['three_days_ago_diff_medals'] = 0
+                rec['three_days_ago_max_rensa'] = 0
+                rec['three_days_ago_max_medals'] = 0
+                rec['three_days_ago_history'] = []
+                rec['three_days_ago_date'] = fixed_three_days
+
+            # recent_daysも日付固定化
+            if rec.get('recent_days'):
+                new_recent_days = []
+                for i, fixed_date in enumerate(fixed_dates[:7]):
+                    matching_day = None
+                    for day in rec.get('recent_days', []):
+                        if day.get('date') == fixed_date:
+                            matching_day = day
+                            break
+                    if matching_day and matching_day.get('art', 0) > 0:
+                        new_recent_days.append(matching_day)
+                rec['recent_days'] = new_recent_days
+
         # 各台の過去3日分の当たり履歴を答え合わせ形式に加工
         _rec_mk = _get_machine_key(store_key)
         for rec in recommendations:
