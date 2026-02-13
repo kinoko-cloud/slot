@@ -1,17 +1,18 @@
 """
 scrapers_v2/config.py - スクレイパー設定
 
-店舗・機種の定義を一元管理
-既存のconfig/stores.pyと連携
-
-【CLAUDE.md記載の仕様】
-- SBJ: 天井999G+α、RBリセットなし、好調閾値1/130
-- 北斗2: あべしシステム、好調閾値1/120
-- 確率は整数表示
-- 設定Xは使わない（機械割で表現）
+v1の設定（fetch_daidata_availability.py）を直接インポート
+v2はスクレイピング部分の高速化のみ担当
 """
 from pathlib import Path
 import sys
+
+# v1の設定をインポート
+sys.path.insert(0, str(Path(__file__).parent.parent))
+try:
+    from fetch_daidata_availability import DAIDATA_STORES
+except ImportError:
+    DAIDATA_STORES = {}
 
 # 既存の設定をインポート
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
@@ -21,29 +22,23 @@ except ImportError:
     ESPASS_STORES = {}
     PAPIMO_STORES = {}
 
-# daidata用設定
+# v1のDAIDATA_STORESからhall_mappingを構築
+def _build_hall_mapping():
+    """v1の設定からhall_id→store_keyマッピングを構築"""
+    mapping = {}
+    for store_key, cfg in DAIDATA_STORES.items():
+        hall_id = cfg.get('hall_id')
+        if hall_id:
+            # store_keyから機種部分を除去（shibuya_espass_sbj → shibuya_espass）
+            base_key = '_'.join(store_key.split('_')[:-1]) if '_sbj' in store_key or '_hokuto' in store_key else store_key
+            if hall_id not in mapping:
+                mapping[hall_id] = base_key
+    return mapping
+
+# daidata用設定（v1からインポート）
 DAIDATA_CONFIG = {
-    # 店舗ID → store_key のマッピング
-    'hall_mapping': {
-        '100949': 'shinjuku_espass',      # 新宿エスパス歌舞伎町
-        '100860': 'shibuya_espass',       # 渋谷エスパス新館
-        '100928': 'akiba_espass',         # 秋葉原エスパス駅前
-        '100950': 'seibu_shinjuku_espass', # 西武新宿駅前エスパス
-        '100196': 'ueno_espass',          # エスパス上野新館
-        '100947': 'ueno_honkan_espass',   # エスパス上野本館
-        '100915': 'takadanobaba_espass',  # エスパス高田馬場
-        '100952': 'akasaka_espass',       # エスパス赤坂見附
-        '100951': 'shinokubo_espass',     # エスパス新大久保
-        '100260': 'shinkoiwa_espass',     # エスパス新小岩
-        '100856': 'shibuya_honkan_espass', # 渋谷エスパス本館
-    },
-    
-    # 機種名（URLエンコード済み）
-    'machine_encoding': {
-        'sbj': 'L%EF%BD%BD%EF%BD%B0%EF%BE%8A%EF%BE%9F%EF%BD%B0%EF%BE%8C%EF%BE%9E%EF%BE%97%EF%BD%AF%EF%BD%B8%EF%BD%BC%EF%BE%9E%EF%BD%AC%EF%BD%AF%EF%BD%B8',
-        'hokuto': '%E5%8C%97%E6%96%97%E3%81%AE%E6%8B%B3',
-        'hokuto2': '%E5%8C%97%E6%96%97%E3%81%AE%E6%8B%B3%20%E8%BB%A2%E7%94%9F%E3%81%AE%E7%AB%A0',
-    },
+    'stores': DAIDATA_STORES,  # v1の設定をそのまま使用
+    'hall_mapping': _build_hall_mapping(),
 }
 
 # papimo用設定
