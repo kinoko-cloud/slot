@@ -155,7 +155,13 @@ def setup_jinja():
         if not history or len(history) < 2:
             return ''
         # hit_num降順（大きい=古い）でソート
-        sorted_hist = sorted(history, key=lambda x: (-x.get('hit_num', 0), x.get('time', '00:00')))
+        # ただし、hit_numが全て0または未設定の場合はリスト順序をそのまま使用
+        hit_nums = [h.get('hit_num', 0) for h in history]
+        if len(set(hit_nums)) <= 1:
+            # 全て同じ値（0を含む）なので元の順序を使用
+            sorted_hist = list(history)
+        else:
+            sorted_hist = sorted(history, key=lambda x: (-x.get('hit_num', 0), x.get('time', '00:00')))
         # 各当たりのメダル獲得数で相対推移を計算
         # medals: ボーナス/AT獲得枚数、start: 当たり間の消化G数
         cumulative = [0]
