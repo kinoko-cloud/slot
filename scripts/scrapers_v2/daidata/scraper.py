@@ -93,6 +93,15 @@ class DaidataScraper(BaseScraper):
         if not self._goto_with_terms(url, hall_id):
             return {'unit_id': unit_id, 'error': 'navigation_failed'}
         
+        # 「リスト表示に切り替える」をクリック（グラフ表示からリスト表示に切り替え）
+        try:
+            link = self.page.locator('text=リスト表示に切り替える')
+            if link.count() > 0:
+                link.click()
+                self.wait(2000)
+        except Exception as e:
+            self.logger.debug(f"リスト表示切り替え: {e}")
+        
         text = self.get_text()
         data = {
             'unit_id': unit_id,
@@ -119,39 +128,23 @@ class DaidataScraper(BaseScraper):
         if diff:
             data['diff_medals'] = int(diff.group(1))
         
-        # 今日の履歴テーブルを取得
-        # 「大当たり」「スタート」「出玉」「種別」「時間」ヘッダーを持つテーブルを探す
+        # 今日の履歴をテキストから正規表現でパース
+        # パターン: 大当たり スタート 出玉 種別 時間
+        # 例: 0 32 37 ART 22:36
         today_history = []
         try:
-            tables = self.page.locator('table').all()
-            history_table = None
-            for table in tables:
-                headers = table.locator('th').all()
-                header_texts = [h.inner_text().strip() for h in headers[:5]]
-                if '大当たり' in header_texts and '時間' in header_texts:
-                    history_table = table
-                    break
-            
-            if history_table:
-                rows = history_table.locator('tr').all()
-                for row in rows[1:]:  # ヘッダースキップ
-                    cells = row.locator('td').all()
-                    if len(cells) >= 5:
-                        hit_num_text = cells[0].inner_text().strip()
-                        start_text = cells[1].inner_text().strip()
-                        medals_text = cells[2].inner_text().strip()
-                        type_text = cells[3].inner_text().strip()
-                        time_text = cells[4].inner_text().strip()
-                        
-                        item = {
-                            'hit_num': int(hit_num_text) if hit_num_text.isdigit() else 0,
-                            'start': int(start_text) if start_text.isdigit() else 0,
-                            'medals': int(medals_text) if medals_text.isdigit() else 0,
-                            'type': type_text,
-                            'time': time_text,
-                        }
-                        if item['time']:  # 時間がある行のみ
-                            today_history.append(item)
+            pattern = r'(\d+)\s+(\d+)\s+(\d+)\s+(ART|RB|BB)\s+(\d{1,2}:\d{2})'
+            matches = re.findall(pattern, text)
+            for m in matches:
+                today_history.append({
+                    'hit_num': int(m[0]),
+                    'start': int(m[1]),
+                    'medals': int(m[2]),
+                    'type': m[3],
+                    'time': m[4],
+                })
+            # 時刻順にソート（古い順）
+            today_history.sort(key=lambda x: x['time'])
         except Exception as e:
             self.logger.debug(f"Failed to get today_history: {e}")
         
