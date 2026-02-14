@@ -57,6 +57,27 @@ def is_valid_history(history):
     return True
 
 
+def is_valid_day_data(day_data):
+    """日付データにサマリーフィールドがあり、値が正しいかチェック"""
+    if not day_data:
+        return False
+    
+    history = day_data.get('history', [])
+    if not history:
+        return True  # 履歴なしはOK
+    
+    # サマリーフィールドが必要
+    if 'art' not in day_data or 'prob' not in day_data:
+        return False
+    
+    # artの値が履歴と一致しているか
+    actual_art = len([h for h in history if h.get('type') == 'ART'])
+    if day_data.get('art') != actual_art:
+        return False
+    
+    return True
+
+
 def get_top_page_units(top_n=25):
     """トップページから上位N台を取得"""
     index_file = ROOT / 'docs' / 'index.html'
@@ -119,6 +140,8 @@ def check_unit_data(store_key, unit_id, days_back=3):
             issues.append(('missing', target_date))
         elif not is_valid_history(day_data.get('history', [])):
             issues.append(('invalid', target_date))
+        elif not is_valid_day_data(day_data):
+            issues.append(('no_summary', target_date))
     
     return issues
 
@@ -180,6 +203,71 @@ def fix_unit_data(scraper, store_key, unit_id, target_date):
         return False
 
 
+def calculate_summary(history):
+    """履歴からサマリーを計算"""
+    if not history:
+        return {}
+    
+    art = len([h for h in history if h.get('type') == 'ART'])
+    rb = len([h for h in history if h.get('type') in ('RB', 'REG', 'BB')])
+    total_start = sum(h.get('start', 0) for h in history)
+    games = total_start
+    prob = round(total_start / art, 1) if art > 0 else 0
+    
+    total_medals = sum(h.get('medals', 0) for h in history)
+    invested = int(total_start * 3)
+    diff_medals = total_medals - invested
+    
+    max_rensa = 1
+    current_rensa = 1
+    for h in history:
+        if h.get('start', 0) <= 32:
+            current_rensa += 1
+            max_rensa = max(max_rensa, current_rensa)
+        else:
+            current_rensa = 1
+    
+    max_medals = max((h.get('medals', 0) for h in history), default=0)
+    
+    return {
+        'art': art,
+        'rb': rb,
+        'total_start': total_start,
+        'games': games,
+        'prob': prob,
+        'diff_medals': diff_medals,
+        'max_rensa': max_rensa,
+        'max_medals': max_medals,
+        'is_good': prob > 0 and prob <= 120,
+    }
+
+
+def fix_summary(store_key, unit_id, target_date):
+    """サマリーフィールドを補完/修正"""
+    hist_file = HISTORY_DIR / store_key / f"{unit_id}.json"
+    if not hist_file.exists():
+        padded_id = unit_id.zfill(4)
+        hist_file = HISTORY_DIR / store_key / f"{padded_id}.json"
+        if not hist_file.exists():
+            return False
+    
+    with open(hist_file) as f:
+        data = json.load(f)
+    
+    for day in data.get('days', []):
+        if day.get('date') == target_date:
+            if day.get('history'):
+                # 履歴から正しいサマリーを計算して上書き
+                summary = calculate_summary(day['history'])
+                day.update(summary)
+                
+                with open(hist_file, 'w') as f:
+                    json.dump(data, f, ensure_ascii=False)
+                return True
+    
+    return False
+
+
 def main():
     import argparse
     parser = argparse.ArgumentParser()
@@ -211,19 +299,34 @@ def main():
         return
     
     print("\n修正中...")
-    scraper = DaidataScraper(headless=True)
-    scraper.timeout = 60000
     
-    fixed = 0
-    with scraper.browser_session('daidata'):
-        for store_key, unit_id, issues in all_issues:
-            for issue_type, target_date in issues:
-                if issue_type in ('missing', 'invalid') and target_date:
-                    print(f"  {store_key}/{unit_id} ({target_date})...")
+    # まずno_summaryを修正（ネットワーク不要）
+    summary_fixed = 0
+    for store_key, unit_id, issues in all_issues:
+        for issue_type, target_date in issues:
+            if issue_type == 'no_summary' and target_date:
+                print(f"  {store_key}/{unit_id} ({target_date}) サマリー補完...")
+                if fix_summary(store_key, unit_id, target_date):
+                    summary_fixed += 1
+    
+    # missing/invalidはネットワーク経由で修正
+    network_issues = [(s, u, [(t, d) for t, d in i if t in ('missing', 'invalid')]) 
+                      for s, u, i in all_issues]
+    network_issues = [(s, u, i) for s, u, i in network_issues if i]
+    
+    network_fixed = 0
+    if network_issues:
+        scraper = DaidataScraper(headless=True)
+        scraper.timeout = 60000
+        
+        with scraper.browser_session('daidata'):
+            for store_key, unit_id, issues in network_issues:
+                for issue_type, target_date in issues:
+                    print(f"  {store_key}/{unit_id} ({target_date}) 再取得...")
                     if fix_unit_data(scraper, store_key, unit_id, target_date):
-                        fixed += 1
+                        network_fixed += 1
     
-    print(f"\n修正完了: {fixed}件")
+    print(f"\n修正完了: サマリー補完={summary_fixed}件, 再取得={network_fixed}件")
 
 
 if __name__ == '__main__':
