@@ -75,6 +75,14 @@ def is_valid_day_data(day_data):
     if day_data.get('art') != actual_art:
         return False
     
+    # prob=0 かつ ART>0 は異常（G数データがない）
+    if day_data.get('prob', 0) == 0 and actual_art > 0:
+        return False
+    
+    # 履歴のstartが全て0は異常（古いデータ）
+    if all(h.get('start', 0) == 0 for h in history):
+        return False
+    
     return True
 
 
