@@ -725,11 +725,25 @@ def generate_index(env):
     # 古すぎるデータをクリア（7日以上前のデータは除外）
     cutoff_date = (datetime.now() - timedelta(days=7)).strftime('%Y-%m-%d')
 
-    for rec in top3 + top3_candidates + yesterday_top10 + today_top10:
+    # all_sa_recsもループに含める（#11以降のrecsの日付も設定するため）
+    all_recs_for_date_fix = list({id(r): r for r in top3 + top3_candidates + yesterday_top10 + today_top10}.values())
+    
+    for rec in all_recs_for_date_fix:
         # 日付を強制的に固定化（recommenderが「最新データ」を返す問題の対策）
         # 常に蓄積DBから正しい日付のデータを取得する
         store_key = rec.get('store_key', '')
         unit_id = str(rec.get('unit_id', ''))
+        
+        # 日付は常に設定（データがなくても「データなし」表示のため）
+        rec['yesterday_date'] = fixed_yesterday
+        rec['day_before_date'] = fixed_day_before
+        rec['three_days_ago_date'] = fixed_three_days
+        
+        # gamesも初期化（データがない場合のデフォルト）
+        if 'day_before_games' not in rec:
+            rec['day_before_games'] = 0
+        if 'three_days_ago_games' not in rec:
+            rec['three_days_ago_games'] = 0
         
         if store_key and unit_id:
             # yesterday_dateが昨日でない場合、蓄積DBから正しいデータを取得
@@ -739,8 +753,7 @@ def generate_index(env):
                 if acc and acc.get('days'):
                     days_by_date = {d['date']: d for d in acc['days'] if d.get('date')}
                     
-                    # 昨日のデータ（データがなくても日付は設定）
-                    rec['yesterday_date'] = fixed_yesterday
+                    # 昨日のデータ
                     if fixed_yesterday in days_by_date:
                         yd = days_by_date[fixed_yesterday]
                         yd_art = yd.get('art', 0)
@@ -752,21 +765,20 @@ def generate_index(env):
                         rec['yesterday_max_medals'] = yd.get('max_medals', 0) if yd_art > 0 else 0
                         rec['yesterday_history'] = yd.get('history', [])
                     
-                    # 前々日のデータ（データがなくても日付は設定）
-                    rec['day_before_date'] = fixed_day_before
+                    # 前々日のデータ
                     if fixed_day_before in days_by_date:
                         dbd = days_by_date[fixed_day_before]
                         dbd_art = dbd.get('art', 0)
+                        dbd_games = dbd.get('games', 0) or dbd.get('total_start', 0)
                         rec['day_before_art'] = dbd_art
                         rec['day_before_rb'] = dbd.get('rb', 0)
-                        rec['day_before_games'] = dbd.get('games', 0) or dbd.get('total_start', 0)
+                        rec['day_before_games'] = dbd_games
                         rec['day_before_diff_medals'] = dbd.get('diff_medals', 0) if dbd_art > 0 else 0
                         rec['day_before_max_rensa'] = dbd.get('max_rensa', 0)
                         rec['day_before_max_medals'] = dbd.get('max_medals', 0) if dbd_art > 0 else 0
                         rec['day_before_history'] = dbd.get('history', [])
                     
-                    # 3日前のデータ（データがなくても日付は設定）
-                    rec['three_days_ago_date'] = fixed_three_days
+                    # 3日前のデータ
                     if fixed_three_days in days_by_date:
                         tdd = days_by_date[fixed_three_days]
                         tdd_art = tdd.get('art', 0)
@@ -1320,6 +1332,7 @@ def generate_ranking_pages(env):
         # 蓄積DB補完（共通関数）
         from scripts.enrich_rec import enrich_recs as _enrich
         _enrich(all_recommendations)
+        
         top_recs = [r for r in all_recommendations if r['final_rank'] in ('S', 'A') and not r['is_running']][:10]
         other_recs = [r for r in all_recommendations if r not in top_recs][:20]
 
@@ -1498,7 +1511,7 @@ def generate_recommend_pages(env):
                 rec['three_days_ago_history'] = []
                 rec['three_days_ago_date'] = ''
 
-            # recent_daysも日付固定化
+            # recent_daysも日付固定化（art=0でもgames>0があれば表示）
             if rec.get('recent_days'):
                 new_recent_days = []
                 for i, fixed_date in enumerate(fixed_dates[:7]):
@@ -1507,7 +1520,8 @@ def generate_recommend_pages(env):
                         if day.get('date') == fixed_date:
                             matching_day = day
                             break
-                    if matching_day and matching_day.get('art', 0) > 0:
+                    # art>0またはgames>0があれば追加
+                    if matching_day and (matching_day.get('art', 0) > 0 or matching_day.get('games', 0) > 0):
                         new_recent_days.append(matching_day)
                 rec['recent_days'] = new_recent_days
 

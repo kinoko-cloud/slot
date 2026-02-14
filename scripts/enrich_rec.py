@@ -78,10 +78,10 @@ def _enrich_day_prefix(rec, days_by_date, prefix, date_key):
     """rec[prefix + 'diff_medals'] 等を蓄積DBから補完"""
     from datetime import datetime, timedelta
     
-    target_date = rec.get(date_key, '')
+    target_date = rec.get(date_key, '') or ''
     
-    # 日付が空の場合、蓄積DBから正しい日付を設定
-    if not target_date:
+    # 日付が空または無効な場合、蓄積DBから正しい日付を設定
+    if not target_date or len(target_date) < 10:
         # prefixから何日前かを判定
         if prefix == 'yesterday_':
             days_ago = 1
@@ -94,14 +94,12 @@ def _enrich_day_prefix(rec, days_by_date, prefix, date_key):
         
         target_date = (datetime.now() - timedelta(days=days_ago)).strftime('%Y-%m-%d')
         day_data = days_by_date.get(target_date)
-        if day_data and day_data.get('art', 0) > 0:
-            # 日付とARTを設定
-            rec[date_key] = target_date
+        # art>0またはgames>0があれば日付を設定（空の日でも日付表示のため常に設定）
+        rec[date_key] = target_date
+        if day_data:
             rec[f'{prefix}art'] = day_data.get('art', 0)
             rec[f'{prefix}rb'] = day_data.get('rb', 0)
             rec[f'{prefix}games'] = day_data.get('games') or day_data.get('total_start', 0)
-        else:
-            return
     
     day_data = days_by_date.get(target_date)
     if not day_data:
