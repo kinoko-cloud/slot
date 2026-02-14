@@ -27,6 +27,7 @@ from common.base import setup_logger, now_jst
 CONFIG_FILES = {
     'fetch_daidata_availability': Path(__file__).parent.parent / 'fetch_daidata_availability.py',
     'rankings': Path(__file__).parent.parent.parent / 'config' / 'rankings.py',
+    'papimo_scraper': Path(__file__).parent / 'papimo' / 'scraper.py',
 }
 
 logger = setup_logger('auto_update_units')
@@ -68,6 +69,12 @@ def discover_all_units() -> Dict[str, Dict]:
             # 変更検出
             has_change = set(expected) != set(detected)
             
+            # 消えた台・増えた台を計算
+            expected_set = set(expected)
+            detected_set = set(detected)
+            missing = sorted(expected_set - detected_set)
+            added = sorted(detected_set - expected_set)
+            
             results[store_key] = {
                 'hall_id': hall_id,
                 'machine_key': machine_key,
@@ -75,6 +82,8 @@ def discover_all_units() -> Dict[str, Dict]:
                 'expected': expected,
                 'detected': detected,
                 'has_change': has_change,
+                'missing': missing,
+                'added': added,
             }
             
             if has_change:
@@ -87,21 +96,29 @@ def discover_all_units() -> Dict[str, Dict]:
     return results
 
 
-def update_config_file(path: Path, store_key: str, new_units: List[str]) -> bool:
-    """設定ファイルの台番号を更新"""
+def update_config_file(path: Path, store_key: str, new_units: List[str], machine_key: str = None) -> bool:
+    """設定ファイルの台番号を更新
+    
+    Args:
+        path: 設定ファイルのパス
+        store_key: 店舗キー（例: 'akiba_espass_sbj'）
+        new_units: 新しい台番号リスト
+        machine_key: 機種キー（papimo用、'sbj' or 'hokuto2'）
+    """
     content = path.read_text()
-    
-    # 'store_key': { ... 'units': [...], ... } のパターンを探す
-    # 複数行にまたがる可能性があるので、正規表現で対応
-    
-    # パターン1: 'units': ['xxx', 'yyy', ...]
-    pattern = rf"('{store_key}':\s*\{{[^}}]*'units':\s*)\[[^\]]*\]"
-    
-    # 新しいunitsリスト
     new_units_str = str(new_units)
     
-    # 置換
-    new_content, count = re.subn(pattern, rf"\1{new_units_str}", content, flags=re.DOTALL)
+    # papimo/scraper.py用の特殊処理
+    if 'papimo' in str(path) and machine_key:
+        # 'machines': { 'sbj': { 'units': [...] } } の形式
+        # store_keyからbase_store_keyを抽出（例: 'island_akihabara_sbj' → 'island_akihabara'）
+        base_store_key = store_key.replace('_sbj', '').replace('_hokuto2', '')
+        pattern = rf"('{base_store_key}':\s*\{{[^}}]*'{machine_key}':\s*\{{[^}}]*'units':\s*)\[[^\]]*\]"
+        new_content, count = re.subn(pattern, rf"\1{new_units_str}", content, flags=re.DOTALL)
+    else:
+        # 通常の設定ファイル形式
+        pattern = rf"('{store_key}':\s*\{{[^}}]*'units':\s*)\[[^\]]*\]"
+        new_content, count = re.subn(pattern, rf"\1{new_units_str}", content, flags=re.DOTALL)
     
     if count > 0:
         path.write_text(new_content)
@@ -119,15 +136,18 @@ def apply_changes(results: Dict[str, Dict]) -> int:
             continue
         
         detected = data['detected']
+        machine_key = data.get('machine_key', 'sbj' if 'sbj' in store_key else 'hokuto2')
         
-        # 両方の設定ファイルを更新
+        # 全ての設定ファイルを更新
         for name, path in CONFIG_FILES.items():
             if path.exists():
-                if update_config_file(path, store_key, detected):
+                if update_config_file(path, store_key, detected, machine_key):
                     logger.info(f"  ✓ {name}: {store_key} 更新完了")
                     updated += 1
                 else:
-                    logger.warning(f"  ⚠️ {name}: {store_key} 更新失敗（パターン不一致）")
+                    # papimo_scraperは対応する店舗がない場合がある
+                    if name != 'papimo_scraper':
+                        logger.warning(f"  ⚠️ {name}: {store_key} 更新失敗（パターン不一致）")
     
     return updated
 

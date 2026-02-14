@@ -730,7 +730,34 @@ def auto_repair(results):
             except:
                 pass
     
-    # 3. availabilityが古い → fetch実行
+    # 3. 台番号変更検出 → 自動更新
+    unit_check = results['checks'].get('unit_changes', {})
+    if unit_check.get('status') == 'error':
+        try:
+            import subprocess
+            # 台番号自動更新スクリプトを実行
+            result = subprocess.run(
+                ['python3', str(PROJECT_ROOT / 'scripts' / 'scrapers_v2' / 'auto_update_units.py'), '--apply'],
+                cwd=str(PROJECT_ROOT),
+                timeout=600,  # 10分
+                capture_output=True,
+                text=True
+            )
+            if '更新完了' in result.stdout:
+                repairs.append('🔧 台番号設定を自動更新')
+                # git commit & push
+                subprocess.run(['git', 'add', '-A'], cwd=str(PROJECT_ROOT), timeout=30)
+                subprocess.run(['git', 'commit', '-m', 'fix: 台番号自動更新'], cwd=str(PROJECT_ROOT), timeout=30)
+                subprocess.run(['git', 'push'], cwd=str(PROJECT_ROOT), timeout=60)
+                repairs.append('🔧 設定変更をコミット・プッシュ')
+            else:
+                repairs.append(f'⚠️ 台番号自動更新: 変更なしまたは失敗')
+        except subprocess.TimeoutExpired:
+            repairs.append('⚠️ 台番号自動更新タイムアウト')
+        except Exception as e:
+            repairs.append(f'⚠️ 台番号自動更新エラー: {e}')
+    
+    # 4. availabilityが古い → fetch実行
     avail_check = results['checks'].get('availability', {})
     if avail_check.get('status') == 'error' and avail_check.get('age_hours', 0) > 2:
         try:
