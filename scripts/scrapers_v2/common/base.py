@@ -35,24 +35,54 @@ def setup_logger(name: str, level: int = logging.INFO) -> logging.Logger:
 class BaseScraper(ABC):
     """スクレイパー基底クラス"""
     
-    def __init__(self, headless: bool = True, timeout: int = 20000):
+    # Cookie保存先（同意状態を永続化）
+    STORAGE_DIR = Path(__file__).parent.parent.parent.parent / 'data' / '.browser_state'
+    
+    def __init__(self, headless: bool = True, timeout: int = 20000, persist_state: bool = True):
         self.headless = headless
         self.timeout = timeout
+        self.persist_state = persist_state
         self.logger = setup_logger(self.__class__.__name__)
         self._browser: Optional[Browser] = None
         self._context: Optional[BrowserContext] = None
         self._page: Optional[Page] = None
     
+    def _get_storage_path(self, site: str = 'default') -> Path:
+        """サイト別のストレージパスを取得"""
+        self.STORAGE_DIR.mkdir(parents=True, exist_ok=True)
+        return self.STORAGE_DIR / f'{site}_state.json'
+    
     @contextmanager
-    def browser_session(self):
-        """ブラウザセッションのコンテキストマネージャ"""
+    def browser_session(self, site: str = 'daidata'):
+        """ブラウザセッションのコンテキストマネージャ（Cookie永続化対応）"""
+        storage_path = self._get_storage_path(site)
+        
         with sync_playwright() as p:
             self._browser = p.chromium.launch(headless=self.headless)
-            self._context = self._browser.new_context()
+            
+            # 保存済みのCookie/ストレージがあれば読み込む
+            if self.persist_state and storage_path.exists():
+                try:
+                    self._context = self._browser.new_context(storage_state=str(storage_path))
+                    self.logger.debug(f"Loaded browser state from {storage_path}")
+                except Exception as e:
+                    self.logger.warning(f"Failed to load state: {e}")
+                    self._context = self._browser.new_context()
+            else:
+                self._context = self._browser.new_context()
+            
             self._page = self._context.new_page()
             try:
                 yield self._page
             finally:
+                # セッション終了時にCookie/ストレージを保存
+                if self.persist_state:
+                    try:
+                        self._context.storage_state(path=str(storage_path))
+                        self.logger.debug(f"Saved browser state to {storage_path}")
+                    except Exception as e:
+                        self.logger.warning(f"Failed to save state: {e}")
+                
                 self._browser.close()
                 self._browser = None
                 self._context = None

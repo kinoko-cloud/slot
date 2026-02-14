@@ -175,7 +175,7 @@ def fetch_store_availability(page, hall_id: str, model_encoded: str, expected_un
             accept_btn = page.locator('button:has-text("利用規約に同意する")')
             if accept_btn.count() > 0:
                 accept_btn.click()
-                page.wait_for_timeout(3000)  # 同意後のリダイレクト待ち（長めに）
+                page.wait_for_timeout(1500)  # 同意後のリダイレクト待ち（長めに）
                 print("  Accepted terms, re-navigating...")
                 # 同意後はトップページにリダイレクトされるため、再度unit_listに遷移
                 page.goto(url, timeout=20000, wait_until='domcontentloaded')
@@ -254,7 +254,7 @@ def fetch_unit_detail(page, hall_id: str, unit_id: str, last_hit_time: str = Non
             accept_btn = page.locator('button:has-text("利用規約に同意する")')
             if accept_btn.count() > 0:
                 accept_btn.click()
-                page.wait_for_timeout(3000)  # 同意後のリダイレクト待ち（長めに）
+                page.wait_for_timeout(1500)  # 同意後のリダイレクト待ち（長めに）
                 # 規約同意後、元のdetailページに戻る
                 page.goto(url, timeout=20000, wait_until='domcontentloaded')
                 page.wait_for_timeout(1500)
@@ -281,7 +281,7 @@ def fetch_unit_detail(page, hall_id: str, unit_id: str, last_hit_time: str = Non
                 accept_btn = page.locator('text="利用規約に同意する"')
                 if accept_btn.count() > 0:
                     accept_btn.click()
-                    page.wait_for_timeout(3000)
+                    page.wait_for_timeout(1500)
                 page.goto(url, timeout=20000, wait_until='domcontentloaded')
                 page.wait_for_timeout(2000)
                 page.evaluate(REMOVE_ADS_SCRIPT)  # 広告削除
