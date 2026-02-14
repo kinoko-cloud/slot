@@ -46,7 +46,7 @@ DAIDATA_STORES = {
         'hall_id': '100928',
         'name': '秋葉原エスパス駅前',
         'model_encoded': 'L%EF%BD%BD%EF%BD%B0%EF%BE%8A%EF%BE%9F%EF%BD%B0%EF%BE%8C%EF%BE%9E%EF%BE%97%EF%BD%AF%EF%BD%B8%EF%BD%BC%EF%BE%9E%EF%BD%AC%EF%BD%AF%EF%BD%B8',
-        'units': ['2158', '2159', '2160', '2161'],
+        'units': ['2157', '2158', '2159', '2160'],
     },
     'seibu_shinjuku_espass_sbj': {
         'hall_id': '100950',
