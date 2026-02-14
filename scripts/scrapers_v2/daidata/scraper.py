@@ -120,20 +120,38 @@ class DaidataScraper(BaseScraper):
             data['diff_medals'] = int(diff.group(1))
         
         # 今日の履歴テーブルを取得
+        # 「大当たり」「スタート」「出玉」「種別」「時間」ヘッダーを持つテーブルを探す
         today_history = []
         try:
-            rows = self.page.locator('table tr').all()
-            for row in rows[1:]:  # ヘッダースキップ
-                cells = row.locator('td').all()
-                if len(cells) >= 3:
-                    item = {
-                        'start': int(cells[0].inner_text().strip() or '0'),
-                        'type': cells[1].inner_text().strip(),
-                        'medals': int(cells[2].inner_text().strip() or '0'),
-                    }
-                    if len(cells) > 3:
-                        item['time'] = cells[3].inner_text().strip()
-                    today_history.append(item)
+            tables = self.page.locator('table').all()
+            history_table = None
+            for table in tables:
+                headers = table.locator('th').all()
+                header_texts = [h.inner_text().strip() for h in headers[:5]]
+                if '大当たり' in header_texts and '時間' in header_texts:
+                    history_table = table
+                    break
+            
+            if history_table:
+                rows = history_table.locator('tr').all()
+                for row in rows[1:]:  # ヘッダースキップ
+                    cells = row.locator('td').all()
+                    if len(cells) >= 5:
+                        hit_num_text = cells[0].inner_text().strip()
+                        start_text = cells[1].inner_text().strip()
+                        medals_text = cells[2].inner_text().strip()
+                        type_text = cells[3].inner_text().strip()
+                        time_text = cells[4].inner_text().strip()
+                        
+                        item = {
+                            'hit_num': int(hit_num_text) if hit_num_text.isdigit() else 0,
+                            'start': int(start_text) if start_text.isdigit() else 0,
+                            'medals': int(medals_text) if medals_text.isdigit() else 0,
+                            'type': type_text,
+                            'time': time_text,
+                        }
+                        if item['time']:  # 時間がある行のみ
+                            today_history.append(item)
         except Exception as e:
             self.logger.debug(f"Failed to get today_history: {e}")
         

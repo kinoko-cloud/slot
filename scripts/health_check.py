@@ -232,7 +232,7 @@ def check_history_completeness():
                     if day.get('date') == target_date:
                         hist = day.get('history', [])
                         if hist:
-                            last_time = hist[-1].get('time', '')
+                            last_time = hist[0].get('time', '')  # 最新の履歴（[0]が最新）
                             checked += 1
                             if last_time and last_time < min_last_time:
                                 issues.append({
