@@ -721,12 +721,11 @@ def generate_index(env):
 
     for rec in top3 + top3_candidates + yesterday_top10 + today_top10:
         # 日付を強制的に固定化（recommenderが「最新データ」を返す問題の対策）
-        # yesterday_dateが実際の「昨日」と異なる場合、蓄積DBから正しい日付のデータを取得
+        # 常に蓄積DBから正しい日付のデータを取得する
         store_key = rec.get('store_key', '')
         unit_id = str(rec.get('unit_id', ''))
-        y_date = rec.get('yesterday_date', '')
         
-        if y_date and y_date != fixed_yesterday and store_key and unit_id:
+        if store_key and unit_id:
             # yesterday_dateが昨日でない場合、蓄積DBから正しいデータを取得
             try:
                 from analysis.history_accumulator import load_unit_history
@@ -885,7 +884,7 @@ def generate_index(env):
     # 差枚だと「万枚出して飲まれた台」が低く出る。
     # max_chain（1回の連チャン区間の累計枚数）なら爆発の瞬間を正しく評価。
     # 前日の爆発台も差枚優先
-    yesterday_top10.sort(key=lambda x: (-x.get('yesterday_diff_medals', x.get('diff_medals', 0)), -x.get('yesterday_max_medals', 0)))
+    yesterday_top10.sort(key=lambda x: (-(x.get('yesterday_diff_medals') or x.get('diff_medals') or 0), -(x.get('yesterday_max_medals') or 0)))
     yesterday_top10 = yesterday_top10[:10]
 
     # 本日の爆発台: 最大連チャン枚数でソート
