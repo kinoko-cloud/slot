@@ -40,6 +40,12 @@ jobs:
           playwright install chromium
           playwright install-deps chromium
 
+      - name: Check unit changes (daily at 10:00)
+        if: github.event.schedule == '0 1 * * *'
+        run: |
+          # 毎日10時に台番号変更をチェック
+          timeout 300 python scripts/scrapers_v2/fetch_all.py --discover 2>&1 || true
+
       - name: Fetch with v2 scraper
         run: |
           # 全店舗取得（daidata + papimo）
