@@ -196,19 +196,42 @@ def _accumulate_unit(store_key: str, unit_id: str, days: list, machine_key: str)
         if not date:
             continue
         
-        # 既存データがあり、historyが空で、新データにhistoryがある場合は更新
+        # 既存データがある場合：より新しい（art/gamesが大きい）データで更新
         if date in existing_days_map:
             existing_day = existing_days_map[date]
+            new_art = day.get('art', 0)
+            new_games = day.get('total_start', 0) or day.get('games', 0)
+            existing_art = existing_day.get('art', 0)
+            existing_games = existing_day.get('games', 0) or existing_day.get('total_start', 0)
+            
+            # art または games が増加していたら更新（閉店後のデータがより完全）
+            if new_art > existing_art or new_games > existing_games:
+                # art/games/probを更新
+                existing_day['art'] = new_art
+                existing_day['games'] = new_games
+                existing_day['total_start'] = new_games
+                prob = new_games / new_art if new_art > 0 and new_games > 0 else 0
+                existing_day['prob'] = round(prob, 1) if prob > 0 else 0
+                existing_day['is_good'] = prob > 0 and prob <= good_prob and new_art >= (20 if machine_key == 'sbj' else 10)
+                
+                # diff_medals更新
+                new_diff = day.get('diff_medals') or day.get('diff') or day.get('sashi')
+                if new_diff:
+                    existing_day['diff_medals'] = new_diff
+                
+                updated += 1
+            
+            # historyも更新（より多い履歴で上書き）
             new_history = day.get('history', [])
-            if new_history and not existing_day.get('history'):
+            existing_history = existing_day.get('history', [])
+            if new_history and len(new_history) > len(existing_history):
                 existing_day['history'] = new_history
-                # max_rensa, max_medalsも更新
                 max_rensa, max_medals = _calc_history_stats(new_history)
                 if max_rensa > 0:
                     existing_day['max_rensa'] = max_rensa
                 if max_medals > 0:
                     existing_day['max_medals'] = max_medals
-                updated += 1
+            
             continue
 
         art = day.get('art', 0)
