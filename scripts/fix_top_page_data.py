@@ -78,6 +78,29 @@ def is_valid_day_data(day_data):
     return True
 
 
+def check_duplicate_data(days):
+    """複数日で同じ履歴データが重複していないかチェック"""
+    if len(days) < 2:
+        return []
+    
+    duplicates = []
+    for i in range(len(days)):
+        for j in range(i + 1, len(days)):
+            hist_i = days[i].get('history', [])
+            hist_j = days[j].get('history', [])
+            
+            if not hist_i or not hist_j:
+                continue
+            
+            # 最初と最後の時刻が同じなら重複の可能性
+            if len(hist_i) == len(hist_j) and len(hist_i) > 0:
+                if (hist_i[0].get('time') == hist_j[0].get('time') and
+                    hist_i[-1].get('time') == hist_j[-1].get('time')):
+                    duplicates.append((days[i].get('date'), days[j].get('date')))
+    
+    return duplicates
+
+
 def get_top_page_units(top_n=25):
     """トップページから上位N台を取得"""
     index_file = ROOT / 'docs' / 'index.html'
@@ -142,6 +165,12 @@ def check_unit_data(store_key, unit_id, days_back=3):
             issues.append(('invalid', target_date))
         elif not is_valid_day_data(day_data):
             issues.append(('no_summary', target_date))
+    
+    # 重複チェック
+    recent_days = [d for d in data.get('days', []) if d.get('date', '') >= (today - timedelta(days=days_back)).strftime('%Y-%m-%d')]
+    duplicates = check_duplicate_data(recent_days)
+    for date1, date2 in duplicates:
+        issues.append(('duplicate', f"{date1}={date2}"))
     
     return issues
 
