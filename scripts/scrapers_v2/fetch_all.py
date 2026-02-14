@@ -145,6 +145,7 @@ class V2Fetcher:
                         'bb': today.get('bb', 0),
                         'rb': today.get('rb', 0),
                         'total_start': today.get('total_start', 0),
+                        'today_history': today.get('history', []),
                     }
                 else:
                     result['units'][unit_id] = {
@@ -153,6 +154,7 @@ class V2Fetcher:
                         'bb': 0,
                         'rb': 0,
                         'total_start': 0,
+                        'today_history': [],
                     }
             
             result['fetched_at'] = now_jst().isoformat()
@@ -266,6 +268,9 @@ class V2Fetcher:
 def discover_all_units() -> Dict[str, List[str]]:
     """
     全店舗の台番号を自動検出
+    
+    Returns:
+        {store_key: detected_units} - 変更があった店舗のみ
     """
     discovery = DaidataDiscovery(headless=True)
     updates = {}
@@ -276,18 +281,27 @@ def discover_all_units() -> Dict[str, List[str]]:
         for store_key, config in DAIDATA_STORES.items():
             hall_id = config['hall_id']
             machine_key = 'sbj' if 'sbj' in store_key else 'hokuto2'
-            expected = config.get('units', [])
+            expected = set(config.get('units', []))
             
             result = discovery.discover_units(hall_id, machine_key)
-            detected = [u['unit_id'] for u in result.get('units', [])]
+            detected = set(u['unit_id'] for u in result.get('units', []))
+            machine_name = result.get('machine_name', '')
             
-            if set(expected) != set(detected):
-                logger.warning(f"⚠️ {store_key}: 台番号変更検出")
-                logger.warning(f"   設定: {expected}")
-                logger.warning(f"   検出: {detected}")
-                updates[store_key] = detected
+            # 差分を計算
+            missing = expected - detected  # 設定にあるが検出されない（消えた台）
+            added = detected - expected    # 検出されたが設定にない（増えた台）
+            
+            if missing or added:
+                logger.warning(f"⚠️ {store_key}: 台番号変更検出 [{machine_name}]")
+                if missing:
+                    logger.warning(f"   🔴 消えた台: {sorted(missing)}")
+                if added:
+                    logger.warning(f"   🟢 増えた台: {sorted(added)}")
+                logger.warning(f"   設定: {sorted(expected)}")
+                logger.warning(f"   検出: {sorted(detected)}")
+                updates[store_key] = sorted(detected)
             else:
-                logger.info(f"✓ {store_key}: OK ({len(detected)}台)")
+                logger.info(f"✓ {store_key}: OK ({len(detected)}台) [{machine_name}]")
     
     return updates
 
