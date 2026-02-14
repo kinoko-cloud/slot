@@ -43,6 +43,10 @@ jobs:
         run: |
           python scripts/fill_missing_history.py --days 7
 
+      - name: Fix top page data
+        run: |
+          python scripts/fix_top_page_data.py --top 25 --days 3
+
       - name: Regenerate static site
         run: |
           pip install pyyaml
