@@ -834,10 +834,12 @@ def generate_index(env):
                     for fixed_date in fixed_dates[:7]:
                         # 蓄積DBを優先、なければ既存から
                         day_data = days_by_date.get(fixed_date) or existing_days.get(fixed_date)
-                        if day_data and day_data.get('art', 0) > 0:
+                        # art=0でもgamesがあれば表示（稼働があった日）
+                        if day_data and (day_data.get('art', 0) > 0 or day_data.get('games', 0) > 0 or day_data.get('total_start', 0) > 0):
                             recent_days.append({
                                 'date': fixed_date,
                                 'art': day_data.get('art', 0),
+                                'games': day_data.get('games', 0) or day_data.get('total_start', 0),
                                 'prob': day_data.get('prob', 0),
                                 'diff_medals': day_data.get('diff_medals'),
                                 'max_rensa': day_data.get('max_rensa'),
@@ -856,9 +858,9 @@ def generate_index(env):
                     if day.get('date') == fixed_date:
                         matching_day = day
                         break
-                if matching_day and matching_day.get('art', 0) > 0:
+                # art=0でもgamesがあれば表示（稼働があった日）
+                if matching_day and (matching_day.get('art', 0) > 0 or matching_day.get('games', 0) > 0):
                     new_recent_days.append(matching_day)
-                # データなしまたはART=0の場合はスキップ（表示しない）
             rec['recent_days'] = new_recent_days
 
     # TOP3 + 全S/A候補 + 爆発台の過去3日分+当日の当たり履歴を加工

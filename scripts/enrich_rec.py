@@ -51,33 +51,27 @@ def enrich_recs(recs):
         _enrich_day_prefix(rec, days_by_date, 'day_before_', 'day_before_date')
         _enrich_day_prefix(rec, days_by_date, 'three_days_ago_', 'three_days_ago_date')
 
-        # 2. recent_daysの補完（空なら蓄積DBから構築）
-        if not rec.get('recent_days'):
-            # 蓄積DBから過去7日分を構築
-            from datetime import datetime, timedelta
-            recent_days = []
-            for i in range(1, 8):
-                d = (datetime.now() - timedelta(days=i)).strftime('%Y-%m-%d')
-                day_data = days_by_date.get(d)
-                if day_data and day_data.get('art', 0) > 0:
-                    recent_days.append({
-                        'date': d,
-                        'art': day_data.get('art', 0),
-                        'diff_medals': day_data.get('diff_medals'),
-                        'max_rensa': day_data.get('max_rensa'),
-                        'max_medals': day_data.get('max_medals'),
-                        'history': day_data.get('history', []),
-                    })
-            rec['recent_days'] = recent_days
-        else:
-            for rd in rec.get('recent_days', []):
-                rd_date = rd.get('date', '')
-                if not rd_date:
-                    continue
-                day_data = days_by_date.get(rd_date)
-                if not day_data:
-                    continue
-                _enrich_day_dict(rd, day_data)
+        # 2. recent_daysを蓄積DBから常に補完（recommenderからのデータが不完全な場合があるため）
+        from datetime import datetime, timedelta
+        existing_days = {d.get('date'): d for d in rec.get('recent_days', []) if d.get('date')}
+        recent_days = []
+        for i in range(1, 8):
+            d = (datetime.now() - timedelta(days=i)).strftime('%Y-%m-%d')
+            # 蓄積DBを優先、なければ既存から
+            day_data = days_by_date.get(d) or existing_days.get(d)
+            # art=0でもgamesがあれば表示（稼働があった日）
+            if day_data and (day_data.get('art', 0) > 0 or day_data.get('games', 0) > 0 or day_data.get('total_start', 0) > 0):
+                recent_days.append({
+                    'date': d,
+                    'art': day_data.get('art', 0),
+                    'games': day_data.get('games', 0) or day_data.get('total_start', 0),
+                    'prob': day_data.get('prob', 0),
+                    'diff_medals': day_data.get('diff_medals'),
+                    'max_rensa': day_data.get('max_rensa'),
+                    'max_medals': day_data.get('max_medals'),
+                    'history': day_data.get('history', []),
+                })
+        rec['recent_days'] = recent_days
 
 
 def _enrich_day_prefix(rec, days_by_date, prefix, date_key):
