@@ -194,14 +194,16 @@ class DaidataScraper(BaseScraper):
         text = self.get_text()
         day = {'date': date, 'history': []}
         
-        # BB/RB/ART
+        # BB/RB/ART/スタート
         for pattern, key in [
             (r'BB[：:]\s*(\d+)', 'bb'),
             (r'RB[：:]\s*(\d+)', 'rb'),
             (r'ART[：:]\s*(\d+)', 'art'),
+            (r'(?:スタート|総回転|G数)[：:]\s*(\d+)', 'games'),
+            (r'(\d+)\s*(?:G|回転)', 'games'),  # フォールバック
         ]:
             match = re.search(pattern, text)
-            if match:
+            if match and key not in day:  # 重複防止
                 day[key] = int(match.group(1))
         
         # 履歴テーブル
@@ -221,7 +223,14 @@ class DaidataScraper(BaseScraper):
         except:
             pass
         
-        return day if day.get('history') or day.get('art', 0) > 0 else None
+        # gamesがない場合、履歴からstartの合計を計算
+        if not day.get('games') and day.get('history'):
+            total_start = sum(h.get('start', 0) for h in day['history'])
+            if total_start > 0:
+                day['games'] = total_start
+                day['total_start'] = total_start
+        
+        return day if day.get('history') or day.get('art', 0) > 0 or day.get('games', 0) > 0 else None
     
     def fetch_list_games(self, hall_id: str, model_encoded: str) -> Dict[str, int]:
         """
