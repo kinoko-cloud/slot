@@ -52,14 +52,14 @@ DAIDATA_STORES = {
         'hall_id': '100950',
         'name': '西武新宿駅前エスパス',
         'model_encoded': 'L%EF%BD%BD%EF%BD%B0%EF%BE%8A%EF%BE%9F%EF%BD%B0%EF%BE%8C%EF%BE%9E%EF%BE%97%EF%BD%AF%EF%BD%B8%EF%BD%BC%EF%BE%9E%EF%BD%AC%EF%BD%AF%EF%BD%B8',
-        'units': ['4168'],  # 減台により4168のみ稼働（3185,3186,3187は撤去）
+        'units': ['3185', '3186', '3187'],
     },
     # === エスパス上野新館 (hall_id=100196) ===
     'ueno_espass_sbj': {
         'hall_id': '100196',
         'name': 'エスパス上野新館',
         'model_encoded': 'L%EF%BD%BD%EF%BD%B0%EF%BE%8A%EF%BE%9F%EF%BD%B0%EF%BE%8C%EF%BE%9E%EF%BE%97%EF%BD%AF%EF%BD%B8%EF%BD%BC%EF%BE%9E%EF%BD%AC%EF%BD%AF%EF%BD%B8',
-        'units': ['3110', '3111', '3112', '3113'],
+        'units': ['3075', '3079', '3085', '3127', '3140'],
     },
     # === エスパス上野本館 (hall_id=100947) ===
     'ueno_honkan_espass_sbj': {
@@ -91,10 +91,10 @@ DAIDATA_STORES = {
     },
     # === エスパス新小岩 (hall_id=100260) ===
     'shinkoiwa_espass_sbj': {
-        'hall_id': '100260',
-        'name': 'エスパス新小岩',
+        'hall_id': '100948',
+        'name': '新小岩エスパス',
         'model_encoded': 'L%EF%BD%BD%EF%BD%B0%EF%BE%8A%EF%BE%9F%EF%BD%B0%EF%BE%8C%EF%BE%9E%EF%BE%97%EF%BD%AF%EF%BD%B8%EF%BD%BC%EF%BE%9E%EF%BD%AC%EF%BD%AF%EF%BD%B8',
-        'units': ['2050', '2051', '2052'],
+        'units': ['3938', '102', '113'],
     },
     'seibu_shinjuku_espass_hokuto2': {
         'hall_id': '100950',
