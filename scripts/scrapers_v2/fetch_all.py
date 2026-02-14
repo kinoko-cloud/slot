@@ -56,13 +56,34 @@ class V2Fetcher:
         return {}
     
     def _get_previous_unit_data(self, store_key: str, unit_id: str) -> Dict:
-        """前回の台データを取得"""
+        """前回の台データを取得（availability.json → historyファイルの順で探す）"""
+        # まずavailability.jsonから
         stores = self._previous_availability.get('stores', {})
         store = stores.get(store_key, {})
         units = store.get('units', [])
         for u in units:
             if u.get('unit_id') == unit_id:
-                return u
+                if u.get('art', 0) > 0:
+                    return u
+        
+        # availability.jsonにデータがない or ART=0の場合、historyファイルから取得
+        history_file = ROOT / 'data' / 'history' / store_key / f"{unit_id}.json"
+        if history_file.exists():
+            try:
+                with open(history_file) as f:
+                    hist = json.load(f)
+                days = hist.get('days', [])
+                today = now_jst().strftime('%Y-%m-%d')
+                for d in days:
+                    if d.get('date') == today:
+                        return {
+                            'art': d.get('art', 0),
+                            'bb': d.get('bb', 0),
+                            'rb': d.get('rb', 0),
+                            'final_start': d.get('final_start', 0),
+                        }
+            except:
+                pass
         return {}
         
     def fetch_store_daidata(self, store_key: str, config: Dict) -> Dict[str, Any]:
