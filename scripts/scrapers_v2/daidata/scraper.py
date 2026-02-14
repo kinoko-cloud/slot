@@ -119,6 +119,27 @@ class DaidataScraper(BaseScraper):
         if diff:
             data['diff_medals'] = int(diff.group(1))
         
+        # 今日の履歴テーブルを取得
+        today_history = []
+        try:
+            rows = self.page.locator('table tr').all()
+            for row in rows[1:]:  # ヘッダースキップ
+                cells = row.locator('td').all()
+                if len(cells) >= 3:
+                    item = {
+                        'start': int(cells[0].inner_text().strip() or '0'),
+                        'type': cells[1].inner_text().strip(),
+                        'medals': int(cells[2].inner_text().strip() or '0'),
+                    }
+                    if len(cells) > 3:
+                        item['time'] = cells[3].inner_text().strip()
+                    today_history.append(item)
+        except Exception as e:
+            self.logger.debug(f"Failed to get today_history: {e}")
+        
+        if today_history:
+            data['today_history'] = today_history
+        
         return data
     
     def fetch_history(self, hall_id: str, unit_id: str, days: int = 7) -> List[Dict]:
