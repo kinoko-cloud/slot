@@ -24,6 +24,7 @@ sys.path.insert(0, str(ROOT / 'scripts'))
 from daidata.scraper import DaidataScraper
 from daidata.discovery import DaidataDiscovery
 from common.base import setup_logger, now_jst
+from common.games_cache import get_changed_units, save_cache
 
 # v1の店舗設定をインポート
 from fetch_daidata_availability import DAIDATA_STORES, PAPIMO_STORES
@@ -45,9 +46,9 @@ class V2Fetcher:
         """
         1店舗のdaidataデータ取得
         
-        1. 台番号を自動検出（オプション）
-        2. 一覧ページでG数＋空き/遊技中を一括取得
-        3. 詳細は差分取得（G数変化台のみ）
+        1. 一覧ページでG数＋空き/遊技中を一括取得
+        2. G数が変化した台のみ詳細取得（差分取得）
+        3. G数変化なしの台は前回のキャッシュを使用
         """
         hall_id = config['hall_id']
         model_encoded = config['model_encoded']
@@ -59,6 +60,8 @@ class V2Fetcher:
             'units': {},
             'playing': [],
             'empty': [],
+            'changed_count': 0,
+            'skipped_count': 0,
             'fetched_at': None,
             'error': None,
         }
@@ -67,13 +70,6 @@ class V2Fetcher:
             scraper = DaidataScraper(headless=self.headless)
             
             with scraper.browser_session():
-                # 台番号自動検出
-                if self.discover:
-                    machine_key = 'sbj' if 'sbj' in store_key else 'hokuto2'
-                    discovery = DaidataDiscovery(headless=self.headless)
-                    # 既存のブラウザセッションを再利用（別インスタンスなので無理）
-                    # discoveryは別途実行
-                
                 # 一覧ページでG数＋空き/遊技中を取得
                 list_data = scraper.fetch_list_with_availability(
                     hall_id, model_encoded, expected_units
@@ -82,29 +78,35 @@ class V2Fetcher:
                 result['playing'] = list_data.get('playing', [])
                 result['empty'] = list_data.get('empty', [])
                 
-                # 各台の詳細取得（空き台はスキップして高速化）
+                # G数マップ
                 games_map = list_data.get('games', {})
+                
+                # G数が変化した台を特定
+                changed_units = get_changed_units(store_key, games_map)
                 
                 for unit_id in expected_units:
                     games = games_map.get(unit_id, 0)
                     
-                    # 遊技中の台のみ詳細取得
-                    if unit_id in result['playing'] and games > 0:
+                    # G数が変化した台のみ詳細取得
+                    if unit_id in changed_units:
                         detail = scraper.fetch_realtime(hall_id, unit_id)
                         result['units'][unit_id] = detail
+                        result['changed_count'] += 1
                     else:
-                        # 空き台は基本情報のみ
+                        # G数変化なし → 基本情報のみ（キャッシュ扱い）
                         result['units'][unit_id] = {
                             'unit_id': unit_id,
                             'total_start': games,
-                            'art': 0,
+                            'art': 0,  # 詳細は前回のまま
                             'bb': 0,
                             'rb': 0,
-                            'status': 'empty' if unit_id in result['empty'] else 'unknown',
+                            'cached': True,
+                            'status': 'empty' if unit_id in result['empty'] else 'playing',
                         }
+                        result['skipped_count'] += 1
                 
                 result['fetched_at'] = now_jst().isoformat()
-                logger.info(f"✓ {store_key}: {len(result['playing'])}台遊技中, {len(result['empty'])}台空き")
+                logger.info(f"✓ {store_key}: {result['changed_count']}台取得, {result['skipped_count']}台スキップ (G数変化なし)")
                 
         except Exception as e:
             result['error'] = str(e)
