@@ -1,12 +1,11 @@
-name: Fetch Availability (Parallel)
+name: Fetch Availability (Parallel) [DISABLED - Use v2]
 
 on:
-  schedule:
-    # メインデータ取得: 毎時0分と30分実行（JST 10-22時）
-    # GitHub Actionsのスケジュール遅延対策で頻度を上げる
-    - cron: '0 1-13 * * *'   # 毎時0分
-    - cron: '30 1-13 * * *'  # 毎時30分
-  workflow_dispatch:
+  # スケジュール無効化 - v2に移行
+  # schedule:
+  #   - cron: '0 1-13 * * *'
+  #   - cron: '30 1-13 * * *'
+  workflow_dispatch:  # 手動実行のみ
 
 concurrency:
   group: slot-fetch-parallel-${{ github.run_id }}
