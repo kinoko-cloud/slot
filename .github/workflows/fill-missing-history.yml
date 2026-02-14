@@ -1,0 +1,61 @@
+name: Fill Missing History
+
+on:
+  schedule:
+    # JST 2:00 (UTC 17:00) に毎日実行
+    - cron: '0 17 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: slot-fill-history
+  cancel-in-progress: true
+
+jobs:
+  fill:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    timeout-minutes: 30
+    
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-1.49.1
+
+      - name: Install dependencies
+        run: |
+          pip install 'playwright==1.49.1' requests beautifulsoup4
+          playwright install chromium
+          playwright install-deps chromium
+
+      - name: Fill missing history data
+        run: |
+          python scripts/fill_missing_history.py --days 7
+
+      - name: Regenerate static site
+        run: |
+          pip install pyyaml
+          python scripts/generate_static.py
+
+      - name: Commit and push
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add -A
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "auto: 欠損履歴データ補完"
+            git push
+          fi
