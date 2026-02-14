@@ -210,8 +210,10 @@ class V2Fetcher:
         """
         v1のavailability.json形式に変換
         """
+        ts = now_jst().isoformat()
         v1_data = {
-            'last_updated': now_jst().isoformat(),
+            'last_updated': ts,
+            'fetched_at': ts,  # ヘルスチェック用
             'stores': {}
         }
         
