@@ -42,6 +42,28 @@ class V2Fetcher:
         self.headless = headless
         self.discover = discover  # 台番号自動検出を行うか
         self.results = {}
+        self._previous_availability = self._load_previous_availability()
+        
+    def _load_previous_availability(self) -> Dict:
+        """前回のavailability.jsonを読み込む"""
+        avail_path = ROOT / 'data' / 'availability.json'
+        if avail_path.exists():
+            try:
+                with open(avail_path) as f:
+                    return json.load(f)
+            except:
+                pass
+        return {}
+    
+    def _get_previous_unit_data(self, store_key: str, unit_id: str) -> Dict:
+        """前回の台データを取得"""
+        stores = self._previous_availability.get('stores', {})
+        store = stores.get(store_key, {})
+        units = store.get('units', [])
+        for u in units:
+            if u.get('unit_id') == unit_id:
+                return u
+        return {}
         
     def fetch_store_daidata(self, store_key: str, config: Dict) -> Dict[str, Any]:
         """
@@ -94,13 +116,17 @@ class V2Fetcher:
                         result['units'][unit_id] = detail
                         result['changed_count'] += 1
                     else:
-                        # G数変化なし → 基本情報のみ（キャッシュ扱い）
+                        # G数変化なし → 前回のデータを使用
+                        # availability.jsonから前回のデータを取得
+                        prev_data = self._get_previous_unit_data(store_key, unit_id)
                         result['units'][unit_id] = {
                             'unit_id': unit_id,
                             'total_start': games,
-                            'art': 0,  # 詳細は前回のまま
-                            'bb': 0,
-                            'rb': 0,
+                            'art': prev_data.get('art', 0),
+                            'bb': prev_data.get('bb', 0),
+                            'rb': prev_data.get('rb', 0),
+                            'final_start': prev_data.get('final_start', 0),
+                            'diff_medals': prev_data.get('diff_medals', 0),
                             'cached': True,
                             'status': 'empty' if unit_id in result['empty'] else 'playing',
                         }
