@@ -253,3 +253,49 @@ cron → daily_collect.py
 | 2026-01-30 | 初版作成（RSさん指摘：既存コードを忘れて新規で作る問題への対策） |
 | 2026-01-30 | Why（設計意図・経緯）セクション追加 |
 | 2026-01-31 | リアルタイム機能統合 — 全9店舗対応、稼働状態を明記、アーカイブ整理 |
+
+---
+
+## v2スクレイパー（2026-02-14〜）
+
+### 概要
+`scripts/scrapers_v2/` に統合スクレイパーを実装。
+
+### 特徴
+1. **G数変化ベースの差分取得** - 変化なし台はスキップで高速
+2. **全店舗統合** - daidata 16店舗 + papimo 2店舗
+3. **キャッシュ機能** - `data/.games_cache/` にG数を保存
+
+### パフォーマンス
+- v1: 約5分以上
+- **v2: 約4分**（G数変化なしならさらに高速）
+
+### ファイル構成
+```
+scripts/scrapers_v2/
+├── fetch_all.py          # メインスクリプト（統合）
+├── daidata/
+│   ├── scraper.py        # daidata用スクレイパー
+│   └── discovery.py      # 台番号自動検出
+├── papimo/
+│   └── scraper.py        # papimo用スクレイパー
+└── common/
+    ├── base.py           # 共通基盤
+    └── games_cache.py    # G数キャッシュ
+```
+
+### コマンド
+```bash
+# 全店舗取得
+python scripts/scrapers_v2/fetch_all.py
+
+# SBJのみ
+python scripts/scrapers_v2/fetch_all.py --sbj-only
+
+# 台番号検出
+python scripts/scrapers_v2/fetch_all.py --discover
+```
+
+### GitHub Actions
+- `fetch-availability-v2.yml`: 毎時0分/30分に自動実行
+- `fetch-availability-parallel.yml`: 無効化（手動のみ）
