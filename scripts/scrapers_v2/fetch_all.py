@@ -23,6 +23,7 @@ sys.path.insert(0, str(ROOT / 'scripts'))
 
 from daidata.scraper import DaidataScraper
 from daidata.discovery import DaidataDiscovery
+from papimo.scraper import PapimoScraper, PAPIMO_STORES as PAPIMO_CONFIG
 from common.base import setup_logger, now_jst
 from common.games_cache import get_changed_units, save_cache
 
@@ -113,6 +114,66 @@ class V2Fetcher:
             logger.error(f"✗ {store_key}: {e}")
         
         return result
+    
+    def fetch_store_papimo(self, store_key: str, machine_key: str) -> Dict[str, Any]:
+        """
+        1店舗のpapimoデータ取得（リアルタイム）
+        """
+        result = {
+            'store_key': f"{store_key}_{machine_key}",
+            'name': f"アイランド秋葉原 {machine_key.upper()}",
+            'units': {},
+            'fetched_at': None,
+            'error': None,
+        }
+        
+        try:
+            scraper = PapimoScraper(headless=self.headless)
+            
+            # 最新1日分だけ取得（リアルタイム用）
+            data = scraper.fetch(store_key=store_key, machine_key=machine_key, days_back=1)
+            
+            for unit_data in data.get('units', []):
+                unit_id = unit_data.get('unit_id')
+                days = unit_data.get('days', [])
+                
+                if days:
+                    today = days[0]
+                    result['units'][unit_id] = {
+                        'unit_id': unit_id,
+                        'art': today.get('art', 0),
+                        'bb': today.get('bb', 0),
+                        'rb': today.get('rb', 0),
+                        'total_start': today.get('total_start', 0),
+                    }
+                else:
+                    result['units'][unit_id] = {
+                        'unit_id': unit_id,
+                        'art': 0,
+                        'bb': 0,
+                        'rb': 0,
+                        'total_start': 0,
+                    }
+            
+            result['fetched_at'] = now_jst().isoformat()
+            logger.info(f"✓ {result['store_key']}: {len(result['units'])}台取得")
+            
+        except Exception as e:
+            result['error'] = str(e)
+            logger.error(f"✗ {store_key}_{machine_key}: {e}")
+        
+        return result
+    
+    def fetch_all_papimo(self) -> Dict[str, Any]:
+        """papimo全店舗を取得"""
+        results = {}
+        
+        for store_key, config in PAPIMO_CONFIG.items():
+            for machine_key in config.get('machines', {}).keys():
+                full_key = f"{store_key}_{machine_key}"
+                results[full_key] = self.fetch_store_papimo(store_key, machine_key)
+        
+        return results
     
     def fetch_all_daidata(self, stores: Dict = None, parallel: int = 1) -> Dict[str, Any]:
         """
@@ -236,6 +297,8 @@ def main():
     parser.add_argument('--discover', action='store_true', help='台番号自動検出のみ')
     parser.add_argument('--sbj-only', action='store_true', help='SBJのみ')
     parser.add_argument('--hokuto-only', action='store_true', help='北斗のみ')
+    parser.add_argument('--daidata-only', action='store_true', help='daidataのみ（papimoスキップ）')
+    parser.add_argument('--papimo-only', action='store_true', help='papimoのみ')
     parser.add_argument('--parallel', type=int, default=1, help='並列数')
     parser.add_argument('--store', type=str, help='特定店舗のみ')
     args = parser.parse_args()
@@ -251,25 +314,34 @@ def main():
             print("\n✅ 全店舗の台番号OK")
         return
     
-    # フィルタリング
-    stores = DAIDATA_STORES.copy()
-    if args.sbj_only:
-        stores = {k: v for k, v in stores.items() if 'sbj' in k}
-    elif args.hokuto_only:
-        stores = {k: v for k, v in stores.items() if 'hokuto' in k}
-    if args.store:
-        stores = {k: v for k, v in stores.items() if args.store in k}
-    
-    # 取得実行
     fetcher = V2Fetcher(headless=True, discover=False)
     start = time.time()
+    all_results = {}
     
-    results = fetcher.fetch_all_daidata(stores, parallel=args.parallel)
-    fetcher.save_availability(results)
+    # daidata取得
+    if not args.papimo_only:
+        stores = DAIDATA_STORES.copy()
+        if args.sbj_only:
+            stores = {k: v for k, v in stores.items() if 'sbj' in k}
+        elif args.hokuto_only:
+            stores = {k: v for k, v in stores.items() if 'hokuto' in k}
+        if args.store:
+            stores = {k: v for k, v in stores.items() if args.store in k}
+        
+        daidata_results = fetcher.fetch_all_daidata(stores, parallel=args.parallel)
+        all_results.update(daidata_results)
+    
+    # papimo取得
+    if not args.daidata_only and not args.sbj_only and not args.hokuto_only:
+        papimo_results = fetcher.fetch_all_papimo()
+        all_results.update(papimo_results)
+    
+    # 保存
+    fetcher.save_availability(all_results)
     
     elapsed = time.time() - start
-    success = sum(1 for r in results.values() if not r.get('error'))
-    logger.info(f"完了: {success}/{len(stores)}店舗, {elapsed:.1f}秒")
+    success = sum(1 for r in all_results.values() if not r.get('error'))
+    logger.info(f"完了: {success}/{len(all_results)}店舗, {elapsed:.1f}秒")
 
 
 if __name__ == '__main__':
