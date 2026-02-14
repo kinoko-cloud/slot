@@ -188,6 +188,55 @@ STORES = {
         'units': ['0811', '0812', '0813', '0815', '0816', '0817', '0818', '0820', '0821', '0822', '0823', '0825'],  # 0814,0824別機種 (2026-02-14)
         'data_source': 'papimo',
     },
+    # === 追加店舗 (2026-02-14) ===
+    'ueno_espass_sbj': {
+        'name': 'エスパス日拓上野新館',
+        'short_name': 'エスパス上野新館',
+        'hall_id': '100196',
+        'machine': 'sbj',
+        'units': ['3075', '3079', '3085', '3127', '3140'],
+        'data_source': 'daidata',
+    },
+    'ueno_honkan_espass_sbj': {
+        'name': 'エスパス日拓上野本館',
+        'short_name': 'エスパス上野本館',
+        'hall_id': '100947',
+        'machine': 'sbj',
+        'units': ['3125', '3126', '3127'],
+        'data_source': 'daidata',
+    },
+    'takadanobaba_espass_sbj': {
+        'name': 'エスパス日拓高田馬場店',
+        'short_name': 'エスパス高田馬場',
+        'hall_id': '100915',
+        'machine': 'sbj',
+        'units': ['2060', '2061', '2062'],
+        'data_source': 'daidata',
+    },
+    'akasaka_espass_sbj': {
+        'name': 'エスパス日拓赤坂見附店',
+        'short_name': 'エスパス赤坂見附',
+        'hall_id': '100952',
+        'machine': 'sbj',
+        'units': ['2039', '2040', '2041'],
+        'data_source': 'daidata',
+    },
+    'shinokubo_espass_sbj': {
+        'name': 'エスパス日拓新大久保店',
+        'short_name': 'エスパス新大久保',
+        'hall_id': '100951',
+        'machine': 'sbj',
+        'units': ['3141', '3142', '3143', '3144'],
+        'data_source': 'daidata',
+    },
+    'shinkoiwa_espass_sbj': {
+        'name': 'エスパス日拓新小岩店',
+        'short_name': 'エスパス新小岩',
+        'hall_id': '100948',
+        'machine': 'sbj',
+        'units': ['179', '194'],
+        'data_source': 'daidata',
+    },
 }
 
 # 旧形式との互換性
