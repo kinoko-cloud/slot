@@ -29,13 +29,13 @@
 
 {# 前日・前々日・3日前用のマクロ（ラベル+詳細ボタン+履歴テーブル） #}
 {% macro recent_day_expandable(day_art, day_prob, day_date, day_label, day_diff, day_rensa, day_max_m, day_hist) %}
-{% if day_art > 0 %}
+{% if day_art > 0 or (day_hist and day_hist|length > 0) %}
 <div class="recent-day-block">
     <div class="recent-day-row {% if day_hist and day_hist|length > 0 %}has-detail{% endif %}" onclick="{% if day_hist and day_hist|length > 0 %}toggleRecentDayDetail(event, this){% endif %}">
         <span class="recent-label">{{ short_date(day_date) or day_label }}</span>
         {% if day_art > 0 %}<span class="recent-art">ART {{ day_art }}</span>{% endif %}
         {% if day_prob > 0 %}<span class="recent-prob {% if day_prob <= 100 %}excellent{% elif day_prob <= 130 %}good{% elif day_prob >= 200 %}bad{% endif %}">1/{{ day_prob|int }}</span>{% endif %}
-        {% if day_diff != 0 %}<span class="diff-medals-sm {% if day_diff > 0 %}plus{% else %}minus{% endif %}">{{ '{:+,}'.format(day_diff) }}枚</span>{% endif %}
+        {% if day_diff != 0 and day_art > 0 %}<span class="diff-medals-sm {% if day_diff > 0 %}plus{% else %}minus{% endif %}">{{ '{:+,}'.format(day_diff) }}枚</span>{% endif %}
         {% if day_rensa >= 3 %}<span class="rensa-sm">{{ day_rensa }}連</span>{% endif %}
         {% if day_max_m > 0 %}<span class="max-medals-sm">最大{{ '{:,}'.format(day_max_m) }}枚</span>{% endif %}
         {% if day_hist and day_hist|length > 0 %}<span class="expand-icon small">▼</span>{% endif %}

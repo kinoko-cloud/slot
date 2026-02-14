@@ -601,21 +601,22 @@ def generate_index(env):
                             'today_history': t_hist_marked,
                             'recent_days': rec.get('recent_days', []),
                             'first_hit_count': y_first_hit_count,
-                            # 前々日・3日前データ
+                            # 前々日・3日前データ（ART=0の場合はdiff_medals/max_medalsを0に）
                             'day_before_art': rec.get('day_before_art', 0),
                             'day_before_rb': rec.get('day_before_rb', 0),
                             'day_before_games': rec.get('day_before_games', 0),
                             'day_before_date': rec.get('day_before_date', ''),
-                            'day_before_diff_medals': rec.get('day_before_diff_medals', 0),
+                            'day_before_diff_medals': rec.get('day_before_diff_medals', 0) if rec.get('day_before_art', 0) > 0 else 0,
                             'day_before_max_rensa': rec.get('day_before_max_rensa', 0),
-                            'day_before_max_medals': rec.get('day_before_max_medals', 0),
+                            'day_before_max_medals': rec.get('day_before_max_medals', 0) if rec.get('day_before_art', 0) > 0 else 0,
                             'three_days_ago_art': rec.get('three_days_ago_art', 0),
                             'three_days_ago_rb': rec.get('three_days_ago_rb', 0),
                             'three_days_ago_games': rec.get('three_days_ago_games', 0),
                             'three_days_ago_date': rec.get('three_days_ago_date', ''),
-                            'three_days_ago_diff_medals': rec.get('three_days_ago_diff_medals', 0),
+                            # ART=0の場合はdiff_medals/max_medalsを0に（不正な値を防止）
+                            'three_days_ago_diff_medals': rec.get('three_days_ago_diff_medals', 0) if rec.get('three_days_ago_art', 0) > 0 else 0,
                             'three_days_ago_max_rensa': rec.get('three_days_ago_max_rensa', 0),
-                            'three_days_ago_max_medals': rec.get('three_days_ago_max_medals', 0),
+                            'three_days_ago_max_medals': rec.get('three_days_ago_max_medals', 0) if rec.get('three_days_ago_art', 0) > 0 else 0,
                         })
 
                 # 本日の爆発台（全台から収集、art_count > 0）
@@ -736,37 +737,43 @@ def generate_index(env):
                     # 昨日のデータ
                     if fixed_yesterday in days_by_date:
                         yd = days_by_date[fixed_yesterday]
+                        yd_art = yd.get('art', 0)
                         rec['yesterday_date'] = fixed_yesterday
-                        rec['yesterday_art'] = yd.get('art', 0)
+                        rec['yesterday_art'] = yd_art
                         rec['yesterday_rb'] = yd.get('rb', 0)
                         rec['yesterday_games'] = yd.get('games', 0) or yd.get('total_start', 0)
-                        rec['yesterday_diff_medals'] = yd.get('diff_medals', 0)
+                        # ART=0の場合はdiff_medalsを0に（不正な値を防止）
+                        rec['yesterday_diff_medals'] = yd.get('diff_medals', 0) if yd_art > 0 else 0
                         rec['yesterday_max_rensa'] = yd.get('max_rensa', 0)
-                        rec['yesterday_max_medals'] = yd.get('max_medals', 0)
+                        rec['yesterday_max_medals'] = yd.get('max_medals', 0) if yd_art > 0 else 0
                         rec['yesterday_history'] = yd.get('history', [])
                     
                     # 前々日のデータ
                     if fixed_day_before in days_by_date:
                         dbd = days_by_date[fixed_day_before]
+                        dbd_art = dbd.get('art', 0)
                         rec['day_before_date'] = fixed_day_before
-                        rec['day_before_art'] = dbd.get('art', 0)
+                        rec['day_before_art'] = dbd_art
                         rec['day_before_rb'] = dbd.get('rb', 0)
                         rec['day_before_games'] = dbd.get('games', 0) or dbd.get('total_start', 0)
-                        rec['day_before_diff_medals'] = dbd.get('diff_medals', 0)
+                        # ART=0の場合はdiff_medalsを0に（不正な値を防止）
+                        rec['day_before_diff_medals'] = dbd.get('diff_medals', 0) if dbd_art > 0 else 0
                         rec['day_before_max_rensa'] = dbd.get('max_rensa', 0)
-                        rec['day_before_max_medals'] = dbd.get('max_medals', 0)
+                        rec['day_before_max_medals'] = dbd.get('max_medals', 0) if dbd_art > 0 else 0
                         rec['day_before_history'] = dbd.get('history', [])
                     
                     # 3日前のデータ
                     if fixed_three_days in days_by_date:
                         tdd = days_by_date[fixed_three_days]
+                        tdd_art = tdd.get('art', 0)
                         rec['three_days_ago_date'] = fixed_three_days
-                        rec['three_days_ago_art'] = tdd.get('art', 0)
+                        rec['three_days_ago_art'] = tdd_art
                         rec['three_days_ago_rb'] = tdd.get('rb', 0)
                         rec['three_days_ago_games'] = tdd.get('games', 0) or tdd.get('total_start', 0)
-                        rec['three_days_ago_diff_medals'] = tdd.get('diff_medals', 0)
+                        # ART=0の場合はdiff_medalsを0に（不正な値を防止）
+                        rec['three_days_ago_diff_medals'] = tdd.get('diff_medals', 0) if tdd_art > 0 else 0
                         rec['three_days_ago_max_rensa'] = tdd.get('max_rensa', 0)
-                        rec['three_days_ago_max_medals'] = tdd.get('max_medals', 0)
+                        rec['three_days_ago_max_medals'] = tdd.get('max_medals', 0) if tdd_art > 0 else 0
                         rec['three_days_ago_history'] = tdd.get('history', [])
             except Exception:
                 pass
