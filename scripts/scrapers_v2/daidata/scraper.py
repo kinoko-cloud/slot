@@ -221,6 +221,66 @@ class DaidataScraper(BaseScraper):
         
         return results
     
+    def fetch_list_with_availability(self, hall_id: str, model_encoded: str, expected_units: List[str] = None) -> Dict[str, Any]:
+        """
+        一覧ページから全台のG数 + 空き/遊技中を一括取得
+        
+        Returns:
+            {
+                'games': {unit_id: total_start},
+                'playing': [unit_ids...],  # 遊技中
+                'empty': [unit_ids...],    # 空き
+            }
+        """
+        url = f"{self.BASE_URL}/{hall_id}/unit_list?model={model_encoded}&ballPrice=21.70&ps=S"
+        
+        if not self._goto_with_terms(url, hall_id):
+            return {'games': {}, 'playing': [], 'empty': []}
+        
+        self.wait(2000)
+        
+        games = {}
+        playing = []
+        empty = []
+        
+        try:
+            html = self.page.content()
+            
+            # HTMLから台番号と遊技状態を抽出
+            # パターン: <tr>内で icon-user があれば遊技中
+            for unit_id in (expected_units or []):
+                # 台番号を含む行を検索
+                pattern = rf'<tr[^>]*>.*?<td[^>]*>(.*?)</td>\s*<td[^>]*>\s*<a[^>]*>\s*{unit_id}\s*</a>'
+                match = re.search(pattern, html, re.DOTALL | re.IGNORECASE)
+                
+                if match:
+                    first_td = match.group(1)
+                    if 'icon-user' in first_td:
+                        playing.append(unit_id)
+                    else:
+                        empty.append(unit_id)
+                else:
+                    empty.append(unit_id)  # 見つからない場合は空きとみなす
+            
+            # G数も取得
+            text = self.get_text()
+            for line in text.split('\n'):
+                match = re.match(r'^\s*(\d+)\s+\d+\s+\d+\s+\d+\s+(\d+)', line)
+                if match:
+                    unit_id = match.group(1)
+                    g = int(match.group(2))
+                    games[unit_id] = g
+                    
+        except Exception as e:
+            self.logger.error(f"fetch_list_with_availability error: {e}")
+        
+        return {
+            'games': games,
+            'playing': sorted(playing),
+            'empty': sorted(empty),
+            'total': len(expected_units) if expected_units else len(games),
+        }
+    
     def fetch_selective(self, hall_id: str, model_encoded: str, store_key: str) -> Dict[str, Any]:
         """
         G数が変化した台だけ詳細取得（高速化版）
