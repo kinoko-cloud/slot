@@ -191,12 +191,12 @@ class DaidataScraper(BaseScraper):
         
         return day if day.get('history') or day.get('art', 0) > 0 else None
     
-    def fetch_list_art(self, hall_id: str, model_encoded: str) -> Dict[str, int]:
+    def fetch_list_games(self, hall_id: str, model_encoded: str) -> Dict[str, int]:
         """
-        一覧ページから全台のART数を一括取得（1リクエストで全台分）
+        一覧ページから全台のG数（スタート回数）を一括取得
         
         Returns:
-            {unit_id: art_count} の辞書
+            {unit_id: total_start} の辞書
         """
         url = f"{self.BASE_URL}/{hall_id}/unit_list?model={model_encoded}&ballPrice=21.70&ps=S"
         
@@ -209,23 +209,24 @@ class DaidataScraper(BaseScraper):
         try:
             text = self.get_text()
             for line in text.split('\n'):
-                # パターン: 台番号 BB RB ART ...
-                match = re.match(r'^\s*(\d+)\s+\d+\s+\d+\s+(\d+)', line)
+                # パターン: 台番号 BB RB ART スタート回数
+                # 例: 682 5 3 42 1234
+                match = re.match(r'^\s*(\d+)\s+\d+\s+\d+\s+\d+\s+(\d+)', line)
                 if match:
                     unit_id = match.group(1)
-                    art = int(match.group(2))
-                    results[unit_id] = art
+                    games = int(match.group(2))
+                    results[unit_id] = games
         except Exception as e:
-            self.logger.error(f"fetch_list_art error: {e}")
+            self.logger.error(f"fetch_list_games error: {e}")
         
         return results
     
     def fetch_selective(self, hall_id: str, model_encoded: str, store_key: str) -> Dict[str, Any]:
         """
-        変化した台だけ詳細取得（高速化版）
+        G数が変化した台だけ詳細取得（高速化版）
         
-        1. 一覧ページでART数を一括取得
-        2. 前回キャッシュと比較して変化した台を特定
+        1. 一覧ページでG数を一括取得
+        2. 前回キャッシュと比較（G数が同じ=誰も回してない=スキップ）
         3. 変化した台だけ詳細取得
         """
         from common.unit_tracker import get_changed_units
@@ -233,28 +234,28 @@ class DaidataScraper(BaseScraper):
         results = {'hall_id': hall_id, 'units': [], 'fetched_at': now_jst().isoformat()}
         
         with self.browser_session():
-            # 一覧からART数を取得
-            current_arts = self.fetch_list_art(hall_id, model_encoded)
-            self.logger.info(f"一覧取得: {len(current_arts)}台")
+            # 一覧からG数を取得
+            current_games = self.fetch_list_games(hall_id, model_encoded)
+            self.logger.info(f"一覧取得: {len(current_games)}台")
             
-            if not current_arts:
+            if not current_games:
                 return results
             
-            # 変化した台を特定
-            changed_units = get_changed_units(store_key, current_arts)
-            self.logger.info(f"変化あり: {len(changed_units)}台 / {len(current_arts)}台")
+            # G数が変化した台を特定
+            changed_units = get_changed_units(store_key, current_games)
+            self.logger.info(f"G数変化: {len(changed_units)}台 / {len(current_games)}台")
             
             # 変化した台だけ詳細取得
             for unit_id in changed_units:
                 data = self.fetch_realtime(hall_id, unit_id)
                 results['units'].append(data)
             
-            # 変化なし台は基本データのみ
-            for unit_id, art in current_arts.items():
+            # 変化なし台は基本データのみ（前回のキャッシュを使用）
+            for unit_id, games in current_games.items():
                 if unit_id not in changed_units:
                     results['units'].append({
                         'unit_id': unit_id,
-                        'art': art,
+                        'total_start': games,
                         'cached': True,
                     })
         
