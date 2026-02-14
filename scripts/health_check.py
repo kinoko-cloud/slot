@@ -299,6 +299,31 @@ def check_unit_changes():
     except Exception as e:
         return {'status': 'warning', 'message': f'台変動チェック失敗: {e}'}
 
+
+def check_config_integrity():
+    """設定ファイル整合性チェック（rankings.py vs fetch_daidata_availability.py）"""
+    try:
+        from check_config_integrity import check_integrity
+        errors, warnings = check_integrity()
+        
+        if errors:
+            return {
+                'status': 'error',
+                'message': f'設定ファイル不整合: {len(errors)}件',
+                'errors': errors[:5]
+            }
+        elif warnings:
+            return {
+                'status': 'warning',
+                'message': f'設定ファイル警告: {len(warnings)}件',
+                'warnings': warnings[:5]
+            }
+        else:
+            return {'status': 'ok', 'message': '設定ファイル整合性OK'}
+    except Exception as e:
+        return {'status': 'warning', 'message': f'整合性チェック失敗: {e}'}
+
+
 def check_github_actions():
     """GitHub Actionsの最新実行状態チェック"""
     import urllib.request
@@ -602,6 +627,7 @@ def run_all_checks():
     results['checks']['history'] = check_history_freshness()
     results['checks']['art_zero'] = check_art_zero_anomaly()
     results['checks']['unit_changes'] = check_unit_changes()
+    results['checks']['config_integrity'] = check_config_integrity()
     results['checks']['github_actions'] = check_github_actions()
     results['checks']['git_status'] = check_git_status()
     results['checks']['data_consistency'] = check_data_consistency()
