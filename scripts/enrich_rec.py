@@ -58,18 +58,41 @@ def enrich_recs(recs):
         for i in range(1, 8):
             d = (datetime.now() - timedelta(days=i)).strftime('%Y-%m-%d')
             # 蓄積DBを優先、なければ既存から
-            day_data = days_by_date.get(d) or existing_days.get(d)
+            acc_data = days_by_date.get(d)
+            exist_data = existing_days.get(d)
+            
+            # 蓄積DBがあればそれを使う、なければ既存データ
+            if acc_data:
+                day_data = acc_data
+            elif exist_data:
+                day_data = exist_data
+            else:
+                day_data = None
+            
             # art=0でもgamesがあれば表示（稼働があった日）
             if day_data and (day_data.get('art', 0) > 0 or day_data.get('games', 0) > 0 or day_data.get('total_start', 0) > 0):
+                # 蓄積DBと既存データをマージ（既存データにdiff_medalsがあればそれを使う）
+                diff_medals = day_data.get('diff_medals')
+                max_rensa = day_data.get('max_rensa')
+                max_medals = day_data.get('max_medals')
+                history = day_data.get('history', [])
+                
+                # 既存データがあれば補完（蓄積DBにデータがない/0の場合）
+                if exist_data:
+                    diff_medals = exist_data.get('diff_medals') if diff_medals is None else diff_medals
+                    max_rensa = exist_data.get('max_rensa') if not max_rensa else max_rensa
+                    max_medals = exist_data.get('max_medals') if not max_medals else max_medals
+                    history = exist_data.get('history', []) if not history else history
+                
                 recent_days.append({
                     'date': d,
                     'art': day_data.get('art', 0),
                     'games': day_data.get('games', 0) or day_data.get('total_start', 0),
                     'prob': day_data.get('prob', 0),
-                    'diff_medals': day_data.get('diff_medals'),
-                    'max_rensa': day_data.get('max_rensa'),
-                    'max_medals': day_data.get('max_medals'),
-                    'history': day_data.get('history', []),
+                    'diff_medals': diff_medals,
+                    'max_rensa': max_rensa,
+                    'max_medals': max_medals,
+                    'history': history,
                 })
         rec['recent_days'] = recent_days
 
