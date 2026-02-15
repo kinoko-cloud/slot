@@ -217,11 +217,8 @@ def _enrich_day_prefix(rec, days_by_date, prefix, date_key):
                 diff = total_medals - invested
                 if diff != 0:
                     rec[f'{prefix}diff_medals'] = diff
-        else:
-            # historyから差枚を推定
-            hist = rec.get(f'{prefix}history', []) or day_data.get('history', [])
-            games = rec.get(f'{prefix}games', 0)
-            if hist and games > 0:
+            elif hist and games == 0:
+                # gamesがない場合、historyから推定
                 try:
                     from analysis.diff_medals_estimator import estimate_diff_medals
                     medals_total = sum(h.get('medals', 0) for h in hist)

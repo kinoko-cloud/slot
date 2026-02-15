@@ -763,38 +763,58 @@ def generate_index(env):
                     if fixed_yesterday in days_by_date:
                         yd = days_by_date[fixed_yesterday]
                         yd_art = yd.get('art', 0)
+                        yd_games = yd.get('games', 0) or yd.get('total_start', 0)
+                        yd_hist = yd.get('history', [])
                         rec['yesterday_art'] = yd_art
                         rec['yesterday_rb'] = yd.get('rb', 0)
-                        rec['yesterday_games'] = yd.get('games', 0) or yd.get('total_start', 0)
-                        rec['yesterday_diff_medals'] = yd.get('diff_medals', 0) if yd_art > 0 else 0
+                        rec['yesterday_games'] = yd_games
+                        # diff_medalsは蓄積DB優先、なければhistoryから計算
+                        yd_diff = yd.get('diff_medals')
+                        if yd_diff is None and yd_hist and yd_games > 0:
+                            total_medals = sum(h.get('medals', 0) for h in yd_hist)
+                            yd_diff = total_medals - (yd_games * 3)
+                        rec['yesterday_diff_medals'] = yd_diff if yd_art > 0 else 0
                         rec['yesterday_max_rensa'] = yd.get('max_rensa', 0)
                         rec['yesterday_max_medals'] = yd.get('max_medals', 0) if yd_art > 0 else 0
-                        rec['yesterday_history'] = yd.get('history', [])
+                        rec['yesterday_history'] = yd_hist
                     
                     # 前々日のデータ
                     if fixed_day_before in days_by_date:
                         dbd = days_by_date[fixed_day_before]
                         dbd_art = dbd.get('art', 0)
                         dbd_games = dbd.get('games', 0) or dbd.get('total_start', 0)
+                        dbd_hist = dbd.get('history', [])
                         rec['day_before_art'] = dbd_art
                         rec['day_before_rb'] = dbd.get('rb', 0)
                         rec['day_before_games'] = dbd_games
-                        rec['day_before_diff_medals'] = dbd.get('diff_medals', 0) if dbd_art > 0 else 0
+                        # diff_medalsは蓄積DB優先、なければhistoryから計算
+                        dbd_diff = dbd.get('diff_medals')
+                        if dbd_diff is None and dbd_hist and dbd_games > 0:
+                            total_medals = sum(h.get('medals', 0) for h in dbd_hist)
+                            dbd_diff = total_medals - (dbd_games * 3)
+                        rec['day_before_diff_medals'] = dbd_diff if dbd_art > 0 else 0
                         rec['day_before_max_rensa'] = dbd.get('max_rensa', 0)
                         rec['day_before_max_medals'] = dbd.get('max_medals', 0) if dbd_art > 0 else 0
-                        rec['day_before_history'] = dbd.get('history', [])
+                        rec['day_before_history'] = dbd_hist
                     
                     # 3日前のデータ
                     if fixed_three_days in days_by_date:
                         tdd = days_by_date[fixed_three_days]
                         tdd_art = tdd.get('art', 0)
+                        tdd_games = tdd.get('games', 0) or tdd.get('total_start', 0)
+                        tdd_hist = tdd.get('history', [])
                         rec['three_days_ago_art'] = tdd_art
                         rec['three_days_ago_rb'] = tdd.get('rb', 0)
-                        rec['three_days_ago_games'] = tdd.get('games', 0) or tdd.get('total_start', 0)
-                        rec['three_days_ago_diff_medals'] = tdd.get('diff_medals', 0) if tdd_art > 0 else 0
+                        rec['three_days_ago_games'] = tdd_games
+                        # diff_medalsは蓄積DB優先、なければhistoryから計算
+                        tdd_diff = tdd.get('diff_medals')
+                        if tdd_diff is None and tdd_hist and tdd_games > 0:
+                            total_medals = sum(h.get('medals', 0) for h in tdd_hist)
+                            tdd_diff = total_medals - (tdd_games * 3)
+                        rec['three_days_ago_diff_medals'] = tdd_diff if tdd_art > 0 else 0
                         rec['three_days_ago_max_rensa'] = tdd.get('max_rensa', 0)
                         rec['three_days_ago_max_medals'] = tdd.get('max_medals', 0) if tdd_art > 0 else 0
-                        rec['three_days_ago_history'] = tdd.get('history', [])
+                        rec['three_days_ago_history'] = tdd_hist
             except Exception:
                 pass
         
