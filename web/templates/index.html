@@ -752,7 +752,7 @@
                                 {% if rec.art_prob > 0 %}<span class="sa-prob {% if rec.art_prob <= 100 %}excellent{% elif rec.art_prob <= 130 %}good{% elif rec.art_prob >= 200 %}bad{% endif %}">1/{{ rec.art_prob|int }}</span>{% endif %}
                                 {% endif %}
                                 {% if rec.yesterday_art %}
-                                <span class="sa-prev">{{ short_date(rec.yesterday_date) or '前日' }}: ART {{ rec.yesterday_art }}{% if rec.yesterday_diff_medals is defined and rec.yesterday_diff_medals != 0 %} <span class="{% if rec.yesterday_diff_medals > 0 %}plus{% else %}minus{% endif %}">{{ '{:+,}'.format(rec.yesterday_diff_medals) }}枚</span>{% endif %}</span>
+                                <span class="sa-prev">{{ short_date(rec.yesterday_date) or '前日' }}: ART {{ rec.yesterday_art }}{% if rec.yesterday_diff_medals is defined and rec.yesterday_diff_medals is not none and rec.yesterday_diff_medals != 0 %} <span class="{% if rec.yesterday_diff_medals > 0 %}plus{% else %}minus{% endif %}">{{ '{:+,}'.format(rec.yesterday_diff_medals) }}枚</span>{% endif %}</span>
                                 {% endif %}
                             </div>
                             {% if rec.reasons %}
@@ -787,7 +787,7 @@
                         {% endif %}
                     </div>
                     <div class="yesterday-stats">
-                        {% set _dm3 = rec.yesterday_diff_medals|default(rec.diff_medals|default(0)) %}
+                        {% set _dm3 = rec.yesterday_diff_medals|default(rec.diff_medals|default(0, true), true) %}
                         {% if _dm3 != 0 %}
                         <span class="diff-medals {% if _dm3 > 0 %}plus{% else %}minus{% endif %}">
                             {{ '{:+,}'.format(_dm3) }}枚
