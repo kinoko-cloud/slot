@@ -284,6 +284,7 @@ class V2Fetcher:
                     'total_start': unit_data.get('total_start', 0),
                     'games': unit_data.get('total_start', 0),
                     'status': unit_data.get('status', 'unknown'),
+                    'today_history': unit_data.get('today_history', []),
                 })
             
             v1_data['stores'][store_key] = store_data
