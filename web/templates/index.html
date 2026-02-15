@@ -580,8 +580,18 @@
                     </div>
                     {% endif %}
                     {% endif %}
-                    {# === 前日データの詳細展開（テンプレートA準拠） === #}
-                    {% if rec.yesterday_art or rec.day_before_art or rec.three_days_ago_art %}
+                    {# === 前日データの詳細展開（recent_days優先） === #}
+                    {% if rec.recent_days and rec.recent_days|length > 0 %}
+                    <div class="recent-days">
+                        {% for day in rec.recent_days[:3] %}
+                        {% set _day_art = day.art|default(0) %}
+                        {% set _day_games = day.games|default(0) %}
+                        {% set _day_prob = (_day_games / _day_art)|int if _day_art > 0 and _day_games > 0 else 0 %}
+                        {% set _dhist = day.history_processed|default(day.history|default([])) %}
+                        {{ recent_day_expandable(_day_art, _day_prob, day.date, '', day.diff_medals|default(0, true), day.max_rensa|default(0, true), day.max_medals|default(0, true), _dhist, _day_games, true) }}
+                        {% endfor %}
+                    </div>
+                    {% elif rec.yesterday_art or rec.day_before_art or rec.three_days_ago_art %}
                     <div class="recent-days">
                         {% set y_art = rec.yesterday_art or 0 %}
                         {% set y_games = rec.yesterday_games or 0 %}
