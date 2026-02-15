@@ -1756,26 +1756,35 @@ def _process_history_for_verify(history, machine_key=None):
 def _try_load_backtest_results():
     """有効な実績データがある最新のバックテスト結果を読み込む（当日は未確定なのでスキップ）"""
     import glob
-    from datetime import datetime
+    from datetime import datetime, timedelta
     today_str = datetime.now().strftime('%Y%m%d')
+    yesterday_str = (datetime.now() - timedelta(days=1)).strftime('%Y%m%d')
     results_files = sorted(glob.glob(str(PROJECT_ROOT / 'data' / 'verify' / 'verify_*_results.json')), reverse=True)
     for f in results_files:
-        if today_str in Path(f).name:
+        fname = Path(f).name
+        # 当日はスキップ
+        if today_str in fname:
+            continue
+        # 昨日のデータのみ使用（古いデータは使わない）
+        if yesterday_str not in fname:
             continue
         try:
             data = json.loads(Path(f).read_text())
-            # S/A予測台のうちactual_prob>0が1台でもあれば有効
-            has_valid = False
+            # S/A予測台のうちactual_prob>0がある店舗が全体の半数以上あれば有効
+            # （一部店舗だけデータがある場合は蓄積DBからリアルタイム補完を使う）
+            stores_with_valid = 0
+            total_stores = 0
             for sk, units in data.get('units', {}).items():
-                for u in units:
-                    if u.get('predicted_rank') in ('S', 'A') and u.get('actual_prob', 0) > 0:
-                        has_valid = True
-                        break
-                if has_valid:
-                    break
-            if has_valid:
-                print(f"  バックテスト結果を使用: {Path(f).name}")
+                total_stores += 1
+                has_prob = any(u.get('actual_prob', 0) > 0 for u in units if u.get('predicted_rank') in ('S', 'A'))
+                if has_prob:
+                    stores_with_valid += 1
+            # 半数以上の店舗に実績データがある場合のみ使用
+            if total_stores > 0 and stores_with_valid >= total_stores * 0.5:
+                print(f"  バックテスト結果を使用: {fname} ({stores_with_valid}/{total_stores}店舗)")
                 return data
+            else:
+                print(f"  バックテスト結果スキップ（データ不足）: {fname} ({stores_with_valid}/{total_stores}店舗)")
         except:
             pass
     return None
