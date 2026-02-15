@@ -44,7 +44,7 @@
         {% endif %}
         {% if day_prob > 0 %}<span class="recent-prob {% if day_prob <= 100 %}excellent{% elif day_prob <= 130 %}good{% elif day_prob >= 200 %}bad{% endif %}">1/{{ day_prob|int }}</span>{% endif %}
         {% if _diff != 0 and _art > 0 %}<span class="diff-medals-sm {% if _diff > 0 %}plus{% else %}minus{% endif %}">{{ '{:+,}'.format(_diff) }}枚</span>{% endif %}
-        {% if day_rensa >= 3 %}<span class="rensa-sm">{{ day_rensa }}連</span>{% endif %}
+        {% if day_rensa > 0 %}<span class="rensa-sm">{{ day_rensa }}連</span>{% endif %}
         {% if day_max_m > 0 %}<span class="max-medals-sm">最大{{ '{:,}'.format(day_max_m) }}枚</span>{% endif %}
         {% if day_hist and day_hist|length > 0 %}<span class="expand-icon small">▼</span>{% endif %}
     </div>
@@ -270,10 +270,10 @@
                         <span class="setting-estimate setting-{{ rec.setting_num|default(0) }}">
                             <small class="payout-label">機械割</small><span class="payout-num">{{ rec.payout_estimate }}<span class="payout-pct">%</span></span>
                         </span>
-                        {% if rec.today_max_rensa and rec.today_max_rensa >= 3 %}<span class="rensa-inline"><span class="rensa-label">最大</span> <span class="rensa-num">{{ rec.today_max_rensa }}</span><span class="rensa-unit">連</span></span>{% endif %}
+                        {% if rec.today_max_rensa and rec.today_max_rensa > 0 %}<span class="rensa-inline"><span class="rensa-label">最大</span> <span class="rensa-num">{{ rec.today_max_rensa }}</span><span class="rensa-unit">連</span></span>{% endif %}
                         {% if rec.today_history and rec.today_history|length > 0 %}<span class="detail-trigger-inline" onclick="toggleHistoryDetail(event, this)">▼詳細 </span>{% endif %}
                     </div>
-                    {% elif rec.today_max_rensa and rec.today_max_rensa >= 3 %}
+                    {% elif rec.today_max_rensa and rec.today_max_rensa > 0 %}
                     <div class="top3-setting">
                         <span class="rensa-inline"><span class="rensa-label">最大</span> <span class="rensa-num">{{ rec.today_max_rensa }}</span><span class="rensa-unit">連</span></span>
                         {% if rec.today_history and rec.today_history|length > 0 %}<span class="detail-trigger-inline" onclick="toggleHistoryDetail(event, this)">▼詳細 </span>{% endif %}
@@ -405,10 +405,10 @@
                         {% endif %}
                     </div>
                     {# === サブデータ: 連チャン / 最大枚数 / 天井 === #}
-                    {% if (rec.yesterday_max_rensa and rec.yesterday_max_rensa >= 3) or (rec.yesterday_max_medals and rec.yesterday_max_medals > 0) or (rec.yesterday_ceilings and rec.yesterday_ceilings > 0) %}
+                    {% if (rec.yesterday_max_rensa and rec.yesterday_max_rensa > 0) or (rec.yesterday_max_medals and rec.yesterday_max_medals > 0) or (rec.yesterday_ceilings and rec.yesterday_ceilings > 0) %}
                     <div class="yesterday-sub-stats">
-                        {% if rec.yesterday_max_rensa and rec.yesterday_max_rensa >= 3 %}
-                        <span class="rensa-badge {% if rec.yesterday_max_rensa >= 8 %}rensa-8{% elif rec.yesterday_max_rensa >= 5 %}rensa-5{% elif rec.yesterday_max_rensa >= 3 %}rensa-3{% else %}rensa-2{% endif %}">最大<span class="num">{{ rec.yesterday_max_rensa }}</span>連</span>
+                        {% if rec.yesterday_max_rensa and rec.yesterday_max_rensa > 0 %}
+                        <span class="rensa-badge {% if rec.yesterday_max_rensa >= 8 %}rensa-8{% elif rec.yesterday_max_rensa >= 5 %}rensa-5{% elif rec.yesterday_max_rensa > 0 %}rensa-3{% else %}rensa-2{% endif %}">最大<span class="num">{{ rec.yesterday_max_rensa }}</span>連</span>
                         {% endif %}
                         {% if rec.yesterday_max_medals and rec.yesterday_max_medals > 0 %}
                         <span class="max-medals">最大<span class="num">{{ '{:,}'.format(rec.yesterday_max_medals) }}</span>枚</span>
@@ -555,10 +555,10 @@
                         <span class="setting-estimate setting-{{ rec.setting_num|default(0) }}">
                             <small class="payout-label">機械割</small><span class="payout-num">{{ rec.payout_estimate }}<span class="payout-pct">%</span></span>
                         </span>
-                        {% if rec.today_max_rensa and rec.today_max_rensa >= 3 %}<span class="rensa-inline"><span class="rensa-label">最大</span> <span class="rensa-num">{{ rec.today_max_rensa }}</span><span class="rensa-unit">連</span></span>{% endif %}
+                        {% if rec.today_max_rensa and rec.today_max_rensa > 0 %}<span class="rensa-inline"><span class="rensa-label">最大</span> <span class="rensa-num">{{ rec.today_max_rensa }}</span><span class="rensa-unit">連</span></span>{% endif %}
                         {% if rec.today_history and rec.today_history|length > 0 %}<span class="detail-trigger-inline" onclick="toggleHistoryDetail(event, this)">▼詳細 </span>{% endif %}
                     </div>
-                    {% elif rec.today_max_rensa and rec.today_max_rensa >= 3 %}
+                    {% elif rec.today_max_rensa and rec.today_max_rensa > 0 %}
                     <div class="top3-setting">
                         <span class="rensa-inline"><span class="rensa-label">最大</span> <span class="rensa-num">{{ rec.today_max_rensa }}</span><span class="rensa-unit">連</span></span>
                         {% if rec.today_history and rec.today_history|length > 0 %}<span class="detail-trigger-inline" onclick="toggleHistoryDetail(event, this)">▼詳細 </span>{% endif %}
@@ -655,10 +655,10 @@
                         <span class="setting-estimate setting-{{ rec.setting_num|default(0) }}">
                             <small class="payout-label">機械割</small><span class="payout-num">{{ rec.payout_estimate }}<span class="payout-pct">%</span></span>
                         </span>
-                        {% if rec.today_max_rensa and rec.today_max_rensa >= 3 %}<span class="rensa-inline"><span class="rensa-label">最大</span> <span class="rensa-num">{{ rec.today_max_rensa }}</span><span class="rensa-unit">連</span></span>{% endif %}
+                        {% if rec.today_max_rensa and rec.today_max_rensa > 0 %}<span class="rensa-inline"><span class="rensa-label">最大</span> <span class="rensa-num">{{ rec.today_max_rensa }}</span><span class="rensa-unit">連</span></span>{% endif %}
                         {% if rec.today_history and rec.today_history|length > 0 %}<span class="detail-trigger-inline" onclick="toggleHistoryDetail(event, this)">▼詳細 </span>{% endif %}
                     </div>
-                    {% elif rec.today_max_rensa and rec.today_max_rensa >= 3 %}
+                    {% elif rec.today_max_rensa and rec.today_max_rensa > 0 %}
                     <div class="top3-setting">
                         <span class="rensa-inline"><span class="rensa-label">最大</span> <span class="rensa-num">{{ rec.today_max_rensa }}</span><span class="rensa-unit">連</span></span>
                         {% if rec.today_history and rec.today_history|length > 0 %}<span class="detail-trigger-inline" onclick="toggleHistoryDetail(event, this)">▼詳細 </span>{% endif %}
@@ -796,8 +796,8 @@
                         {% if rec.art_count > 0 %}
                         <span class="art-badge">ART <span class="art-num">{{ rec.art_count }}</span></span>
                         {% endif %}
-                        {% if rec.today_max_rensa and rec.today_max_rensa >= 3 %}
-                        <span class="rensa-badge {% if rec.today_max_rensa >= 8 %}rensa-8{% elif rec.today_max_rensa >= 5 %}rensa-5{% elif rec.today_max_rensa >= 3 %}rensa-3{% else %}rensa-2{% endif %}">最大<span class="num">{{ rec.today_max_rensa }}</span>連</span>
+                        {% if rec.today_max_rensa and rec.today_max_rensa > 0 %}
+                        <span class="rensa-badge {% if rec.today_max_rensa >= 8 %}rensa-8{% elif rec.today_max_rensa >= 5 %}rensa-5{% elif rec.today_max_rensa > 0 %}rensa-3{% else %}rensa-2{% endif %}">最大<span class="num">{{ rec.today_max_rensa }}</span>連</span>
                         {% endif %}
                         {% if rec.total_games and rec.total_games > 0 %}
                         <span class="total-games-label">{{ '{:,}'.format(rec.total_games) }}G</span>
@@ -914,10 +914,10 @@
                         {% endif %}
                     </div>
                     {# === サブデータ === #}
-                    {% if (rec.yesterday_max_rensa and rec.yesterday_max_rensa >= 3) or (rec.yesterday_max_medals and rec.yesterday_max_medals > 0) %}
+                    {% if (rec.yesterday_max_rensa and rec.yesterday_max_rensa > 0) or (rec.yesterday_max_medals and rec.yesterday_max_medals > 0) %}
                     <div class="yesterday-sub-stats">
-                        {% if rec.yesterday_max_rensa and rec.yesterday_max_rensa >= 3 %}
-                        <span class="rensa-badge {% if rec.yesterday_max_rensa >= 8 %}rensa-8{% elif rec.yesterday_max_rensa >= 5 %}rensa-5{% elif rec.yesterday_max_rensa >= 3 %}rensa-3{% else %}rensa-2{% endif %}">最大<span class="num">{{ rec.yesterday_max_rensa }}</span>連</span>
+                        {% if rec.yesterday_max_rensa and rec.yesterday_max_rensa > 0 %}
+                        <span class="rensa-badge {% if rec.yesterday_max_rensa >= 8 %}rensa-8{% elif rec.yesterday_max_rensa >= 5 %}rensa-5{% elif rec.yesterday_max_rensa > 0 %}rensa-3{% else %}rensa-2{% endif %}">最大<span class="num">{{ rec.yesterday_max_rensa }}</span>連</span>
                         {% endif %}
                         {% if rec.yesterday_max_medals and rec.yesterday_max_medals > 0 %}
                         <span class="max-medals">最大<span class="num">{{ '{:,}'.format(rec.yesterday_max_medals) }}</span>枚</span>
