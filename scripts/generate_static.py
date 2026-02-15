@@ -668,7 +668,8 @@ def generate_index(env):
     # ソート
     # TOP3: 各機種の最強台を1台ずつ + 残り枠は差枚順
     # 機種関係なく「前日最も稼いだS/A台」= 高設定の据え置き期待
-    top3_candidates = [r for r in top3_all if r.get('final_rank') in ('S', 'A')]
+    # 営業中モードでは、本日のリアルタイムデータがある台のみを対象とする（昨日のデータを誤表示しない）
+    top3_candidates = [r for r in top3_all if r.get('final_rank') in ('S', 'A') and (r.get('art_count', 0) > 0 or r.get('total_games', 0) > 0)]
     # スコア順（信頼度・試行回数を考慮した総合スコア）
     top3_candidates.sort(key=lambda r: -r.get('final_score', 0))
 

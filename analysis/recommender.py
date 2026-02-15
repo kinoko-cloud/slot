@@ -1243,17 +1243,11 @@ def analyze_today_data(unit_data: dict, current_hour: int = None, machine_key: s
                 yesterday_data = day
 
         if not today_data:
-            # 当日データなし → 昨日のデータを使用
-            if yesterday_data:
-                today_data = yesterday_data
-                result['status'] = '昨日データ'
-                result['data_date'] = yesterday
-                result['today_reasons'].append('本日データなし（昨日のデータを表示）')
-            else:
-                result['status'] = 'データなし'
-                result['today_score_bonus'] = 5  # 未稼働台は狙い目の可能性
-                result['today_reasons'].append('本日のデータなし（狙い目の可能性）')
-                return result
+            # 当日データなし → 昨日のデータを使用しない（リアルタイム表示では誤解を招く）
+            result['status'] = 'データなし'
+            result['today_score_bonus'] = 5  # 未稼働台は狙い目の可能性
+            result['today_reasons'].append('本日のデータなし（狙い目の可能性）')
+            return result
         else:
             result['data_date'] = today
             result['status'] = '本日データ'
