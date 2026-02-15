@@ -2062,13 +2062,14 @@ def _generate_verify_from_backtest(env, results):
             rank = u.get('predicted_rank', 'C')
             prob = u.get('actual_prob', 0)
             games = u.get('actual_games', 0)
+            actual_art = u.get('actual_art', 0)
             
             uid = str(u.get('unit_id', ''))
             avail_info = avail_lookup.get((store_key, uid), {})
             # バックテスト結果のデータを優先（availability.jsonは当日データなので混在させない）
             max_medals = u.get('max_medals', 0)
             diff_medals = (u.get('diff_medals') or 0)
-            # 蓄積DBから差枚・最大枚数を補完（履歴のmedals合計から再計算）
+            # 蓄積DBから実績データ・差枚・最大枚数を補完
             try:
                 from analysis.history_accumulator import load_unit_history
                 from analysis.diff_medals_estimator import estimate_diff_medals as _est_diff
@@ -2080,6 +2081,13 @@ def _generate_verify_from_backtest(env, results):
                         _adate = (_dt2.strptime(pred_date, '%Y-%m-%d') + _td2(days=1)).strftime('%Y-%m-%d')
                         for _dd in _hd.get('days', []):
                             if _dd.get('date') == _adate:
+                                # 実績データを蓄積DBから補完（バックテスト結果にない場合）
+                                if games == 0:
+                                    games = _dd.get('games', _dd.get('total_start', 0)) or 0
+                                if actual_art == 0:
+                                    actual_art = _dd.get('art', 0) or 0
+                                if prob == 0 and games > 0 and actual_art > 0:
+                                    prob = games / actual_art
                                 if max_medals == 0:
                                     max_medals = _dd.get('max_medals', 0)
                                 # diff_medals: 履歴から再計算（蓄積DBの値は信頼性が低い）
@@ -2129,7 +2137,7 @@ def _generate_verify_from_backtest(env, results):
                 'pre_open_score': u.get('predicted_score', 50),
                 'predicted_rank': rank,
                 'predicted_score': u.get('predicted_score', 50),
-                'actual_art': u.get('actual_art', 0),
+                'actual_art': actual_art,
                 'actual_prob': prob,
                 'actual_games': games,
                 'max_medals': max_medals,
