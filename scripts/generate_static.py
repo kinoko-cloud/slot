@@ -2025,22 +2025,28 @@ def _generate_verify_from_backtest(env, results):
     for sk, sv in STORES.items():
         STORE_TO_MACHINE[sk] = sv.get('machine', sv.get('machine_key', 'sbj'))
     
-    # availability.jsonからdiff_medals/max_medalsを取得
+    # availability.jsonからdiff_medals/max_medals/games/artを取得
     # availability.jsonは当日最終データ（historyからdiff推定可能）
     avail_lookup = {}
+    avail_date = None
     try:
         from analysis.diff_medals_estimator import estimate_diff_medals
         avail_data = json.load(open(str(PROJECT_ROOT / 'data' / 'availability.json')))
+        # availability.jsonの日付を取得
+        fetched_at = avail_data.get('fetched_at', '')
+        if fetched_at:
+            avail_date = fetched_at[:10]  # YYYY-MM-DD部分
         for sk, sdata in avail_data.get('stores', {}).items():
             mk = STORE_TO_MACHINE.get(sk, 'sbj')
             for u in sdata.get('units', []):
                 uid = str(u.get('unit_id', ''))
                 hist = u.get('today_history', [])
                 medals_total = sum(h.get('medals', 0) for h in hist)
-                games = u.get('total_start', 0)
+                games = u.get('total_start', 0) or u.get('games', 0)
+                art = u.get('art', 0)
                 max_medals = u.get('max_medals', 0)
                 diff = estimate_diff_medals(medals_total, games, mk) if games > 0 else 0
-                info = {'max_medals': max_medals, 'diff_medals': diff}
+                info = {'max_medals': max_medals, 'diff_medals': diff, 'games': games, 'art': art, 'history': hist}
                 avail_lookup[(sk, uid)] = info
                 # エイリアス: akihabara↔akiba の差異対応
                 if 'akihabara' in sk:
@@ -2099,6 +2105,22 @@ def _generate_verify_from_backtest(env, results):
                                 break
             except:
                 pass
+            
+            # 蓄積DBで取得できなかった場合、availability.jsonからフォールバック
+            # （availability.jsonの日付がverify対象日と一致する場合のみ）
+            pred_date = results.get('prediction_date', '')
+            if pred_date:
+                from datetime import datetime as _dt3, timedelta as _td3
+                _target_date = (_dt3.strptime(pred_date, '%Y-%m-%d') + _td3(days=1)).strftime('%Y-%m-%d')
+                if avail_date == _target_date and games == 0:
+                    ai = avail_lookup.get((store_key, uid), {})
+                    if ai.get('games', 0) > 0:
+                        games = ai['games']
+                        actual_art = ai.get('art', 0) or actual_art
+                        if actual_art > 0 and games > 0:
+                            prob = games / actual_art
+                        diff_medals = ai.get('diff_medals', 0) or diff_medals
+                        max_medals = ai.get('max_medals', 0) or max_medals
             
             # verdict.py共通ロジックで判定
             if games < 500 or prob <= 0:
