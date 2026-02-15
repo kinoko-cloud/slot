@@ -276,6 +276,17 @@ class V2Fetcher:
             }
             
             for unit_id, unit_data in data.get('units', {}).items():
+                # 履歴からdiff_medalsとmax_medalsを計算
+                today_history = unit_data.get('today_history', [])
+                total_start = unit_data.get('total_start', 0)
+                
+                # 総獲得枚数を計算
+                total_medals = sum(h.get('medals', 0) for h in today_history) if today_history else 0
+                max_medals = max((h.get('medals', 0) for h in today_history), default=0) if today_history else 0
+                
+                # 差枚 = 総獲得 - 投資（3枚/G）
+                diff_medals = total_medals - (total_start * 3) if total_start > 0 else 0
+                
                 store_data['units'].append({
                     'unit_id': unit_id,
                     'art': unit_data.get('art', 0),
@@ -284,7 +295,9 @@ class V2Fetcher:
                     'total_start': unit_data.get('total_start', 0),
                     'games': unit_data.get('total_start', 0),
                     'status': unit_data.get('status', 'unknown'),
-                    'today_history': unit_data.get('today_history', []),
+                    'today_history': today_history,
+                    'diff_medals': diff_medals,
+                    'max_medals': max_medals,
                 })
             
             v1_data['stores'][store_key] = store_data
