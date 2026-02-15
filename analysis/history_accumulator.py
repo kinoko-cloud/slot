@@ -205,7 +205,10 @@ def _accumulate_unit(store_key: str, unit_id: str, days: list, machine_key: str)
             existing_games = existing_day.get('games', 0) or existing_day.get('total_start', 0)
             
             # art または games が増加していたら更新（閉店後のデータがより完全）
-            if new_art > existing_art or new_games > existing_games:
+            # また、既存games=0で新games>0の場合も更新（不完全データの修復）
+            should_update = (new_art > existing_art or new_games > existing_games or 
+                           (existing_games == 0 and new_games > 0))
+            if should_update:
                 # art/games/probを更新
                 existing_day['art'] = new_art
                 existing_day['games'] = new_games
