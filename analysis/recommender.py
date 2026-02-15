@@ -3597,6 +3597,22 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
             _r_note = f"（SBJ全店舗実績: {_rs['recovered']}/{_rs['total']}回={_rs['rate']:.0%}で翌日回復）" if _rs.get('total', 0) >= 3 else ""
             rec['reasons'].insert(1, f"🔄 直近2日とも不調（1/{_dbp:.0f}→1/{_yp:.0f}）→ {_ndl}入替期待大{_r_note}")
 
+        # 直近データがない台はスキップ
+        has_realtime = rec.get('art_count', 0) > 0 or rec.get('total_games', 0) > 0
+        has_yesterday = rec.get('yesterday_art', 0) > 0 or rec.get('yesterday_games', 0) > 0
+        
+        # 営業時間帯（10:00-23:00）は今日のリアルタイムデータ必須
+        # 閉店後（23:00-10:00）は昨日のデータがあればOK
+        current_hour = datetime.now().hour
+        is_business_hours = 10 <= current_hour < 23
+        
+        if is_business_hours:
+            if not has_realtime:
+                continue
+        else:
+            if not has_realtime and not has_yesterday:
+                continue
+
         recommendations.append(rec)
 
     # === 【改善3】ハイブリッド評価（絶対スコア + 相対位置補正）===
