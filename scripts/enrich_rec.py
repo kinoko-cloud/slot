@@ -102,6 +102,12 @@ def enrich_recs(recs):
                 if not max_medals and history:
                     _, max_medals = _calc_history_stats(history)
                 
+                # diff_medalsがない場合、historyから計算
+                if diff_medals is None and history and games > 0:
+                    total_medals = sum(h.get('medals', 0) for h in history)
+                    invested = games * 3  # SBJは1G=3枚
+                    diff_medals = total_medals - invested
+                
                 # 既存データがあれば補完（蓄積DBにデータがない/0の場合）
                 if exist_data:
                     diff_medals = exist_data.get('diff_medals') if diff_medals is None else diff_medals
@@ -201,6 +207,16 @@ def _enrich_day_prefix(rec, days_by_date, prefix, date_key):
         db_diff = day_data.get('diff_medals')
         if db_diff is not None and db_diff != 0:
             rec[f'{prefix}diff_medals'] = int(db_diff)
+        else:
+            # historyから差枚を計算
+            hist = rec.get(f'{prefix}history', []) or day_data.get('history', [])
+            games = rec.get(f'{prefix}games', 0) or day_data.get('games', 0) or day_data.get('total_start', 0)
+            if hist and games > 0:
+                total_medals = sum(h.get('medals', 0) for h in hist)
+                invested = games * 3  # SBJは1G=3枚（機種によって異なる場合は要調整）
+                diff = total_medals - invested
+                if diff != 0:
+                    rec[f'{prefix}diff_medals'] = diff
         else:
             # historyから差枚を推定
             hist = rec.get(f'{prefix}history', []) or day_data.get('history', [])

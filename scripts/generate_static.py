@@ -810,38 +810,6 @@ def generate_index(env):
             rec['yesterday_history'] = []
             rec['yesterday_date'] = ''
 
-        # 前日データが不完全（games=0だがart>0）の場合、前々日を前日にシフト
-        y_art = rec.get('yesterday_art', 0)
-        y_games = rec.get('yesterday_games', 0)
-        if y_art > 0 and y_games == 0:
-            # 前々日を前日にシフト
-            rec['yesterday_art'] = rec.get('day_before_art', 0)
-            rec['yesterday_rb'] = rec.get('day_before_rb', 0)
-            rec['yesterday_games'] = rec.get('day_before_games', 0)
-            rec['yesterday_diff_medals'] = rec.get('day_before_diff_medals', 0)
-            rec['yesterday_max_rensa'] = rec.get('day_before_max_rensa', 0)
-            rec['yesterday_max_medals'] = rec.get('day_before_max_medals', 0)
-            rec['yesterday_history'] = rec.get('day_before_history', [])
-            rec['yesterday_date'] = rec.get('day_before_date', '')
-            # 3日前を前々日にシフト
-            rec['day_before_art'] = rec.get('three_days_ago_art', 0)
-            rec['day_before_rb'] = rec.get('three_days_ago_rb', 0)
-            rec['day_before_games'] = rec.get('three_days_ago_games', 0)
-            rec['day_before_diff_medals'] = rec.get('three_days_ago_diff_medals', 0)
-            rec['day_before_max_rensa'] = rec.get('three_days_ago_max_rensa', 0)
-            rec['day_before_max_medals'] = rec.get('three_days_ago_max_medals', 0)
-            rec['day_before_history'] = rec.get('three_days_ago_history', [])
-            rec['day_before_date'] = rec.get('three_days_ago_date', '')
-            # 3日前をクリア
-            rec['three_days_ago_art'] = 0
-            rec['three_days_ago_rb'] = 0
-            rec['three_days_ago_games'] = 0
-            rec['three_days_ago_diff_medals'] = 0
-            rec['three_days_ago_max_rensa'] = 0
-            rec['three_days_ago_max_medals'] = 0
-            rec['three_days_ago_history'] = []
-            rec['three_days_ago_date'] = ''
-
         # 2日前データのチェック（7日以上前は除外）
         db_date = rec.get('day_before_date', '')
         if db_date and db_date < cutoff_date:
@@ -853,35 +821,6 @@ def generate_index(env):
             rec['day_before_max_medals'] = 0
             rec['day_before_history'] = []
             rec['day_before_date'] = ''
-
-        # 2日前データが不完全（games=0だがart>0）の場合、3日前をシフト
-        db_art = rec.get('day_before_art', 0)
-        db_games = rec.get('day_before_games', 0)
-        if db_art > 0 and db_games == 0:
-            # 3日前を前々日にシフト
-            rec['day_before_art'] = rec.get('three_days_ago_art', 0)
-            rec['day_before_rb'] = rec.get('three_days_ago_rb', 0)
-            rec['day_before_games'] = rec.get('three_days_ago_games', 0)
-            rec['day_before_diff_medals'] = rec.get('three_days_ago_diff_medals', 0)
-            rec['day_before_max_rensa'] = rec.get('three_days_ago_max_rensa', 0)
-            rec['day_before_max_medals'] = rec.get('three_days_ago_max_medals', 0)
-            rec['day_before_history'] = rec.get('three_days_ago_history', [])
-            rec['day_before_date'] = rec.get('three_days_ago_date', '')
-            # 3日前をクリア
-            rec['three_days_ago_art'] = 0
-            rec['three_days_ago_rb'] = 0
-            rec['three_days_ago_games'] = 0
-            rec['three_days_ago_diff_medals'] = 0
-            rec['three_days_ago_max_rensa'] = 0
-            rec['three_days_ago_max_medals'] = 0
-            rec['three_days_ago_history'] = []
-            rec['three_days_ago_date'] = ''
-
-        # シフト後もデータがない場合（art=0かつgames=0）、日付もクリア
-        if rec.get('day_before_art', 0) == 0 and rec.get('day_before_games', 0) == 0:
-            rec['day_before_date'] = ''
-        if rec.get('three_days_ago_art', 0) == 0 and rec.get('three_days_ago_games', 0) == 0:
-            rec['three_days_ago_date'] = ''
 
         # 3日前データのチェック（7日以上前は除外）
         td_date = rec.get('three_days_ago_date', '')
