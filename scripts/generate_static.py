@@ -899,6 +899,26 @@ def generate_index(env):
                 processed, summary = _process_history_for_verify(raw_hist, machine_key=_mk)
                 day['history_processed'] = processed
                 day['history_summary'] = summary
+            
+            # historyから diff_medals / max_medals / max_rensa を計算（データがない場合）
+            if raw_hist and not day.get('diff_medals'):
+                total_medals = sum(h.get('medals', 0) for h in raw_hist)
+                games = day.get('games', 0) or day.get('total_start', 0)
+                day['diff_medals'] = total_medals - (games * 3) if games > 0 else 0
+            if raw_hist and not day.get('max_medals'):
+                day['max_medals'] = max((h.get('medals', 0) for h in raw_hist), default=0)
+            if raw_hist and not day.get('max_rensa'):
+                # 最大連チャンを計算
+                max_rensa = 0
+                for h in raw_hist:
+                    rensa_str = h.get('rensa', '')
+                    if rensa_str and '連' in str(rensa_str):
+                        try:
+                            rensa_num = int(str(rensa_str).replace('連', ''))
+                            max_rensa = max(max_rensa, rensa_num)
+                        except:
+                            pass
+                day['max_rensa'] = max_rensa
 
     # 前日の爆発台: 最大連チャン枚数でソート
     # 差枚だと「万枚出して飲まれた台」が低く出る。
