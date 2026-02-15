@@ -20,7 +20,7 @@ def enrich_recs(recs):
     全recの蓄積DB補完を一括で行う。
     generate_static.pyで全recを生成した後に1回だけ呼ぶ。
     """
-    from analysis.history_accumulator import load_unit_history
+    from analysis.history_accumulator import load_unit_history, _calc_history_stats
 
     # キャッシュ: (store_key, unit_id) -> days_by_date
     _cache = {}
@@ -69,13 +69,34 @@ def enrich_recs(recs):
             else:
                 day_data = None
             
-            # art=0でもgamesがあれば表示（稼働があった日）
+            # art>0またはgames>0があれば表示
             if day_data and (day_data.get('art', 0) > 0 or day_data.get('games', 0) > 0 or day_data.get('total_start', 0) > 0):
                 # 蓄積DBと既存データをマージ（既存データにdiff_medalsがあればそれを使う）
                 diff_medals = day_data.get('diff_medals')
                 max_rensa = day_data.get('max_rensa')
                 max_medals = day_data.get('max_medals')
                 history = day_data.get('history', [])
+                art = day_data.get('art', 0)
+                games = day_data.get('games', 0) or day_data.get('total_start', 0)
+                prob = day_data.get('prob', 0)
+                
+                # games=0だがart>0の場合、historyから再計算
+                if art > 0 and games == 0 and history:
+                    # gamesはhistoryの先頭のtotal_startまたはstartの累計から推定
+                    # 最も簡単な方法: artとprobの仕様値から逆算（概算）
+                    # または、historyの累計Gを計算
+                    total_g = sum(h.get('start', 0) for h in history)
+                    if total_g > 0:
+                        games = total_g
+                        prob = games / art if art > 0 else 0
+                
+                # max_rensaがない場合、historyから計算
+                if not max_rensa and history:
+                    max_rensa, _ = _calc_history_stats(history)
+                
+                # max_medalsがない場合、historyから計算
+                if not max_medals and history:
+                    _, max_medals = _calc_history_stats(history)
                 
                 # 既存データがあれば補完（蓄積DBにデータがない/0の場合）
                 if exist_data:
@@ -86,9 +107,9 @@ def enrich_recs(recs):
                 
                 recent_days.append({
                     'date': d,
-                    'art': day_data.get('art', 0),
-                    'games': day_data.get('games', 0) or day_data.get('total_start', 0),
-                    'prob': day_data.get('prob', 0),
+                    'art': art,
+                    'games': games,
+                    'prob': prob,
                     'diff_medals': diff_medals,
                     'max_rensa': max_rensa,
                     'max_medals': max_medals,
