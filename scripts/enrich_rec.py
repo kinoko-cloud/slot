@@ -70,9 +70,11 @@ def enrich_recs(recs):
                 day_data = None
             
             # art>0かつgames>0がある日のみ表示（不完全データはスキップ）
-            day_art = day_data.get('art', 0) if day_data else 0
-            day_games = day_data.get('games', 0) or (day_data.get('total_start', 0) if day_data else 0)
-            if day_data and day_art > 0 and day_games > 0:
+            if not day_data:
+                continue
+            day_art = day_data.get('art', 0)
+            day_games = day_data.get('games', 0) or day_data.get('total_start', 0)
+            if day_art > 0 and day_games > 0:
                 # 蓄積DBと既存データをマージ（既存データにdiff_medalsがあればそれを使う）
                 diff_medals = day_data.get('diff_medals')
                 max_rensa = day_data.get('max_rensa')
