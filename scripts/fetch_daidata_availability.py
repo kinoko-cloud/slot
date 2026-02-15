@@ -59,7 +59,7 @@ DAIDATA_STORES = {
         'hall_id': '100196',
         'name': 'エスパス上野新館',
         'model_encoded': 'L%EF%BD%BD%EF%BD%B0%EF%BE%8A%EF%BE%9F%EF%BD%B0%EF%BE%8C%EF%BE%9E%EF%BE%97%EF%BD%AF%EF%BD%B8%EF%BD%BC%EF%BE%9E%EF%BD%AC%EF%BD%AF%EF%BD%B8',
-        'units': ['3075', '3079', '3085', '3127', '3140'],
+        'units': ['3110', '3111', '3112', '3113'],
     },
     # === エスパス上野本館 (hall_id=100947) ===
     'ueno_honkan_espass_sbj': {
@@ -94,7 +94,7 @@ DAIDATA_STORES = {
         'hall_id': '100948',
         'name': '新小岩エスパス',
         'model_encoded': 'L%EF%BD%BD%EF%BD%B0%EF%BE%8A%EF%BE%9F%EF%BD%B0%EF%BE%8C%EF%BE%9E%EF%BE%97%EF%BD%AF%EF%BD%B8%EF%BD%BC%EF%BE%9E%EF%BD%AC%EF%BD%AF%EF%BD%B8',
-        'units': ['179', '194'],
+        'units': ['485', '486'],
     },
     'seibu_shinjuku_espass_hokuto2': {
         'hall_id': '100950',
