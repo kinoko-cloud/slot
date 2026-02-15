@@ -145,10 +145,20 @@ class DaidataScraper(BaseScraper):
             data['art'] = int(match.group(3))
             data['final_start'] = int(match.group(4))
         
-        # 累計スタート
+        # 累計スタート（複数パターン対応）
         total = re.search(r'累計スタート\s*\n?\s*(\d+)', text)
         if total:
             data['total_start'] = int(total.group(1))
+        else:
+            # 別パターン: 「累計スタート」ではなく「累計」の場合
+            alt_total = re.search(r'累計\s*\n?\s*(\d+)\s*G', text)
+            if alt_total:
+                data['total_start'] = int(alt_total.group(1))
+            else:
+                # さらに別パターン
+                alt_total2 = re.search(r'(\d+)\s*G\s*累計', text)
+                if alt_total2:
+                    data['total_start'] = int(alt_total2.group(1))
         
         # 差枚
         diff = re.search(r'差枚\s*\n?\s*([+-]?\d+)', text)
@@ -177,6 +187,19 @@ class DaidataScraper(BaseScraper):
         
         if today_history:
             data['today_history'] = today_history
+            # total_startが取得できなかった場合、履歴から推定
+            if data['total_start'] == 0 and len(today_history) > 0:
+                # 最後の当たりのスタート数を使用
+                last_start = max(h.get('start', 0) for h in today_history)
+                if last_start > 0:
+                    data['total_start'] = last_start
+                    self.logger.info(f"Unit {unit_id}: total_start estimated from history: {last_start}")
+        
+        # デバッグ: total_start=0でART>0は異常
+        if data['total_start'] == 0 and data['art'] > 0:
+            self.logger.warning(f"Unit {unit_id}: total_start=0 but art={data['art']} - data may be incomplete")
+            # ページテキストの一部をログに出力（デバッグ用）
+            self.logger.debug(f"Page text sample: {text[:1000]}")
         
         return data
     
