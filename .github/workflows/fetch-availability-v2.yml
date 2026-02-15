@@ -66,5 +66,14 @@ jobs:
           else
             git add data/availability.json
             git commit -m "data: リアルタイムデータ更新 (v2)"
-            git push
+            
+            # Push with retry (handle concurrent pushes)
+            for i in 1 2 3; do
+              if git push; then
+                echo "✅ Push successful"
+                break
+              fi
+              echo "⚠️ Push failed (attempt $i/3), pulling and retrying..."
+              git pull --rebase origin main
+            done
           fi
