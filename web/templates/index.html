@@ -375,7 +375,7 @@
                         {% endif %}
                     </div>
                     {# === 差枚（目立たせる） === #}
-                    {% set _dm = rec.yesterday_diff_medals|default(rec.diff_medals|default(0, true)) %}
+                    {% set _dm = (rec.yesterday_diff_medals or rec.diff_medals or 0)|int %}
                     {% if _dm != 0 %}
                     <div class="yesterday-diff-line">
                         <span class="diff-medals-lg {% if _dm > 0 %}plus{% else %}minus{% endif %}">
