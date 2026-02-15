@@ -829,36 +829,7 @@ def generate_index(env):
             rec['three_days_ago_history'] = []
             rec['three_days_ago_date'] = fixed_three_days
         
-        # recent_daysを蓄積DBから常に補完（recommenderからのデータが不完全な場合があるため）
-        store_key = rec.get('store_key', '')
-        unit_id = str(rec.get('unit_id', ''))
-        if store_key and unit_id:
-            try:
-                from analysis.history_accumulator import load_unit_history
-                acc = load_unit_history(store_key, unit_id)
-                if acc and acc.get('days'):
-                    days_by_date = {d['date']: d for d in acc['days'] if d.get('date')}
-                    # 既存のrecent_daysからも取得（フォールバック用）
-                    existing_days = {d.get('date'): d for d in rec.get('recent_days', []) if d.get('date')}
-                    recent_days = []
-                    for fixed_date in fixed_dates[:7]:
-                        # 蓄積DBを優先、なければ既存から
-                        day_data = days_by_date.get(fixed_date) or existing_days.get(fixed_date)
-                        # art=0でもgamesがあれば表示（稼働があった日）
-                        if day_data and (day_data.get('art', 0) > 0 or day_data.get('games', 0) > 0 or day_data.get('total_start', 0) > 0):
-                            recent_days.append({
-                                'date': fixed_date,
-                                'art': day_data.get('art', 0),
-                                'games': day_data.get('games', 0) or day_data.get('total_start', 0),
-                                'prob': day_data.get('prob', 0),
-                                'diff_medals': day_data.get('diff_medals'),
-                                'max_rensa': day_data.get('max_rensa'),
-                                'max_medals': day_data.get('max_medals'),
-                                'history': day_data.get('history', []),
-                            })
-                    rec['recent_days'] = recent_days
-            except Exception:
-                pass
+        # recent_daysの補完はenrich_rec.pyで実施済み（重複処理を削除）
         if rec.get('recent_days'):
             new_recent_days = []
             for i, fixed_date in enumerate(fixed_dates[:7]):

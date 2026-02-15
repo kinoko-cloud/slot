@@ -201,11 +201,11 @@
                         {% set db_art = rec.day_before_art or 0 %}
                         {% set db_games = rec.day_before_games or 0 %}
                         {% set db_prob = (db_games / db_art)|int if db_art > 0 and db_games > 0 else 0 %}
-                        {{ recent_day_expandable(y_art, y_prob, rec.yesterday_date, '前日', rec.yesterday_diff_medals|default(0), rec.yesterday_max_rensa|default(0), rec.yesterday_max_medals|default(0), rec.yesterday_history_processed|default(rec.yesterday_history|default([])), y_games, true) }}
-                        {{ recent_day_expandable(db_art, db_prob, rec.day_before_date, '前々日', rec.day_before_diff_medals|default(0), rec.day_before_max_rensa|default(0), rec.day_before_max_medals|default(0), rec.day_before_history_processed|default(rec.day_before_history|default([])), db_games, true) }}
+                        {{ recent_day_expandable(y_art, y_prob, rec.yesterday_date, '前日', rec.yesterday_diff_medals|default(0, true), rec.yesterday_max_rensa|default(0, true), rec.yesterday_max_medals|default(0, true), rec.yesterday_history_processed|default(rec.yesterday_history|default([])), y_games, true) }}
+                        {{ recent_day_expandable(db_art, db_prob, rec.day_before_date, '前々日', rec.day_before_diff_medals|default(0, true), rec.day_before_max_rensa|default(0, true), rec.day_before_max_medals|default(0, true), rec.day_before_history_processed|default(rec.day_before_history|default([])), db_games, true) }}
                         {% set _td_art = rec.three_days_ago_art|default(0) %}
                         {% set _td_prob = ((rec.three_days_ago_games|default(0)) / _td_art)|int if _td_art > 0 else 0 %}
-                        {{ recent_day_expandable(_td_art, _td_prob, rec.three_days_ago_date|default(''), '3日前', rec.three_days_ago_diff_medals|default(0), rec.three_days_ago_max_rensa|default(0), rec.three_days_ago_max_medals|default(0), rec.three_days_ago_history_processed|default(rec.three_days_ago_history|default([])), rec.three_days_ago_games|default(0), true) }}
+                        {{ recent_day_expandable(_td_art, _td_prob, rec.three_days_ago_date|default(''), '3日前', rec.three_days_ago_diff_medals|default(0, true), rec.three_days_ago_max_rensa|default(0, true), rec.three_days_ago_max_medals|default(0, true), rec.three_days_ago_history_processed|default(rec.three_days_ago_history|default([])), rec.three_days_ago_games|default(0), true) }}
                     </div>
                     {# === 差枚推移グラフ（yesterday_history=最新前日を優先。today_historyは当日リアルタイム時のみ） === #}
                     {# yesterday_history=前日(最新確定データ)、today_history=当日or古いフォールバックの可能性あり #}
@@ -301,11 +301,11 @@
                         {% set db_art = rec.day_before_art or 0 %}
                         {% set db_games = rec.day_before_games or 0 %}
                         {% set db_prob = (db_games / db_art)|int if db_art > 0 and db_games > 0 else 0 %}
-                        {{ recent_day_expandable(y_art, y_prob, rec.yesterday_date, '前日', rec.yesterday_diff_medals|default(0), rec.yesterday_max_rensa|default(0), rec.yesterday_max_medals|default(0), rec.yesterday_history_processed|default(rec.yesterday_history|default([])), y_games, true) }}
-                        {{ recent_day_expandable(db_art, db_prob, rec.day_before_date, '前々日', rec.day_before_diff_medals|default(0), rec.day_before_max_rensa|default(0), rec.day_before_max_medals|default(0), rec.day_before_history_processed|default(rec.day_before_history|default([])), db_games, true) }}
+                        {{ recent_day_expandable(y_art, y_prob, rec.yesterday_date, '前日', rec.yesterday_diff_medals|default(0, true), rec.yesterday_max_rensa|default(0, true), rec.yesterday_max_medals|default(0, true), rec.yesterday_history_processed|default(rec.yesterday_history|default([])), y_games, true) }}
+                        {{ recent_day_expandable(db_art, db_prob, rec.day_before_date, '前々日', rec.day_before_diff_medals|default(0, true), rec.day_before_max_rensa|default(0, true), rec.day_before_max_medals|default(0, true), rec.day_before_history_processed|default(rec.day_before_history|default([])), db_games, true) }}
                         {% set _td_art = rec.three_days_ago_art|default(0) %}
                         {% set _td_prob = ((rec.three_days_ago_games|default(0)) / _td_art)|int if _td_art > 0 else 0 %}
-                        {{ recent_day_expandable(_td_art, _td_prob, rec.three_days_ago_date|default(''), '3日前', rec.three_days_ago_diff_medals|default(0), rec.three_days_ago_max_rensa|default(0), rec.three_days_ago_max_medals|default(0), rec.three_days_ago_history_processed|default(rec.three_days_ago_history|default([])), rec.three_days_ago_games|default(0), true) }}
+                        {{ recent_day_expandable(_td_art, _td_prob, rec.three_days_ago_date|default(''), '3日前', rec.three_days_ago_diff_medals|default(0, true), rec.three_days_ago_max_rensa|default(0, true), rec.three_days_ago_max_medals|default(0, true), rec.three_days_ago_history_processed|default(rec.three_days_ago_history|default([])), rec.three_days_ago_games|default(0), true) }}
                     </div>
                     {% endif %}
                     {% else %}
@@ -321,13 +321,13 @@
                         {% set _day_games = day.games|default(0) %}
                         {% set _day_prob = (_day_games / _day_art)|int if _day_art > 0 and _day_games > 0 else 0 %}
                         {% set _dhist = day.history_processed|default(day.history|default([])) %}
-                        {{ recent_day_expandable(_day_art, _day_prob, day.date, '', day.diff_medals|default(0), day.max_rensa|default(0), day.max_medals|default(0), _dhist, _day_games, true) }}
+                        {{ recent_day_expandable(_day_art, _day_prob, day.date, '', day.diff_medals|default(0, true), day.max_rensa|default(0, true), day.max_medals|default(0, true), _dhist, _day_games, true) }}
                         {% endfor %}
                         {% else %}
                         {% set y_art = rec.yesterday_art or 0 %}
                         {% set y_games = rec.yesterday_games or 0 %}
                         {% set y_prob = (y_games / y_art)|int if y_art > 0 and y_games > 0 else 0 %}
-                        {{ recent_day_expandable(y_art, y_prob, rec.yesterday_date, '前日', rec.yesterday_diff_medals|default(0), rec.yesterday_max_rensa|default(0), rec.yesterday_max_medals|default(0), rec.yesterday_history_processed|default(rec.yesterday_history|default([])), y_games, true) }}
+                        {{ recent_day_expandable(y_art, y_prob, rec.yesterday_date, '前日', rec.yesterday_diff_medals|default(0, true), rec.yesterday_max_rensa|default(0, true), rec.yesterday_max_medals|default(0, true), rec.yesterday_history_processed|default(rec.yesterday_history|default([])), y_games, true) }}
                         {% endif %}
                     </div>
                     {% set _gh = rec.yesterday_history if rec.yesterday_history and rec.yesterday_history|length >= 2 else (rec.today_history if rec.today_history and rec.today_history|length >= 2 else none) %}
@@ -375,7 +375,7 @@
                         {% endif %}
                     </div>
                     {# === 差枚（目立たせる） === #}
-                    {% set _dm = rec.yesterday_diff_medals|default(rec.diff_medals|default(0)) %}
+                    {% set _dm = rec.yesterday_diff_medals|default(rec.diff_medals|default(0, true)) %}
                     {% if _dm != 0 %}
                     <div class="yesterday-diff-line">
                         <span class="diff-medals-lg {% if _dm > 0 %}plus{% else %}minus{% endif %}">
@@ -589,11 +589,11 @@
                         {% set db_art = rec.day_before_art or 0 %}
                         {% set db_games = rec.day_before_games or 0 %}
                         {% set db_prob = (db_games / db_art)|int if db_art > 0 and db_games > 0 else 0 %}
-                        {{ recent_day_expandable(y_art, y_prob, rec.yesterday_date, '前日', rec.yesterday_diff_medals|default(0), rec.yesterday_max_rensa|default(0), rec.yesterday_max_medals|default(0), rec.yesterday_history_processed|default(rec.yesterday_history|default([])), y_games, true) }}
-                        {{ recent_day_expandable(db_art, db_prob, rec.day_before_date, '前々日', rec.day_before_diff_medals|default(0), rec.day_before_max_rensa|default(0), rec.day_before_max_medals|default(0), rec.day_before_history_processed|default(rec.day_before_history|default([])), db_games, true) }}
+                        {{ recent_day_expandable(y_art, y_prob, rec.yesterday_date, '前日', rec.yesterday_diff_medals|default(0, true), rec.yesterday_max_rensa|default(0, true), rec.yesterday_max_medals|default(0, true), rec.yesterday_history_processed|default(rec.yesterday_history|default([])), y_games, true) }}
+                        {{ recent_day_expandable(db_art, db_prob, rec.day_before_date, '前々日', rec.day_before_diff_medals|default(0, true), rec.day_before_max_rensa|default(0, true), rec.day_before_max_medals|default(0, true), rec.day_before_history_processed|default(rec.day_before_history|default([])), db_games, true) }}
                         {% set _td_art = rec.three_days_ago_art|default(0) %}
                         {% set _td_prob = ((rec.three_days_ago_games|default(0)) / _td_art)|int if _td_art > 0 else 0 %}
-                        {{ recent_day_expandable(_td_art, _td_prob, rec.three_days_ago_date|default(''), '3日前', rec.three_days_ago_diff_medals|default(0), rec.three_days_ago_max_rensa|default(0), rec.three_days_ago_max_medals|default(0), rec.three_days_ago_history_processed|default(rec.three_days_ago_history|default([])), rec.three_days_ago_games|default(0), true) }}
+                        {{ recent_day_expandable(_td_art, _td_prob, rec.three_days_ago_date|default(''), '3日前', rec.three_days_ago_diff_medals|default(0, true), rec.three_days_ago_max_rensa|default(0, true), rec.three_days_ago_max_medals|default(0, true), rec.three_days_ago_history_processed|default(rec.three_days_ago_history|default([])), rec.three_days_ago_games|default(0), true) }}
                     </div>
                     {% endif %}
                     {# === 推奨理由（全件表示・カテゴリ色分け） === #}
@@ -686,11 +686,11 @@
                         {% set db_art = rec.day_before_art or 0 %}
                         {% set db_games = rec.day_before_games or 0 %}
                         {% set db_prob = (db_games / db_art)|int if db_art > 0 and db_games > 0 else 0 %}
-                        {{ recent_day_expandable(y_art, y_prob, rec.yesterday_date, '前日', rec.yesterday_diff_medals|default(0), rec.yesterday_max_rensa|default(0), rec.yesterday_max_medals|default(0), rec.yesterday_history_processed|default(rec.yesterday_history|default([])), y_games, true) }}
-                        {{ recent_day_expandable(db_art, db_prob, rec.day_before_date, '前々日', rec.day_before_diff_medals|default(0), rec.day_before_max_rensa|default(0), rec.day_before_max_medals|default(0), rec.day_before_history_processed|default(rec.day_before_history|default([])), db_games, true) }}
+                        {{ recent_day_expandable(y_art, y_prob, rec.yesterday_date, '前日', rec.yesterday_diff_medals|default(0, true), rec.yesterday_max_rensa|default(0, true), rec.yesterday_max_medals|default(0, true), rec.yesterday_history_processed|default(rec.yesterday_history|default([])), y_games, true) }}
+                        {{ recent_day_expandable(db_art, db_prob, rec.day_before_date, '前々日', rec.day_before_diff_medals|default(0, true), rec.day_before_max_rensa|default(0, true), rec.day_before_max_medals|default(0, true), rec.day_before_history_processed|default(rec.day_before_history|default([])), db_games, true) }}
                         {% set _td_art = rec.three_days_ago_art|default(0) %}
                         {% set _td_prob = ((rec.three_days_ago_games|default(0)) / _td_art)|int if _td_art > 0 else 0 %}
-                        {{ recent_day_expandable(_td_art, _td_prob, rec.three_days_ago_date|default(''), '3日前', rec.three_days_ago_diff_medals|default(0), rec.three_days_ago_max_rensa|default(0), rec.three_days_ago_max_medals|default(0), rec.three_days_ago_history_processed|default(rec.three_days_ago_history|default([])), rec.three_days_ago_games|default(0), true) }}
+                        {{ recent_day_expandable(_td_art, _td_prob, rec.three_days_ago_date|default(''), '3日前', rec.three_days_ago_diff_medals|default(0, true), rec.three_days_ago_max_rensa|default(0, true), rec.three_days_ago_max_medals|default(0, true), rec.three_days_ago_history_processed|default(rec.three_days_ago_history|default([])), rec.three_days_ago_games|default(0), true) }}
                     </div>
                     {% endif %}
                     {% else %}
@@ -706,11 +706,11 @@
                         {% set db_art = rec.day_before_art or 0 %}
                         {% set db_games = rec.day_before_games or 0 %}
                         {% set db_prob = (db_games / db_art)|int if db_art > 0 and db_games > 0 else 0 %}
-                        {{ recent_day_expandable(y_art, y_prob, rec.yesterday_date, '前日', rec.yesterday_diff_medals|default(0), rec.yesterday_max_rensa|default(0), rec.yesterday_max_medals|default(0), rec.yesterday_history_processed|default(rec.yesterday_history|default([])), y_games, true) }}
-                        {{ recent_day_expandable(db_art, db_prob, rec.day_before_date, '前々日', rec.day_before_diff_medals|default(0), rec.day_before_max_rensa|default(0), rec.day_before_max_medals|default(0), rec.day_before_history_processed|default(rec.day_before_history|default([])), db_games, true) }}
+                        {{ recent_day_expandable(y_art, y_prob, rec.yesterday_date, '前日', rec.yesterday_diff_medals|default(0, true), rec.yesterday_max_rensa|default(0, true), rec.yesterday_max_medals|default(0, true), rec.yesterday_history_processed|default(rec.yesterday_history|default([])), y_games, true) }}
+                        {{ recent_day_expandable(db_art, db_prob, rec.day_before_date, '前々日', rec.day_before_diff_medals|default(0, true), rec.day_before_max_rensa|default(0, true), rec.day_before_max_medals|default(0, true), rec.day_before_history_processed|default(rec.day_before_history|default([])), db_games, true) }}
                         {% set _td_art = rec.three_days_ago_art|default(0) %}
                         {% set _td_prob = ((rec.three_days_ago_games|default(0)) / _td_art)|int if _td_art > 0 else 0 %}
-                        {{ recent_day_expandable(_td_art, _td_prob, rec.three_days_ago_date|default(''), '3日前', rec.three_days_ago_diff_medals|default(0), rec.three_days_ago_max_rensa|default(0), rec.three_days_ago_max_medals|default(0), rec.three_days_ago_history_processed|default(rec.three_days_ago_history|default([])), rec.three_days_ago_games|default(0), true) }}
+                        {{ recent_day_expandable(_td_art, _td_prob, rec.three_days_ago_date|default(''), '3日前', rec.three_days_ago_diff_medals|default(0, true), rec.three_days_ago_max_rensa|default(0, true), rec.three_days_ago_max_medals|default(0, true), rec.three_days_ago_history_processed|default(rec.three_days_ago_history|default([])), rec.three_days_ago_games|default(0), true) }}
                     </div>
                     {% set _gh = rec.yesterday_history if rec.yesterday_history and rec.yesterday_history|length >= 2 else (rec.today_history if rec.today_history and rec.today_history|length >= 2 else none) %}
                     {% if _gh %}
@@ -884,7 +884,7 @@
                         {% endif %}
                     </div>
                     {# === 差枚（目立たせる） === #}
-                    {% set _dm2 = rec.yesterday_diff_medals|default(rec.diff_medals|default(0)) %}
+                    {% set _dm2 = rec.yesterday_diff_medals|default(rec.diff_medals|default(0, true)) %}
                     {% if _dm2 != 0 %}
                     <div class="yesterday-diff-line">
                         <span class="diff-medals-lg {% if _dm2 > 0 %}plus{% else %}minus{% endif %}">
