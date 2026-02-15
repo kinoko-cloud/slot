@@ -47,13 +47,28 @@ class DaidataScraper(BaseScraper):
             return True
         
         try:
-            # ボタン形式
-            btn = self.page.locator('button:has-text("利用規約に同意する")')
-            if btn.count() > 0:
-                btn.first.click()
-                self.wait(3000)
-                self._agreed_halls.add(hall_id)
-                return True
+            # ボタン形式（複数パターン対応）
+            selectors = [
+                'button:has-text("利用規約に同意する")',
+                'input[type="submit"][value*="同意"]',
+                'button:has-text("同意する")',
+                'a:has-text("利用規約に同意する")',
+                'a:has-text("同意する")',
+                '.agree-button',
+                '#agree-btn',
+            ]
+            
+            for selector in selectors:
+                try:
+                    elem = self.page.locator(selector)
+                    if elem.count() > 0:
+                        elem.first.click()
+                        self.wait(3000)
+                        self._agreed_halls.add(hall_id)
+                        self.logger.info(f"Terms accepted for hall {hall_id} via {selector}")
+                        return True
+                except:
+                    continue
             
             # リンク形式
             link = self.page.locator('a:has-text("同意")')
@@ -78,11 +93,23 @@ class DaidataScraper(BaseScraper):
         self._accept_terms(hall_id)
         
         # 規約ページにリダイレクトされた場合、元のURLに戻る
-        if 'terms' in self.page.url or '規約' in self.get_text()[:200]:
+        current_url = self.page.url
+        page_text = self.get_text()[:500]
+        if 'terms' in current_url or 'accept' in current_url or '規約' in page_text or '同意' in page_text:
+            self.logger.info(f"Detected terms page: {current_url}")
             self._accept_terms(hall_id)
-            self.navigate(url)
+            self.wait(2000)
+            # 同意後に元のURLに遷移
+            if not self.navigate(url):
+                return False
             self.wait(1500)
             self._remove_ads()
+            # 再度リダイレクトされた場合のリトライ
+            if 'accept' in self.page.url:
+                self._accept_terms(hall_id)
+                self.wait(2000)
+                self.navigate(url)
+                self.wait(1500)
         
         return True
     
