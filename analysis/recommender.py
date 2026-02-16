@@ -2923,13 +2923,16 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
                 _hist_unit_data = _json_hist.loads(_hist_file_for_today.read_text())
 
                 if is_business_hours:
-                    # 営業中：当日のhistoryのみを補完（常に実行）
+                    # 営業中：当日のhistoryとtotal_gamesを補完（常に実行）
                     today_str = datetime.now().strftime('%Y-%m-%d')
                     for day in _hist_unit_data.get('days', []):
                         if day.get('date') == today_str:
                             # historyがない、または空の場合に補完
                             if not today_analysis.get('today_history') or len(today_analysis.get('today_history', [])) == 0:
                                 today_analysis['today_history'] = day.get('history', [])
+                            # total_gamesが0の場合に補完（v2スクリプトの「G数変化なしスキップ」対策）
+                            if today_analysis.get('total_games', 0) == 0:
+                                today_analysis['total_games'] = day.get('total_start', 0) or day.get('games', 0)
                             break
                 elif today_analysis.get('status') == '-':
                     # 営業時間外で、データがない場合のみ全データを使用
