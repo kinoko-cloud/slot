@@ -32,6 +32,33 @@ def load_availability():
         return None
 
 
+def convert_to_v1_format(data):
+    """新形式(status/today_history)を旧形式(availability/history)に変換"""
+    converted_count = 0
+
+    stores = data.get('stores', {})
+    for store_key, store_data in stores.items():
+        units = store_data.get('units', [])
+        for unit in units:
+            # status → availability変換
+            if 'status' in unit and 'availability' not in unit:
+                status = unit.pop('status')
+                status_map = {
+                    'playing': '遊技中',
+                    'empty': '空き',
+                    'unknown': '?'
+                }
+                unit['availability'] = status_map.get(status, '?')
+                converted_count += 1
+
+            # today_history → history変換
+            if 'today_history' in unit and 'history' not in unit:
+                unit['history'] = unit.pop('today_history')
+                converted_count += 1
+
+    return converted_count
+
+
 def check_availability_completeness(data):
     """availability.jsonの完全性をチェック"""
     issues = []
@@ -39,6 +66,11 @@ def check_availability_completeness(data):
     if not data or 'stores' not in data:
         issues.append('availability.jsonにstoresキーがない')
         return issues
+
+    # フォーマット変換（新形式→旧形式）
+    converted = convert_to_v1_format(data)
+    if converted > 0:
+        issues.append(f'新形式フィールドを{converted}件変換しました（status→availability, today_history→history）')
 
     stores = data['stores']
 
@@ -126,6 +158,16 @@ def run_repair(dry_run=False):
     avail_issues = check_availability_completeness(data)
     all_issues.extend(avail_issues)
 
+    # フォーマット変換を実行した場合は保存
+    format_converted = any('新形式フィールドを' in issue for issue in avail_issues)
+    if format_converted and not dry_run:
+        print('  💾 変換したデータを保存中...')
+        try:
+            AVAILABILITY_JSON.write_text(json.dumps(data, ensure_ascii=False, indent=2))
+            print('  ✅ 保存完了')
+        except Exception as e:
+            print(f'  ❌ 保存失敗: {e}')
+
     if avail_issues:
         print(f'  ⚠️  {len(avail_issues)}件の問題を検出:')
         for issue in avail_issues[:5]:  # 最初の5件のみ表示
@@ -133,7 +175,9 @@ def run_repair(dry_run=False):
         if len(avail_issues) > 5:
             print(f'    ... 他 {len(avail_issues)-5}件')
 
-        if not dry_run:
+        # フォーマット変換以外の問題がある場合は再取得
+        other_issues = [i for i in avail_issues if '新形式フィールド' not in i]
+        if other_issues and not dry_run:
             print('  🔧 自動修復: availability.jsonを再取得中...')
             try:
                 subprocess.run(

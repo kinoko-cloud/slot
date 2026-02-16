@@ -287,6 +287,15 @@ class V2Fetcher:
                 # 差枚 = 総獲得 - 投資（3枚/G）
                 diff_medals = total_medals - (total_start * 3) if total_start > 0 else 0
                 
+                # statusを日本語のavailabilityに変換
+                status = unit_data.get('status', 'unknown')
+                availability_map = {
+                    'playing': '遊技中',
+                    'empty': '空き',
+                    'unknown': '?'
+                }
+                availability = availability_map.get(status, '?')
+
                 store_data['units'].append({
                     'unit_id': unit_id,
                     'art': unit_data.get('art', 0),
@@ -294,8 +303,8 @@ class V2Fetcher:
                     'rb': unit_data.get('rb', 0),
                     'total_start': unit_data.get('total_start', 0),
                     'games': unit_data.get('total_start', 0),
-                    'status': unit_data.get('status', 'unknown'),
-                    'today_history': today_history,
+                    'availability': availability,  # v1形式
+                    'history': today_history,      # v1形式（today_history → history）
                     'diff_medals': diff_medals,
                     'max_medals': max_medals,
                 })

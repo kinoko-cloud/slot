@@ -124,6 +124,78 @@ def check_accumulated_games_display(html: str, fname: str) -> list:
     return issues
 
 
+def check_availability_format() -> list:
+    """availability.jsonのフォーマットと整合性をチェック"""
+    issues = []
+
+    avail_path = BASE / 'data' / 'availability.json'
+    if not avail_path.exists():
+        issues.append('ERROR: data/availability.json が存在しない')
+        return issues
+
+    try:
+        data = json.loads(avail_path.read_text())
+    except Exception as e:
+        issues.append(f'ERROR: availability.json 読み込み失敗: {e}')
+        return issues
+
+    stores = data.get('stores', {})
+    if not stores:
+        issues.append('ERROR: availability.json に stores がない')
+        return issues
+
+    # 各店舗のユニットをチェック
+    total_units = 0
+    playing_units = 0
+    empty_units = 0
+    format_issues = []
+
+    for store_key, store_data in stores.items():
+        units = store_data.get('units', [])
+        if not units:
+            continue
+
+        for unit in units:
+            total_units += 1
+
+            # フィールド形式チェック
+            has_availability = 'availability' in unit
+            has_status = 'status' in unit
+            has_history = 'history' in unit
+            has_today_history = 'today_history' in unit
+
+            # 新旧形式混在チェック
+            if has_status and not has_availability:
+                format_issues.append(f'{store_key}: unit {unit.get("unit_id")} が新形式(status)')
+            if has_today_history and not has_history:
+                format_issues.append(f'{store_key}: unit {unit.get("unit_id")} が新形式(today_history)')
+
+            # availability集計
+            if has_availability:
+                avail_val = unit.get('availability', '?')
+                if avail_val == '遊技中':
+                    playing_units += 1
+                elif avail_val == '空き':
+                    empty_units += 1
+
+    # フォーマット不一致警告
+    if format_issues:
+        issues.append(f'WARN: availability.json に新形式フィールドが {len(format_issues)} 件: {format_issues[:3]}')
+
+    # 営業時間中チェック（10-22時）
+    from datetime import datetime
+    now_hour = datetime.now().hour
+    if 10 <= now_hour <= 22:
+        # 営業時間中なのに遊技中が0台は異常
+        if total_units > 50 and playing_units == 0:
+            issues.append(f'ERROR: 営業時間中({now_hour}時)なのに遊技中が0台（総台数{total_units}）→ データ未更新の可能性')
+        # 遊技中が異常に少ない
+        elif total_units > 50 and playing_units < 10:
+            issues.append(f'WARN: 営業時間中({now_hour}時)に遊技中が{playing_units}台のみ（総台数{total_units}）→ データ更新不完全の可能性')
+
+    return issues
+
+
 def check_sparkline_graphs(html: str, fname: str) -> list:
     """リアルタイムグラフ（sparkline）の検証"""
     issues = []
@@ -165,7 +237,10 @@ def check_sparkline_graphs(html: str, fname: str) -> list:
 def run_all() -> int:
     """全HTML検証を実行。ERRORの数を返す"""
     all_issues = []
-    
+
+    # availability.json検証（HTML生成前のデータ品質チェック）
+    all_issues.extend(check_availability_format())
+
     index_html = DOCS / 'index.html'
     if not index_html.exists():
         print('❌ POST-BUILD: docs/index.html が存在しない')
