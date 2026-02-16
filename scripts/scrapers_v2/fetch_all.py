@@ -127,10 +127,13 @@ class V2Fetcher:
                 
                 # G数が変化した台を特定
                 changed_units = get_changed_units(store_key, games_map)
-                
+
+                # 🚨 一時的に全台取得（スキップ無効化）
+                changed_units = set(expected_units)
+
                 for unit_id in expected_units:
                     games = games_map.get(unit_id, 0)
-                    
+
                     # G数が変化した台のみ詳細取得
                     if unit_id in changed_units:
                         detail = scraper.fetch_realtime(hall_id, unit_id)
