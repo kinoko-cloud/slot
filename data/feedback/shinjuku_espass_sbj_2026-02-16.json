@@ -5,24 +5,33 @@
   "weekday": "月",
   "total_units": 4,
   "hits": 1,
-  "misses": 2,
+  "misses": 3,
   "surprises": 0,
   "miss_details": [
     {
       "unit_id": "683",
-      "score": 83,
-      "actual_prob": 259,
+      "score": 80,
+      "actual_prob": 323,
       "reasons": [
         "高スコア過信",
-        "設定1域(1/259)"
+        "設定1域(1/323)"
+      ]
+    },
+    {
+      "unit_id": "684",
+      "score": 70,
+      "actual_prob": 203,
+      "reasons": [
+        "低稼働(814G)",
+        "設定1域(1/203)"
       ]
     },
     {
       "unit_id": "685",
-      "score": 43,
-      "actual_prob": 256,
+      "score": 44,
+      "actual_prob": 230,
       "reasons": [
-        "設定1域(1/256)"
+        "設定1域(1/230)"
       ]
     }
   ],

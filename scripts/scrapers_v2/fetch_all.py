@@ -137,6 +137,25 @@ class V2Fetcher:
                     # G数が変化した台のみ詳細取得
                     if unit_id in changed_units:
                         detail = scraper.fetch_realtime(hall_id, unit_id)
+
+                        # 空データ検証（規約ページ処理失敗など）
+                        if (detail.get('art', 0) == 0 and
+                            detail.get('total_start', 0) == 0 and
+                            detail.get('bb', 0) == 0 and
+                            detail.get('rb', 0) == 0):
+                            prev_data = self._get_previous_unit_data(store_key, unit_id)
+                            if prev_data and (prev_data.get('art', 0) > 0 or prev_data.get('total_start', 0) > 0):
+                                # 前回データがあれば、それを保持（ただしG数は更新）
+                                logger.warning(f"{store_key}/{unit_id}: 空データ検知、前回データを保持")
+                                result['units'][unit_id] = {
+                                    **prev_data,
+                                    'total_start': games,
+                                    'cached': True,
+                                    'stale_warning': True,
+                                }
+                                result['skipped_count'] += 1
+                                continue
+
                         result['units'][unit_id] = detail
                         result['changed_count'] += 1
                     else:
