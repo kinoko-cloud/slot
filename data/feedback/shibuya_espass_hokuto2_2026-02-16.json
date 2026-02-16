@@ -5,8 +5,8 @@
   "weekday": "月",
   "total_units": 30,
   "hits": 1,
-  "misses": 1,
-  "surprises": 1,
+  "misses": 2,
+  "surprises": 0,
   "miss_details": [
     {
       "unit_id": "2047",
@@ -17,15 +17,17 @@
         "低稼働(418G)",
         "設定1域(1/209)"
       ]
-    }
-  ],
-  "surprise_details": [
+    },
     {
       "unit_id": "2066",
-      "rank": "B",
-      "score": 78,
+      "score": 81,
       "actual_prob": 258,
-      "reasons": []
+      "reasons": [
+        "高スコア過信",
+        "低稼働(258G)",
+        "設定1域(1/258)"
+      ]
     }
-  ]
+  ],
+  "surprise_details": []
 }
