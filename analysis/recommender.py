@@ -2911,9 +2911,10 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
                         today_analysis = analyze_today_data(unit, machine_key=machine_key)
                         break
 
-        # data/history/ からも直接読み込み（リアルタイムデータがない場合のみ補完）
-        # リアルタイムデータがある場合は、ART=0でもそのまま使用（今日まだ稼働開始していないケース）
-        if not (realtime_data and realtime_is_today) and today_analysis.get('status') == '-':
+        # data/history/ からも直接読み込み（historyデータの補完）
+        # リアルタイムデータがある場合でも、historyがない場合は補完する
+        # （v2スクリプトの「G数変化なしスキップ」でhistoryが取れないケースへの対応）
+        if today_analysis.get('status') == '-' or (realtime_data and realtime_is_today and not today_analysis.get('today_history')):
             _hist_file_for_today = Path(__file__).parent.parent / 'data' / 'history' / data_store_key / f'{unit_id}.json'
             if not _hist_file_for_today.exists():
                 _hist_file_for_today = Path(__file__).parent.parent / 'data' / 'history' / store_key / f'{unit_id}.json'
@@ -2922,7 +2923,18 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
                     import json as _json_hist
                     _hist_unit_data = _json_hist.loads(_hist_file_for_today.read_text())
                     # historyデータをdaysキー付きの形式で渡す
-                    today_analysis = analyze_today_data(_hist_unit_data, machine_key=machine_key)
+                    # 営業中の場合は、当日のhistoryのみ使用
+                    if is_business_hours:
+                        # 当日のhistoryのみを補完（ART回数などは既存のものを維持）
+                        today_str = datetime.now().strftime('%Y-%m-%d')
+                        for day in _hist_unit_data.get('days', []):
+                            if day.get('date') == today_str:
+                                if not today_analysis.get('today_history'):
+                                    today_analysis['today_history'] = day.get('history', [])
+                                break
+                    else:
+                        # 営業時間外は全データを使用
+                        today_analysis = analyze_today_data(_hist_unit_data, machine_key=machine_key)
                 except Exception:
                     pass
 
