@@ -149,6 +149,7 @@ class PapimoScraper(BaseScraper):
         data = {
             'unit_id': unit_id,
             'date': date_str,
+            'status': 'empty',  # デフォルトは空台
         }
         
         # BB/RB/ART回数
@@ -199,7 +200,11 @@ class PapimoScraper(BaseScraper):
             data['prob'] = round(total_start / art, 1)
             data['is_good_sbj'] = data['prob'] <= 130
             data['is_good_hokuto'] = data['prob'] <= 330
-        
+
+        # ステータス判定: データがあれば遊技中
+        if art > 0 or data.get('bb', 0) > 0 or data.get('rb', 0) > 0 or total_start > 0:
+            data['status'] = 'playing'
+
         return data if data.get('total_start', 0) > 0 else None
     
     def discover_units(self, hall_id: str, machine_id: str) -> List[str]:

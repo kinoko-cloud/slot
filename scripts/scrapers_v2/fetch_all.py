@@ -147,9 +147,12 @@ class V2Fetcher:
                             if prev_data and (prev_data.get('art', 0) > 0 or prev_data.get('total_start', 0) > 0):
                                 # 前回データがあれば、それを保持（ただしG数は更新）
                                 logger.warning(f"{store_key}/{unit_id}: 空データ検知、前回データを保持")
+                                # statusも保持（遊技中判定のため）
+                                status = 'playing' if (prev_data.get('art', 0) > 0 or prev_data.get('total_start', 0) > 0) else 'empty'
                                 result['units'][unit_id] = {
                                     **prev_data,
                                     'total_start': games,
+                                    'status': status,
                                     'cached': True,
                                     'stale_warning': True,
                                 }
@@ -214,6 +217,7 @@ class V2Fetcher:
                         'bb': today.get('bb', 0),
                         'rb': today.get('rb', 0),
                         'total_start': today.get('total_start', 0),
+                        'status': today.get('status', 'unknown'),  # status追加
                         'today_history': today.get('history', []),
                     }
                 else:
@@ -223,6 +227,7 @@ class V2Fetcher:
                         'bb': 0,
                         'rb': 0,
                         'total_start': 0,
+                        'status': 'empty',  # データなし=空台
                         'today_history': [],
                     }
             

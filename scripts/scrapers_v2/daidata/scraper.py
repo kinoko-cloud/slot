@@ -134,6 +134,7 @@ class DaidataScraper(BaseScraper):
             'unit_id': unit_id,
             'bb': 0, 'rb': 0, 'art': 0,
             'total_start': 0, 'final_start': 0,
+            'status': 'empty',  # デフォルトは空台
             'fetched_at': now_jst().isoformat()
         }
         
@@ -195,12 +196,16 @@ class DaidataScraper(BaseScraper):
                     data['total_start'] = last_start
                     self.logger.info(f"Unit {unit_id}: total_start estimated from history: {last_start}")
         
+        # ステータス判定: データがあれば遊技中
+        if data['art'] > 0 or data['bb'] > 0 or data['rb'] > 0 or data['total_start'] > 0:
+            data['status'] = 'playing'
+
         # デバッグ: total_start=0でART>0は異常
         if data['total_start'] == 0 and data['art'] > 0:
             self.logger.warning(f"Unit {unit_id}: total_start=0 but art={data['art']} - data may be incomplete")
             # ページテキストの一部をログに出力（デバッグ用）
             self.logger.debug(f"Page text sample: {text[:1000]}")
-        
+
         return data
     
     def fetch_history(self, hall_id: str, unit_id: str, days: int = 7) -> List[Dict]:
