@@ -2747,9 +2747,14 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
 
     # 全台の当日データを収集（比較用）
     all_units_today = []
+    from datetime import datetime
+    now_hour = datetime.now().hour
+    is_business_hours = 10 <= now_hour <= 22
+
     if realtime_data and 'units' in realtime_data:
         all_units_today = realtime_data.get('units', [])
-    elif daily_data:
+    elif daily_data and not is_business_hours:
+        # ⚠️ 営業中は昨日のデータにフォールバックしない
         # データ内の店舗キーで検索（複数パターンを試行）
         store_data = None
         for key_to_try in [data_store_key, store_key, f'{store_key}_sbj']:
@@ -2887,7 +2892,12 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
                         break
 
         # 日別データからも分析（リアルタイムデータがない場合）
-        if daily_data and today_analysis.get('status') == '-':
+        # ⚠️ 営業中（10-22時）は昨日のデータにフォールバックしない
+        from datetime import datetime
+        now_hour = datetime.now().hour
+        is_business_hours = 10 <= now_hour <= 22
+
+        if daily_data and today_analysis.get('status') == '-' and not is_business_hours:
             # データ内の店舗キーで検索
             store_data = None
             for key_to_try in [data_store_key, store_key, f'{store_key}_sbj']:
