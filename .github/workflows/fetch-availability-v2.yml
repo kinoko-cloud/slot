@@ -1,11 +1,11 @@
-name: Fetch Availability (v2) [DISABLED - Use Parallel]
+name: Fetch Availability (v2)
 
 on:
-  # スケジュール無効化 - 並列ワークフローに移行
-  # schedule:
-  #   - cron: '0 1-13 * * *'
-  #   - cron: '30 1-13 * * *'
-  workflow_dispatch:  # 手動実行のみ
+  schedule:
+    # JST 10-22時の毎時0分と30分
+    - cron: '0 1-13 * * *'
+    - cron: '30 1-13 * * *'
+  workflow_dispatch:  # 手動実行も可能
 
 concurrency:
   group: slot-fetch-v2

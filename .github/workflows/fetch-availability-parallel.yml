@@ -1,10 +1,9 @@
-name: Fetch Availability (Parallel)
+name: Fetch Availability (Parallel) [DISABLED]
 
 on:
-  schedule:
-    # JST 10-22時の毎時0分（18店舗並列取得）
-    - cron: '0 1-13 * * *'
-  workflow_dispatch:  # 手動実行も可能
+  # schedule:
+  #   - cron: '0 1-13 * * *'
+  workflow_dispatch:  # 手動実行のみ
 
 concurrency:
   group: slot-fetch-parallel-${{ github.run_id }}
