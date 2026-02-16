@@ -56,16 +56,33 @@ jobs:
             exit 1
           }
 
+      - name: Generate static HTML (営業時間中のみ)
+        run: |
+          HOUR=$(TZ='Asia/Tokyo' date +'%H')
+          if [ "$HOUR" -ge 10 ] && [ "$HOUR" -le 22 ]; then
+            echo "営業時間中 ($HOUR時) - HTML生成"
+            pip install jinja2
+            timeout 300 python scripts/generate_static.py 2>&1 || {
+              echo "⚠️ HTML生成失敗（データ更新は続行）"
+            }
+          else
+            echo "営業時間外 ($HOUR時) - HTML生成スキップ"
+          fi
+
       - name: Commit and push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          
-          if git diff --quiet data/availability.json; then
+
+          git add data/availability.json docs/ || true
+
+          if git diff --staged --quiet; then
             echo "No changes to commit"
           else
-            git add data/availability.json
-            git commit -m "data: リアルタイムデータ更新 (v2)"
+            TIMESTAMP=$(TZ='Asia/Tokyo' date +'%H:%M')
+            git commit -m "auto: リアルタイムデータ更新 ${TIMESTAMP}
+
+Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
             
             # Push with retry (handle concurrent pushes)
             for i in 1 2 3; do

@@ -379,10 +379,10 @@
                                 <div class="detail-item minus">{{ rec.consecutive_minus }}日連続マイナス → 設定上げ期待</div>
                                 {% endif %}
                                 {% if rec.yesterday_art %}
-                                <div class="detail-item">前日ART {{ rec.yesterday_art }}回{% if rec.yesterday_games %} ({{ '{:,}'.format(rec.yesterday_games) }}G){% endif %}</div>
+                                <div class="detail-item">前日{% if rec.yesterday_date %}({{ rec.yesterday_date[5:] }}){% endif %}ART {{ rec.yesterday_art }}回{% if rec.yesterday_games %} ({{ '{:,}'.format(rec.yesterday_games) }}G){% endif %}</div>
                                 {% endif %}
                                 {% if rec.day_before_art %}
-                                <div class="detail-item">前々日ART {{ rec.day_before_art }}回{% if rec.day_before_games %} ({{ '{:,}'.format(rec.day_before_games) }}G){% endif %}</div>
+                                <div class="detail-item">前々日{% if rec.day_before_date %}({{ rec.day_before_date[5:] }}){% endif %}ART {{ rec.day_before_art }}回{% if rec.day_before_games %} ({{ '{:,}'.format(rec.day_before_games) }}G){% endif %}</div>
                                 {% endif %}
                             </div>
                         </div>
