@@ -1,11 +1,10 @@
-name: Fetch Availability (Parallel) [DISABLED - Use v2]
+name: Fetch Availability (Parallel)
 
 on:
-  # スケジュール無効化 - v2に移行
-  # schedule:
-  #   - cron: '0 1-13 * * *'
-  #   - cron: '30 1-13 * * *'
-  workflow_dispatch:  # 手動実行のみ
+  schedule:
+    # JST 10-22時の毎時0分（18店舗並列取得）
+    - cron: '0 1-13 * * *'
+  workflow_dispatch:  # 手動実行も可能
 
 concurrency:
   group: slot-fetch-parallel-${{ github.run_id }}
