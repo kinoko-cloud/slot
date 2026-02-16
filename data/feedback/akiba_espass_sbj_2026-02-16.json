@@ -4,18 +4,27 @@
   "date": "2026-02-16",
   "weekday": "月",
   "total_units": 4,
-  "hits": 0,
-  "misses": 0,
+  "hits": 1,
+  "misses": 1,
   "surprises": 1,
-  "miss_details": [],
+  "miss_details": [
+    {
+      "unit_id": "2159",
+      "score": 64,
+      "actual_prob": 201,
+      "reasons": [
+        "設定1域(1/201)"
+      ]
+    }
+  ],
   "surprise_details": [
     {
       "unit_id": "2157",
       "rank": "D",
-      "score": 81,
-      "actual_prob": 52,
+      "score": 84,
+      "actual_prob": 54,
       "reasons": [
-        "実は高設定域(1/52)"
+        "実は高設定域(1/54)"
       ]
     }
   ]
