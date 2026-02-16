@@ -194,7 +194,7 @@ STORES = {
         'short_name': 'エスパス上野新館',
         'hall_id': '100196',
         'machine': 'sbj',
-        'units': ['3075', '3079', '3085', '3127', '3140'],
+        'units': ['3110', '3111', '3112', '3113'],
         'data_source': 'daidata',
     },
     'ueno_honkan_espass_sbj': {
@@ -232,9 +232,9 @@ STORES = {
     'shinkoiwa_espass_sbj': {
         'name': 'エスパス日拓新小岩店',
         'short_name': 'エスパス新小岩',
-        'hall_id': '100948',
+        'hall_id': '100260',
         'machine': 'sbj',
-        'units': ['179', '194'],
+        'units': ['485', '486'],
         'data_source': 'daidata',
     },
 }

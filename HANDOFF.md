@@ -81,18 +81,10 @@ new file:   scripts/scrapers_v2/sync_stores.py
 
 ---
 
-## 🚨 最新アラート (11:01)
+## 🚨 最新アラート (15:31) - 台番号不整合再修正
 
-**config_integrity不整合が残っている:**
-- `ueno_espass_sbj`: stores.pyとfetch_daidata_availability.pyで台番号が異なる
-- `shinkoiwa_espass_sbj`: 同上
+**rankings.py と fetch_daidata_availability.py を修正:**
+- `ueno_espass_sbj`: 3110-3113に統一（古い台番号3075,3079,3085,3127,3140は削除）
+- `shinkoiwa_espass_sbj`: 485,486に統一、hall_id=100260（古い179,194は削除）
 
-**原因:** stores.pyには全台番号を追加したが、ヘルスチェックがstores.pyとfetch_daidata_availability.pyの両方を比較している可能性
-
-**対応案:** 
-- stores.pyの台番号をfetch_daidata_availability.pyと一致させる
-- または、ヘルスチェックのロジックを確認
-
-**上野新館の台番号問題:**
-- 3075, 3079, 3085, 3127, 3140 がdaidataで見つからない
-- 台が撤去された可能性あり → fetch_daidata_availability.pyから削除を検討
+**注意:** git操作で変更がリセットされる可能性あり。コミット・プッシュが必要。
