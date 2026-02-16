@@ -124,6 +124,44 @@ def check_accumulated_games_display(html: str, fname: str) -> list:
     return issues
 
 
+def check_sparkline_graphs(html: str, fname: str) -> list:
+    """リアルタイムグラフ（sparkline）の検証"""
+    issues = []
+
+    # sparklineを全て抽出
+    sparklines = re.findall(
+        r'<div class="sparkline-label">(.*?)</div>\s*<svg class="sparkline".*?>(.*?)</svg>',
+        html,
+        re.DOTALL
+    )
+
+    for i, (label, svg_content) in enumerate(sparklines):
+        # ラベルに「データ取得中」がある場合は線がないのが正常
+        if 'データ取得中' in label:
+            # 線がないのが正常
+            if '<polyline' in svg_content:
+                issues.append(f'WARN: {fname} データ取得中なのにグラフに線がある')
+            continue
+
+        # 本日データの場合
+        if '本日' in label:
+            # 線がないのは異常（ART > 0なら線があるべき）
+            if '<polyline' not in svg_content:
+                # 本日ARTが0の場合は線がないのが正常
+                # ここでは一旦スキップ（厳密にはART数を確認する必要がある）
+                pass
+            else:
+                # polylineのpointsが異常に短い（データ不足）
+                points_match = re.search(r'points="([^"]+)"', svg_content)
+                if points_match:
+                    points = points_match.group(1)
+                    point_count = len(points.split())
+                    if point_count < 3:
+                        issues.append(f'WARN: {fname} グラフのデータポイント数が少ない（{point_count}点）')
+
+    return issues
+
+
 def run_all() -> int:
     """全HTML検証を実行。ERRORの数を返す"""
     all_issues = []
@@ -151,6 +189,7 @@ def run_all() -> int:
         check_time_order,
         check_chain_arrow_direction,
         check_accumulated_games_display,
+        check_sparkline_graphs,
     ]
     
     for fname, fpath in html_files.items():

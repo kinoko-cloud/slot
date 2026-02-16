@@ -1110,12 +1110,30 @@
         try {
             // metadata.jsonから最終更新時刻を取得
             const metadataRes = await fetch('/metadata.json?' + Date.now());
-            if (!metadataRes.ok) return;
+            if (!metadataRes.ok) {
+                document.getElementById('realtime-status').textContent = 'データ取得エラー';
+                return;
+            }
 
             const metadata = await metadataRes.json();
             const fetchedAt = new Date(metadata.fetched_at);
             const now = new Date();
             const minutesOld = (now - fetchedAt) / 1000 / 60;
+
+            // 最終更新時刻を表示
+            const timeStr = fetchedAt.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' });
+            let statusText = `最終更新: ${timeStr}`;
+
+            if (minutesOld < 1) {
+                statusText += ' (たった今)';
+            } else if (minutesOld < 60) {
+                statusText += ` (${Math.floor(minutesOld)}分前)`;
+            } else {
+                const hours = Math.floor(minutesOld / 60);
+                statusText += ` (${hours}時間前)`;
+            }
+
+            document.getElementById('realtime-status').textContent = statusText;
 
             console.log(`[リアルタイムチェック] データ年齢: ${minutesOld.toFixed(1)}分前`);
 
@@ -1128,6 +1146,7 @@
             }
         } catch (error) {
             console.error('[リアルタイムチェック] エラー:', error);
+            document.getElementById('realtime-status').textContent = 'データ取得エラー';
         }
     }
 
@@ -1160,6 +1179,13 @@
         // リアルタイムデータチェック（営業中のみ）
         var mode = getDisplayMode();
         if (mode === 'realtime') {
+            // 初回チェック
+            checkDataFreshness();
+
+            // 30秒ごとに更新時刻を再表示（経過時間を更新）
+            setInterval(checkDataFreshness, 30000);
+        } else {
+            // 営業外の場合も更新時刻を表示
             checkDataFreshness();
         }
 
