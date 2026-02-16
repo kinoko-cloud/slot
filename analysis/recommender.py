@@ -2912,31 +2912,30 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
                         break
 
         # data/history/ からも直接読み込み（historyデータの補完）
-        # リアルタイムデータがある場合でも、historyがない場合は補完する
-        # （v2スクリプトの「G数変化なしスキップ」でhistoryが取れないケースへの対応）
-        if today_analysis.get('status') == '-' or (realtime_data and realtime_is_today and not today_analysis.get('today_history')):
-            _hist_file_for_today = Path(__file__).parent.parent / 'data' / 'history' / data_store_key / f'{unit_id}.json'
-            if not _hist_file_for_today.exists():
-                _hist_file_for_today = Path(__file__).parent.parent / 'data' / 'history' / store_key / f'{unit_id}.json'
-            if _hist_file_for_today.exists():
-                try:
-                    import json as _json_hist
-                    _hist_unit_data = _json_hist.loads(_hist_file_for_today.read_text())
-                    # historyデータをdaysキー付きの形式で渡す
-                    # 営業中の場合は、当日のhistoryのみ使用
-                    if is_business_hours:
-                        # 当日のhistoryのみを補完（ART回数などは既存のものを維持）
-                        today_str = datetime.now().strftime('%Y-%m-%d')
-                        for day in _hist_unit_data.get('days', []):
-                            if day.get('date') == today_str:
-                                if not today_analysis.get('today_history'):
-                                    today_analysis['today_history'] = day.get('history', [])
-                                break
-                    else:
-                        # 営業時間外は全データを使用
-                        today_analysis = analyze_today_data(_hist_unit_data, machine_key=machine_key)
-                except Exception:
-                    pass
+        # 営業中は、常にdata/history/から当日のhistoryを補完する（グラフ表示用）
+        _hist_file_for_today = Path(__file__).parent.parent / 'data' / 'history' / data_store_key / f'{unit_id}.json'
+        if not _hist_file_for_today.exists():
+            _hist_file_for_today = Path(__file__).parent.parent / 'data' / 'history' / store_key / f'{unit_id}.json'
+
+        if _hist_file_for_today.exists():
+            try:
+                import json as _json_hist
+                _hist_unit_data = _json_hist.loads(_hist_file_for_today.read_text())
+
+                if is_business_hours:
+                    # 営業中：当日のhistoryのみを補完（常に実行）
+                    today_str = datetime.now().strftime('%Y-%m-%d')
+                    for day in _hist_unit_data.get('days', []):
+                        if day.get('date') == today_str:
+                            # historyがない、または空の場合に補完
+                            if not today_analysis.get('today_history') or len(today_analysis.get('today_history', [])) == 0:
+                                today_analysis['today_history'] = day.get('history', [])
+                            break
+                elif today_analysis.get('status') == '-':
+                    # 営業時間外で、データがない場合のみ全データを使用
+                    today_analysis = analyze_today_data(_hist_unit_data, machine_key=machine_key)
+            except Exception:
+                pass
 
         # 他台との比較
         comparison = compare_with_others(store_key, unit_id, all_units_today)
