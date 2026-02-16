@@ -109,15 +109,19 @@ def backfill_store(store_key: str, target_dates: list = None, dry_run: bool = Fa
             current = load_unit_history(store_key, unit_id)
             current_dates = {d['date'] for d in current.get('days', []) if d.get('date')} if current else set()
             
-            # 欠落日付を特定（art=0のデータも含める）
+            # 欠落日付を特定（art=0またはgames=0のデータも含める）
             current_days_map = {d['date']: d for d in current.get('days', []) if d.get('date')} if current else {}
             missing_dates = []
             for d in target_dates:
                 if d not in current_dates:
                     missing_dates.append(d)
-                elif current_days_map.get(d, {}).get('art', 0) == 0:
-                    # art=0のデータも更新対象（実際には稼働していた可能性）
-                    missing_dates.append(d)
+                else:
+                    day_data = current_days_map.get(d, {})
+                    # art=0またはgames=0のデータも更新対象
+                    if day_data.get('art', 0) == 0:
+                        missing_dates.append(d)
+                    elif (day_data.get('games', 0) or day_data.get('total_start', 0)) == 0:
+                        missing_dates.append(d)
             
             if not missing_dates:
                 print(f"  ✅ {unit_id}: 欠落なし")

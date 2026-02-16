@@ -184,6 +184,10 @@ def _enrich_day_prefix(rec, days_by_date, prefix, date_key):
         db_max = day_data.get('max_medals')
         if db_max:
             rec[f'{prefix}max_medals'] = db_max
+            # DEBUG
+            if target_date == '2026-02-13' and prefix == 'three_days_ago_':
+                import sys
+                print(f"[DEBUG enrich 183-186] overwriting with db_max={db_max}", file=sys.stderr)
         elif hist:
             # historyから最大枚数を計算
             max_medals = max((h.get('medals', 0) for h in hist), default=0)
@@ -238,6 +242,10 @@ def _enrich_day_prefix(rec, days_by_date, prefix, date_key):
         db_max = day_data.get('max_medals')
         if db_max:
             rec[f'{prefix}max_medals'] = db_max
+            # DEBUG
+            if target_date == '2026-02-13' and prefix == 'three_days_ago_':
+                import sys
+                print(f"[DEBUG enrich 237-240] overwriting with db_max={db_max}", file=sys.stderr)
 
 
 def _enrich_day_dict(day_dict, day_data):

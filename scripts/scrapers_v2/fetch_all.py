@@ -381,14 +381,9 @@ def main():
     args = parser.parse_args()
     
     if args.discover:
-        # 台番号検出のみ
-        updates = discover_all_units()
-        if updates:
-            print(f"\n⚠️ {len(updates)}店舗で台番号変更を検出")
-            for store, units in updates.items():
-                print(f"  {store}: {units}")
-        else:
-            print("\n✅ 全店舗の台番号OK")
+        # 台番号検出 + stores.py自動更新
+        from sync_stores import main as sync_stores_main
+        sync_stores_main(do_update=True)
         return
     
     fetcher = V2Fetcher(headless=True, discover=False)

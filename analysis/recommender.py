@@ -926,6 +926,12 @@ def analyze_trend(days: List[dict], machine_key: str = 'sbj') -> dict:
         elif art > 0:
             daily_results.append((day.get('date'), 0, art, games))
 
+    # DEBUG: daily_resultsの中身を確認
+    _has_0213 = any(d[0] == '2026-02-13' for d in daily_results)
+    if _has_0213:
+        import sys
+        print(f"[DEBUG daily_results] len={len(daily_results)}, [2]={daily_results[2] if len(daily_results) >= 3 else 'N/A'}", file=sys.stderr)
+
     if art_counts:
         result['avg_art_7days'] = sum(art_counts) / len(art_counts)
     if game_counts:
@@ -982,63 +988,86 @@ def analyze_trend(days: List[dict], machine_key: str = 'sbj') -> dict:
         else:
             result['yesterday_result'] = 'even'
 
-    # 昨日のRB・最大連チャン・最大枚数を取得
-    if sorted_days:
-        yesterday_day = sorted_days[0]
-        result['yesterday_rb'] = yesterday_day.get('rb', 0)
-        result['yesterday_date'] = yesterday_day.get('date', '')
-        yesterday_history = yesterday_day.get('history', [])
-        site_max_medals = yesterday_day.get('max_medals', 0)
-        if yesterday_history:
-            from analysis.analyzer import calculate_max_chain_medals
-            result['yesterday_max_rensa'] = calculate_max_rensa(yesterday_history, machine_key=machine_key)
-            calc_max = calculate_max_chain_medals(yesterday_history, machine_key=machine_key)
-            result['yesterday_max_medals'] = max(site_max_medals, calc_max)
-            result['yesterday_history'] = yesterday_history
-            yesterday_at_intervals = calculate_at_intervals(yesterday_history)
-            ceiling_threshold = 999 if machine_key == 'sbj' else 600
-            result['yesterday_ceilings'] = sum(1 for g in yesterday_at_intervals if g >= ceiling_threshold)
-        else:
-            result['yesterday_max_medals'] = site_max_medals
-            result['yesterday_ceilings'] = 0
+    # 昨日のRB・最大連チャン・最大枚数を取得（日付ベースで照合）
+    if daily_results and sorted_days:
+        yesterday_date = daily_results[0][0]  # daily_resultsの最新日付
+        yesterday_day = next((d for d in sorted_days if d.get('date') == yesterday_date), None)
+        if yesterday_day:
+            result['yesterday_rb'] = yesterday_day.get('rb', 0)
+            result['yesterday_date'] = yesterday_day.get('date', '')
+            yesterday_history = yesterday_day.get('history', [])
+            site_max_medals = yesterday_day.get('max_medals', 0)
+            if yesterday_history:
+                from analysis.analyzer import calculate_max_chain_medals
+                result['yesterday_max_rensa'] = calculate_max_rensa(yesterday_history, machine_key=machine_key)
+                calc_max = calculate_max_chain_medals(yesterday_history, machine_key=machine_key)
+                result['yesterday_max_medals'] = max(site_max_medals, calc_max)
+                result['yesterday_history'] = yesterday_history
+                yesterday_at_intervals = calculate_at_intervals(yesterday_history)
+                ceiling_threshold = 999 if machine_key == 'sbj' else 600
+                result['yesterday_ceilings'] = sum(1 for g in yesterday_at_intervals if g >= ceiling_threshold)
+            else:
+                result['yesterday_max_medals'] = site_max_medals
+                result['yesterday_ceilings'] = 0
 
-    # 前々日の結果（2番目に新しいデータ）
+    # 前々日の結果（2番目に新しいデータ、日付ベースで照合）
     if len(daily_results) >= 2:
         db_date, db_diff, db_art, db_games = daily_results[1]
         result['day_before_art'] = db_art
         result['day_before_games'] = int(db_games)
         result['day_before_date'] = db_date
         result['day_before_diff_medals'] = int(db_diff) if db_diff else 0
-    if len(sorted_days) >= 2:
-        result['day_before_rb'] = sorted_days[1].get('rb', 0)
-        db_history = sorted_days[1].get('history', [])
-        site_db_max = sorted_days[1].get('max_medals', 0)
-        if db_history:
-            from analysis.analyzer import calculate_max_chain_medals
-            result['day_before_max_rensa'] = calculate_max_rensa(db_history, machine_key=machine_key)
-            result['day_before_max_medals'] = max(site_db_max, calculate_max_chain_medals(db_history, machine_key=machine_key))
-        else:
-            result['day_before_max_rensa'] = sorted_days[1].get('max_rensa', 0)
-            result['day_before_max_medals'] = site_db_max
+        # sorted_daysから同じ日付のデータを検索
+        day_before_day = next((d for d in sorted_days if d.get('date') == db_date), None)
+        if day_before_day:
+            result['day_before_rb'] = day_before_day.get('rb', 0)
+            db_history = day_before_day.get('history', [])
+            site_db_max = day_before_day.get('max_medals', 0)
+            if db_history:
+                from analysis.analyzer import calculate_max_chain_medals
+                result['day_before_max_rensa'] = calculate_max_rensa(db_history, machine_key=machine_key)
+                result['day_before_max_medals'] = max(site_db_max, calculate_max_chain_medals(db_history, machine_key=machine_key))
+            else:
+                result['day_before_max_rensa'] = day_before_day.get('max_rensa', 0)
+                result['day_before_max_medals'] = site_db_max
 
-    # 3日前の結果（3番目に新しいデータ）
+    # 3日前の結果（3番目に新しいデータ、日付ベースで照合）
     if len(daily_results) >= 3:
         td_date, td_diff, td_art, td_games = daily_results[2]
+        # DEBUG
+        if td_date == '2026-02-13' and td_art == 96:
+            import sys
+            print(f"[DEBUG 3days entry] td_date={td_date}, td_art={td_art}, len(sorted_days)={len(sorted_days)}", file=sys.stderr)
         result['three_days_ago_art'] = td_art
         result['three_days_ago_games'] = int(td_games)
         result['three_days_ago_date'] = td_date
         result['three_days_ago_diff_medals'] = int(td_diff) if td_diff else 0
-    if len(sorted_days) >= 3:
-        result['three_days_ago_rb'] = sorted_days[2].get('rb', 0)
-        td_history = sorted_days[2].get('history', [])
-        site_td_max = sorted_days[2].get('max_medals', 0)
-        if td_history:
-            from analysis.analyzer import calculate_max_chain_medals
-            result['three_days_ago_max_rensa'] = calculate_max_rensa(td_history, machine_key=machine_key)
-            result['three_days_ago_max_medals'] = max(site_td_max, calculate_max_chain_medals(td_history, machine_key=machine_key))
-        else:
-            result['three_days_ago_max_rensa'] = sorted_days[2].get('max_rensa', 0)
-            result['three_days_ago_max_medals'] = site_td_max
+        # sorted_daysから同じ日付のデータを検索
+        three_days_ago_day = next((d for d in sorted_days if d.get('date') == td_date), None)
+        # DEBUG
+        if td_date == '2026-02-13' and td_art == 96:
+            import sys
+            print(f"[DEBUG 1040 after search] three_days_ago_day found: {three_days_ago_day is not None}", file=sys.stderr)
+        if three_days_ago_day:
+            result['three_days_ago_rb'] = three_days_ago_day.get('rb', 0)
+            td_history = three_days_ago_day.get('history', [])
+            site_td_max = three_days_ago_day.get('max_medals', 0)
+            # DEBUG
+            if td_date == '2026-02-13' and td_art == 96:
+                import sys
+                print(f"[DEBUG 1041 before if] td_history length: {len(td_history)}, truthy: {bool(td_history)}", file=sys.stderr)
+            if td_history:
+                from analysis.analyzer import calculate_max_chain_medals
+                result['three_days_ago_max_rensa'] = calculate_max_rensa(td_history, machine_key=machine_key)
+                _calc_max = calculate_max_chain_medals(td_history, machine_key=machine_key)
+                result['three_days_ago_max_medals'] = max(site_td_max, _calc_max)
+                # DEBUG: 2/13のデータのみログ出力
+                if td_date == '2026-02-13' and td_art == 96:
+                    import sys
+                    print(f"[DEBUG] date={td_date}, site={site_td_max}, calc={_calc_max}, final={result['three_days_ago_max_medals']}", file=sys.stderr)
+            else:
+                result['three_days_ago_max_rensa'] = three_days_ago_day.get('max_rensa', 0)
+                result['three_days_ago_max_medals'] = site_td_max
 
     # トレンド判定
     if consecutive_plus >= 3:
@@ -1177,6 +1206,11 @@ def analyze_trend(days: List[dict], machine_key: str = 'sbj') -> dict:
             'history': day_history,
         })
     result['recent_days'] = recent_days
+
+    # DEBUG
+    if result.get('three_days_ago_date') == '2026-02-13' and result.get('three_days_ago_art') == 96:
+        import sys
+        print(f"[DEBUG before return] three_days_ago_max_medals={result.get('three_days_ago_max_medals')}", file=sys.stderr)
 
     return result
 
@@ -2947,12 +2981,22 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
                     'max_rensa': d.get('max_rensa', 0) or 0,
                     'max_medals': d.get('max_medals', 0) or 0,
                 })
+            # DEBUG
+            _td_dates = [d.get('date') for d in acc_days_for_trend if d.get('art', 0) == 96]
+            if '2026-02-13' in _td_dates:
+                import sys
+                _day_0213 = next((d for d in acc_days_for_trend if d.get('date') == '2026-02-13'), None)
+                if _day_0213:
+                    print(f"[DEBUG 2961] 2/13 history length: {len(_day_0213.get('history', []))}", file=sys.stderr)
             trend_from_acc = analyze_trend(acc_days_for_trend, machine_key)
             # 蓄積DBにdiff_medalsが含まれるため、蓄積DBのtrend_dataを常に優先
             # （daily dataのestimate_diff_medalsは誤差が大きい）
             acc_latest = max(d.get('date', '') for d in accumulated['days']) if accumulated['days'] else ''
             trend_latest = trend_data.get('yesterday_date', '')
             if acc_latest >= trend_latest:
+                # DEBUG
+                if '2026-02-13' in _td_dates:
+                    print(f"[DEBUG 2970] overwriting trend_data with trend_from_acc", file=sys.stderr)
                 trend_data = trend_from_acc
 
         # Phase 2+: 入替周期分析

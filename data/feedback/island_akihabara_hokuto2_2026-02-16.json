@@ -4,58 +4,34 @@
   "date": "2026-02-16",
   "weekday": "月",
   "total_units": 12,
-  "hits": 4,
-  "misses": 0,
-  "surprises": 7,
-  "miss_details": [],
+  "hits": 3,
+  "misses": 1,
+  "surprises": 2,
+  "miss_details": [
+    {
+      "unit_id": "0820",
+      "score": 90,
+      "actual_prob": 375,
+      "reasons": [
+        "高スコア過信",
+        "低稼働(750G)",
+        "設定1域(1/375)"
+      ]
+    }
+  ],
   "surprise_details": [
     {
-      "unit_id": "0818",
+      "unit_id": "0816",
       "rank": "B",
-      "score": 147,
-      "actual_prob": 106,
-      "reasons": []
-    },
-    {
-      "unit_id": "0811",
-      "rank": "B",
-      "score": 141,
-      "actual_prob": 83,
+      "score": 101,
+      "actual_prob": 194,
       "reasons": []
     },
     {
       "unit_id": "0825",
       "rank": "B",
-      "score": 137,
-      "actual_prob": 106,
-      "reasons": []
-    },
-    {
-      "unit_id": "0815",
-      "rank": "B",
-      "score": 127,
-      "actual_prob": 230,
-      "reasons": []
-    },
-    {
-      "unit_id": "0816",
-      "rank": "B",
-      "score": 127,
-      "actual_prob": 115,
-      "reasons": []
-    },
-    {
-      "unit_id": "0822",
-      "rank": "B",
-      "score": 127,
-      "actual_prob": 225,
-      "reasons": []
-    },
-    {
-      "unit_id": "0823",
-      "rank": "B",
-      "score": 103,
-      "actual_prob": 123,
+      "score": 101,
+      "actual_prob": 170,
       "reasons": []
     }
   ]
