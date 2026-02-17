@@ -143,7 +143,8 @@ def sync_store_to_history(store_key: str, store_data: dict, date_str: str):
         art = unit_data.get('art', 0) or 0
         rb = unit_data.get('rb', 0) or 0
         total_games = unit_data.get('total_start', 0) or 0
-        today_history = unit_data.get('today_history', [])
+        # today_historyまたはhistoryフィールドを使用
+        today_history = unit_data.get('today_history', []) or unit_data.get('history', [])
         max_medals = unit_data.get('max_medals', 0) or 0
         today_max_rensa = unit_data.get('today_max_rensa', 0) or 0
         
