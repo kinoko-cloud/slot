@@ -86,9 +86,9 @@ class V2Fetcher:
                 pass
         return {}
         
-    def fetch_store_daidata(self, store_key: str, config: Dict) -> Dict[str, Any]:
+    def fetch_store_daidata(self, store_key: str, config: Dict, max_retries: int = 2) -> Dict[str, Any]:
         """
-        1店舗のdaidataデータ取得
+        1店舗のdaidataデータ取得（リトライ付き）
         
         1. 一覧ページでG数＋空き/遊技中を一括取得
         2. G数が変化した台のみ詳細取得（差分取得）
@@ -110,80 +110,105 @@ class V2Fetcher:
             'error': None,
         }
         
-        try:
-            scraper = DaidataScraper(headless=self.headless)
+        last_error = None
+        for attempt in range(max_retries + 1):
+            try:
+                if attempt > 0:
+                    logger.info(f"⟳ {store_key}: リトライ {attempt}/{max_retries}")
+                    import time
+                    time.sleep(2)  # リトライ前に少し待機
+                
+                return self._fetch_store_daidata_inner(store_key, config, result.copy())
+            except Exception as e:
+                last_error = e
+                error_str = str(e)
+                # EPIPE, timeout, その他のブラウザクラッシュ系エラーはリトライ
+                if 'EPIPE' in error_str or 'timeout' in error_str.lower() or 'Target page' in error_str:
+                    logger.warning(f"⚠️ {store_key}: ブラウザエラー ({error_str[:50]}...), リトライします")
+                    continue
+                else:
+                    # その他のエラーはリトライせず終了
+                    break
+        
+        result['error'] = str(last_error)
+        logger.error(f"✗ {store_key}: {last_error}")
+        return result
+    
+    def _fetch_store_daidata_inner(self, store_key: str, config: Dict, result: Dict) -> Dict[str, Any]:
+        """fetch_store_daidataの内部実装"""
+        hall_id = config['hall_id']
+        model_encoded = config['model_encoded']
+        expected_units = config.get('units', [])
+        
+        scraper = DaidataScraper(headless=self.headless)
+        
+        with scraper.browser_session():
+            # 一覧ページでG数＋空き/遊技中を取得
+            list_data = scraper.fetch_list_with_availability(
+                hall_id, model_encoded, expected_units
+            )
             
-            with scraper.browser_session():
-                # 一覧ページでG数＋空き/遊技中を取得
-                list_data = scraper.fetch_list_with_availability(
-                    hall_id, model_encoded, expected_units
-                )
-                
-                result['playing'] = list_data.get('playing', [])
-                result['empty'] = list_data.get('empty', [])
-                
-                # G数マップ
-                games_map = list_data.get('games', {})
-                
-                # G数が変化した台を特定
-                changed_units = get_changed_units(store_key, games_map)
+            result['playing'] = list_data.get('playing', [])
+            result['empty'] = list_data.get('empty', [])
+            
+            # G数マップ
+            games_map = list_data.get('games', {})
+            
+            # G数が変化した台を特定
+            changed_units = get_changed_units(store_key, games_map)
 
-                # 🚨 一時的に全台取得（スキップ無効化）
-                changed_units = set(expected_units)
+            # 差分取得を有効化（G数変化台のみ詳細取得）
+            # changed_units = set(expected_units)  # 全台取得モード（無効化）
 
-                for unit_id in expected_units:
-                    games = games_map.get(unit_id, 0)
+            for unit_id in expected_units:
+                games = games_map.get(unit_id, 0)
 
-                    # G数が変化した台のみ詳細取得
-                    if unit_id in changed_units:
-                        detail = scraper.fetch_realtime(hall_id, unit_id)
+                # G数が変化した台のみ詳細取得
+                if unit_id in changed_units:
+                    detail = scraper.fetch_realtime(hall_id, unit_id)
 
-                        # 空データ検証（規約ページ処理失敗など）
-                        if (detail.get('art', 0) == 0 and
-                            detail.get('total_start', 0) == 0 and
-                            detail.get('bb', 0) == 0 and
-                            detail.get('rb', 0) == 0):
-                            prev_data = self._get_previous_unit_data(store_key, unit_id)
-                            if prev_data and (prev_data.get('art', 0) > 0 or prev_data.get('total_start', 0) > 0):
-                                # 前回データがあれば、それを保持（ただしG数は更新）
-                                logger.warning(f"{store_key}/{unit_id}: 空データ検知、前回データを保持")
-                                # statusも保持（遊技中判定のため）
-                                status = 'playing' if (prev_data.get('art', 0) > 0 or prev_data.get('total_start', 0) > 0) else 'empty'
-                                result['units'][unit_id] = {
-                                    **prev_data,
-                                    'total_start': games,
-                                    'status': status,
-                                    'cached': True,
-                                    'stale_warning': True,
-                                }
-                                result['skipped_count'] += 1
-                                continue
-
-                        result['units'][unit_id] = detail
-                        result['changed_count'] += 1
-                    else:
-                        # G数変化なし → 前回のデータを使用
-                        # availability.jsonから前回のデータを取得
+                    # 空データ検証（規約ページ処理失敗など）
+                    if (detail.get('art', 0) == 0 and
+                        detail.get('total_start', 0) == 0 and
+                        detail.get('bb', 0) == 0 and
+                        detail.get('rb', 0) == 0):
                         prev_data = self._get_previous_unit_data(store_key, unit_id)
-                        result['units'][unit_id] = {
-                            'unit_id': unit_id,
-                            'total_start': games,
-                            'art': prev_data.get('art', 0),
-                            'bb': prev_data.get('bb', 0),
-                            'rb': prev_data.get('rb', 0),
-                            'final_start': prev_data.get('final_start', 0),
-                            'diff_medals': prev_data.get('diff_medals', 0),
-                            'cached': True,
-                            'status': 'empty' if unit_id in result['empty'] else 'playing',
-                        }
-                        result['skipped_count'] += 1
-                
-                result['fetched_at'] = now_jst().isoformat()
-                logger.info(f"✓ {store_key}: {result['changed_count']}台取得, {result['skipped_count']}台スキップ (G数変化なし)")
-                
-        except Exception as e:
-            result['error'] = str(e)
-            logger.error(f"✗ {store_key}: {e}")
+                        if prev_data and (prev_data.get('art', 0) > 0 or prev_data.get('total_start', 0) > 0):
+                            # 前回データがあれば、それを保持（ただしG数は更新）
+                            logger.warning(f"{store_key}/{unit_id}: 空データ検知、前回データを保持")
+                            # statusも保持（遊技中判定のため）
+                            status = 'playing' if (prev_data.get('art', 0) > 0 or prev_data.get('total_start', 0) > 0) else 'empty'
+                            result['units'][unit_id] = {
+                                **prev_data,
+                                'total_start': games,
+                                'status': status,
+                                'cached': True,
+                                'stale_warning': True,
+                            }
+                            result['skipped_count'] += 1
+                            continue
+
+                    result['units'][unit_id] = detail
+                    result['changed_count'] += 1
+                else:
+                    # G数変化なし → 前回のデータを使用
+                    # availability.jsonから前回のデータを取得
+                    prev_data = self._get_previous_unit_data(store_key, unit_id)
+                    result['units'][unit_id] = {
+                        'unit_id': unit_id,
+                        'total_start': games,
+                        'art': prev_data.get('art', 0),
+                        'bb': prev_data.get('bb', 0),
+                        'rb': prev_data.get('rb', 0),
+                        'final_start': prev_data.get('final_start', 0),
+                        'diff_medals': prev_data.get('diff_medals', 0),
+                        'cached': True,
+                        'status': 'empty' if unit_id in result['empty'] else 'playing',
+                    }
+                    result['skipped_count'] += 1
+            
+            result['fetched_at'] = now_jst().isoformat()
+            logger.info(f"✓ {store_key}: {result['changed_count']}台取得, {result['skipped_count']}台スキップ (G数変化なし)")
         
         return result
     
