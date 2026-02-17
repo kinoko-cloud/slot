@@ -157,8 +157,8 @@ class V2Fetcher:
             # G数が変化した台を特定
             changed_units = get_changed_units(store_key, games_map)
 
-            # 差分取得を有効化（G数変化台のみ詳細取得）
-            # changed_units = set(expected_units)  # 全台取得モード（無効化）
+            # 🚨 一時的に全台取得（差分取得はデータ不整合のため無効化）
+            changed_units = set(expected_units)
 
             for unit_id in expected_units:
                 games = games_map.get(unit_id, 0)
