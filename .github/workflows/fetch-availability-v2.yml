@@ -48,6 +48,9 @@ jobs:
 
       - name: Fetch with v2 scraper
         run: |
+          # ロックファイルをクリア（前回の異常終了対策）
+          rm -f /tmp/slot_fetch.lock
+          
           # 全店舗取得（daidata + papimo）
           # - daidata: G数変化なしの台はスキップで高速
           # - papimo: 全台取得（約2分）
