@@ -62,9 +62,9 @@ class V2Fetcher:
         store = stores.get(store_key, {})
         units = store.get('units', [])
         for u in units:
-            if u.get('unit_id') == unit_id:
-                if u.get('art', 0) > 0:
-                    return u
+            if str(u.get('unit_id')) == str(unit_id):
+                # データがあれば返す（ART=0でも）
+                return u
         
         # availability.jsonにデータがない or ART=0の場合、historyファイルから取得
         history_file = ROOT / 'data' / 'history' / store_key / f"{unit_id}.json"
@@ -154,11 +154,8 @@ class V2Fetcher:
             # G数マップ
             games_map = list_data.get('games', {})
             
-            # G数が変化した台を特定
+            # G数が変化した台を特定（差分取得）
             changed_units = get_changed_units(store_key, games_map)
-
-            # 🚨 一時的に全台取得（差分取得はデータ不整合のため無効化）
-            changed_units = set(expected_units)
 
             for unit_id in expected_units:
                 games = games_map.get(unit_id, 0)

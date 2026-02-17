@@ -83,9 +83,7 @@ jobs:
             echo "No changes to commit"
           else
             TIMESTAMP=$(TZ='Asia/Tokyo' date +'%H:%M')
-            git commit -m "auto: リアルタイムデータ更新 ${TIMESTAMP}
-
-Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
+            git commit -m "auto: リアルタイムデータ更新 ${TIMESTAMP}"
             
             # Push with retry (handle concurrent pushes)
             for i in 1 2 3; do
@@ -94,7 +92,6 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
                 break
               fi
               echo "⚠️ Push failed (attempt $i/3), pulling and retrying..."
-              # Stash any unstaged changes before rebase
               git stash --include-untracked || true
               git pull --rebase origin main
               git stash pop || true
