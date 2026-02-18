@@ -57,19 +57,18 @@ def fetch_unit_day(page, hall_id: str, unit_id: str, target_date: str, need_agre
     
     try:
         page.goto(url, wait_until='load', timeout=30000)
-        page.wait_for_timeout(1500)
+        page.wait_for_timeout(2500)
         page.evaluate(REMOVE_ADS_SCRIPT)
         
-        # 規約同意（必要な場合のみ）
-        if need_agree:
-            try:
-                agree_btn = page.locator('button:has-text("利用規約に同意する")')
-                if agree_btn.count() > 0 and agree_btn.first.is_visible():
-                    agree_btn.first.click()
-                    page.wait_for_timeout(2000)
-                    page.evaluate(REMOVE_ADS_SCRIPT)
-            except:
-                pass
+        # 規約同意（毎回チェック）
+        try:
+            agree_btn = page.locator('button:has-text("利用規約に同意する")')
+            if agree_btn.count() > 0 and agree_btn.first.is_visible():
+                agree_btn.first.click()
+                page.wait_for_timeout(2000)
+                page.evaluate(REMOVE_ADS_SCRIPT)
+        except:
+            pass
         
         text = page.inner_text('body')
         
