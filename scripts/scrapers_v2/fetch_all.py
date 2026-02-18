@@ -153,6 +153,35 @@ class V2Fetcher:
         scraper = DaidataScraper(headless=self.headless)
         
         with scraper.browser_session():
+            # model_encoded=Noneの場合は詳細ページのみで取得
+            if model_encoded is None:
+                # 全台を詳細取得
+                for unit_id in expected_units:
+                    detail = scraper.fetch_realtime(hall_id, unit_id)
+                    if detail.get('art', 0) > 0 or detail.get('total_start', 0) > 0:
+                        result['units'][unit_id] = detail
+                        result['changed_count'] += 1
+                    else:
+                        # 空データ → 前回データを保持
+                        prev_data = self._get_previous_unit_data(store_key, unit_id)
+                        result['units'][unit_id] = {
+                            'unit_id': unit_id,
+                            'total_start': prev_data.get('total_start', 0),
+                            'art': prev_data.get('art', 0),
+                            'bb': prev_data.get('bb', 0),
+                            'rb': prev_data.get('rb', 0),
+                            'final_start': prev_data.get('final_start', 0),
+                            'diff_medals': prev_data.get('diff_medals', 0),
+                            'today_history': prev_data.get('history', []),
+                            'cached': True,
+                            'status': 'empty',
+                        }
+                        result['skipped_count'] += 1
+                
+                result['fetched_at'] = now_jst().isoformat()
+                logger.info(f"✓ {result['store_key']}: {result['changed_count']}台取得, {result['skipped_count']}台スキップ (詳細のみモード)")
+                return result
+            
             # 一覧ページでG数＋空き/遊技中を取得
             list_data = scraper.fetch_list_with_availability(
                 hall_id, model_encoded, expected_units
@@ -202,19 +231,28 @@ class V2Fetcher:
                     # G数変化なし → 前回のデータを使用
                     # availability.jsonから前回のデータを取得
                     prev_data = self._get_previous_unit_data(store_key, unit_id)
-                    result['units'][unit_id] = {
-                        'unit_id': unit_id,
-                        'total_start': games,
-                        'art': prev_data.get('art', 0),
-                        'bb': prev_data.get('bb', 0),
-                        'rb': prev_data.get('rb', 0),
-                        'final_start': prev_data.get('final_start', 0),
-                        'diff_medals': prev_data.get('diff_medals', 0),
-                        'today_history': prev_data.get('history', []),  # 履歴も引き継ぐ
-                        'cached': True,
-                        'status': 'empty' if unit_id in result['empty'] else 'playing',
-                    }
-                    result['skipped_count'] += 1
+
+                    # 🔧 空データ自動復旧: 前回データが空なら強制的に詳細取得
+                    if prev_data.get('art', 0) == 0 and prev_data.get('total_start', 0) == 0:
+                        logger.warning(f"{store_key}/{unit_id}: 前回データが空 → 強制詳細取得")
+                        detail = scraper.fetch_realtime(hall_id, unit_id)
+                        result['units'][unit_id] = detail
+                        result['changed_count'] += 1
+                    else:
+                        # 正常な前回データがある場合は引き継ぐ
+                        result['units'][unit_id] = {
+                            'unit_id': unit_id,
+                            'total_start': games,
+                            'art': prev_data.get('art', 0),
+                            'bb': prev_data.get('bb', 0),
+                            'rb': prev_data.get('rb', 0),
+                            'final_start': prev_data.get('final_start', 0),
+                            'diff_medals': prev_data.get('diff_medals', 0),
+                            'today_history': prev_data.get('history', []),  # 履歴も引き継ぐ
+                            'cached': True,
+                            'status': 'empty' if unit_id in result['empty'] else 'playing',
+                        }
+                        result['skipped_count'] += 1
             
             result['fetched_at'] = now_jst().isoformat()
             logger.info(f"✓ {store_key}: {result['changed_count']}台取得, {result['skipped_count']}台スキップ (G数変化なし)")
@@ -474,7 +512,7 @@ def main():
         all_results.update(daidata_results)
     
     # papimo取得
-    if not args.daidata_only and not args.sbj_only and not args.hokuto_only:
+    if not args.daidata_only:
         papimo_results = fetcher.fetch_all_papimo()
         all_results.update(papimo_results)
     
