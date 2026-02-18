@@ -56,17 +56,19 @@ class V2Fetcher:
         return {}
     
     def _get_previous_unit_data(self, store_key: str, unit_id: str) -> Dict:
-        """前回の台データを取得（availability.json → historyファイルの順で探す）"""
+        """前回の台データを取得（availability.json + historyファイルから補完）"""
+        result = {}
+        
         # まずavailability.jsonから
         stores = self._previous_availability.get('stores', {})
         store = stores.get(store_key, {})
         units = store.get('units', [])
         for u in units:
             if str(u.get('unit_id')) == str(unit_id):
-                # データがあれば返す（ART=0でも）
-                return u
+                result = dict(u)
+                break
         
-        # availability.jsonにデータがない or ART=0の場合、historyファイルから取得
+        # historyファイルから今日のデータを補完
         history_file = ROOT / 'data' / 'history' / store_key / f"{unit_id}.json"
         if history_file.exists():
             try:
@@ -76,15 +78,23 @@ class V2Fetcher:
                 today = now_jst().strftime('%Y-%m-%d')
                 for d in days:
                     if d.get('date') == today:
-                        return {
-                            'art': d.get('art', 0),
-                            'bb': d.get('bb', 0),
-                            'rb': d.get('rb', 0),
-                            'final_start': d.get('final_start', 0),
-                        }
+                        # historyファイルにデータがあれば補完
+                        if d.get('art', 0) > 0 and not result.get('art'):
+                            result['art'] = d.get('art', 0)
+                        if d.get('bb', 0) > 0 and not result.get('bb'):
+                            result['bb'] = d.get('bb', 0)
+                        if d.get('rb', 0) > 0 and not result.get('rb'):
+                            result['rb'] = d.get('rb', 0)
+                        if d.get('final_start', 0) > 0 and not result.get('final_start'):
+                            result['final_start'] = d.get('final_start', 0)
+                        # historyが空ならhistoryファイルから補完
+                        if not result.get('history') and d.get('history'):
+                            result['history'] = d.get('history', [])
+                        break
             except:
                 pass
-        return {}
+        
+        return result
         
     def fetch_store_daidata(self, store_key: str, config: Dict, max_retries: int = 2) -> Dict[str, Any]:
         """
