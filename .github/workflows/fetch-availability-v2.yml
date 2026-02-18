@@ -66,19 +66,19 @@ jobs:
             echo "✅ 台番号変更なし"
           fi
 
-      - name: Fetch with v2 scraper
+      - name: Fetch with v2 scraper (priority stores only)
         run: |
           # ロックファイルをクリア（前回の異常終了対策）
           rm -f /tmp/slot_fetch.lock
           
-          # メモリ不足対策: SBJと北斗を順番に実行
-          echo "=== SBJ店舗取得 ==="
-          timeout 300 python scripts/scrapers_v2/fetch_all.py --sbj-only 2>&1 || {
+          # 主要店舗のみ取得（渋谷/新宿/秋葉原）
+          echo "=== 主要店舗取得（SBJ）==="
+          timeout 300 python scripts/scrapers_v2/fetch_all.py --priority-only --sbj-only 2>&1 || {
             echo "⚠️ SBJ fetch failed"
           }
           
-          echo "=== 北斗店舗取得 ==="
-          timeout 300 python scripts/scrapers_v2/fetch_all.py --hokuto-only 2>&1 || {
+          echo "=== 主要店舗取得（北斗）==="
+          timeout 300 python scripts/scrapers_v2/fetch_all.py --priority-only --hokuto-only 2>&1 || {
             echo "⚠️ Hokuto fetch failed"
           }
 

@@ -1,16 +1,15 @@
-name: Fetch Availability (Secondary - 15/45分)
+name: Fetch Availability (Sub Stores - 22:50/00:10)
 
 on:
   schedule:
-    # JST 10:15-22:45 (メインの15分後)
-    - cron: '15 1-13 * * *'
-    - cron: '45 1-13 * * *'
-    # JST 23:15 (最終)
-    - cron: '15 14 * * *'
+    # JST 22:50 (営業終了後)
+    - cron: '50 13 * * *'
+    # JST 00:10 (日付変更後)
+    - cron: '10 15 * * *'
   workflow_dispatch:  # 手動実行も可能
 
 concurrency:
-  group: slot-fetch-secondary
+  group: slot-fetch-sub
   cancel-in-progress: true
 
 jobs:
@@ -26,7 +25,7 @@ jobs:
           fetch-depth: 1
 
       - name: Set up Python
-        uses: actions/setup_python@v5
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
@@ -42,34 +41,26 @@ jobs:
           playwright install chromium
           playwright install-deps chromium
 
-      - name: Fetch with v2 scraper (priority stores only)
+      - name: Fetch sub stores (赤坂/上野/高田馬場/新大久保/新小岩)
         run: |
-          # ロックファイルをクリア
           rm -f /tmp/slot_fetch.lock
           
-          # 主要店舗のみ取得（渋谷/新宿/秋葉原）
-          echo "=== 主要店舗取得（SBJ）==="
-          timeout 300 python scripts/scrapers_v2/fetch_all.py --priority-only --sbj-only 2>&1 || {
+          echo "=== サブ店舗取得（SBJ）==="
+          timeout 300 python scripts/scrapers_v2/fetch_all.py --sub-only --sbj-only 2>&1 || {
             echo "⚠️ SBJ fetch failed"
           }
           
-          echo "=== 主要店舗取得（北斗）==="
-          timeout 300 python scripts/scrapers_v2/fetch_all.py --priority-only --hokuto-only 2>&1 || {
+          echo "=== サブ店舗取得（北斗）==="
+          timeout 300 python scripts/scrapers_v2/fetch_all.py --sub-only --hokuto-only 2>&1 || {
             echo "⚠️ Hokuto fetch failed"
           }
 
-      - name: Generate static HTML (営業時間中のみ)
+      - name: Generate static HTML
         run: |
-          HOUR=$(TZ='Asia/Tokyo' date +'%H')
-          if [ "$HOUR" -ge 10 ] && [ "$HOUR" -le 23 ]; then
-            echo "営業時間中 ($HOUR時) - HTML生成"
-            pip install jinja2
-            timeout 300 python scripts/generate_static.py 2>&1 || {
-              echo "⚠️ HTML生成失敗（データ更新は続行）"
-            }
-          else
-            echo "営業時間外 ($HOUR時) - HTML生成スキップ"
-          fi
+          pip install jinja2
+          timeout 300 python scripts/generate_static.py 2>&1 || {
+            echo "⚠️ HTML生成失敗（データ更新は続行）"
+          }
 
       - name: Commit and push
         run: |
@@ -82,9 +73,8 @@ jobs:
             echo "No changes to commit"
           else
             TIMESTAMP=$(TZ='Asia/Tokyo' date +'%H:%M')
-            git commit -m "auto: リアルタイムデータ更新 ${TIMESTAMP} (secondary)"
+            git commit -m "auto: サブ店舗更新 ${TIMESTAMP}"
             
-            # Push with retry
             for i in 1 2 3; do
               if git push; then
                 echo "✅ Push successful"

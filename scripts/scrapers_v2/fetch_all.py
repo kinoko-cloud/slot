@@ -552,6 +552,36 @@ def discover_all_units() -> Dict[str, List[str]]:
     return updates
 
 
+# 主要店舗（15分間隔でリアルタイム取得）
+PRIORITY_STORES = [
+    'shibuya_espass', 'shibuya_honkan_espass',
+    'shinjuku_espass', 'seibu_shinjuku_espass',
+    'akiba_espass',
+    'island_akihabara',
+]
+
+# サブ店舗（1日2回: 22:50, 00:10）
+SUB_STORES = [
+    'akasaka_espass',
+    'ueno_espass', 'ueno_honkan_espass',
+    'takadanobaba_espass',
+    'shinokubo_espass',
+    'shinkoiwa_espass',
+]
+
+
+def is_priority_store(store_key: str) -> bool:
+    """主要店舗かどうか"""
+    base = store_key.rsplit('_', 1)[0]  # _sbj, _hokuto2を除去
+    return any(p in store_key or p == base for p in PRIORITY_STORES)
+
+
+def is_sub_store(store_key: str) -> bool:
+    """サブ店舗かどうか"""
+    base = store_key.rsplit('_', 1)[0]
+    return any(s in store_key or s == base for s in SUB_STORES)
+
+
 def main():
     import argparse
     
@@ -561,6 +591,8 @@ def main():
     parser.add_argument('--hokuto-only', action='store_true', help='北斗のみ')
     parser.add_argument('--daidata-only', action='store_true', help='daidataのみ（papimoスキップ）')
     parser.add_argument('--papimo-only', action='store_true', help='papimoのみ')
+    parser.add_argument('--priority-only', action='store_true', help='主要店舗のみ（渋谷/新宿/秋葉原）')
+    parser.add_argument('--sub-only', action='store_true', help='サブ店舗のみ（赤坂/上野/高田馬場/新大久保/新小岩）')
     parser.add_argument('--parallel', type=int, default=1, help='並列数')
     parser.add_argument('--store', type=str, help='特定店舗のみ')
     args = parser.parse_args()
@@ -582,14 +614,18 @@ def main():
             stores = {k: v for k, v in stores.items() if 'sbj' in k}
         elif args.hokuto_only:
             stores = {k: v for k, v in stores.items() if 'hokuto' in k}
+        if args.priority_only:
+            stores = {k: v for k, v in stores.items() if is_priority_store(k)}
+        elif args.sub_only:
+            stores = {k: v for k, v in stores.items() if is_sub_store(k)}
         if args.store:
             stores = {k: v for k, v in stores.items() if args.store in k}
         
         daidata_results = fetcher.fetch_all_daidata(stores, parallel=args.parallel)
         all_results.update(daidata_results)
     
-    # papimo取得
-    if not args.daidata_only:
+    # papimo取得（island_akihabaraは主要店舗）
+    if not args.daidata_only and not args.sub_only:
         papimo_results = fetcher.fetch_all_papimo()
         all_results.update(papimo_results)
     
