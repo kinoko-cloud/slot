@@ -199,6 +199,7 @@ class V2Fetcher:
                         'rb': prev_data.get('rb', 0),
                         'final_start': prev_data.get('final_start', 0),
                         'diff_medals': prev_data.get('diff_medals', 0),
+                        'today_history': prev_data.get('history', []),  # 履歴も引き継ぐ
                         'cached': True,
                         'status': 'empty' if unit_id in result['empty'] else 'playing',
                     }
