@@ -946,7 +946,12 @@ def repair_history_data():
 
 
 def check_recent_days_completeness():
-    """過去3日分のデータでhistoryがないのにART>0の台を検出"""
+    """過去3日分のデータでhistoryがないのにART>0の台を検出
+    
+    区別:
+    - 取得失敗: エントリはあるがhistory空（補完すべき）
+    - 新規/変更台: エントリ自体なし（補完不要）
+    """
     from datetime import datetime, timedelta, timezone
     import json
     from pathlib import Path
@@ -957,7 +962,8 @@ def check_recent_days_completeness():
     
     HISTORY_DIR = PROJECT_ROOT / 'data' / 'history'
     
-    missing_by_date = {d: [] for d in dates}
+    fetch_failed = {d: [] for d in dates}  # 取得失敗（補完すべき）
+    new_units = {d: [] for d in dates}     # 新規/変更台（補完不要）
     checked = 0
     
     for store_dir in HISTORY_DIR.iterdir():
@@ -971,37 +977,47 @@ def check_recent_days_completeness():
                 days_by_date = {d['date']: d for d in data.get('days', []) if d.get('date')}
                 
                 for date in dates:
-                    day = days_by_date.get(date)
-                    if day:
+                    if date in days_by_date:
+                        # エントリあり
                         checked += 1
+                        day = days_by_date[date]
                         art = day.get('art', 0)
                         diff = day.get('diff_medals')
-                        rensa = day.get('max_rensa')
                         hist = day.get('history', [])
-                        # ARTがあるのにdiff/rensaがない or historyが空
-                        if art > 0 and (diff is None or rensa is None or len(hist) == 0):
-                            missing_by_date[date].append({
+                        # ARTがあるのにdiff/historyがない → 取得失敗
+                        if art > 0 and (diff is None or len(hist) == 0):
+                            fetch_failed[date].append({
                                 'store': store_dir.name,
                                 'unit': f.stem,
                                 'art': art,
                             })
+                    else:
+                        # エントリなし → 最近のデータがあれば新規台の可能性
+                        recent_dates = [dates[0], dates[1]] if date == dates[2] else [dates[0]]
+                        has_recent = any(d in days_by_date for d in recent_dates)
+                        if has_recent:
+                            new_units[date].append({
+                                'store': store_dir.name,
+                                'unit': f.stem,
+                            })
             except:
                 continue
     
-    total_missing = sum(len(v) for v in missing_by_date.values())
+    total_failed = sum(len(v) for v in fetch_failed.values())
+    total_new = sum(len(v) for v in new_units.values())
     
-    if total_missing > 0:
-        summary = {d: len(v) for d, v in missing_by_date.items()}
-        return {
-            'status': 'error',
-            'message': f'過去3日間で{total_missing}件のhistoryデータが欠落',
-            'summary': summary,
-            'samples': {d: v[:3] for d, v in missing_by_date.items() if v},
-            'checked': checked
-        }
+    result = {
+        'checked': checked,
+        'fetch_failed': {d: len(v) for d, v in fetch_failed.items()},
+        'new_units': {d: len(v) for d, v in new_units.items()},
+    }
+    
+    if total_failed > 0:
+        result['status'] = 'error'
+        result['message'] = f'過去3日間で{total_failed}件の取得失敗（補完推奨）、{total_new}件は新規/変更台'
+        result['samples'] = {d: v[:3] for d, v in fetch_failed.items() if v}
     else:
-        return {
-            'status': 'ok',
-            'message': f'過去3日間のhistoryデータ完全（{checked}件確認）',
-            'checked': checked
-        }
+        result['status'] = 'ok'
+        result['message'] = f'過去3日間のhistoryデータ完全（{checked}件確認）、新規/変更台{total_new}件'
+    
+    return result
