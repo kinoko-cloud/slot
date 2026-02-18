@@ -1777,9 +1777,9 @@ def calc_no_explosion_next_day_stats(machine_key: str = 'sbj') -> dict:
                 continue
             days = sorted(data.get('days', []), key=lambda d: d.get('date', ''))
             for i, d in enumerate(days):
-                art = d.get('art', 0)
-                games = d.get('total_start', 0) or d.get('games', 0)
-                mr = d.get('max_rensa', 0)
+                art = d.get('art', 0) or 0
+                games = d.get('total_start', 0) or d.get('games', 0) or 0
+                mr = d.get('max_rensa', 0) or 0
                 if art <= 0 or games <= 0 or mr <= 0:
                     continue
                 prob = int(games / art)
