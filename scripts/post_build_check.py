@@ -235,6 +235,40 @@ def check_sparkline_graphs(html: str, fname: str) -> list:
     return issues
 
 
+def check_recent_data_missing(html: str, fname: str) -> list:
+    """直近データでART>0なのに差枚・連チャンがない欠損をチェック"""
+    issues = []
+    
+    if fname != 'index.html':
+        return issues  # index.htmlのみチェック
+    
+    # unit-cardごとに抽出
+    cards = re.findall(r'<a href="[^"]*" class="unit-card[^"]*"[^>]*>.*?</a>', html, re.DOTALL)
+    
+    for card in cards[:30]:  # TOP30のみ
+        rank_match = re.search(r'ranking-num">#(\d+)</span>', card)
+        unit_match = re.search(r'unit-id-num[^>]*>(\d+)</span>', card)
+        rank = rank_match.group(1) if rank_match else '?'
+        unit_id = unit_match.group(1) if unit_match else '?'
+        
+        blocks = re.findall(r'<div class="recent-day-block">.*?</div>\s*</div>', card, re.DOTALL)
+        
+        for block in blocks:
+            label = re.search(r'recent-label[^>]*>([^<]+)', block)
+            art = re.search(r'recent-art[^>]*>ART (\d+)', block)
+            diff = re.search(r'diff-medals-sm', block)
+            rensa = re.search(r'rensa-sm', block)
+            
+            label_str = label.group(1) if label else '?'
+            art_val = int(art.group(1)) if art else 0
+            
+            # ARTが5以上あるのに差枚・連がない = 欠損
+            if art_val >= 5 and (not diff or not rensa):
+                issues.append(f'ERROR: {fname} {rank}位 {unit_id}: {label_str} ART={art_val} → 差枚/連なし')
+    
+    return issues
+
+
 def run_all() -> int:
     """全HTML検証を実行。ERRORの数を返す"""
     all_issues = []
@@ -266,6 +300,7 @@ def run_all() -> int:
         check_chain_arrow_direction,
         check_accumulated_games_display,
         check_sparkline_graphs,
+        check_recent_data_missing,
     ]
     
     for fname, fpath in html_files.items():
