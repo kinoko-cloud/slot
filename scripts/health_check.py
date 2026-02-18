@@ -945,18 +945,19 @@ def repair_history_data():
         return f'⚠️ historyファイル更新エラー: {e}'
 
 
-def check_yesterday_history_completeness():
-    """昨日のデータでhistoryがないのにART>0の台を検出"""
+def check_recent_days_completeness():
+    """過去3日分のデータでhistoryがないのにART>0の台を検出"""
     from datetime import datetime, timedelta, timezone
     import json
     from pathlib import Path
     
     JST = timezone(timedelta(hours=9))
-    yesterday = (datetime.now(JST) - timedelta(days=1)).strftime('%Y-%m-%d')
+    now = datetime.now(JST)
+    dates = [(now - timedelta(days=i)).strftime('%Y-%m-%d') for i in range(1, 4)]
     
     HISTORY_DIR = PROJECT_ROOT / 'data' / 'history'
     
-    missing = []
+    missing_by_date = {d: [] for d in dates}
     checked = 0
     
     for store_dir in HISTORY_DIR.iterdir():
@@ -966,34 +967,41 @@ def check_yesterday_history_completeness():
             try:
                 with open(f) as fp:
                     data = json.load(fp)
-                for d in data.get('days', []):
-                    if d.get('date') == yesterday:
+                
+                days_by_date = {d['date']: d for d in data.get('days', []) if d.get('date')}
+                
+                for date in dates:
+                    day = days_by_date.get(date)
+                    if day:
                         checked += 1
-                        art = d.get('art', 0)
-                        diff = d.get('diff_medals')
-                        hist = d.get('history', [])
-                        # ARTがあるのにdiff_medalsがNone、かつhistoryも空
-                        if art > 0 and diff is None and len(hist) == 0:
-                            missing.append({
+                        art = day.get('art', 0)
+                        diff = day.get('diff_medals')
+                        rensa = day.get('max_rensa')
+                        hist = day.get('history', [])
+                        # ARTがあるのにdiff/rensaがない or historyが空
+                        if art > 0 and (diff is None or rensa is None or len(hist) == 0):
+                            missing_by_date[date].append({
                                 'store': store_dir.name,
                                 'unit': f.stem,
                                 'art': art,
                             })
-                        break
             except:
                 continue
     
-    if missing:
+    total_missing = sum(len(v) for v in missing_by_date.values())
+    
+    if total_missing > 0:
+        summary = {d: len(v) for d, v in missing_by_date.items()}
         return {
             'status': 'error',
-            'message': f'{len(missing)}台で昨日のhistoryデータが欠落',
-            'missing': missing[:10],
-            'total_missing': len(missing),
+            'message': f'過去3日間で{total_missing}件のhistoryデータが欠落',
+            'summary': summary,
+            'samples': {d: v[:3] for d, v in missing_by_date.items() if v},
             'checked': checked
         }
     else:
         return {
             'status': 'ok',
-            'message': f'昨日のhistoryデータ完全（{checked}台確認）',
+            'message': f'過去3日間のhistoryデータ完全（{checked}件確認）',
             'checked': checked
         }
