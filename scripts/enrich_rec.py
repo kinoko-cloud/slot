@@ -205,27 +205,26 @@ def _enrich_day_prefix(rec, days_by_date, prefix, date_key):
     db_diff = day_data.get('diff_medals')
     if db_diff is not None:
         rec[f'{prefix}diff_medals'] = int(db_diff)
-        else:
-            # historyから差枚を計算
-            hist = rec.get(f'{prefix}history', []) or day_data.get('history', [])
-            games = rec.get(f'{prefix}games', 0) or day_data.get('games', 0) or day_data.get('total_start', 0)
-            if hist and games > 0:
-                total_medals = sum(h.get('medals', 0) for h in hist)
-                invested = games * 3  # SBJは1G=3枚（機種によって異なる場合は要調整）
-                diff = total_medals - invested
-                if diff != 0:
-                    rec[f'{prefix}diff_medals'] = diff
-            elif hist and games == 0:
-                # gamesがない場合、historyから推定
-                try:
-                    from analysis.diff_medals_estimator import estimate_diff_medals
-                    medals_total = sum(h.get('medals', 0) for h in hist)
-                    machine_key = rec.get('machine_key', 'sbj')
-                    estimated = estimate_diff_medals(medals_total, games, machine_key)
-                    if estimated != 0:
-                        rec[f'{prefix}diff_medals'] = int(estimated)
-                except Exception:
-                    pass
+    elif not rec.get(f'{prefix}diff_medals'):
+        # 蓄積DBにない場合のみhistoryから計算
+        hist = rec.get(f'{prefix}history', []) or day_data.get('history', [])
+        games = rec.get(f'{prefix}games', 0) or day_data.get('games', 0) or day_data.get('total_start', 0)
+        if hist and games > 0:
+            total_medals = sum(h.get('medals', 0) for h in hist)
+            invested = games * 3
+            diff = total_medals - invested
+            if diff != 0:
+                rec[f'{prefix}diff_medals'] = diff
+        elif hist and games == 0:
+            try:
+                from analysis.diff_medals_estimator import estimate_diff_medals
+                medals_total = sum(h.get('medals', 0) for h in hist)
+                machine_key = rec.get('machine_key', 'sbj')
+                estimated = estimate_diff_medals(medals_total, games, machine_key)
+                if estimated != 0:
+                    rec[f'{prefix}diff_medals'] = int(estimated)
+            except Exception:
+                pass
 
     if not rec.get(f'{prefix}max_rensa'):
         db_rensa = day_data.get('max_rensa')
