@@ -168,19 +168,27 @@
         {% endif %}
     </div>
     {% endif %}
-    {# 直近3日間データ #}
+    {# 直近データ（本日 + 過去3日間） #}
     <div class="recent-days">
         <div class="recent-header">直近データ</div>
+        {# 本日のデータ（閉店後/営業前に表示） #}
+        {% set t_art = rec.art_count or rec.today_art or 0 %}
+        {% set t_games = rec.total_games or rec.today_games or 0 %}
+        {% set t_prob = (t_games / t_art)|int if t_art > 0 and t_games > 0 else 0 %}
+        {{ day_row(t_art, t_prob, rec.today_date, '本日', rec.today_diff_medals|default(rec.diff_medals|default(0)), rec.today_max_rensa|default(0), rec.today_max_medals|default(rec.max_medals|default(0)), rec.today_history_processed|default(rec.today_history|default([]))) }}
+        {# 前日 #}
         {% set y_art = rec.yesterday_art or 0 %}
         {% set y_games = rec.yesterday_games or 0 %}
         {% set y_prob = (y_games / y_art)|int if y_art > 0 and y_games > 0 else 0 %}
+        {{ day_row(y_art, y_prob, rec.yesterday_date, '前日', rec.yesterday_diff_medals|default(0), rec.yesterday_max_rensa|default(0), rec.yesterday_max_medals|default(0), rec.yesterday_history_processed|default(rec.yesterday_history|default([]))) }}
+        {# 前々日 #}
         {% set db_art = rec.day_before_art or 0 %}
         {% set db_games = rec.day_before_games or 0 %}
         {% set db_prob = (db_games / db_art)|int if db_art > 0 and db_games > 0 else 0 %}
+        {{ day_row(db_art, db_prob, rec.day_before_date, '前々日', rec.day_before_diff_medals|default(0), rec.day_before_max_rensa|default(0), rec.day_before_max_medals|default(0), rec.day_before_history_processed|default(rec.day_before_history|default([]))) }}
+        {# 3日前 #}
         {% set td_art = rec.three_days_ago_art|default(0) %}
         {% set td_prob = ((rec.three_days_ago_games|default(0)) / td_art)|int if td_art > 0 else 0 %}
-        {{ day_row(y_art, y_prob, rec.yesterday_date, '前日', rec.yesterday_diff_medals|default(0), rec.yesterday_max_rensa|default(0), rec.yesterday_max_medals|default(0), rec.yesterday_history_processed|default(rec.yesterday_history|default([]))) }}
-        {{ day_row(db_art, db_prob, rec.day_before_date, '前々日', rec.day_before_diff_medals|default(0), rec.day_before_max_rensa|default(0), rec.day_before_max_medals|default(0), rec.day_before_history_processed|default(rec.day_before_history|default([]))) }}
         {{ day_row(td_art, td_prob, rec.three_days_ago_date|default(''), '3日前', rec.three_days_ago_diff_medals|default(0), rec.three_days_ago_max_rensa|default(0), rec.three_days_ago_max_medals|default(0), rec.three_days_ago_history_processed|default(rec.three_days_ago_history|default([]))) }}
     </div>
     {# 差枚推移グラフ #}
