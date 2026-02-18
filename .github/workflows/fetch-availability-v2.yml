@@ -55,12 +55,15 @@ jobs:
           # ロックファイルをクリア（前回の異常終了対策）
           rm -f /tmp/slot_fetch.lock
           
-          # 全店舗取得（daidata + papimo）
-          # - daidata: G数変化なしの台はスキップで高速
-          # - papimo: 全台取得（約2分）
-          timeout 600 python scripts/scrapers_v2/fetch_all.py 2>&1 || {
-            echo "⚠️ Fetch failed or timed out"
-            exit 1
+          # メモリ不足対策: SBJと北斗を順番に実行
+          echo "=== SBJ店舗取得 ==="
+          timeout 300 python scripts/scrapers_v2/fetch_all.py --sbj-only 2>&1 || {
+            echo "⚠️ SBJ fetch failed"
+          }
+          
+          echo "=== 北斗店舗取得 ==="
+          timeout 300 python scripts/scrapers_v2/fetch_all.py --hokuto-only 2>&1 || {
+            echo "⚠️ Hokuto fetch failed"
           }
 
       - name: Generate static HTML (営業時間中のみ)
