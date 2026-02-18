@@ -2,11 +2,8 @@ name: Fetch Availability (Secondary - 15/45分)
 
 on:
   schedule:
-    # JST 10:15-22:45 (メインの15分後)
-    - cron: '15 1-13 * * *'
-    - cron: '45 1-13 * * *'
-    # JST 23:15 (最終)
-    - cron: '15 14 * * *'
+    # JST 10:30-22:30 (毎時30分、メインと交互)
+    - cron: '30 1-13 * * *'
   workflow_dispatch:  # 手動実行も可能
 
 concurrency:
