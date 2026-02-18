@@ -7,7 +7,7 @@
 from playwright.sync_api import sync_playwright
 import re
 import json
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 JST = timezone(timedelta(hours=9))
 from pathlib import Path
 
