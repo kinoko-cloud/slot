@@ -943,3 +943,57 @@ def repair_history_data():
             return f'⚠️ historyファイル更新失敗: {result.stderr[:100]}'
     except Exception as e:
         return f'⚠️ historyファイル更新エラー: {e}'
+
+
+def check_yesterday_history_completeness():
+    """昨日のデータでhistoryがないのにART>0の台を検出"""
+    from datetime import datetime, timedelta, timezone
+    import json
+    from pathlib import Path
+    
+    JST = timezone(timedelta(hours=9))
+    yesterday = (datetime.now(JST) - timedelta(days=1)).strftime('%Y-%m-%d')
+    
+    HISTORY_DIR = PROJECT_ROOT / 'data' / 'history'
+    
+    missing = []
+    checked = 0
+    
+    for store_dir in HISTORY_DIR.iterdir():
+        if not store_dir.is_dir():
+            continue
+        for f in store_dir.glob('*.json'):
+            try:
+                with open(f) as fp:
+                    data = json.load(fp)
+                for d in data.get('days', []):
+                    if d.get('date') == yesterday:
+                        checked += 1
+                        art = d.get('art', 0)
+                        diff = d.get('diff_medals')
+                        hist = d.get('history', [])
+                        # ARTがあるのにdiff_medalsがNone、かつhistoryも空
+                        if art > 0 and diff is None and len(hist) == 0:
+                            missing.append({
+                                'store': store_dir.name,
+                                'unit': f.stem,
+                                'art': art,
+                            })
+                        break
+            except:
+                continue
+    
+    if missing:
+        return {
+            'status': 'error',
+            'message': f'{len(missing)}台で昨日のhistoryデータが欠落',
+            'missing': missing[:10],
+            'total_missing': len(missing),
+            'checked': checked
+        }
+    else:
+        return {
+            'status': 'ok',
+            'message': f'昨日のhistoryデータ完全（{checked}台確認）',
+            'checked': checked
+        }
