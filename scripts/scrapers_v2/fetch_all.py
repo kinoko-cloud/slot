@@ -178,6 +178,7 @@ class V2Fetcher:
                             result['units'][unit_id] = {
                                 **prev_data,
                                 'total_start': games,
+                                'today_history': prev_data.get('history', []),  # 履歴も引き継ぐ
                                 'status': status,
                                 'cached': True,
                                 'stale_warning': True,
