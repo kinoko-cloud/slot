@@ -10,6 +10,9 @@ generate_static.pyから呼ばれる。
 """
 import sys
 from pathlib import Path
+from datetime import datetime, timedelta, timezone
+
+JST = timezone(timedelta(hours=9))
 
 # プロジェクトルートをパスに追加
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
