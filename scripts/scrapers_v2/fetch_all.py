@@ -204,8 +204,9 @@ class V2Fetcher:
             result['playing'] = list_data.get('playing', [])
             result['empty'] = list_data.get('empty', [])
             
-            # G数マップ
+            # G数・ARTマップ
             games_map = list_data.get('games', {})
+            arts_map = list_data.get('arts', {})
             
             # G数が変化した台を特定（差分取得）
             changed_units = get_changed_units(store_key, games_map)
@@ -239,6 +240,10 @@ class V2Fetcher:
                             result['skipped_count'] += 1
                             continue
 
+                    # 詳細ページでART=0の場合、一覧ページのARTを使う
+                    if detail.get('art', 0) == 0 and arts_map.get(unit_id, 0) > 0:
+                        detail['art'] = arts_map[unit_id]
+                    
                     result['units'][unit_id] = detail
                     result['changed_count'] += 1
                 else:
@@ -246,10 +251,21 @@ class V2Fetcher:
                     # availability.jsonから前回のデータを取得
                     prev_data = self._get_previous_unit_data(store_key, unit_id)
 
-                    # 🔧 空データ自動復旧: 前回データが空なら強制的に詳細取得
-                    if prev_data.get('art', 0) == 0 and prev_data.get('total_start', 0) == 0:
-                        logger.warning(f"{store_key}/{unit_id}: 前回データが空 → 強制詳細取得")
+                    # 🔧 空データ/履歴なし自動復旧: 前回データが空、または履歴なしなら強制的に詳細取得
+                    prev_art = prev_data.get('art', 0)
+                    prev_hist = prev_data.get('history', [])
+                    needs_force_fetch = (
+                        (prev_art == 0 and prev_data.get('total_start', 0) == 0) or
+                        (prev_art > 0 and len(prev_hist) == 0)  # ART/履歴矛盾
+                    )
+                    
+                    if needs_force_fetch:
+                        reason = "前回データが空" if prev_art == 0 else "ART/履歴矛盾"
+                        logger.warning(f"{store_key}/{unit_id}: {reason} → 強制詳細取得")
                         detail = scraper.fetch_realtime(hall_id, unit_id)
+                        # 詳細ページでART=0の場合、一覧ページのARTを使う
+                        if detail.get('art', 0) == 0 and arts_map.get(unit_id, 0) > 0:
+                            detail['art'] = arts_map[unit_id]
                         result['units'][unit_id] = detail
                         result['changed_count'] += 1
                     else:

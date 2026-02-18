@@ -391,20 +391,24 @@ class DaidataScraper(BaseScraper):
                 else:
                     empty.append(unit_id)  # 見つからない場合は空きとみなす
             
-            # G数も取得
+            # G数・ART等も取得
+            arts = {}
             text = self.get_text()
             for line in text.split('\n'):
-                match = re.match(r'^\s*(\d+)\s+\d+\s+\d+\s+\d+\s+(\d+)', line)
+                # 台番号 G数 BB RB ART ...
+                match = re.match(r'^\s*(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)', line)
                 if match:
                     unit_id = match.group(1)
-                    g = int(match.group(2))
-                    games[unit_id] = g
+                    games[unit_id] = int(match.group(2))
+                    # BB=group(3), RB=group(4), ART=group(5)
+                    arts[unit_id] = int(match.group(5))
                     
         except Exception as e:
             self.logger.error(f"fetch_list_with_availability error: {e}")
         
         return {
             'games': games,
+            'arts': arts,
             'playing': sorted(playing),
             'empty': sorted(empty),
             'total': len(expected_units) if expected_units else len(games),
