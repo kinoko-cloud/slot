@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """毎日深夜に実行：バックテスト→パターン更新→精度改善"""
 import json
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 JST = timezone(timedelta(hours=9))
 from pathlib import Path
 from collections import defaultdict
