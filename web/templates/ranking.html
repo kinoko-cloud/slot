@@ -129,8 +129,28 @@
                                 <span class="data-label">差枚</span>
                             </div>
                             {% endif %}
+                            {% if rec.total_games >= 2000 and rec.payout_estimate %}
+                            <div class="data-cell {% if rec.payout_estimate >= 110 %}excellent{% elif rec.payout_estimate >= 105 %}good{% elif rec.payout_estimate <= 95 %}bad{% endif %}">
+                                <span class="data-value">{{ rec.payout_estimate }}%</span>
+                                <span class="data-label">機械割</span>
+                            </div>
+                            {% endif %}
                         </div>
                     </div>
+
+                    {# === 本日の差枚推移グラフ（営業中モード） === #}
+                    {% if rec.today_history %}
+                    <div class="sparkline-container" style="margin-top: 8px; padding: 4px 0;">
+                        <div class="sparkline-label" style="font-size: 10px; color: #999; margin-bottom: 2px;">本日の波</div>
+                        <div class="wave-graph">
+                            {% for h in rec.today_history %}
+                            <span class="wave-bar {% if h.start >= 500 %}deep{% elif h.start >= 300 %}mid{% elif h.start <= 70 %}rensa{% endif %}" title="{{ h.time }} {{ h.start }}G {{ h.type }}">
+                                {% if h.start >= 500 %}&#x2587;{% elif h.start >= 300 %}&#x2585;{% elif h.start >= 200 %}&#x2584;{% elif h.start >= 100 %}&#x2583;{% elif h.start >= 70 %}&#x2582;{% else %}&#x2581;{% endif %}
+                            </span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
                     {% endif %}
 
                     {# === 直近3日間データ（TOP3と同じフォーマット） === #}
