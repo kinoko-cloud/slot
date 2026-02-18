@@ -35,7 +35,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install 'playwright==1.49.1' requests beautifulsoup4
+          pip install 'playwright==1.49.1' requests beautifulsoup4 flask jinja2 pyyaml
           playwright install chromium
           playwright install-deps chromium
 
@@ -49,7 +49,6 @@ jobs:
 
       - name: Regenerate static site
         run: |
-          pip install pyyaml
           python scripts/generate_static.py
 
       - name: Commit and push
