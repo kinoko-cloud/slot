@@ -8,7 +8,8 @@ daily_collect.py の結果を history_accumulator で蓄積する一連の処理
 
 import sys
 import json
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
+JST = timezone(timedelta(hours=9))
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -20,7 +21,7 @@ from analysis.history_accumulator import _accumulate_unit, load_unit_history
 def get_stores_needing_update(target_date: str = None) -> list:
     """target_dateまでデータがない店舗・台を洗い出す"""
     if target_date is None:
-        target_date = (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d')
+        target_date = (datetime.now(JST) - timedelta(days=1)).strftime('%Y-%m-%d')
 
     needs_update = []
     old_keys = {'island_akihabara', 'shibuya_espass', 'shinjuku_espass'}
@@ -161,7 +162,7 @@ def main():
     parser.add_argument('--check-only', action='store_true', help='更新が必要な台を表示するだけ')
     args = parser.parse_args()
     
-    target = args.target_date or (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d')
+    target = args.target_date or (datetime.now(JST) - timedelta(days=1)).strftime('%Y-%m-%d')
     
     print(f"蓄積DB更新チェック: target_date={target}")
     print(f"{'='*60}")

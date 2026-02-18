@@ -850,7 +850,7 @@ def api_status(store_key: str):
     realtime_data = None
     if store_key in REALTIME_CACHE:
         cache = REALTIME_CACHE[store_key]
-        cache_age = (datetime.now() - cache['fetched_at']).total_seconds()
+        cache_age = (datetime.now(JST) - cache['fetched_at']).total_seconds()
         if cache_age < 600:
             realtime_data = cache['data']
 
@@ -884,7 +884,7 @@ def api_refresh(store_key: str):
     # キャッシュがあればそれを使用
     if store_key in REALTIME_CACHE:
         cache = REALTIME_CACHE[store_key]
-        cache_age = (datetime.now() - cache['fetched_at']).total_seconds()
+        cache_age = (datetime.now(JST) - cache['fetched_at']).total_seconds()
         if cache_age < 300:  # 5分以内はキャッシュ使用
             recommendations = recommend_units(store_key, cache['data'])
             return jsonify({
@@ -910,7 +910,7 @@ def run_scraping(store_key: str, max_retries: int = 3):
     import logging
     import time
     
-    SCRAPING_STATUS[store_key] = {'status': 'running', 'started_at': datetime.now()}
+    SCRAPING_STATUS[store_key] = {'status': 'running', 'started_at': datetime.now(JST)}
     last_error = None
     
     for attempt in range(max_retries):
@@ -921,10 +921,10 @@ def run_scraping(store_key: str, max_retries: int = 3):
             if realtime_data and realtime_data.get('units'):
                 REALTIME_CACHE[store_key] = {
                     'data': realtime_data,
-                    'fetched_at': datetime.now(),
+                    'fetched_at': datetime.now(JST),
                     'source': 'github',
                 }
-                SCRAPING_STATUS[store_key] = {'status': 'completed', 'completed_at': datetime.now(), 'source': 'github'}
+                SCRAPING_STATUS[store_key] = {'status': 'completed', 'completed_at': datetime.now(JST), 'source': 'github'}
                 return
 
             # GitHubにデータがない場合は直接スクレイピングを試みる
@@ -934,10 +934,10 @@ def run_scraping(store_key: str, max_retries: int = 3):
             if store_key in results:
                 REALTIME_CACHE[store_key] = {
                     'data': results[store_key],
-                    'fetched_at': datetime.now(),
+                    'fetched_at': datetime.now(JST),
                     'source': 'direct',
                 }
-                SCRAPING_STATUS[store_key] = {'status': 'completed', 'completed_at': datetime.now(), 'source': 'direct'}
+                SCRAPING_STATUS[store_key] = {'status': 'completed', 'completed_at': datetime.now(JST), 'source': 'direct'}
                 return
             else:
                 last_error = 'No data returned'
@@ -957,12 +957,12 @@ def run_scraping(store_key: str, max_retries: int = 3):
         if fallback_data:
             REALTIME_CACHE[store_key] = {
                 'data': fallback_data,
-                'fetched_at': datetime.now(),
+                'fetched_at': datetime.now(JST),
                 'source': 'fallback',
             }
             SCRAPING_STATUS[store_key] = {
                 'status': 'completed',
-                'completed_at': datetime.now(),
+                'completed_at': datetime.now(JST),
                 'source': 'fallback',
                 'warning': f'Using cached data due to fetch error: {last_error}',
             }
@@ -1056,7 +1056,7 @@ def api_scrape(store_key: str):
     if store_key in SCRAPING_STATUS:
         status = SCRAPING_STATUS[store_key]
         if status.get('status') == 'running':
-            elapsed = (datetime.now() - status['started_at']).total_seconds()
+            elapsed = (datetime.now(JST) - status['started_at']).total_seconds()
             return jsonify({
                 'status': 'running',
                 'elapsed_seconds': int(elapsed),

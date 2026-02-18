@@ -8,7 +8,8 @@ import sys
 import json
 import argparse
 from pathlib import Path
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
+JST = timezone(timedelta(hours=9))
 
 PROJECT_ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
@@ -94,7 +95,7 @@ def backfill_store(store_key: str, target_dates: list = None, dry_run: bool = Fa
     
     if not target_dates:
         # デフォルトで過去7日
-        today = datetime.now()
+        today = datetime.now(JST)
         target_dates = [(today - timedelta(days=i)).strftime('%Y-%m-%d') for i in range(1, 8)]
     
     # スクレイパー起動

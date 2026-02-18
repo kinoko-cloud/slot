@@ -5,14 +5,15 @@
 """
 import json
 from pathlib import Path
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
+JST = timezone(timedelta(hours=9))
 import sys
 
 HISTORY_DIR = Path(__file__).parent.parent / 'data' / 'history'
 
 def check_gaps(days_back=7):
     """過去N日間の日付欠落を検出"""
-    today = datetime.now()
+    today = datetime.now(JST)
     check_dates = [(today - timedelta(days=i)).strftime('%Y-%m-%d') for i in range(1, days_back + 1)]
     check_dates.reverse()  # 古い順
     

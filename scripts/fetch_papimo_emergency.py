@@ -2,7 +2,8 @@
 """アイランド秋葉原（PAPIMO）緊急取得"""
 import sys
 from pathlib import Path
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
+JST = timezone(timedelta(hours=9))
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
@@ -10,7 +11,7 @@ from playwright.sync_api import sync_playwright
 from scrapers.papimo import get_unit_history
 from analysis.history_accumulator import _accumulate_unit, load_unit_history
 
-TARGET = (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d')
+TARGET = (datetime.now(JST) - timedelta(days=1)).strftime('%Y-%m-%d')
 
 STORES = {
     'island_akihabara_sbj': {

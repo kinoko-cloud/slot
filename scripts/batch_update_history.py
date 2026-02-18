@@ -9,7 +9,8 @@ import sys
 import re
 import json
 import time
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
+JST = timezone(timedelta(hours=9))
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -20,7 +21,7 @@ from scrapers.daidata_detail_history import (
     extract_day_history, _parse_overview_summary, REMOVE_ADS_SCRIPT
 )
 
-TARGET_DATE = (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d')
+TARGET_DATE = (datetime.now(JST) - timedelta(days=1)).strftime('%Y-%m-%d')
 
 
 def get_missing_units(target_date: str):

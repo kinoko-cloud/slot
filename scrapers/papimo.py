@@ -6,7 +6,8 @@ papimo.jp - 秋葉原アイランド SBJデータ取得
 from playwright.sync_api import sync_playwright
 import re
 import json
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
+JST = timezone(timedelta(hours=9))
 from pathlib import Path
 
 # 店舗設定

@@ -13,7 +13,8 @@ import json
 import re
 import sys
 import requests
-from datetime import datetime
+from datetime import datetime, timezone
+JST = timezone(timedelta(hours=9))
 from pathlib import Path
 
 # プロジェクトルートをパスに追加
@@ -317,7 +318,7 @@ def scrape_daidata_current(session_or_page, hall_id: str, units: list, debug_inf
 def scrape_realtime(store_key: str = None) -> dict:
     """リアルタイムデータを取得"""
     results = {}
-    now = datetime.now()
+    now = datetime.now(JST)
 
     stores_to_scrape = [store_key] if store_key else STORES.keys()
 

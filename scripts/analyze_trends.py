@@ -15,7 +15,8 @@
 
 import json
 import sys
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
+JST = timezone(timedelta(hours=9))
 from pathlib import Path
 from typing import Dict, List, Optional
 from collections import defaultdict

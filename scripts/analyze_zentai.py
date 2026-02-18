@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """全台系イベント分析スクリプト"""
 import json, sys, glob, os
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
+JST = timezone(timedelta(hours=9))
 from pathlib import Path
 from collections import defaultdict
 

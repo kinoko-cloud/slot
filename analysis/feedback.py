@@ -8,7 +8,8 @@
 """
 
 import json
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
+JST = timezone(timedelta(hours=9))
 from pathlib import Path
 
 FEEDBACK_DIR = Path('data/feedback')

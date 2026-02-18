@@ -9,7 +9,8 @@
 - リセット判定
 """
 
-from datetime import datetime
+from datetime import datetime, timezone
+JST = timezone(timedelta(hours=9))
 from typing import Optional, List, Dict, Any
 
 # 機種別天井パラメータ

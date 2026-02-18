@@ -152,7 +152,7 @@ def calculate_expected_profit(total_games: int, art_count: int, machine_key: str
             'profit_category': str,       # '5000枚+', '3000枚+', '2000枚+', '1000枚+', 'プラス', 'マイナス'
         }
     """
-    now = datetime.now()
+    now = datetime.now(JST)
     closing_hour = 23  # 閉店時刻
 
     # 残り時間
@@ -1266,7 +1266,7 @@ def analyze_today_data(unit_data: dict, current_hour: int = None, machine_key: s
             return result
 
         today = datetime.now().strftime('%Y-%m-%d')
-        yesterday = (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d')
+        yesterday = (datetime.now(JST) - timedelta(days=1)).strftime('%Y-%m-%d')
         today_data = None
         yesterday_data = None
 
@@ -1323,7 +1323,7 @@ def analyze_today_data(unit_data: dict, current_hour: int = None, machine_key: s
         if result['last_hit_time']:
             try:
                 last_time = datetime.strptime(result['last_hit_time'], '%H:%M')
-                now = datetime.now()
+                now = datetime.now(JST)
                 current_time = datetime.strptime(now.strftime('%H:%M'), '%H:%M')
                 diff_minutes = (current_time - last_time).total_seconds() / 60
 
@@ -3216,7 +3216,7 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
         
         # 当日の履歴を取得（リアルタイムデータを優先）
         today_str = datetime.now().strftime('%Y-%m-%d')
-        yesterday_str = (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d')
+        yesterday_str = (datetime.now(JST) - timedelta(days=1)).strftime('%Y-%m-%d')
         
         # まずリアルタイムデータからtoday_historyを取得（最優先）
         if realtime_data and realtime_is_today:
@@ -3451,7 +3451,7 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
             if fetched_at:
                 try:
                     fetch_date_str = datetime.fromisoformat(fetched_at).strftime('%Y-%m-%d')
-                    yesterday_check = (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d')
+                    yesterday_check = (datetime.now(JST) - timedelta(days=1)).strftime('%Y-%m-%d')
                     if fetch_date_str == yesterday_check:
                         # 昨日のリアルタイムデータを前日データとして使用
                         units_list = realtime_data.get('units', [])
@@ -3470,7 +3470,7 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
             acc_days = sorted(accumulated['days'], key=lambda x: x.get('date', ''), reverse=True)
 
             # 日付を明示的に計算（データの有無に関わらず）
-            now = datetime.now()
+            now = datetime.now(JST)
             expected_yesterday = (now - timedelta(days=1)).strftime('%Y-%m-%d')
             expected_day_before = (now - timedelta(days=2)).strftime('%Y-%m-%d')
             expected_three_days = (now - timedelta(days=3)).strftime('%Y-%m-%d')

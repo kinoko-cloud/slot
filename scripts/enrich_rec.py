@@ -52,11 +52,12 @@ def enrich_recs(recs):
         _enrich_day_prefix(rec, days_by_date, 'three_days_ago_', 'three_days_ago_date')
 
         # 2. recent_daysを蓄積DBから常に補完（recommenderからのデータが不完全な場合があるため）
-        from datetime import datetime, timedelta
+        from datetime import datetime, timedelta, timezone
+        JST = timezone(timedelta(hours=9))
         existing_days = {d.get('date'): d for d in rec.get('recent_days', []) if d.get('date')}
         recent_days = []
         for i in range(1, 8):
-            d = (datetime.now() - timedelta(days=i)).strftime('%Y-%m-%d')
+            d = (datetime.now(JST) - timedelta(days=i)).strftime('%Y-%m-%d')
             # 蓄積DBを優先、なければ既存から
             acc_data = days_by_date.get(d)
             exist_data = existing_days.get(d)
@@ -146,7 +147,7 @@ def _enrich_day_prefix(rec, days_by_date, prefix, date_key):
         else:
             return
         
-        target_date = (datetime.now() - timedelta(days=days_ago)).strftime('%Y-%m-%d')
+        target_date = (datetime.now(JST) - timedelta(days=days_ago)).strftime('%Y-%m-%d')
         day_data = days_by_date.get(target_date)
         # art>0またはgames>0があれば日付を設定（空の日でも日付表示のため常に設定）
         rec[date_key] = target_date

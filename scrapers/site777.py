@@ -7,7 +7,8 @@
 from playwright.sync_api import sync_playwright
 import re
 import json
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
+JST = timezone(timedelta(hours=9))
 from pathlib import Path
 
 UA = 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15'
@@ -123,7 +124,7 @@ def get_store_data(store_key: str, days_back: int = 1) -> dict:
             for machine_key, mdc in store['machines'].items():
                 machine_data = []
                 for dtdd in range(1, days_back + 1):
-                    target_date = (datetime.now() - timedelta(days=dtdd)).strftime('%Y-%m-%d')
+                    target_date = (datetime.now(JST) - timedelta(days=dtdd)).strftime('%Y-%m-%d')
                     print(f'  {name} {machine_key} {target_date} (dtdd={dtdd})...', end='', flush=True)
 
                     try:

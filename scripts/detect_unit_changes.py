@@ -13,7 +13,8 @@
 import json
 import sys
 from pathlib import Path
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
+JST = timezone(timedelta(hours=9))
 
 PROJECT_ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
@@ -90,7 +91,7 @@ def scan_papimo_units(hall_id: str) -> list:
 def check_all_stores(fix: bool = False):
     """全店舗の台番号変更をチェック"""
     print(f"=== 台番号変更検出 ===")
-    print(f"実行時刻: {datetime.now()}")
+    print(f"実行時刻: {datetime.now(JST)}")
     print()
     
     changes = []

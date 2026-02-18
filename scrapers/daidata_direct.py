@@ -8,7 +8,8 @@ from playwright.sync_api import sync_playwright
 from bs4 import BeautifulSoup
 import re
 import json
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
+JST = timezone(timedelta(hours=9))
 from pathlib import Path
 
 REMOVE_ADS_SCRIPT = """

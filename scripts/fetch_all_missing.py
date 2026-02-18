@@ -4,7 +4,8 @@ import sys
 import json
 import time
 from pathlib import Path
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
+JST = timezone(timedelta(hours=9))
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
@@ -14,7 +15,7 @@ from scrapers.daidata_detail_history import get_all_history
 from analysis.history_accumulator import _accumulate_unit, load_unit_history
 
 # 目標日付（今日の前日まで）
-TARGET_DATE = (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d')
+TARGET_DATE = (datetime.now(JST) - timedelta(days=1)).strftime('%Y-%m-%d')
 
 def main():
     total_updated = 0

@@ -183,8 +183,9 @@ def check_availability_format() -> list:
         issues.append(f'WARN: availability.json に新形式フィールドが {len(format_issues)} 件: {format_issues[:3]}')
 
     # 営業時間中チェック（10-22時）
-    from datetime import datetime
-    now_hour = datetime.now().hour
+    from datetime import datetime, timedelta, timezone
+    JST = timezone(timedelta(hours=9))
+    now_hour = datetime.now(JST).hour
     if 10 <= now_hour <= 22:
         # 営業時間中なのに遊技中が0台は異常
         if total_units > 50 and playing_units == 0:

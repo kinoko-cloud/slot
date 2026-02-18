@@ -342,7 +342,7 @@ def generate_index(env):
     verify_lookup = {}  # {store_key: {unit_id: {predicted_rank, predicted_score, ...}}}
     try:
         import datetime as _dt_mod
-        _yesterday_str = (_dt_mod.datetime.now() - _dt_mod.timedelta(days=1)).strftime('%Y%m%d')
+        _yesterday_str = (_dt_mod.datetime.now(JST) - _dt_mod.timedelta(days=1)).strftime('%Y%m%d')
         _verify_path = Path(f'data/verify/verify_{_yesterday_str}.json')
         if _verify_path.exists():
             import json as _json_mod
@@ -729,7 +729,7 @@ def generate_index(env):
     fixed_three_days = fixed_dates[2]
     
     # 古すぎるデータをクリア（7日以上前のデータは除外）
-    cutoff_date = (datetime.now() - timedelta(days=7)).strftime('%Y-%m-%d')
+    cutoff_date = (datetime.now(JST) - timedelta(days=7)).strftime('%Y-%m-%d')
 
     # all_sa_recsもループに含める（#11以降のrecsの日付も設定するため）
     all_recs_for_date_fix = list({id(r): r for r in top3 + top3_candidates + yesterday_top10 + today_top10}.values())
@@ -1489,7 +1489,7 @@ def generate_recommend_pages(env):
         fixed_three_days = fixed_dates[2]
 
         # 古すぎるデータをクリア（7日以上前のデータは除外）
-        cutoff_date = (datetime.now() - timedelta(days=7)).strftime('%Y-%m-%d')
+        cutoff_date = (datetime.now(JST) - timedelta(days=7)).strftime('%Y-%m-%d')
 
         for rec in recommendations:
             # 前日データのチェック（7日以上前は除外）
@@ -1778,7 +1778,7 @@ def _try_load_backtest_results():
     import glob
     from datetime import datetime, timedelta
     today_str = datetime.now().strftime('%Y%m%d')
-    yesterday_str = (datetime.now() - timedelta(days=1)).strftime('%Y%m%d')
+    yesterday_str = (datetime.now(JST) - timedelta(days=1)).strftime('%Y%m%d')
     results_files = sorted(glob.glob(str(PROJECT_ROOT / 'data' / 'verify' / 'verify_*_results.json')), reverse=True)
     for f in results_files:
         fname = Path(f).name
@@ -1841,7 +1841,7 @@ def _get_latest_valid_verify():
 def _get_verify_date_str():
     """的中率の日付を取得（常に前日を表示）"""
     # データの有無に関係なく、常に「前日」を表示
-    yesterday = datetime.now() - timedelta(days=1)
+    yesterday = datetime.now(JST) - timedelta(days=1)
     weekdays = ['月','火','水','木','金','土','日']
     return f'{yesterday.month}/{yesterday.day}({weekdays[yesterday.weekday()]})'
 
@@ -2506,7 +2506,7 @@ def generate_verify_page(env):
                 from datetime import datetime, timedelta
                 from analysis.history_accumulator import load_unit_history
                 from analysis.diff_medals_estimator import estimate_diff_medals
-                _verify_date = (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d')
+                _verify_date = (datetime.now(JST) - timedelta(days=1)).strftime('%Y-%m-%d')
                 _uhist = load_unit_history(store_key, uid)
                 if _uhist:
                     for _dd in _uhist.get('days', []):

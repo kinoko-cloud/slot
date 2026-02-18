@@ -9,7 +9,8 @@ import requests
 from bs4 import BeautifulSoup
 import re
 import json
-from datetime import datetime
+from datetime import datetime, timezone
+JST = timezone(timedelta(hours=9))
 from pathlib import Path
 
 HEADERS = {

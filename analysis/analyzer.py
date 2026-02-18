@@ -12,7 +12,8 @@ SBJ データ分析・良台判定システム
 """
 
 import json
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
+JST = timezone(timedelta(hours=9))
 from pathlib import Path
 from typing import Optional
 

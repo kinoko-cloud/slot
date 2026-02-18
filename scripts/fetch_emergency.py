@@ -16,7 +16,8 @@ import time
 import argparse
 import multiprocessing
 from pathlib import Path
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
+JST = timezone(timedelta(hours=9))
 from concurrent.futures import ProcessPoolExecutor, as_completed
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -26,7 +27,7 @@ from scrapers.daidata_detail_history import get_all_history
 from analysis.history_accumulator import _accumulate_unit, load_unit_history
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-TARGET_DATE = (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d')
+TARGET_DATE = (datetime.now(JST) - timedelta(days=1)).strftime('%Y-%m-%d')
 
 def get_all_units():
     """全店舗・全台のリストを取得"""

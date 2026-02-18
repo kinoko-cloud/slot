@@ -10,7 +10,8 @@ import requests
 from bs4 import BeautifulSoup
 import re
 import json
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
+JST = timezone(timedelta(hours=9))
 from pathlib import Path
 
 HEADERS = {
@@ -198,7 +199,7 @@ def scrape_all_stores(date_str: str = None, days_back: int = 1) -> dict:
 
     if not date_str:
         # 昨日
-        date_str = (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d')
+        date_str = (datetime.now(JST) - timedelta(days=1)).strftime('%Y-%m-%d')
 
     all_data = {}
 

@@ -7,7 +7,8 @@
 """
 import json
 import sys
-from datetime import datetime
+from datetime import datetime, timezone
+JST = timezone(timedelta(hours=9))
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).parent.parent
@@ -195,7 +196,7 @@ def sync_store_to_history(store_key: str, store_data: dict, date_str: str):
 
 def main():
     print(f"=== リアルタイム→History同期 ===")
-    print(f"実行時刻: {datetime.now()}")
+    print(f"実行時刻: {datetime.now(JST)}")
     
     # availability.jsonを読み込み
     avail = load_availability_json()
