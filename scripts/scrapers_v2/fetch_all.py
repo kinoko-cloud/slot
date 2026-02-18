@@ -35,6 +35,48 @@ logger = setup_logger('fetch_all')
 JST = timezone(timedelta(hours=9))
 
 
+def fetch_with_retry(scraper, hall_id: str, unit_id: str, max_time: int = 60) -> Dict[str, Any]:
+    """
+    取れるまでリトライする詳細取得
+    
+    Args:
+        scraper: DaidataScraperインスタンス
+        hall_id: ホールID
+        unit_id: 台番号
+        max_time: 最大試行時間（秒）
+    
+    Returns:
+        取得データ。success=Trueなら成功、Falseなら失敗
+    """
+    import time as time_module
+    
+    start_time = time_module.time()
+    delays = [2, 4, 8, 8, 8, 8, 8, 8]  # リトライ間隔（秒）
+    attempt = 0
+    
+    while True:
+        elapsed = time_module.time() - start_time
+        if elapsed > max_time:
+            logger.error(f"⚠️ {hall_id}/{unit_id}: {max_time}秒経過しても取得できず（異常事態）")
+            return {'unit_id': unit_id, 'success': False, 'error': 'max_time_exceeded'}
+        
+        data = scraper.fetch_realtime(hall_id, unit_id)
+        
+        # 成功判定: 必須フィールドがパースできているか
+        # （値が0でもパースできていれば成功）
+        has_data = 'bb' in data and 'art' in data and data.get('error') is None
+        
+        if has_data:
+            data['success'] = True
+            return data
+        
+        # 失敗 → リトライ
+        attempt += 1
+        delay = delays[min(attempt - 1, len(delays) - 1)]
+        logger.debug(f"{hall_id}/{unit_id}: 取得失敗、{delay}秒後にリトライ (試行{attempt})")
+        time_module.sleep(delay)
+
+
 class V2Fetcher:
     """v2統合フェッチャー"""
     
@@ -157,38 +199,28 @@ class V2Fetcher:
             # （北斗2は一覧→詳細遷移で規約処理が失敗しやすいため）
             is_hokuto2 = 'hokuto2' in store_key
             if model_encoded is None or is_hokuto2:
-                # 全台を詳細取得
+                # 全台を詳細取得（取れるまでリトライ）
                 for unit_id in expected_units:
-                    prev_data = self._get_previous_unit_data(store_key, unit_id)
-                    prev_art = prev_data.get('art', 0)
-                    prev_hist = prev_data.get('history', [])
+                    detail = fetch_with_retry(scraper, hall_id, unit_id, max_time=60)
                     
-                    detail = scraper.fetch_realtime(hall_id, unit_id)
-                    
-                    # 空データかつ前回art>0の場合、リトライ
-                    if (detail.get('art', 0) == 0 and 
-                        detail.get('total_start', 0) == 0 and
-                        prev_art > 0):
-                        import time
-                        time.sleep(2)
-                        detail = scraper.fetch_realtime(hall_id, unit_id)
-                    
-                    if detail.get('art', 0) > 0 or detail.get('total_start', 0) > 0:
+                    if detail.get('success'):
                         result['units'][unit_id] = detail
                         result['changed_count'] += 1
                     else:
-                        # 空データ → 前回データを保持
+                        # 60秒取得できなかった → 異常事態、警告出して前回データ保持
+                        logger.error(f"🚨 {store_key}/{unit_id}: 取得失敗（台番号確認が必要）")
+                        prev_data = self._get_previous_unit_data(store_key, unit_id)
                         result['units'][unit_id] = {
                             'unit_id': unit_id,
                             'total_start': prev_data.get('total_start', 0),
-                            'art': prev_art,
+                            'art': prev_data.get('art', 0),
                             'bb': prev_data.get('bb', 0),
                             'rb': prev_data.get('rb', 0),
                             'final_start': prev_data.get('final_start', 0),
                             'diff_medals': prev_data.get('diff_medals', 0),
-                            'today_history': prev_hist,
-                            'cached': True,
-                            'status': 'empty',
+                            'today_history': prev_data.get('history', []),
+                            'fetch_failed': True,
+                            'status': 'unknown',
                         }
                         result['skipped_count'] += 1
                 
@@ -216,29 +248,26 @@ class V2Fetcher:
 
                 # G数が変化した台のみ詳細取得
                 if unit_id in changed_units:
-                    detail = scraper.fetch_realtime(hall_id, unit_id)
+                    detail = fetch_with_retry(scraper, hall_id, unit_id, max_time=60)
 
-                    # 空データ検証（規約ページ処理失敗など）
-                    if (detail.get('art', 0) == 0 and
-                        detail.get('total_start', 0) == 0 and
-                        detail.get('bb', 0) == 0 and
-                        detail.get('rb', 0) == 0):
+                    if not detail.get('success'):
+                        # 60秒取得できなかった → 異常事態
+                        logger.error(f"🚨 {store_key}/{unit_id}: 取得失敗（台番号確認が必要）")
                         prev_data = self._get_previous_unit_data(store_key, unit_id)
-                        if prev_data and (prev_data.get('art', 0) > 0 or prev_data.get('total_start', 0) > 0):
-                            # 前回データがあれば、それを保持（ただしG数は更新）
-                            logger.warning(f"{store_key}/{unit_id}: 空データ検知、前回データを保持")
-                            # statusも保持（遊技中判定のため）
-                            status = 'playing' if (prev_data.get('art', 0) > 0 or prev_data.get('total_start', 0) > 0) else 'empty'
-                            result['units'][unit_id] = {
-                                **prev_data,
-                                'total_start': games,
-                                'today_history': prev_data.get('history', []),  # 履歴も引き継ぐ
-                                'status': status,
-                                'cached': True,
-                                'stale_warning': True,
-                            }
-                            result['skipped_count'] += 1
-                            continue
+                        result['units'][unit_id] = {
+                            'unit_id': unit_id,
+                            'total_start': games,
+                            'art': prev_data.get('art', 0),
+                            'bb': prev_data.get('bb', 0),
+                            'rb': prev_data.get('rb', 0),
+                            'final_start': prev_data.get('final_start', 0),
+                            'diff_medals': prev_data.get('diff_medals', 0),
+                            'today_history': prev_data.get('history', []),
+                            'fetch_failed': True,
+                            'status': 'unknown',
+                        }
+                        result['skipped_count'] += 1
+                        continue
 
                     # 詳細ページでART=0の場合、一覧ページのARTを使う
                     if detail.get('art', 0) == 0 and arts_map.get(unit_id, 0) > 0:
@@ -262,12 +291,26 @@ class V2Fetcher:
                     if needs_force_fetch:
                         reason = "前回データが空" if prev_art == 0 else "ART/履歴矛盾"
                         logger.warning(f"{store_key}/{unit_id}: {reason} → 強制詳細取得")
-                        detail = scraper.fetch_realtime(hall_id, unit_id)
-                        # 詳細ページでART=0の場合、一覧ページのARTを使う
-                        if detail.get('art', 0) == 0 and arts_map.get(unit_id, 0) > 0:
-                            detail['art'] = arts_map[unit_id]
-                        result['units'][unit_id] = detail
-                        result['changed_count'] += 1
+                        detail = fetch_with_retry(scraper, hall_id, unit_id, max_time=60)
+                        
+                        if not detail.get('success'):
+                            logger.error(f"🚨 {store_key}/{unit_id}: 取得失敗（台番号確認が必要）")
+                            result['units'][unit_id] = {
+                                'unit_id': unit_id,
+                                'total_start': games,
+                                'art': prev_art,
+                                'bb': prev_data.get('bb', 0),
+                                'rb': prev_data.get('rb', 0),
+                                'fetch_failed': True,
+                                'status': 'unknown',
+                            }
+                            result['skipped_count'] += 1
+                        else:
+                            # 詳細ページでART=0の場合、一覧ページのARTを使う
+                            if detail.get('art', 0) == 0 and arts_map.get(unit_id, 0) > 0:
+                                detail['art'] = arts_map[unit_id]
+                            result['units'][unit_id] = detail
+                            result['changed_count'] += 1
                     else:
                         # 正常な前回データがある場合は引き継ぐ
                         result['units'][unit_id] = {
