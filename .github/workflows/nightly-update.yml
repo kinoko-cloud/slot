@@ -44,7 +44,11 @@ jobs:
       - name: Fetch latest data (final scrape of the day)
         timeout-minutes: 15
         run: |
-          python scripts/fetch_daidata_availability.py || echo "⚠️ Fetch failed (will use existing data)"
+          # v2スクレイパー（順次実行でメモリ節約）
+          echo "=== SBJ店舗取得 ==="
+          timeout 300 python scripts/scrapers_v2/fetch_all.py --sbj-only || echo "⚠️ SBJ fetch failed"
+          echo "=== 北斗店舗取得 ==="
+          timeout 300 python scripts/scrapers_v2/fetch_all.py --hokuto-only || echo "⚠️ Hokuto fetch failed"
 
       - name: Sync availability to history (確定データ移行)
         run: |

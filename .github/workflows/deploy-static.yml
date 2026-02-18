@@ -134,18 +134,11 @@ jobs:
         if: steps.check_data.outputs.needs_fetch == 'true'
         run: |
           echo "🔄 Data is stale, fetching fresh data..."
-          for attempt in 1 2 3; do
-            echo "=== Attempt $attempt / 3 ==="
-            if timeout 300 python scripts/fetch_daidata_availability.py; then
-              echo "✅ Fetch succeeded"
-              break
-            else
-              echo "❌ Fetch failed"
-              if [ $attempt -lt 3 ]; then
-                sleep 20
-              fi
-            fi
-          done
+          # v2スクレイパー（順次実行でメモリ節約）
+          echo "=== SBJ店舗取得 ==="
+          timeout 300 python scripts/scrapers_v2/fetch_all.py --sbj-only || echo "⚠️ SBJ fetch failed"
+          echo "=== 北斗店舗取得 ==="
+          timeout 300 python scripts/scrapers_v2/fetch_all.py --hokuto-only || echo "⚠️ Hokuto fetch failed"
 
       - name: Generate static site
         run: |
