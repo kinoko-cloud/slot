@@ -6,9 +6,12 @@ on:
     paths:
       - '.github/workflows/fetch-availability-v2.yml'
   schedule:
-    # JST 10-22時の毎時0分と30分
-    - cron: '0 1-13 * * *'
+    # JST 10:00 (開店時 - discovery → fetch)
+    - cron: '0 1 * * *'
+    # JST 10:30-22:30 (通常fetch)
     - cron: '30 1-13 * * *'
+    # JST 11:00-23:00 (通常fetch、営業終了22:45+余裕)
+    - cron: '0 2-14 * * *'
   workflow_dispatch:  # 手動実行も可能
 
 concurrency:
@@ -47,8 +50,21 @@ jobs:
       - name: Check unit changes (daily at 10:00)
         if: github.event.schedule == '0 1 * * *'
         run: |
-          # 毎日10時に台番号変更をチェック
+          # 毎日10時に台番号変更をチェック → stores.py自動更新
+          echo "=== 台番号チェック開始 ==="
           timeout 300 python scripts/scrapers_v2/fetch_all.py --discover 2>&1 || true
+          
+          # stores.pyが更新されていたら先にcommit
+          if ! git diff --quiet config/stores.py 2>/dev/null; then
+            echo "⚠️ 台番号変更を検出 - stores.py更新をcommit"
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add config/stores.py
+            git commit -m "auto: 台番号更新 $(TZ='Asia/Tokyo' date +'%Y-%m-%d %H:%M')"
+            git push
+          else
+            echo "✅ 台番号変更なし"
+          fi
 
       - name: Fetch with v2 scraper
         run: |
@@ -69,7 +85,7 @@ jobs:
       - name: Generate static HTML (営業時間中のみ)
         run: |
           HOUR=$(TZ='Asia/Tokyo' date +'%H')
-          if [ "$HOUR" -ge 10 ] && [ "$HOUR" -le 22 ]; then
+          if [ "$HOUR" -ge 10 ] && [ "$HOUR" -le 23 ]; then
             echo "営業時間中 ($HOUR時) - HTML生成"
             pip install jinja2
             timeout 300 python scripts/generate_static.py 2>&1 || {
