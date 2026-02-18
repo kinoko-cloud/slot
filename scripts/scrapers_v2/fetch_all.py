@@ -153,8 +153,10 @@ class V2Fetcher:
         scraper = DaidataScraper(headless=self.headless)
         
         with scraper.browser_session():
-            # model_encoded=Noneの場合は詳細ページのみで取得
-            if model_encoded is None:
+            # model_encoded=Noneの場合、または北斗2店舗は詳細ページのみで取得
+            # （北斗2は一覧→詳細遷移で規約処理が失敗しやすいため）
+            is_hokuto2 = 'hokuto2' in store_key
+            if model_encoded is None or is_hokuto2:
                 # 全台を詳細取得
                 for unit_id in expected_units:
                     detail = scraper.fetch_realtime(hall_id, unit_id)

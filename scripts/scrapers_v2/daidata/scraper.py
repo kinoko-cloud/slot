@@ -130,6 +130,23 @@ class DaidataScraper(BaseScraper):
             self.logger.debug(f"リスト表示切り替え: {e}")
         
         text = self.get_text()
+        
+        # マッチしない場合（規約ページが残っている可能性）→ リトライ
+        if 'BB' not in text or 'スタート' not in text:
+            self.logger.debug(f"Unit {unit_id}: Page may be terms page, retrying...")
+            self._accept_terms(hall_id)
+            self.wait(1500)
+            self.page.goto(url, timeout=20000, wait_until='domcontentloaded')
+            self.wait(2000)
+            # リスト表示に再度切り替え
+            try:
+                link = self.page.locator('text=リスト表示に切り替える')
+                if link.count() > 0:
+                    link.click()
+                    self.wait(2000)
+            except:
+                pass
+            text = self.get_text()
         data = {
             'unit_id': unit_id,
             'bb': 0, 'rb': 0, 'art': 0,
