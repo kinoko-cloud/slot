@@ -159,22 +159,34 @@ class V2Fetcher:
             if model_encoded is None or is_hokuto2:
                 # 全台を詳細取得
                 for unit_id in expected_units:
+                    prev_data = self._get_previous_unit_data(store_key, unit_id)
+                    prev_art = prev_data.get('art', 0)
+                    prev_hist = prev_data.get('history', [])
+                    
                     detail = scraper.fetch_realtime(hall_id, unit_id)
+                    
+                    # 空データかつ前回art>0の場合、リトライ
+                    if (detail.get('art', 0) == 0 and 
+                        detail.get('total_start', 0) == 0 and
+                        prev_art > 0):
+                        import time
+                        time.sleep(2)
+                        detail = scraper.fetch_realtime(hall_id, unit_id)
+                    
                     if detail.get('art', 0) > 0 or detail.get('total_start', 0) > 0:
                         result['units'][unit_id] = detail
                         result['changed_count'] += 1
                     else:
                         # 空データ → 前回データを保持
-                        prev_data = self._get_previous_unit_data(store_key, unit_id)
                         result['units'][unit_id] = {
                             'unit_id': unit_id,
                             'total_start': prev_data.get('total_start', 0),
-                            'art': prev_data.get('art', 0),
+                            'art': prev_art,
                             'bb': prev_data.get('bb', 0),
                             'rb': prev_data.get('rb', 0),
                             'final_start': prev_data.get('final_start', 0),
                             'diff_medals': prev_data.get('diff_medals', 0),
-                            'today_history': prev_data.get('history', []),
+                            'today_history': prev_hist,
                             'cached': True,
                             'status': 'empty',
                         }
