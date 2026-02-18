@@ -409,6 +409,10 @@ class V2Fetcher:
                 today_history = unit_data.get('today_history', [])
                 total_start = unit_data.get('total_start', 0)
                 
+                # total_startが0でも履歴があれば履歴から計算
+                if total_start == 0 and today_history:
+                    total_start = sum(h.get('start', 0) for h in today_history)
+                
                 # 総獲得枚数を計算
                 total_medals = sum(h.get('medals', 0) for h in today_history) if today_history else 0
                 max_medals = max((h.get('medals', 0) for h in today_history), default=0) if today_history else 0
@@ -430,8 +434,8 @@ class V2Fetcher:
                     'art': unit_data.get('art', 0),
                     'bb': unit_data.get('bb', 0),
                     'rb': unit_data.get('rb', 0),
-                    'total_start': unit_data.get('total_start', 0),
-                    'games': unit_data.get('total_start', 0),
+                    'total_start': total_start,  # 履歴から計算済み
+                    'games': total_start,  # 履歴から計算済み
                     'availability': availability,  # v1形式
                     'history': today_history,      # v1形式（today_history → history）
                     'diff_medals': diff_medals,
