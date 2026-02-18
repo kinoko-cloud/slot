@@ -1,90 +1,79 @@
-# 引き継ぎドキュメント (2026-02-16 10:50)
+# HANDOFF.md - 作業引き継ぎ
 
-## 本日の作業サマリー
+**最終更新:** 2026-02-19 08:55 JST
 
-### 1. 台番号自動同期機能の実装 ✅
+---
 
-**新規作成:** `scripts/scrapers_v2/sync_stores.py`
-- daidataから実際の台番号を取得し、stores.pyと比較
-- 差分があれば自動更新
-- `--update` オプションで stores.py を更新
+## 現在の状態
 
-**使い方:**
+### 本日実施した変更（2026-02-19）
+
+#### 1. GitHub Actions スケジュール改善
+- **30分間隔の交互実行**: メイン(0分) / セカンダリ(30分)
+- **営業時間**: 10:00-23:00対応
+
+#### 2. 店舗の主要/サブ分割
+**主要店舗（30分間隔）:** 渋谷系、新宿系、秋葉原系（6店舗）
+**サブ店舗（22:50/00:10）:** 赤坂、上野、高田馬場、新大久保、新小岩（6店舗）
+
+#### 3. v3効率化をメインスクレイパーに適用
+- 規約同意の毎回チェック
+- 実行時間短縮
+
+### 新規オプション（fetch_all.py）
 ```bash
-python scripts/scrapers_v2/sync_stores.py           # 差分チェックのみ
-python scripts/scrapers_v2/sync_stores.py --update  # stores.pyを更新
-python scripts/scrapers_v2/fetch_all.py --discover  # 統合版（自動更新）
-```
+# 主要店舗のみ（メイン/セカンダリworkflowで使用）
+python scripts/scrapers_v2/fetch_all.py --priority-only --sbj-only
+python scripts/scrapers_v2/fetch_all.py --priority-only --hokuto-only
 
-### 2. 台番号不整合の修正 ✅
-
-**fetch_daidata_availability.py:**
-- `ueno_espass_sbj`: 台番号を `['3110', '3111', '3112', '3113']` → `['3075', '3079', '3085', '3110', '3111', '3112', '3113', '3127', '3140']` に更新
-- `shinkoiwa_espass_sbj`: hall_id を `100948` → `100260` に修正、台番号を `['485', '486']` → `['179', '194', '485', '486']` に更新
-
-**stores.py:**
-- 6店舗を新規追加:
-  - akasaka_espass (100952)
-  - ueno_espass (100196)
-  - ueno_honkan_espass (100947)
-  - takadanobaba_espass (100915)
-  - shinokubo_espass (100951)
-  - shinkoiwa_espass (100260)
-
-**sync_stores.py:**
-- DAIDATA_HALL_IDS に上記6店舗を追加（計11店舗対応）
-
-### 3. 北斗2の台番号更新 ✅
-
-stores.pyの北斗2台番号を最新に同期済み:
-- 新宿: 38,39,40追加、17,18,19削除
-- 秋葉原: 2068削除
-- 西武新宿: 3138削除
-- 渋谷本館: range()形式からリスト形式に変換
-
-### 4. データ取得 ✅
-
-10:40に全18店舗のデータ取得完了（約5分）
-
----
-
-## 未対応・確認事項
-
-### GitHub Actions失敗
-cronアラートで報告あり:
-- Nightly Update: failure
-- Fill Missing History: failure
-
-→ ログ確認が必要
-
-### 北斗2履歴が2/14で止まっている
-5店舗で履歴が2/14で止まっている問題あり（cronアラート報告）
-
----
-
-## ファイル変更一覧
-
-```
-modified:   config/stores.py
-modified:   scripts/fetch_daidata_availability.py
-modified:   scripts/scrapers_v2/fetch_all.py
-new file:   scripts/scrapers_v2/sync_stores.py
+# サブ店舗のみ（サブworkflowで使用）
+python scripts/scrapers_v2/fetch_all.py --sub-only --sbj-only
+python scripts/scrapers_v2/fetch_all.py --sub-only --hokuto-only
 ```
 
 ---
 
-## 次のアクション候補
+## 未修正バグ
 
-1. GitHub Actionsのログ確認・修正
-2. 北斗2履歴の欠損を埋める（backfill_history.py）
-3. 台番号自動検出をGitHub Actionsに組み込む
+### 店舗個別ページの表示バグ
+**URL例:** `https://slot-e8a.pages.dev/recommend/island_akihabara_sbj`
+
+1. **日付重複表示**: 同じ日が2行表示
+2. **前日/前々日が同じ日付**: バグ
+3. **確率の微妙な違い**: 1/119 vs 1/118
+
+**修正対象:** `analysis/recommender.py` の日付処理
 
 ---
 
-## 🚨 最新アラート (15:31) - 台番号不整合再修正
+## 10時以降の確認ポイント
 
-**rankings.py と fetch_daidata_availability.py を修正:**
-- `ueno_espass_sbj`: 3110-3113に統一（古い台番号3075,3079,3085,3127,3140は削除）
-- `shinkoiwa_espass_sbj`: 485,486に統一、hall_id=100260（古い179,194は削除）
+1. discovery（台番号チェック）が動くか
+2. 主要店舗のデータ取得が正常か
+3. 表示が正しく切り替わるか
+4. v3効率化の効果（実行時間短縮）
 
-**注意:** git操作で変更がリセットされる可能性あり。コミット・プッシュが必要。
+---
+
+## ファイル構成
+
+### Workflows
+- `.github/workflows/fetch-availability-v2.yml` - メイン（毎時0分）
+- `.github/workflows/fetch-availability-secondary.yml` - セカンダリ（毎時30分）
+- `.github/workflows/fetch-availability-sub.yml` - サブ（22:50/00:10）
+
+### スクレイパー
+- `scripts/scrapers_v2/fetch_all.py` - v2統合スクレイパー
+- `scripts/scrapers_v2/daidata/scraper.py` - daidataスクレイパー
+- `scripts/fill_missing_history_v3.py` - 欠落履歴補完（手動用）
+
+### 店舗定義
+- `PRIORITY_STORES` / `SUB_STORES` → `scripts/scrapers_v2/fetch_all.py`
+
+---
+
+## 次のタスク
+
+1. [ ] 10時以降の動作確認
+2. [ ] 表示バグの修正（トップページ基準に統一）
+3. [ ] 実行時間の計測・最適化

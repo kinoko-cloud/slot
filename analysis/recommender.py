@@ -879,8 +879,34 @@ def analyze_trend(days: List[dict], machine_key: str = 'sbj') -> dict:
         return result
 
     # 日付順にソート（新しい順）、今日のデータは除外（「昨日」として今日を表示しないため）
+    # 重複日付がある場合はマージ（より完全なデータを優先）
     today_str = datetime.now(JST).strftime('%Y-%m-%d')
-    sorted_days = sorted([d for d in days if d.get('date', '') != today_str], key=lambda x: x.get('date', ''), reverse=True)
+    days_filtered = [d for d in days if d.get('date', '') != today_str]
+    
+    # 日付ごとにグループ化して重複を排除
+    date_to_day = {}
+    for d in days_filtered:
+        date = d.get('date', '')
+        if not date:
+            continue
+        if date not in date_to_day:
+            date_to_day[date] = d
+        else:
+            # 既存データとマージ（より完全な方を優先）
+            existing = date_to_day[date]
+            # historyがある方を優先
+            if d.get('history') and not existing.get('history'):
+                date_to_day[date] = d
+            # ART回数が多い方を優先（同等なら既存を維持）
+            elif d.get('art', 0) > existing.get('art', 0):
+                date_to_day[date] = d
+            # diff_medalsがある方を優先
+            elif d.get('diff_medals') and not existing.get('diff_medals'):
+                # 既存にhistoryがあれば既存を維持、なければ新しいデータを使用
+                if not existing.get('history'):
+                    date_to_day[date] = d
+    
+    sorted_days = sorted(date_to_day.values(), key=lambda x: x.get('date', ''), reverse=True)
 
     # 7日間の統計
     art_counts = []
