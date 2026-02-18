@@ -261,22 +261,38 @@ class DaidataScraper(BaseScraper):
             if match and key not in day:  # 重複防止
                 day[key] = int(match.group(1))
         
-        # 履歴テーブル
+        # 履歴テーブル（大当たり, スタート, 出玉, 種別, 時間）
         try:
             rows = self.page.locator('table tr').all()
             for row in rows[1:]:  # ヘッダースキップ
                 cells = row.locator('td').all()
-                if len(cells) >= 3:
-                    item = {
-                        'start': int(cells[0].inner_text().strip() or '0'),
-                        'type': cells[1].inner_text().strip(),
-                        'medals': int(cells[2].inner_text().strip() or '0'),
-                    }
-                    if len(cells) > 3:
-                        item['time'] = cells[3].inner_text().strip()
-                    day['history'].append(item)
-        except:
-            pass
+                if len(cells) >= 5:
+                    # カラム順: 大当たり(0), スタート(1), 出玉(2), 種別(3), 時間(4)
+                    start_text = cells[1].inner_text().strip()
+                    medals_text = cells[2].inner_text().strip()
+                    type_text = cells[3].inner_text().strip()
+                    time_text = cells[4].inner_text().strip()
+                    
+                    # 数値変換（空文字対策）
+                    try:
+                        start = int(start_text) if start_text.isdigit() else 0
+                    except:
+                        start = 0
+                    try:
+                        medals = int(medals_text) if medals_text.isdigit() else 0
+                    except:
+                        medals = 0
+                    
+                    if type_text in ['ART', 'BB', 'RB']:  # 有効なタイプのみ
+                        item = {
+                            'start': start,
+                            'medals': medals,
+                            'type': type_text,
+                            'time': time_text,
+                        }
+                        day['history'].append(item)
+        except Exception as e:
+            self.logger.debug(f"History parse error: {e}")
         
         # gamesがない場合、履歴からstartの合計を計算
         if not day.get('games') and day.get('history'):
