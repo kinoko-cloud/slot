@@ -481,7 +481,7 @@ def check_data_consistency():
             for unit in store.get('units', []):
                 unit_id = unit.get('unit_id', '?')
                 art = unit.get('art', 0)
-                history = unit.get('today_history', [])
+                history = unit.get('history', unit.get('today_history', []))
                 history_count = len(history)
                 
                 # 履歴内でhit_numがリセット（1に戻る）されている場合はスキップ
@@ -557,7 +557,7 @@ def check_history_freshness_realtime():
             for unit in store.get('units', []):
                 unit_id = unit.get('unit_id', '?')
                 art = unit.get('art', 0)
-                history = unit.get('today_history', [])
+                history = unit.get('history', unit.get('today_history', []))
                 
                 if art < 10 or not history:
                     continue  # 稼働が少ない台はスキップ（閾値を5→10に）
