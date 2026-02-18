@@ -14,7 +14,8 @@
 
 import json
 import os
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
+JST = timezone(timedelta(hours=9))
 from pathlib import Path
 from typing import Optional, List, Dict
 import sys
@@ -878,7 +879,7 @@ def analyze_trend(days: List[dict], machine_key: str = 'sbj') -> dict:
         return result
 
     # 日付順にソート（新しい順）、今日のデータは除外（「昨日」として今日を表示しないため）
-    today_str = datetime.now().strftime('%Y-%m-%d')
+    today_str = datetime.now(JST).strftime('%Y-%m-%d')
     sorted_days = sorted([d for d in days if d.get('date', '') != today_str], key=lambda x: x.get('date', ''), reverse=True)
 
     # 7日間の統計
