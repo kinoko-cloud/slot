@@ -596,6 +596,23 @@ def main():
     # 保存
     fetcher.save_availability(all_results)
     
+    # historyファイルも更新（差枚・最大・連チャンを反映）
+    try:
+        import subprocess
+        result = subprocess.run(
+            ['python3', str(ROOT / 'scripts' / 'update_history_from_availability.py')],
+            cwd=str(ROOT),
+            capture_output=True,
+            text=True,
+            timeout=60
+        )
+        if result.returncode == 0:
+            logger.info("✅ historyファイル更新完了")
+        else:
+            logger.warning(f"⚠️ historyファイル更新失敗: {result.stderr[:100]}")
+    except Exception as e:
+        logger.warning(f"⚠️ historyファイル更新エラー: {e}")
+    
     elapsed = time.time() - start
     success = sum(1 for r in all_results.values() if not r.get('error'))
     logger.info(f"完了: {success}/{len(all_results)}店舗, {elapsed:.1f}秒")

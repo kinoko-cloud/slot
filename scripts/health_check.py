@@ -634,6 +634,7 @@ def run_all_checks():
     results['checks']['data_consistency'] = check_data_consistency()
     results['checks']['history_realtime'] = check_history_freshness_realtime()
     results['checks']['history_completeness'] = check_history_completeness()
+    results['checks']['history_data'] = check_history_completeness_data()
     
     # 全体ステータス判定
     has_error = any(c.get('status') == 'error' for c in results['checks'].values())
@@ -798,6 +799,11 @@ def auto_repair(results):
             except Exception as e:
                 repairs.append(f'⚠️ データ取得開始失敗: {e}')
     
+    # 5. historyデータが不完全な場合の修復
+    hist_check = results['checks'].get('history_data', {})
+    if hist_check.get('status') == 'error':
+        repairs.append(repair_history_data())
+
     # 4. 修復後にサイト再ビルド
     if any('再取得成功' in r for r in repairs):
         try:
@@ -862,3 +868,78 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
+def check_history_completeness_data():
+    """historyファイルに当日の差枚・最大・連チャンが入っているか確認"""
+    from datetime import datetime
+    today = now_jst().strftime('%Y-%m-%d')
+    
+    issues = []
+    checked = 0
+    
+    for store_dir in HISTORY_DIR.iterdir():
+        if not store_dir.is_dir():
+            continue
+        
+        for hist_file in list(store_dir.glob('*.json'))[:5]:  # 店舗あたり5台サンプル
+            try:
+                with open(hist_file) as f:
+                    data = json.load(f)
+                
+                for day in data.get('days', []):
+                    if day.get('date') == today:
+                        checked += 1
+                        art = day.get('art', 0)
+                        if art > 0:
+                            # ARTがあるなら差枚・最大・連チャンも必要
+                            if day.get('diff_medals') is None:
+                                issues.append({
+                                    'store': store_dir.name,
+                                    'unit': hist_file.stem,
+                                    'missing': 'diff_medals'
+                                })
+                            if day.get('max_rensa') is None:
+                                issues.append({
+                                    'store': store_dir.name,
+                                    'unit': hist_file.stem,
+                                    'missing': 'max_rensa'
+                                })
+                        break
+            except:
+                continue
+    
+    if issues:
+        return {
+            'status': 'error',
+            'message': f'{len(issues)}台でhistoryデータ不完全',
+            'issues': issues[:5],
+            'total_issues': len(issues),
+            'checked': checked
+        }
+    else:
+        return {
+            'status': 'ok',
+            'message': f'historyデータ完全性OK（{checked}台確認）',
+            'checked': checked
+        }
+
+
+# auto_repairにhistoryデータ修復を追加
+def repair_history_data():
+    """historyデータが不完全な場合、availability.jsonから更新"""
+    import subprocess
+    try:
+        result = subprocess.run(
+            ['python3', str(PROJECT_ROOT / 'scripts' / 'update_history_from_availability.py')],
+            cwd=str(PROJECT_ROOT),
+            capture_output=True,
+            text=True,
+            timeout=120
+        )
+        if result.returncode == 0:
+            return '🔧 historyファイル更新成功'
+        else:
+            return f'⚠️ historyファイル更新失敗: {result.stderr[:100]}'
+    except Exception as e:
+        return f'⚠️ historyファイル更新エラー: {e}'
