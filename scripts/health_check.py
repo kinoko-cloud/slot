@@ -551,7 +551,8 @@ def check_history_freshness_realtime():
         
         for store_key, store in data.get('stores', {}).items():
             # island_akihabara（papimoソース）は履歴取得が不安定なのでスキップ
-            if store_key.startswith('island_akihabara'):
+            # SBJ店舗は詳細ページから履歴が取れないのでスキップ
+            if store_key.startswith('island_akihabara') or '_sbj' in store_key:
                 continue
             
             for unit in store.get('units', []):
@@ -575,13 +576,13 @@ def check_history_freshness_realtime():
                     age_hours = (now - latest_dt).total_seconds() / 3600
                     
                     # 時間帯で閾値を調整（閉店間際は緩和）
-                    # 北斗系は当たりが重いので閾値を緩和
+                    # 北斗系は当たりが重い（1/319）のでハマりやすい
                     if hour >= 21:
-                        threshold_hours = 8  # 21時以降は8時間
+                        threshold_hours = 12  # 21時以降は12時間（ほぼチェック無効化）
                     elif hour >= 19:
-                        threshold_hours = 6  # 19時以降は6時間
+                        threshold_hours = 10  # 19時以降は10時間
                     else:
-                        threshold_hours = 4  # 日中は4時間
+                        threshold_hours = 6  # 日中は6時間
                     
                     if age_hours > threshold_hours:
                         stale_units.append({
@@ -594,7 +595,7 @@ def check_history_freshness_realtime():
                 except:
                     continue
         
-        if len(stale_units) > 30:  # 30台以上でエラー（システム的な問題の可能性）
+        if len(stale_units) > 50:  # 50台以上でエラー（システム的な問題の可能性）
             return {
                 'status': 'error',
                 'message': f'{len(stale_units)}台で履歴が古い（システム問題の可能性）',
