@@ -245,8 +245,8 @@ def check_renchain_sanity():
     import json
     from analysis.analyzer import calculate_max_rensa
     
-    MAX_SANE_RENSA = {'sbj': 25, 'hokuto2': 20}  # 機種別の現実的な上限
-    DEFAULT_MAX = 20
+    MAX_SANE_RENSA = {'sbj': 150, 'hokuto2': 150}  # 機種別の現実的な上限（実際に100連超えもある）
+    DEFAULT_MAX = 150
     
     history_dir = BASE / 'data' / 'history'
     if not history_dir.exists():
