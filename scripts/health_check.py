@@ -982,14 +982,20 @@ def check_recent_days_completeness():
                         checked += 1
                         day = days_by_date[date]
                         art = day.get('art', 0)
+                        games = day.get('games', 0) or day.get('total_start', 0)
                         diff = day.get('diff_medals')
                         hist = day.get('history', [])
-                        # ARTがあるのにdiff/historyがない → 取得失敗
-                        if art > 0 and (diff is None or len(hist) == 0):
+                        
+                        # 判定ロジック:
+                        # - art=0 && games=0 → 稼働なし（正常）
+                        # - art=0 && games>0 → 稼働したがART未当選（正常データ）
+                        # - art>0 && hist=0 → 取得失敗（補完が必要）
+                        if art > 0 and len(hist) == 0:
                             fetch_failed[date].append({
                                 'store': store_dir.name,
                                 'unit': f.stem,
                                 'art': art,
+                                'games': games,
                             })
                     else:
                         # エントリなし → 最近のデータがあれば新規台の可能性

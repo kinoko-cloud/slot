@@ -864,8 +864,9 @@ def generate_index(env):
                     if day.get('date') == fixed_date:
                         matching_day = day
                         break
-                # art>0かつgames>0がある日のみ表示（不完全データはスキップ）
-                if matching_day and matching_day.get('art', 0) > 0 and matching_day.get('games', 0) > 0:
+                # games>0（稼働あり）の日を表示
+                # art=0でもgames>0なら「稼働したがART未当選」として正常データ
+                if matching_day and matching_day.get('games', 0) > 0:
                     new_recent_days.append(matching_day)
             rec['recent_days'] = new_recent_days
 
@@ -1537,8 +1538,9 @@ def generate_recommend_pages(env):
                         if day.get('date') == fixed_date:
                             matching_day = day
                             break
-                    # art>0かつgames>0がある日のみ表示（不完全データはスキップ）
-                    if matching_day and matching_day.get('art', 0) > 0 and matching_day.get('games', 0) > 0:
+                    # games>0（稼働あり）の日を表示
+                    # art=0でもgames>0なら「稼働したがART未当選」として正常データ
+                    if matching_day and matching_day.get('games', 0) > 0:
                         new_recent_days.append(matching_day)
                 rec['recent_days'] = new_recent_days
 
