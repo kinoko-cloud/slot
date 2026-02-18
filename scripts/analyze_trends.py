@@ -285,7 +285,7 @@ def analyze_and_save():
         store_machine_rates[key] = calculate_rates(patterns, include_store_specific=True)
     
     # 保存
-    now = datetime.now().isoformat()
+    now = datetime.now(JST).isoformat()
     
     # グローバル傾向
     global_data = {

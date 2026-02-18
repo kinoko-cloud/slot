@@ -52,7 +52,7 @@ def detect_zentai_events():
                     'good_rate': round(rate*100,1), 'avg_prob': round(sum(probs)/len(probs),1) if probs else 0,
                     'unit_ids': [u['unit_id'] for u in units if is_good_day(u, mk)],
                 })
-    return {'events': sorted(events, key=lambda x: (x['store_key'], x['date'])), 'generated_at': datetime.now().isoformat()}
+    return {'events': sorted(events, key=lambda x: (x['store_key'], x['date'])), 'generated_at': datetime.now(JST).isoformat()}
 
 def analyze_patterns(events_data):
     events = events_data.get('events', [])
@@ -75,7 +75,7 @@ def analyze_patterns(events_data):
             'hot_units': sorted(unit_freq.items(), key=lambda x: -x[1])[:10],
             'last_event': evts[-1]['date'] if evts else None,
         }
-    return {'patterns': patterns, 'generated_at': datetime.now().isoformat()}
+    return {'patterns': patterns, 'generated_at': datetime.now(JST).isoformat()}
 
 def predict_next(patterns):
     predictions = {}
@@ -91,7 +91,7 @@ def predict_next(patterns):
                 'hot_units': p.get('hot_units', [])[:5],
                 'confidence': 'low' if p['event_count']<3 else ('medium' if p['event_count']<5 else 'high'),
             }
-    return {'predictions': predictions, 'generated_at': datetime.now().isoformat()}
+    return {'predictions': predictions, 'generated_at': datetime.now(JST).isoformat()}
 
 def main():
     print("🎰 全台系イベント分析")

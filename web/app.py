@@ -869,7 +869,7 @@ def api_status(store_key: str):
 
     return jsonify({
         'store': store['name'],
-        'updated_at': datetime.now().isoformat(),
+        'updated_at': datetime.now(JST).isoformat(),
         'units': recommendations,
     })
 
@@ -899,7 +899,7 @@ def api_refresh(store_key: str):
 
     return jsonify({
         'store': store['name'],
-        'updated_at': datetime.now().isoformat(),
+        'updated_at': datetime.now(JST).isoformat(),
         'units': recommendations,
         'note': 'Using historical data. Click "Get Latest" to fetch real-time data.',
     })

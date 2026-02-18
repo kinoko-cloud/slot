@@ -75,8 +75,8 @@ def analyze_prediction_errors(verify_results: list, store_key: str, machine_key:
     analysis = {
         'store_key': store_key,
         'machine_key': machine_key,
-        'date': datetime.now().strftime('%Y-%m-%d'),
-        'weekday': WEEKDAY_NAMES[datetime.now().weekday()],
+        'date': datetime.now(JST).strftime('%Y-%m-%d'),
+        'weekday': WEEKDAY_NAMES[datetime.now(JST).weekday()],
         'total_units': len(verify_results),
         'hits': len(hits),
         'misses': len(misses),

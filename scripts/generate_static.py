@@ -142,8 +142,8 @@ def setup_jinja():
         return s
     env.filters['pad_id'] = pad_unit_id
     env.globals['pad_id'] = pad_unit_id
-    env.globals['build_time'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    env.globals['cache_bust'] = datetime.now().strftime('%Y%m%d%H%M%S')
+    env.globals['build_time'] = datetime.now(JST).strftime('%Y-%m-%d %H:%M:%S')
+    env.globals['cache_bust'] = datetime.now(JST).strftime('%Y%m%d%H%M%S')
 
     def generate_sparkline(history, width=120, height=40, diff_medals=None):
         """当たり履歴から差枚推移のSVGスパークラインを生成
@@ -1777,7 +1777,7 @@ def _try_load_backtest_results():
     """有効な実績データがある最新のバックテスト結果を読み込む（当日は未確定なのでスキップ）"""
     import glob
     from datetime import datetime, timedelta
-    today_str = datetime.now().strftime('%Y%m%d')
+    today_str = datetime.now(JST).strftime('%Y%m%d')
     yesterday_str = (datetime.now(JST) - timedelta(days=1)).strftime('%Y%m%d')
     results_files = sorted(glob.glob(str(PROJECT_ROOT / 'data' / 'verify' / 'verify_*_results.json')), reverse=True)
     for f in results_files:
@@ -1813,7 +1813,7 @@ def _try_load_backtest_results():
 def _get_latest_valid_verify():
     """有効な実績データがあるverifyファイルを返す（nodataのみ・当日はスキップ）"""
     from datetime import datetime
-    today_str = datetime.now().strftime('%Y%m%d')
+    today_str = datetime.now(JST).strftime('%Y%m%d')
     files = sorted(glob.glob('data/verify/verify_*_results.json'), reverse=True)
     for f in files:
         # 当日のverifyは未確定なのでスキップ

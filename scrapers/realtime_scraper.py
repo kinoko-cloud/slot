@@ -388,7 +388,7 @@ def main():
     """メイン処理"""
     print("=" * 60)
     print("リアルタイムデータ取得（全機種対応）")
-    print(f"取得時刻: {datetime.now().strftime('%Y-%m-%d %H:%M')}")
+    print(f"取得時刻: {datetime.now(JST).strftime('%Y-%m-%d %H:%M')}")
     print(f"対象店舗: {len([k for k in STORES if k not in _LEGACY_KEY_MAP])}店舗")
     print("=" * 60)
 
@@ -396,7 +396,7 @@ def main():
     results = scrape_realtime()
 
     # 保存
-    save_path = Path('data/raw') / f'realtime_{datetime.now().strftime("%Y%m%d_%H%M")}.json'
+    save_path = Path('data/raw') / f'realtime_{datetime.now(JST).strftime("%Y%m%d_%H%M")}.json'
     save_path.parent.mkdir(parents=True, exist_ok=True)
     with open(save_path, 'w', encoding='utf-8') as f:
         json.dump(results, f, ensure_ascii=False, indent=2)

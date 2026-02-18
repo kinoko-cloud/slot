@@ -665,7 +665,7 @@ def generate_report(all_units: list) -> str:
     report = []
     report.append("=" * 70)
     report.append("SBJ 良台分析レポート")
-    report.append(f"生成日時: {datetime.now().strftime('%Y-%m-%d %H:%M')}")
+    report.append(f"生成日時: {datetime.now(JST).strftime('%Y-%m-%d %H:%M')}")
     report.append("=" * 70)
 
     for unit_data in all_units:
@@ -722,14 +722,14 @@ def main():
     print(report)
 
     # レポート保存
-    report_path = Path('data/raw') / f'sbj_analysis_report_{datetime.now().strftime("%Y%m%d_%H%M")}.txt'
+    report_path = Path('data/raw') / f'sbj_analysis_report_{datetime.now(JST).strftime("%Y%m%d_%H%M")}.txt'
     with open(report_path, 'w', encoding='utf-8') as f:
         f.write(report)
     print(f"\n✓ レポート保存: {report_path}")
 
     # JSON形式でも保存
     analysis_results = [analyze_unit(unit) for unit in all_units]
-    json_path = Path('data/raw') / f'sbj_analysis_{datetime.now().strftime("%Y%m%d_%H%M")}.json'
+    json_path = Path('data/raw') / f'sbj_analysis_{datetime.now(JST).strftime("%Y%m%d_%H%M")}.json'
     with open(json_path, 'w', encoding='utf-8') as f:
         json.dump(analysis_results, f, ensure_ascii=False, indent=2)
     print(f"✓ 分析結果JSON保存: {json_path}")

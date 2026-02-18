@@ -182,7 +182,7 @@ def backtest_store(store_key, mk, patterns):
     return res
 
 def main():
-    print(f"[{datetime.now().isoformat()}] 日次バックテスト開始")
+    print(f"[{datetime.now(JST).isoformat()}] 日次バックテスト開始")
     
     stores = []
     for sd in HISTORY_DIR.iterdir():
@@ -196,7 +196,7 @@ def main():
         if p: patterns[sk] = p
     
     with open(ANALYSIS_DIR/'store_patterns.json','w') as f:
-        json.dump({'stores':patterns,'generated_at':datetime.now().isoformat()}, f, ensure_ascii=False, indent=2)
+        json.dump({'stores':patterns,'generated_at':datetime.now(JST).isoformat()}, f, ensure_ascii=False, indent=2)
     print(f"  パターン更新: {len(patterns)}店舗")
     
     total = {'pred':0,'hits':0,'actual':0}
@@ -211,7 +211,7 @@ def main():
     cov = total['hits']/total['actual']*100 if total['actual']>0 else 0
     print(f"  精度: {acc:.1f}% / カバー: {cov:.1f}%")
     
-    entry = {'date':datetime.now().strftime('%Y-%m-%d'),'accuracy':round(acc,2),'coverage':round(cov,2),
+    entry = {'date':datetime.now(JST).strftime('%Y-%m-%d'),'accuracy':round(acc,2),'coverage':round(cov,2),
              'total_pred':total['pred'],'total_hits':total['hits'],
              'stores':{sk:{'acc':round(r['hits']/r['pred']*100,1) if r['pred']>0 else 0} for sk,r in sr.items()}}
     
@@ -222,7 +222,7 @@ def main():
     logs.append(entry)
     logs = logs[-30:]
     with open(LOG_FILE,'w') as f: json.dump(logs, f, ensure_ascii=False, indent=2)
-    print(f"[{datetime.now().isoformat()}] 完了")
+    print(f"[{datetime.now(JST).isoformat()}] 完了")
 
 if __name__ == '__main__':
     main()

@@ -87,7 +87,7 @@ def get_store_daily_data(store_key: str) -> dict:
         'store_name': store['name'],
         'event_days': '',
         'anniversary': '',
-        'fetched_at': datetime.now().isoformat(),
+        'fetched_at': datetime.now(JST).isoformat(),
         'days': [],
     }
 

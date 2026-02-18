@@ -56,8 +56,8 @@ def get_unit_detail_full(page, hall_id: str, unit_id: str):
 
     result = {
         'unit_id': unit_id,
-        'date': datetime.now().strftime('%Y-%m-%d'),
-        'fetched_at': datetime.now().isoformat(),
+        'date': datetime.now(JST).strftime('%Y-%m-%d'),
+        'fetched_at': datetime.now(JST).isoformat(),
         'raw_text': text[:3000],
     }
 
@@ -223,7 +223,7 @@ def main():
                 results.append(detail)
 
             # 保存
-            save_path = Path('data/raw') / f'sbj_espass_shibuya_{datetime.now().strftime("%Y%m%d_%H%M")}.json'
+            save_path = Path('data/raw') / f'sbj_espass_shibuya_{datetime.now(JST).strftime("%Y%m%d_%H%M")}.json'
             save_path.parent.mkdir(parents=True, exist_ok=True)
             with open(save_path, 'w', encoding='utf-8') as f:
                 json.dump(results, f, ensure_ascii=False, indent=2)

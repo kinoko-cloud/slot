@@ -260,7 +260,7 @@ def get_store_weekday_info(store_key: str) -> dict:
                 break
     if not store_info:
         return {}
-    today_weekday = WEEKDAY_NAMES[datetime.now().weekday()]
+    today_weekday = WEEKDAY_NAMES[datetime.now(JST).weekday()]
     today_rating = store_info['day_ratings'].get(today_weekday, 3)
     return {
         'short_name': store_info['short_name'],
@@ -298,7 +298,7 @@ def load_daily_data(date_str: str = None, machine_key: str = None) -> dict:
         読み込んだデータ辞書
     """
     if date_str is None:
-        date_str = datetime.now().strftime('%Y%m%d')
+        date_str = datetime.now(JST).strftime('%Y%m%d')
 
     data_dir = Path(__file__).parent.parent / 'data' / 'daily'
 
@@ -1226,7 +1226,7 @@ def analyze_today_data(unit_data: dict, current_hour: int = None, machine_key: s
         machine_key: 機種キー（'sbj', 'hokuto2'）- 閾値判定に使用
     """
     if current_hour is None:
-        current_hour = datetime.now().hour
+        current_hour = datetime.now(JST).hour
 
     result = {
         'art_count': 0,
@@ -1257,7 +1257,7 @@ def analyze_today_data(unit_data: dict, current_hour: int = None, machine_key: s
     if 'days' not in unit_data:
         today_data = unit_data
         result['status'] = 'リアルタイム'
-        result['data_date'] = datetime.now().strftime('%Y-%m-%d')
+        result['data_date'] = datetime.now(JST).strftime('%Y-%m-%d')
         result['is_today_data'] = True
     else:
         # 日別データ形式の場合
@@ -1265,7 +1265,7 @@ def analyze_today_data(unit_data: dict, current_hour: int = None, machine_key: s
         if not days:
             return result
 
-        today = datetime.now().strftime('%Y-%m-%d')
+        today = datetime.now(JST).strftime('%Y-%m-%d')
         yesterday = (datetime.now(JST) - timedelta(days=1)).strftime('%Y-%m-%d')
         today_data = None
         yesterday_data = None
@@ -1378,7 +1378,7 @@ def analyze_today_data(unit_data: dict, current_hour: int = None, machine_key: s
 
     # 時間帯に対する稼働量の評価
     if current_hour >= 10:
-        elapsed_hours = current_hour - 10 + (datetime.now().minute / 60)
+        elapsed_hours = current_hour - 10 + (datetime.now(JST).minute / 60)
         expected_games_per_hour = 800  # 設定6なら1時間800Gくらい
         result['expected_games'] = elapsed_hours * expected_games_per_hour * 0.7  # 70%稼働想定
 
@@ -2106,7 +2106,7 @@ def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
     today_rating = weekday_info.get('today_rating', 3)
 
     # 翌日/本日の表現（0:00〜10:00は「本日」、10:00〜24:00は「翌日」）
-    _hour = datetime.now().hour
+    _hour = datetime.now(JST).hour
     next_day_label = '本日' if _hour < 10 else '翌日'
 
     total_games = today.get('total_games', 0)
@@ -2749,7 +2749,7 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
     # 全台の当日データを収集（比較用）
     all_units_today = []
     from datetime import datetime
-    now_hour = datetime.now().hour
+    now_hour = datetime.now(JST).hour
     is_business_hours = 10 <= now_hour <= 22
 
     if realtime_data and 'units' in realtime_data:
@@ -2766,7 +2766,7 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
         if store_data:
             for unit in store_data.get('units', []):
                 # 当日データを探す
-                today_str = datetime.now().strftime('%Y-%m-%d')
+                today_str = datetime.now(JST).strftime('%Y-%m-%d')
                 for day in unit.get('days', []):
                     if day.get('date') == today_str:
                         all_units_today.append(day)
@@ -2866,7 +2866,7 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
             if fetched_at:
                 try:
                     fetch_date = datetime.fromisoformat(fetched_at).strftime('%Y-%m-%d')
-                    today_str_check = datetime.now().strftime('%Y-%m-%d')
+                    today_str_check = datetime.now(JST).strftime('%Y-%m-%d')
                     realtime_is_today = (fetch_date == today_str_check)
                 except:
                     pass
@@ -2895,7 +2895,7 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
         # 日別データからも分析（リアルタイムデータがない場合）
         # ⚠️ 営業中（10-22時）は昨日のデータにフォールバックしない
         from datetime import datetime
-        now_hour = datetime.now().hour
+        now_hour = datetime.now(JST).hour
         is_business_hours = 10 <= now_hour <= 22
 
         if daily_data and today_analysis.get('status') == '-' and not is_business_hours:
@@ -2925,7 +2925,7 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
 
                 if is_business_hours:
                     # 営業中：当日のhistoryとtotal_gamesを補完（常に実行）
-                    today_str = datetime.now().strftime('%Y-%m-%d')
+                    today_str = datetime.now(JST).strftime('%Y-%m-%d')
                     for day in _hist_unit_data.get('days', []):
                         if day.get('date') == today_str:
                             # historyがない、または空の場合に補完
@@ -3122,7 +3122,7 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
         pattern_bonus = 0
         try:
             from analysis.store_pattern import calculate_pattern_bonus
-            _target_date = datetime.now().strftime('%Y-%m-%d')
+            _target_date = datetime.now(JST).strftime('%Y-%m-%d')
             pattern_bonus = calculate_pattern_bonus(store_key, machine_key, unit_id, _target_date)
         except Exception:
             pass
@@ -3157,7 +3157,7 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
                 uid_str = str(unit_id)
                 unit_corr = corrections['unit_corrections'].get(uid_str, 0)
                 # 曜日補正
-                wd_name = ['月', '火', '水', '木', '金', '土', '日'][datetime.now().weekday()]
+                wd_name = ['月', '火', '水', '木', '金', '土', '日'][datetime.now(JST).weekday()]
                 wd_corr = corrections['weekday_corrections'].get(wd_name, 0)
                 feedback_bonus = int((unit_corr + wd_corr) * corrections['confidence'])
         except Exception:
@@ -3215,7 +3215,7 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
                 pass
         
         # 当日の履歴を取得（リアルタイムデータを優先）
-        today_str = datetime.now().strftime('%Y-%m-%d')
+        today_str = datetime.now(JST).strftime('%Y-%m-%d')
         yesterday_str = (datetime.now(JST) - timedelta(days=1)).strftime('%Y-%m-%d')
         
         # まずリアルタイムデータからtoday_historyを取得（最優先）
@@ -3249,7 +3249,7 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
 
         # データ日付を取得（今日 or 昨日）
         data_date = today_analysis.get('data_date', '')
-        is_today_data = data_date == datetime.now().strftime('%Y-%m-%d') if data_date else False
+        is_today_data = data_date == datetime.now(JST).strftime('%Y-%m-%d') if data_date else False
 
         # 現在のハマりG数（generate_reasonsで連チャン中判定に必要）
         _final_start = 0
@@ -3645,7 +3645,7 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
             if len(_rot_days) >= 5:
                 _new_rot = analyze_rotation_pattern(_rot_days, machine_key=machine_key)
                 # reasonsのローテ行を差し替え
-                _hour = datetime.now().hour
+                _hour = datetime.now(JST).hour
                 _ndl = '本日' if _hour < 10 else '翌日'
                 _old_rot_prefix = '🔄 ローテ傾向:'
                 rec['reasons'] = [r for r in rec['reasons'] if not r.startswith(_old_rot_prefix)]
@@ -3658,7 +3658,7 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
         _has_2day_bad = any('直近2日とも不調' in r for r in rec['reasons'])
         _bad_th = get_machine_threshold(machine_key, 'bad_prob')
         if _yp >= _bad_th and _dbp >= _bad_th and not _has_2day_bad:
-            _hour = datetime.now().hour
+            _hour = datetime.now(JST).hour
             _ndl = '本日' if _hour < 10 else '翌日'
             _mk = machine_info.get('key', 'sbj') if machine_info else 'sbj'
             _mr = get_machine_recovery_stats(_mk)
@@ -3714,7 +3714,7 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
             max_sa_count = max(2, int(round(policy['avg_good_per_day'])))
         else:
             # フォールバック: 従来の計算
-            target_weekday = datetime.now().weekday()
+            target_weekday = datetime.now(JST).weekday()
             _store_good_rate = _get_store_dynamic_good_rate(store_key, machine_key, target_weekday)
             if _store_good_rate < 0.2:
                 _store_good_rate = _estimate_store_good_rate(store_key, machine_key, perf_days_all=sorted_by_score)
@@ -3830,7 +3830,7 @@ def format_recommendations(recommendations: list, store_name: str, machine_name:
     """
     lines = []
     lines.append(f"=== {store_name} {machine_name} 推奨台 ===")
-    lines.append(f"更新: {datetime.now().strftime('%H:%M')}")
+    lines.append(f"更新: {datetime.now(JST).strftime('%H:%M')}")
     lines.append("")
 
     # S/Aランクを推奨台として表示

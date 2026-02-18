@@ -234,7 +234,7 @@ def scrape_sbj_island(days_back: int = 14) -> list:
                 result['hall_id'] = hall_id
                 result['hall_name'] = hall_name
                 result['machine_name'] = 'Lスーパーブラックジャック'
-                result['fetched_at'] = datetime.now().isoformat()
+                result['fetched_at'] = datetime.now(JST).isoformat()
 
                 all_results.append(result)
 
@@ -254,7 +254,7 @@ def scrape_sbj_island(days_back: int = 14) -> list:
             browser.close()
 
     # 保存
-    save_path = Path('data/raw') / f'papimo_island_sbj_{datetime.now().strftime("%Y%m%d_%H%M")}.json'
+    save_path = Path('data/raw') / f'papimo_island_sbj_{datetime.now(JST).strftime("%Y%m%d_%H%M")}.json'
     save_path.parent.mkdir(parents=True, exist_ok=True)
     with open(save_path, 'w', encoding='utf-8') as f:
         json.dump(all_results, f, ensure_ascii=False, indent=2)
@@ -318,7 +318,7 @@ def scrape_island_machine(machine_key: str = 'hokuto2', days_back: int = 7) -> l
                 result['hall_id'] = hall_id
                 result['hall_name'] = hall_name
                 result['machine_name'] = machine_name
-                result['fetched_at'] = datetime.now().isoformat()
+                result['fetched_at'] = datetime.now(JST).isoformat()
                 all_results.append(result)
         except Exception as e:
             print(f"エラー: {e}")
@@ -329,7 +329,7 @@ def scrape_island_machine(machine_key: str = 'hokuto2', days_back: int = 7) -> l
 
     # 保存
     tag = 'hokuto' if 'hokuto' in machine_key else 'sbj'
-    save_path = Path('data/raw') / f'papimo_island_{tag}_{datetime.now().strftime("%Y%m%d_%H%M")}.json'
+    save_path = Path('data/raw') / f'papimo_island_{tag}_{datetime.now(JST).strftime("%Y%m%d_%H%M")}.json'
     save_path.parent.mkdir(parents=True, exist_ok=True)
     with open(save_path, 'w', encoding='utf-8') as f:
         json.dump(all_results, f, ensure_ascii=False, indent=2)

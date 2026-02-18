@@ -180,7 +180,7 @@ def collect_and_save(store_key: str = None, days_back: int = 1) -> dict:
                         'machine_key': mk,
                         'pmc': store['pmc'],
                         'mdc': store['machines'][mk],
-                        'fetched_at': datetime.now().isoformat(),
+                        'fetched_at': datetime.now(JST).isoformat(),
                         'units': units,
                     }, f, ensure_ascii=False, indent=2)
                 print(f'  保存: {save_path}')

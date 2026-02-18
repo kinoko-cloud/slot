@@ -262,7 +262,7 @@ def main():
 
     print(f"===== 蓄積DBバッチ更新 =====")
     print(f"target: {TARGET_DATE}")
-    print(f"時刻: {datetime.now().strftime('%H:%M:%S')}")
+    print(f"時刻: {datetime.now(JST).strftime('%H:%M:%S')}")
 
     daidata_by_hall, papimo_tasks = get_missing_units(TARGET_DATE)
     n_dai = sum(len(v) for v in daidata_by_hall.values())

@@ -478,7 +478,7 @@ def is_target_for_realtime(
     is_target = priority >= 2
     
     # 期待収支計算
-    remaining_hours = max(0, 23 - datetime.now().hour)
+    remaining_hours = max(0, 23 - datetime.now(JST).hour)
     if priority >= 3:
         expected_profit = remaining_hours * 1500  # 高設定期待
     elif priority >= 1:

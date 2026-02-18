@@ -184,7 +184,7 @@ def sync_store_to_history(store_key: str, store_data: dict, date_str: str):
         }
         
         unit_history['days'].append(day_entry)
-        unit_history['last_updated'] = datetime.now().isoformat()
+        unit_history['last_updated'] = datetime.now(JST).isoformat()
         
         with open(history_file, 'w') as f:
             json.dump(unit_history, f, ensure_ascii=False, indent=2)
@@ -201,7 +201,7 @@ def main():
     # availability.jsonを読み込み
     avail = load_availability_json()
     fetched_at = avail.get('fetched_at', '')
-    date_str = fetched_at[:10] if fetched_at else datetime.now().strftime('%Y-%m-%d')
+    date_str = fetched_at[:10] if fetched_at else datetime.now(JST).strftime('%Y-%m-%d')
     print(f"データ日付: {date_str}")
     
     stores = avail.get('stores', {})

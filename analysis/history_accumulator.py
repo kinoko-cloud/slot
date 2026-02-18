@@ -8,6 +8,7 @@ import json
 import os
 import sys
 from datetime import datetime
+JST = timezone(timedelta(hours=9))
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -280,7 +281,7 @@ def _accumulate_unit(store_key: str, unit_id: str, days: list, machine_key: str)
     if added > 0 or updated > 0:
         # 日付順ソート（古い順）
         existing['days'].sort(key=lambda x: x.get('date', ''))
-        existing['last_updated'] = datetime.now().isoformat()
+        existing['last_updated'] = datetime.now(JST).isoformat()
 
         with open(file_path, 'w', encoding='utf-8') as f:
             json.dump(existing, f, ensure_ascii=False, indent=1)

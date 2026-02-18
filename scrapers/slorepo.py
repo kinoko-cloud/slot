@@ -84,7 +84,7 @@ def get_machine_monthly_data(shop_id: str) -> list[dict]:
                     'this_month_total': int(this_match.group(1).replace(',', '')) if this_match else 0,
                     'this_month_avg_per_day': int(avg_match.group(1)) if avg_match else 0,
                     'last_month_raw': last_month,
-                    'fetched_at': datetime.now().isoformat(),
+                    'fetched_at': datetime.now(JST).isoformat(),
                 })
 
     return results
@@ -150,7 +150,7 @@ def get_daily_machine_data(shop_id: str, date_str: str = None) -> list[dict]:
                     'total_games': int(games_match.group(1).replace(',', '')) if games_match else 0,
                     'win_units': int(win_match.group(1)) if win_match else 0,
                     'total_units': int(win_match.group(2)) if win_match else 0,
-                    'fetched_at': datetime.now().isoformat(),
+                    'fetched_at': datetime.now(JST).isoformat(),
                 })
 
     return results
@@ -214,7 +214,7 @@ def main():
 
     # 保存
     print("\n" + "=" * 60)
-    today = datetime.now().strftime('%Y%m%d')
+    today = datetime.now(JST).strftime('%Y%m%d')
     save_json(all_monthly, f'sbj_monthly_{today}.json')
     save_json(all_daily, f'sbj_daily_{today}.json')
 

@@ -52,7 +52,7 @@ def get_all_history(hall_id: str = "100860", unit_id: str = "3011", hall_name: s
                 'unit_id': unit_id,
                 'hall_id': hall_id,
                 'hall_name': hall_name,
-                'fetched_at': datetime.now().isoformat(),
+                'fetched_at': datetime.now(JST).isoformat(),
                 'days': []
             }
 
@@ -148,7 +148,7 @@ def get_all_history(hall_id: str = "100860", unit_id: str = "3011", hall_name: s
                     page.screenshot(path=f'data/raw/daidata_{unit_id}_detail_{i}.png')
 
             # 保存
-            save_path = Path('data/raw') / f'sbj_{unit_id}_history_{datetime.now().strftime("%Y%m%d_%H%M")}.json'
+            save_path = Path('data/raw') / f'sbj_{unit_id}_history_{datetime.now(JST).strftime("%Y%m%d_%H%M")}.json'
             save_path.parent.mkdir(parents=True, exist_ok=True)
             with open(save_path, 'w', encoding='utf-8') as f:
                 json.dump(result, f, ensure_ascii=False, indent=2)
@@ -179,7 +179,7 @@ def _parse_overview_summary(text: str) -> dict:
         {date_str: {'max_medals_day': int, 'total_start': int, 'bb': int, 'rb': int, 'art': int}}
     """
     result = {}
-    year = datetime.now().year
+    year = datetime.now(JST).year
     
     # 日付セクションごとに分割
     # パターン: X月Y日 （詳細を見る）
@@ -191,7 +191,7 @@ def _parse_overview_summary(text: str) -> dict:
         section_text = sections[i + 2]
         
         # 前年判定
-        current_month = datetime.now().month
+        current_month = datetime.now(JST).month
         y = year if month <= current_month else year - 1
         date_str = f"{y}-{month:02d}-{day:02d}"
         
@@ -231,9 +231,9 @@ def extract_day_history(text: str, unit_id: str) -> dict:
     date_match = re.search(r'(\d{1,2})月(\d{1,2})日', text)
     if date_match:
         month, day = date_match.groups()
-        year = datetime.now().year
+        year = datetime.now(JST).year
         # 1月なのに12月のデータの場合は前年
-        current_month = datetime.now().month
+        current_month = datetime.now(JST).month
         if int(month) > current_month:
             year -= 1
         data['date'] = f"{year}-{int(month):02d}-{int(day):02d}"
@@ -325,7 +325,7 @@ def main():
             all_results.append(result)
 
     # 全台分を保存
-    save_path = Path('data/raw') / f'sbj_all_history_{datetime.now().strftime("%Y%m%d_%H%M")}.json'
+    save_path = Path('data/raw') / f'sbj_all_history_{datetime.now(JST).strftime("%Y%m%d_%H%M")}.json'
     with open(save_path, 'w', encoding='utf-8') as f:
         json.dump(all_results, f, ensure_ascii=False, indent=2)
     print(f"\n✓ 全台保存: {save_path}")
