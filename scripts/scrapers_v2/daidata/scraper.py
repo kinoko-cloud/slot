@@ -42,74 +42,53 @@ class DaidataScraper(BaseScraper):
             pass
     
     def _accept_terms(self, hall_id: str) -> bool:
-        """規約同意処理"""
-        if hall_id in self._agreed_halls:
-            return True
-        
+        """規約同意処理（v3方式: 毎回チェック）"""
+        # v3効率化: ホール管理せず毎回ボタンをチェック
         try:
-            # ボタン形式（複数パターン対応）
+            # メインのボタン（最も一般的）
+            agree_btn = self.page.locator('button:has-text("利用規約に同意する")')
+            if agree_btn.count() > 0 and agree_btn.first.is_visible():
+                agree_btn.first.click()
+                self.wait(2000)
+                self._remove_ads()
+                self.logger.info(f"Terms accepted for hall {hall_id}")
+                return True
+            
+            # その他のパターン
             selectors = [
-                'button:has-text("利用規約に同意する")',
                 'input[type="submit"][value*="同意"]',
                 'button:has-text("同意する")',
                 'a:has-text("利用規約に同意する")',
                 'a:has-text("同意する")',
-                '.agree-button',
-                '#agree-btn',
             ]
             
             for selector in selectors:
                 try:
                     elem = self.page.locator(selector)
-                    if elem.count() > 0:
+                    if elem.count() > 0 and elem.first.is_visible():
                         elem.first.click()
-                        self.wait(3000)
-                        self._agreed_halls.add(hall_id)
+                        self.wait(2000)
+                        self._remove_ads()
                         self.logger.info(f"Terms accepted for hall {hall_id} via {selector}")
                         return True
                 except:
                     continue
-            
-            # リンク形式
-            link = self.page.locator('a:has-text("同意")')
-            if link.count() > 0:
-                link.first.click()
-                self.wait(2000)
-                self._agreed_halls.add(hall_id)
-                return True
                 
         except Exception as e:
-            self.logger.debug(f"Terms accept: {e}")
+            self.logger.debug(f"Terms accept check: {e}")
         
         return False
     
     def _goto_with_terms(self, url: str, hall_id: str) -> bool:
-        """ページ遷移＋規約同意"""
+        """ページ遷移＋規約同意（v3方式: シンプル化）"""
         if not self.navigate(url):
             return False
         
-        self.wait(1500)
+        self.wait(2500)  # v3と同じ待機時間
         self._remove_ads()
-        self._accept_terms(hall_id)
         
-        # 規約ページにリダイレクトされた場合、元のURLに戻る
-        current_url = self.page.url
-        page_text = self.get_text()[:500]
-        if 'terms' in current_url or 'accept' in current_url or '規約' in page_text or '同意' in page_text:
-            self.logger.info(f"Detected terms page: {current_url}")
-            self._accept_terms(hall_id)
-            self.wait(2000)
-            # 同意後に元のURLに遷移
-            if not self.navigate(url):
-                return False
-            self.wait(1500)
-            self._remove_ads()
-            # 再度リダイレクトされた場合のリトライ
-            if 'accept' in self.page.url:
-                self._accept_terms(hall_id)
-                self.wait(2000)
-                self.navigate(url)
-                self.wait(1500)
+        # 規約同意（表示されていたらクリック）
+        self._accept_terms(hall_id)
         
         return True
     
