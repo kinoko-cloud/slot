@@ -43,19 +43,28 @@ jobs:
 
       - name: Fetch latest data (final scrape of the day)
         timeout-minutes: 20
+        env:
+          # Playwrightのパイプエラーを回避
+          PLAYWRIGHT_BROWSERS_PATH: /tmp/pw-browsers
         run: |
           # v2スクレイパー（店舗ごとに実行して1つ失敗しても他は成功するように）
           echo "=== SBJ店舗取得 ==="
-          timeout 180 python scripts/scrapers_v2/fetch_all.py --sbj-only --daidata-only || echo "⚠️ SBJ daidata failed"
+          timeout 180 python scripts/scrapers_v2/fetch_all.py --sbj-only --daidata-only 2>&1 || echo "⚠️ SBJ daidata failed"
+          
+          # クリーンアップ待ち
+          sleep 10
           
           echo "=== 北斗店舗取得（1店舗ずつ）==="
           for store in seibu_shinjuku_espass_hokuto2 shibuya_espass_hokuto2 shibuya_honkan_espass_hokuto2 shinjuku_espass_hokuto2 akiba_espass_hokuto2; do
             echo "--- $store ---"
-            timeout 120 python scripts/scrapers_v2/fetch_all.py --store $store || echo "⚠️ $store failed"
+            # プロセス間にインターバルを入れてブラウザのクリーンアップを確実にする
+            sleep 10
+            timeout 120 python scripts/scrapers_v2/fetch_all.py --store $store 2>&1 || echo "⚠️ $store failed"
           done
           
+          sleep 10
           echo "=== papimo取得 ==="
-          timeout 120 python scripts/scrapers_v2/fetch_all.py --papimo-only || echo "⚠️ papimo failed"
+          timeout 120 python scripts/scrapers_v2/fetch_all.py --papimo-only 2>&1 || echo "⚠️ papimo failed"
 
       - name: Sync availability to history (確定データ移行)
         run: |
