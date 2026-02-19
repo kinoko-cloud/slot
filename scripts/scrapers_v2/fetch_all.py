@@ -479,6 +479,7 @@ class V2Fetcher:
                     'rb': unit_data.get('rb', 0),
                     'total_start': total_start,  # 履歴から計算済み
                     'games': total_start,  # 履歴から計算済み
+                    'final_start': unit_data.get('final_start', 0),  # 現在のスタート数（ハマり）
                     'availability': availability,  # v1形式
                     'history': today_history,      # v1形式（today_history → history）
                     'diff_medals': diff_medals,
