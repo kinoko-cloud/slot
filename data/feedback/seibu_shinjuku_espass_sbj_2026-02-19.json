@@ -6,17 +6,25 @@
   "total_units": 3,
   "hits": 0,
   "misses": 1,
-  "surprises": 0,
+  "surprises": 1,
   "miss_details": [
     {
       "unit_id": "3186",
-      "score": 57,
-      "actual_prob": 367,
+      "score": 56,
+      "actual_prob": 357,
       "reasons": [
-        "低稼働(735G)",
-        "設定1域(1/367)"
+        "低稼働(715G)",
+        "設定1域(1/357)"
       ]
     }
   ],
-  "surprise_details": []
+  "surprise_details": [
+    {
+      "unit_id": "3185",
+      "rank": "D",
+      "score": 44,
+      "actual_prob": 127,
+      "reasons": []
+    }
+  ]
 }

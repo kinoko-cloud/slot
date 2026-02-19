@@ -155,13 +155,27 @@ class DaidataScraper(BaseScraper):
             'fetched_at': now_jst().isoformat()
         }
         
-        # BB RB ART スタート回数
-        match = re.search(r'BB\s+RB\s+ART\s+スタート回数\s*\n?\s*(\d+)\s+(\d+)\s+(\d+)\s+(\d+)', text)
+        # BB RB ART スタート回数（複数パターン対応）
+        match = re.search(r'BB\s+RB\s+ART\s+スタート回数?\s*\n?\s*(\d+)\s+(\d+)\s+(\d+)\s+(\d+)', text)
         if match:
             data['bb'] = int(match.group(1))
             data['rb'] = int(match.group(2))
             data['art'] = int(match.group(3))
             data['final_start'] = int(match.group(4))
+        else:
+            # フォールバック: 各項目を個別に取得
+            bb_match = re.search(r'BB\s*\n?\s*(\d+)', text)
+            rb_match = re.search(r'RB\s*\n?\s*(\d+)', text)
+            art_match = re.search(r'ART\s*\n?\s*(\d+)', text)
+            start_match = re.search(r'スタート(?:回数)?\s*\n?\s*(\d+)', text)
+            if bb_match:
+                data['bb'] = int(bb_match.group(1))
+            if rb_match:
+                data['rb'] = int(rb_match.group(1))
+            if art_match:
+                data['art'] = int(art_match.group(1))
+            if start_match:
+                data['final_start'] = int(start_match.group(1))
         
         # 累計スタート（複数パターン対応）
         total = re.search(r'累計スタート\s*\n?\s*(\d+)', text)
