@@ -61,11 +61,16 @@ def fetch_with_retry(scraper, hall_id: str, unit_id: str, max_time: int = 60) ->
             return {'unit_id': unit_id, 'success': False, 'error': 'max_time_exceeded'}
         
         data = scraper.fetch_realtime(hall_id, unit_id)
-        
+
+        # 台変動（パチンコ・見つからない）はリトライせず即返す
+        if data.get('machine_mismatch') or data.get('not_found'):
+            data['success'] = True  # 取得自体は成功（台変動を正常検知）
+            return data
+
         # 成功判定: 必須フィールドがパースできているか
         # （値が0でもパースできていれば成功）
         has_data = 'bb' in data and 'art' in data and data.get('error') is None
-        
+
         if has_data:
             data['success'] = True
             return data
@@ -199,11 +204,32 @@ class V2Fetcher:
             # （北斗2は一覧→詳細遷移で規約処理が失敗しやすいため）
             is_hokuto2 = 'hokuto2' in store_key
             if model_encoded is None or is_hokuto2:
+                # 一覧ページからスタート回数を先に取得（詳細ページfinal_start=0の補完用）
+                starts_map = {}
+                if model_encoded:
+                    try:
+                        list_data = scraper.fetch_list_with_availability(
+                            hall_id, model_encoded, expected_units
+                        )
+                        starts_map = list_data.get('starts', {})
+                        logger.info(f"{store_key}: 一覧ページstarts取得: {len(starts_map)}台")
+                    except Exception as e:
+                        logger.warning(f"{store_key}: 一覧ページ取得失敗 ({e}), 詳細のみで継続")
+
                 # 全台を詳細取得（取れるまでリトライ）
                 for unit_id in expected_units:
                     detail = fetch_with_retry(scraper, hall_id, unit_id, max_time=60)
-                    
+
                     if detail.get('success'):
+                        # 台変動（パチンコ・見つからない）はスキップ
+                        if detail.get('machine_mismatch') or detail.get('not_found'):
+                            logger.info(f"{store_key}/{unit_id}: 台変動のためスキップ")
+                            result['skipped_count'] += 1
+                            continue
+                        # 詳細ページでfinal_start=0の場合、一覧ページのスタート回数で補完
+                        if detail.get('final_start', 0) == 0 and starts_map.get(unit_id, 0) > 0:
+                            detail['final_start'] = starts_map[unit_id]
+                            logger.debug(f"{store_key}/{unit_id}: final_start補完 → {starts_map[unit_id]}")
                         result['units'][unit_id] = detail
                         result['changed_count'] += 1
                     else:
@@ -270,14 +296,20 @@ class V2Fetcher:
                         result['skipped_count'] += 1
                         continue
 
+                    # 台変動（パチンコ・見つからない）はスキップ
+                    if detail.get('machine_mismatch') or detail.get('not_found'):
+                        logger.info(f"{store_key}/{unit_id}: 台変動のためスキップ")
+                        result['skipped_count'] += 1
+                        continue
+
                     # 詳細ページでART=0の場合、一覧ページのARTを使う
                     if detail.get('art', 0) == 0 and arts_map.get(unit_id, 0) > 0:
                         detail['art'] = arts_map[unit_id]
-                    
+
                     # 詳細ページでfinal_start=0の場合、一覧ページのスタート回数を使う
                     if detail.get('final_start', 0) == 0 and starts_map.get(unit_id, 0) > 0:
                         detail['final_start'] = starts_map[unit_id]
-                    
+
                     result['units'][unit_id] = detail
                     result['changed_count'] += 1
                 else:

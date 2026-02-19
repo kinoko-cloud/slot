@@ -109,7 +109,7 @@ class DaidataScraper(BaseScraper):
             self.logger.debug(f"リスト表示切り替え: {e}")
         
         text = self.get_text()
-        
+
         # マッチしない場合（規約ページが残っている可能性）→ リトライ
         if 'BB' not in text or 'スタート' not in text:
             self.logger.debug(f"Unit {unit_id}: Page may be terms page, retrying...")
@@ -126,6 +126,27 @@ class DaidataScraper(BaseScraper):
             except:
                 pass
             text = self.get_text()
+
+        # 機種種別チェック（台変動検知）
+        # ページ先頭20行以内に'Slot'または'Pachinko'が表示される
+        fetched_at = now_jst().isoformat()
+        if 'お探しの台は見つかりませんでした' in text:
+            self.logger.info(f"Unit {unit_id}: 台が見つからない（撤去または台番号変更）")
+            return {'unit_id': unit_id, 'not_found': True, 'error': 'not_found',
+                    'bb': 0, 'rb': 0, 'art': 0, 'total_start': 0, 'final_start': 0,
+                    'status': 'empty', 'fetched_at': fetched_at}
+        page_kind = None
+        for line in text.split('\n')[:20]:
+            stripped = line.strip()
+            if stripped in ('Slot', 'Pachinko'):
+                page_kind = stripped
+                break
+        if page_kind == 'Pachinko':
+            self.logger.warning(f"Unit {unit_id}: パチンコ台（台変動）- スキップ")
+            return {'unit_id': unit_id, 'machine_mismatch': True, 'error': 'machine_mismatch',
+                    'bb': 0, 'rb': 0, 'art': 0, 'total_start': 0, 'final_start': 0,
+                    'status': 'empty', 'fetched_at': fetched_at}
+
         data = {
             'unit_id': unit_id,
             'bb': 0, 'rb': 0, 'art': 0,
