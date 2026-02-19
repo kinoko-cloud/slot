@@ -418,10 +418,20 @@ class DaidataScraper(BaseScraper):
                     games[unit_id] = int(match.group(2))
                     # BB=group(3), RB=group(4), ART=group(5)
                     arts[unit_id] = int(match.group(5))
-                    # 行末の数字がスタート回数
+                    # 行末の数字がスタート回数（複数パターン対応）
                     all_nums = re.findall(r'\d+', line)
-                    if len(all_nums) >= 2:
-                        starts[unit_id] = int(all_nums[-1])  # 最後の数字
+                    if len(all_nums) >= 6:
+                        # 通常パターン: 最後から2番目または最後の数字
+                        # 行末が「143 111」のような場合、143がスタート回数
+                        last_two = [int(all_nums[-2]), int(all_nums[-1])]
+                        # 累計Gと同じ値が行末にある場合、その前の数字がスタート
+                        total_g = int(match.group(2))
+                        if last_two[1] == total_g and last_two[0] != total_g:
+                            starts[unit_id] = last_two[0]
+                        else:
+                            starts[unit_id] = last_two[1]
+                    elif len(all_nums) >= 2:
+                        starts[unit_id] = int(all_nums[-1])
                     
         except Exception as e:
             self.logger.error(f"fetch_list_with_availability error: {e}")
