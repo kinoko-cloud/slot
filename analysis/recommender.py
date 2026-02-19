@@ -1488,6 +1488,35 @@ def analyze_today_data(unit_data: dict, current_hour: int = None, machine_key: s
                 f'🎯 ちょいプラス狙い目: 差枚{diff:+.0f}+{max_rensa}連以下 ({total_games}G) → 連チャンしてないので大爆発期待！'
             )
     
+    # --- 【2026-02-20分析】大負け好調 = 翌日爆発率57% ---
+    # 条件: 確率1/130以下 + 差枚-2000以下
+    # データ: 大爆発（30連超え）54件中31件が「大負け好調」からの爆発
+    if machine_key == 'sbj' and result['art_prob'] > 0 and result['total_games'] >= 2000:
+        prob = result['art_prob']
+        diff = result['diff_medals']
+        max_rensa = result.get('today_max_rensa', 0)
+        explosion_cond = MACHINES.get('sbj', {}).get('explosion_condition', {})
+        prob_threshold = explosion_cond.get('prob_threshold', 130)
+        diff_threshold = explosion_cond.get('diff_threshold', -2000)
+        
+        # 大負け好調条件
+        is_oomake_kouchou = (
+            prob <= prob_threshold and
+            diff <= diff_threshold
+        )
+        
+        if is_oomake_kouchou:
+            total_games = result['total_games']
+            bonus = 40  # 基本ボーナス（翌日爆発率57%）
+            if total_games >= 5000:
+                bonus = 55
+            elif total_games >= 3000:
+                bonus = 50
+            result['today_score_bonus'] += bonus
+            result['today_reasons'].append(
+                f'💥 大負け好調: 確率1/{prob:.0f}+差枚{diff:+.0f} → 翌日大爆発期待（データ: 57%）'
+            )
+    
     # --- 【RSさん仮説2】当たるけど伸びない台 = 爆発前の高設定 ---
     # 条件: 確率良い + ハマり軽め + 連チャン伸びず + マイナス
     # 分析結果: 17時以降で勝率66%、3000枚以上50%、平均+2000枚超え
@@ -1552,6 +1581,35 @@ def analyze_today_data(unit_data: dict, current_hour: int = None, machine_key: s
                     f'🎯 爆発前候補: 確率1/{prob:.0f}+最大{max_rensa}連+最大{max_med}枚+マイナス ({total_games}G) → 伸び悩み台は爆発前'
                 )
 
+    # --- 【2026-02-20分析】北斗モミモミ好調 = 翌日爆発率48% ---
+    # 条件: 確率1/330以下 + 差枚±5000以内
+    # データ: 大爆発（20連超え）696件中334件が「モミモミ好調」からの爆発
+    if machine_key == 'hokuto2' and result['art_prob'] > 0 and result['total_games'] >= 2000:
+        prob = result['art_prob']
+        diff = result['diff_medals']
+        explosion_cond = MACHINES.get('hokuto2', {}).get('explosion_condition', {})
+        prob_threshold = explosion_cond.get('prob_threshold', 330)
+        diff_min = explosion_cond.get('diff_min', -5000)
+        diff_max = explosion_cond.get('diff_max', 5000)
+        
+        # モミモミ好調条件
+        is_momimomi_kouchou = (
+            prob <= prob_threshold and
+            diff_min <= diff <= diff_max
+        )
+        
+        if is_momimomi_kouchou:
+            total_games = result['total_games']
+            bonus = 35  # 基本ボーナス（翌日爆発率48%）
+            if total_games >= 5000:
+                bonus = 50
+            elif total_games >= 3000:
+                bonus = 45
+            result['today_score_bonus'] += bonus
+            result['today_reasons'].append(
+                f'💥 北斗モミモミ好調: 確率1/{prob:.0f}+差枚{diff:+.0f} → 翌日爆発期待（データ: 48%）'
+            )
+    
     # --- 【北斗転生2】差枚ベースの狙い目条件 ---
     # 分析結果: マイナス台=勝率64%、プラス台=勝率12%（超危険）
     # 超最強: マイナス+最大2000枚以下+10連以上 = 勝率100%
@@ -4459,8 +4517,10 @@ def _analyze_today_pattern(today_history: list, machine_key: str = 'sbj') -> dic
     score_adjust = 0
     reason = None
     
-    # 天井期待（SBJ: 999G、北斗: あべしシステム）
-    ceiling = 999 if machine_key == 'sbj' else 666  # 北斗はモード次第
+    # 天井狙い閾値（MACHINESから取得、なければデフォルト）
+    machine_config = MACHINES.get(machine_key, {})
+    ceiling_target = machine_config.get('ceiling_target_games', 500)  # RB込みで500G以上
+    ceiling = machine_config.get('normal_ceiling', 999)
     
     if today_diff >= 3000:
         pattern = 'explosion'
@@ -4488,10 +4548,13 @@ def _analyze_today_pattern(today_history: list, machine_key: str = 'sbj') -> dic
             # ハマリ少ないけどマイナス → 引き弱だが高設定の可能性も
             score_adjust = 0
     
-    # 天井狙い判定
-    if current_hama >= ceiling * 0.7:  # 天井の70%以上
+    # 天井狙い判定（RB込みで ceiling_target 以上）
+    if current_hama >= ceiling_target:
+        score_adjust += 15
+        reason = f'⏱️ 現在{current_hama}Gハマリ→天井狙い圏内'
+    elif current_hama >= ceiling_target * 0.8:
         score_adjust += 10
-        reason = f'現在{current_hama}Gハマリ→天井狙い圏内'
+        reason = f'⏱️ 現在{current_hama}Gハマリ→天井狙い圏内まであと{ceiling_target - current_hama}G'
     elif current_hama >= ceiling * 0.5:
         score_adjust += 5
     

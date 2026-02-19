@@ -31,6 +31,14 @@ MACHINES = {
                                        # SBJのATは1セット約30G消化。AT間1-10Gは即連（有利区間内）。
                                        # 30G以上空いたら通常に戻った可能性 → 新規初当たり扱い。
                                        # 実績: 閾値30Gで最大20連程度（現実的な範囲）
+        # === 推奨条件（2026-02-20 データ分析結果） ===
+        'ceiling_target_games': 500,  # 天井狙い閾値: RB込み500G以上
+        'explosion_condition': {      # 爆発期待条件
+            'prob_threshold': 130,    # 確率1/130以下
+            'diff_threshold': -2000,  # 差枚-2000以下
+        },
+        'big_renchain': 30,           # 大連チャン定義: 30連
+        'warning_renchain_count': 2,  # 警戒ライン: 同日30連×2回
     },
     'hokuto2': {
         'name': 'L北斗の拳 転生の章2',
@@ -63,6 +71,15 @@ MACHINES = {
         'reset_first_hit_bonus': True, # 朝イチ初当たりに恩恵あり
         'renchain_threshold': 50,     # 連チャン判定: AT間50G以内なら連チャン継続
                                        # 北斗はAT消化が速い。50G以内は連チャン、それ以上は新規初当たり。
+        # === 推奨条件（2026-02-20 データ分析結果） ===
+        'ceiling_target_games': 800,  # 天井狙い閾値: RB込み800G以上
+        'explosion_condition': {      # 爆発期待条件（モミモミ好調）
+            'prob_threshold': 330,    # 確率1/330以下
+            'diff_min': -5000,        # 差枚-5000以上
+            'diff_max': 5000,         # 差枚+5000以下
+        },
+        'big_renchain': 20,           # 大連チャン定義: 20連
+        'warning_renchain_count': 2,  # 警戒ライン: 同日20連×2回
     },
 }
 
