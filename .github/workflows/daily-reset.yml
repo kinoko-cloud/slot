@@ -1,0 +1,40 @@
+name: Daily Reset
+
+on:
+  schedule:
+    # JST 10:00 = UTC 1:00（営業開始時）
+    - cron: '0 1 * * *'
+  workflow_dispatch:  # 手動実行も可能
+
+jobs:
+  reset:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    timeout-minutes: 5
+    
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Reset daily data
+        run: |
+          python scripts/reset_daily_data.py
+
+      - name: Commit and push
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add data/availability.json
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "auto: 営業開始リセット $(TZ='Asia/Tokyo' date +'%Y-%m-%d %H:%M')"
+            git push
+          fi
