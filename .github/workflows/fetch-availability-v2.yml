@@ -114,7 +114,14 @@ jobs:
               fi
               echo "⚠️ Push failed (attempt $i/3), pulling and retrying..."
               git stash --include-untracked || true
-              git pull --rebase origin main
+              if ! git pull --rebase origin main; then
+                echo "⚠️ Rebase conflict detected, aborting and using force push"
+                git rebase --abort || true
+                git stash pop || true
+                git push --force
+                echo "✅ Force push successful"
+                break
+              fi
               git stash pop || true
             done
           fi
