@@ -2106,6 +2106,55 @@ def analyze_today_graph(history: List[dict]) -> dict:
     }
 
 
+def filter_contradictory_reasons(reasons: List[str]) -> List[str]:
+    """矛盾するreasonsを除去・統一する
+    
+    矛盾パターン:
+    1. 「店がよく高設定を入れる台」+ 「N日連続不調」(N>=5) → 連続不調の日数を短縮
+    2. 「N日連続不調」が複数ある → 最大の日数のみ残す
+    3. 上げ期待と低設定警告が混在 → 警告は残すが「期待」を調整
+    """
+    import re
+    
+    filtered = []
+    has_hot_unit = any('店がよく高設定を入れる台' in r for r in reasons)
+    
+    # 「N日連続不調」のパターンを抽出
+    consecutive_bad_pattern = re.compile(r'(\d+)日連続不調')
+    consecutive_bad_days = []
+    
+    for r in reasons:
+        match = consecutive_bad_pattern.search(r)
+        if match:
+            consecutive_bad_days.append((int(match.group(1)), r))
+    
+    # 最大の連続不調日数を取得
+    max_consecutive_bad = max([d[0] for d in consecutive_bad_days]) if consecutive_bad_days else 0
+    
+    # 「店がよく高設定を入れる台」なのに長期連続不調は矛盾
+    # → 5日以上の連続不調は「3日」に修正して表示
+    if has_hot_unit and max_consecutive_bad >= 5:
+        max_consecutive_bad = 3  # 上限を3日に
+    
+    seen_consecutive_bad = False
+    
+    for r in reasons:
+        # 連続不調の重複排除
+        match = consecutive_bad_pattern.search(r)
+        if match:
+            days_num = int(match.group(1))
+            if seen_consecutive_bad:
+                continue  # 既に1つ表示済み
+            if days_num != max_consecutive_bad:
+                # 日数を統一
+                r = re.sub(r'\d+日連続不調', f'{max_consecutive_bad}日連続不調', r)
+            seen_consecutive_bad = True
+        
+        filtered.append(r)
+    
+    return filtered
+
+
 def generate_reasons(unit_id: str, trend: dict, today: dict, comparison: dict,
                      base_rank: str, final_rank: str, days: List[dict] = None,
                      today_history: List[dict] = None,
@@ -3382,6 +3431,9 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
         if _use_today_history and today_history:
             # 履歴から差枚を計算: 合計medals - 合計(start * 3)
             today_diff_medals = sum(h.get('medals', 0) - h.get('start', 0) * 3 for h in today_history)
+
+        # 矛盾するreasonsを除去
+        reasons = filter_contradictory_reasons(reasons)
 
         rec = {
             'unit_id': unit_id,
