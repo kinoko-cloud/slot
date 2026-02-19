@@ -395,17 +395,13 @@ class V2Fetcher:
                 
                 if days:
                     today = days[0]
-                    final_start_val = today.get('final_start', 0)
-                    # デバッグ: final_start=0の場合はログ出力
-                    if final_start_val == 0 and today.get('art', 0) > 0:
-                        logger.warning(f"  {unit_id}: final_start=0 but art={today.get('art')} - raw data: {today.keys()}")
                     result['units'][unit_id] = {
                         'unit_id': unit_id,
                         'art': today.get('art', 0),
                         'bb': today.get('bb', 0),
                         'rb': today.get('rb', 0),
                         'total_start': today.get('total_start', 0),
-                        'final_start': final_start_val,  # スタート数
+                        'final_start': today.get('final_start', 0),  # スタート数
                         'status': today.get('status', 'unknown'),
                         'today_history': today.get('history', []),
                     }

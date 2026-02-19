@@ -169,10 +169,6 @@ class PapimoScraper(BaseScraper):
             if match:
                 data[key] = self._parse_number(match.group(1))
         
-        # デバッグ: final_startが取得できなかった場合
-        if 'final_start' not in data and data.get('art', 0) > 0:
-            self.logger.warning(f"final_start not found for {unit_id}, art={data.get('art')}")
-        
         # 当たり履歴
         history = []
         history_pattern = re.findall(
@@ -204,6 +200,14 @@ class PapimoScraper(BaseScraper):
             data['prob'] = round(total_start / art, 1)
             data['is_good_sbj'] = data['prob'] <= 130
             data['is_good_hokuto'] = data['prob'] <= 330
+
+        # final_startが取得できなかった場合、履歴から計算
+        if 'final_start' not in data and history and total_start > 0:
+            history_total = sum(h['start'] for h in history)
+            calculated_final = total_start - history_total
+            if calculated_final >= 0:
+                data['final_start'] = calculated_final
+                self.logger.debug(f"  {unit_id}: final_start calculated: {calculated_final}")
 
         # ステータス判定: データがあれば遊技中
         if art > 0 or data.get('bb', 0) > 0 or data.get('rb', 0) > 0 or total_start > 0:
