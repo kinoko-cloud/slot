@@ -866,10 +866,6 @@ def main():
     else:
         sys.exit(0)
 
-if __name__ == '__main__':
-    main()
-
-
 def check_history_completeness_data():
     """historyファイルに当日の差枚・最大・連チャンが入っているか確認"""
     from datetime import datetime
@@ -1027,3 +1023,7 @@ def check_recent_days_completeness():
         result['message'] = f'過去3日間のhistoryデータ完全（{checked}件確認）、新規/変更台{total_new}件'
     
     return result
+
+
+if __name__ == '__main__':
+    main()
