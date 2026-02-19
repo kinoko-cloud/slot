@@ -169,6 +169,10 @@ class PapimoScraper(BaseScraper):
             if match:
                 data[key] = self._parse_number(match.group(1))
         
+        # デバッグ: final_startが取得できなかった場合
+        if 'final_start' not in data and data.get('art', 0) > 0:
+            self.logger.warning(f"final_start not found for {unit_id}, art={data.get('art')}")
+        
         # 当たり履歴
         history = []
         history_pattern = re.findall(
