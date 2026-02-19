@@ -155,6 +155,22 @@ class DaidataScraper(BaseScraper):
             'fetched_at': now_jst().isoformat()
         }
         
+        # ページから日付を取得（「本日の大当たり履歴詳細（2月19日）」または「2026.02.19」）
+        date_match = re.search(r'本日の大当たり履歴詳細（(\d+)月(\d+)日）', text)
+        if date_match:
+            month = int(date_match.group(1))
+            day = int(date_match.group(2))
+            year = now_jst().year
+            # 12月に1月のデータを見ている場合は翌年
+            if now_jst().month == 12 and month == 1:
+                year += 1
+            data['date'] = f"{year}-{month:02d}-{day:02d}"
+        else:
+            # フォールバック: 「2026.02.19 23:53現在」パターン
+            alt_date = re.search(r'(\d{4})\.(\d{2})\.(\d{2})\s+\d{1,2}:\d{2}現在', text)
+            if alt_date:
+                data['date'] = f"{alt_date.group(1)}-{alt_date.group(2)}-{alt_date.group(3)}"
+        
         # BB RB ART スタート回数（複数パターン対応）
         match = re.search(r'BB\s+RB\s+ART\s+スタート(?:回数)?\s*\n?\s*(\d+)\s+(\d+)\s+(\d+)\s+(\d+)', text)
         if match:

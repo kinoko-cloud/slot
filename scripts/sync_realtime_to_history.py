@@ -121,6 +121,9 @@ def sync_store_to_history(store_key: str, store_data: dict, date_str: str):
         if not unit_id:
             continue
         
+        # データページから取得した日付があればそれを優先
+        unit_date_str = unit_data.get('date', date_str)
+        
         # 履歴ファイル
         history_file = store_history_dir / f'{unit_id}.json'
         if history_file.exists():
@@ -138,11 +141,11 @@ def sync_store_to_history(store_key: str, store_data: dict, date_str: str):
         # 既存日付確認
         existing_dates = {d.get('date') for d in unit_history.get('days', [])}
         # 既存データがあっても、artやhistoryが増えていれば更新
-        should_update = date_str not in existing_dates
-        if date_str in existing_dates:
+        should_update = unit_date_str not in existing_dates
+        if unit_date_str in existing_dates:
             # 既存データを確認
             for existing_day in unit_history.get('days', []):
-                if existing_day.get('date') == date_str:
+                if existing_day.get('date') == unit_date_str:
                     existing_art = existing_day.get('art', 0) or 0
                     new_art = unit_data.get('art', 0) or 0
                     existing_hist_len = len(existing_day.get('history', []))
@@ -151,7 +154,7 @@ def sync_store_to_history(store_key: str, store_data: dict, date_str: str):
                     # artが増えているか、履歴が増えていれば更新
                     if new_art > existing_art or new_hist_len > existing_hist_len:
                         # 既存データを削除して更新
-                        unit_history['days'] = [d for d in unit_history['days'] if d.get('date') != date_str]
+                        unit_history['days'] = [d for d in unit_history['days'] if d.get('date') != unit_date_str]
                         should_update = True
                     break
         
@@ -189,7 +192,7 @@ def sync_store_to_history(store_key: str, store_data: dict, date_str: str):
             today_max_rensa = max_rensa
         
         day_entry = {
-            'date': date_str,
+            'date': unit_date_str,
             'art': art,
             'rb': rb,
             'games': total_games,

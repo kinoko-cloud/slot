@@ -471,13 +471,7 @@ class V2Fetcher:
         """
         v1のavailability.json形式に変換
         """
-        ts = now_jst()
-        # 営業時間外（0:00-10:00）は前日の日付として扱う
-        # 0時過ぎに取得したデータは実質前日の営業データ
-        if ts.hour < 10:
-            ts = ts - timedelta(days=1)
-            ts = ts.replace(hour=22, minute=0, second=0, microsecond=0)
-        ts_str = ts.isoformat()
+        ts_str = now_jst().isoformat()
         v1_data = {
             'last_updated': ts_str,
             'fetched_at': ts_str,  # ヘルスチェック用
@@ -518,7 +512,7 @@ class V2Fetcher:
                 }
                 availability = availability_map.get(status, '?')
 
-                store_data['units'].append({
+                unit_entry = {
                     'unit_id': unit_id,
                     'art': unit_data.get('art', 0),
                     'bb': unit_data.get('bb', 0),
@@ -530,7 +524,11 @@ class V2Fetcher:
                     'history': today_history,      # v1形式（today_history → history）
                     'diff_medals': diff_medals,
                     'max_medals': max_medals,
-                })
+                }
+                # データページから取得した日付があれば追加
+                if unit_data.get('date'):
+                    unit_entry['date'] = unit_data.get('date')
+                store_data['units'].append(unit_entry)
             
             v1_data['stores'][store_key] = store_data
         
