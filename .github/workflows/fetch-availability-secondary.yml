@@ -12,7 +12,7 @@ on:
 
 concurrency:
   group: slot-fetch-secondary
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   fetch:

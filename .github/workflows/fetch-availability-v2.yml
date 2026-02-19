@@ -14,7 +14,7 @@ on:
 
 concurrency:
   group: slot-fetch-v2
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   fetch:
