@@ -370,17 +370,23 @@ class DaidataScraper(BaseScraper):
                 else:
                     empty.append(unit_id)  # 見つからない場合は空きとみなす
             
-            # G数・ART等も取得
+            # G数・ART等・スタート回数を取得
             arts = {}
+            starts = {}  # スタート回数（現在のハマり）
             text = self.get_text()
             for line in text.split('\n'):
-                # 台番号 G数 BB RB ART ...
+                # 台番号 累計G BB RB ART ... スタート回数（最後の数字）
+                # 例: 682 111 0 0 0 15 1/0.0 1/0.0 0.0 0.0 143 111
                 match = re.match(r'^\s*(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)', line)
                 if match:
                     unit_id = match.group(1)
                     games[unit_id] = int(match.group(2))
                     # BB=group(3), RB=group(4), ART=group(5)
                     arts[unit_id] = int(match.group(5))
+                    # 行末の数字がスタート回数
+                    all_nums = re.findall(r'\d+', line)
+                    if len(all_nums) >= 2:
+                        starts[unit_id] = int(all_nums[-1])  # 最後の数字
                     
         except Exception as e:
             self.logger.error(f"fetch_list_with_availability error: {e}")
@@ -388,6 +394,7 @@ class DaidataScraper(BaseScraper):
         return {
             'games': games,
             'arts': arts,
+            'starts': starts,  # スタート回数（現在のハマり）
             'playing': sorted(playing),
             'empty': sorted(empty),
             'total': len(expected_units) if expected_units else len(games),

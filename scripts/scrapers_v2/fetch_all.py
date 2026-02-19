@@ -236,9 +236,10 @@ class V2Fetcher:
             result['playing'] = list_data.get('playing', [])
             result['empty'] = list_data.get('empty', [])
             
-            # G数・ARTマップ
+            # G数・ART・スタート回数マップ
             games_map = list_data.get('games', {})
             arts_map = list_data.get('arts', {})
+            starts_map = list_data.get('starts', {})  # スタート回数（現在のハマり）
             
             # G数が変化した台を特定（差分取得）
             changed_units = get_changed_units(store_key, games_map)
@@ -272,6 +273,10 @@ class V2Fetcher:
                     # 詳細ページでART=0の場合、一覧ページのARTを使う
                     if detail.get('art', 0) == 0 and arts_map.get(unit_id, 0) > 0:
                         detail['art'] = arts_map[unit_id]
+                    
+                    # 詳細ページでfinal_start=0の場合、一覧ページのスタート回数を使う
+                    if detail.get('final_start', 0) == 0 and starts_map.get(unit_id, 0) > 0:
+                        detail['final_start'] = starts_map[unit_id]
                     
                     result['units'][unit_id] = detail
                     result['changed_count'] += 1
@@ -313,13 +318,15 @@ class V2Fetcher:
                             result['changed_count'] += 1
                     else:
                         # 正常な前回データがある場合は引き継ぐ
+                        # スタート回数は一覧ページから最新値を取得
+                        final_start = starts_map.get(unit_id, 0) or prev_data.get('final_start', 0)
                         result['units'][unit_id] = {
                             'unit_id': unit_id,
                             'total_start': games,
                             'art': prev_data.get('art', 0),
                             'bb': prev_data.get('bb', 0),
                             'rb': prev_data.get('rb', 0),
-                            'final_start': prev_data.get('final_start', 0),
+                            'final_start': final_start,  # 一覧ページから取得
                             'diff_medals': prev_data.get('diff_medals', 0),
                             'today_history': prev_data.get('history', []),  # 履歴も引き継ぐ
                             'cached': True,
