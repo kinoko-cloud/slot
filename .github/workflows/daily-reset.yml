@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-    timeout-minutes: 5
+    timeout-minutes: 15
     
     steps:
       - uses: actions/checkout@v4
@@ -23,9 +23,19 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Install dependencies
+        run: |
+          pip install playwright beautifulsoup4
+          playwright install chromium
+
       - name: Reset daily data
         run: |
           python scripts/reset_daily_data.py
+
+      - name: Check hall IDs
+        run: |
+          python scripts/check_hall_ids.py
+        continue-on-error: true  # 失敗しても続行（警告として扱う）
 
       - name: Commit and push
         run: |
