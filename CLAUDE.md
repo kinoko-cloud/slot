@@ -57,6 +57,13 @@
 - 例: `shinjuku_espass_sbj`, `shinjuku_espass_hokuto2`
 - 詳細は `ARCHITECTURE.md` の「命名規則」セクション参照
 
+### 7. テストコードでのhall_id/store_key取得
+- **絶対にハードコードしない** → 必ずconfigから取得
+- ❌ `hall_id = '600024'` （適当な値）
+- ✅ `from config.stores import DAIDATA_STORES; hall_id = DAIDATA_STORES['shinjuku_espass']['hall_id']`
+- 台番号も同様: `config/stores.py` の `UNITS` を参照
+- テスト前に必ず店舗・台番号の存在を確認する
+
 ---
 
 ## 🎰 機種仕様（推測不可能）
