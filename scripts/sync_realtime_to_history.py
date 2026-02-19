@@ -137,7 +137,25 @@ def sync_store_to_history(store_key: str, store_data: dict, date_str: str):
         
         # 既存日付確認
         existing_dates = {d.get('date') for d in unit_history.get('days', [])}
+        # 既存データがあっても、artやhistoryが増えていれば更新
+        should_update = date_str not in existing_dates
         if date_str in existing_dates:
+            # 既存データを確認
+            for existing_day in unit_history.get('days', []):
+                if existing_day.get('date') == date_str:
+                    existing_art = existing_day.get('art', 0) or 0
+                    new_art = unit_data.get('art', 0) or 0
+                    existing_hist_len = len(existing_day.get('history', []))
+                    new_hist = unit_data.get('today_history', []) or unit_data.get('history', [])
+                    new_hist_len = len(new_hist)
+                    # artが増えているか、履歴が増えていれば更新
+                    if new_art > existing_art or new_hist_len > existing_hist_len:
+                        # 既存データを削除して更新
+                        unit_history['days'] = [d for d in unit_history['days'] if d.get('date') != date_str]
+                        should_update = True
+                    break
+        
+        if not should_update:
             continue
         
         # 当日データ構築
