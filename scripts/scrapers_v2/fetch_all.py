@@ -369,7 +369,8 @@ class V2Fetcher:
                         'bb': today.get('bb', 0),
                         'rb': today.get('rb', 0),
                         'total_start': today.get('total_start', 0),
-                        'status': today.get('status', 'unknown'),  # status追加
+                        'final_start': today.get('final_start', 0),  # スタート数
+                        'status': today.get('status', 'unknown'),
                         'today_history': today.get('history', []),
                     }
                 else:
