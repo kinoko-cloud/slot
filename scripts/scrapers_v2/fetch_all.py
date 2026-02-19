@@ -471,10 +471,16 @@ class V2Fetcher:
         """
         v1のavailability.json形式に変換
         """
-        ts = now_jst().isoformat()
+        ts = now_jst()
+        # 営業時間外（0:00-10:00）は前日の日付として扱う
+        # 0時過ぎに取得したデータは実質前日の営業データ
+        if ts.hour < 10:
+            ts = ts - timedelta(days=1)
+            ts = ts.replace(hour=22, minute=0, second=0, microsecond=0)
+        ts_str = ts.isoformat()
         v1_data = {
-            'last_updated': ts,
-            'fetched_at': ts,  # ヘルスチェック用
+            'last_updated': ts_str,
+            'fetched_at': ts_str,  # ヘルスチェック用
             'stores': {}
         }
         
