@@ -1099,16 +1099,17 @@ def analyze_trend(days: List[dict], machine_key: str = 'sbj') -> dict:
     # トレンド判定
     if consecutive_plus >= 3:
         result['trend'] = 'strong_up'
-        result['reasons'].append(f'{consecutive_plus}日連続プラス推定')
+        result['reasons'].append(f'{consecutive_plus}日連続好調 → 据え置き期待大')
     elif consecutive_plus >= 2:
         result['trend'] = 'up'
-        result['reasons'].append(f'{consecutive_plus}日連続プラス推定')
+        result['reasons'].append(f'{consecutive_plus}日連続好調 → 据え置き期待')
     elif consecutive_minus >= 3:
         result['trend'] = 'strong_down'
-        result['reasons'].append(f'{consecutive_minus}日連続マイナス推定')
+        # 注: データ分析により「連続不調→翌日好調」は56%程度で期待ほど高くない
+        result['reasons'].append(f'{consecutive_minus}日連続不調（様子見推奨）')
     elif consecutive_minus >= 2:
         result['trend'] = 'down'
-        result['reasons'].append(f'{consecutive_minus}日連続マイナス推定')
+        result['reasons'].append(f'{consecutive_minus}日連続不調')
 
     # 最高/最悪の日
     if daily_results:
@@ -4333,12 +4334,14 @@ def _calculate_change_expectation(unit_history: list, good_prob: int = 130) -> t
         else:
             break
     
+    # 注: データ分析により連続不調→翌日好調率は約56%（期待ほど高くない）
+    # 文言を控えめに修正
     if consecutive_bad >= 5:
-        return 20, f'{consecutive_bad}日連続不調→設定変更期待大'
+        return 15, f'{consecutive_bad}日連続不調（様子見）'
     elif consecutive_bad >= 4:
-        return 15, f'{consecutive_bad}日連続不調→設定変更期待'
+        return 10, f'{consecutive_bad}日連続不調'
     elif consecutive_bad >= 3:
-        return 10, f'{consecutive_bad}日連続不調→変更期待'
+        return 5, f'{consecutive_bad}日連続不調'
     
     return 0, None
 
@@ -4405,7 +4408,7 @@ def _analyze_setting_quality(unit_history: list, machine_key: str = 'sbj') -> di
 
 
 def _calculate_change_expectation(unit_history: list, good_prob: int = 130) -> tuple:
-    """設定変更期待度を計算"""
+    """設定変更可能性を計算（注: 実際の翌日好調率は約56%で期待ほど高くない）"""
     if not unit_history or len(unit_history) < 3:
         return 0, None
     sorted_days = sorted(unit_history, key=lambda x: x.get('date', ''), reverse=True)
@@ -4416,9 +4419,10 @@ def _calculate_change_expectation(unit_history: list, good_prob: int = 130) -> t
         if art <= 0 or games < 500: continue
         if (games / art) > good_prob: consecutive_bad += 1
         else: break
-    if consecutive_bad >= 5: return 20, f'{consecutive_bad}日連続不調→設定変更期待大'
-    elif consecutive_bad >= 4: return 15, f'{consecutive_bad}日連続不調→設定変更期待'
-    elif consecutive_bad >= 3: return 10, f'{consecutive_bad}日連続不調→変更期待'
+    # スコアと文言を控えめに（データ分析結果に基づく）
+    if consecutive_bad >= 5: return 15, f'{consecutive_bad}日連続不調（様子見）'
+    elif consecutive_bad >= 4: return 10, f'{consecutive_bad}日連続不調'
+    elif consecutive_bad >= 3: return 5, f'{consecutive_bad}日連続不調'
     return 0, None
 
 

@@ -298,12 +298,14 @@
                         </span>
                         {% endif %}
                         <span class="past-eval">
-                            {% if rec.consecutive_minus >= 2 %}
-                            {{ rec.consecutive_minus }}日連続不調 → 設定上げの可能性あり
-                            {% elif rec.consecutive_plus >= 3 %}
-                            {{ rec.consecutive_plus }}日連続好調 → 据え置き or 転落警戒
+                            {% if rec.consecutive_plus >= 3 %}
+                            {{ rec.consecutive_plus }}日連続好調 → 据え置き期待大
                             {% elif rec.consecutive_plus >= 2 %}
-                            2日連続好調 → 据え置き期待
+                            {{ rec.consecutive_plus }}日連続好調 → 据え置き期待
+                            {% elif rec.consecutive_minus >= 3 %}
+                            {{ rec.consecutive_minus }}日連続不調（様子見）
+                            {% elif rec.consecutive_minus >= 2 %}
+                            {{ rec.consecutive_minus }}日連続不調
                             {% elif rec.trend and rec.trend.get('art_trend') == 'improving' %}
                             直近ART改善傾向
                             {% else %}
@@ -374,9 +376,9 @@
                             <div class="detail-section">
                                 <div class="detail-title">過去データ分析</div>
                                 {% if rec.consecutive_plus > 0 %}
-                                <div class="detail-item plus">{{ rec.consecutive_plus }}日連続プラス推定 → 据え置き期待</div>
+                                <div class="detail-item plus">{{ rec.consecutive_plus }}日連続好調 → 据え置き期待</div>
                                 {% elif rec.consecutive_minus > 0 %}
-                                <div class="detail-item minus">{{ rec.consecutive_minus }}日連続マイナス → 設定上げ期待</div>
+                                <div class="detail-item minus">{{ rec.consecutive_minus }}日連続不調</div>
                                 {% endif %}
                                 {% if rec.yesterday_art %}
                                 <div class="detail-item">前日{% if rec.yesterday_date %}({{ rec.yesterday_date[5:] }}){% endif %}ART {{ rec.yesterday_art }}回{% if rec.yesterday_games %} ({{ '{:,}'.format(rec.yesterday_games) }}G){% endif %}</div>
