@@ -1,6 +1,10 @@
-name: Fetch Availability (Secondary - 15/45分)
+name: Fetch Availability (Secondary - 30分)
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/fetch-availability-secondary.yml'
   schedule:
     # JST 10:30-22:30 (毎時30分、メインと交互)
     - cron: '30 1-13 * * *'
