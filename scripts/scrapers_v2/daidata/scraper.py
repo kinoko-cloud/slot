@@ -156,7 +156,7 @@ class DaidataScraper(BaseScraper):
         }
         
         # BB RB ART スタート回数（複数パターン対応）
-        match = re.search(r'BB\s+RB\s+ART\s+スタート回数?\s*\n?\s*(\d+)\s+(\d+)\s+(\d+)\s+(\d+)', text)
+        match = re.search(r'BB\s+RB\s+ART\s+スタート(?:回数)?\s*\n?\s*(\d+)\s+(\d+)\s+(\d+)\s+(\d+)', text)
         if match:
             data['bb'] = int(match.group(1))
             data['rb'] = int(match.group(2))
