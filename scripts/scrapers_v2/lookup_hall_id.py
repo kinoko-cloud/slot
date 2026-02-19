@@ -34,8 +34,8 @@ def search_stores(keyword: str) -> list:
     
     scraper = DaidataScraper(headless=True)
     with scraper.browser_session():
-        scraper.page.goto(search_url, wait_until='networkidle')
-        scraper.page.wait_for_timeout(3000)
+        scraper.page.goto(search_url, wait_until='load', timeout=60000)
+        scraper.page.wait_for_timeout(5000)  # JS読み込み待ち
         
         html = scraper.page.content()
         soup = BeautifulSoup(html, 'html.parser')
