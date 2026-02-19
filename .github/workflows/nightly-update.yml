@@ -42,13 +42,20 @@ jobs:
           playwright install-deps chromium
 
       - name: Fetch latest data (final scrape of the day)
-        timeout-minutes: 15
+        timeout-minutes: 20
         run: |
-          # v2スクレイパー（順次実行でメモリ節約）
+          # v2スクレイパー（店舗ごとに実行して1つ失敗しても他は成功するように）
           echo "=== SBJ店舗取得 ==="
-          timeout 300 python scripts/scrapers_v2/fetch_all.py --sbj-only || echo "⚠️ SBJ fetch failed"
-          echo "=== 北斗店舗取得 ==="
-          timeout 300 python scripts/scrapers_v2/fetch_all.py --hokuto-only || echo "⚠️ Hokuto fetch failed"
+          timeout 180 python scripts/scrapers_v2/fetch_all.py --sbj-only --daidata-only || echo "⚠️ SBJ daidata failed"
+          
+          echo "=== 北斗店舗取得（1店舗ずつ）==="
+          for store in seibu_shinjuku_espass_hokuto2 shibuya_espass_hokuto2 shibuya_honkan_espass_hokuto2 shinjuku_espass_hokuto2 akiba_espass_hokuto2; do
+            echo "--- $store ---"
+            timeout 120 python scripts/scrapers_v2/fetch_all.py --store $store || echo "⚠️ $store failed"
+          done
+          
+          echo "=== papimo取得 ==="
+          timeout 120 python scripts/scrapers_v2/fetch_all.py --papimo-only || echo "⚠️ papimo failed"
 
       - name: Sync availability to history (確定データ移行)
         run: |
