@@ -534,8 +534,32 @@ class V2Fetcher:
         """availability.jsonに保存"""
         path = path or ROOT / 'data' / 'availability.json'
         v1_data = self.to_v1_format(results)
-        
-        # 既存データとマージ
+
+        # 取得対象のconfig台番号マップを構築（余分な台を除外するため）
+        config_units_map = {}  # store_key -> set of unit_ids
+        for store_key in results:
+            # DAIDATA_STORESからconfigの台番号を取得
+            cfg = DAIDATA_STORES.get(store_key)
+            if cfg:
+                config_units_map[store_key] = set(str(u) for u in cfg.get('units', []))
+            else:
+                # Papimo等: 取得できた台のみ
+                config_units_map[store_key] = None
+
+        # configにない台を除外（merge時のデータ混入を防ぐ）
+        for store_key, store_data in v1_data['stores'].items():
+            expected = config_units_map.get(store_key)
+            if expected is not None:
+                before = len(store_data['units'])
+                store_data['units'] = [
+                    u for u in store_data['units']
+                    if str(u.get('unit_id')) in expected
+                ]
+                after = len(store_data['units'])
+                if before != after:
+                    logger.info(f"{store_key}: config外の台を除外 {before}台→{after}台")
+
+        # 既存データとマージ（今回取得していない店舗のデータを保持）
         if path.exists():
             try:
                 with open(path) as f:
@@ -545,10 +569,10 @@ class V2Fetcher:
                         v1_data['stores'][k] = v
             except:
                 pass
-        
+
         with open(path, 'w') as f:
             json.dump(v1_data, f, ensure_ascii=False, indent=2)
-        
+
         logger.info(f"Saved to {path}")
 
 
