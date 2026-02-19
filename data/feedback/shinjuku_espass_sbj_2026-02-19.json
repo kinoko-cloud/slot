@@ -5,8 +5,27 @@
   "weekday": "木",
   "total_units": 4,
   "hits": 1,
-  "misses": 0,
+  "misses": 2,
   "surprises": 0,
-  "miss_details": [],
+  "miss_details": [
+    {
+      "unit_id": "683",
+      "score": 95,
+      "actual_prob": 222,
+      "reasons": [
+        "高スコア過信",
+        "設定1域(1/222)"
+      ]
+    },
+    {
+      "unit_id": "684",
+      "score": 65,
+      "actual_prob": 429,
+      "reasons": [
+        "低稼働(429G)",
+        "設定1域(1/429)"
+      ]
+    }
+  ],
   "surprise_details": []
 }
