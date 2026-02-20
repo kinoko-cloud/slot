@@ -204,7 +204,7 @@ def check_history_completeness():
         context = '閉店後チェック'
     elif current_hour >= 12:  # 営業中（12時以降）
         target_date = today
-        expected_hour = current_hour - 2
+        expected_hour = current_hour - 3  # 3時間の猶予（サイト側の更新遅延を考慮）
         min_last_time = f'{expected_hour:02d}:00'
         context = '営業中チェック'
     elif current_hour >= 10:  # 営業中（10-12時）
@@ -232,7 +232,7 @@ def check_history_completeness():
                     if day.get('date') == target_date:
                         hist = day.get('history', [])
                         if hist:
-                            last_time = hist[0].get('time', '')  # 最新の履歴（[0]が最新）
+                            last_time = hist[-1].get('time', '')  # 最新の履歴（[-1]が最新）
                             checked += 1
                             if last_time and last_time < min_last_time:
                                 issues.append({
@@ -247,9 +247,9 @@ def check_history_completeness():
                 continue
     
     if issues:
-        # 10%以上の台で問題があればエラー
+        # 40%以上の台で問題があればエラー（サイト側の更新遅延を考慮）
         error_rate = len(issues) / max(checked, 1) * 100
-        if error_rate >= 10:
+        if error_rate >= 40:
             return {
                 'status': 'error',
                 'message': f'{context}: {len(issues)}台の履歴データが途中で切れている（{error_rate:.0f}%）',
