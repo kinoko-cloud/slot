@@ -339,6 +339,10 @@
                     {% endif %}
                     {% endif %}
                 </a>
+                {# === 本日履歴の詳細展開 === #}
+                {% if rec.today_history and rec.today_history|length > 0 %}
+                {{ history_table_only(rec.today_history) }}
+                {% endif %}
                 {% endfor %}
                 </div>
                 {% endif %}
