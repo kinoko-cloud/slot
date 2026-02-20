@@ -38,7 +38,7 @@ class BaseScraper(ABC):
     # Cookie保存先（同意状態を永続化）
     STORAGE_DIR = Path(__file__).parent.parent.parent.parent / 'data' / '.browser_state'
     
-    def __init__(self, headless: bool = True, timeout: int = 20000, persist_state: bool = True):
+    def __init__(self, headless: bool = True, timeout: int = 60000, persist_state: bool = True):
         self.headless = headless
         self.timeout = timeout
         self.persist_state = persist_state
