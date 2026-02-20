@@ -1341,7 +1341,18 @@ def utility_processor():
         except (ValueError, TypeError):
             return None
 
-    return dict(rank_color=rank_color, rank_stars=rank_stars, signed_number=signed_number, medals_badge=medals_badge)
+    def short_date(date_str):
+        """日付を短い形式に変換 (例: 2026-02-18 → 2/18)"""
+        if not date_str:
+            return ''
+        try:
+            from datetime import datetime
+            dt = datetime.strptime(date_str, '%Y-%m-%d')
+            return f'{dt.month}/{dt.day}'
+        except:
+            return date_str
+
+    return dict(rank_color=rank_color, rank_stars=rank_stars, signed_number=signed_number, medals_badge=medals_badge, short_date=short_date)
 
 
 if __name__ == '__main__':
