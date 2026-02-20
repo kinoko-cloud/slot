@@ -272,9 +272,7 @@ def calculate_max_chain_medals(history: list, machine_key: str = None) -> int:
                 current_chain = 1
                 current_chain_medals = medals
             accumulated_games = 0
-        else:
-            # RBは連チャン数にカウントしないが、枚数は累計する
-            current_chain_medals += medals
+        # REG/RBは連チャンにも枚数にもカウントしない（除外）
 
     # 最後の区間
     if current_chain_medals > max_medals:
