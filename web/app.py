@@ -317,7 +317,7 @@ def index():
                     max_medals = rec.get('max_medals', 0)
                     y_art = rec.get('yesterday_art', 0)
                     y_games = rec.get('yesterday_games', 0)
-                    if max_medals > 3000 or rec.get('yesterday_diff', 0) > 500:
+                    if max_medals > 2000 or rec.get('yesterday_diff', 0) > 500:  # 差枚ベースなので閾値調整
                         yesterday_top10.append({
                             'unit_id': rec['unit_id'],
                             'store_name': store.get('short_name', store['name']),
@@ -753,7 +753,7 @@ def unit_history(store_key: str, unit_id: str):
                         # 履歴データを整形
                         raw_history = latest_day.get('history', [])
                         tenjou_count = 0
-                        max_rensa = 0
+                        max_rensa = latest_day.get('max_rensa', 0)  # dayから取得
                         valleys = []
 
                         for i, h in enumerate(raw_history):
@@ -763,8 +763,6 @@ def unit_history(store_key: str, unit_id: str):
 
                             if is_tenjou:
                                 tenjou_count += 1
-                            if rensa > max_rensa:
-                                max_rensa = rensa
                             if start > 0:
                                 valleys.append(start)
 

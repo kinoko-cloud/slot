@@ -478,7 +478,8 @@ def _is_quality_good(day: dict, prob: float, good_threshold: float,
     deep_hama = sum(1 for h in hist if h.get('start', 0) >= 500) if hist else 0
     max_medals = day.get('max_medals', 0)
     if not max_medals and hist:
-        max_medals = max((h.get('medals', 0) for h in hist), default=0)
+        from analysis.analyzer import calculate_max_chain_medals
+        max_medals = calculate_max_chain_medals(hist)
     # ハマリが多すぎる
     if hist and deep_hama >= deep_hama_limit:
         return False
@@ -550,7 +551,8 @@ def calculate_unit_historical_performance(days: List[dict], machine_key: str = '
             deep_hama = sum(1 for h in hist if h.get('start', 0) >= 500) if hist else 0
             max_medals = day.get('max_medals', 0)
             if not max_medals and hist:
-                max_medals = max((h.get('medals', 0) for h in hist), default=0)
+                from analysis.analyzer import calculate_max_chain_medals
+                max_medals = calculate_max_chain_medals(hist)
 
             # 好調判定: 確率OK + 出玉品質OK
             quality_ok = True

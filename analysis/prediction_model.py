@@ -140,11 +140,12 @@ def analyze_patterns(all_data: dict, all_dates: list) -> dict:
                                 if is_good:
                                     patterns['after_good_1day']['hit'] += 1
                             
-                            # 最大枚数
+                            # 最大枚数（差枚ベース）
                             history = prev1.get('history', [])
                             if history:
-                                max_medals = max((h.get('medals', 0) for h in history), default=0)
-                                if max_medals >= 2000:
+                                from analysis.analyzer import calculate_max_chain_medals
+                                max_medals = calculate_max_chain_medals(history)
+                                if max_medals >= 1500:  # 差枚ベースなので閾値調整
                                     patterns['high_max_medals']['total'] += 1
                                     if is_good:
                                         patterns['high_max_medals']['hit'] += 1
