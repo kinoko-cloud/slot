@@ -633,7 +633,8 @@ def run_all_checks():
     results['checks']['git_status'] = check_git_status()
     results['checks']['data_consistency'] = check_data_consistency()
     results['checks']['history_realtime'] = check_history_freshness_realtime()
-    results['checks']['history_completeness'] = check_history_completeness()
+    # history_completeness は無効化（稼働していない台を誤検知するため）
+    # results['checks']['history_completeness'] = check_history_completeness()
     results['checks']['history_data'] = check_history_completeness_data()
     
     # 全体ステータス判定
