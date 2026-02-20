@@ -31,7 +31,7 @@ class DaidataScraper(BaseScraper):
     BASE_URL = "https://daidata.goraggio.com"
     
     def __init__(self, headless: bool = True):
-        super().__init__(headless=headless, timeout=20000)
+        super().__init__(headless=headless, timeout=60000)
         self._agreed_halls = set()  # 同意済みホール
     
     def _remove_ads(self):
@@ -115,7 +115,7 @@ class DaidataScraper(BaseScraper):
             self.logger.debug(f"Unit {unit_id}: Page may be terms page, retrying...")
             self._accept_terms(hall_id)
             self.wait(1500)
-            self.page.goto(url, timeout=20000, wait_until='domcontentloaded')
+            self.page.goto(url, timeout=60000, wait_until='domcontentloaded')
             self.wait(2000)
             # リスト表示に再度切り替え
             try:
@@ -296,13 +296,15 @@ class DaidataScraper(BaseScraper):
         text = self.get_text()
         day = {'date': date, 'history': []}
         
-        # BB/RB/ART/スタート
+        # BB/RB/ART/スタート/差枚/最大
         for pattern, key in [
             (r'BB[：:]\s*(\d+)', 'bb'),
             (r'RB[：:]\s*(\d+)', 'rb'),
             (r'ART[：:]\s*(\d+)', 'art'),
             (r'(?:スタート|総回転|G数)[：:]\s*(\d+)', 'games'),
             (r'(\d+)\s*(?:G|回転)', 'games'),  # フォールバック
+            (r'(?:差枚|差玉)[：:]\s*([+-]?\d+)', 'diff_medals'),
+            (r'(?:最大|MAX)[：:]\s*(\d+)', 'max_medals'),
         ]:
             match = re.search(pattern, text)
             if match and key not in day:  # 重複防止
