@@ -220,17 +220,17 @@ def mark_first_hits(history: list) -> list:
 
 
 def calculate_max_chain_medals(history: list, machine_key: str = None) -> int:
-    """最大連チャン区間の累計枚数を計算する
+    """最大連チャン区間の獲得枚数累計を計算する
 
-    連チャンが途切れるまでの全当たり（RB含む）の出玉合計。
-    複数の連チャン区間がある場合は最も枚数が多い区間を返す。
+    連チャン区間での獲得枚数（medals）の合計を返す。
+    Papimoの「最大出メダル」に相当する値。
 
     Args:
         history: 当たり履歴リスト
         machine_key: 機種キー（閾値取得用）
 
     Returns:
-        最大連チャン区間の累計枚数
+        最大連チャン区間の獲得枚数累計
     """
     if not history:
         return 0
@@ -248,8 +248,8 @@ def calculate_max_chain_medals(history: list, machine_key: str = None) -> int:
 
     sorted_history = sorted(history, key=lambda x: x.get('time', '00:00'))
 
-    max_medals = 0
-    current_chain_medals = 0
+    max_medals = 0  # 全区間での最大累計
+    current_chain_medals = 0  # 連チャン区間の獲得枚数累計
     current_chain = 0
     accumulated_games = 0
 
@@ -262,7 +262,7 @@ def calculate_max_chain_medals(history: list, machine_key: str = None) -> int:
 
         if is_big_hit(hit_type):
             if accumulated_games <= _threshold:
-                # 連チャン継続：RB分も含めて累計
+                # 連チャン継続
                 current_chain += 1
                 current_chain_medals += medals
             else:
