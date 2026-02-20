@@ -153,10 +153,23 @@ def get_availability(store_key: str) -> Dict[str, str]:
         return {}
 
     result = {}
+    
+    # 新形式: units配列からavailabilityを取得
+    units = store_data.get('units', [])
+    if units and isinstance(units, list):
+        for u in units:
+            unit_id = str(u.get('unit_id', ''))
+            avail = u.get('availability', '')
+            if unit_id and avail:
+                result[unit_id] = avail
+        if result:
+            return result
+    
+    # 旧形式: empty/playingリストから取得（フォールバック）
     for u in store_data.get('empty', []):
-        result[u] = '空き'
+        result[str(u)] = '空き'
     for u in store_data.get('playing', []):
-        result[u] = '遊技中'
+        result[str(u)] = '遊技中'
     return result
 
 
