@@ -60,5 +60,25 @@ jobs:
             echo "No changes to commit"
           else
             git commit -m "auto: 欠損履歴データ補完"
-            git push
+            
+            # Push with retry (handle concurrent pushes)
+            for i in 1 2 3; do
+              if git push; then
+                echo "✅ Push successful"
+                break
+              fi
+              echo "⚠️ Push failed (attempt $i/3), pulling and retrying..."
+              git stash --include-untracked || true
+              if ! git pull --rebase origin main; then
+                echo "⚠️ Rebase conflict detected, aborting and using force push"
+                git rebase --abort || true
+                git stash pop || true
+                git push --force
+                echo "✅ Force push successful"
+                break
+              fi
+              git stash pop || true
+              git add -A
+              git commit --amend --no-edit || true
+            done
           fi
