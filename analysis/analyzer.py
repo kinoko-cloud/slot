@@ -220,9 +220,9 @@ def mark_first_hits(history: list) -> list:
 
 
 def calculate_max_chain_medals(history: list, machine_key: str = None) -> int:
-    """最大連チャン区間の獲得枚数累計を計算する
+    """最大連チャン区間の差枚を計算する
 
-    連チャン区間での獲得枚数（medals）の合計を返す。
+    連チャン区間での獲得枚数 - 投入枚数（平均0.8枚/G）を返す。
     Papimoの「最大出メダル」に相当する値。
 
     Args:
@@ -230,10 +230,13 @@ def calculate_max_chain_medals(history: list, machine_key: str = None) -> int:
         machine_key: 機種キー（閾値取得用）
 
     Returns:
-        最大連チャン区間の獲得枚数累計
+        最大連チャン区間の差枚
     """
     if not history:
         return 0
+
+    # 平均消費: 0.8枚/G（リプレイ・JACゲーム考慮）
+    AVG_COST_PER_GAME = 0.8
 
     # 機種別連チャン閾値
     _threshold = RENCHAIN_THRESHOLD
@@ -248,8 +251,9 @@ def calculate_max_chain_medals(history: list, machine_key: str = None) -> int:
 
     sorted_history = sorted(history, key=lambda x: x.get('time', '00:00'))
 
-    max_medals = 0  # 全区間での最大累計
+    max_diff = 0  # 全区間での最大差枚
     current_chain_medals = 0  # 連チャン区間の獲得枚数累計
+    current_chain_start = 0   # 連チャン区間の投入G数累計
     current_chain = 0
     accumulated_games = 0
 
@@ -265,20 +269,24 @@ def calculate_max_chain_medals(history: list, machine_key: str = None) -> int:
                 # 連チャン継続
                 current_chain += 1
                 current_chain_medals += medals
+                current_chain_start += start
             else:
-                # 連チャン途切れ → 新しい区間開始
-                if current_chain_medals > max_medals:
-                    max_medals = current_chain_medals
+                # 連チャン途切れ → 差枚を計算して新しい区間開始
+                diff = current_chain_medals - int(current_chain_start * AVG_COST_PER_GAME)
+                if diff > max_diff:
+                    max_diff = diff
                 current_chain = 1
                 current_chain_medals = medals
+                current_chain_start = start
             accumulated_games = 0
         # REG/RBは連チャンにも枚数にもカウントしない（除外）
 
     # 最後の区間
-    if current_chain_medals > max_medals:
-        max_medals = current_chain_medals
+    diff = current_chain_medals - int(current_chain_start * AVG_COST_PER_GAME)
+    if diff > max_diff:
+        max_diff = diff
 
-    return max_medals
+    return max_diff
 
 
 def calculate_current_at_games(history: list, final_start: int = 0) -> int:

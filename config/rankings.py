@@ -27,7 +27,7 @@ MACHINES = {
         'normal_ceiling': 999,        # 通常天井（液晶G数ベース。データ上は+αの誤差あり）
         'reset_ceiling': 600,         # リセット時天井（朝イチ天井）
         'reset_first_hit_bonus': True, # 朝イチ初当たりに恩恵あり
-        'renchain_threshold': 70,     # 連チャン判定: AT間70G以内なら連チャン継続（デフォルト統一）
+        'renchain_threshold': 65,     # 連チャン判定: AT間70G以内なら連チャン継続（デフォルト統一）
         # === 推奨条件（2026-02-20 データ分析結果） ===
         'ceiling_target_games': 500,  # 天井狙い閾値: RB込み500G以上
         'explosion_condition': {      # 爆発期待条件
@@ -66,7 +66,7 @@ MACHINES = {
         'reset_ceiling': 600,         # リセット時天井（G数換算。あべし1280≒G数600〜800程度）
         'reset_ceiling_abeshi': 1280, # リセット時あべし天井
         'reset_first_hit_bonus': True, # 朝イチ初当たりに恩恵あり
-        'renchain_threshold': 70,     # 連チャン判定: AT間70G以内なら連チャン継続（デフォルト統一）
+        'renchain_threshold': 65,     # 連チャン判定: AT間70G以内なら連チャン継続（デフォルト統一）
         # === 推奨条件（2026-02-20 データ分析結果） ===
         'ceiling_target_games': 800,  # 天井狙い閾値: RB込み800G以上
         'explosion_condition': {      # 爆発期待条件（モミモミ好調）
@@ -88,7 +88,7 @@ MACHINE_DEFAULTS = {
     'normal_ceiling': 999,
     'reset_ceiling': 999,       # デフォルトはリセット恩恵なし（通常天井と同じ）
     'reset_first_hit_bonus': False,
-    'renchain_threshold': 70,   # デフォルト連チャン閾値
+    'renchain_threshold': 65,   # デフォルト連チャン閾値
 }
 
 
