@@ -148,6 +148,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--dry-run', action='store_true', help='実際には取得しない')
     parser.add_argument('--limit', type=int, help='取得台数制限')
+    parser.add_argument('--days', type=int, default=7, help='何日分のデータを対象にするか（デフォルト: 7）')
     args = parser.parse_args()
     
+    # --daysオプションは将来の拡張用（現在はmissing_history.jsonから読むため未使用）
     fill_missing_history(dry_run=args.dry_run, limit=args.limit)
