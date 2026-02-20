@@ -498,7 +498,10 @@ class V2Fetcher:
                 
                 # 総獲得枚数を計算
                 total_medals = sum(h.get('medals', 0) for h in today_history) if today_history else 0
-                max_medals = max((h.get('medals', 0) for h in today_history), default=0) if today_history else 0
+                # max_medalsはPapimoから直接取得した値を優先、なければhistoryから計算
+                max_medals = unit_data.get('max_medals', 0)
+                if not max_medals and today_history:
+                    max_medals = max((h.get('medals', 0) for h in today_history), default=0)
                 
                 # 差枚 = 総獲得 - 投資（3枚/G）
                 diff_medals = total_medals - (total_start * 3) if total_start > 0 else 0
