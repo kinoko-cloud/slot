@@ -96,8 +96,12 @@ def update_history_from_availability():
             
             # 計算
             diff_medals = unit.get('diff_medals', 0)
-            # max_medalsは連チャン累計枚数の最大を計算
-            max_medals = calculate_max_chain_medals(history)
+            # max_medalsはDAIDATAから取得した値を優先（連チャン累計の最大）
+            max_medals = unit.get('max_medals', 0)
+            # DAIDATAから取得できない場合のみ履歴から推定（フォールバック）
+            if not max_medals and history:
+                # 単発最大を使用（連チャン計算は不正確なので）
+                max_medals = max((h.get('medals', 0) for h in history), default=0)
             max_rensa = calculate_max_rensa(history)
             
             # historyファイルを読み込み

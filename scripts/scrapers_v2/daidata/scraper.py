@@ -213,6 +213,11 @@ class DaidataScraper(BaseScraper):
         if diff:
             data['diff_medals'] = int(diff.group(1))
         
+        # 最大持ち玉（連チャン累計の最大）
+        max_medals = re.search(r'最大持ち玉\s*\n?\s*(\d+)', text)
+        if max_medals:
+            data['max_medals'] = int(max_medals.group(1))
+        
         # 今日の履歴をテキストから正規表現でパース
         # パターン: 大当たり スタート 出玉 種別 時間
         # 例: 0 32 37 ART 22:36
@@ -304,7 +309,7 @@ class DaidataScraper(BaseScraper):
             (r'(?:スタート|総回転|G数)[：:]\s*(\d+)', 'games'),
             (r'(\d+)\s*(?:G|回転)', 'games'),  # フォールバック
             (r'(?:差枚|差玉)[：:]\s*([+-]?\d+)', 'diff_medals'),
-            (r'(?:最大|MAX)[：:]\s*(\d+)', 'max_medals'),
+            (r'(?:最大持ち玉|最大|MAX)[：:\t\s]+(\d+)', 'max_medals'),
         ]:
             match = re.search(pattern, text)
             if match and key not in day:  # 重複防止
