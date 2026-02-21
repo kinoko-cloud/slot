@@ -26,8 +26,8 @@ def calculate_max_rensa(history: list) -> int:
     for i, h in enumerate(sorted_hist):
         if i > 0:
             start = h.get('start', 999)
-            # ARTで30G以内なら連チャン継続
-            if h.get('type') == 'ART' and start <= 30:
+            # 65G以内なら連チャン継続（config/rankings.pyのrenchain_threshold準拠）
+            if start <= 65:
                 current_rensa += 1
             else:
                 max_rensa = max(max_rensa, current_rensa)
