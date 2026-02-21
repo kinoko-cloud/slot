@@ -90,6 +90,22 @@ class V2Fetcher:
         self.discover = discover  # 台番号自動検出を行うか
         self.results = {}
         self._previous_availability = self._load_previous_availability()
+        self._date_changed = self._check_date_changed()
+        if self._date_changed:
+            logger.info("📅 日付変更検出 → 全台強制取得モード")
+    
+    def _check_date_changed(self) -> bool:
+        """前回取得日と現在日が異なるかチェック"""
+        fetched_at = self._previous_availability.get('fetched_at', '')
+        if not fetched_at:
+            return True  # 前回データなし → 強制取得
+        try:
+            # fetched_atをパース（ISO形式）
+            prev_date = fetched_at[:10]  # YYYY-MM-DD部分
+            today = now_jst().strftime('%Y-%m-%d')
+            return prev_date != today
+        except:
+            return True  # パース失敗 → 強制取得
         
     def _load_previous_availability(self) -> Dict:
         """前回のavailability.jsonを読み込む"""
@@ -316,6 +332,30 @@ class V2Fetcher:
                     # G数変化なし → 前回のデータを使用
                     # availability.jsonから前回のデータを取得
                     prev_data = self._get_previous_unit_data(store_key, unit_id)
+
+                    # 🔧 日付変更時は強制取得（前日データ混入防止）
+                    if self._date_changed:
+                        logger.info(f"{store_key}/{unit_id}: 日付変更 → 強制詳細取得")
+                        detail = fetch_with_retry(scraper, hall_id, unit_id, max_time=60)
+                        if detail.get('success'):
+                            if detail.get('art', 0) == 0 and arts_map.get(unit_id, 0) > 0:
+                                detail['art'] = arts_map[unit_id]
+                            if detail.get('final_start', 0) == 0 and starts_map.get(unit_id, 0) > 0:
+                                detail['final_start'] = starts_map[unit_id]
+                            result['units'][unit_id] = detail
+                            result['changed_count'] += 1
+                        else:
+                            # 取得失敗 → 0でリセット（前日データを使わない）
+                            result['units'][unit_id] = {
+                                'unit_id': unit_id,
+                                'total_start': games,
+                                'art': 0, 'bb': 0, 'rb': 0,
+                                'final_start': 0, 'diff_medals': 0,
+                                'history': [],
+                                'fetch_failed': True,
+                            }
+                            result['skipped_count'] += 1
+                        continue
 
                     # 🔧 空データ/履歴なし自動復旧: 前回データが空、または履歴なしなら強制的に詳細取得
                     prev_art = prev_data.get('art', 0)
