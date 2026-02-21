@@ -36,6 +36,36 @@ def calculate_max_rensa(history: list) -> int:
     max_rensa = max(max_rensa, current_rensa)
     return max_rensa
 
+
+def calculate_max_chain_medals(history: list) -> int:
+    """履歴から連チャン累計枚数の最大を計算"""
+    if not history:
+        return 0
+    
+    # ARTのみ抽出して時刻順にソート
+    art_hist = sorted([h for h in history if h.get('type') == 'ART'], key=lambda x: x.get('time', ''))
+    
+    if not art_hist:
+        return 0
+    
+    max_chain_medals = 0
+    current_chain_medals = 0
+    
+    for i, h in enumerate(art_hist):
+        start = h.get('start', 999)
+        medals = h.get('medals', 0)
+        
+        if i == 0 or start > 30:
+            # 新規当たり開始
+            max_chain_medals = max(max_chain_medals, current_chain_medals)
+            current_chain_medals = medals
+        else:
+            # 連チャン継続
+            current_chain_medals += medals
+    
+    max_chain_medals = max(max_chain_medals, current_chain_medals)
+    return max_chain_medals
+
 def update_history_from_availability():
     """availability.jsonからhistoryファイルを更新"""
     avail_path = ROOT / 'data' / 'availability.json'
@@ -66,10 +96,8 @@ def update_history_from_availability():
             
             # 計算
             diff_medals = unit.get('diff_medals', 0)
-            max_medals = unit.get('max_medals', 0)
-            # max_medalsが0の場合はhistoryから計算
-            if not max_medals and history:
-                max_medals = max((h.get('medals', 0) for h in history), default=0)
+            # max_medalsは連チャン累計枚数の最大を計算
+            max_medals = calculate_max_chain_medals(history)
             max_rensa = calculate_max_rensa(history)
             
             # historyファイルを読み込み
