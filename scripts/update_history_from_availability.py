@@ -67,6 +67,9 @@ def update_history_from_availability():
             # 計算
             diff_medals = unit.get('diff_medals', 0)
             max_medals = unit.get('max_medals', 0)
+            # max_medalsが0の場合はhistoryから計算
+            if not max_medals and history:
+                max_medals = max((h.get('medals', 0) for h in history), default=0)
             max_rensa = calculate_max_rensa(history)
             
             # historyファイルを読み込み

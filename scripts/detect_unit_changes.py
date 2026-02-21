@@ -9,6 +9,10 @@
 - 変更があればWhatsApp通知 + config更新提案
 
 実行: python scripts/detect_unit_changes.py [--fix]
+
+データソース（優先順）:
+1. availability.json（最新の取得データ）
+2. DAIDATA/PAPILOウェブスクレイピング（フォールバック）
 """
 import json
 import sys
@@ -19,30 +23,47 @@ JST = timezone(timedelta(hours=9))
 PROJECT_ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from config.rankings import STORES
+from config.stores import DAIDATA_STORES, PAPIMO_STORES
 
 
-def detect_changes(store_key: str, actual_units: list) -> dict:
+def detect_changes(store_key: str, config_units: list, actual_units: list) -> dict:
     """config定義と実際の台番号を比較して変更を検出"""
-    cfg = STORES.get(store_key, {})
-    config_units = set(str(u) for u in cfg.get('units', []))
-    actual_units = set(str(u) for u in actual_units)
+    config_set = set(str(u) for u in config_units)
+    actual_set = set(str(u) for u in actual_units)
     
-    missing = config_units - actual_units  # configにあるが実際にはない
-    new = actual_units - config_units      # configにないが実際にはある
+    missing = config_set - actual_set  # configにあるが実際にはない
+    new = actual_set - config_set      # configにないが実際にはある
     
     return {
         'store_key': store_key,
-        'config_count': len(config_units),
-        'actual_count': len(actual_units),
+        'config_count': len(config_set),
+        'actual_count': len(actual_set),
         'missing': sorted(missing),
         'new': sorted(new),
         'has_changes': bool(missing or new)
     }
 
 
+def get_units_from_availability(store_key: str) -> list:
+    """availability.jsonから台番号一覧を取得"""
+    avail_path = PROJECT_ROOT / 'data' / 'availability.json'
+    if not avail_path.exists():
+        return []
+    
+    try:
+        with open(avail_path) as f:
+            data = json.load(f)
+        
+        store = data.get('stores', {}).get(store_key, {})
+        units = store.get('units', [])
+        return [u.get('unit_id') for u in units if u.get('unit_id')]
+    except Exception as e:
+        print(f"  Error reading availability.json: {e}")
+        return []
+
+
 def scan_daidata_units(hall_id: str) -> list:
-    """DAIDATAから現在の台番号一覧を取得"""
+    """DAIDATAから現在の台番号一覧を取得（フォールバック）"""
     try:
         import requests
         from bs4 import BeautifulSoup
@@ -65,7 +86,7 @@ def scan_daidata_units(hall_id: str) -> list:
 
 
 def scan_papimo_units(hall_id: str) -> list:
-    """PAPILOから現在の台番号一覧を取得"""
+    """PAPILOから現在の台番号一覧を取得（フォールバック）"""
     try:
         from playwright.sync_api import sync_playwright
         
@@ -84,7 +105,7 @@ def scan_papimo_units(hall_id: str) -> list:
             browser.close()
             return list(set(units))
     except Exception as e:
-        print(f"  Error scanning PAPILO: {e}")
+        print(f"  Error scanning PAPIMO: {e}")
         return []
 
 
@@ -96,41 +117,81 @@ def check_all_stores(fix: bool = False):
     
     changes = []
     
-    for store_key, cfg in STORES.items():
-        if not cfg.get('units'):
-            continue
-        
+    # DAIDATA店舗
+    for store_key, cfg in DAIDATA_STORES.items():
+        machines = cfg.get('machines', {})
         hall_id = cfg.get('hall_id')
-        data_source = cfg.get('data_source', 'daidata')
         
-        if not hall_id:
-            continue
+        for machine_key, config_units in machines.items():
+            if not config_units:
+                continue
+            
+            full_key = f"{store_key}_{machine_key}"
+            print(f"{full_key}...")
+            
+            # まずavailability.jsonから取得
+            actual_units = get_units_from_availability(full_key)
+            
+            # なければDAIDATAから直接取得
+            if not actual_units and hall_id:
+                print(f"  availability.jsonにデータなし、DAIDATAから取得中...")
+                actual_units = scan_daidata_units(hall_id)
+            
+            if not actual_units:
+                print(f"  スキップ（データ取得失敗）")
+                continue
+            
+            result = detect_changes(full_key, config_units, actual_units)
+            
+            if result['has_changes']:
+                changes.append(result)
+                print(f"  ⚠️ 変更検出!")
+                print(f"    config: {result['config_count']}台")
+                print(f"    実際: {result['actual_count']}台")
+                if result['missing']:
+                    print(f"    なくなった台: {result['missing']}")
+                if result['new']:
+                    print(f"    新しい台: {result['new']}")
+            else:
+                print(f"  ✅ 変更なし ({result['config_count']}台)")
+    
+    # PAPIMO店舗
+    for store_key, cfg in PAPIMO_STORES.items():
+        machines = cfg.get('machines', {})
+        hall_id = cfg.get('hall_id')
         
-        print(f"{store_key}...")
-        
-        # 実際の台番号を取得
-        if data_source == 'papimo':
-            actual_units = scan_papimo_units(hall_id)
-        else:
-            actual_units = scan_daidata_units(hall_id)
-        
-        if not actual_units:
-            print(f"  スキップ（データ取得失敗）")
-            continue
-        
-        result = detect_changes(store_key, actual_units)
-        
-        if result['has_changes']:
-            changes.append(result)
-            print(f"  ⚠️ 変更検出!")
-            print(f"    config: {result['config_count']}台")
-            print(f"    実際: {result['actual_count']}台")
-            if result['missing']:
-                print(f"    なくなった台: {result['missing']}")
-            if result['new']:
-                print(f"    新しい台: {result['new']}")
-        else:
-            print(f"  ✅ 変更なし ({result['config_count']}台)")
+        for machine_key, config_units in machines.items():
+            if not config_units:
+                continue
+            
+            full_key = f"{store_key}_{machine_key}"
+            print(f"{full_key}...")
+            
+            # まずavailability.jsonから取得
+            actual_units = get_units_from_availability(full_key)
+            
+            # なければPAPILOから直接取得
+            if not actual_units and hall_id:
+                print(f"  availability.jsonにデータなし、PAPILOから取得中...")
+                actual_units = scan_papimo_units(hall_id)
+            
+            if not actual_units:
+                print(f"  スキップ（データ取得失敗）")
+                continue
+            
+            result = detect_changes(full_key, config_units, actual_units)
+            
+            if result['has_changes']:
+                changes.append(result)
+                print(f"  ⚠️ 変更検出!")
+                print(f"    config: {result['config_count']}台")
+                print(f"    実際: {result['actual_count']}台")
+                if result['missing']:
+                    print(f"    なくなった台: {result['missing']}")
+                if result['new']:
+                    print(f"    新しい台: {result['new']}")
+            else:
+                print(f"  ✅ 変更なし ({result['config_count']}台)")
     
     print()
     
@@ -147,7 +208,7 @@ def check_all_stores(fix: bool = False):
             print()
             print("=== config更新 ===")
             # TODO: 自動更新実装
-            print("自動更新は未実装。手動でconfig/rankings.pyを更新してください。")
+            print("自動更新は未実装。手動でconfig/stores.pyを更新してください。")
     else:
         print("✅ 全店舗で変更なし")
     
