@@ -563,8 +563,8 @@ def check_history_freshness_realtime():
                 if art < 10 or not history:
                     continue  # 稼働が少ない台はスキップ（閾値を5→10に）
                 
-                # 最新履歴の時刻
-                latest_time = history[0].get('time', '')
+                # 最新履歴の時刻（履歴は古い順なので最後が最新）
+                latest_time = history[-1].get('time', '')
                 if not latest_time:
                     continue
                 
