@@ -13,54 +13,75 @@ ROOT = Path(__file__).parent.parent
 HISTORY_DIR = ROOT / 'data' / 'history'
 
 def calculate_max_rensa(history: list) -> int:
-    """履歴から最大連チャンを計算"""
+    """履歴から最大連チャンを計算
+    
+    連チャン判定ルール（DAIDATA仕様）:
+    - RBのstartが65G超 → 新規当たり開始
+    - RBのstartが65G以下 → 連チャン継続
+    - ARTのstartは常に0か1なので判定に使わない（RBに追従）
+    """
     if not history:
         return 0
     
-    max_rensa = 1
-    current_rensa = 1
+    max_rensa = 0
+    current_rensa = 0
     
     # 時刻順（古い順）にソート
     sorted_hist = sorted(history, key=lambda x: x.get('time', ''))
     
-    for i, h in enumerate(sorted_hist):
-        if i > 0:
-            start = h.get('start', 999)
-            # 65G以内なら連チャン継続（config/rankings.pyのrenchain_threshold準拠）
-            if start <= 65:
-                current_rensa += 1
-            else:
+    for h in sorted_hist:
+        hit_type = h.get('type', 'ART')
+        start = h.get('start', 999)
+        
+        if hit_type == 'RB':
+            # RBのstartで新規/継続を判定
+            if start > 65:
                 max_rensa = max(max_rensa, current_rensa)
                 current_rensa = 1
+            else:
+                current_rensa += 1
+        else:
+            # ARTは常に連チャン継続扱い
+            current_rensa += 1
     
     max_rensa = max(max_rensa, current_rensa)
     return max_rensa
 
 
 def calculate_max_chain_medals(history: list) -> int:
-    """履歴から連チャン累計枚数の最大を計算"""
+    """履歴から連チャン累計枚数の最大を計算
+    
+    連チャン判定ルール（DAIDATA仕様）:
+    - RBのstartが65G超 → 新規当たり開始
+    - RBのstartが65G以下 → 連チャン継続
+    - ARTのstartは常に0か1なので判定に使わない（RBに追従）
+    """
     if not history:
         return 0
     
-    # ARTのみ抽出して時刻順にソート
-    art_hist = sorted([h for h in history if h.get('type') == 'ART'], key=lambda x: x.get('time', ''))
+    # 時刻順にソート
+    sorted_hist = sorted(history, key=lambda x: x.get('time', ''))
     
-    if not art_hist:
+    if not sorted_hist:
         return 0
     
     max_chain_medals = 0
     current_chain_medals = 0
     
-    for i, h in enumerate(art_hist):
+    for h in sorted_hist:
+        hit_type = h.get('type', 'ART')
         start = h.get('start', 999)
         medals = h.get('medals', 0)
         
-        if i == 0 or start > 30:
-            # 新規当たり開始
-            max_chain_medals = max(max_chain_medals, current_chain_medals)
-            current_chain_medals = medals
+        if hit_type == 'RB':
+            # RBのstartで新規/継続を判定
+            if start > 65:
+                max_chain_medals = max(max_chain_medals, current_chain_medals)
+                current_chain_medals = medals
+            else:
+                current_chain_medals += medals
         else:
-            # 連チャン継続
+            # ARTは常に連チャン継続扱い
             current_chain_medals += medals
     
     max_chain_medals = max(max_chain_medals, current_chain_medals)
