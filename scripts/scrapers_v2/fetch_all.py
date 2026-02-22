@@ -318,13 +318,23 @@ class V2Fetcher:
                         result['skipped_count'] += 1
                         continue
 
+                    # 詳細ページの日付が今日かチェック
+                    today = now_jst().strftime('%Y-%m-%d')
+                    detail_date = detail.get('date', '')
+                    is_today_data = (detail_date == today) or (detail.get('art', 0) > 0 and detail.get('today_history'))
+                    
                     # 詳細ページでART=0の場合、一覧ページのARTを使う
+                    # ただし、日付変更後で詳細が今日のデータでない場合は0のまま（昨日データ混入防止）
                     if detail.get('art', 0) == 0 and arts_map.get(unit_id, 0) > 0:
-                        detail['art'] = arts_map[unit_id]
+                        if not self._date_changed or is_today_data:
+                            detail['art'] = arts_map[unit_id]
+                        else:
+                            logger.info(f"{store_key}/{unit_id}: 日付変更後、一覧ARTをスキップ（昨日データの可能性）")
 
                     # 詳細ページでfinal_start=0の場合、一覧ページのスタート回数を使う
                     if detail.get('final_start', 0) == 0 and starts_map.get(unit_id, 0) > 0:
-                        detail['final_start'] = starts_map[unit_id]
+                        if not self._date_changed or is_today_data:
+                            detail['final_start'] = starts_map[unit_id]
 
                     result['units'][unit_id] = detail
                     result['changed_count'] += 1
@@ -338,10 +348,19 @@ class V2Fetcher:
                         logger.info(f"{store_key}/{unit_id}: 日付変更 → 強制詳細取得")
                         detail = fetch_with_retry(scraper, hall_id, unit_id, max_time=60)
                         if detail.get('success'):
-                            if detail.get('art', 0) == 0 and arts_map.get(unit_id, 0) > 0:
-                                detail['art'] = arts_map[unit_id]
-                            if detail.get('final_start', 0) == 0 and starts_map.get(unit_id, 0) > 0:
-                                detail['final_start'] = starts_map[unit_id]
+                            # 詳細ページの日付が今日かチェック
+                            today = now_jst().strftime('%Y-%m-%d')
+                            detail_date = detail.get('date', '')
+                            is_today_data = (detail_date == today) or (detail.get('art', 0) > 0 and detail.get('today_history'))
+                            
+                            # 詳細が今日のデータでない場合、一覧ページのデータも使わない（昨日データ混入防止）
+                            if not is_today_data:
+                                logger.info(f"{store_key}/{unit_id}: 詳細が今日のデータでない → 0リセット")
+                                detail['art'] = 0
+                                detail['bb'] = 0
+                                detail['rb'] = 0
+                                detail['final_start'] = 0
+                                detail['history'] = []
                             result['units'][unit_id] = detail
                             result['changed_count'] += 1
                         else:
