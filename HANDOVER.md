@@ -1,96 +1,39 @@
-# HANDOVER - 2026-02-13 14:08 作成
+# HANDOVER.md - 引き継ぎ情報
 
-## 今日の問題と対応状況
+## 最終更新: 2026-02-22 16:00
 
-### 問題1: 履歴データが途中で切れていた（ART=0表示）
-**原因**: `scrapers/daidata_detail_history.py` の正規表現バグ
-- `過去\d+日` で早期終了していた（ページ上部の「過去7日」で切れる）
+## 直近の変更 (2026-02-22)
 
-**修正済み** (コミット: cdf5b268b4):
-```python
-# 旧
-r'大当たり\s+スタート\s+出玉\s+種別\s+時間(.+?)(?:過去\d+日|ページ先頭|台データオンライン|$)'
+### 1. max_medals取得修正
+- DAIDATAから「最大持ち玉」を直接取得するように変更
+- `scripts/scrapers_v2/daidata/scraper.py` - fetch_realtimeで取得
+- `scripts/update_history_from_availability.py` - DAIDATAの値を優先
 
-# 新
-r'大当たり\s+スタート\s+出玉\s+種別\s+時間(.+?)(?:グラフ表示|差枚数推移|データを表示中|関連台|機種名|ページ先頭へ|$)'
-```
+### 2. 連チャン判定閾値
+- 30G → 65G に変更（config/rankings.pyのrenchain_threshold準拠）
 
-### 問題2: ART=0がサイトに表示されていた
-**原因**: `scripts/generate_static.py` がデータ欠損時にART=0を埋めていた
+### 3. 朝イチの昨日データ混入防止 ⚠️重要
+- `scripts/scrapers_v2/fetch_all.py` を修正
+- 日付変更後、詳細ページの日付が今日でない場合:
+  - 一覧ページのARTを使わない
+  - 全て0でリセット
+- **仕様**: 朝イチは全部0で埋めて開店
 
-**修正済み** (コミット: 7182eec267):
-- `scripts/generate_static.py` 775-779行目: ART=0はスキップ
-- `web/templates/index.html` 36行目, 857行目: ART>0のみ表示
+### 4. GitHub Actionsワークフロー
+- `fetch-availability-sub.yml`: コンフリクト対策（reset→再fetch）
+- `daily-verify.yml`: コンフリクト時はforce push
 
-### 問題3: availability.json（リアルタイムデータ）が12時間前で止まっている
-**原因**: GitHub Actionsのスケジュール実行が今日は動いていない
+### 5. 台番号変更
+- 新宿エスパス北斗2: 5台（125, 126, 127, 128, 4349）
+- 他店舗は未対応（確認が必要）
 
-**状況**: 
-- ローカルでfetch_daidata_availability.pyを実行したが、10分以上かかりタイムアウト
-- availability.jsonは **まだ更新できていない**
+## 注意事項
+- 変更を加えたら必ずこのファイルを更新すること
+- 約束したことは必ず実装すること（朝0埋めの件で問題発生）
 
-**TODO**:
-```bash
-# ロックファイル削除
-rm -f /tmp/slot_fetch.lock /tmp/slot_*_update.lock
-
-# 実行（10分以上かかる）
-cd /home/riichi/works/slot
-python3 scripts/fetch_daidata_availability.py
-
-# 完了したら再生成
-python3 scripts/generate_static.py
-git add -A && git commit -m "fix: availability更新" && git push origin main
-```
-
-### 問題4: ヘルスチェックでART=0を検知できていなかった
-**修正済み** (コミット: 0d929e6970):
-- `scripts/health_check.py` に `check_art_zero_anomaly()` 関数を追加
-
----
-
-## 未完了タスク
-
-1. **availability.json更新**: ローカルで実行中だったが、タイムアウトで失敗。再実行が必要
-2. **island_akihabara**: papimoソースのデータが2/11で止まっている（別問題）
-3. **GitHub Actionsスケジュール**: 今日動いていない原因不明。ワークフロー自体はactive
-
----
-
-## Git差分（今日のコミット）
-
-```
-7182eec267 fix: ART=0を表示しないように修正
-31bd89329d fix: 2/10-12のART=0異常データを削除＆再生成
-4f844b26c5 fix: 履歴データ修正後のサイト再生成
-0d929e6970 feat: ART=0異常検知をヘルスチェックに追加
-cdf5b268b4 fix: 履歴取得の正規表現修正 - 過去Xで早期終了するバグを修正
-```
-
----
-
-## ファイル変更一覧
-
-| ファイル | 変更内容 |
-|---------|---------|
-| `scrapers/daidata_detail_history.py` | 正規表現の終了条件修正 |
-| `scripts/generate_static.py` | ART=0スキップ処理追加 |
-| `scripts/health_check.py` | ART=0異常検知関数追加 |
-| `web/templates/index.html` | ART=0非表示条件追加 |
-| `data/history/*` | 2/10-12のART<=2データ削除 |
-| `docs/*` | 再生成済み |
-
----
-
-## 確認コマンド
-
-```bash
-# 現在のavailability.jsonの鮮度確認
-python3 -c "import json; d=json.load(open('data/availability.json')); print(d.get('fetched_at'))"
-
-# ヘルスチェック実行
-python3 scripts/health_check.py
-
-# サイト再生成
-python3 scripts/generate_static.py
-```
+## 未対応タスク
+- [ ] 西武新宿エスパス北斗2: +1台（3151）
+- [ ] 上野エスパスSBJ: 台数確認
+- [ ] 高田馬場エスパスSBJ: 台番号入替確認
+- [ ] 新小岩エスパスSBJ: 台数確認
+- [ ] アイランド秋葉原北斗2: 0814,0824撤去確認
