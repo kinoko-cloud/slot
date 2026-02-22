@@ -80,9 +80,16 @@ jobs:
                 echo "✅ Push successful"
                 break
               fi
-              echo "⚠️ Push failed (attempt $i/3), pulling and retrying..."
-              git stash --include-untracked || true
-              git pull --rebase origin main
-              git stash pop || true
+              echo "⚠️ Push failed (attempt $i/3), resetting to remote and retrying..."
+              git fetch origin main
+              git reset --hard origin/main
+              # 再度fetchして再生成
+              timeout 300 python scripts/scrapers_v2/fetch_all.py --sub-only 2>&1 || true
+              timeout 300 python scripts/generate_static.py 2>&1 || true
+              git add data/availability.json docs/ || true
+              if ! git diff --staged --quiet; then
+                TIMESTAMP=$(TZ='Asia/Tokyo' date +'%H:%M')
+                git commit -m "auto: サブ店舗更新 ${TIMESTAMP} (retry)"
+              fi
             done
           fi

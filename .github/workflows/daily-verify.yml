@@ -73,7 +73,14 @@ jobs:
               echo "✅ Push succeeded"
               exit 0
             fi
-            echo "Push failed (attempt $i/3), rebasing..."
-            git pull --rebase origin main
+            echo "Push failed (attempt $i/3), resetting to remote..."
+            git fetch origin main
+            if ! git pull --rebase origin main; then
+              echo "⚠️ Rebase conflict, aborting and using force push"
+              git rebase --abort || true
+              git push --force
+              echo "✅ Force push successful"
+              exit 0
+            fi
           done
           exit 0
