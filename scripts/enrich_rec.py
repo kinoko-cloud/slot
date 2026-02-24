@@ -12,6 +12,16 @@ generate_static.pyから呼ばれる。
 # Papimo店舗: 差枚をサイトから取得できないため、estimate_diff_medalsを使用
 # DaiData店舗: サイトから実差枚を取得済みのため、DBの値を優先
 _PAPIMO_STORES = {'island_akihabara_sbj', 'island_akihabara_hokuto2'}
+
+
+def _get_machine_key(rec, store_key):
+    """recのmachine_keyを取得（Noneの場合はstore_keyから判定）"""
+    mk = rec.get('machine_key')
+    if mk:
+        return mk
+    if 'hokuto2' in store_key or '_hokuto' in store_key:
+        return 'hokuto2'
+    return 'sbj'
 import sys
 from pathlib import Path
 from datetime import datetime, timedelta, timezone
@@ -119,7 +129,7 @@ def enrich_recs(recs):
                 # DaiData店舗: DBの実差枚を優先、なければhistoryから計算
                 if store_key in _PAPIMO_STORES and history and games > 0:
                     from analysis.diff_medals_estimator import estimate_diff_medals
-                    _machine_key = rec.get('machine_key', 'sbj')
+                    _machine_key = _get_machine_key(rec, store_key)
                     _total_m = sum(h.get('medals', 0) for h in history)
                     diff_medals = estimate_diff_medals(_total_m, games, _machine_key)
                 elif diff_medals is None and history and games > 0:
@@ -233,7 +243,7 @@ def _enrich_day_prefix(rec, days_by_date, prefix, date_key):
         if hist and games > 0:
             from analysis.diff_medals_estimator import estimate_diff_medals
             _total_m = sum(h.get('medals', 0) for h in hist)
-            _mk = rec.get('machine_key', 'sbj')
+            _mk = _get_machine_key(rec, _store_key)
             rec[f'{prefix}diff_medals'] = estimate_diff_medals(_total_m, games, _mk)
     else:
         # DaiData: DBの実差枚を優先

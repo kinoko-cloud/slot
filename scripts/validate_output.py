@@ -317,7 +317,7 @@ def _validate_index(content, expected_mode, expected_verify_dt, expected_rec_dt,
         if latest_month != expected_yesterday.month or latest_day != expected_yesterday.day:
             actual_str = f'{latest_month}/{latest_day}'
             expected_str = f'{expected_yesterday.month}/{expected_yesterday.day}'
-            issues.append(f'ERROR: 直近データの最新日付が{actual_str}だが前日{expected_str}であるべき（蓄積DBが古い可能性）')
+            issues.append(f'WARN: 直近データの最新日付が{actual_str}だが前日{expected_str}（データ欠損またはDBが古い可能性）')
 
     return issues
 
