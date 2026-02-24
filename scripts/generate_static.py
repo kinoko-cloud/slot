@@ -631,11 +631,16 @@ def generate_index(env):
                     t_medals = rec.get('max_medals', 0)
                     t_games = rec.get('total_games', 0)
                     if t_art > 0 or t_medals > 0:
-                        # 差枚計算
+                        # 差枚: DAIDATAの実データを使用（理論値は使わない）
                         diff_medals = 0
-                        if t_art > 0 and t_games > 0:
-                            profit = calculate_expected_profit(t_games, t_art, key)
-                            diff_medals = profit.get('current_estimate', 0)
+                        if realtime and 'units' in realtime:
+                            for ru in realtime.get('units', []):
+                                if str(ru.get('unit_id')) == str(rec.get('unit_id')):
+                                    diff_medals = ru.get('diff_medals', 0) or 0
+                                    # max_medalsも実データを優先
+                                    if ru.get('max_medals', 0):
+                                        t_medals = ru.get('max_medals', 0)
+                                    break
                         # 初当たり計算
                         t_hist_raw2 = rec.get('today_history', [])
                         t_first_hits = calculate_first_hits(t_hist_raw2)
