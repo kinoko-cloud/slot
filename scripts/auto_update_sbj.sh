@@ -52,7 +52,7 @@ if ! git diff --quiet docs/ || ! git diff --quiet data/; then
     fi
     rm -f .git/index.lock 2>/dev/null || true
     
-    git add docs/ data/availability.json data/history/
+    git add docs/ data/availability.json
     git commit -m "auto: SBJ更新 $(date '+%H:%M')" >> "$LOGFILE" 2>&1 || true
     
     # fetchしてリモートとの差分を確認
