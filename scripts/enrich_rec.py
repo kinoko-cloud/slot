@@ -112,8 +112,8 @@ def enrich_recs(recs):
                         games = total_g
                         prob = games / art if art > 0 else 0
                 
-                # max_rensaがない場合、historyから計算
-                if not max_rensa and history:
+                # max_rensaはhistoryから常に再計算（DBのmax_rensaはlen(history)の誤値が多いため信頼できない）
+                if history:
                     max_rensa, _ = _calc_history_stats(history)
                 
                 # max_medals: historyから連チャン合計枚数を計算し、保存値と大きい方を使用
@@ -194,28 +194,22 @@ def _enrich_day_prefix(rec, days_by_date, prefix, date_key):
         if db_history:
             rec[f'{prefix}history'] = db_history
     
-    # max_rensa/max_medalsの補完（蓄積DBを常に優先）
+    # max_rensa/max_medalsはhistoryから再計算（DBのmax_rensaはlen(history)の誤値が多いため信頼できない）
     hist = rec.get(f'{prefix}history', []) or day_data.get('history', [])
-    db_rensa = day_data.get('max_rensa')
-    if db_rensa:
-        rec[f'{prefix}max_rensa'] = db_rensa
-    elif not rec.get(f'{prefix}max_rensa') and hist:
-        # 蓄積DBにない場合のみhistoryから計算
+    if hist:
         from analysis.history_accumulator import _calc_history_stats
-        max_rensa, max_medals = _calc_history_stats(hist)
-        if max_rensa > 0:
-            rec[f'{prefix}max_rensa'] = max_rensa
-        if max_medals > 0:
-            rec[f'{prefix}max_medals'] = max_medals
-    
-    # max_medalsはhistoryから連チャン合計を計算（1hit最大値より正確）
-    if hist and not rec.get(f'{prefix}max_medals'):
-        from analysis.history_accumulator import _calc_history_stats
-        _, calc_max = _calc_history_stats(hist)
-        if calc_max > 0:
-            rec[f'{prefix}max_medals'] = calc_max
-    # 蓄積DBの値はフォールバック（histから計算できない場合のみ）
-    if not rec.get(f'{prefix}max_medals'):
+        calc_r, calc_m = _calc_history_stats(hist)
+        if calc_r > 0:
+            rec[f'{prefix}max_rensa'] = calc_r
+        if calc_m > 0:
+            db_max = day_data.get('max_medals') or 0
+            # DBのmax_medalsがcalcより大きい場合はDBを優先（Papimoサマリの正確な値）
+            rec[f'{prefix}max_medals'] = max(calc_m, db_max)
+    else:
+        # historyがない場合のみDB値を使用
+        db_rensa = day_data.get('max_rensa')
+        if db_rensa:
+            rec[f'{prefix}max_rensa'] = db_rensa
         db_max = day_data.get('max_medals')
         if db_max:
             rec[f'{prefix}max_medals'] = db_max
@@ -270,19 +264,7 @@ def _enrich_day_prefix(rec, days_by_date, prefix, date_key):
                 except Exception:
                     pass
 
-    if not rec.get(f'{prefix}max_rensa'):
-        db_rensa = day_data.get('max_rensa')
-        if db_rensa:
-            rec[f'{prefix}max_rensa'] = db_rensa
-
-    if not rec.get(f'{prefix}max_medals'):
-        db_max = day_data.get('max_medals')
-        if db_max:
-            rec[f'{prefix}max_medals'] = db_max
-            # DEBUG
-            if target_date == '2026-02-13' and prefix == 'three_days_ago_':
-                import sys
-                print(f"[DEBUG enrich 237-240] overwriting with db_max={db_max}", file=sys.stderr)
+    # max_rensa/max_medalsはhist分岐で処理済み（DB値はlen(history)の誤値が多いため使わない）
 
 
 def _enrich_day_dict(day_dict, day_data):
