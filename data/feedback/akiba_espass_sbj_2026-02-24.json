@@ -4,11 +4,18 @@
   "date": "2026-02-24",
   "weekday": "火",
   "total_units": 4,
-  "hits": 2,
-  "misses": 0,
-  "surprises": 1,
-  "miss_details": [],
-  "surprise_details": [
+  "hits": 0,
+  "misses": 2,
+  "surprises": 0,
+  "miss_details": [
+    {
+      "unit_id": "2158",
+      "score": 119,
+      "actual_prob": 0,
+      "reasons": [
+        "高スコア過信"
+      ]
+    },
     {
       "unit_id": "2160",
       "rank": "B",
@@ -18,5 +25,6 @@
         "実は高設定域(1/66)"
       ]
     }
-  ]
+  ],
+  "surprise_details": []
 }
