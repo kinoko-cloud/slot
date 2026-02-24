@@ -8,6 +8,10 @@ generate_static.pyから呼ばれる。
 - three_days_ago_diff_medals / three_days_ago_max_rensa / three_days_ago_max_medals
 - recent_days[].diff_medals / max_rensa / max_medals
 """
+
+# Papimo店舗: 差枚をサイトから取得できないため、estimate_diff_medalsを使用
+# DaiData店舗: サイトから実差枚を取得済みのため、DBの値を優先
+_PAPIMO_STORES = {'island_akihabara_sbj', 'island_akihabara_hokuto2'}
 import sys
 from pathlib import Path
 from datetime import datetime, timedelta, timezone
@@ -110,8 +114,15 @@ def enrich_recs(recs):
                     if calc_m > 0:
                         max_medals = max(max_medals or 0, calc_m)
                 
-                # diff_medalsがない場合、historyから計算
-                if diff_medals is None and history and games > 0:
+                # diff_medals計算:
+                # Papimo店舗: サイトから差枚取得不可 → estimate_diff_medalsで常に計算（DBの誤値を上書き）
+                # DaiData店舗: DBの実差枚を優先、なければhistoryから計算
+                if store_key in _PAPIMO_STORES and history and games > 0:
+                    from analysis.diff_medals_estimator import estimate_diff_medals
+                    _machine_key = rec.get('machine_key', 'sbj')
+                    _total_m = sum(h.get('medals', 0) for h in history)
+                    diff_medals = estimate_diff_medals(_total_m, games, _machine_key)
+                elif diff_medals is None and history and games > 0:
                     total_medals = sum(h.get('medals', 0) for h in history)
                     invested = games * 3  # SBJは1G=3枚
                     diff_medals = total_medals - invested
@@ -212,30 +223,42 @@ def _enrich_day_prefix(rec, days_by_date, prefix, date_key):
                 if total_start > 0:
                     rec[f'{prefix}games'] = total_start
 
-    # diff_medalsは蓄積DBを常に優先（recommenderの推定値より正確）
-    db_diff = day_data.get('diff_medals')
-    if db_diff is not None:
-        rec[f'{prefix}diff_medals'] = int(db_diff)
-    elif not rec.get(f'{prefix}diff_medals'):
-        # 蓄積DBにない場合のみhistoryから計算
+    # diff_medals計算:
+    # Papimo店舗: サイトから取得不可 → estimate_diff_medalsで常に計算（DBの誤値を上書き）
+    # DaiData店舗: DBの実差枚を優先（サイトから取得済み）
+    _store_key = rec.get('store_key', '')
+    if _store_key in _PAPIMO_STORES:
         hist = rec.get(f'{prefix}history', []) or day_data.get('history', [])
         games = rec.get(f'{prefix}games', 0) or day_data.get('games', 0) or day_data.get('total_start', 0)
         if hist and games > 0:
-            total_medals = sum(h.get('medals', 0) for h in hist)
-            invested = games * 3
-            diff = total_medals - invested
-            if diff != 0:
-                rec[f'{prefix}diff_medals'] = diff
-        elif hist and games == 0:
-            try:
-                from analysis.diff_medals_estimator import estimate_diff_medals
-                medals_total = sum(h.get('medals', 0) for h in hist)
-                machine_key = rec.get('machine_key', 'sbj')
-                estimated = estimate_diff_medals(medals_total, games, machine_key)
-                if estimated != 0:
-                    rec[f'{prefix}diff_medals'] = int(estimated)
-            except Exception:
-                pass
+            from analysis.diff_medals_estimator import estimate_diff_medals
+            _total_m = sum(h.get('medals', 0) for h in hist)
+            _mk = rec.get('machine_key', 'sbj')
+            rec[f'{prefix}diff_medals'] = estimate_diff_medals(_total_m, games, _mk)
+    else:
+        # DaiData: DBの実差枚を優先
+        db_diff = day_data.get('diff_medals')
+        if db_diff is not None:
+            rec[f'{prefix}diff_medals'] = int(db_diff)
+        elif not rec.get(f'{prefix}diff_medals'):
+            hist = rec.get(f'{prefix}history', []) or day_data.get('history', [])
+            games = rec.get(f'{prefix}games', 0) or day_data.get('games', 0) or day_data.get('total_start', 0)
+            if hist and games > 0:
+                total_medals = sum(h.get('medals', 0) for h in hist)
+                invested = games * 3
+                diff = total_medals - invested
+                if diff != 0:
+                    rec[f'{prefix}diff_medals'] = diff
+            elif hist and games == 0:
+                try:
+                    from analysis.diff_medals_estimator import estimate_diff_medals
+                    medals_total = sum(h.get('medals', 0) for h in hist)
+                    machine_key = rec.get('machine_key', 'sbj')
+                    estimated = estimate_diff_medals(medals_total, games, machine_key)
+                    if estimated != 0:
+                        rec[f'{prefix}diff_medals'] = int(estimated)
+                except Exception:
+                    pass
 
     if not rec.get(f'{prefix}max_rensa'):
         db_rensa = day_data.get('max_rensa')

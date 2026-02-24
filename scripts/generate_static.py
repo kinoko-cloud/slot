@@ -922,7 +922,9 @@ def generate_index(env):
             if raw_hist and not day.get('diff_medals'):
                 total_medals = sum(h.get('medals', 0) for h in raw_hist)
                 games = day.get('games', 0) or day.get('total_start', 0)
-                day['diff_medals'] = total_medals - (games * 3) if games > 0 else 0
+                if games > 0:
+                    from analysis.diff_medals_estimator import estimate_diff_medals
+                    day['diff_medals'] = estimate_diff_medals(total_medals, games, _mk)
             if raw_hist:
                 # historyから連チャン合計枚数を計算し、保存値と大きい方を使用
                 from analysis.history_accumulator import _calc_history_stats as _calc_stats
