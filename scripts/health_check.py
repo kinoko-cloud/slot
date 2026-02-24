@@ -828,37 +828,46 @@ def auto_repair(results):
 def main():
     import argparse
     parser = argparse.ArgumentParser()
-    parser.add_argument('--repair', action='store_true', help='自己修復を試みる')
+    parser.add_argument('--repair', action='store_true', help='自己修復を試みる（デフォルトで有効）')
+    parser.add_argument('--no-repair', action='store_true', help='自己修復を無効化')
     parser.add_argument('--quiet', action='store_true', help='正常時は出力しない')
     args = parser.parse_args()
-    
+
     results = run_all_checks()
-    
-    # 自己修復
+
+    # 自己修復（デフォルト有効: --no-repairで無効化）
     repairs = []
-    if args.repair and results['overall'] == 'error':
+    should_repair = not args.no_repair  # デフォルトで修復する
+    if should_repair and results['overall'] == 'error':
         repairs = auto_repair(results)
         results['repairs'] = repairs
-        
+
         # 修復後に再チェック
         if repairs:
             import time
             time.sleep(2)
             results['after_repair'] = run_all_checks()
-    
+            # 修復成功なら通知しない
+            if results['after_repair']['overall'] != 'error':
+                if args.quiet:
+                    sys.exit(0)
+                print(f"🔧 自動修復完了: {', '.join(repairs)}", file=sys.stderr)
+                print(json.dumps(results, ensure_ascii=False, indent=2))
+                sys.exit(0)  # 修復成功 → 通知不要
+
     # 出力
     if args.quiet and results['overall'] == 'ok':
         sys.exit(0)
-    
+
     # JSON出力
     print(json.dumps(results, ensure_ascii=False, indent=2))
-    
-    # 異常時はexit code 1
+
+    # 異常時はexit code 1（通知トリガー）
     if results['overall'] == 'error':
         # アラートメッセージも出力
         msg = format_alert_message(results)
         if repairs:
-            msg += '\n\n--- 自己修復 ---\n' + '\n'.join(repairs)
+            msg += '\n\n--- 自己修復試行（失敗）---\n' + '\n'.join(repairs)
         print("\n--- ALERT MESSAGE ---", file=sys.stderr)
         print(msg, file=sys.stderr)
         sys.exit(1)
