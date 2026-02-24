@@ -1027,10 +1027,10 @@ def analyze_trend(days: List[dict], machine_key: str = 'sbj') -> dict:
             yesterday_history = yesterday_day.get('history', [])
             site_max_medals = yesterday_day.get('max_medals', 0)
             if yesterday_history:
-                from analysis.analyzer import calculate_max_chain_medals
+                from analysis.history_accumulator import _calc_history_stats as _calc_stats
                 result['yesterday_max_rensa'] = calculate_max_rensa(yesterday_history, machine_key=machine_key)
-                calc_max = calculate_max_chain_medals(yesterday_history, machine_key=machine_key)
-                result['yesterday_max_medals'] = max(site_max_medals, calc_max)
+                _, calc_max = _calc_stats(yesterday_history)
+                result['yesterday_max_medals'] = max(site_max_medals, calc_max) if calc_max > 0 else site_max_medals
                 result['yesterday_history'] = yesterday_history
                 yesterday_at_intervals = calculate_at_intervals(yesterday_history)
                 ceiling_threshold = 999 if machine_key == 'sbj' else 600
@@ -1053,9 +1053,10 @@ def analyze_trend(days: List[dict], machine_key: str = 'sbj') -> dict:
             db_history = day_before_day.get('history', [])
             site_db_max = day_before_day.get('max_medals', 0)
             if db_history:
-                from analysis.analyzer import calculate_max_chain_medals
+                from analysis.history_accumulator import _calc_history_stats as _calc_stats
                 result['day_before_max_rensa'] = calculate_max_rensa(db_history, machine_key=machine_key)
-                result['day_before_max_medals'] = max(site_db_max, calculate_max_chain_medals(db_history, machine_key=machine_key))
+                _, db_calc_max = _calc_stats(db_history)
+                result['day_before_max_medals'] = max(site_db_max, db_calc_max) if db_calc_max > 0 else site_db_max
             else:
                 result['day_before_max_rensa'] = day_before_day.get('max_rensa', 0)
                 result['day_before_max_medals'] = site_db_max
@@ -1086,14 +1087,10 @@ def analyze_trend(days: List[dict], machine_key: str = 'sbj') -> dict:
                 import sys
                 print(f"[DEBUG 1041 before if] td_history length: {len(td_history)}, truthy: {bool(td_history)}", file=sys.stderr)
             if td_history:
-                from analysis.analyzer import calculate_max_chain_medals
+                from analysis.history_accumulator import _calc_history_stats as _calc_stats
                 result['three_days_ago_max_rensa'] = calculate_max_rensa(td_history, machine_key=machine_key)
-                _calc_max = calculate_max_chain_medals(td_history, machine_key=machine_key)
-                result['three_days_ago_max_medals'] = max(site_td_max, _calc_max)
-                # DEBUG: 2/13のデータのみログ出力
-                if td_date == '2026-02-13' and td_art == 96:
-                    import sys
-                    print(f"[DEBUG] date={td_date}, site={site_td_max}, calc={_calc_max}, final={result['three_days_ago_max_medals']}", file=sys.stderr)
+                _, _calc_max = _calc_stats(td_history)
+                result['three_days_ago_max_medals'] = max(site_td_max, _calc_max) if _calc_max > 0 else site_td_max
             else:
                 result['three_days_ago_max_rensa'] = three_days_ago_day.get('max_rensa', 0)
                 result['three_days_ago_max_medals'] = site_td_max
@@ -1205,12 +1202,16 @@ def analyze_trend(days: List[dict], machine_key: str = 'sbj') -> dict:
             sorted_h = sorted(day_history, key=lambda x: (-x.get('hit_num', 0), x.get('time', '00:00')))
             day_diff = sum(h.get('medals', 0) - h.get('start', 0) * 3 for h in sorted_h)
         
-        # max_medals: historyから計算
+        # max_medals: historyと保存値の大きい方を使用
+        # 保存値: Papimoサマリの正確な値（7000+等）の場合あり
+        # 計算値: _calc_history_statsで最大連チャン区間の獲得枚数合計
+        db_max_medals = d.get('max_medals', 0) or 0
         if day_history:
-            from analysis.analyzer import calculate_max_chain_medals
-            day_max_medals = calculate_max_chain_medals(day_history)
+            from analysis.history_accumulator import _calc_history_stats as _calc_stats
+            _, calc_day_max = _calc_stats(day_history)
+            day_max_medals = max(db_max_medals, calc_day_max) if calc_day_max > 0 else db_max_medals
         else:
-            day_max_medals = d.get('max_medals', 0) or 0
+            day_max_medals = db_max_medals
         
         # max_rensa: DB値 → historyから計算
         day_rensa = d.get('max_rensa', 0) or 0
@@ -3639,8 +3640,16 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
                         rec['yesterday_date'] = d
                     if not rec.get('yesterday_max_rensa'):
                         rec['yesterday_max_rensa'] = ad.get('max_rensa', 0)
-                    if not rec.get('yesterday_max_medals'):
-                        rec['yesterday_max_medals'] = ad.get('max_medals', 0)
+                    # max_medals: historyから連チャン合計を計算し保存値と大きい方を使用
+                    _y_hist = ad.get('history', [])
+                    _y_saved = ad.get('max_medals', 0) or 0
+                    if _y_hist:
+                        from analysis.history_accumulator import _calc_history_stats as _chs
+                        _, _y_calc = _chs(_y_hist)
+                        _y_max = max(_y_saved, _y_calc) if _y_calc > 0 else _y_saved
+                    else:
+                        _y_max = _y_saved
+                    rec['yesterday_max_medals'] = max(rec.get('yesterday_max_medals', 0) or 0, _y_max)
                     if not rec.get('yesterday_history') and ad.get('history'):
                         rec['yesterday_history'] = ad['history']
 
@@ -3653,8 +3662,16 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
                         rec['day_before_date'] = d
                     if not rec.get('day_before_max_rensa'):
                         rec['day_before_max_rensa'] = ad.get('max_rensa', 0)
-                    if not rec.get('day_before_max_medals'):
-                        rec['day_before_max_medals'] = ad.get('max_medals', 0)
+                    # max_medals: historyから連チャン合計を計算し保存値と大きい方を使用
+                    _db_hist = ad.get('history', [])
+                    _db_saved = ad.get('max_medals', 0) or 0
+                    if _db_hist:
+                        from analysis.history_accumulator import _calc_history_stats as _chs
+                        _, _db_calc = _chs(_db_hist)
+                        _db_max = max(_db_saved, _db_calc) if _db_calc > 0 else _db_saved
+                    else:
+                        _db_max = _db_saved
+                    rec['day_before_max_medals'] = max(rec.get('day_before_max_medals', 0) or 0, _db_max)
                     if not rec.get('day_before_history') and ad.get('history'):
                         rec['day_before_history'] = ad['history']
 
@@ -3665,13 +3682,23 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
                         rec['three_days_ago_rb'] = ad.get('rb', 0)
                         rec['three_days_ago_games'] = ad.get('games', 0)
                         rec['three_days_ago_date'] = d
-                        rec['three_days_ago_max_rensa'] = ad.get('max_rensa', 0)
-                        rec['three_days_ago_max_medals'] = ad.get('max_medals', 0)
                         if ad.get('history'):
                             rec['three_days_ago_history'] = ad['history']
                         _3d_art = ad.get('art', 0)
                         _3d_games = ad.get('games', 0)
                         rec['three_days_ago_prob'] = round(_3d_games / _3d_art) if _3d_art > 0 and _3d_games > 0 else 0
+                    if not rec.get('three_days_ago_max_rensa'):
+                        rec['three_days_ago_max_rensa'] = ad.get('max_rensa', 0)
+                    # max_medals: historyから連チャン合計を計算し保存値と大きい方を使用
+                    _3d_hist = ad.get('history', [])
+                    _3d_saved = ad.get('max_medals', 0) or 0
+                    if _3d_hist:
+                        from analysis.history_accumulator import _calc_history_stats as _chs
+                        _, _3d_calc = _chs(_3d_hist)
+                        _3d_max = max(_3d_saved, _3d_calc) if _3d_calc > 0 else _3d_saved
+                    else:
+                        _3d_max = _3d_saved
+                    rec['three_days_ago_max_medals'] = max(rec.get('three_days_ago_max_medals', 0) or 0, _3d_max)
 
         # 閉店後: availabilityのデータを補完
         # 注意: availabilityのtoday_historyの日付と蓄積DBのyesterday_dateが異なる場合がある

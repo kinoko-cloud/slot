@@ -628,21 +628,22 @@ def generate_index(env):
                 # 本日の爆発台（全台から収集、art_count > 0）
                 for rec in recs:
                     t_art = rec.get('art_count', 0)
-                    t_medals = rec.get('max_medals', 0)
                     t_games = rec.get('total_games', 0)
-                    if t_art > 0 or t_medals > 0:
+                    if t_art > 0:
+                        # 初当たり計算（先にhistoryを取得）
+                        t_hist_raw2 = rec.get('today_history', [])
                         # 差枚: DAIDATAの実データを使用（理論値は使わない）
                         diff_medals = 0
                         if realtime and 'units' in realtime:
                             for ru in realtime.get('units', []):
                                 if str(ru.get('unit_id')) == str(rec.get('unit_id')):
                                     diff_medals = ru.get('diff_medals', 0) or 0
-                                    # max_medalsも実データを優先
-                                    if ru.get('max_medals', 0):
-                                        t_medals = ru.get('max_medals', 0)
                                     break
-                        # 初当たり計算
-                        t_hist_raw2 = rec.get('today_history', [])
+                        # max_medals: historyから連チャン合計枚数を計算（最大連チャン中の獲得枚数合計）
+                        from analysis.history_accumulator import _calc_history_stats as _calc_stats
+                        _, t_medals = _calc_stats(t_hist_raw2)
+                        if not t_medals:
+                            t_medals = rec.get('max_medals', 0)
                         t_first_hits = calculate_first_hits(t_hist_raw2)
                         t_first_hit_count = t_first_hits['first_hit_count']
                         t_hist_marked2 = mark_first_hits(t_hist_raw2)
@@ -780,7 +781,12 @@ def generate_index(env):
                             yd_diff = total_medals - (yd_games * 3)
                         rec['yesterday_diff_medals'] = yd_diff if yd_art > 0 else 0
                         rec['yesterday_max_rensa'] = yd.get('max_rensa', 0)
-                        rec['yesterday_max_medals'] = yd.get('max_medals', 0) if yd_art > 0 else 0
+                        if yd_art > 0 and yd_hist:
+                            from analysis.history_accumulator import _calc_history_stats as _calc_stats
+                            _, y_max_m = _calc_stats(yd_hist)
+                            rec['yesterday_max_medals'] = max(yd.get('max_medals', 0), y_max_m) if y_max_m > 0 else yd.get('max_medals', 0)
+                        else:
+                            rec['yesterday_max_medals'] = 0
                         rec['yesterday_history'] = yd_hist
                     
                     # 前々日のデータ
@@ -799,7 +805,12 @@ def generate_index(env):
                             dbd_diff = total_medals - (dbd_games * 3)
                         rec['day_before_diff_medals'] = dbd_diff if dbd_art > 0 else 0
                         rec['day_before_max_rensa'] = dbd.get('max_rensa', 0)
-                        rec['day_before_max_medals'] = dbd.get('max_medals', 0) if dbd_art > 0 else 0
+                        if dbd_art > 0 and dbd_hist:
+                            from analysis.history_accumulator import _calc_history_stats as _calc_stats
+                            _, db_max_m = _calc_stats(dbd_hist)
+                            rec['day_before_max_medals'] = max(dbd.get('max_medals', 0), db_max_m) if db_max_m > 0 else dbd.get('max_medals', 0)
+                        else:
+                            rec['day_before_max_medals'] = 0
                         rec['day_before_history'] = dbd_hist
                     
                     # 3日前のデータ
@@ -818,7 +829,12 @@ def generate_index(env):
                             tdd_diff = total_medals - (tdd_games * 3)
                         rec['three_days_ago_diff_medals'] = tdd_diff if tdd_art > 0 else 0
                         rec['three_days_ago_max_rensa'] = tdd.get('max_rensa', 0)
-                        rec['three_days_ago_max_medals'] = tdd.get('max_medals', 0) if tdd_art > 0 else 0
+                        if tdd_art > 0 and tdd_hist:
+                            from analysis.history_accumulator import _calc_history_stats as _calc_stats
+                            _, tdd_max_m = _calc_stats(tdd_hist)
+                            rec['three_days_ago_max_medals'] = max(tdd.get('max_medals', 0), tdd_max_m) if tdd_max_m > 0 else tdd.get('max_medals', 0)
+                        else:
+                            rec['three_days_ago_max_medals'] = 0
                         rec['three_days_ago_history'] = tdd_hist
             except Exception:
                 pass
@@ -907,8 +923,12 @@ def generate_index(env):
                 total_medals = sum(h.get('medals', 0) for h in raw_hist)
                 games = day.get('games', 0) or day.get('total_start', 0)
                 day['diff_medals'] = total_medals - (games * 3) if games > 0 else 0
-            if raw_hist and not day.get('max_medals'):
-                day['max_medals'] = max((h.get('medals', 0) for h in raw_hist), default=0)
+            if raw_hist:
+                # historyから連チャン合計枚数を計算し、保存値と大きい方を使用
+                from analysis.history_accumulator import _calc_history_stats as _calc_stats
+                _, calc_max = _calc_stats(raw_hist)
+                if calc_max > 0:
+                    day['max_medals'] = max(day.get('max_medals', 0), calc_max)
             if raw_hist and not day.get('max_rensa'):
                 # 最大連チャンを計算
                 max_rensa = 0

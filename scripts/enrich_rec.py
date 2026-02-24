@@ -102,9 +102,13 @@ def enrich_recs(recs):
                 if not max_rensa and history:
                     max_rensa, _ = _calc_history_stats(history)
                 
-                # max_medalsがない場合、historyから計算
-                if not max_medals and history:
-                    _, max_medals = _calc_history_stats(history)
+                # max_medals: historyから連チャン合計枚数を計算し、保存値と大きい方を使用
+                # 保存値 > calc の場合: Papimoサマリの正確な値（7000+等）を優先
+                # 保存値 < calc の場合: historyから正しく再計算（1hit最大値バグを修正）
+                if history:
+                    _, calc_m = _calc_history_stats(history)
+                    if calc_m > 0:
+                        max_medals = max(max_medals or 0, calc_m)
                 
                 # diff_medalsがない場合、historyから計算
                 if diff_medals is None and history and games > 0:
@@ -183,14 +187,17 @@ def _enrich_day_prefix(rec, days_by_date, prefix, date_key):
         if max_medals > 0:
             rec[f'{prefix}max_medals'] = max_medals
     
-    db_max = day_data.get('max_medals')
-    if db_max:
-        rec[f'{prefix}max_medals'] = db_max
-    elif not rec.get(f'{prefix}max_medals') and hist:
-        # 蓄積DBにない場合のみhistoryから計算
-        max_medals = max((h.get('medals', 0) for h in hist), default=0)
-        if max_medals > 0:
-            rec[f'{prefix}max_medals'] = max_medals
+    # max_medalsはhistoryから連チャン合計を計算（1hit最大値より正確）
+    if hist and not rec.get(f'{prefix}max_medals'):
+        from analysis.history_accumulator import _calc_history_stats
+        _, calc_max = _calc_history_stats(hist)
+        if calc_max > 0:
+            rec[f'{prefix}max_medals'] = calc_max
+    # 蓄積DBの値はフォールバック（histから計算できない場合のみ）
+    if not rec.get(f'{prefix}max_medals'):
+        db_max = day_data.get('max_medals')
+        if db_max:
+            rec[f'{prefix}max_medals'] = db_max
 
     # gamesの補完（historyから計算）
     if not rec.get(f'{prefix}games') or rec.get(f'{prefix}games') == 0:
@@ -258,6 +265,15 @@ def _enrich_day_dict(day_dict, day_data):
             day_dict['max_rensa'] = db_rensa
 
     if not day_dict.get('max_medals'):
-        db_max = day_data.get('max_medals')
-        if db_max:
-            day_dict['max_medals'] = db_max
+        # historyから連チャン合計を計算（1hit最大値より正確）
+        hist = day_dict.get('history', []) or day_data.get('history', [])
+        if hist:
+            from analysis.history_accumulator import _calc_history_stats
+            _, calc_max = _calc_history_stats(hist)
+            if calc_max > 0:
+                day_dict['max_medals'] = calc_max
+        # フォールバック: historyがない場合のみDBの値を使用
+        if not day_dict.get('max_medals'):
+            db_max = day_data.get('max_medals')
+            if db_max:
+                day_dict['max_medals'] = db_max
