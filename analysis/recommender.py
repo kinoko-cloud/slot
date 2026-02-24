@@ -3431,7 +3431,19 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
         # 当日パターン理由を追加
         # 当日パターン分析（ハマリ・モミモミ・天井狙い）
         if today_history:
-            _today_ptn = _analyze_today_pattern(today_history, machine_key)
+            _papimo_stores_ptn = {'island_akihabara_sbj', 'island_akihabara_hokuto2'}
+            _total_games_ptn = today_analysis.get('total_games', 0)
+            if store_key in _papimo_stores_ptn and today_history:
+                # Papimo店舗: estimate_diff_medalsで正しい差枚を計算
+                # today_historyは最新100件のみ（全日分ではない）のため、hist_gamesを使う（medalとgamesを統一）
+                from analysis.diff_medals_estimator import estimate_diff_medals as _est_ptn
+                _total_m_ptn = sum(h.get('medals', 0) for h in today_history)
+                _hist_g_ptn = sum(h.get('start', 0) for h in today_history) or _total_games_ptn
+                _mk_ptn = machine_key or ('hokuto2' if 'hokuto2' in store_key else 'sbj')
+                _precomputed_diff = _est_ptn(_total_m_ptn, _hist_g_ptn, _mk_ptn)
+            else:
+                _precomputed_diff = None
+            _today_ptn = _analyze_today_pattern(today_history, machine_key, precomputed_diff=_precomputed_diff)
             today_pattern_reason = _today_ptn.get('reason')
             _today_ptn_bonus = _today_ptn.get('score_adjust', 0)
             if _today_ptn_bonus != 0:
@@ -3500,8 +3512,25 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
         # 本日の差枚を計算（履歴から）
         today_diff_medals = 0
         if _use_today_history and today_history:
-            # 履歴から差枚を計算: 合計medals - 合計(start * 3)
-            today_diff_medals = sum(h.get('medals', 0) - h.get('start', 0) * 3 for h in today_history)
+            _total_m_today = sum(h.get('medals', 0) for h in today_history)
+            _papimo_stores = {'island_akihabara_sbj', 'island_akihabara_hokuto2'}
+            if store_key in _papimo_stores:
+                # Papimo店舗: estimate_diff_medals（サイトから差枚取得不可）
+                # today_historyは最新100件のみなので、hist_gamesを使う（medalとgamesを統一）
+                _hist_g_today = sum(h.get('start', 0) for h in today_history) or total_games
+                from analysis.diff_medals_estimator import estimate_diff_medals as _est_diff
+                _mk_for_diff = machine_key or ('hokuto2' if 'hokuto2' in store_key else 'sbj')
+                today_diff_medals = _est_diff(_total_m_today, _hist_g_today, _mk_for_diff)
+            else:
+                # DaiData店舗: medals - start*3（通常計算）
+                today_diff_medals = sum(h.get('medals', 0) - h.get('start', 0) * 3 for h in today_history)
+
+        # 本日の最大枚数をhistoryから再計算（availability.jsonの値は1hit最大値で信頼できない）
+        if today_history:
+            from analysis.history_accumulator import _calc_history_stats as _calc_today_stats
+            _, _calc_today_max = _calc_today_stats(today_history)
+            if _calc_today_max > max_medals:
+                max_medals = _calc_today_max
 
         # 矛盾するreasonsを除去
         reasons = filter_contradictory_reasons(reasons)
@@ -4513,9 +4542,12 @@ def _calculate_change_expectation(unit_history: list, good_prob: int = 130) -> t
     return 0, None
 
 
-def _analyze_today_pattern(today_history: list, machine_key: str = 'sbj') -> dict:
+def _analyze_today_pattern(today_history: list, machine_key: str = 'sbj', precomputed_diff: int = None) -> dict:
     """当日のハマリ・モミモミパターンを分析
-    
+
+    Args:
+        precomputed_diff: Papimo店舗等で事前計算された差枚（Noneの場合はhistoryから計算）
+
     Returns:
         {
             'pattern': str,  # 'explosion'/'stable'/'momimomi'/'struggling'
@@ -4530,10 +4562,13 @@ def _analyze_today_pattern(today_history: list, machine_key: str = 'sbj') -> dic
         return {'pattern': 'unknown', 'today_diff': 0, 'deep_hama_count': 0, 
                 'current_hama': 0, 'score_adjust': 0, 'reason': None}
     
-    # 当日差枚を計算
-    total_medals = sum(h.get('medals', 0) for h in today_history)
-    total_start = sum(h.get('start', 0) for h in today_history)
-    today_diff = total_medals - total_start * 3
+    # 当日差枚を計算（Papimo店舗は呼び出し元でestimate_diff_medalsを計算してprecomputed_diffとして渡す）
+    if precomputed_diff is not None:
+        today_diff = precomputed_diff
+    else:
+        total_medals = sum(h.get('medals', 0) for h in today_history)
+        total_start = sum(h.get('start', 0) for h in today_history)
+        today_diff = total_medals - total_start * 3
     
     # ハマリ回数（500G以上）
     deep_hama_count = sum(1 for h in today_history if h.get('start', 0) >= 500)

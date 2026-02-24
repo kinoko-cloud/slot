@@ -5,24 +5,31 @@
   "weekday": "火",
   "total_units": 4,
   "hits": 1,
-  "misses": 2,
+  "misses": 3,
   "surprises": 0,
   "miss_details": [
     {
-      "unit_id": "684",
-      "score": 65,
-      "actual_prob": 213,
+      "unit_id": "683",
+      "score": 106,
+      "actual_prob": 0,
       "reasons": [
-        "設定1域(1/213)"
+        "高スコア過信"
+      ]
+    },
+    {
+      "unit_id": "684",
+      "score": 96,
+      "actual_prob": 239,
+      "reasons": [
+        "高スコア過信",
+        "設定1域(1/239)"
       ]
     },
     {
       "unit_id": "685",
-      "score": 47,
-      "actual_prob": 237,
-      "reasons": [
-        "設定1域(1/237)"
-      ]
+      "score": 65,
+      "actual_prob": 0,
+      "reasons": []
     }
   ],
   "surprise_details": []
