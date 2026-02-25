@@ -235,7 +235,15 @@ def _accumulate_unit(store_key: str, unit_id: str, days: list, machine_key: str)
                     existing_day['max_rensa'] = max_rensa
                 if max_medals > 0:
                     existing_day['max_medals'] = max_medals
-            
+                # historyが空→有に変わった場合はdiff_medalsも更新
+                if len(existing_history) == 0 and len(new_history) > 0:
+                    new_diff = day.get('diff_medals') or day.get('diff') or day.get('sashi')
+                    if new_diff:
+                        existing_day['diff_medals'] = new_diff
+                    elif existing_day.get('diff_medals', 0) == 0:
+                        # diff_medalsが0のままならNoneに（generate_static.pyが再計算する）
+                        existing_day['diff_medals'] = None
+
             continue
 
         art = day.get('art', 0)

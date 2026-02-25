@@ -42,9 +42,14 @@ def get_missing_units(target_date: str):
 
         for uid in units:
             hist = load_unit_history(store_key, uid)
-            dates = [d.get('date', '') for d in hist.get('days', [])]
-            if target_date in dates:
-                continue
+            days_by_date = {d.get('date', ''): d for d in hist.get('days', [])}
+            if target_date in days_by_date:
+                # historyが0件かつart>0なら再取得（上書きによるデータ消失の修復）
+                existing_day = days_by_date[target_date]
+                if len(existing_day.get('history', [])) == 0 and existing_day.get('art', 0) > 0:
+                    pass  # 再取得を続行
+                else:
+                    continue
 
             task = {
                 'store_key': store_key, 'unit_id': uid,
@@ -72,13 +77,16 @@ def _scrape_unit_shared(page, hall_id, unit_id, hall_name, expected_machine=None
 
     text = page.inner_text('body')
 
-    # 機種名バリデーション
+    # 機種名バリデーション（半角↔全角カタカナの正規化も行う）
     if expected_machine:
         machine_match = re.search(r'(L[ｱ-ﾝァ-ヶー\w]+)\s*\(', text)
         if machine_match:
+            import unicodedata
             actual = machine_match.group(1)
+            # 半角カタカナを全角に正規化して比較
+            actual_normalized = unicodedata.normalize('NFKC', actual)
             keywords = expected_machine if isinstance(expected_machine, list) else [expected_machine]
-            missing = [kw for kw in keywords if kw not in actual]
+            missing = [kw for kw in keywords if kw not in actual and kw not in actual_normalized]
             if missing:
                 return {'machine_mismatch': True, 'actual': actual}
 

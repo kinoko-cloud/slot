@@ -777,8 +777,10 @@ def generate_index(env):
                         # diff_medalsは蓄積DB優先、なければhistoryから計算
                         yd_diff = yd.get('diff_medals')
                         if yd_diff is None and yd_hist and yd_games > 0:
+                            from analysis.diff_medals_estimator import estimate_diff_medals as _est_yd
                             total_medals = sum(h.get('medals', 0) for h in yd_hist)
-                            yd_diff = total_medals - (yd_games * 3)
+                            _mk_yd = rec.get('machine_key') or ('hokuto2' if 'hokuto2' in (rec.get('store_key') or '') else 'sbj')
+                            yd_diff = _est_yd(total_medals, yd_games, _mk_yd)
                         rec['yesterday_diff_medals'] = yd_diff if yd_art > 0 else 0
                         rec['yesterday_max_rensa'] = yd.get('max_rensa', 0)
                         if yd_art > 0 and yd_hist:
@@ -801,8 +803,10 @@ def generate_index(env):
                         # diff_medalsは蓄積DB優先、なければhistoryから計算
                         dbd_diff = dbd.get('diff_medals')
                         if dbd_diff is None and dbd_hist and dbd_games > 0:
+                            from analysis.diff_medals_estimator import estimate_diff_medals as _est_dbd
                             total_medals = sum(h.get('medals', 0) for h in dbd_hist)
-                            dbd_diff = total_medals - (dbd_games * 3)
+                            _mk_dbd = rec.get('machine_key') or ('hokuto2' if 'hokuto2' in (rec.get('store_key') or '') else 'sbj')
+                            dbd_diff = _est_dbd(total_medals, dbd_games, _mk_dbd)
                         rec['day_before_diff_medals'] = dbd_diff if dbd_art > 0 else 0
                         rec['day_before_max_rensa'] = dbd.get('max_rensa', 0)
                         if dbd_art > 0 and dbd_hist:
@@ -825,8 +829,10 @@ def generate_index(env):
                         # diff_medalsは蓄積DB優先、なければhistoryから計算
                         tdd_diff = tdd.get('diff_medals')
                         if tdd_diff is None and tdd_hist and tdd_games > 0:
+                            from analysis.diff_medals_estimator import estimate_diff_medals as _est_tdd
                             total_medals = sum(h.get('medals', 0) for h in tdd_hist)
-                            tdd_diff = total_medals - (tdd_games * 3)
+                            _mk_tdd = rec.get('machine_key') or ('hokuto2' if 'hokuto2' in (rec.get('store_key') or '') else 'sbj')
+                            tdd_diff = _est_tdd(total_medals, tdd_games, _mk_tdd)
                         rec['three_days_ago_diff_medals'] = tdd_diff if tdd_art > 0 else 0
                         rec['three_days_ago_max_rensa'] = tdd.get('max_rensa', 0)
                         if tdd_art > 0 and tdd_hist:

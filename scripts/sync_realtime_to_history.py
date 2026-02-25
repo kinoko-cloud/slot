@@ -152,7 +152,10 @@ def sync_store_to_history(store_key: str, store_data: dict, date_str: str):
                     new_hist = unit_data.get('today_history', []) or unit_data.get('history', [])
                     new_hist_len = len(new_hist)
                     # artが増えているか、履歴が増えていれば更新
-                    if new_art > existing_art or new_hist_len > existing_hist_len:
+                    # ただし新しいhistoryが空で既存historyがある場合は上書き禁止（データ消失防止）
+                    if new_hist_len == 0 and existing_hist_len > 0:
+                        should_update = False  # historyが消える方向の上書きは禁止
+                    elif new_art > existing_art or new_hist_len > existing_hist_len:
                         # 既存データを削除して更新
                         unit_history['days'] = [d for d in unit_history['days'] if d.get('date') != unit_date_str]
                         should_update = True
