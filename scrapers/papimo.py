@@ -43,26 +43,19 @@ def get_unit_history(page, hall_id: str, unit_id: str, days_back: int = 14,
     page.goto(url, wait_until='load', timeout=30000)
     page.wait_for_timeout(2000)
 
-    # 機種名バリデーション: ページ上の機種名を取得して照合
+    # 機種名バリデーション: ページ全体テキストにキーワードが含まれるか確認
     if expected_machine:
         try:
             page_text = page.inner_text('body')
-            # papimoのページ上部に機種名が含まれる行を探す
-            page_machine = ''
-            for line in page_text.split('\n')[:30]:  # ページ上部30行以内
-                line = line.strip()
-                if len(line) > 3 and ('L' in line or 'ス' in line or '北' in line):
-                    page_machine = line
-                    break
-            if page_machine:
-                keywords = expected_machine if isinstance(expected_machine, list) else [expected_machine]
-                missing = [kw for kw in keywords if kw not in page_machine]
-                if missing:
-                    print(f"    ⚠️ 機種不一致! 台{unit_id}: 期待キーワード={keywords}, 実際={page_machine}, 不足={missing}")
-                    print(f"    → 台番号が別機種に変わった可能性。スキップします。")
-                    result['machine_mismatch'] = True
-                    result['actual_machine'] = page_machine
-                    return result
+            keywords = expected_machine if isinstance(expected_machine, list) else [expected_machine]
+            missing = [kw for kw in keywords if kw not in page_text]
+            if missing:
+                page_machine = page.title() or 'unknown'
+                print(f"    ⚠️ 機種不一致! 台{unit_id}: 期待キーワード={keywords}, 実際={page_machine}, 不足={missing}")
+                print(f"    → 台番号が別機種に変わった可能性。スキップします。")
+                result['machine_mismatch'] = True
+                result['actual_machine'] = page_machine
+                return result
         except Exception as e:
             print(f"    機種名確認エラー: {e}")
 

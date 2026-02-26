@@ -225,10 +225,14 @@ def run_papimo_batch(papimo_tasks: list):
             hist = load_unit_history(sk, uid)
             existing_dates = [d.get('date','') for d in hist.get('days',[])]
             latest = max(existing_dates) if existing_dates else ''
+            # 今日からTARGET_DATEまでの日数（過去日付再取得時に必要）
+            today_str = datetime.now(JST).strftime('%Y-%m-%d')
+            days_from_today = (datetime.strptime(today_str, '%Y-%m-%d') -
+                               datetime.strptime(TARGET_DATE, '%Y-%m-%d')).days + 1
             if latest:
                 days_missing = (datetime.strptime(TARGET_DATE, '%Y-%m-%d') -
                                 datetime.strptime(latest, '%Y-%m-%d')).days
-                days_back = min(max(days_missing + 1, 2), 14)
+                days_back = min(max(days_missing + 1, days_from_today, 2), 14)
             else:
                 days_back = 14
 
