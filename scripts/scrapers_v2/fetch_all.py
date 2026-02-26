@@ -29,6 +29,8 @@ from common.games_cache import get_changed_units, save_cache
 
 # v1の店舗設定をインポート
 from fetch_daidata_availability import DAIDATA_STORES, PAPIMO_STORES
+sys.path.insert(0, str(ROOT))
+from analysis.diff_medals_estimator import estimate_diff_medals
 
 logger = setup_logger('fetch_all')
 
@@ -550,20 +552,27 @@ class V2Fetcher:
                 # 履歴からdiff_medalsとmax_medalsを計算
                 today_history = unit_data.get('today_history', [])
                 total_start = unit_data.get('total_start', 0)
-                
+
                 # total_startが0でも履歴があれば履歴から計算
                 if total_start == 0 and today_history:
                     total_start = sum(h.get('start', 0) for h in today_history)
-                
+
                 # 総獲得枚数を計算
                 total_medals = sum(h.get('medals', 0) for h in today_history) if today_history else 0
                 # max_medalsはPapimoから直接取得した値を優先、なければhistoryから計算
                 max_medals = unit_data.get('max_medals', 0)
                 if not max_medals and today_history:
                     max_medals = max((h.get('medals', 0) for h in today_history), default=0)
-                
-                # 差枚 = 総獲得 - 投資（3枚/G）
-                diff_medals = total_medals - (total_start * 3) if total_start > 0 else 0
+
+                # 差枚: スクレイパーが取得した値（DaIData）を優先、なければestimate_diff_medalsで推定
+                site_diff = unit_data.get('diff_medals')
+                if site_diff is not None:
+                    diff_medals = site_diff
+                elif today_history and total_start > 0:
+                    machine_key = 'hokuto2' if 'hokuto2' in store_key else 'sbj'
+                    diff_medals = estimate_diff_medals(total_medals, total_start, machine_key)
+                else:
+                    diff_medals = 0
                 
                 # statusを日本語のavailabilityに変換
                 status = unit_data.get('status', 'unknown')

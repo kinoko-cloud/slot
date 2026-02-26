@@ -369,11 +369,11 @@ def discover_machine_units(hall_id: str, machine_id: str, timeout: int = 30000) 
             page.goto(url, wait_until='load', timeout=timeout)
             page.wait_for_timeout(2000)
             
-            # 台番号を抽出（4桁の数字）
+            # 台番号を抽出
             import re
             text = page.inner_text('body')
-            # papimo.jpでは台番号が「No.0811」のような形式で表示される
-            matches = re.findall(r'No\.(\d{4})', text)
+            # papimo.jpでは台番号が行頭に「1015遊技中」「0820\xa0空き\xa0」のような形式で表示される
+            matches = re.findall(r'(?m)^(\d{3,4})(?:遊技中|\xa0空き\xa0)', text)
             if matches:
                 units = sorted(set(matches))
             
