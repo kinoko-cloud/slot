@@ -6,6 +6,7 @@ papimo.jp - 秋葉原アイランド SBJデータ取得
 from playwright.sync_api import sync_playwright
 import re
 import json
+import unicodedata
 from datetime import datetime, timedelta, timezone
 JST = timezone(timedelta(hours=9))
 from pathlib import Path
@@ -43,18 +44,22 @@ def get_unit_history(page, hall_id: str, unit_id: str, days_back: int = 14,
     page.goto(url, wait_until='load', timeout=30000)
     page.wait_for_timeout(2000)
 
-    # 機種名バリデーション: ページ全体テキストにキーワードが含まれるか確認
+    # 機種名バリデーション: page.title()から機種名を取得してキーワード照合
+    # title例: 「アイランド秋葉原店 - スマスロスーパーブラックジャック - 大当り情報」
     if expected_machine:
         try:
-            page_text = page.inner_text('body')
+            page_title = page.title() or ''
+            # NFKC正規化（半角カタカナ→全角、テンセイ→転生 等を統一）
+            page_title_normalized = unicodedata.normalize('NFKC', page_title)
             keywords = expected_machine if isinstance(expected_machine, list) else [expected_machine]
-            missing = [kw for kw in keywords if kw not in page_text]
+            # キーワードもNFKC正規化してから比較（AND条件: 全て含むこと）
+            keywords_normalized = [unicodedata.normalize('NFKC', kw) for kw in keywords]
+            missing = [kw for kw, kw_n in zip(keywords, keywords_normalized) if kw_n not in page_title_normalized]
             if missing:
-                page_machine = page.title() or 'unknown'
-                print(f"    ⚠️ 機種不一致! 台{unit_id}: 期待キーワード={keywords}, 実際={page_machine}, 不足={missing}")
+                print(f"    ⚠️ 機種不一致! 台{unit_id}: 期待キーワード={keywords}, 実際タイトル={page_title}, 不足={missing}")
                 print(f"    → 台番号が別機種に変わった可能性。スキップします。")
                 result['machine_mismatch'] = True
-                result['actual_machine'] = page_machine
+                result['actual_machine'] = page_title
                 return result
         except Exception as e:
             print(f"    機種名確認エラー: {e}")
