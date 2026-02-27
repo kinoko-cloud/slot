@@ -135,7 +135,7 @@ jobs:
           # SBJ取得（最大2回リトライ）
           echo "=== SBJ取得 ==="
           for attempt in 1 2; do
-            if timeout 500 python scripts/fetch_daidata_availability.py --sbj-only; then
+            if timeout 500 python scripts/scrapers_v2/fetch_all.py --priority-only --sbj-only; then
               echo "✅ SBJ fetch succeeded"
               break
             else
@@ -147,7 +147,7 @@ jobs:
           # 北斗取得（最大2回リトライ）
           echo "=== 北斗取得 ==="
           for attempt in 1 2; do
-            if timeout 500 python scripts/fetch_daidata_availability.py --hokuto-only; then
+            if timeout 500 python scripts/scrapers_v2/fetch_all.py --priority-only --hokuto-only; then
               echo "✅ 北斗 fetch succeeded"
               break
             else
