@@ -34,7 +34,7 @@ DAIDATA_STORES = {
         'hall_id': '100860',
         'name': '渋谷エスパス新館',
         'model_encoded': 'L%EF%BD%BD%EF%BD%B0%EF%BE%8A%EF%BE%9F%EF%BD%B0%EF%BE%8C%EF%BE%9E%EF%BE%97%EF%BD%AF%EF%BD%B8%EF%BD%BC%EF%BE%9E%EF%BD%AC%EF%BD%AF%EF%BD%B8',
-        'units': ['3011', '3012', '3013'],
+        'units': ['3011'],  # 3012,3013除外: Lかぐや様は告らせたいに台変動(2026-03-02確認)
     },
     'shinjuku_espass_sbj': {
         'hall_id': '100949',
@@ -52,7 +52,7 @@ DAIDATA_STORES = {
         'hall_id': '100950',
         'name': '西武新宿駅前エスパス',
         'model_encoded': 'L%EF%BD%BD%EF%BD%B0%EF%BE%8A%EF%BE%9F%EF%BD%B0%EF%BE%8C%EF%BE%9E%EF%BE%97%EF%BD%AF%EF%BD%B8%EF%BD%BC%EF%BE%9E%EF%BD%AC%EF%BD%AF%EF%BD%B8',
-        'units': ['3185', '3186', '3187'],
+        'units': [],  # 3185,3186,3187全て除外: L化物語に台変動(2026-03-02確認)
     },
     # === エスパス上野新館 (hall_id=100196) ===
     'ueno_espass_sbj': {
@@ -94,7 +94,7 @@ DAIDATA_STORES = {
         'hall_id': '100260',
         'name': '新小岩エスパス',
         'model_encoded': 'L%EF%BD%BD%EF%BD%B0%EF%BE%8A%EF%BE%9F%EF%BD%B0%EF%BE%8C%EF%BE%9E%EF%BE%97%EF%BD%AF%EF%BD%B8%EF%BD%BC%EF%BE%9E%EF%BD%AC%EF%BD%AF%EF%BD%B8',
-        'units': ['485', '486'],
+        'units': [],  # 485,486除外: 空データ継続 → 台変動/撤去の可能性(2026-03-02確認)
     },
     'seibu_shinjuku_espass_hokuto2': {
         'hall_id': '100950',
@@ -115,13 +115,13 @@ DAIDATA_STORES = {
         'hall_id': '100860',
         'name': 'エスパス渋谷新館(北斗)',
         'model_encoded': None,  # detail pageのみで取得
-        'units': [str(i) for i in range(2046, 2068)] + [str(i) for i in range(2233, 2241)],
+        'units': [str(i) for i in range(2046, 2056)] + [str(i) for i in range(2057, 2068)] + ['2233', '2234', '2235', '2238', '2239', '2240'],  # 2056除外: データなし, 2236,2237除外: パチンコ台変動(2026-03-02確認)
     },
     'shibuya_honkan_espass_hokuto2': {
         'hall_id': '100930',
         'name': 'エスパス渋谷本館(北斗)',
         'model_encoded': None,
-        'units': [str(i) for i in range(2013, 2020)] + [str(i) for i in range(2030, 2038)],
+        'units': ['2013', '2014', '2017', '2018', '2019'] + [str(i) for i in range(2030, 2038)],  # 2015,2016除外: パチンコ台変動(2026-03-02確認)
     },
     'shinjuku_espass_hokuto2': {
         'hall_id': '100949',
@@ -129,13 +129,14 @@ DAIDATA_STORES = {
         'model_encoded': 'L%E5%8C%97%E6%96%97%20%E8%BB%A2%E7%94%9F%E3%81%AE%E7%AB%A02',  # L北斗 転生の章2
         # 2026-02-19更新: 台変動を検知。125-128の4台のみ北斗転生2として稼働中を確認。
         # 旧台番号(2505,1349等)は他機種(パチンコ・他スロット)または撤去済み。
-        'units': ['125', '126', '127', '128'],
+        # 2026-03-02更新: 125-128全台もL甲鉄城のｶﾊﾞﾈﾘ海門決戦に台変動 → 全台除外
+        'units': [],
     },
     'akiba_espass_hokuto2': {
         'hall_id': '100928',
         'name': '秋葉原エスパス駅前',
         'model_encoded': 'L%E5%8C%97%E6%96%97%20%E8%BB%A2%E7%94%9F%E3%81%AE%E7%AB%A02',  # L北斗 転生の章2
-        'units': ['2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019', '2057', '2058', '2059', '2060', '2061', '2062', '2063', '2064', '2065', '2066', '2067'],
+        'units': ['2011', '2012', '2013', '2014', '2015', '2016', '2019', '2057', '2058', '2059', '2060', '2061', '2062', '2063', '2066', '2067'],  # 2017,2018,2064,2065除外: パチンコ台変動(2026-03-02確認)
     },
     # === サブ店舗 北斗転生2 (2026-03-02追加) ===
     'akasaka_espass_hokuto2': {
@@ -154,7 +155,7 @@ DAIDATA_STORES = {
         'hall_id': '100947',
         'name': 'エスパス上野本館',
         'model_encoded': 'L%E5%8C%97%E6%96%97%20%E8%BB%A2%E7%94%9F%E3%81%AE%E7%AB%A02',
-        'units': ['3001', '3002', '3003', '3004', '3005', '3006', '3007', '3008', '3009', '3010', '3011', '3012', '3013', '3014', '3114', '3184'],
+        'units': ['3001', '3002', '3003', '3004', '3005', '3006', '3007', '3008', '3009', '3010', '3011', '3012', '3013', '3014', '3184'],  # 3114除外: L東京喰種に台変動(2026-03-02確認)
     },
     'takadanobaba_espass_hokuto2': {
         'hall_id': '100915',
