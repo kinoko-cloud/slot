@@ -3365,10 +3365,11 @@ def recommend_units(store_key: str, realtime_data: dict = None, availability: di
         yesterday_str = (datetime.now(JST) - timedelta(days=1)).strftime('%Y-%m-%d')
         
         # まずリアルタイムデータからtoday_historyを取得（最優先）
+        # availability.jsonはv1形式で 'history' として保存されるため、両方を参照
         if realtime_data and realtime_is_today:
             for _u in realtime_data.get('units', []):
                 if _u.get('unit_id') == unit_id:
-                    rt_history = _u.get('today_history')
+                    rt_history = _u.get('today_history') or _u.get('history', [])
                     if rt_history:
                         today_history = rt_history
                         history_date = today_str

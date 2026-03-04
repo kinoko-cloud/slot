@@ -394,13 +394,15 @@ def generate_index(env):
                 
                 # availability.jsonから直接today_historyを取得してセット
                 # （recommenderが設定しない場合のフォールバック）
+                # v1形式では 'history' として保存されるため両方参照
                 if realtime and 'units' in realtime:
                     for r in recs:
                         if not r.get('today_history'):
                             for ru in realtime.get('units', []):
                                 if str(ru.get('unit_id')) == str(r.get('unit_id')):
-                                    if ru.get('today_history'):
-                                        r['today_history'] = ru.get('today_history')
+                                    rt_hist = ru.get('today_history') or ru.get('history', [])
+                                    if rt_hist:
+                                        r['today_history'] = rt_hist
                                     break
                 
                 # recommenderが返すtoday関連データの整合性チェック
