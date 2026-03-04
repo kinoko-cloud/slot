@@ -4,19 +4,23 @@
   "date": "2026-03-04",
   "weekday": "水",
   "total_units": 27,
-  "hits": 4,
+  "hits": 5,
   "misses": 2,
-  "surprises": 6,
+  "surprises": 4,
   "miss_details": [
     {
-      "unit_id": "2051",
-      "score": 77,
-      "actual_prob": 0,
-      "reasons": []
+      "unit_id": "2052",
+      "score": 91,
+      "actual_prob": 259,
+      "reasons": [
+        "高スコア過信",
+        "低稼働(519G)",
+        "設定1域(1/259)"
+      ]
     },
     {
       "unit_id": "2054",
-      "score": 65,
+      "score": 63,
       "actual_prob": 1046,
       "reasons": [
         "設定1域(1/1046)"
@@ -25,23 +29,9 @@
   ],
   "surprise_details": [
     {
-      "unit_id": "2062",
-      "rank": "B",
-      "score": 89,
-      "actual_prob": 155,
-      "reasons": []
-    },
-    {
-      "unit_id": "2052",
-      "rank": "B",
-      "score": 88,
-      "actual_prob": 259,
-      "reasons": []
-    },
-    {
       "unit_id": "2064",
       "rank": "B",
-      "score": 85,
+      "score": 84,
       "actual_prob": 47,
       "reasons": [
         "実は高設定域(1/47)"
@@ -50,21 +40,21 @@
     {
       "unit_id": "2238",
       "rank": "B",
-      "score": 82,
+      "score": 81,
       "actual_prob": 157,
       "reasons": []
     },
     {
       "unit_id": "2065",
       "rank": "B",
-      "score": 81,
+      "score": 80,
       "actual_prob": 307,
       "reasons": []
     },
     {
       "unit_id": "2063",
       "rank": "C",
-      "score": 76,
+      "score": 75,
       "actual_prob": 134,
       "reasons": []
     }
