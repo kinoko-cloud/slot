@@ -43,7 +43,7 @@ def _calc_history_stats(history: list) -> tuple:
         medals = hit.get('medals', 0)
         accumulated_games += start
 
-        if hit_type in ('ART', 'AT', 'BIG'):
+        if hit_type in ('ART', 'AT', 'BIG', 'BB', 'RB'):
             if i == 0 or accumulated_games > RENCHAIN_THRESHOLD:
                 # 前の連チャンが終了 → 記録
                 if chain_len > 0:
