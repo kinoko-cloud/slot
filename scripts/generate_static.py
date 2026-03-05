@@ -994,6 +994,12 @@ def generate_index(env):
     
     yesterday_top10.sort(key=lambda x: (-(x.get('yesterday_diff_medals') or x.get('diff_medals') or 0), -(x.get('yesterday_max_medals') or 0)))
     yesterday_top10 = yesterday_top10[:10]
+    
+    # ★ 営業時間外の場合、おすすめ台TOP10からも前日データがない台を除外
+    # （営業中は当日データがあれば表示したいので除外しない）
+    if not is_open:
+        top3 = [r for r in top3 if r.get('yesterday_games', 0) > 0 or r.get('total_games', 0) > 0]
+        top3_candidates = [r for r in top3_candidates if r.get('yesterday_games', 0) > 0 or r.get('total_games', 0) > 0]
 
     # 本日の爆発台: 最大連チャン枚数でソート
     # 爆発台は差枚優先（朝から座ってたらいくら勝てたか）
