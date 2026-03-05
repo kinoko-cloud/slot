@@ -792,6 +792,16 @@ def generate_index(env):
                         else:
                             rec['yesterday_max_medals'] = 0
                         rec['yesterday_history'] = yd_hist
+                    else:
+                        # 前日データなし: 古いデータをクリア（recommenderからの古いデータを上書き）
+                        rec['yesterday_art'] = 0
+                        rec['yesterday_rb'] = 0
+                        rec['yesterday_games'] = 0
+                        rec['yesterday_diff_medals'] = 0
+                        rec['yesterday_max_rensa'] = 0
+                        rec['yesterday_max_medals'] = 0
+                        rec['yesterday_history'] = []
+                        rec['_no_yesterday_data'] = True  # フィルタリング用フラグ
                     
                     # 前々日のデータ
                     if fixed_day_before in days_by_date:
@@ -818,6 +828,15 @@ def generate_index(env):
                         else:
                             rec['day_before_max_medals'] = 0
                         rec['day_before_history'] = dbd_hist
+                    else:
+                        # 前々日データなし: 古いデータをクリア
+                        rec['day_before_art'] = 0
+                        rec['day_before_rb'] = 0
+                        rec['day_before_games'] = 0
+                        rec['day_before_diff_medals'] = 0
+                        rec['day_before_max_rensa'] = 0
+                        rec['day_before_max_medals'] = 0
+                        rec['day_before_history'] = []
                     
                     # 3日前のデータ
                     if fixed_three_days in days_by_date:
@@ -844,6 +863,15 @@ def generate_index(env):
                         else:
                             rec['three_days_ago_max_medals'] = 0
                         rec['three_days_ago_history'] = tdd_hist
+                    else:
+                        # 3日前データなし: 古いデータをクリア
+                        rec['three_days_ago_art'] = 0
+                        rec['three_days_ago_rb'] = 0
+                        rec['three_days_ago_games'] = 0
+                        rec['three_days_ago_diff_medals'] = 0
+                        rec['three_days_ago_max_rensa'] = 0
+                        rec['three_days_ago_max_medals'] = 0
+                        rec['three_days_ago_history'] = []
             except Exception:
                 pass
         
@@ -956,6 +984,11 @@ def generate_index(env):
     # 差枚だと「万枚出して飲まれた台」が低く出る。
     # max_chain（1回の連チャン区間の累計枚数）なら爆発の瞬間を正しく評価。
     # 前日の爆発台も差枚優先
+    
+    # ★ 前日データがない台を除外（古いデータの誤表示防止）
+    # yesterday_gamesが0 = 前日のデータ取得失敗 or 稼働なし
+    yesterday_top10 = [r for r in yesterday_top10 if r.get('yesterday_games', 0) > 0]
+    
     yesterday_top10.sort(key=lambda x: (-(x.get('yesterday_diff_medals') or x.get('diff_medals') or 0), -(x.get('yesterday_max_medals') or 0)))
     yesterday_top10 = yesterday_top10[:10]
 
