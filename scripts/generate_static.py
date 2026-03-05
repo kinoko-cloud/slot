@@ -794,6 +794,7 @@ def generate_index(env):
                         rec['yesterday_history'] = yd_hist
                     else:
                         # 前日データなし: 古いデータをクリア（recommenderからの古いデータを上書き）
+                        print(f"[DEBUG] Clearing yesterday data for {store_key}/{unit_id} (no {fixed_yesterday} in DB)")
                         rec['yesterday_art'] = 0
                         rec['yesterday_rb'] = 0
                         rec['yesterday_games'] = 0
