@@ -47,8 +47,9 @@ def get_missing_units(target_date: str):
                 existing_day = days_by_date[target_date]
                 hist_len = len(existing_day.get('history', []))
                 art = existing_day.get('art', 0)
-                # historyが0件なら再取得（データ消失修復 or art=0取得失敗の両方をカバー）
-                if hist_len == 0:
+                # historyが0件かつart>0なら再取得（データ消失修復）
+                # art=0,hist=0は稼働なし/台変動と見なしスキップ（無限再取得防止）
+                if hist_len == 0 and art > 0:
                     pass  # 再取得を続行
                 else:
                     continue
