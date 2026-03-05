@@ -44,9 +44,11 @@ def get_missing_units(target_date: str):
             hist = load_unit_history(store_key, uid)
             days_by_date = {d.get('date', ''): d for d in hist.get('days', [])}
             if target_date in days_by_date:
-                # historyが0件かつart>0なら再取得（上書きによるデータ消失の修復）
                 existing_day = days_by_date[target_date]
-                if len(existing_day.get('history', [])) == 0 and existing_day.get('art', 0) > 0:
+                hist_len = len(existing_day.get('history', []))
+                art = existing_day.get('art', 0)
+                # historyが0件なら再取得（データ消失修復 or art=0取得失敗の両方をカバー）
+                if hist_len == 0:
                     pass  # 再取得を続行
                 else:
                     continue
