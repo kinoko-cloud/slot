@@ -794,7 +794,6 @@ def generate_index(env):
                         rec['yesterday_history'] = yd_hist
                     else:
                         # 前日データなし: 古いデータをクリア（recommenderからの古いデータを上書き）
-                        print(f"[DEBUG] Clearing yesterday data for {store_key}/{unit_id} (no {fixed_yesterday} in DB)")
                         rec['yesterday_art'] = 0
                         rec['yesterday_rb'] = 0
                         rec['yesterday_games'] = 0
@@ -802,6 +801,7 @@ def generate_index(env):
                         rec['yesterday_max_rensa'] = 0
                         rec['yesterday_max_medals'] = 0
                         rec['yesterday_history'] = []
+                        rec['yesterday_date'] = ''  # 日付もクリア（テンプレートで「データなし」を表示しない）
                         rec['_no_yesterday_data'] = True  # フィルタリング用フラグ
                     
                     # 前々日のデータ
@@ -838,6 +838,7 @@ def generate_index(env):
                         rec['day_before_max_rensa'] = 0
                         rec['day_before_max_medals'] = 0
                         rec['day_before_history'] = []
+                        rec['day_before_date'] = ''  # 日付もクリア
                     
                     # 3日前のデータ
                     if fixed_three_days in days_by_date:
@@ -873,6 +874,7 @@ def generate_index(env):
                         rec['three_days_ago_max_rensa'] = 0
                         rec['three_days_ago_max_medals'] = 0
                         rec['three_days_ago_history'] = []
+                        rec['three_days_ago_date'] = ''  # 日付もクリア
             except Exception:
                 pass
         
