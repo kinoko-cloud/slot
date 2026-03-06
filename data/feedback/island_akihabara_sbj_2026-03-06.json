@@ -5,15 +5,24 @@
   "weekday": "金",
   "total_units": 14,
   "hits": 7,
-  "misses": 0,
+  "misses": 1,
   "surprises": 1,
-  "miss_details": [],
+  "miss_details": [
+    {
+      "unit_id": "1016",
+      "score": 45,
+      "actual_prob": 252,
+      "reasons": [
+        "設定1域(1/252)"
+      ]
+    }
+  ],
   "surprise_details": [
     {
       "unit_id": "1018",
       "rank": "B",
-      "score": 189,
-      "actual_prob": 130,
+      "score": 169,
+      "actual_prob": 127,
       "reasons": []
     }
   ]
