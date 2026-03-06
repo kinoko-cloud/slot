@@ -15,6 +15,29 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from common.base import BaseScraper, DataStore, setup_logger, now_jst
 
+# 機種名マッチング用（台変動検知）
+MACHINE_NAMES = {
+    'sbj': {
+        'include': ['ブラックジャック', 'SBJ', 'ﾌﾞﾗｯｸｼﾞｬｯｸ'],
+        'exclude': [],
+    },
+    'hokuto2': {
+        'include': ['転生'],
+        'exclude': [],
+    },
+}
+
+def match_machine_name(text: str, machine_key: str) -> bool:
+    """機種名マッチング"""
+    config = MACHINE_NAMES.get(machine_key)
+    if not config:
+        return False
+    has_include = any(kw in text for kw in config['include'])
+    if not has_include:
+        return False
+    has_exclude = any(kw in text for kw in config.get('exclude', []))
+    return not has_exclude
+
 # 広告削除スクリプト
 REMOVE_ADS_SCRIPT = """
 () => {
@@ -92,8 +115,14 @@ class DaidataScraper(BaseScraper):
         
         return True
     
-    def fetch_realtime(self, hall_id: str, unit_id: str) -> Dict[str, Any]:
-        """リアルタイムデータ取得（1台分）"""
+    def fetch_realtime(self, hall_id: str, unit_id: str, expected_machine: str = None) -> Dict[str, Any]:
+        """リアルタイムデータ取得（1台分）
+        
+        Args:
+            hall_id: ホールID
+            unit_id: 台番号
+            expected_machine: 期待する機種キー（sbj/hokuto2）。指定時は機種名チェックを行う
+        """
         url = f"{self.BASE_URL}/{hall_id}/detail?unit={unit_id}"
         
         if not self._goto_with_terms(url, hall_id):
@@ -146,6 +175,16 @@ class DaidataScraper(BaseScraper):
             return {'unit_id': unit_id, 'machine_mismatch': True, 'error': 'machine_mismatch',
                     'bb': 0, 'rb': 0, 'art': 0, 'total_start': 0, 'final_start': 0,
                     'status': 'empty', 'fetched_at': fetched_at}
+
+        # 機種名チェック（expected_machine指定時）
+        # ページ先頭50行以内に機種名が表示される
+        if expected_machine:
+            page_header = '\n'.join(text.split('\n')[:50])
+            if not match_machine_name(page_header, expected_machine):
+                self.logger.warning(f"Unit {unit_id}: 機種不一致（期待: {expected_machine}）- スキップ")
+                return {'unit_id': unit_id, 'machine_mismatch': True, 'error': 'machine_mismatch',
+                        'bb': 0, 'rb': 0, 'art': 0, 'total_start': 0, 'final_start': 0,
+                        'status': 'empty', 'fetched_at': fetched_at}
 
         data = {
             'unit_id': unit_id,

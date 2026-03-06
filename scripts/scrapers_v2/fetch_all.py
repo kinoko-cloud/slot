@@ -37,7 +37,7 @@ logger = setup_logger('fetch_all')
 JST = timezone(timedelta(hours=9))
 
 
-def fetch_with_retry(scraper, hall_id: str, unit_id: str, max_time: int = 60) -> Dict[str, Any]:
+def fetch_with_retry(scraper, hall_id: str, unit_id: str, max_time: int = 60, machine_key: str = None) -> Dict[str, Any]:
     """
     取れるまでリトライする詳細取得
     
@@ -46,6 +46,7 @@ def fetch_with_retry(scraper, hall_id: str, unit_id: str, max_time: int = 60) ->
         hall_id: ホールID
         unit_id: 台番号
         max_time: 最大試行時間（秒）
+        machine_key: 機種キー（sbj/hokuto2）。指定時は機種名チェックを行う
     
     Returns:
         取得データ。success=Trueなら成功、Falseなら失敗
@@ -62,9 +63,9 @@ def fetch_with_retry(scraper, hall_id: str, unit_id: str, max_time: int = 60) ->
             logger.error(f"⚠️ {hall_id}/{unit_id}: {max_time}秒経過しても取得できず（異常事態）")
             return {'unit_id': unit_id, 'success': False, 'error': 'max_time_exceeded'}
         
-        data = scraper.fetch_realtime(hall_id, unit_id)
+        data = scraper.fetch_realtime(hall_id, unit_id, expected_machine=machine_key)
 
-        # 台変動（パチンコ・見つからない）はリトライせず即返す
+        # 台変動（パチンコ・見つからない・機種不一致）はリトライせず即返す
         if data.get('machine_mismatch') or data.get('not_found'):
             data['success'] = True  # 取得自体は成功（台変動を正常検知）
             return data
@@ -235,11 +236,13 @@ class V2Fetcher:
                         logger.warning(f"{store_key}: 一覧ページ取得失敗 ({e}), 詳細のみで継続")
 
                 # 全台を詳細取得（取れるまでリトライ）
+                # 機種キーをstore_keyから判定
+                machine_key = 'hokuto2' if is_hokuto2 else 'sbj'
                 for unit_id in expected_units:
-                    detail = fetch_with_retry(scraper, hall_id, unit_id, max_time=60)
+                    detail = fetch_with_retry(scraper, hall_id, unit_id, max_time=60, machine_key=machine_key)
 
                     if detail.get('success'):
-                        # 台変動（パチンコ・見つからない）はスキップ
+                        # 台変動（パチンコ・見つからない・機種不一致）はスキップ
                         if detail.get('machine_mismatch') or detail.get('not_found'):
                             logger.info(f"{store_key}/{unit_id}: 台変動のためスキップ")
                             result['skipped_count'] += 1
@@ -293,7 +296,9 @@ class V2Fetcher:
 
                 # G数が変化した台のみ詳細取得
                 if unit_id in changed_units:
-                    detail = fetch_with_retry(scraper, hall_id, unit_id, max_time=60)
+                    # 機種キーをstore_keyから判定
+                    machine_key = 'hokuto2' if 'hokuto2' in store_key else 'sbj'
+                    detail = fetch_with_retry(scraper, hall_id, unit_id, max_time=60, machine_key=machine_key)
 
                     if not detail.get('success'):
                         # 60秒取得できなかった → 異常事態
@@ -348,7 +353,8 @@ class V2Fetcher:
                     # 🔧 日付変更時は強制取得（前日データ混入防止）
                     if self._date_changed:
                         logger.info(f"{store_key}/{unit_id}: 日付変更 → 強制詳細取得")
-                        detail = fetch_with_retry(scraper, hall_id, unit_id, max_time=60)
+                        machine_key = 'hokuto2' if 'hokuto2' in store_key else 'sbj'
+                        detail = fetch_with_retry(scraper, hall_id, unit_id, max_time=60, machine_key=machine_key)
                         if detail.get('success'):
                             # 詳細ページの日付が今日かチェック
                             today = now_jst().strftime('%Y-%m-%d')
@@ -389,7 +395,8 @@ class V2Fetcher:
                     if needs_force_fetch:
                         reason = "前回データが空" if prev_art == 0 else "ART/履歴矛盾"
                         logger.warning(f"{store_key}/{unit_id}: {reason} → 強制詳細取得")
-                        detail = fetch_with_retry(scraper, hall_id, unit_id, max_time=60)
+                        machine_key = 'hokuto2' if 'hokuto2' in store_key else 'sbj'
+                        detail = fetch_with_retry(scraper, hall_id, unit_id, max_time=60, machine_key=machine_key)
                         
                         if not detail.get('success'):
                             logger.error(f"🚨 {store_key}/{unit_id}: 取得失敗（台番号確認が必要）")
