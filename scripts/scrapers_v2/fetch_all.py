@@ -26,6 +26,10 @@ from daidata.discovery import DaidataDiscovery
 from papimo.scraper import PapimoScraper, PAPIMO_STORES as PAPIMO_CONFIG
 from common.base import setup_logger, now_jst
 from common.games_cache import get_changed_units, save_cache
+from unit_status import (
+    is_unit_active, mark_unit_missing, mark_unit_found,
+    get_stopped_units, get_pending_units
+)
 
 # v1の店舗設定をインポート
 from fetch_daidata_availability import DAIDATA_STORES, PAPIMO_STORES
@@ -239,14 +243,24 @@ class V2Fetcher:
                 # 機種キーをstore_keyから判定
                 machine_key = 'hokuto2' if is_hokuto2 else 'sbj'
                 for unit_id in expected_units:
+                    # 停止中の台はスキップ
+                    if not is_unit_active(store_key, unit_id):
+                        logger.debug(f"{store_key}/{unit_id}: 停止中のためスキップ")
+                        result['skipped_count'] += 1
+                        continue
+                    
                     detail = fetch_with_retry(scraper, hall_id, unit_id, max_time=60, machine_key=machine_key)
 
                     if detail.get('success'):
-                        # 台変動（パチンコ・見つからない・機種不一致）はスキップ
+                        # 台変動（パチンコ・見つからない・機種不一致）
                         if detail.get('machine_mismatch') or detail.get('not_found'):
-                            logger.info(f"{store_key}/{unit_id}: 台変動のためスキップ")
+                            reason = detail.get('error', 'unknown')
+                            new_status = mark_unit_missing(store_key, unit_id, reason)
+                            logger.info(f"{store_key}/{unit_id}: 台変動検知 → {new_status}")
                             result['skipped_count'] += 1
                             continue
+                        # 正常取得 → activeに戻す（pending/stoppedから復帰）
+                        mark_unit_found(store_key, unit_id)
                         # 詳細ページでfinal_start=0の場合、一覧ページのスタート回数で補完
                         if detail.get('final_start', 0) == 0 and starts_map.get(unit_id, 0) > 0:
                             detail['final_start'] = starts_map[unit_id]
@@ -292,6 +306,19 @@ class V2Fetcher:
             changed_units = get_changed_units(store_key, games_map)
 
             for unit_id in expected_units:
+                # 停止中の台はスキップ
+                if not is_unit_active(store_key, unit_id):
+                    logger.debug(f"{store_key}/{unit_id}: 停止中のためスキップ")
+                    result['skipped_count'] += 1
+                    continue
+                
+                # 一覧ページに台がない場合 → 台変動検知
+                if unit_id not in games_map:
+                    new_status = mark_unit_missing(store_key, unit_id, 'not_in_list')
+                    logger.info(f"{store_key}/{unit_id}: 一覧に存在しない → {new_status}")
+                    result['skipped_count'] += 1
+                    continue
+                
                 games = games_map.get(unit_id, 0)
 
                 # G数が変化した台のみ詳細取得
@@ -319,11 +346,15 @@ class V2Fetcher:
                         result['skipped_count'] += 1
                         continue
 
-                    # 台変動（パチンコ・見つからない）はスキップ
+                    # 台変動（パチンコ・見つからない・機種不一致）
                     if detail.get('machine_mismatch') or detail.get('not_found'):
-                        logger.info(f"{store_key}/{unit_id}: 台変動のためスキップ")
+                        reason = detail.get('error', 'unknown')
+                        new_status = mark_unit_missing(store_key, unit_id, reason)
+                        logger.info(f"{store_key}/{unit_id}: 台変動検知 → {new_status}")
                         result['skipped_count'] += 1
                         continue
+                    # 正常取得 → activeに戻す
+                    mark_unit_found(store_key, unit_id)
 
                     # 詳細ページの日付が今日かチェック
                     today = now_jst().strftime('%Y-%m-%d')
@@ -347,6 +378,8 @@ class V2Fetcher:
                     result['changed_count'] += 1
                 else:
                     # G数変化なし → 前回のデータを使用
+                    # 一覧ページに台があるのでactiveに戻す（pendingから復帰）
+                    mark_unit_found(store_key, unit_id)
                     # availability.jsonから前回のデータを取得
                     prev_data = self._get_previous_unit_data(store_key, unit_id)
 
