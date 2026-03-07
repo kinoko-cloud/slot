@@ -223,10 +223,10 @@ class V2Fetcher:
         scraper = DaidataScraper(headless=self.headless)
         
         with scraper.browser_session():
-            # model_encoded=Noneの場合、または北斗2店舗は詳細ページのみで取得
-            # （北斗2は一覧→詳細遷移で規約処理が失敗しやすいため）
+            # model_encoded=Noneの場合のみ詳細ページで取得（旧方式）
+            # model_encodedがあれば一覧から動的取得（北斗2含む）
             is_hokuto2 = 'hokuto2' in store_key
-            if model_encoded is None or is_hokuto2:
+            if model_encoded is None:
                 # 一覧ページからスタート回数を先に取得（詳細ページfinal_start=0の補完用）
                 starts_map = {}
                 if model_encoded:
@@ -290,6 +290,7 @@ class V2Fetcher:
                 return result
             
             # 一覧ページでG数＋空き/遊技中を取得
+            # 動的台番号取得: 設定の台番号ではなく、一覧で見つかった全台を対象にする
             list_data = scraper.fetch_list_with_availability(
                 hall_id, model_encoded, expected_units
             )
@@ -302,10 +303,29 @@ class V2Fetcher:
             arts_map = list_data.get('arts', {})
             starts_map = list_data.get('starts', {})  # スタート回数（現在のハマり）
             
+            # 一覧で見つかった台番号を使用（設定に依存しない）
+            detected_units = sorted(games_map.keys())
+            if not detected_units:
+                logger.warning(f"⚠️ {store_key}: 一覧ページに台が見つからない")
+                result['error'] = 'no_units_detected'
+                return result
+            
+            # 台番号変更の検出（警告のみ、処理は続行）
+            expected_set = set(expected_units)
+            detected_set = set(detected_units)
+            if expected_set != detected_set:
+                missing = expected_set - detected_set
+                added = detected_set - expected_set
+                if missing:
+                    logger.warning(f"⚠️ {store_key}: 設定から消えた台: {sorted(missing)}")
+                if added:
+                    logger.info(f"🆕 {store_key}: 新規検出台: {sorted(added)}")
+                logger.info(f"📋 {store_key}: 検出された台番号で処理続行: {detected_units}")
+            
             # G数が変化した台を特定（差分取得）
             changed_units = get_changed_units(store_key, games_map)
 
-            for unit_id in expected_units:
+            for unit_id in detected_units:
                 # 停止中の台はスキップ
                 if not is_unit_active(store_key, unit_id):
                     logger.debug(f"{store_key}/{unit_id}: 停止中のためスキップ")

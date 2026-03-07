@@ -109,19 +109,18 @@ DAIDATA_STORES = {
         'model_encoded': 'L%EF%BD%BD%EF%BD%B0%EF%BE%8A%EF%BE%9F%EF%BD%B0%EF%BE%8C%EF%BE%9E%EF%BE%97%EF%BD%AF%EF%BD%B8%EF%BD%BC%EF%BE%9E%EF%BD%AC%EF%BD%AF%EF%BD%B8',
         'units': ['3095', '3096', '3097'],
     },
-    # === 北斗転生2 (detail page only, model_encoded不要) ===
-    # Note: 台数が多いためタイムアウト時間を延長して取得
+    # === 北斗転生2 (一覧ページから動的取得に変更 2026-03-07) ===
     'shibuya_espass_hokuto2': {
         'hall_id': '100860',
         'name': 'エスパス渋谷新館(北斗)',
-        'model_encoded': None,  # detail pageのみで取得
-        'units': [str(i) for i in range(2046, 2056) if i not in [2048, 2050]] + [str(i) for i in range(2057, 2068)] + ['2233', '2234', '2235', '2238', '2239', '2240'],  # 2056除外: データなし, 2236,2237除外: パチンコ台変動(2026-03-02確認), 2048,2050除外: Lスマスロ北斗に台変動(2026-03-04確認)
+        'model_encoded': 'L%E5%8C%97%E6%96%97%20%E8%BB%A2%E7%94%9F%E3%81%AE%E7%AB%A02',  # L北斗 転生の章2 - 一覧から動的取得
+        'units': [],  # 一覧から自動検出
     },
     'shibuya_honkan_espass_hokuto2': {
         'hall_id': '100930',
         'name': 'エスパス渋谷本館(北斗)',
-        'model_encoded': None,
-        'units': ['2013', '2014', '2017', '2018', '2019'] + [str(i) for i in range(2030, 2038)],  # 2015,2016除外: パチンコ台変動(2026-03-02確認)
+        'model_encoded': 'L%E5%8C%97%E6%96%97%20%E8%BB%A2%E7%94%9F%E3%81%AE%E7%AB%A02',  # L北斗 転生の章2 - 一覧から動的取得
+        'units': [],  # 一覧から自動検出
     },
     'shinjuku_espass_hokuto2': {
         'hall_id': '100949',
