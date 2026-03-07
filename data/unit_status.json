@@ -1,5 +1,177 @@
 {
   "_comment": "台状態管理: active=正常, pending=保留中, stopped=停止",
-  "_updated": "2026-03-07T03:46:00+09:00",
-  "units": {}
+  "_updated": "2026-03-07T19:56:08.395856+09:00",
+  "units": {
+    "shibuya_espass_hokuto2/2046": {
+      "status": "active",
+      "first_missing": "2026-03-07T19:31:14.435709+09:00",
+      "fail_count": 0,
+      "reason": "machine_mismatch",
+      "last_missing": "2026-03-07T19:33:15.155051+09:00",
+      "recovered_at": "2026-03-07T19:39:40.151221+09:00"
+    },
+    "shibuya_espass_hokuto2/2047": {
+      "status": "active",
+      "first_missing": "2026-03-07T19:31:17.543429+09:00",
+      "fail_count": 0,
+      "reason": "machine_mismatch",
+      "last_missing": "2026-03-07T19:33:18.558609+09:00",
+      "recovered_at": "2026-03-07T19:39:43.489792+09:00"
+    },
+    "shibuya_espass_hokuto2/2049": {
+      "status": "active",
+      "first_missing": "2026-03-07T19:31:20.561077+09:00",
+      "fail_count": 0,
+      "reason": "machine_mismatch",
+      "last_missing": "2026-03-07T19:33:21.962775+09:00",
+      "recovered_at": "2026-03-07T19:39:46.841790+09:00"
+    },
+    "shibuya_espass_hokuto2/2051": {
+      "status": "active",
+      "first_missing": "2026-03-07T19:31:23.742430+09:00",
+      "fail_count": 0,
+      "reason": "machine_mismatch",
+      "last_missing": "2026-03-07T19:33:25.434452+09:00",
+      "recovered_at": "2026-03-07T19:39:50.124541+09:00"
+    },
+    "shibuya_espass_hokuto2/2233": {
+      "status": "active",
+      "first_missing": "2026-03-07T19:32:13.789447+09:00",
+      "fail_count": 0,
+      "reason": "machine_mismatch",
+      "last_missing": "2026-03-07T19:34:19.863994+09:00",
+      "recovered_at": "2026-03-07T19:40:44.007418+09:00"
+    },
+    "shibuya_espass_hokuto2/2234": {
+      "status": "active",
+      "first_missing": "2026-03-07T19:32:16.877534+09:00",
+      "fail_count": 0,
+      "reason": "machine_mismatch",
+      "last_missing": "2026-03-07T19:34:23.102619+09:00",
+      "recovered_at": "2026-03-07T19:40:47.245201+09:00"
+    },
+    "shibuya_espass_hokuto2/2235": {
+      "status": "active",
+      "first_missing": "2026-03-07T19:32:19.899457+09:00",
+      "fail_count": 0,
+      "reason": "machine_mismatch",
+      "last_missing": "2026-03-07T19:34:26.386166+09:00",
+      "recovered_at": "2026-03-07T19:40:50.533810+09:00"
+    },
+    "shibuya_espass_hokuto2/2238": {
+      "status": "active",
+      "first_missing": "2026-03-07T19:32:22.949858+09:00",
+      "fail_count": 0,
+      "reason": "machine_mismatch",
+      "last_missing": "2026-03-07T19:34:29.757811+09:00",
+      "recovered_at": "2026-03-07T19:40:53.760512+09:00"
+    },
+    "shibuya_espass_hokuto2/2239": {
+      "status": "active",
+      "first_missing": "2026-03-07T19:32:26.021969+09:00",
+      "fail_count": 0,
+      "reason": "machine_mismatch",
+      "last_missing": "2026-03-07T19:34:33.056101+09:00",
+      "recovered_at": "2026-03-07T19:40:57.043196+09:00"
+    },
+    "shibuya_espass_hokuto2/2240": {
+      "status": "active",
+      "first_missing": "2026-03-07T19:32:29.087748+09:00",
+      "fail_count": 0,
+      "reason": "machine_mismatch",
+      "last_missing": "2026-03-07T19:34:36.495540+09:00",
+      "recovered_at": "2026-03-07T19:41:00.321043+09:00"
+    },
+    "shibuya_espass_sbj/3011": {
+      "status": "pending",
+      "first_missing": "2026-03-07T19:36:39.948214+09:00",
+      "fail_count": 5,
+      "reason": "not_in_list",
+      "last_missing": "2026-03-07T19:53:03.509735+09:00"
+    },
+    "ueno_espass_sbj/3110": {
+      "status": "pending",
+      "first_missing": "2026-03-07T19:37:41.931272+09:00",
+      "fail_count": 4,
+      "reason": "not_in_list",
+      "last_missing": "2026-03-07T19:53:28.522902+09:00"
+    },
+    "ueno_espass_sbj/3111": {
+      "status": "pending",
+      "first_missing": "2026-03-07T19:37:41.931644+09:00",
+      "fail_count": 4,
+      "reason": "not_in_list",
+      "last_missing": "2026-03-07T19:53:28.523318+09:00"
+    },
+    "ueno_espass_sbj/3112": {
+      "status": "pending",
+      "first_missing": "2026-03-07T19:37:41.931892+09:00",
+      "fail_count": 4,
+      "reason": "not_in_list",
+      "last_missing": "2026-03-07T19:53:28.530797+09:00"
+    },
+    "ueno_espass_sbj/3113": {
+      "status": "pending",
+      "first_missing": "2026-03-07T19:37:41.932102+09:00",
+      "fail_count": 4,
+      "reason": "not_in_list",
+      "last_missing": "2026-03-07T19:53:28.531084+09:00"
+    },
+    "takadanobaba_espass_sbj/2060": {
+      "status": "pending",
+      "first_missing": "2026-03-07T19:38:09.836388+09:00",
+      "fail_count": 4,
+      "reason": "not_in_list",
+      "last_missing": "2026-03-07T19:53:51.291957+09:00"
+    },
+    "takadanobaba_espass_sbj/2061": {
+      "status": "pending",
+      "first_missing": "2026-03-07T19:38:09.836748+09:00",
+      "fail_count": 4,
+      "reason": "not_in_list",
+      "last_missing": "2026-03-07T19:53:51.292529+09:00"
+    },
+    "takadanobaba_espass_sbj/2062": {
+      "status": "pending",
+      "first_missing": "2026-03-07T19:38:09.837263+09:00",
+      "fail_count": 4,
+      "reason": "not_in_list",
+      "last_missing": "2026-03-07T19:53:51.300084+09:00"
+    },
+    "shinokubo_espass_sbj/3141": {
+      "status": "pending",
+      "first_missing": "2026-03-07T19:38:37.350558+09:00",
+      "fail_count": 4,
+      "reason": "not_in_list",
+      "last_missing": "2026-03-07T19:54:14.100166+09:00"
+    },
+    "shinokubo_espass_sbj/3142": {
+      "status": "pending",
+      "first_missing": "2026-03-07T19:38:37.350959+09:00",
+      "fail_count": 4,
+      "reason": "not_in_list",
+      "last_missing": "2026-03-07T19:54:14.101022+09:00"
+    },
+    "shinokubo_espass_sbj/3143": {
+      "status": "pending",
+      "first_missing": "2026-03-07T19:38:37.351284+09:00",
+      "fail_count": 4,
+      "reason": "not_in_list",
+      "last_missing": "2026-03-07T19:54:14.109050+09:00"
+    },
+    "shinokubo_espass_sbj/3144": {
+      "status": "pending",
+      "first_missing": "2026-03-07T19:38:37.351946+09:00",
+      "fail_count": 4,
+      "reason": "not_in_list",
+      "last_missing": "2026-03-07T19:54:14.109499+09:00"
+    },
+    "shibuya_espass_hokuto2/2066": {
+      "status": "active",
+      "first_missing": "2026-03-07T19:51:23.408263+09:00",
+      "fail_count": 0,
+      "reason": "machine_mismatch",
+      "recovered_at": "2026-03-07T19:56:08.395759+09:00"
+    }
+  }
 }
