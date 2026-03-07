@@ -209,7 +209,7 @@ STORES = {
         'short_name': 'エスパス上野新館',
         'hall_id': '100196',
         'machine': 'sbj',
-        'units': ['3110', '3111', '3112', '3113'],
+        'units': ['2070', '2071', '2072', '2280'],  # 台番号変更(2026-03-07確認)
         'data_source': 'daidata',
     },
     'ueno_honkan_espass_sbj': {
@@ -225,7 +225,7 @@ STORES = {
         'short_name': 'エスパス高田馬場',
         'hall_id': '100915',
         'machine': 'sbj',
-        'units': ['2060', '2061', '2062'],
+        'units': ['2067', '2068'],  # 台番号変更、3→2台に減(2026-03-07確認)
         'data_source': 'daidata',
     },
     'akasaka_espass_sbj': {
@@ -241,7 +241,7 @@ STORES = {
         'short_name': 'エスパス新大久保',
         'hall_id': '100951',
         'machine': 'sbj',
-        'units': ['3141', '3142', '3143', '3144'],
+        'units': ['2175', '2176', '2177', '2178'],  # 台番号変更(2026-03-07確認)
         'data_source': 'daidata',
     },
     'shinkoiwa_espass_sbj': {

@@ -59,7 +59,7 @@ DAIDATA_STORES = {
         'hall_id': '100196',
         'name': 'エスパス上野新館',
         'model_encoded': 'L%EF%BD%BD%EF%BD%B0%EF%BE%8A%EF%BE%9F%EF%BD%B0%EF%BE%8C%EF%BE%9E%EF%BE%97%EF%BD%AF%EF%BD%B8%EF%BD%BC%EF%BE%9E%EF%BD%AC%EF%BD%AF%EF%BD%B8',
-        'units': ['3110', '3111', '3112', '3113'],
+        'units': ['2070', '2071', '2072', '2280'],  # 台番号変更(2026-03-07確認)
     },
     # === エスパス上野本館 (hall_id=100947) ===
     'ueno_honkan_espass_sbj': {
@@ -73,7 +73,7 @@ DAIDATA_STORES = {
         'hall_id': '100915',
         'name': 'エスパス高田馬場',
         'model_encoded': 'L%EF%BD%BD%EF%BD%B0%EF%BE%8A%EF%BE%9F%EF%BD%B0%EF%BE%8C%EF%BE%9E%EF%BE%97%EF%BD%AF%EF%BD%B8%EF%BD%BC%EF%BE%9E%EF%BD%AC%EF%BD%AF%EF%BD%B8',
-        'units': ['2060', '2061', '2062'],
+        'units': ['2067', '2068'],  # 台番号変更、3→2台に減(2026-03-07確認)
     },
     # === エスパス赤坂見附 (hall_id=100952) ===
     'akasaka_espass_sbj': {
@@ -87,7 +87,7 @@ DAIDATA_STORES = {
         'hall_id': '100951',
         'name': 'エスパス新大久保',
         'model_encoded': 'L%EF%BD%BD%EF%BD%B0%EF%BE%8A%EF%BE%9F%EF%BD%B0%EF%BE%8C%EF%BE%9E%EF%BE%97%EF%BD%AF%EF%BD%B8%EF%BD%BC%EF%BE%9E%EF%BD%AC%EF%BD%AF%EF%BD%B8',
-        'units': ['3141', '3142', '3143', '3144'],
+        'units': ['2175', '2176', '2177', '2178'],  # 台番号変更(2026-03-07確認)
     },
     # === エスパス新小岩 (hall_id=100260) ===
     'shinkoiwa_espass_sbj': {
