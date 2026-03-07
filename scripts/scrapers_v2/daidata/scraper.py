@@ -176,15 +176,15 @@ class DaidataScraper(BaseScraper):
                     'bb': 0, 'rb': 0, 'art': 0, 'total_start': 0, 'final_start': 0,
                     'status': 'empty', 'fetched_at': fetched_at}
 
-        # 機種名チェック（expected_machine指定時）
-        # ページ先頭50行以内に機種名が表示される
-        if expected_machine:
-            page_header = '\n'.join(text.split('\n')[:50])
-            if not match_machine_name(page_header, expected_machine):
-                self.logger.warning(f"Unit {unit_id}: 機種不一致（期待: {expected_machine}）- スキップ")
-                return {'unit_id': unit_id, 'machine_mismatch': True, 'error': 'machine_mismatch',
-                        'bb': 0, 'rb': 0, 'art': 0, 'total_start': 0, 'final_start': 0,
-                        'status': 'empty', 'fetched_at': fetched_at}
+        # 機種名チェック（一時無効化 - 2026-03-07: 判定ロジックに問題あり、全台スキップされる）
+        # TODO: ページ構造を確認して正しい判定ロジックを実装する
+        # if expected_machine:
+        #     page_header = '\n'.join(text.split('\n')[:50])
+        #     if not match_machine_name(page_header, expected_machine):
+        #         self.logger.warning(f"Unit {unit_id}: 機種不一致（期待: {expected_machine}）- スキップ")
+        #         return {'unit_id': unit_id, 'machine_mismatch': True, 'error': 'machine_mismatch',
+        #                 'bb': 0, 'rb': 0, 'art': 0, 'total_start': 0, 'final_start': 0,
+        #                 'status': 'empty', 'fetched_at': fetched_at}
 
         data = {
             'unit_id': unit_id,
