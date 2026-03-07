@@ -671,12 +671,18 @@ class V2Fetcher:
         v1_data = self.to_v1_format(results)
 
         # 取得対象のconfig台番号マップを構築（余分な台を除外するため）
-        config_units_map = {}  # store_key -> set of unit_ids
+        # Note: units: [] の店舗は動的取得なので除外しない
+        config_units_map = {}  # store_key -> set of unit_ids (None = 除外しない)
         for store_key in results:
             # DAIDATA_STORESからconfigの台番号を取得
             cfg = DAIDATA_STORES.get(store_key)
             if cfg:
-                config_units_map[store_key] = set(str(u) for u in cfg.get('units', []))
+                units = cfg.get('units', [])
+                if units:  # 空でない場合のみフィルタリング
+                    config_units_map[store_key] = set(str(u) for u in units)
+                else:
+                    # units: [] は動的取得なので除外しない
+                    config_units_map[store_key] = None
             else:
                 # Papimo等: 取得できた台のみ
                 config_units_map[store_key] = None
