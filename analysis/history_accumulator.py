@@ -192,7 +192,8 @@ def _accumulate_unit(store_key: str, unit_id: str, days: list, machine_key: str)
     updated = 0
     good_prob = 130 if machine_key == 'sbj' else 330
 
-    for day in days:
+    # 日付昇順でソート（コピー防止チェックが正しく機能するよう古い順に追加）
+    for day in sorted(days, key=lambda x: x.get('date', '')):
         date = day.get('date', '')
         if not date:
             continue
@@ -282,6 +283,15 @@ def _accumulate_unit(store_key: str, unit_id: str, days: list, machine_key: str)
                 entry['max_rensa'] = max_rensa
             if max_medals > 0:
                 entry['max_medals'] = max_medals
+
+            # 前日historyとの重複チェック（コピー防止）
+            sorted_existing = sorted(existing.get('days', []), key=lambda x: x.get('date', ''))
+            if sorted_existing:
+                prev_day = sorted_existing[-1]
+                prev_history = prev_day.get('history', [])
+                if prev_history and history == prev_history:
+                    print(f"    ⚠️ SKIP {store_key}/{unit_id} ({date}): 前日({prev_day['date']})と同一historyのため保存スキップ")
+                    continue
 
         existing['days'].append(entry)
         added += 1

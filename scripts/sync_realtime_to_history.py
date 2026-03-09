@@ -163,7 +163,18 @@ def sync_store_to_history(store_key: str, store_data: dict, date_str: str):
         
         if not should_update:
             continue
-        
+
+        # 前日historyとの重複チェック（コピー防止）
+        today_history_check = unit_data.get('today_history', []) or unit_data.get('history', [])
+        if today_history_check:
+            sorted_existing = sorted(unit_history.get('days', []), key=lambda x: x.get('date', ''))
+            if sorted_existing:
+                prev_day = sorted_existing[-1]
+                prev_history = prev_day.get('history', [])
+                if prev_history and today_history_check == prev_history:
+                    print(f"  ⚠️ SKIP {store_key}/{unit_id} ({unit_date_str}): 前日({prev_day['date']})と同一historyのため保存スキップ")
+                    continue
+
         # 当日データ構築
         art = unit_data.get('art', 0) or 0
         rb = unit_data.get('rb', 0) or 0
