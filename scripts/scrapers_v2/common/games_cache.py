@@ -27,17 +27,23 @@ def _get_cache_path(store_key: str) -> Path:
 def load_cache(store_key: str) -> Dict[str, int]:
     """
     前回のG数キャッシュを読み込む
-    
+
     Returns:
-        {unit_id: games} の辞書
+        {unit_id: games} の辞書。昨日以前のキャッシュは空を返す（全台再取得させる）
     """
     path = _get_cache_path(store_key)
     if not path.exists():
         return {}
-    
+
     try:
         with open(path) as f:
             data = json.load(f)
+        # 昨日以前のキャッシュは無効（日付変わったら全台再取得）
+        updated_at = data.get('updated_at', '')
+        if updated_at:
+            today = datetime.now(JST).strftime('%Y-%m-%d')
+            if not updated_at.startswith(today):
+                return {}
         return data.get('games', {})
     except:
         return {}
