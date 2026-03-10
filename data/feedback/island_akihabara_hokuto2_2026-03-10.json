@@ -4,22 +4,33 @@
   "date": "2026-03-10",
   "weekday": "火",
   "total_units": 5,
-  "hits": 0,
-  "misses": 2,
-  "surprises": 0,
+  "hits": 1,
+  "misses": 1,
+  "surprises": 2,
   "miss_details": [
     {
-      "unit_id": "0700",
-      "score": 78,
-      "actual_prob": 0,
+      "unit_id": "0703",
+      "score": 52,
+      "actual_prob": 675,
+      "reasons": [
+        "設定1域(1/675)"
+      ]
+    }
+  ],
+  "surprise_details": [
+    {
+      "unit_id": "0702",
+      "rank": "C",
+      "score": 73,
+      "actual_prob": 166,
       "reasons": []
     },
     {
-      "unit_id": "0701",
-      "score": 76,
-      "actual_prob": 0,
+      "unit_id": "0705",
+      "rank": "C",
+      "score": 60,
+      "actual_prob": 195,
       "reasons": []
     }
-  ],
-  "surprise_details": []
+  ]
 }
