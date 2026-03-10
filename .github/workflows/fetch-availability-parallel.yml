@@ -116,7 +116,7 @@ jobs:
           git config user.name "GitHub Actions (Parallel)"
           git config user.email "actions@github.com"
 
-          git add data/availability.json docs/
+          git add data/availability.json data/.games_cache/ docs/
 
           if git diff --staged --quiet; then
             echo "No changes to commit"
