@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-    timeout-minutes: 15
+    timeout-minutes: 20
     
     steps:
       - uses: actions/checkout@v4
@@ -71,12 +71,12 @@ jobs:
           
           # 主要店舗のみ取得（渋谷/新宿/秋葉原）
           echo "=== 主要店舗取得（SBJ）==="
-          timeout 300 python scripts/scrapers_v2/fetch_all.py --priority-only --sbj-only 2>&1 || {
+          timeout 360 python scripts/scrapers_v2/fetch_all.py --priority-only --sbj-only 2>&1 || {
             echo "⚠️ SBJ fetch failed"
           }
-          
+
           echo "=== 主要店舗取得（北斗）==="
-          timeout 300 python scripts/scrapers_v2/fetch_all.py --priority-only --hokuto-only 2>&1 || {
+          timeout 480 python scripts/scrapers_v2/fetch_all.py --priority-only --hokuto-only 2>&1 || {
             echo "⚠️ Hokuto fetch failed"
           }
 

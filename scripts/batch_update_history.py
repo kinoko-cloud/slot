@@ -24,6 +24,31 @@ from scrapers.daidata_detail_history import (
 TARGET_DATE = (datetime.now(JST) - timedelta(days=1)).strftime('%Y-%m-%d')
 
 
+def _get_units_for_store(store_key: str, store_cfg: dict) -> list:
+    """店舗の台番号リストを取得（動的店舗はgames_cacheまたはhistoryから）"""
+    units = store_cfg.get('units', [])
+    if units:
+        return units
+
+    # units=[]（動的検出店舗）: games_cacheから取得
+    cache_path = Path(__file__).parent.parent / 'data' / '.games_cache' / f'{store_key}.json'
+    if cache_path.exists():
+        try:
+            cache = json.load(open(cache_path))
+            cached_units = list(cache.get('games', {}).keys())
+            if cached_units:
+                return cached_units
+        except Exception:
+            pass
+
+    # games_cacheになければhistoryディレクトリから取得
+    history_dir = Path(__file__).parent.parent / 'data' / 'history' / store_key
+    if history_dir.exists():
+        return [f.stem for f in history_dir.glob('*.json')]
+
+    return []
+
+
 def get_missing_units(target_date: str):
     """更新が必要な台を収集"""
     old_keys = {'island_akihabara', 'shibuya_espass', 'shinjuku_espass'}
@@ -33,7 +58,7 @@ def get_missing_units(target_date: str):
     for store_key, store_cfg in STORES.items():
         if store_key in old_keys:
             continue
-        units = store_cfg.get('units', [])
+        units = _get_units_for_store(store_key, store_cfg)
         machine_key = store_cfg.get('machine', 'sbj')
         data_source = store_cfg.get('data_source', 'daidata')
         hall_id = store_cfg.get('hall_id')

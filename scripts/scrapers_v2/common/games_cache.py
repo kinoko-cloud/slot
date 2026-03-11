@@ -29,7 +29,7 @@ def load_cache(store_key: str) -> Dict[str, int]:
     前回のG数キャッシュを読み込む
 
     Returns:
-        {unit_id: games} の辞書。昨日以前のキャッシュは空を返す（全台再取得させる）
+        {unit_id: games} の辞書。日付に関係なく前回値を返す（日跨ぎ比較に使用）
     """
     path = _get_cache_path(store_key)
     if not path.exists():
@@ -38,12 +38,6 @@ def load_cache(store_key: str) -> Dict[str, int]:
     try:
         with open(path) as f:
             data = json.load(f)
-        # 昨日以前のキャッシュは無効（日付変わったら全台再取得）
-        updated_at = data.get('updated_at', '')
-        if updated_at:
-            today = datetime.now(JST).strftime('%Y-%m-%d')
-            if not updated_at.startswith(today):
-                return {}
         return data.get('games', {})
     except:
         return {}
@@ -85,15 +79,18 @@ def get_changed_units(store_key: str, current_games: Dict[str, int]) -> List[str
     
     changed = []
     for unit_id, games in current_games.items():
+        # G数が0の台はスキップ（未稼働 or 開店直後）
+        if games == 0:
+            continue
         prev = prev_games.get(unit_id)
-        
+
         # 前回データなし or G数変化あり
         if prev is None or prev != games:
             changed.append(unit_id)
-    
+
     # キャッシュ更新
     save_cache(store_key, current_games)
-    
+
     return changed
 
 
