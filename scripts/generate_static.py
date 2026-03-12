@@ -1395,6 +1395,10 @@ def generate_ranking_pages(env):
         all_recommendations = []
 
         for store_key, store in stores.items():
+            # 隠し店舗はランキングに含めない
+            if store_key in HIDDEN_STORES:
+                continue
+
             availability = {}
             try:
                 availability = get_availability(store_key)
