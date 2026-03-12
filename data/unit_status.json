@@ -1,6 +1,6 @@
 {
   "_comment": "台状態管理: active=正常, pending=保留中, stopped=停止",
-  "_updated": "2026-03-11T19:36:28.401363+09:00",
+  "_updated": "2026-03-12T12:24:13.247173+09:00",
   "units": {
     "shibuya_espass_hokuto2/2046": {
       "status": "active",
@@ -83,11 +83,12 @@
       "recovered_at": "2026-03-07T19:41:00.321043+09:00"
     },
     "shibuya_espass_sbj/3011": {
-      "status": "pending",
+      "status": "stopped",
       "first_missing": "2026-03-07T19:36:39.948214+09:00",
       "fail_count": 5,
-      "reason": "not_in_list",
-      "last_missing": "2026-03-07T19:53:03.509735+09:00"
+      "reason": "sbj_retired",
+      "last_missing": "2026-03-07T19:53:03.509735+09:00",
+      "stopped_at": "2026-03-12T12:24:13.247143+09:00"
     },
     "shibuya_espass_hokuto2/2066": {
       "status": "active",

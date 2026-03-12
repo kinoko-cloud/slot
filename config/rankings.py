@@ -111,14 +111,8 @@ STORES = {
         ],
         'data_source': 'papimo',
     },
-    'shibuya_espass_sbj': {
-        'name': 'エスパス日拓渋谷新館',
-        'short_name': 'エスパス渋谷新館',
-        'hall_id': '100860',
-        'machine': 'sbj',
-        'units': ['3011'],  # 3012,3013除外: Lかぐや様は告らせたいに台変動(2026-03-02確認)
-        'data_source': 'daidata',
-    },
+    # shibuya_espass_sbj: 2026-03-12確認 SBJ撤退済み（3011も台変動）→ ランキング対象から除外
+
     'shinjuku_espass_sbj': {
         'name': 'エスパス日拓新宿歌舞伎町店',
         'short_name': 'エスパス歌舞伎町',
@@ -305,7 +299,7 @@ STORES = {
 
 # 旧形式との互換性
 STORES['island_akihabara'] = STORES['island_akihabara_sbj']
-STORES['shibuya_espass'] = STORES['shibuya_espass_sbj']
+# STORES['shibuya_espass'] = STORES['shibuya_espass_sbj']  # 2026-03-12: SBJ撤退のためコメントアウト
 
 
 
