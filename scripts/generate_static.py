@@ -1258,6 +1258,33 @@ def generate_index(env):
     except:
         pass
 
+    # API JSON生成（realtime.jsのPythonAnywhere障害時フォールバック用）
+    try:
+        _api_dir = OUTPUT_DIR / 'api' / 'v2'
+        _api_dir.mkdir(parents=True, exist_ok=True)
+        _index_api = {
+            'updated_at': datetime.now(JST).isoformat(),
+            'display_mode': display_mode,
+            'is_open': is_open,
+            'top3': [
+                {
+                    'store_key': r.get('store_key', ''),
+                    'store_name': r.get('store_name', ''),
+                    'machine_icon': r.get('machine_icon', '🎰'),
+                    'unit_id': r.get('unit_id', ''),
+                    'final_rank': r.get('final_rank', 'C'),
+                    'availability': r.get('availability', ''),
+                    'today_art': r.get('art_count', 0),
+                    'max_medals': r.get('max_medals', 0),
+                    'reasons': r.get('reasons', []),
+                }
+                for r in top3
+            ],
+        }
+        (_api_dir / 'index.json').write_text(json.dumps(_index_api, ensure_ascii=False), encoding='utf-8')
+    except Exception as _e:
+        print(f"  [warn] API JSON(index)生成失敗: {_e}")
+
     html = template.render(
         machines=machines,
         top3=top3,
@@ -1655,6 +1682,32 @@ def generate_recommend_pages(env):
                         data_date_str = f"{_dt.month}/{_dt.day}({WEEKDAY_NAMES[_dt.weekday()]})"
         except Exception:
             pass
+
+        # API JSON生成（realtime.jsのフォールバック用）
+        try:
+            _api_rec_dir = OUTPUT_DIR / 'api' / 'v2' / 'recommend'
+            _api_rec_dir.mkdir(parents=True, exist_ok=True)
+            def _to_api_rec(r):
+                return {
+                    'unit_id': r.get('unit_id', ''),
+                    'final_rank': r.get('final_rank', 'C'),
+                    'availability': r.get('availability', ''),
+                    'today_art': r.get('art_count', 0),
+                    'today_games': r.get('total_games', 0),
+                    'current_games': r.get('current_start', r.get('total_games', 0)),
+                    'max_medals': r.get('max_medals', 0),
+                    'reasons': r.get('reasons', []),
+                    'is_running': r.get('is_running', False),
+                }
+            _rec_api = {
+                'updated_at': datetime.now(JST).isoformat(),
+                'cache_info': cache_info or {'fetched_at': datetime.now(JST).strftime('%H:%M')},
+                'top_recs': [_to_api_rec(r) for r in top_recs],
+                'other_recs': [_to_api_rec(r) for r in other_recs],
+            }
+            (_api_rec_dir / f'{store_key}.json').write_text(json.dumps(_rec_api, ensure_ascii=False), encoding='utf-8')
+        except Exception as _e:
+            print(f"  [warn] API JSON({store_key})生成失敗: {_e}")
 
         now = datetime.now(JST)
         html = template.render(
