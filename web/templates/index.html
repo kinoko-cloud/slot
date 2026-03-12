@@ -572,16 +572,25 @@
                         <span class="detail-trigger-inline" onclick="toggleHistoryDetail(event, this)">▼詳細 </span>
                     </div>
                     {% endif %}
-                    {# === 本日の差枚推移グラフ（営業中） === #}
+                    {# === 差枚推移グラフ（営業中: 本日優先、なければ前日） === #}
                     {% if is_open %}
+                    {% set _yh = rec.yesterday_history if rec.yesterday_history and rec.yesterday_history|length >= 2 else none %}
+                    {% if rec.today_history and rec.today_history|length >= 2 %}
                     <div class="sparkline-section">
-                        <div class="sparkline-label">本日 差枚推移{% if not rec.today_history or rec.today_history|length < 2 %} (データ取得中){% endif %}</div>
-                        {% if rec.today_history and rec.today_history|length >= 2 %}
+                        <div class="sparkline-label">本日 差枚推移</div>
                         {{ sparkline(rec.today_history, width=220, height=45, diff_medals=rec.diff_medals|default(none))|safe }}
-                        {% else %}
-                        <svg class="sparkline" viewBox="0 0 220 45" preserveAspectRatio="xMidYMid meet"><line x1="0" y1="22.5" x2="220" y2="22.5" stroke="#555" stroke-width="0.5" stroke-dasharray="2,2"/></svg>
-                        {% endif %}
                     </div>
+                    {% elif _yh %}
+                    <div class="sparkline-section">
+                        <div class="sparkline-label">{{ rec.yesterday_date }} 差枚推移</div>
+                        {{ sparkline(_yh, width=220, height=45, diff_medals=rec.yesterday_diff_medals|default(rec.diff_medals|default(none)))|safe }}
+                    </div>
+                    {% else %}
+                    <div class="sparkline-section">
+                        <div class="sparkline-label">本日 差枚推移 (データ取得中)</div>
+                        <svg class="sparkline" viewBox="0 0 220 45" preserveAspectRatio="xMidYMid meet"><line x1="0" y1="22.5" x2="220" y2="22.5" stroke="#555" stroke-width="0.5" stroke-dasharray="2,2"/></svg>
+                    </div>
+                    {% endif %}
                     {% endif %}
                     {% endif %}
                     {# === 前日データの詳細展開（recent_days優先） === #}
@@ -682,15 +691,24 @@
                         <span class="detail-trigger-inline" onclick="toggleHistoryDetail(event, this)">▼詳細 </span>
                     </div>
                     {% endif %}
-                    {# === 本日の差枚推移グラフ（営業中） === #}
+                    {# === 差枚推移グラフ（営業中: 本日優先、なければ前日） === #}
+                    {% set _yh2 = rec.yesterday_history if rec.yesterday_history and rec.yesterday_history|length >= 2 else none %}
+                    {% if rec.today_history and rec.today_history|length >= 2 %}
                     <div class="sparkline-section">
-                        <div class="sparkline-label">本日 差枚推移{% if not rec.today_history or rec.today_history|length < 2 %} (データ取得中){% endif %}</div>
-                        {% if rec.today_history and rec.today_history|length >= 2 %}
+                        <div class="sparkline-label">本日 差枚推移</div>
                         {{ sparkline(rec.today_history, width=220, height=45, diff_medals=rec.diff_medals|default(none))|safe }}
-                        {% else %}
-                        <svg class="sparkline" viewBox="0 0 220 45" preserveAspectRatio="xMidYMid meet"><line x1="0" y1="22.5" x2="220" y2="22.5" stroke="#555" stroke-width="0.5" stroke-dasharray="2,2"/></svg>
-                        {% endif %}
                     </div>
+                    {% elif _yh2 %}
+                    <div class="sparkline-section">
+                        <div class="sparkline-label">{{ rec.yesterday_date }} 差枚推移</div>
+                        {{ sparkline(_yh2, width=220, height=45, diff_medals=rec.yesterday_diff_medals|default(rec.diff_medals|default(none)))|safe }}
+                    </div>
+                    {% else %}
+                    <div class="sparkline-section">
+                        <div class="sparkline-label">本日 差枚推移 (データ取得中)</div>
+                        <svg class="sparkline" viewBox="0 0 220 45" preserveAspectRatio="xMidYMid meet"><line x1="0" y1="22.5" x2="220" y2="22.5" stroke="#555" stroke-width="0.5" stroke-dasharray="2,2"/></svg>
+                    </div>
+                    {% endif %}
                     {# === 前日データの詳細展開 === #}
                     {% if rec.yesterday_art or rec.day_before_art or rec.three_days_ago_art %}
                     <div class="recent-days">
