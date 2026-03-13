@@ -4,13 +4,19 @@
   "date": "2026-03-13",
   "weekday": "金",
   "total_units": 18,
-  "hits": 4,
-  "misses": 2,
-  "surprises": 6,
+  "hits": 3,
+  "misses": 3,
+  "surprises": 7,
   "miss_details": [
     {
+      "unit_id": "2234",
+      "score": 79,
+      "actual_prob": 0,
+      "reasons": []
+    },
+    {
       "unit_id": "2062",
-      "score": 86,
+      "score": 81,
       "actual_prob": 786,
       "reasons": [
         "高スコア過信",
@@ -20,7 +26,7 @@
     },
     {
       "unit_id": "2065",
-      "score": 85,
+      "score": 80,
       "actual_prob": 428,
       "reasons": [
         "高スコア過信",
@@ -31,25 +37,32 @@
   ],
   "surprise_details": [
     {
-      "unit_id": "2061",
+      "unit_id": "2058",
       "rank": "B",
-      "score": 81,
-      "actual_prob": 64,
+      "score": 75,
+      "actual_prob": 130,
+      "reasons": []
+    },
+    {
+      "unit_id": "2054",
+      "rank": "B",
+      "score": 73,
+      "actual_prob": 49,
       "reasons": [
-        "実は高設定域(1/64)"
+        "実は高設定域(1/49)"
       ]
     },
     {
-      "unit_id": "2058",
+      "unit_id": "2060",
       "rank": "B",
-      "score": 80,
-      "actual_prob": 130,
+      "score": 72,
+      "actual_prob": 107,
       "reasons": []
     },
     {
       "unit_id": "2052",
       "rank": "B",
-      "score": 74,
+      "score": 69,
       "actual_prob": 76,
       "reasons": [
         "実は高設定域(1/76)"
@@ -58,25 +71,25 @@
     {
       "unit_id": "2066",
       "rank": "B",
-      "score": 73,
+      "score": 68,
       "actual_prob": 81,
       "reasons": []
     },
     {
-      "unit_id": "2063",
+      "unit_id": "2057",
       "rank": "B",
-      "score": 72,
+      "score": 65,
+      "actual_prob": 139,
+      "reasons": []
+    },
+    {
+      "unit_id": "2063",
+      "rank": "C",
+      "score": 62,
       "actual_prob": 48,
       "reasons": [
         "実は高設定域(1/48)"
       ]
-    },
-    {
-      "unit_id": "2057",
-      "rank": "B",
-      "score": 70,
-      "actual_prob": 139,
-      "reasons": []
     }
   ]
 }
