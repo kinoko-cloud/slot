@@ -346,6 +346,36 @@ class V2Fetcher:
                 
                 games = games_map.get(unit_id, 0)
 
+                # 🔧 日次リセット直後（_date_changed=True）は全台個別フェッチをスキップ
+                # → 一覧ページのARTを使って高速完了（タイムアウト防止）
+                # 履歴は後続のbatch_update/auto-recoveryが補完する
+                if self._date_changed and unit_id in changed_units:
+                    mark_unit_found(store_key, unit_id)
+                    prev_data = self._get_previous_unit_data(store_key, unit_id)
+                    prev_art = prev_data.get('art', 0)
+                    prev_hist = prev_data.get('history', prev_data.get('today_history', []))
+                    if prev_art > 0 and prev_hist:
+                        # 既取得済みデータを引き継ぐ
+                        result['units'][unit_id] = prev_data
+                        result['units'][unit_id]['total_start'] = games
+                        result['skipped_count'] += 1
+                    else:
+                        art = arts_map.get(unit_id, 0)
+                        logger.debug(f"{store_key}/{unit_id}: 日次リセット・G数変化 → 一覧ARTを使用 (art={art})")
+                        result['units'][unit_id] = {
+                            'unit_id': unit_id,
+                            'total_start': games,
+                            'art': art,
+                            'bb': 0,
+                            'rb': 0,
+                            'final_start': starts_map.get(unit_id, 0),
+                            'diff_medals': 0,
+                            'history': [],
+                            'date': now_jst().strftime('%Y-%m-%d'),
+                        }
+                        result['changed_count'] += 1
+                    continue
+
                 # G数が変化した台のみ詳細取得
                 if unit_id in changed_units:
                     # 機種キーをstore_keyから判定
