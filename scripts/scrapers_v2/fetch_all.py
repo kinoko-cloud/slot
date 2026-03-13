@@ -107,9 +107,14 @@ class V2Fetcher:
         if not fetched_at:
             return True  # 前回データなし → 強制取得
         try:
+            today = now_jst().strftime('%Y-%m-%d')
+            # 日次リセット直後は「日付変更」扱い（games_cacheが昨日値のままで全台個別フェッチになるのを防ぐ）
+            daily_reset = self._previous_availability.get('daily_reset', '')
+            if daily_reset and daily_reset[:10] == today:
+                logger.info("📅 日次リセット検出 → 日付変更モードで動作")
+                return True
             # fetched_atをパース（ISO形式）
             prev_date = fetched_at[:10]  # YYYY-MM-DD部分
-            today = now_jst().strftime('%Y-%m-%d')
             return prev_date != today
         except:
             return True  # パース失敗 → 強制取得
@@ -406,20 +411,29 @@ class V2Fetcher:
                     # 🔧 日付変更時: G数変化なし = 今日まだプレイされていない台
                     # 個別フェッチするとN台×最大60sでタイムアウトする → 一覧ページのARTを使用
                     if self._date_changed:
-                        art = arts_map.get(unit_id, 0)
-                        logger.debug(f"{store_key}/{unit_id}: 日付変更・G数変化なし → 一覧ARTを使用 (art={art})")
-                        result['units'][unit_id] = {
-                            'unit_id': unit_id,
-                            'total_start': games,
-                            'art': art,
-                            'bb': 0,
-                            'rb': 0,
-                            'final_start': starts_map.get(unit_id, 0),
-                            'diff_medals': 0,
-                            'history': [],
-                            'date': now_jst().strftime('%Y-%m-%d'),
-                        }
-                        result['changed_count'] += 1
+                        # 既に良いデータ（history付き）があれば引き継ぐ
+                        prev_art = prev_data.get('art', 0)
+                        prev_hist = prev_data.get('history', prev_data.get('today_history', []))
+                        if prev_art > 0 and prev_hist:
+                            # 既取得済みデータを引き継ぐ（上書き禁止）
+                            result['units'][unit_id] = prev_data
+                            result['units'][unit_id]['total_start'] = games
+                            result['skipped_count'] += 1
+                        else:
+                            art = arts_map.get(unit_id, 0)
+                            logger.debug(f"{store_key}/{unit_id}: 日付変更・G数変化なし → 一覧ARTを使用 (art={art})")
+                            result['units'][unit_id] = {
+                                'unit_id': unit_id,
+                                'total_start': games,
+                                'art': art,
+                                'bb': 0,
+                                'rb': 0,
+                                'final_start': starts_map.get(unit_id, 0),
+                                'diff_medals': 0,
+                                'history': [],
+                                'date': now_jst().strftime('%Y-%m-%d'),
+                            }
+                            result['changed_count'] += 1
                         continue
 
                     # 🔧 空データ/履歴なし自動復旧: 前回データが空、または履歴なしなら強制的に詳細取得
