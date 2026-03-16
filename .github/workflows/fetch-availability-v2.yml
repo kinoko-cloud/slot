@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-    timeout-minutes: 20
+    timeout-minutes: 30
     
     steps:
       - uses: actions/checkout@v4
@@ -68,16 +68,22 @@ jobs:
         run: |
           # ロックファイルをクリア（前回の異常終了対策）
           rm -f /tmp/slot_fetch.lock
-          
+
           # 主要店舗のみ取得（渋谷/新宿/秋葉原）
+          # --daidata-only: papimoを別ステップで取得するためここでは除外
           echo "=== 主要店舗取得（SBJ）==="
-          timeout 360 python scripts/scrapers_v2/fetch_all.py --priority-only --sbj-only 2>&1 || {
+          timeout 240 python scripts/scrapers_v2/fetch_all.py --priority-only --sbj-only --daidata-only 2>&1 || {
             echo "⚠️ SBJ fetch failed"
           }
 
           echo "=== 主要店舗取得（北斗）==="
-          timeout 480 python scripts/scrapers_v2/fetch_all.py --priority-only --hokuto-only 2>&1 || {
+          timeout 700 python scripts/scrapers_v2/fetch_all.py --priority-only --hokuto-only --daidata-only 2>&1 || {
             echo "⚠️ Hokuto fetch failed"
+          }
+
+          echo "=== アイランド秋葉原（papimo）==="
+          timeout 200 python scripts/scrapers_v2/fetch_all.py --papimo-only 2>&1 || {
+            echo "⚠️ Papimo fetch failed"
           }
 
       - name: Generate static HTML (営業時間中のみ)

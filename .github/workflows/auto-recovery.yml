@@ -27,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-    timeout-minutes: 18
+    timeout-minutes: 28
     steps:
       - uses: actions/checkout@v4
         with:
@@ -132,10 +132,10 @@ jobs:
           playwright install chromium
           playwright install-deps chromium
 
-          # SBJ取得（最大2回リトライ）
+          # SBJ取得（--daidata-only: papimoは別途取得）
           echo "=== SBJ取得 ==="
           for attempt in 1 2; do
-            if timeout 500 python scripts/scrapers_v2/fetch_all.py --priority-only --sbj-only; then
+            if timeout 240 python scripts/scrapers_v2/fetch_all.py --priority-only --sbj-only --daidata-only; then
               echo "✅ SBJ fetch succeeded"
               break
             else
@@ -144,10 +144,10 @@ jobs:
             fi
           done
 
-          # 北斗取得（最大2回リトライ）
+          # 北斗取得（--daidata-only: papimoは別途取得）
           echo "=== 北斗取得 ==="
           for attempt in 1 2; do
-            if timeout 500 python scripts/scrapers_v2/fetch_all.py --priority-only --hokuto-only; then
+            if timeout 700 python scripts/scrapers_v2/fetch_all.py --priority-only --hokuto-only --daidata-only; then
               echo "✅ 北斗 fetch succeeded"
               break
             else
@@ -155,6 +155,12 @@ jobs:
               sleep 10
             fi
           done
+
+          # papimo取得（アイランド秋葉原）
+          echo "=== papimo取得 ==="
+          timeout 200 python scripts/scrapers_v2/fetch_all.py --papimo-only || {
+            echo "⚠️ Papimo fetch failed (non-critical)"
+          }
 
           # 成功確認
           if [ -f data/availability.json ]; then
