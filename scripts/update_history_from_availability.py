@@ -96,9 +96,32 @@ def is_data_identical(existing: Dict, new_data: Dict) -> bool:
     )
 
 
+def is_ghost_entry(hist_data: Dict, new_data: Dict) -> bool:
+    """ゴーストエントリ判定: art=0, hist=0 かつ前日と同じgames値
+
+    Returns:
+        True: ゴーストエントリ（保存しない）
+        False: 正常データ
+    """
+    if new_data.get('art', 0) != 0:
+        return False
+    if new_data.get('history', []):
+        return False
+    new_games = new_data.get('games', 0)
+    if new_games == 0:
+        return False
+    # 既存の最新日付データのgamesと比較
+    sorted_days = sorted(hist_data.get('days', []), key=lambda x: x.get('date', ''))
+    if sorted_days:
+        prev_games = sorted_days[-1].get('games', 0)
+        if prev_games == new_games:
+            return True
+    return False
+
+
 def check_and_warn_duplicate(store_key: str, unit_id: str, hist_data: Dict, target_date: str, new_data: Dict) -> bool:
     """重複データをチェックし、異常があれば警告
-    
+
     Returns:
         True: 書き込みOK
         False: 書き込みスキップ（異常検出）
@@ -224,6 +247,12 @@ def update_history_from_availability():
             else:
                 hist_data = {'unit_id': unit_id, 'days': []}
             
+            # ゴーストエントリチェック（art=0, hist=0, 前日と同じgames → 保存しない）
+            if is_ghost_entry(hist_data, new_data):
+                print(f"  ⚠️ GHOST SKIP {store_key}/{unit_id} ({data_date}): art=0, hist=0, games={new_data.get('games')}（前日コピー）")
+                skipped_count += 1
+                continue
+
             # 重複・コピーチェック
             if not check_and_warn_duplicate(store_key, unit_id, hist_data, data_date, new_data):
                 skipped_count += 1

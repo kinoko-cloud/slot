@@ -256,6 +256,17 @@ def _accumulate_unit(store_key: str, unit_id: str, days: list, machine_key: str)
         if art == 0 and (games is None or games == 0):
             continue
 
+        # ゴーストエントリフィルタ:
+        # art=0, hist=0, かつ前日と同じgames → 前日コピーと判断して蓄積しない
+        history_check = day.get('history', [])
+        if art == 0 and not history_check and games > 0:
+            sorted_existing_for_ghost = sorted(existing.get('days', []), key=lambda x: x.get('date', ''))
+            if sorted_existing_for_ghost:
+                prev_games_for_ghost = sorted_existing_for_ghost[-1].get('games', 0) or sorted_existing_for_ghost[-1].get('total_start', 0)
+                if prev_games_for_ghost == games:
+                    print(f"    ⚠️ GHOST SKIP {store_key}/{unit_id} ({date}): art=0, hist=0, games={games}（前日コピー）")
+                    continue
+
         prob = games / art if art > 0 and games > 0 else 0
 
         # diff_medalsの取得（複数キー対応）

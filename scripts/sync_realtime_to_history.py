@@ -218,6 +218,15 @@ def sync_store_to_history(store_key: str, store_data: dict, date_str: str):
             'diff_medals': diff_medals
         }
         
+        # ゴーストエントリチェック（art=0, hist=0, 前日と同じgames → 保存しない）
+        if art == 0 and not today_history and total_games > 0:
+            sorted_existing = sorted(unit_history.get('days', []), key=lambda x: x.get('date', ''))
+            if sorted_existing:
+                prev_games = sorted_existing[-1].get('games', 0)
+                if prev_games == total_games:
+                    print(f"  ⚠️ GHOST SKIP {store_key}/{unit_id} ({unit_date_str}): art=0, hist=0, games={total_games}（前日コピー）")
+                    continue
+
         unit_history['days'].append(day_entry)
         unit_history['last_updated'] = datetime.now(JST).isoformat()
         
