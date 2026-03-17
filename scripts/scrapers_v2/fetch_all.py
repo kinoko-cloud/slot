@@ -737,6 +737,10 @@ class V2Fetcher:
                 for k, v in existing.get('stores', {}).items():
                     if k not in v1_data['stores']:
                         v1_data['stores'][k] = v
+                # daily_resetを今日の日付なら引き継ぐ（翌フェッチでも高速パスを維持するため）
+                existing_reset = existing.get('daily_reset', '')
+                if existing_reset and existing_reset[:10] == now_jst().strftime('%Y-%m-%d'):
+                    v1_data['daily_reset'] = existing_reset
             except:
                 pass
 
