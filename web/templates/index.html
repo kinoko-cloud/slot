@@ -224,10 +224,10 @@
                 {% endfor %}
                 {# === もっと見る（TOP11〜30） === #}
                 {% if top3|length > 10 %}
-                <div class="more-recs-toggle" onclick="document.getElementById('more-recs').classList.toggle('hidden'); this.querySelector('.toggle-text').textContent = document.getElementById('more-recs').classList.contains('hidden') ? 'もっと見る（{{ top3|length - 10 }}台）' : '閉じる'">
+                <div class="more-recs-toggle" onclick="var p=this.nextElementSibling;p.classList.toggle('hidden');this.querySelector('.toggle-text').textContent=p.classList.contains('hidden')?'もっと見る（{{ top3|length - 10 }}台）':'閉じる'">
                     <span class="toggle-text">もっと見る（{{ top3|length - 10 }}台）</span>
                 </div>
-                <div id="more-recs" class="hidden">
+                <div class="more-recs hidden">
                 {% for rec in top3[10:] %}
                 <a href="{{ url_for('recommend', store_key=rec.store_key) }}" class="unit-card rank-{{ rec.final_rank|lower }}" style="text-decoration: none; color: inherit;">
                     <div class="unit-header">
@@ -632,10 +632,10 @@
 
                 {# === もっと見る（TOP11〜30）=== #}
                 {% if top3|length > 10 %}
-                <div class="more-recs-toggle" onclick="document.getElementById('more-recs-rt').classList.toggle('hidden'); this.querySelector('.toggle-text').textContent = document.getElementById('more-recs-rt').classList.contains('hidden') ? 'もっと見る（{{ top3|length - 10 }}台）' : '閉じる'">
+                <div class="more-recs-toggle" onclick="var p=this.nextElementSibling;p.classList.toggle('hidden');this.querySelector('.toggle-text').textContent=p.classList.contains('hidden')?'もっと見る（{{ top3|length - 10 }}台）':'閉じる'">
                     <span class="toggle-text">もっと見る（{{ top3|length - 10 }}台）</span>
                 </div>
-                <div id="more-recs-rt" class="hidden">
+                <div class="more-recs hidden">
                 {% for rec in top3[10:] %}
                 <a href="{{ url_for('recommend', store_key=rec.store_key) }}" class="unit-card rank-{{ rec.final_rank|lower }}" style="text-decoration: none; color: inherit;">
                     <div class="unit-header">
