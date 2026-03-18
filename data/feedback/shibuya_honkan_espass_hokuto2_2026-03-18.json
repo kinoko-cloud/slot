@@ -6,86 +6,92 @@
   "total_units": 15,
   "hits": 2,
   "misses": 2,
-  "surprises": 7,
+  "surprises": 8,
   "miss_details": [
     {
-      "unit_id": "2018",
-      "score": 120,
-      "actual_prob": 254,
-      "reasons": [
-        "高スコア過信",
-        "設定1域(1/254)"
-      ]
-    },
-    {
       "unit_id": "2036",
-      "score": 109,
+      "score": 117,
       "actual_prob": 200,
       "reasons": [
         "高スコア過信",
         "低稼働(200G)",
         "設定1域(1/200)"
       ]
+    },
+    {
+      "unit_id": "2014",
+      "score": 89,
+      "actual_prob": 621,
+      "reasons": [
+        "高スコア過信",
+        "低稼働(621G)",
+        "設定1域(1/621)"
+      ]
     }
   ],
   "surprise_details": [
     {
-      "unit_id": "2032",
-      "rank": "B",
-      "score": 120,
-      "actual_prob": 50,
-      "reasons": [
-        "実は高設定域(1/50)"
-      ]
-    },
-    {
-      "unit_id": "2016",
-      "rank": "B",
-      "score": 106,
-      "actual_prob": 101,
-      "reasons": []
-    },
-    {
-      "unit_id": "2019",
-      "rank": "B",
-      "score": 104,
-      "actual_prob": 134,
-      "reasons": []
-    },
-    {
       "unit_id": "2013",
       "rank": "B",
-      "score": 100,
+      "score": 121,
       "actual_prob": 78,
       "reasons": [
         "実は高設定域(1/78)"
       ]
     },
     {
+      "unit_id": "2018",
+      "rank": "B",
+      "score": 120,
+      "actual_prob": 254,
+      "reasons": []
+    },
+    {
+      "unit_id": "2031",
+      "rank": "B",
+      "score": 116,
+      "actual_prob": 175,
+      "reasons": []
+    },
+    {
+      "unit_id": "2016",
+      "rank": "B",
+      "score": 105,
+      "actual_prob": 101,
+      "reasons": []
+    },
+    {
       "unit_id": "2035",
       "rank": "B",
-      "score": 97,
+      "score": 105,
       "actual_prob": 26,
       "reasons": [
         "実は高設定域(1/26)"
       ]
     },
     {
-      "unit_id": "2030",
+      "unit_id": "2019",
       "rank": "B",
-      "score": 94,
-      "actual_prob": 48,
-      "reasons": [
-        "実は高設定域(1/48)"
-      ]
+      "score": 100,
+      "actual_prob": 134,
+      "reasons": []
     },
     {
       "unit_id": "2034",
       "rank": "B",
-      "score": 85,
+      "score": 93,
       "actual_prob": 18,
       "reasons": [
         "実は高設定域(1/18)"
+      ]
+    },
+    {
+      "unit_id": "2030",
+      "rank": "B",
+      "score": 84,
+      "actual_prob": 48,
+      "reasons": [
+        "実は高設定域(1/48)"
       ]
     }
   ]
