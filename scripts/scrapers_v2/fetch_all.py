@@ -108,16 +108,35 @@ class V2Fetcher:
             return True  # 前回データなし → 強制取得
         try:
             today = now_jst().strftime('%Y-%m-%d')
-            # 日次リセット直後は「日付変更」扱い（games_cacheが昨日値のままで全台個別フェッチになるのを防ぐ）
             daily_reset = self._previous_availability.get('daily_reset', '')
             if daily_reset and daily_reset[:10] == today:
-                logger.info("📅 日次リセット検出 → 日付変更モードで動作")
+                # games_cacheがリセット後に更新済みなら差分モードOK（初回fast path済み）
+                if self._is_games_cache_fresh(daily_reset):
+                    logger.info("📅 日次リセット後2回目以降 → 差分モードで動作（hit history取得）")
+                    return False
+                logger.info("📅 日次リセット直後（初回）→ 高速パスで動作")
                 return True
-            # fetched_atをパース（ISO形式）
-            prev_date = fetched_at[:10]  # YYYY-MM-DD部分
+            prev_date = fetched_at[:10]
             return prev_date != today
         except:
             return True  # パース失敗 → 強制取得
+
+    def _is_games_cache_fresh(self, reset_time: str) -> bool:
+        """games_cacheがリセット後に更新済みか確認（初回fast path完了の判定）"""
+        cache_dir = ROOT / 'data' / '.games_cache'
+        if not cache_dir.exists():
+            return False
+        today = now_jst().strftime('%Y-%m-%d')
+        for cache_file in cache_dir.glob('*.json'):
+            try:
+                data = json.load(open(cache_file))
+                updated_at = data.get('updated_at', '')
+                # 今日のリセット後に更新されたキャッシュがあれば初回fast path完了
+                if updated_at[:10] == today and updated_at > reset_time:
+                    return True
+            except:
+                pass
+        return False
         
     def _load_previous_availability(self) -> Dict:
         """前回のavailability.jsonを読み込む"""
