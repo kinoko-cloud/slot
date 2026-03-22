@@ -4,42 +4,26 @@
   "date": "2026-03-22",
   "weekday": "日",
   "total_units": 12,
-  "hits": 3,
-  "misses": 1,
-  "surprises": 3,
+  "hits": 0,
+  "misses": 2,
+  "surprises": 0,
   "miss_details": [
     {
+      "unit_id": "2019",
+      "score": 92,
+      "actual_prob": 0,
+      "reasons": [
+        "高スコア過信"
+      ]
+    },
+    {
       "unit_id": "2061",
-      "score": 95,
+      "score": 90,
       "actual_prob": 0,
       "reasons": [
         "高スコア過信"
       ]
     }
   ],
-  "surprise_details": [
-    {
-      "unit_id": "2067",
-      "rank": "B",
-      "score": 92,
-      "actual_prob": 204,
-      "reasons": []
-    },
-    {
-      "unit_id": "2015",
-      "rank": "B",
-      "score": 86,
-      "actual_prob": 95,
-      "reasons": []
-    },
-    {
-      "unit_id": "2062",
-      "rank": "B",
-      "score": 78,
-      "actual_prob": 30,
-      "reasons": [
-        "実は高設定域(1/30)"
-      ]
-    }
-  ]
+  "surprise_details": []
 }
