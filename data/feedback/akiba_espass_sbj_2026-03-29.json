@@ -5,9 +5,20 @@
   "weekday": "日",
   "total_units": 4,
   "hits": 0,
-  "misses": 0,
+  "misses": 1,
   "surprises": 1,
-  "miss_details": [],
+  "miss_details": [
+    {
+      "unit_id": "2157",
+      "score": 114,
+      "actual_prob": 303,
+      "reasons": [
+        "高スコア過信",
+        "低稼働(607G)",
+        "設定1域(1/303)"
+      ]
+    }
+  ],
   "surprise_details": [
     {
       "unit_id": "2160",
