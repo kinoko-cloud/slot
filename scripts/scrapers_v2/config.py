@@ -62,7 +62,7 @@ SCRAPE_TARGETS = {
         'shibuya_espass': ['sbj', 'hokuto2'],
         'akiba_espass': ['sbj', 'hokuto2'],
         'seibu_shinjuku_espass': ['sbj', 'hokuto2'],
-        'shibuya_honkan_espass': ['sbj', 'hokuto2'],
+        # 'shibuya_honkan_espass': ['sbj', 'hokuto2'],  # 2026-03-31 閉店
         'ueno_espass': ['sbj'],
         'ueno_honkan_espass': ['sbj'],
         'takadanobaba_espass': ['sbj'],

@@ -812,7 +812,7 @@ def discover_all_units() -> Dict[str, List[str]]:
 
 # 主要店舗（15分間隔でリアルタイム取得）
 PRIORITY_STORES = [
-    'shibuya_espass', 'shibuya_honkan_espass',
+    'shibuya_espass',  # shibuya_honkan_espass は 2026-03-31 閉店
     'shinjuku_espass', 'seibu_shinjuku_espass',
     'akiba_espass',
     'island_akihabara',

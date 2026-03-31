@@ -79,9 +79,9 @@ def check_availability_completeness(data):
         'shibuya_espass_sbj', 'shinjuku_espass_sbj', 'akiba_espass_sbj',
         'seibu_shinjuku_espass_sbj', 'ueno_espass_sbj', 'ueno_honkan_espass_sbj',
         'takadanobaba_espass_sbj', 'akasaka_espass_sbj', 'shinokubo_espass_sbj',
-        'shinkoiwa_espass_sbj', 'shibuya_honkan_espass_sbj',
+        'shinkoiwa_espass_sbj',  # shibuya_honkan_espass_sbj は 2026-03-31 閉店
         'shibuya_espass_hokuto2', 'shinjuku_espass_hokuto2', 'akiba_espass_hokuto2',
-        'seibu_shinjuku_espass_hokuto2', 'shibuya_honkan_espass_hokuto2',
+        'seibu_shinjuku_espass_hokuto2',  # shibuya_honkan_espass_hokuto2 は 2026-03-31 閉店
         'island_akihabara_sbj', 'island_akihabara_hokuto2'
     ]
 

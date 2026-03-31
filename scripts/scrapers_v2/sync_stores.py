@@ -28,7 +28,7 @@ DAIDATA_HALL_IDS = {
     'shinjuku_espass': '100949',
     'akiba_espass': '100928',
     'seibu_shinjuku_espass': '100950',
-    'shibuya_honkan_espass': '100930',
+    # 'shibuya_honkan_espass': '100930',  # 2026-03-31 閉店
     'akasaka_espass': '100952',
     'ueno_espass': '100196',
     'ueno_honkan_espass': '100947',

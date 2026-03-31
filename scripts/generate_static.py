@@ -289,18 +289,19 @@ def generate_index(env):
                 {'store_key': 'shibuya_espass_hokuto2', 'icon': '👊', 'short_name': '北斗転生2'},
             ],
         },
-        'shibuya_honkan_espass': {
-            'name': 'エスパス日拓渋谷本館',
-            'short_name': 'エスパス渋谷本館',
-            'day_ratings': {'月': 3, '火': 3, '水': 3, '木': 3, '金': 3, '土': 3, '日': 3},
-            'best_note': '新規追加。データ収集中',
-            'worst_note': '',
-            'overall_rating': 3,
-            'machine_links': [
-                {'store_key': 'shibuya_honkan_espass_sbj', 'icon': '🃏', 'short_name': 'SBJ'},
-                {'store_key': 'shibuya_honkan_espass_hokuto2', 'icon': '👊', 'short_name': '北斗転生2'},
-            ],
-        },
+        # 2026-03-31 閉店
+        # 'shibuya_honkan_espass': {
+        #     'name': 'エスパス日拓渋谷本館',
+        #     'short_name': 'エスパス渋谷本館',
+        #     'day_ratings': {'月': 3, '火': 3, '水': 3, '木': 3, '金': 3, '土': 3, '日': 3},
+        #     'best_note': '新規追加。データ収集中',
+        #     'worst_note': '',
+        #     'overall_rating': 3,
+        #     'machine_links': [
+        #         {'store_key': 'shibuya_honkan_espass_sbj', 'icon': '🃏', 'short_name': 'SBJ'},
+        #         {'store_key': 'shibuya_honkan_espass_hokuto2', 'icon': '👊', 'short_name': '北斗転生2'},
+        #     ],
+        # },
         'shinjuku_espass': {
             'name': 'エスパス日拓新宿歌舞伎町店',
             'short_name': 'エスパス歌舞伎町',
