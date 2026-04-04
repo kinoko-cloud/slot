@@ -4,22 +4,38 @@
   "date": "2026-04-04",
   "weekday": "土",
   "total_units": 5,
-  "hits": 0,
-  "misses": 2,
-  "surprises": 0,
+  "hits": 1,
+  "misses": 1,
+  "surprises": 3,
   "miss_details": [
     {
-      "unit_id": "0700",
-      "score": 66,
-      "actual_prob": 0,
-      "reasons": []
-    },
-    {
-      "unit_id": "0701",
-      "score": 65,
+      "unit_id": "0705",
+      "score": 61,
       "actual_prob": 0,
       "reasons": []
     }
   ],
-  "surprise_details": []
+  "surprise_details": [
+    {
+      "unit_id": "0700",
+      "rank": "B",
+      "score": 58,
+      "actual_prob": 321,
+      "reasons": []
+    },
+    {
+      "unit_id": "0701",
+      "rank": "B",
+      "score": 58,
+      "actual_prob": 135,
+      "reasons": []
+    },
+    {
+      "unit_id": "0703",
+      "rank": "B",
+      "score": 58,
+      "actual_prob": 197,
+      "reasons": []
+    }
+  ]
 }
