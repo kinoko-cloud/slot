@@ -17,7 +17,7 @@
 
 ---
 
-## 現在の状態（2026-03-24）
+## 現在の状態（2026-04-02）
 
 ### ✅ 完了した重要修正
 
@@ -46,15 +46,17 @@
 - 計算仕様: SBJ→`medals>0`のエントリで集計、hokuto2→`hit_num>0`のエントリで集計
 - 影響: 差枚表示が出ないだけ（ランキング自体は正常）
 
+### 🎯 直近の作業（2026-04-02）
+
+#### フロントエンドデザイン改善プレビュー作成
+- `docs/test/frontend_design_preview.html` を作成してデプロイ済み
+- URL: `slot-e8a.pages.dev/test/frontend_design_preview.html`
+- 内容: 本番 `/static/style.css` をそのまま読み込み、フォント（Noto Sans JP + Barlow Condensed）と視覚的な改善（box-shadow、背景グラデーション、カード角丸、fadeUpアニメ）をオーバーレイ
+- ユーザーからフィードバック待ち（「元のデザインが活かされていない」との指摘を受けてv2を作成）
+
 ### 🎯 次にやること
-
-1. **翌日の自動更新を確認**
-   - 12:28のリセット後、初回fast path → 2回目以降diff modeになるか確認
-   - GitHub Actions ログ: `fetch-availability-v2.yml` の実行ログ
-
-2. **データ品質モニタリング**
-   - ゴーストエントリが再発しないか確認
-   - `batch_update_history.py --check-only` で全台データ状況確認
+- フロントエンドデザイン改善プレビューへのフィードバック確認
+- 気に入ったら本番 `style.css` に反映するか検討
 
 ---
 
