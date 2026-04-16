@@ -4,41 +4,56 @@
   "date": "2026-04-10",
   "weekday": "金",
   "total_units": 14,
-  "hits": 7,
-  "misses": 1,
+  "hits": 2,
+  "misses": 3,
   "surprises": 3,
   "miss_details": [
     {
       "unit_id": "1022",
-      "score": 93,
-      "actual_prob": 230,
+      "score": 87,
+      "actual_prob": 0,
       "reasons": [
-        "高スコア過信",
-        "設定1域(1/230)"
+        "高スコア過信"
       ]
+    },
+    {
+      "unit_id": "1031",
+      "score": 78,
+      "actual_prob": 226,
+      "reasons": [
+        "設定1域(1/226)"
+      ]
+    },
+    {
+      "unit_id": "1018",
+      "score": 75,
+      "actual_prob": 0,
+      "reasons": []
     }
   ],
   "surprise_details": [
     {
-      "unit_id": "1030",
-      "rank": "B",
-      "score": 80,
-      "actual_prob": 98,
-      "reasons": []
-    },
-    {
-      "unit_id": "1018",
+      "unit_id": "1026",
       "rank": "B",
       "score": 75,
-      "actual_prob": 129,
+      "actual_prob": 116,
       "reasons": []
     },
     {
-      "unit_id": "1028",
+      "unit_id": "1027",
       "rank": "B",
-      "score": 72,
-      "actual_prob": 101,
+      "score": 75,
+      "actual_prob": 113,
       "reasons": []
+    },
+    {
+      "unit_id": "1020",
+      "rank": "B",
+      "score": 74,
+      "actual_prob": 68,
+      "reasons": [
+        "実は高設定域(1/68)"
+      ]
     }
   ]
 }
