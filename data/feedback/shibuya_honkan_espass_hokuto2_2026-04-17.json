@@ -5,21 +5,24 @@
   "weekday": "金",
   "total_units": 15,
   "hits": 3,
-  "misses": 0,
-  "surprises": 7,
-  "miss_details": [],
-  "surprise_details": [
+  "misses": 1,
+  "surprises": 6,
+  "miss_details": [
     {
       "unit_id": "2018",
-      "rank": "B",
-      "score": 94,
+      "score": 101,
       "actual_prob": 254,
-      "reasons": []
-    },
+      "reasons": [
+        "高スコア過信",
+        "設定1域(1/254)"
+      ]
+    }
+  ],
+  "surprise_details": [
     {
       "unit_id": "2032",
       "rank": "B",
-      "score": 92,
+      "score": 96,
       "actual_prob": 50,
       "reasons": [
         "実は高設定域(1/50)"
@@ -28,7 +31,7 @@
     {
       "unit_id": "2013",
       "rank": "B",
-      "score": 90,
+      "score": 94,
       "actual_prob": 78,
       "reasons": [
         "実は高設定域(1/78)"
@@ -37,14 +40,14 @@
     {
       "unit_id": "2019",
       "rank": "B",
-      "score": 89,
+      "score": 90,
       "actual_prob": 134,
       "reasons": []
     },
     {
       "unit_id": "2035",
       "rank": "B",
-      "score": 81,
+      "score": 82,
       "actual_prob": 26,
       "reasons": [
         "実は高設定域(1/26)"
@@ -53,7 +56,7 @@
     {
       "unit_id": "2034",
       "rank": "B",
-      "score": 76,
+      "score": 77,
       "actual_prob": 18,
       "reasons": [
         "実は高設定域(1/18)"
@@ -62,7 +65,7 @@
     {
       "unit_id": "2030",
       "rank": "B",
-      "score": 70,
+      "score": 71,
       "actual_prob": 48,
       "reasons": [
         "実は高設定域(1/48)"
