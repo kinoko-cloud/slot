@@ -17,7 +17,7 @@
 
 ---
 
-## 現在の状態（2026-04-02）
+## 現在の状態（2026-04-17）
 
 ### ✅ 完了した重要修正
 
@@ -46,17 +46,20 @@
 - 計算仕様: SBJ→`medals>0`のエントリで集計、hokuto2→`hit_num>0`のエントリで集計
 - 影響: 差枚表示が出ないだけ（ランキング自体は正常）
 
-### 🎯 直近の作業（2026-04-02）
+### 🎯 直近の作業（2026-04-17）
 
-#### フロントエンドデザイン改善プレビュー作成
-- `docs/test/frontend_design_preview.html` を作成してデプロイ済み
-- URL: `slot-e8a.pages.dev/test/frontend_design_preview.html`
-- 内容: 本番 `/static/style.css` をそのまま読み込み、フォント（Noto Sans JP + Barlow Condensed）と視覚的な改善（box-shadow、背景グラデーション、カード角丸、fadeUpアニメ）をオーバーレイ
-- ユーザーからフィードバック待ち（「元のデザインが活かされていない」との指摘を受けてv2を作成）
+#### GitHub Actions 一時停止
+- clawdbot削除に伴い、全スケジュールワークフローを一時停止
+- 停止対象: Auto Recovery, Daily Reset, Daily Verify, Fetch Availability系全て, Fill Missing History, Nightly Update
+- 再開時: `gh workflow enable <name>` で復旧
+
+### ⚠️ 要対応
+- clawdbot削除済み → `scripts/notify.py` は動作しない
+- 通知手段を別途検討する必要あり
 
 ### 🎯 次にやること
-- フロントエンドデザイン改善プレビューへのフィードバック確認
-- 気に入ったら本番 `style.css` に反映するか検討
+- clawdbotの代替通知手段を決める
+- ワークフローを再開するか決める
 
 ---
 
