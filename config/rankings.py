@@ -43,12 +43,15 @@ MACHINES = {
         'display_name': '真打吉宗',
         'icon': '⚔️',
         'verify_keywords': ['吉宗'],
-        'good_prob': 200,
-        'bad_prob': 250,
-        'very_bad_prob': 350,
+        # ART確率（papimoのart=AT内ゲーム当選回数）: 設定6≒1/56, 設定1≒1/191
+        # 実データ中央値1/128、good判定は設定4-5相当の1/90以下
+        'good_prob': 90,
+        'bad_prob': 150,
+        'very_bad_prob': 220,
         'typical_daily_games': 5000,
-        'normal_ceiling': 999,
-        'reset_ceiling': 999,
+        # AT間1500G天井、リセット時1000G天井
+        'normal_ceiling': 1500,
+        'reset_ceiling': 1000,
         'reset_first_hit_bonus': False,
         'renchain_threshold': 65,
     },
@@ -58,12 +61,15 @@ MACHINES = {
         'display_name': 'ToLOVEるDARKNESS',
         'icon': '💕',
         'verify_keywords': ['ToLOVE', 'トラブル'],
-        'good_prob': 200,
-        'bad_prob': 250,
-        'very_bad_prob': 350,
+        # ART確率（papimoのart=AT初当たり相当）: 設定5-6≒1/290前後
+        # 実データ中央値1/330、good判定は設定5相当の1/290以下
+        'good_prob': 290,
+        'bad_prob': 380,
+        'very_bad_prob': 460,
         'typical_daily_games': 5000,
+        # ST間999G天井、リセット時650G天井
         'normal_ceiling': 999,
-        'reset_ceiling': 999,
+        'reset_ceiling': 650,
         'reset_first_hit_bonus': False,
         'renchain_threshold': 65,
     },

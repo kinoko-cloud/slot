@@ -96,19 +96,6 @@ def check_claude_md_specs():
         if text not in content:
             issues.append(f'ERROR: CLAUDE.mdに{desc}の記載がない')
 
-    # === 北斗仕様 ===
-    hokuto_specs = {
-        'あべし天井': '北斗あべし天井',
-        '1536あべし': '北斗モードA天井',
-        '896あべし': '北斗モードB天井',
-        '576あべし': '北斗モードC天井',
-        '128あべし': '北斗天国天井',
-        '天撃失敗後は絶対にやめない': '北斗やめどき注意',
-    }
-    for text, desc in hokuto_specs.items():
-        if text not in content:
-            issues.append(f'ERROR: CLAUDE.mdに{desc}の記載がない')
-
     # === config/rankings.pyとの整合 ===
     from config.rankings import MACHINES
 
@@ -117,19 +104,6 @@ def check_claude_md_specs():
         issues.append(f'ERROR: SBJ天井が{sbj.get("normal_ceiling")}だがCLAUDE.mdでは999')
     if sbj.get('good_prob') != 130:
         issues.append(f'WARN: SBJ好調閾値が1/{sbj.get("good_prob")}（CLAUDE.md確認必要）')
-
-    hokuto = MACHINES.get('hokuto2', {})
-    if hokuto.get('normal_ceiling_abeshi') != 1536:
-        issues.append(f'ERROR: 北斗モードA天井が{hokuto.get("normal_ceiling_abeshi")}あべしだがCLAUDE.mdでは1536')
-    if hokuto.get('reset_ceiling_abeshi') != 1280:
-        issues.append(f'ERROR: 北斗リセット天井が{hokuto.get("reset_ceiling_abeshi")}あべしだがCLAUDE.mdでは1280')
-
-    mode_ceilings = hokuto.get('mode_ceilings_abeshi', {})
-    expected_modes = {'A': 1536, 'B': 896, 'C': 576, 'heaven': 128}
-    for mode, expected in expected_modes.items():
-        actual = mode_ceilings.get(mode)
-        if actual != expected:
-            issues.append(f'ERROR: 北斗モード{mode}天井が{actual}あべしだがCLAUDE.mdでは{expected}')
 
     return issues
 
@@ -245,17 +219,23 @@ def check_renchain_sanity():
     import json
     from analysis.analyzer import calculate_max_rensa
     
-    MAX_SANE_RENSA = {'sbj': 150, 'hokuto2': 150}  # 機種別の現実的な上限（実際に100連超えもある）
+    MAX_SANE_RENSA = {'sbj': 150, 'yoshitsune': 150, 'toloveru': 150}
     DEFAULT_MAX = 150
-    
+
     history_dir = BASE / 'data' / 'history'
     if not history_dir.exists():
         return issues
-    
+
     for hdir in history_dir.iterdir():
         if not hdir.is_dir():
             continue
-        mk = 'sbj' if 'sbj' in hdir.name else 'hokuto2'
+        name = hdir.name
+        if '_yoshitsune' in name:
+            mk = 'yoshitsune'
+        elif '_toloveru' in name:
+            mk = 'toloveru'
+        else:
+            mk = 'sbj'
         max_sane = MAX_SANE_RENSA.get(mk, DEFAULT_MAX)
         
         for hf in hdir.glob('*.json'):

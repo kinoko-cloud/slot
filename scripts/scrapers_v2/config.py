@@ -87,16 +87,16 @@ MACHINE_CONFIG = {
     },
     'yoshitsune': {
         'name': 'L真打吉宗',
-        'threshold': 200,
-        'ceiling': 999,
-        'reset_ceiling': 999,
+        'threshold': 90,
+        'ceiling': 1500,
+        'reset_ceiling': 1000,
         'rb_resets_games': False,
     },
     'toloveru': {
         'name': 'L ToLOVEるダークネスver.8.7',
-        'threshold': 200,
+        'threshold': 290,
         'ceiling': 999,
-        'reset_ceiling': 999,
+        'reset_ceiling': 650,
         'rb_resets_games': False,
     },
 }

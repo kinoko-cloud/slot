@@ -63,9 +63,9 @@
 - 古いデータ（stale）と新しいデータを混ぜない
 
 ### 6. store_keyの命名規則
-- **`_hokuto` は使わない** → 必ず **`_hokuto2`** を使う
 - **機種キー・機種名は `config/rankings.py` の `MACHINES` 辞書を参照**
-- 例: `shinjuku_espass_sbj`, `shinjuku_espass_hokuto2`
+- 現行機種: `sbj`, `yoshitsune`, `toloveru`（hokuto2は2026-04-21撤去）
+- 例: `shinjuku_espass_sbj`, `island_akihabara_yoshitsune`, `akiba_espass_toloveru`
 - 詳細は `ARCHITECTURE.md` の「命名規則」セクション参照
 
 ### 7. テストコードでのhall_id/store_key取得
@@ -87,7 +87,21 @@
 - リセット時天井短縮: 600G（朝イチ天井）
 - 好調閾値: 1/130以下
 
+### 真打吉宗（L真打吉宗）
+- 天井: AT間1500G（通常時）
+- リセット時天井短縮: 1000G
+- papimoの`art`フィールド = AT内ゲーム当選回数（AT初当たりではない）
+- AT初当たりは`rb`フィールドに対応（RB = AT初当たり）
+- 好調閾値: ART確率1/90以下（実データ中央値1/128）
+
+### ToLOVEるDARKNESS（L ToLOVEるダークネスver.8.7）
+- 天井: ST間999G（通常時）
+- リセット時天井短縮: 650G
+- papimoの`art`フィールド ≈ AT初当たり相当（BBの方が信頼性高い）
+- 好調閾値: ART確率1/290以下（実データ中央値1/330）
+
 ### 北斗の拳 転生2（L北斗の拳 転生の章2）
+- ※ 2026-04-21 撤去済み。以下は参考情報として保持。
 - あべし天井システム（G数≠あべし、G数ベース天井判定は参考値）
 - モードA天井: 1536あべし
 - モードB天井: 896あべし
