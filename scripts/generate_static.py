@@ -274,7 +274,8 @@ def generate_index(env):
             'overall_rating': 4,
             'machine_links': [
                 {'store_key': 'island_akihabara_sbj', 'icon': '🃏', 'short_name': 'SBJ'},
-                {'store_key': 'island_akihabara_hokuto2', 'icon': '👊', 'short_name': '北斗転生2'},
+                {'store_key': 'island_akihabara_yoshitsune', 'icon': '⚔️', 'short_name': '真打吉宗'},
+                {'store_key': 'island_akihabara_toloveru', 'icon': '💕', 'short_name': 'ToLOVEる'},
             ],
         },
         'shibuya_espass': {
@@ -285,8 +286,8 @@ def generate_index(env):
             'worst_note': '日曜は避けるべき',
             'overall_rating': 3,
             'machine_links': [
-                {'store_key': 'shibuya_espass_sbj', 'icon': '🃏', 'short_name': 'SBJ'},
-                {'store_key': 'shibuya_espass_hokuto2', 'icon': '👊', 'short_name': '北斗転生2'},
+                {'store_key': 'shibuya_espass_yoshitsune', 'icon': '⚔️', 'short_name': '真打吉宗'},
+                {'store_key': 'shibuya_espass_toloveru', 'icon': '💕', 'short_name': 'ToLOVEる'},
             ],
         },
         # 2026-03-31 閉店
@@ -311,7 +312,8 @@ def generate_index(env):
             'overall_rating': 3,
             'machine_links': [
                 {'store_key': 'shinjuku_espass_sbj', 'icon': '🃏', 'short_name': 'SBJ'},
-                {'store_key': 'shinjuku_espass_hokuto2', 'icon': '👊', 'short_name': '北斗転生2'},
+                {'store_key': 'shinjuku_espass_yoshitsune', 'icon': '⚔️', 'short_name': '真打吉宗'},
+                {'store_key': 'shinjuku_espass_toloveru', 'icon': '💕', 'short_name': 'ToLOVEる'},
             ],
         },
         'akiba_espass': {
@@ -323,7 +325,8 @@ def generate_index(env):
             'overall_rating': 3,
             'machine_links': [
                 {'store_key': 'akiba_espass_sbj', 'icon': '🃏', 'short_name': 'SBJ'},
-                {'store_key': 'akiba_espass_hokuto2', 'icon': '👊', 'short_name': '北斗転生2'},
+                {'store_key': 'akiba_espass_yoshitsune', 'icon': '⚔️', 'short_name': '真打吉宗'},
+                {'store_key': 'akiba_espass_toloveru', 'icon': '💕', 'short_name': 'ToLOVEる'},
             ],
         },
         'seibu_shinjuku_espass': {
@@ -335,6 +338,8 @@ def generate_index(env):
             'overall_rating': 2,
             'machine_links': [
                 {'store_key': 'seibu_shinjuku_espass_sbj', 'icon': '🃏', 'short_name': 'SBJ'},
+                {'store_key': 'seibu_shinjuku_espass_yoshitsune', 'icon': '⚔️', 'short_name': '真打吉宗'},
+                {'store_key': 'seibu_shinjuku_espass_toloveru', 'icon': '💕', 'short_name': 'ToLOVEる'},
             ],
         },
     }
@@ -782,7 +787,7 @@ def generate_index(env):
                         if yd_diff is None and yd_hist and yd_games > 0:
                             from analysis.diff_medals_estimator import estimate_diff_medals as _est_yd
                             total_medals = sum(h.get('medals', 0) for h in yd_hist)
-                            _mk_yd = rec.get('machine_key') or ('hokuto2' if 'hokuto2' in (rec.get('store_key') or '') else 'sbj')
+                            _mk_yd = rec.get('machine_key') or _get_machine_key(rec.get('store_key')) or 'sbj'
                             yd_diff = _est_yd(total_medals, yd_games, _mk_yd)
                         rec['yesterday_diff_medals'] = yd_diff if yd_art > 0 else 0
                         rec['yesterday_max_rensa'] = yd.get('max_rensa', 0)
@@ -819,7 +824,7 @@ def generate_index(env):
                         if dbd_diff is None and dbd_hist and dbd_games > 0:
                             from analysis.diff_medals_estimator import estimate_diff_medals as _est_dbd
                             total_medals = sum(h.get('medals', 0) for h in dbd_hist)
-                            _mk_dbd = rec.get('machine_key') or ('hokuto2' if 'hokuto2' in (rec.get('store_key') or '') else 'sbj')
+                            _mk_dbd = rec.get('machine_key') or _get_machine_key(rec.get('store_key')) or 'sbj'
                             dbd_diff = _est_dbd(total_medals, dbd_games, _mk_dbd)
                         rec['day_before_diff_medals'] = dbd_diff if dbd_art > 0 else 0
                         rec['day_before_max_rensa'] = dbd.get('max_rensa', 0)
@@ -855,7 +860,7 @@ def generate_index(env):
                         if tdd_diff is None and tdd_hist and tdd_games > 0:
                             from analysis.diff_medals_estimator import estimate_diff_medals as _est_tdd
                             total_medals = sum(h.get('medals', 0) for h in tdd_hist)
-                            _mk_tdd = rec.get('machine_key') or ('hokuto2' if 'hokuto2' in (rec.get('store_key') or '') else 'sbj')
+                            _mk_tdd = rec.get('machine_key') or _get_machine_key(rec.get('store_key')) or 'sbj'
                             tdd_diff = _est_tdd(total_medals, tdd_games, _mk_tdd)
                         rec['three_days_ago_diff_medals'] = tdd_diff if tdd_art > 0 else 0
                         rec['three_days_ago_max_rensa'] = tdd.get('max_rensa', 0)
@@ -1741,12 +1746,16 @@ def _get_machine_key(store_key):
         return None
     if store_key.endswith('_sbj') or '_sbj_' in store_key:
         return 'sbj'
-    if store_key.endswith('_hokuto') or '_hokuto_' in store_key:
-        return 'hokuto2'
+    if store_key.endswith('_yoshitsune') or '_yoshitsune_' in store_key:
+        return 'yoshitsune'
+    if store_key.endswith('_toloveru') or '_toloveru_' in store_key:
+        return 'toloveru'
     if 'sbj' in store_key:
         return 'sbj'
-    if 'hokuto' in store_key:
-        return 'hokuto2'
+    if 'yoshitsune' in store_key:
+        return 'yoshitsune'
+    if 'toloveru' in store_key:
+        return 'toloveru'
     return None
 
 
@@ -3169,11 +3178,8 @@ def main():
         for store_dir in os.listdir('data/history'):
             if not os.path.isdir(f'data/history/{store_dir}'):
                 continue
-            if '_sbj' in store_dir:
-                mk = 'sbj'
-            elif '_hokuto' in store_dir:
-                mk = 'hokuto2'
-            else:
+            mk = _get_machine_key(store_dir)
+            if not mk:
                 continue
             n = record_from_history(store_dir, mk)
             if n > 0:
@@ -3212,10 +3218,11 @@ def main():
     
     data_check_errors = 0
     print("\n📊 TOP10 3日分データ検証:")
-    for sk in ['shinjuku_espass_sbj', 'shinjuku_espass_hokuto2', 'shibuya_espass_sbj', 'shibuya_espass_hokuto2']:
+    for sk in ['shinjuku_espass_sbj', 'shinjuku_espass_yoshitsune', 'shinjuku_espass_toloveru',
+               'shibuya_espass_yoshitsune', 'shibuya_espass_toloveru']:
         try:
             recs = recommend_units(sk)[:10]
-            machine_key = 'hokuto2' if 'hokuto' in sk else 'sbj'
+            machine_key = _get_machine_key(sk) or 'sbj'
             for r in recs:
                 r['store_key'] = sk
                 r['machine_key'] = machine_key

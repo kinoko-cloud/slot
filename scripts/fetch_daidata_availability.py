@@ -50,128 +50,55 @@ DAIDATA_STORES = {
         'model_encoded': 'L%EF%BD%BD%EF%BD%B0%EF%BE%8A%EF%BE%9F%EF%BD%B0%EF%BE%8C%EF%BE%9E%EF%BE%97%EF%BD%AF%EF%BD%B8%EF%BD%BC%EF%BE%9E%EF%BD%AC%EF%BD%AF%EF%BD%B8',
         'units': [],  # 3185,3186,3187全て除外: L化物語に台変動(2026-03-02確認)
     },
-    # === エスパス上野新館 (hall_id=100196) ===
-    'ueno_espass_sbj': {
-        'hall_id': '100196',
-        'name': 'エスパス上野新館',
-        'model_encoded': 'L%EF%BD%BD%EF%BD%B0%EF%BE%8A%EF%BE%9F%EF%BD%B0%EF%BE%8C%EF%BE%9E%EF%BE%97%EF%BD%AF%EF%BD%B8%EF%BD%BC%EF%BE%9E%EF%BD%AC%EF%BD%AF%EF%BD%B8',
-        'units': ['2070', '2071', '2072', '2280'],  # 台番号変更(2026-03-07確認)
-    },
-    # === エスパス上野本館 (hall_id=100947) ===
-    'ueno_honkan_espass_sbj': {
-        'hall_id': '100947',
-        'name': 'エスパス上野本館',
-        'model_encoded': 'L%EF%BD%BD%EF%BD%B0%EF%BE%8A%EF%BE%9F%EF%BD%B0%EF%BE%8C%EF%BE%9E%EF%BE%97%EF%BD%AF%EF%BD%B8%EF%BD%BC%EF%BE%9E%EF%BD%AC%EF%BD%AF%EF%BD%B8',
-        'units': ['3125', '3126', '3127'],
-    },
-    # === エスパス高田馬場 (hall_id=100915) ===
-    'takadanobaba_espass_sbj': {
-        'hall_id': '100915',
-        'name': 'エスパス高田馬場',
-        'model_encoded': 'L%EF%BD%BD%EF%BD%B0%EF%BE%8A%EF%BE%9F%EF%BD%B0%EF%BE%8C%EF%BE%9E%EF%BE%97%EF%BD%AF%EF%BD%B8%EF%BD%BC%EF%BE%9E%EF%BD%AC%EF%BD%AF%EF%BD%B8',
-        'units': ['2067', '2068'],  # 台番号変更、3→2台に減(2026-03-07確認)
-    },
-    # === エスパス赤坂見附 (hall_id=100952) ===
-    'akasaka_espass_sbj': {
-        'hall_id': '100952',
-        'name': 'エスパス赤坂見附',
-        'model_encoded': 'L%EF%BD%BD%EF%BD%B0%EF%BE%8A%EF%BE%9F%EF%BD%B0%EF%BE%8C%EF%BE%9E%EF%BE%97%EF%BD%AF%EF%BD%B8%EF%BD%BC%EF%BE%9E%EF%BD%AC%EF%BD%AF%EF%BD%B8',
-        'units': ['2039', '2040', '2041'],
-    },
-    # === エスパス新大久保 (hall_id=100951) ===
-    'shinokubo_espass_sbj': {
-        'hall_id': '100951',
-        'name': 'エスパス新大久保',
-        'model_encoded': 'L%EF%BD%BD%EF%BD%B0%EF%BE%8A%EF%BE%9F%EF%BD%B0%EF%BE%8C%EF%BE%9E%EF%BE%97%EF%BD%AF%EF%BD%B8%EF%BD%BC%EF%BE%9E%EF%BD%AC%EF%BD%AF%EF%BD%B8',
-        'units': ['2175', '2176', '2177', '2178'],  # 台番号変更(2026-03-07確認)
-    },
-    # === エスパス新小岩 (hall_id=100260) ===
-    'shinkoiwa_espass_sbj': {
-        'hall_id': '100260',
-        'name': '新小岩エスパス',
-        'model_encoded': 'L%EF%BD%BD%EF%BD%B0%EF%BE%8A%EF%BE%9F%EF%BD%B0%EF%BE%8C%EF%BE%9E%EF%BE%97%EF%BD%AF%EF%BD%B8%EF%BD%BC%EF%BE%9E%EF%BD%AC%EF%BD%AF%EF%BD%B8',
-        'units': [],  # 485,486除外: 空データ継続 → 台変動/撤去の可能性(2026-03-02確認)
-    },
-    'seibu_shinjuku_espass_hokuto2': {
-        'hall_id': '100950',
-        'name': '西武新宿駅前エスパス',
-        'model_encoded': 'L%E5%8C%97%E6%96%97%20%E8%BB%A2%E7%94%9F%E3%81%AE%E7%AB%A02',  # L北斗 転生の章2
-        'units': ['3140', '3141', '3142', '3143', '3144', '3145', '3146', '3147'],  # 3139除外: Lスマスロ北斗(2026-03-04), 3148-3151除外: LモンキーターンV(2026-03-04), 3165,3166除外: 減台確認(2026-03-17)
-    },
-    # === 渋谷本館 (hall_id=100930) ===
-    'shibuya_honkan_espass_sbj': {
-        'hall_id': '100930',
-        'name': '渋谷エスパス本館',
-        'model_encoded': 'L%EF%BD%BD%EF%BD%B0%EF%BE%8A%EF%BE%9F%EF%BD%B0%EF%BE%8C%EF%BE%9E%EF%BE%97%EF%BD%AF%EF%BD%B8%EF%BD%BC%EF%BE%9E%EF%BD%AC%EF%BD%AF%EF%BD%B8',
-        'units': ['3095', '3096', '3097'],
-    },
-    # === 北斗転生2 (一覧ページから動的取得に変更 2026-03-07) ===
-    'shibuya_espass_hokuto2': {
-        'hall_id': '100860',
-        'name': 'エスパス渋谷新館(北斗)',
-        'model_encoded': 'L%E5%8C%97%E6%96%97%20%E8%BB%A2%E7%94%9F%E3%81%AE%E7%AB%A02',  # L北斗 転生の章2 - 一覧から動的取得
-        'units': [],  # 一覧から自動検出
-    },
-    'shibuya_honkan_espass_hokuto2': {
-        'hall_id': '100930',
-        'name': 'エスパス渋谷本館(北斗)',
-        'model_encoded': 'L%E5%8C%97%E6%96%97%20%E8%BB%A2%E7%94%9F%E3%81%AE%E7%AB%A02',  # L北斗 転生の章2 - 一覧から動的取得
-        'units': [],  # 一覧から自動検出
-    },
-    'shinjuku_espass_hokuto2': {
+    # === 真打吉宗 ===
+    'shinjuku_espass_yoshitsune': {
         'hall_id': '100949',
-        'name': '新宿エスパス歌舞伎町',
-        'model_encoded': 'L%E5%8C%97%E6%96%97%20%E8%BB%A2%E7%94%9F%E3%81%AE%E7%AB%A02',  # L北斗 転生の章2
-        # 2026-02-19更新: 台変動を検知。125-128の4台のみ北斗転生2として稼働中を確認。
-        # 旧台番号(2505,1349等)は他機種(パチンコ・他スロット)または撤去済み。
-        # 2026-03-02更新: 125-128全台もL甲鉄城のｶﾊﾞﾈﾘ海門決戦に台変動 → 全台除外
-        'units': [],
+        'name': 'エスパス新宿(真打吉宗)',
+        'model_encoded': 'L%E7%9C%9F%E6%89%93%E5%90%89%E5%AE%97',
+        'units': ['682','683','684','685','686','687','688','689','690','691','692','693','694','695'],
     },
-    'akiba_espass_hokuto2': {
+    'akiba_espass_yoshitsune': {
         'hall_id': '100928',
-        'name': '秋葉原エスパス駅前',
-        'model_encoded': 'L%E5%8C%97%E6%96%97%20%E8%BB%A2%E7%94%9F%E3%81%AE%E7%AB%A02',  # L北斗 転生の章2
-        # 2026-03-03確認: 2060→Lﾏｷﾞｱﾚｺｰﾄﾞ
-        'units': ['2011', '2012', '2013', '2014', '2015', '2016', '2019', '2061', '2062', '2063', '2066', '2067'],  # 2017,2018,2064,2065除外: パチンコ台変動(2026-03-02確認), 2057-2059除外: Lﾏｷﾞｱﾚｺｰﾄﾞ(2026-03-08確認)
+        'name': 'エスパス秋葉原(真打吉宗)',
+        'model_encoded': 'L%E7%9C%9F%E6%89%93%E5%90%89%E5%AE%97',
+        'units': ['2001','2002','2003','2004','2005','2006','2007','2008','2009','2010'],
     },
-    # === サブ店舗 北斗転生2 (2026-03-02追加) ===
-    'akasaka_espass_hokuto2': {
-        'hall_id': '100952',
-        'name': 'エスパス赤坂見附',
-        'model_encoded': 'L%E5%8C%97%E6%96%97%20%E8%BB%A2%E7%94%9F%E3%81%AE%E7%AB%A02',
-        'units': ['2107', '2108', '2109', '2110', '2111', '2112', '2113', '2114', '2115', '2116', '2117', '2118', '2119', '2120', '2121', '2122'],
+    'seibu_shinjuku_espass_yoshitsune': {
+        'hall_id': '100950',
+        'name': 'エスパス西武新宿(真打吉宗)',
+        'model_encoded': 'L%E7%9C%9F%E6%89%93%E5%90%89%E5%AE%97',
+        'units': ['3111','3112','3113','3114','3115'],
     },
-    'ueno_espass_hokuto2': {
-        'hall_id': '100196',
-        'name': 'エスパス上野新館',
-        'model_encoded': 'L%E5%8C%97%E6%96%97%20%E8%BB%A2%E7%94%9F%E3%81%AE%E7%AB%A02',
-        'units': ['2207', '2208', '2221', '2222', '2223', '2224', '2225', '2226', '2227', '2228', '2229', '2230', '2231', '2232', '2233', '2270', '2271', '2272'],
+    'shibuya_espass_yoshitsune': {
+        'hall_id': '100860',
+        'name': 'エスパス渋谷新館(真打吉宗)',
+        'model_encoded': 'L%E7%9C%9F%E6%89%93%E5%90%89%E5%AE%97',
+        'units': ['3047','3048','3049','3050','3051','3052','3053','3090'],
     },
-    'ueno_honkan_espass_hokuto2': {
-        'hall_id': '100947',
-        'name': 'エスパス上野本館',
-        'model_encoded': 'L%E5%8C%97%E6%96%97%20%E8%BB%A2%E7%94%9F%E3%81%AE%E7%AB%A02',
-        'units': ['3001', '3002', '3003', '3004', '3005', '3006', '3007', '3008', '3009', '3010', '3011', '3012', '3013', '3014', '3184'],  # 3114除外: L東京喰種に台変動(2026-03-02確認)
+    # === ToLOVEるDARKNESS ===
+    'shinjuku_espass_toloveru': {
+        'hall_id': '100949',
+        'name': 'エスパス新宿(ToLOVEる)',
+        'model_encoded': 'L%20ToLOVE%E3%82%8B%EF%BE%80%EF%BE%9E%EF%BD%B0%EF%BD%B8%EF%BE%88%EF%BD%BDver.8.7',
+        'units': ['1389','1390','1391'],
     },
-    'takadanobaba_espass_hokuto2': {
-        'hall_id': '100915',
-        'name': 'エスパス高田馬場',
-        'model_encoded': 'L%E5%8C%97%E6%96%97%20%E8%BB%A2%E7%94%9F%E3%81%AE%E7%AB%A02',
-        # 2026-03-02確認: 2103-2109,2173-2176→L甲鉄城のｶﾊﾞﾈﾘ海門決戦。残7台のみ継続
-        'units': ['2110', '2111', '2112', '2170', '2171', '2172', '2192'],
+    'akiba_espass_toloveru': {
+        'hall_id': '100928',
+        'name': 'エスパス秋葉原(ToLOVEる)',
+        'model_encoded': 'L%20ToLOVE%E3%82%8B%EF%BE%80%EF%BE%9E%EF%BD%B0%EF%BD%B8%EF%BE%88%EF%BD%BDver.8.7',
+        'units': ['3075','3076','3077','3078','3079','3080','3081','3082','3083','3084','3085','3086','3087','3150','3151','3152','3153','3154','3155','3156','3157','3158','3159','3160','3161','3162','3163','3164','3165','3166'],
     },
-    'shinokubo_espass_hokuto2': {
-        'hall_id': '100951',
-        'name': 'エスパス新大久保',
-        'model_encoded': 'L%E5%8C%97%E6%96%97%20%E8%BB%A2%E7%94%9F%E3%81%AE%E7%AB%A02',
-        'units': ['2125', '2126', '2127', '2128', '2129', '2130', '2131', '2132', '2133', '2193'],
+    'seibu_shinjuku_espass_toloveru': {
+        'hall_id': '100950',
+        'name': 'エスパス西武新宿(ToLOVEる)',
+        'model_encoded': 'L%20ToLOVE%E3%82%8B%EF%BE%80%EF%BE%9E%EF%BD%B0%EF%BD%B8%EF%BE%88%EF%BD%BDver.8.7',
+        'units': ['3195','3196','3197'],
     },
-    'shinkoiwa_espass_hokuto2': {
-        'hall_id': '100260',
-        'name': '新小岩エスパス',
-        'model_encoded': 'L%E5%8C%97%E6%96%97%20%E8%BB%A2%E7%94%9F%E3%81%AE%E7%AB%A02',
-        # 2026-03-02確認: 2216-2221→Lｽﾏｽﾛ北斗に台変動
-        'units': ['2167', '2168', '2169', '2170', '2171', '2172', '2173', '2222', '2223', '2224', '2225', '2226', '2227', '2228', '2229', '2230', '2231', '2232', '2233', '2234', '2235', '2236'],
+    'shibuya_espass_toloveru': {
+        'hall_id': '100860',
+        'name': 'エスパス渋谷新館(ToLOVEる)',
+        'model_encoded': 'L%20ToLOVE%E3%82%8B%EF%BE%80%EF%BE%9E%EF%BD%B0%EF%BD%B8%EF%BE%88%EF%BD%BDver.8.7',
+        'units': ['3010','3011','3012'],
     },
 }
 
@@ -186,14 +113,25 @@ PAPIMO_STORES = {
             '1025', '1026', '1027', '1028', '1030', '1031',
         ],
     },
-    'island_akihabara_hokuto2': {
+    'island_akihabara_yoshitsune': {
         'hall_id': '00031715',
-        'name': 'アイランド秋葉原(北斗)',
-        'machine_id': '225110007',
-        # 2026-02-14更新: 0814, 0824が別機種に変更 (14台→12台)
-        # 2026-03-02更新: 0811-0825全台が台変動 → 全台除外
-        'units': [],
-        'list_url': 'https://papimo.jp/h/00031715/hit/index_sort/225110007/1-20-1290529/83/1/0/0',
+        'name': 'アイランド秋葉原(真打吉宗)',
+        'machine_id': '226030000',
+        'units': [
+            '637', '638', '650', '651', '652', '653', '655', '656', '657', '658',
+        ],
+    },
+    'island_akihabara_toloveru': {
+        'hall_id': '00031715',
+        'name': 'アイランド秋葉原(ToLOVEる)',
+        'machine_id': '224040005',
+        'units': [
+            '1227', '1228', '1230', '1231', '1232', '1233', '1235', '1236', '1237', '1238',
+            '1250', '1251', '1252', '1253', '1255', '1256', '1257', '1258',
+            '1260', '1261', '1262', '1263', '1265', '1266', '1267', '1268',
+            '1270', '1271', '1272', '1273', '1275', '1276', '1277', '1278',
+            '1280', '1281', '1282', '1283', '1285', '1286', '1287', '1288',
+        ],
     },
 }
 
@@ -582,9 +520,10 @@ def main():
     
     # オプション解析
     sbj_only = '--sbj-only' in sys.argv
-    hokuto_only = '--hokuto-only' in sys.argv
+    yoshitsune_only = '--yoshitsune-only' in sys.argv
+    toloveru_only = '--toloveru-only' in sys.argv
     include_hidden = '--include-hidden' in sys.argv  # 隠し店舗も含める（日次収集用）
-    
+
     # 隠し店舗（リアルタイム更新対象外）を読み込み
     hidden_stores = set()
     hidden_config_path = Path(__file__).parent.parent / 'config' / 'hidden_stores.json'
@@ -595,11 +534,11 @@ def main():
                 hidden_stores = set(hidden_config.get('hidden_store_keys', []))
         except:
             pass
-    
+
     # 対象店舗をフィルタリング
     daidata_stores = DAIDATA_STORES
     papimo_stores = PAPIMO_STORES
-    
+
     if sbj_only:
         daidata_stores = {k: v for k, v in DAIDATA_STORES.items() if 'sbj' in k}
         papimo_stores = {k: v for k, v in PAPIMO_STORES.items() if 'sbj' in k}
@@ -608,10 +547,14 @@ def main():
             daidata_stores = {k: v for k, v in daidata_stores.items() if k not in hidden_stores}
             papimo_stores = {k: v for k, v in papimo_stores.items() if k not in hidden_stores}
         print(f"SBJのみモード: {len(daidata_stores) + len(papimo_stores)}店舗")
-    elif hokuto_only:
-        daidata_stores = {k: v for k, v in DAIDATA_STORES.items() if 'hokuto' in k}
-        papimo_stores = {k: v for k, v in PAPIMO_STORES.items() if 'hokuto' in k}
-        print(f"北斗のみモード: {len(daidata_stores) + len(papimo_stores)}店舗")
+    elif yoshitsune_only:
+        daidata_stores = {k: v for k, v in DAIDATA_STORES.items() if 'yoshitsune' in k}
+        papimo_stores = {k: v for k, v in PAPIMO_STORES.items() if 'yoshitsune' in k}
+        print(f"真打吉宗のみモード: {len(daidata_stores) + len(papimo_stores)}店舗")
+    elif toloveru_only:
+        daidata_stores = {k: v for k, v in DAIDATA_STORES.items() if 'toloveru' in k}
+        papimo_stores = {k: v for k, v in PAPIMO_STORES.items() if 'toloveru' in k}
+        print(f"ToLOVEるのみモード: {len(daidata_stores) + len(papimo_stores)}店舗")
     
     # 前回データを読み込み（差分取得用）
     prev_data = {'stores': {}}
@@ -884,7 +827,7 @@ def main():
 
     # JSONに保存（クラッシュ時も部分データを書き出す）
     # --sbj-only や --hokuto-only の場合は部分更新（既存データ保持）
-    _save_result(result, partial_update=(sbj_only or hokuto_only))
+    _save_result(result, partial_update=(sbj_only or yoshitsune_only or toloveru_only))
 
 
 def _save_result(result, partial_update=False):

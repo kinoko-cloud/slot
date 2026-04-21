@@ -37,45 +37,35 @@ MACHINES = {
         'big_renchain': 30,           # 大連チャン定義: 30連
         'warning_renchain_count': 2,  # 警戒ライン: 同日30連×2回
     },
-    'hokuto2': {
-        'name': 'L北斗の拳 転生の章2',
-        'short_name': '北斗の拳 転生の章2',
-        'display_name': '北斗転生2',
-        'icon': '👊',
-        # 「北斗」だけだと北斗無双等と混同する。「転生」で絞り込む
-        'verify_keywords': ['北斗', '転生'],
-        'good_prob': 120,       # ART確率1/120以下なら好調（実データ70%タイル）
-        'bad_prob': 150,        # ART確率1/150以上なら不調（実データ88%タイル）
-        'very_bad_prob': 200,   # 明確に低設定
-        'typical_daily_games': 7000,  # 北斗は消化速度が速い
-        # 天井パラメータ
-        # ※北斗転生2の天井は「あべしpt」ベース（液晶表示）。G数ではない。
-        #   データサイトからあべし数は取得不可。G数のみ。
-        #   あべしとG数は比例しない。レア役で大量加算されるため、
-        #   極端な例では10Gで天井到達もありうる。
-        #   → G数ベースの天井判定は参考程度。ハマリ判定には使えるが天井狙いには不適。
-        # モード別あべし天井:
-        #   通常A: 1536あべし / 通常B: 896あべし / 通常C: 576あべし / 天国: 128あべし
-        #   設定変更後: 最大1280あべし
-        # コイン持ち: 50枚≒31.5G
-        'normal_ceiling': 1100,       # 参考値（通常Aの実データ上の最大ハマリ付近。天井判定には不適）
-        'normal_ceiling_abeshi': 1536, # 通常Aモードのあべし天井
-        'mode_ceilings_abeshi': {     # モード別あべし天井
-            'A': 1536, 'B': 896, 'C': 576, 'heaven': 128,
-        },
-        'reset_ceiling': 600,         # リセット時天井（G数換算。あべし1280≒G数600〜800程度）
-        'reset_ceiling_abeshi': 1280, # リセット時あべし天井
-        'reset_first_hit_bonus': True, # 朝イチ初当たりに恩恵あり
-        'renchain_threshold': 65,     # 連チャン判定: AT間70G以内なら連チャン継続（デフォルト統一）
-        # === 推奨条件（2026-02-20 データ分析結果） ===
-        'ceiling_target_games': 800,  # 天井狙い閾値: RB込み800G以上
-        'explosion_condition': {      # 爆発期待条件（モミモミ好調）
-            'prob_threshold': 330,    # 確率1/330以下
-            'diff_min': -5000,        # 差枚-5000以上
-            'diff_max': 5000,         # 差枚+5000以下
-        },
-        'big_renchain': 20,           # 大連チャン定義: 20連
-        'warning_renchain_count': 2,  # 警戒ライン: 同日20連×2回
+    'yoshitsune': {
+        'name': 'L真打吉宗',
+        'short_name': '真打吉宗',
+        'display_name': '真打吉宗',
+        'icon': '⚔️',
+        'verify_keywords': ['吉宗'],
+        'good_prob': 200,
+        'bad_prob': 250,
+        'very_bad_prob': 350,
+        'typical_daily_games': 5000,
+        'normal_ceiling': 999,
+        'reset_ceiling': 999,
+        'reset_first_hit_bonus': False,
+        'renchain_threshold': 65,
+    },
+    'toloveru': {
+        'name': 'L ToLOVEるダークネスver.8.7',
+        'short_name': 'ToLOVEるDARKNESS',
+        'display_name': 'ToLOVEるDARKNESS',
+        'icon': '💕',
+        'verify_keywords': ['ToLOVE', 'トラブル'],
+        'good_prob': 200,
+        'bad_prob': 250,
+        'very_bad_prob': 350,
+        'typical_daily_games': 5000,
+        'normal_ceiling': 999,
+        'reset_ceiling': 999,
+        'reset_first_hit_bonus': False,
+        'renchain_threshold': 65,
     },
 }
 
@@ -129,14 +119,6 @@ STORES = {
         'units': [],  # 3185,3186,3187全て除外: L化物語に台変動(2026-03-02確認)
         'data_source': 'daidata',
     },
-    'seibu_shinjuku_espass_hokuto2': {
-        'name': 'エスパス日拓西武新宿駅前店',
-        'short_name': 'エスパス西武新宿',
-        'hall_id': '100950',
-        'machine': 'hokuto2',
-        'units': ['3140', '3141', '3142', '3143', '3144', '3145', '3146', '3147'],  # 3139除外: Lスマスロ北斗(2026-03-04), 3148-3151除外: LモンキーターンV(2026-03-04), 3165,3166除外: 減台確認(2026-03-17)
-        'data_source': 'daidata',
-    },
     'akiba_espass_sbj': {
         'name': 'エスパス日拓秋葉原駅前店',
         'short_name': 'エスパス秋葉原',
@@ -145,154 +127,94 @@ STORES = {
         'units': ['2157', '2158', '2159', '2160'],
         'data_source': 'daidata',
     },
-    # === 渋谷本館 (hall_id=100930) ===
-    'shibuya_honkan_espass_sbj': {
-        'name': 'エスパス日拓渋谷本館',
-        'short_name': 'エスパス渋谷本館',
-        'hall_id': '100930',
-        'machine': 'sbj',
-        'units': ['3095', '3096', '3097'],
-        'data_source': 'daidata',
-    },
-    'shibuya_honkan_espass_hokuto2': {
-        'name': 'エスパス日拓渋谷本館',
-        'short_name': 'エスパス渋谷本館',
-        'hall_id': '100930',
-        'machine': 'hokuto2',
-        'units': ['2013', '2014', '2015', '2016', '2017', '2018', '2019'] + [str(i) for i in range(2030, 2038)],  # 2015,2016復活確認(2026-03-17), 旧: パチンコ台変動として除外(2026-03-02)
-        'data_source': 'daidata',
-    },
-    # === 北斗転生2 ===
-    'shibuya_espass_hokuto2': {
-        'name': 'エスパス日拓渋谷新館',
-        'short_name': 'エスパス渋谷新館',
-        'hall_id': '100860',
-        'machine': 'hokuto2',
-        'units': [str(i) for i in range(2052, 2075)] + [str(i) for i in range(2246, 2254)],  # 2026-03-17確認: 31台稼働(2052-2074, 2246-2253)
-        'data_source': 'daidata',
-    },
-    'shinjuku_espass_hokuto2': {
-        'name': 'エスパス日拓新宿歌舞伎町店',
-        'short_name': 'エスパス歌舞伎町',
-        'hall_id': '100949',
-        'machine': 'hokuto2',
-        # 2026-03-02: 旧125-128全台→L甲鉄城に台変動 → 全台除外
-        # 2026-03-17: 新台番号で36台稼働確認(1-16, 30-43, 57-62)、history1/19〜あり
-        'units': [str(i) for i in range(1, 17)] + [str(i) for i in range(30, 44)] + [str(i) for i in range(57, 63)],
-        'data_source': 'daidata',
-    },
-    'akiba_espass_hokuto2': {
-        'name': 'エスパス日拓秋葉原駅前店',
-        'short_name': 'エスパス秋葉原',
-        'hall_id': '100928',
-        'machine': 'hokuto2',
-        'units': ['2011', '2012', '2013', '2014', '2015', '2016', '2019', '2061', '2062', '2063', '2066', '2067'],  # 2056,2060除外: Lﾏｷﾞｱﾚｺｰﾄﾞ, 2017,2018,2064,2065除外: パチンコ台変動(2026-03-02確認), 2060除外: Lﾏｷﾞｱﾚｺｰﾄﾞ(2026-03-03確認), 2057-2059除外: Lﾏｷﾞｱﾚｺｰﾄﾞ(2026-03-08確認)
-        'data_source': 'daidata',
-    },
-    'island_akihabara_hokuto2': {
+    # === 真打吉宗 ===
+    'island_akihabara_yoshitsune': {
         'name': 'アイランド秋葉原',
         'short_name': 'アイランド秋葉原',
         'hall_id': None,
-        'machine': 'hokuto2',
-        'units': ['0700', '0701', '0702', '0703', '0705'],  # 2026-03-08確認: 台番号変更
+        'machine': 'yoshitsune',
+        'units': [
+            '637', '638', '650', '651', '652', '653', '655', '656', '657', '658',
+        ],
         'data_source': 'papimo',
     },
-    # === 追加店舗 (2026-02-14) ===
-    'ueno_espass_sbj': {
-        'name': 'エスパス日拓上野新館',
-        'short_name': 'エスパス上野新館',
-        'hall_id': '100196',
-        'machine': 'sbj',
-        'units': ['2070', '2071', '2072', '2280'],  # 台番号変更(2026-03-07確認)
+    'shinjuku_espass_yoshitsune': {
+        'name': 'エスパス日拓新宿歌舞伎町店',
+        'short_name': 'エスパス歌舞伎町',
+        'hall_id': '100949',
+        'machine': 'yoshitsune',
+        'units': ['682','683','684','685','686','687','688','689','690','691','692','693','694','695'],
         'data_source': 'daidata',
     },
-    'ueno_honkan_espass_sbj': {
-        'name': 'エスパス日拓上野本館',
-        'short_name': 'エスパス上野本館',
-        'hall_id': '100947',
-        'machine': 'sbj',
-        'units': ['3125', '3126', '3127'],
+    'akiba_espass_yoshitsune': {
+        'name': 'エスパス日拓秋葉原駅前店',
+        'short_name': 'エスパス秋葉原',
+        'hall_id': '100928',
+        'machine': 'yoshitsune',
+        'units': ['2001','2002','2003','2004','2005','2006','2007','2008','2009','2010'],
         'data_source': 'daidata',
     },
-    'takadanobaba_espass_sbj': {
-        'name': 'エスパス日拓高田馬場店',
-        'short_name': 'エスパス高田馬場',
-        'hall_id': '100915',
-        'machine': 'sbj',
-        'units': ['2067', '2068'],  # 台番号変更、3→2台に減(2026-03-07確認)
+    'seibu_shinjuku_espass_yoshitsune': {
+        'name': 'エスパス日拓西武新宿駅前店',
+        'short_name': 'エスパス西武新宿',
+        'hall_id': '100950',
+        'machine': 'yoshitsune',
+        'units': ['3111','3112','3113','3114','3115'],
         'data_source': 'daidata',
     },
-    'akasaka_espass_sbj': {
-        'name': 'エスパス日拓赤坂見附店',
-        'short_name': 'エスパス赤坂見附',
-        'hall_id': '100952',
-        'machine': 'sbj',
-        'units': ['2039', '2040', '2041'],
+    'shibuya_espass_yoshitsune': {
+        'name': 'エスパス日拓渋谷新館',
+        'short_name': 'エスパス渋谷新館',
+        'hall_id': '100860',
+        'machine': 'yoshitsune',
+        'units': ['3047','3048','3049','3050','3051','3052','3053','3090'],
         'data_source': 'daidata',
     },
-    'shinokubo_espass_sbj': {
-        'name': 'エスパス日拓新大久保店',
-        'short_name': 'エスパス新大久保',
-        'hall_id': '100951',
-        'machine': 'sbj',
-        'units': ['2175', '2176', '2177', '2178'],  # 台番号変更(2026-03-07確認)
+    # === ToLOVEるDARKNESS ===
+    'island_akihabara_toloveru': {
+        'name': 'アイランド秋葉原',
+        'short_name': 'アイランド秋葉原',
+        'hall_id': None,
+        'machine': 'toloveru',
+        'units': [
+            '1227', '1228', '1230', '1231', '1232', '1233', '1235', '1236', '1237', '1238',
+            '1250', '1251', '1252', '1253', '1255', '1256', '1257', '1258',
+            '1260', '1261', '1262', '1263', '1265', '1266', '1267', '1268',
+            '1270', '1271', '1272', '1273', '1275', '1276', '1277', '1278',
+            '1280', '1281', '1282', '1283', '1285', '1286', '1287', '1288',
+        ],
+        'data_source': 'papimo',
+    },
+    'shinjuku_espass_toloveru': {
+        'name': 'エスパス日拓新宿歌舞伎町店',
+        'short_name': 'エスパス歌舞伎町',
+        'hall_id': '100949',
+        'machine': 'toloveru',
+        'units': ['1389','1390','1391'],
         'data_source': 'daidata',
     },
-    'shinkoiwa_espass_sbj': {
-        'name': 'エスパス日拓新小岩店',
-        'short_name': 'エスパス新小岩',
-        'hall_id': '100260',
-        'machine': 'sbj',
-        'units': [],  # 485,486除外: 空データ継続(art=0,games=0) → 台変動/撤去の可能性(2026-03-02確認)
+    'akiba_espass_toloveru': {
+        'name': 'エスパス日拓秋葉原駅前店',
+        'short_name': 'エスパス秋葉原',
+        'hall_id': '100928',
+        'machine': 'toloveru',
+        'units': ['3075','3076','3077','3078','3079','3080','3081','3082','3083','3084','3085','3086','3087','3150','3151','3152','3153','3154','3155','3156','3157','3158','3159','3160','3161','3162','3163','3164','3165','3166'],
         'data_source': 'daidata',
     },
-    # === サブ店舗 北斗転生2 (2026-03-02追加) ===
-    'akasaka_espass_hokuto2': {
-        'name': 'エスパス日拓赤坂見附店',
-        'short_name': 'エスパス赤坂見附',
-        'hall_id': '100952',
-        'machine': 'hokuto2',
-        'units': ['2107', '2108', '2109', '2110', '2111', '2112', '2113', '2114', '2115', '2116', '2117', '2118', '2119', '2120', '2121', '2122'],
+    'seibu_shinjuku_espass_toloveru': {
+        'name': 'エスパス日拓西武新宿駅前店',
+        'short_name': 'エスパス西武新宿',
+        'hall_id': '100950',
+        'machine': 'toloveru',
+        'units': ['3195','3196','3197'],
         'data_source': 'daidata',
     },
-    'ueno_espass_hokuto2': {
-        'name': 'エスパス日拓上野新館',
-        'short_name': 'エスパス上野新館',
-        'hall_id': '100196',
-        'machine': 'hokuto2',
-        'units': ['2207', '2208', '2221', '2222', '2223', '2224', '2225', '2226', '2227', '2228', '2229', '2230', '2231', '2232', '2233', '2270', '2271', '2272'],
-        'data_source': 'daidata',
-    },
-    'ueno_honkan_espass_hokuto2': {
-        'name': 'エスパス日拓上野本館',
-        'short_name': 'エスパス上野本館',
-        'hall_id': '100947',
-        'machine': 'hokuto2',
-        'units': ['3001', '3002', '3003', '3004', '3005', '3006', '3007', '3008', '3009', '3010', '3011', '3012', '3013', '3014', '3184'],  # 3114除外: L東京喰種に台変動(2026-03-02確認)
-        'data_source': 'daidata',
-    },
-    'takadanobaba_espass_hokuto2': {
-        'name': 'エスパス日拓高田馬場店',
-        'short_name': 'エスパス高田馬場',
-        'hall_id': '100915',
-        'machine': 'hokuto2',
-        'units': ['2110', '2111', '2112', '2170', '2171', '2172', '2192'],  # 2103-2109,2173-2176除外: L甲鉄城のｶﾊﾞﾈﾘ海門決戦に台変動(2026-03-02確認)
-        'data_source': 'daidata',
-    },
-    'shinokubo_espass_hokuto2': {
-        'name': 'エスパス日拓新大久保店',
-        'short_name': 'エスパス新大久保',
-        'hall_id': '100951',
-        'machine': 'hokuto2',
-        'units': ['2125', '2126', '2127', '2128', '2129', '2130', '2131', '2132', '2133', '2193'],
-        'data_source': 'daidata',
-    },
-    'shinkoiwa_espass_hokuto2': {
-        'name': 'エスパス日拓新小岩店',
-        'short_name': 'エスパス新小岩',
-        'hall_id': '100260',
-        'machine': 'hokuto2',
-        'units': ['2167', '2168', '2169', '2170', '2171', '2172', '2173', '2222', '2223', '2224', '2225', '2226', '2227', '2228', '2229', '2230', '2231', '2232', '2233', '2234', '2235', '2236'],  # 2216-2221除外: Lｽﾏｽﾛ北斗に台変動(2026-03-02確認)
+    'shibuya_espass_toloveru': {
+        'name': 'エスパス日拓渋谷新館',
+        'short_name': 'エスパス渋谷新館',
+        'hall_id': '100860',
+        'machine': 'toloveru',
+        'units': ['3010','3011','3012'],
         'data_source': 'daidata',
     },
 }
@@ -339,11 +261,6 @@ RANKINGS = {
         '1031': {'rank': 'B', 'score': 66.4, 'note': ''},
         '1015': {'rank': 'B', 'score': 65.7, 'note': ''},
     },
-    'shibuya_espass': {
-        '3012': {'rank': 'A', 'score': 70.0, 'note': '7日ART208回'},
-        '3011': {'rank': 'A', 'score': 69.3, 'note': '7日ART198回'},
-        '3013': {'rank': 'B', 'score': 62.1, 'note': '7日ART192回'},
-    },
 }
 
 # 台評価の閾値
@@ -386,7 +303,7 @@ def get_unit_ranking(store_key: str, unit_id: str) -> dict:
     store_rankings = RANKINGS.get(store_key, {})
     if not store_rankings:
         # 機種サフィックスなしのキーでも検索
-        for suffix in ['_sbj', '_hokuto', '_hokuto2']:
+        for suffix in ['_sbj', '_yoshitsune', '_toloveru']:
             if store_key.endswith(suffix):
                 alt_key = store_key[:-len(suffix)]
                 store_rankings = RANKINGS.get(alt_key, {})
