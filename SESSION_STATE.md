@@ -17,7 +17,7 @@
 
 ---
 
-## 現在の状態（2026-04-17）
+## 現在の状態（2026-04-21）
 
 ### ✅ 完了した重要修正
 
@@ -39,27 +39,33 @@
 - `config/rankings.py` + `scripts/fetch_daidata_availability.py` 両方更新済み
 - 詳細は `memory/MEMORY.md` の2026-03-12セクション参照
 
-### ⚠️ 現在の問題
+### ✅ 2026-04-21 完了: 機種変更対応
 
-#### 差枚データ一部欠損（非致命的）
-- 一部台で `diff_medals=0` または `None` のまま
-- 計算仕様: SBJ→`medals>0`のエントリで集計、hokuto2→`hit_num>0`のエントリで集計
-- 影響: 差枚表示が出ないだけ（ランキング自体は正常）
+#### hokuto2を全面削除・真打吉宗・ToLOVEるを追加
+- **config/rankings.py**: MACHINES/STORESからhokuto2削除。yoshitsune・toloveru追加。アイランド秋葉原エントリ追加
+- **scripts/fetch_daidata_availability.py**: PAPIMO_STORESにisland_akihabara_yoshitsune・island_akihabara_toloveru追加
+- **scripts/scrapers_v2/papimo/scraper.py**: hokuto2→yoshitsune/toloveru更新
+- **scripts/scrapers_v2/config.py**: SCRAPE_TARGETS・MACHINE_CONFIG更新
+- **scripts/generate_static.py**: machine_links・_get_machine_key更新
+- **渋谷本館エスパスは閉店済み** → configから削除完了
 
-### 🎯 直近の作業（2026-04-17）
+#### アイランド秋葉原 papimo台番号（2026-04-21確認）
+- 真打吉宗(226030000): 0637,0638,0650〜0653,0655〜0658（10台）
+- ToLOVEるDARKNESS(224040005): 1227〜1288系（42台）
+- SBJ(225010000): 1015〜1031系（14台）変更なし
 
-#### GitHub Actions 一時停止
-- clawdbot削除に伴い、全スケジュールワークフローを一時停止
-- 停止対象: Auto Recovery, Daily Reset, Daily Verify, Fetch Availability系全て, Fill Missing History, Nightly Update
+### ✅ GitHub Actions 一時停止（2026-04-17）
+- 全スケジュールワークフローを一時停止済み
 - 再開時: `gh workflow enable <name>` で復旧
 
-### ⚠️ 要対応
-- clawdbot削除済み → `scripts/notify.py` は動作しない
-- 通知手段を別途検討する必要あり
-
 ### 🎯 次にやること
-- clawdbotの代替通知手段を決める
-- ワークフローを再開するか決める
+1. **ワークフローを再開するか確認・対応**
+   - SBJ + 真打吉宗 + ToLOVEるの3機種でワークフロー再開可能
+   - `gh workflow enable fetch-availability-v2.yml` で再開
+   - fetch-availability-v2.yml の内容が現在の機種に対応していることを確認（yoshitsune/toloveru既対応）
+2. **デザイン実験の差し戻し** 
+   - ユーザーから質問があったが内容未確認
+   - 必要なら `docs/test/frontend_design_preview.html` を確認
 
 ---
 
@@ -78,6 +84,16 @@
 | `analysis/history_accumulator.py` | 履歴蓄積ロジック |
 | `config/rankings.py` | 店舗・台番号設定 |
 | `data/availability.json` | リアルタイムデータ（毎時更新） |
+| `scripts/fetch_daidata_availability.py` | DAIDATA_STORES + PAPIMO_STORES定義 |
+
+### 店舗・機種構成（2026-04-21現在）
+| 店舗 | SBJ | 真打吉宗 | ToLOVEる | データ源 |
+|------|-----|---------|---------|---------|
+| アイランド秋葉原 | ✅ | ✅ | ✅ | papimo |
+| エスパス新宿 | ✅ | ✅ | ✅ | daidata |
+| エスパス秋葉原 | ✅ | ✅ | ✅ | daidata |
+| エスパス西武新宿 | ✅(空) | ✅ | ✅ | daidata |
+| エスパス渋谷新館 | ✗(撤退) | ✅ | ✅ | daidata |
 
 ### よくある問題の対処
 | 症状 | 原因 | 対処 |
@@ -86,9 +102,3 @@
 | データが古い | availability.json未更新 | 手動で`python3 scripts/scrapers_v2/fetch_all.py`実行 |
 | ゴーストエントリ | art=0でgames=前日コピー | `batch_update_history.py`で削除 |
 | 台データ取れない | 台変動の可能性 | `verify_units.py`で確認 → config更新 |
-
-### 最新コミット（2026-03-18時点）
-```
-feb333c043 Merge remote-tracking branch 'origin/main'
-dddab255fd fix: リセット後の初回fast path完了後は差分モードに切り替え（hit history取得を最適化）
-```
