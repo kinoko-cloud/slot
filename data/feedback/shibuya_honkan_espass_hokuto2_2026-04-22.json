@@ -4,23 +4,33 @@
   "date": "2026-04-22",
   "weekday": "水",
   "total_units": 15,
-  "hits": 4,
-  "misses": 0,
+  "hits": 3,
+  "misses": 1,
   "surprises": 6,
-  "miss_details": [],
+  "miss_details": [
+    {
+      "unit_id": "2018",
+      "score": 103,
+      "actual_prob": 254,
+      "reasons": [
+        "高スコア過信",
+        "設定1域(1/254)"
+      ]
+    }
+  ],
   "surprise_details": [
+    {
+      "unit_id": "2016",
+      "rank": "B",
+      "score": 99,
+      "actual_prob": 101,
+      "reasons": []
+    },
     {
       "unit_id": "2031",
       "rank": "B",
       "score": 99,
       "actual_prob": 175,
-      "reasons": []
-    },
-    {
-      "unit_id": "2018",
-      "rank": "B",
-      "score": 97,
-      "actual_prob": 254,
       "reasons": []
     },
     {
