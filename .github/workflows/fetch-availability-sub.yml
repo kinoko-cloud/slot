@@ -49,11 +49,6 @@ jobs:
           timeout 300 python scripts/scrapers_v2/fetch_all.py --sub-only --sbj-only 2>&1 || {
             echo "⚠️ SBJ fetch failed"
           }
-          
-          echo "=== サブ店舗取得（北斗）==="
-          timeout 300 python scripts/scrapers_v2/fetch_all.py --sub-only --hokuto-only 2>&1 || {
-            echo "⚠️ Hokuto fetch failed"
-          }
 
       - name: Generate static HTML
         run: |

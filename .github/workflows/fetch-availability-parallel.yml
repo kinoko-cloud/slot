@@ -17,30 +17,26 @@ jobs:
       contents: read
     timeout-minutes: 8
     strategy:
-      max-parallel: 18  # 全店舗同時実行（エスパス16 + アイランド2）
+      max-parallel: 12  # 全店舗同時実行
       fail-fast: false  # 1店舗が失敗しても他は続行
       matrix:
         store:
-          # エスパス系（DaiData）
-          - shibuya_espass_sbj
+          # エスパス系（DaiData） - SBJ
           - shinjuku_espass_sbj
           - akiba_espass_sbj
           - seibu_shinjuku_espass_sbj
-          - ueno_espass_sbj
-          - ueno_honkan_espass_sbj
-          - takadanobaba_espass_sbj
-          - akasaka_espass_sbj
-          - shinokubo_espass_sbj
-          - shinkoiwa_espass_sbj
-          - shibuya_honkan_espass_sbj
-          - shibuya_espass_hokuto2
-          - shinjuku_espass_hokuto2
-          - akiba_espass_hokuto2
-          - seibu_shinjuku_espass_hokuto2
-          - shibuya_honkan_espass_hokuto2
+          # エスパス系（DaiData） - 真打吉宗
+          - shinjuku_espass_yoshitsune
+          - akiba_espass_yoshitsune
+          - seibu_shinjuku_espass_yoshitsune
+          - shibuya_espass_yoshitsune
+          # エスパス系（DaiData） - ToLOVEるDARKNESS
+          - shinjuku_espass_toloveru
+          - akiba_espass_toloveru
+          - seibu_shinjuku_espass_toloveru
+          - shibuya_espass_toloveru
           # アイランド系（Papimo）
           - island_akihabara_sbj
-          - island_akihabara_hokuto2
 
     steps:
       - uses: actions/checkout@v4

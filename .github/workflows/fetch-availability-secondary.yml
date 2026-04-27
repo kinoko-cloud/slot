@@ -54,9 +54,14 @@ jobs:
             echo "⚠️ SBJ fetch failed"
           }
           
-          echo "=== 主要店舗取得（北斗）==="
-          timeout 300 python scripts/scrapers_v2/fetch_all.py --priority-only --hokuto-only 2>&1 || {
-            echo "⚠️ Hokuto fetch failed"
+          echo "=== 主要店舗取得（真打吉宗）==="
+          timeout 300 python scripts/scrapers_v2/fetch_all.py --priority-only --yoshitsune-only 2>&1 || {
+            echo "⚠️ Yoshitsune fetch failed"
+          }
+
+          echo "=== 主要店舗取得（ToLOVEる）==="
+          timeout 300 python scripts/scrapers_v2/fetch_all.py --priority-only --toloveru-only 2>&1 || {
+            echo "⚠️ ToLOVEru fetch failed"
           }
 
       - name: Generate static HTML (営業時間中のみ)

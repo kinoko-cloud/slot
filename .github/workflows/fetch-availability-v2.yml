@@ -76,9 +76,14 @@ jobs:
             echo "⚠️ SBJ fetch failed"
           }
 
-          echo "=== 主要店舗取得（北斗）==="
-          timeout 700 python scripts/scrapers_v2/fetch_all.py --priority-only --hokuto-only --daidata-only 2>&1 || {
-            echo "⚠️ Hokuto fetch failed"
+          echo "=== 主要店舗取得（真打吉宗）==="
+          timeout 480 python scripts/scrapers_v2/fetch_all.py --priority-only --yoshitsune-only --daidata-only 2>&1 || {
+            echo "⚠️ Yoshitsune fetch failed"
+          }
+
+          echo "=== 主要店舗取得（ToLOVEる）==="
+          timeout 480 python scripts/scrapers_v2/fetch_all.py --priority-only --toloveru-only --daidata-only 2>&1 || {
+            echo "⚠️ ToLOVEru fetch failed"
           }
 
           echo "=== アイランド秋葉原（papimo）==="

@@ -137,8 +137,10 @@ jobs:
           # v2スクレイパー（順次実行でメモリ節約）
           echo "=== SBJ店舗取得 ==="
           timeout 300 python scripts/scrapers_v2/fetch_all.py --sbj-only || echo "⚠️ SBJ fetch failed"
-          echo "=== 北斗店舗取得 ==="
-          timeout 300 python scripts/scrapers_v2/fetch_all.py --hokuto-only || echo "⚠️ Hokuto fetch failed"
+          echo "=== 真打吉宗店舗取得 ==="
+          timeout 300 python scripts/scrapers_v2/fetch_all.py --yoshitsune-only || echo "⚠️ Yoshitsune fetch failed"
+          echo "=== ToLOVEる店舗取得 ==="
+          timeout 300 python scripts/scrapers_v2/fetch_all.py --toloveru-only || echo "⚠️ ToLOVEru fetch failed"
 
       - name: Generate static site
         run: |

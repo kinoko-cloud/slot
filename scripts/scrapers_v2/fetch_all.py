@@ -249,7 +249,7 @@ class V2Fetcher:
         with scraper.browser_session():
             # model_encoded=Noneの場合のみ詳細ページで取得（旧方式）
             # model_encodedがあれば一覧から動的取得（北斗2含む）
-            is_hokuto2 = 'hokuto2' in store_key
+            machine_key = store_key.rsplit('_', 1)[-1]  # sbj / yoshitsune / toloveru 等
             if model_encoded is None:
                 # 一覧ページからスタート回数を先に取得（詳細ページfinal_start=0の補完用）
                 starts_map = {}
@@ -262,10 +262,6 @@ class V2Fetcher:
                         logger.info(f"{store_key}: 一覧ページstarts取得: {len(starts_map)}台")
                     except Exception as e:
                         logger.warning(f"{store_key}: 一覧ページ取得失敗 ({e}), 詳細のみで継続")
-
-                # 全台を詳細取得（取れるまでリトライ）
-                # 機種キーをstore_keyから判定
-                machine_key = 'hokuto2' if is_hokuto2 else 'sbj'
                 for unit_id in expected_units:
                     # 停止中の台はスキップ
                     if not is_unit_active(store_key, unit_id):
@@ -398,7 +394,6 @@ class V2Fetcher:
                 # G数が変化した台のみ詳細取得
                 if unit_id in changed_units:
                     # 機種キーをstore_keyから判定
-                    machine_key = 'hokuto2' if 'hokuto2' in store_key else 'sbj'
                     detail = fetch_with_retry(scraper, hall_id, unit_id, max_time=60, machine_key=machine_key)
 
                     if not detail.get('success'):
@@ -496,7 +491,6 @@ class V2Fetcher:
                     if needs_force_fetch:
                         reason = "前回データが空" if prev_art == 0 else "ART/履歴矛盾"
                         logger.warning(f"{store_key}/{unit_id}: {reason} → 強制詳細取得")
-                        machine_key = 'hokuto2' if 'hokuto2' in store_key else 'sbj'
                         detail = fetch_with_retry(scraper, hall_id, unit_id, max_time=60, machine_key=machine_key)
                         
                         if not detail.get('success'):
@@ -677,8 +671,8 @@ class V2Fetcher:
                 if site_diff is not None:
                     diff_medals = site_diff
                 elif today_history and total_start > 0:
-                    machine_key = 'hokuto2' if 'hokuto2' in store_key else 'sbj'
-                    diff_medals = estimate_diff_medals(total_medals, total_start, machine_key)
+                    mk = store_key.rsplit('_', 1)[-1]
+                    diff_medals = estimate_diff_medals(total_medals, total_start, mk)
                 else:
                     diff_medals = 0
                 
@@ -784,7 +778,7 @@ def discover_all_units() -> Dict[str, List[str]]:
     with discovery.browser_session():
         for store_key, config in DAIDATA_STORES.items():
             hall_id = config['hall_id']
-            machine_key = 'sbj' if 'sbj' in store_key else 'hokuto2'
+            machine_key = store_key.rsplit('_', 1)[-1]
             expected = set(config.get('units', []))
             
             result = discovery.discover_units(hall_id, machine_key)
@@ -830,7 +824,7 @@ SUB_STORES = [
 
 def is_priority_store(store_key: str) -> bool:
     """主要店舗かどうか"""
-    base = store_key.rsplit('_', 1)[0]  # _sbj, _hokuto2を除去
+    base = store_key.rsplit('_', 1)[0]  # _sbj, _yoshitsune, _toloveru等を除去
     return any(p in store_key or p == base for p in PRIORITY_STORES)
 
 
@@ -846,7 +840,9 @@ def main():
     parser = argparse.ArgumentParser(description='v2統合スクレイパー')
     parser.add_argument('--discover', action='store_true', help='台番号自動検出のみ')
     parser.add_argument('--sbj-only', action='store_true', help='SBJのみ')
-    parser.add_argument('--hokuto-only', action='store_true', help='北斗のみ')
+    parser.add_argument('--yoshitsune-only', action='store_true', help='真打吉宗のみ')
+    parser.add_argument('--toloveru-only', action='store_true', help='ToLOVEるのみ')
+    parser.add_argument('--hokuto-only', action='store_true', help='北斗のみ（後方互換、yoshitsune-only相当）')
     parser.add_argument('--daidata-only', action='store_true', help='daidataのみ（papimoスキップ）')
     parser.add_argument('--papimo-only', action='store_true', help='papimoのみ')
     parser.add_argument('--priority-only', action='store_true', help='主要店舗のみ（渋谷/新宿/秋葉原）')
@@ -870,8 +866,13 @@ def main():
         stores = DAIDATA_STORES.copy()
         if args.sbj_only:
             stores = {k: v for k, v in stores.items() if 'sbj' in k}
+        elif args.yoshitsune_only:
+            stores = {k: v for k, v in stores.items() if 'yoshitsune' in k}
+        elif args.toloveru_only:
+            stores = {k: v for k, v in stores.items() if 'toloveru' in k}
         elif args.hokuto_only:
-            stores = {k: v for k, v in stores.items() if 'hokuto' in k}
+            # 後方互換: hokuto-only は yoshitsune + toloveru を取得
+            stores = {k: v for k, v in stores.items() if 'yoshitsune' in k or 'toloveru' in k}
         if args.priority_only:
             stores = {k: v for k, v in stores.items() if is_priority_store(k)}
         elif args.sub_only:

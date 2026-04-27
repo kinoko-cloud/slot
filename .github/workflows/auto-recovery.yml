@@ -144,14 +144,26 @@ jobs:
             fi
           done
 
-          # 北斗取得（--daidata-only: papimoは別途取得）
-          echo "=== 北斗取得 ==="
+          # 真打吉宗取得（--daidata-only: papimoは別途取得）
+          echo "=== 真打吉宗取得 ==="
           for attempt in 1 2; do
-            if timeout 700 python scripts/scrapers_v2/fetch_all.py --priority-only --hokuto-only --daidata-only; then
-              echo "✅ 北斗 fetch succeeded"
+            if timeout 480 python scripts/scrapers_v2/fetch_all.py --priority-only --yoshitsune-only --daidata-only; then
+              echo "✅ 真打吉宗 fetch succeeded"
               break
             else
-              echo "❌ 北斗 fetch failed (attempt $attempt)"
+              echo "❌ 真打吉宗 fetch failed (attempt $attempt)"
+              sleep 10
+            fi
+          done
+
+          # ToLOVEる取得（--daidata-only: papimoは別途取得）
+          echo "=== ToLOVEる取得 ==="
+          for attempt in 1 2; do
+            if timeout 480 python scripts/scrapers_v2/fetch_all.py --priority-only --toloveru-only --daidata-only; then
+              echo "✅ ToLOVEる fetch succeeded"
+              break
+            else
+              echo "❌ ToLOVEる fetch failed (attempt $attempt)"
               sleep 10
             fi
           done
