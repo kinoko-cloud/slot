@@ -36,13 +36,13 @@ DAIDATA_STORES = {
         'hall_id': '100949',
         'name': '新宿エスパス歌舞伎町',
         'model_encoded': 'L%EF%BD%BD%EF%BD%B0%EF%BE%8A%EF%BE%9F%EF%BD%B0%EF%BE%8C%EF%BE%9E%EF%BE%97%EF%BD%AF%EF%BD%B8%EF%BD%BC%EF%BE%9E%EF%BD%AC%EF%BD%AF%EF%BD%B8',
-        'units': ['682', '683', '684', '685'],
+        'units': ['669', '670', '671', '672'],  # 2026-04-27確認: 682-685はyoshitsuneに台変動
     },
     'akiba_espass_sbj': {
         'hall_id': '100928',
         'name': '秋葉原エスパス駅前',
         'model_encoded': 'L%EF%BD%BD%EF%BD%B0%EF%BE%8A%EF%BE%9F%EF%BD%B0%EF%BE%8C%EF%BE%9E%EF%BE%97%EF%BD%AF%EF%BD%B8%EF%BD%BC%EF%BE%9E%EF%BD%AC%EF%BD%AF%EF%BD%B8',
-        'units': ['2157', '2158', '2159', '2160'],
+        'units': ['2070', '2071', '2072'],  # 2026-04-27確認: 2157-2160は台変動
     },
     'seibu_shinjuku_espass_sbj': {
         'hall_id': '100950',
@@ -92,7 +92,7 @@ DAIDATA_STORES = {
         'hall_id': '100950',
         'name': 'エスパス西武新宿(ToLOVEる)',
         'model_encoded': 'L%20ToLOVE%E3%82%8B%EF%BE%80%EF%BE%9E%EF%BD%B0%EF%BD%B8%EF%BE%88%EF%BD%BDver.8.7',
-        'units': ['3195','3196','3197'],
+        'units': [],  # 2026-04-27確認: 0台（未設置または撤去）
     },
     'shibuya_espass_toloveru': {
         'hall_id': '100860',

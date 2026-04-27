@@ -27,12 +27,20 @@ GAS_STORES = ['island_akihabara_sbj']
 
 # GitHubでサポートしている店舗 (availability.json経由 = daidata + papimo)
 GITHUB_STORES = [
+    # SBJ
     'shibuya_espass_sbj', 'shinjuku_espass_sbj', 'akiba_espass_sbj',
     'seibu_shinjuku_espass_sbj', 'island_akihabara_sbj',
-    # 北斗転生2
+    # 真打吉宗
+    'shinjuku_espass_yoshitsune', 'akiba_espass_yoshitsune',
+    'seibu_shinjuku_espass_yoshitsune', 'shibuya_espass_yoshitsune',
+    'island_akihabara_yoshitsune',
+    # ToLOVEるDARKNESS
+    'shinjuku_espass_toloveru', 'akiba_espass_toloveru',
+    'seibu_shinjuku_espass_toloveru', 'shibuya_espass_toloveru',
+    'island_akihabara_toloveru',
+    # 北斗転生2（レガシー）
     'shibuya_espass_hokuto', 'shinjuku_espass_hokuto', 'akiba_espass_hokuto',
     'island_akihabara_hokuto',
-    # _tensei2サフィックスのエイリアス
     'shibuya_espass_hokuto2', 'shinjuku_espass_hokuto2', 'akiba_espass_hokuto2',
     'island_akihabara_hokuto2', 'seibu_shinjuku_espass_hokuto2',
     'shibuya_honkan_espass_hokuto2',

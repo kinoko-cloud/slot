@@ -68,15 +68,26 @@ class DaidataScraper(BaseScraper):
         """規約同意処理（v3方式: 毎回チェック）"""
         # v3効率化: ホール管理せず毎回ボタンをチェック
         try:
+            # wait_for_selectorで確実に待機（固定waitより信頼性が高い）
+            try:
+                self.page.wait_for_selector('button:has-text("利用規約に同意する")', timeout=8000)
+            except Exception:
+                pass
+
             # メインのボタン（最も一般的）
             agree_btn = self.page.locator('button:has-text("利用規約に同意する")')
             if agree_btn.count() > 0 and agree_btn.first.is_visible():
                 agree_btn.first.click()
-                self.wait(2000)
+                # ページ遷移完了まで待機
+                try:
+                    self.page.wait_for_load_state('domcontentloaded', timeout=10000)
+                except Exception:
+                    pass
+                self.wait(1500)
                 self._remove_ads()
                 self.logger.info(f"Terms accepted for hall {hall_id}")
                 return True
-            
+
             # その他のパターン
             selectors = [
                 'input[type="submit"][value*="同意"]',
@@ -84,13 +95,17 @@ class DaidataScraper(BaseScraper):
                 'a:has-text("利用規約に同意する")',
                 'a:has-text("同意する")',
             ]
-            
+
             for selector in selectors:
                 try:
                     elem = self.page.locator(selector)
                     if elem.count() > 0 and elem.first.is_visible():
                         elem.first.click()
-                        self.wait(2000)
+                        try:
+                            self.page.wait_for_load_state('domcontentloaded', timeout=10000)
+                        except Exception:
+                            pass
+                        self.wait(1500)
                         self._remove_ads()
                         self.logger.info(f"Terms accepted for hall {hall_id} via {selector}")
                         return True
@@ -106,13 +121,13 @@ class DaidataScraper(BaseScraper):
         """ページ遷移＋規約同意（v3方式: シンプル化）"""
         if not self.navigate(url):
             return False
-        
-        self.wait(2500)  # v3と同じ待機時間
+
+        self.wait(1500)
         self._remove_ads()
-        
-        # 規約同意（表示されていたらクリック）
+
+        # 規約同意（表示されていたらクリック）。内部でwait_for_selectorを使うので高速
         self._accept_terms(hall_id)
-        
+
         return True
     
     def fetch_realtime(self, hall_id: str, unit_id: str, expected_machine: str = None) -> Dict[str, Any]:
@@ -442,13 +457,18 @@ class DaidataScraper(BaseScraper):
         if not self._goto_with_terms(url, hall_id):
             return {'games': {}, 'playing': [], 'empty': []}
 
-        self.wait(2000)
-
         # 規約受諾後に別ページへリダイレクトされた場合、再度ターゲットURLへ
         current_url = self.page.url
         if 'unit_list' not in current_url:
             self.logger.info(f"Redirected to {current_url}, re-navigating to unit_list")
-            self.navigate(url)
+            if not self.navigate(url):
+                return {'games': {}, 'playing': [], 'empty': []}
+            self._accept_terms(hall_id)
+
+        # unit_listページのテーブル行が表示されるまで待機（最大8秒）
+        try:
+            self.page.wait_for_selector('table tr td', timeout=8000)
+        except Exception:
             self.wait(2000)
 
         # 規約ページが再表示された場合の対処
@@ -456,7 +476,10 @@ class DaidataScraper(BaseScraper):
         if '利用規約' in page_text_check and '同意' in page_text_check:
             self.logger.info(f"Terms page detected after navigation, re-accepting")
             self._accept_terms(hall_id)
-            self.wait(2000)
+            try:
+                self.page.wait_for_selector('table tr td', timeout=8000)
+            except Exception:
+                self.wait(2000)
 
         games = {}
         playing = []
