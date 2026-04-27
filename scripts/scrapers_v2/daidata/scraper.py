@@ -66,11 +66,15 @@ class DaidataScraper(BaseScraper):
     
     def _accept_terms(self, hall_id: str) -> bool:
         """規約同意処理（v3方式: 毎回チェック）"""
+        # unit_listページにいる場合は規約処理不要（8秒待ちを省略）
+        if 'unit_list' in self.page.url:
+            return False
+
         # v3効率化: ホール管理せず毎回ボタンをチェック
         try:
             # wait_for_selectorで確実に待機（固定waitより信頼性が高い）
             try:
-                self.page.wait_for_selector('button:has-text("利用規約に同意する")', timeout=8000)
+                self.page.wait_for_selector('button:has-text("利用規約に同意する")', timeout=10000)
             except Exception:
                 pass
 
@@ -124,8 +128,9 @@ class DaidataScraper(BaseScraper):
 
         self.wait(1500)
         self._remove_ads()
+        self.logger.debug(f"After navigate: URL={self.page.url}")
 
-        # 規約同意（表示されていたらクリック）。内部でwait_for_selectorを使うので高速
+        # 規約同意（表示されていたらクリック）。unit_listなら内部でスキップ
         self._accept_terms(hall_id)
 
         return True
@@ -465,11 +470,15 @@ class DaidataScraper(BaseScraper):
                 return {'games': {}, 'playing': [], 'empty': []}
             self._accept_terms(hall_id)
 
-        # unit_listページのテーブル行が表示されるまで待機（最大8秒）
+        # unit_listページのテーブル行が表示されるまで待機（最大30秒、AJAX完了を待つ）
         try:
-            self.page.wait_for_selector('table tr td', timeout=8000)
+            self.page.wait_for_selector('table tr td', timeout=30000)
         except Exception:
-            self.wait(2000)
+            # フォールバック: networkidleまで待機
+            try:
+                self.page.wait_for_load_state('networkidle', timeout=10000)
+            except Exception:
+                self.wait(3000)
 
         # 規約ページが再表示された場合の対処
         page_text_check = self.get_text()
@@ -477,9 +486,9 @@ class DaidataScraper(BaseScraper):
             self.logger.info(f"Terms page detected after navigation, re-accepting")
             self._accept_terms(hall_id)
             try:
-                self.page.wait_for_selector('table tr td', timeout=8000)
+                self.page.wait_for_selector('table tr td', timeout=30000)
             except Exception:
-                self.wait(2000)
+                self.wait(3000)
 
         games = {}
         playing = []
@@ -534,7 +543,12 @@ class DaidataScraper(BaseScraper):
                     
         except Exception as e:
             self.logger.error(f"fetch_list_with_availability error: {e}")
-        
+
+        # gamesが空の場合は診断情報を出力（根本原因特定のため）
+        if not games:
+            self.logger.warning(f"DIAG: URL={self.page.url}")
+            self.logger.warning(f"DIAG: TEXT={self.get_text()[:400]!r}")
+
         return {
             'games': games,
             'arts': arts,
