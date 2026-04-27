@@ -54,7 +54,7 @@ jobs:
           sleep 3
           
           echo "=== 真打吉宗・ToLOVEる店舗取得（1店舗ずつ）==="
-          for store in shinjuku_espass_yoshitsune akiba_espass_yoshitsune seibu_shinjuku_espass_yoshitsune shibuya_espass_yoshitsune shinjuku_espass_toloveru akiba_espass_toloveru seibu_shinjuku_espass_toloveru shibuya_espass_toloveru; do
+          for store in shinjuku_espass_yoshimune akiba_espass_yoshimune seibu_shinjuku_espass_yoshimune shibuya_espass_yoshimune shinjuku_espass_toloveru akiba_espass_toloveru seibu_shinjuku_espass_toloveru shibuya_espass_toloveru; do
             echo "--- $store ---"
             sleep 3
             timeout 120 python scripts/scrapers_v2/fetch_all.py --store $store 2>&1 || echo "⚠️ $store failed"

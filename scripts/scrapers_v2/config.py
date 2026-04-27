@@ -30,7 +30,7 @@ def _build_hall_mapping():
         hall_id = cfg.get('hall_id')
         if hall_id:
             # store_keyから機種部分を除去（shibuya_espass_sbj → shibuya_espass）
-            base_key = '_'.join(store_key.split('_')[:-1]) if any(store_key.endswith(f'_{m}') for m in ('sbj', 'yoshitsune', 'toloveru')) else store_key
+            base_key = '_'.join(store_key.split('_')[:-1]) if any(store_key.endswith(f'_{m}') for m in ('sbj', 'yoshimune', 'toloveru')) else store_key
             if hall_id not in mapping:
                 mapping[hall_id] = base_key
     return mapping
@@ -51,7 +51,7 @@ PAPIMO_CONFIG = {
     },
     'machines': {
         'sbj': 'Lスーパーブラックジャック',
-        'yoshitsune': 'L真打吉宗',
+        'yoshimune': 'L真打吉宗',
         'toloveru': 'L ToLOVEるダークネスver.8.7',
     }
 }
@@ -59,10 +59,10 @@ PAPIMO_CONFIG = {
 # 取得対象の店舗×機種
 SCRAPE_TARGETS = {
     'daidata': {
-        'shinjuku_espass': ['sbj', 'yoshitsune', 'toloveru'],
-        'shibuya_espass': ['yoshitsune', 'toloveru'],
-        'akiba_espass': ['sbj', 'yoshitsune', 'toloveru'],
-        'seibu_shinjuku_espass': ['sbj', 'yoshitsune', 'toloveru'],
+        'shinjuku_espass': ['sbj', 'yoshimune', 'toloveru'],
+        'shibuya_espass': ['yoshimune', 'toloveru'],
+        'akiba_espass': ['sbj', 'yoshimune', 'toloveru'],
+        'seibu_shinjuku_espass': ['sbj', 'yoshimune', 'toloveru'],
         # 'shibuya_honkan_espass': [],  # 2026-03-31 閉店
         'ueno_espass': ['sbj'],
         'ueno_honkan_espass': ['sbj'],
@@ -72,7 +72,7 @@ SCRAPE_TARGETS = {
         'shinkoiwa_espass': ['sbj'],
     },
     'papimo': {
-        'island_akihabara': ['sbj', 'yoshitsune', 'toloveru'],
+        'island_akihabara': ['sbj', 'yoshimune', 'toloveru'],
     }
 }
 
@@ -85,7 +85,7 @@ MACHINE_CONFIG = {
         'reset_ceiling': 600,
         'rb_resets_games': False,
     },
-    'yoshitsune': {
+    'yoshimune': {
         'name': 'L真打吉宗',
         'threshold': 90,
         'ceiling': 1500,

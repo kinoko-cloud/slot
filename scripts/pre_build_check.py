@@ -219,7 +219,7 @@ def check_renchain_sanity():
     import json
     from analysis.analyzer import calculate_max_rensa
     
-    MAX_SANE_RENSA = {'sbj': 150, 'yoshitsune': 150, 'toloveru': 150}
+    MAX_SANE_RENSA = {'sbj': 150, 'yoshimune': 150, 'toloveru': 150}
     DEFAULT_MAX = 150
 
     history_dir = BASE / 'data' / 'history'
@@ -230,8 +230,8 @@ def check_renchain_sanity():
         if not hdir.is_dir():
             continue
         name = hdir.name
-        if '_yoshitsune' in name:
-            mk = 'yoshitsune'
+        if '_yoshimune' in name:
+            mk = 'yoshimune'
         elif '_toloveru' in name:
             mk = 'toloveru'
         else:

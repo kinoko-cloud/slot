@@ -147,7 +147,7 @@ jobs:
           # 真打吉宗取得（--daidata-only: papimoは別途取得）
           echo "=== 真打吉宗取得 ==="
           for attempt in 1 2; do
-            if timeout 480 python scripts/scrapers_v2/fetch_all.py --priority-only --yoshitsune-only --daidata-only; then
+            if timeout 480 python scripts/scrapers_v2/fetch_all.py --priority-only --yoshimune-only --daidata-only; then
               echo "✅ 真打吉宗 fetch succeeded"
               break
             else

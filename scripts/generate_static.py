@@ -274,7 +274,7 @@ def generate_index(env):
             'overall_rating': 4,
             'machine_links': [
                 {'store_key': 'island_akihabara_sbj', 'icon': '🃏', 'short_name': 'SBJ'},
-                {'store_key': 'island_akihabara_yoshitsune', 'icon': '⚔️', 'short_name': '真打吉宗'},
+                {'store_key': 'island_akihabara_yoshimune', 'icon': '⚔️', 'short_name': '真打吉宗'},
                 {'store_key': 'island_akihabara_toloveru', 'icon': '💕', 'short_name': 'ToLOVEる'},
             ],
         },
@@ -286,7 +286,7 @@ def generate_index(env):
             'worst_note': '日曜は避けるべき',
             'overall_rating': 3,
             'machine_links': [
-                {'store_key': 'shibuya_espass_yoshitsune', 'icon': '⚔️', 'short_name': '真打吉宗'},
+                {'store_key': 'shibuya_espass_yoshimune', 'icon': '⚔️', 'short_name': '真打吉宗'},
                 {'store_key': 'shibuya_espass_toloveru', 'icon': '💕', 'short_name': 'ToLOVEる'},
             ],
         },
@@ -312,7 +312,7 @@ def generate_index(env):
             'overall_rating': 3,
             'machine_links': [
                 {'store_key': 'shinjuku_espass_sbj', 'icon': '🃏', 'short_name': 'SBJ'},
-                {'store_key': 'shinjuku_espass_yoshitsune', 'icon': '⚔️', 'short_name': '真打吉宗'},
+                {'store_key': 'shinjuku_espass_yoshimune', 'icon': '⚔️', 'short_name': '真打吉宗'},
                 {'store_key': 'shinjuku_espass_toloveru', 'icon': '💕', 'short_name': 'ToLOVEる'},
             ],
         },
@@ -325,7 +325,7 @@ def generate_index(env):
             'overall_rating': 3,
             'machine_links': [
                 {'store_key': 'akiba_espass_sbj', 'icon': '🃏', 'short_name': 'SBJ'},
-                {'store_key': 'akiba_espass_yoshitsune', 'icon': '⚔️', 'short_name': '真打吉宗'},
+                {'store_key': 'akiba_espass_yoshimune', 'icon': '⚔️', 'short_name': '真打吉宗'},
                 {'store_key': 'akiba_espass_toloveru', 'icon': '💕', 'short_name': 'ToLOVEる'},
             ],
         },
@@ -338,7 +338,7 @@ def generate_index(env):
             'overall_rating': 2,
             'machine_links': [
                 {'store_key': 'seibu_shinjuku_espass_sbj', 'icon': '🃏', 'short_name': 'SBJ'},
-                {'store_key': 'seibu_shinjuku_espass_yoshitsune', 'icon': '⚔️', 'short_name': '真打吉宗'},
+                {'store_key': 'seibu_shinjuku_espass_yoshimune', 'icon': '⚔️', 'short_name': '真打吉宗'},
                 {'store_key': 'seibu_shinjuku_espass_toloveru', 'icon': '💕', 'short_name': 'ToLOVEる'},
             ],
         },
@@ -1746,14 +1746,14 @@ def _get_machine_key(store_key):
         return None
     if store_key.endswith('_sbj') or '_sbj_' in store_key:
         return 'sbj'
-    if store_key.endswith('_yoshitsune') or '_yoshitsune_' in store_key:
-        return 'yoshitsune'
+    if store_key.endswith('_yoshimune') or '_yoshimune_' in store_key:
+        return 'yoshimune'
     if store_key.endswith('_toloveru') or '_toloveru_' in store_key:
         return 'toloveru'
     if 'sbj' in store_key:
         return 'sbj'
-    if 'yoshitsune' in store_key:
-        return 'yoshitsune'
+    if 'yoshimune' in store_key:
+        return 'yoshimune'
     if 'toloveru' in store_key:
         return 'toloveru'
     return None
@@ -3218,8 +3218,8 @@ def main():
     
     data_check_errors = 0
     print("\n📊 TOP10 3日分データ検証:")
-    for sk in ['shinjuku_espass_sbj', 'shinjuku_espass_yoshitsune', 'shinjuku_espass_toloveru',
-               'shibuya_espass_yoshitsune', 'shibuya_espass_toloveru']:
+    for sk in ['shinjuku_espass_sbj', 'shinjuku_espass_yoshimune', 'shinjuku_espass_toloveru',
+               'shibuya_espass_yoshimune', 'shibuya_espass_toloveru']:
         try:
             recs = recommend_units(sk)[:10]
             machine_key = _get_machine_key(sk) or 'sbj'

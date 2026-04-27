@@ -249,7 +249,7 @@ class V2Fetcher:
         with scraper.browser_session():
             # model_encoded=Noneの場合のみ詳細ページで取得（旧方式）
             # model_encodedがあれば一覧から動的取得（北斗2含む）
-            machine_key = store_key.rsplit('_', 1)[-1]  # sbj / yoshitsune / toloveru 等
+            machine_key = store_key.rsplit('_', 1)[-1]  # sbj / yoshimune / toloveru 等
             if model_encoded is None:
                 # 一覧ページからスタート回数を先に取得（詳細ページfinal_start=0の補完用）
                 starts_map = {}
@@ -824,7 +824,7 @@ SUB_STORES = [
 
 def is_priority_store(store_key: str) -> bool:
     """主要店舗かどうか"""
-    base = store_key.rsplit('_', 1)[0]  # _sbj, _yoshitsune, _toloveru等を除去
+    base = store_key.rsplit('_', 1)[0]  # _sbj, _yoshimune, _toloveru等を除去
     return any(p in store_key or p == base for p in PRIORITY_STORES)
 
 
@@ -840,9 +840,9 @@ def main():
     parser = argparse.ArgumentParser(description='v2統合スクレイパー')
     parser.add_argument('--discover', action='store_true', help='台番号自動検出のみ')
     parser.add_argument('--sbj-only', action='store_true', help='SBJのみ')
-    parser.add_argument('--yoshitsune-only', action='store_true', help='真打吉宗のみ')
+    parser.add_argument('--yoshimune-only', action='store_true', help='真打吉宗のみ')
     parser.add_argument('--toloveru-only', action='store_true', help='ToLOVEるのみ')
-    parser.add_argument('--hokuto-only', action='store_true', help='北斗のみ（後方互換、yoshitsune-only相当）')
+    parser.add_argument('--hokuto-only', action='store_true', help='北斗のみ（後方互換、yoshimune-only相当）')
     parser.add_argument('--daidata-only', action='store_true', help='daidataのみ（papimoスキップ）')
     parser.add_argument('--papimo-only', action='store_true', help='papimoのみ')
     parser.add_argument('--priority-only', action='store_true', help='主要店舗のみ（渋谷/新宿/秋葉原）')
@@ -866,13 +866,13 @@ def main():
         stores = DAIDATA_STORES.copy()
         if args.sbj_only:
             stores = {k: v for k, v in stores.items() if 'sbj' in k}
-        elif args.yoshitsune_only:
-            stores = {k: v for k, v in stores.items() if 'yoshitsune' in k}
+        elif args.yoshimune_only:
+            stores = {k: v for k, v in stores.items() if 'yoshimune' in k}
         elif args.toloveru_only:
             stores = {k: v for k, v in stores.items() if 'toloveru' in k}
         elif args.hokuto_only:
-            # 後方互換: hokuto-only は yoshitsune + toloveru を取得
-            stores = {k: v for k, v in stores.items() if 'yoshitsune' in k or 'toloveru' in k}
+            # 後方互換: hokuto-only は yoshimune + toloveru を取得
+            stores = {k: v for k, v in stores.items() if 'yoshimune' in k or 'toloveru' in k}
         if args.priority_only:
             stores = {k: v for k, v in stores.items() if is_priority_store(k)}
         elif args.sub_only:

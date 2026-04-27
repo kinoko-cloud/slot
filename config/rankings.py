@@ -37,7 +37,7 @@ MACHINES = {
         'big_renchain': 30,           # 大連チャン定義: 30連
         'warning_renchain_count': 2,  # 警戒ライン: 同日30連×2回
     },
-    'yoshitsune': {
+    'yoshimune': {
         'name': 'L真打吉宗',
         'short_name': '真打吉宗',
         'display_name': '真打吉宗',
@@ -134,45 +134,45 @@ STORES = {
         'data_source': 'daidata',
     },
     # === 真打吉宗 ===
-    'island_akihabara_yoshitsune': {
+    'island_akihabara_yoshimune': {
         'name': 'アイランド秋葉原',
         'short_name': 'アイランド秋葉原',
         'hall_id': None,
-        'machine': 'yoshitsune',
+        'machine': 'yoshimune',
         'units': [
             '637', '638', '650', '651', '652', '653', '655', '656', '657', '658',
         ],
         'data_source': 'papimo',
     },
-    'shinjuku_espass_yoshitsune': {
+    'shinjuku_espass_yoshimune': {
         'name': 'エスパス日拓新宿歌舞伎町店',
         'short_name': 'エスパス歌舞伎町',
         'hall_id': '100949',
-        'machine': 'yoshitsune',
+        'machine': 'yoshimune',
         'units': ['682','683','684','685','686','687','688','689','690','691','692','693','694','695'],
         'data_source': 'daidata',
     },
-    'akiba_espass_yoshitsune': {
+    'akiba_espass_yoshimune': {
         'name': 'エスパス日拓秋葉原駅前店',
         'short_name': 'エスパス秋葉原',
         'hall_id': '100928',
-        'machine': 'yoshitsune',
+        'machine': 'yoshimune',
         'units': ['2001','2002','2003','2004','2005','2006','2007','2008','2009','2010'],
         'data_source': 'daidata',
     },
-    'seibu_shinjuku_espass_yoshitsune': {
+    'seibu_shinjuku_espass_yoshimune': {
         'name': 'エスパス日拓西武新宿駅前店',
         'short_name': 'エスパス西武新宿',
         'hall_id': '100950',
-        'machine': 'yoshitsune',
+        'machine': 'yoshimune',
         'units': ['3111','3112','3113','3114','3115'],
         'data_source': 'daidata',
     },
-    'shibuya_espass_yoshitsune': {
+    'shibuya_espass_yoshimune': {
         'name': 'エスパス日拓渋谷新館',
         'short_name': 'エスパス渋谷新館',
         'hall_id': '100860',
-        'machine': 'yoshitsune',
+        'machine': 'yoshimune',
         'units': ['3047','3048','3049','3050','3051','3052','3053','3090'],
         'data_source': 'daidata',
     },
@@ -309,7 +309,7 @@ def get_unit_ranking(store_key: str, unit_id: str) -> dict:
     store_rankings = RANKINGS.get(store_key, {})
     if not store_rankings:
         # 機種サフィックスなしのキーでも検索
-        for suffix in ['_sbj', '_yoshitsune', '_toloveru']:
+        for suffix in ['_sbj', '_yoshimune', '_toloveru']:
             if store_key.endswith(suffix):
                 alt_key = store_key[:-len(suffix)]
                 store_rankings = RANKINGS.get(alt_key, {})

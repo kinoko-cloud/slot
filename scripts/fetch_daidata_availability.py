@@ -36,7 +36,7 @@ DAIDATA_STORES = {
         'hall_id': '100949',
         'name': '新宿エスパス歌舞伎町',
         'model_encoded': 'L%EF%BD%BD%EF%BD%B0%EF%BE%8A%EF%BE%9F%EF%BD%B0%EF%BE%8C%EF%BE%9E%EF%BE%97%EF%BD%AF%EF%BD%B8%EF%BD%BC%EF%BE%9E%EF%BD%AC%EF%BD%AF%EF%BD%B8',
-        'units': ['669', '670', '671', '672'],  # 2026-04-27確認: 682-685はyoshitsuneに台変動
+        'units': ['669', '670', '671', '672'],  # 2026-04-27確認: 682-685はyoshimuneに台変動
     },
     'akiba_espass_sbj': {
         'hall_id': '100928',
@@ -51,25 +51,25 @@ DAIDATA_STORES = {
         'units': [],  # 3185,3186,3187全て除外: L化物語に台変動(2026-03-02確認)
     },
     # === 真打吉宗 ===
-    'shinjuku_espass_yoshitsune': {
+    'shinjuku_espass_yoshimune': {
         'hall_id': '100949',
         'name': 'エスパス新宿(真打吉宗)',
         'model_encoded': 'L%E7%9C%9F%E6%89%93%E5%90%89%E5%AE%97',
         'units': ['682','683','684','685','686','687','688','689','690','691','692','693','694','695'],
     },
-    'akiba_espass_yoshitsune': {
+    'akiba_espass_yoshimune': {
         'hall_id': '100928',
         'name': 'エスパス秋葉原(真打吉宗)',
         'model_encoded': 'L%E7%9C%9F%E6%89%93%E5%90%89%E5%AE%97',
         'units': ['2001','2002','2003','2004','2005','2006','2007','2008','2009','2010'],
     },
-    'seibu_shinjuku_espass_yoshitsune': {
+    'seibu_shinjuku_espass_yoshimune': {
         'hall_id': '100950',
         'name': 'エスパス西武新宿(真打吉宗)',
         'model_encoded': 'L%E7%9C%9F%E6%89%93%E5%90%89%E5%AE%97',
         'units': ['3111','3112','3113','3114','3115'],
     },
-    'shibuya_espass_yoshitsune': {
+    'shibuya_espass_yoshimune': {
         'hall_id': '100860',
         'name': 'エスパス渋谷新館(真打吉宗)',
         'model_encoded': 'L%E7%9C%9F%E6%89%93%E5%90%89%E5%AE%97',
@@ -113,7 +113,7 @@ PAPIMO_STORES = {
             '1025', '1026', '1027', '1028', '1030', '1031',
         ],
     },
-    'island_akihabara_yoshitsune': {
+    'island_akihabara_yoshimune': {
         'hall_id': '00031715',
         'name': 'アイランド秋葉原(真打吉宗)',
         'machine_id': '226030000',
@@ -520,7 +520,7 @@ def main():
     
     # オプション解析
     sbj_only = '--sbj-only' in sys.argv
-    yoshitsune_only = '--yoshitsune-only' in sys.argv
+    yoshimune_only = '--yoshimune-only' in sys.argv
     toloveru_only = '--toloveru-only' in sys.argv
     include_hidden = '--include-hidden' in sys.argv  # 隠し店舗も含める（日次収集用）
 
@@ -547,9 +547,9 @@ def main():
             daidata_stores = {k: v for k, v in daidata_stores.items() if k not in hidden_stores}
             papimo_stores = {k: v for k, v in papimo_stores.items() if k not in hidden_stores}
         print(f"SBJのみモード: {len(daidata_stores) + len(papimo_stores)}店舗")
-    elif yoshitsune_only:
-        daidata_stores = {k: v for k, v in DAIDATA_STORES.items() if 'yoshitsune' in k}
-        papimo_stores = {k: v for k, v in PAPIMO_STORES.items() if 'yoshitsune' in k}
+    elif yoshimune_only:
+        daidata_stores = {k: v for k, v in DAIDATA_STORES.items() if 'yoshimune' in k}
+        papimo_stores = {k: v for k, v in PAPIMO_STORES.items() if 'yoshimune' in k}
         print(f"真打吉宗のみモード: {len(daidata_stores) + len(papimo_stores)}店舗")
     elif toloveru_only:
         daidata_stores = {k: v for k, v in DAIDATA_STORES.items() if 'toloveru' in k}
@@ -827,7 +827,7 @@ def main():
 
     # JSONに保存（クラッシュ時も部分データを書き出す）
     # --sbj-only や --hokuto-only の場合は部分更新（既存データ保持）
-    _save_result(result, partial_update=(sbj_only or yoshitsune_only or toloveru_only))
+    _save_result(result, partial_update=(sbj_only or yoshimune_only or toloveru_only))
 
 
 def _save_result(result, partial_update=False):

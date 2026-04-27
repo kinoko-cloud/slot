@@ -31,9 +31,9 @@ GITHUB_STORES = [
     'shibuya_espass_sbj', 'shinjuku_espass_sbj', 'akiba_espass_sbj',
     'seibu_shinjuku_espass_sbj', 'island_akihabara_sbj',
     # 真打吉宗
-    'shinjuku_espass_yoshitsune', 'akiba_espass_yoshitsune',
-    'seibu_shinjuku_espass_yoshitsune', 'shibuya_espass_yoshitsune',
-    'island_akihabara_yoshitsune',
+    'shinjuku_espass_yoshimune', 'akiba_espass_yoshimune',
+    'seibu_shinjuku_espass_yoshimune', 'shibuya_espass_yoshimune',
+    'island_akihabara_yoshimune',
     # ToLOVEるDARKNESS
     'shinjuku_espass_toloveru', 'akiba_espass_toloveru',
     'seibu_shinjuku_espass_toloveru', 'shibuya_espass_toloveru',

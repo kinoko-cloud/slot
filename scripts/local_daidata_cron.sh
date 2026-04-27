@@ -31,7 +31,7 @@ echo "--- SBJ取得 ---"
 timeout 240 $PYTHON "$REPO/scripts/scrapers_v2/fetch_all.py" --priority-only --sbj-only --daidata-only 2>&1 || echo "⚠️ SBJ取得失敗"
 
 echo "--- 真打吉宗取得 ---"
-timeout 600 $PYTHON "$REPO/scripts/scrapers_v2/fetch_all.py" --priority-only --yoshitsune-only --daidata-only 2>&1 || echo "⚠️ yoshitsune取得失敗"
+timeout 600 $PYTHON "$REPO/scripts/scrapers_v2/fetch_all.py" --priority-only --yoshimune-only --daidata-only 2>&1 || echo "⚠️ yoshimune取得失敗"
 
 echo "--- ToLOVEる取得 ---"
 timeout 600 $PYTHON "$REPO/scripts/scrapers_v2/fetch_all.py" --priority-only --toloveru-only --daidata-only 2>&1 || echo "⚠️ toloveru取得失敗"

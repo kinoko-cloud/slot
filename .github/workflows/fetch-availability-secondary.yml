@@ -55,7 +55,7 @@ jobs:
           }
           
           echo "=== 主要店舗取得（真打吉宗）==="
-          timeout 300 python scripts/scrapers_v2/fetch_all.py --priority-only --yoshitsune-only 2>&1 || {
+          timeout 300 python scripts/scrapers_v2/fetch_all.py --priority-only --yoshimune-only 2>&1 || {
             echo "⚠️ Yoshitsune fetch failed"
           }
 
