@@ -58,11 +58,21 @@
 - 全スケジュールワークフローを一時停止済み
 - 再開時: `gh workflow enable <name>` で復旧
 
+### ✅ 2026-04-21 完了: 予測閾値・仕様設定
+
+- **config/rankings.py**: yoshitsune/toloveruの閾値・天井を実データ基準に最終設定
+  - yoshitsune: good=1/90, bad=1/150, very_bad=1/220, ceiling=1500G, reset=1000G
+  - toloveru: good=1/290, bad=1/380, very_bad=1/460, ceiling=999G, reset=650G
+- **scrapers_v2/config.py**: MACHINE_CONFIGの閾値・天井を同期
+- **validate_output.py**: expected_keysをyoshitsune/toloveruに更新
+- **CLAUDE.md**: 機種仕様セクションに真打吉宗・ToLOVEる追記、hokuto2を「撤去済み参考情報」に変更
+- **docs/**: 真打吉宗・ToLOVEるの全ページ（ranking/recommend/history/machine）を新規生成
+
 ### 🎯 次にやること
 1. **ワークフローを再開するか確認・対応**
    - SBJ + 真打吉宗 + ToLOVEるの3機種でワークフロー再開可能
    - `gh workflow enable fetch-availability-v2.yml` で再開
-   - fetch-availability-v2.yml の内容が現在の機種に対応していることを確認（yoshitsune/toloveru既対応）
+   - yoshitsune/toloveru対応済み（fetch_all.py, scrapers_v2/config.py）
 2. **デザイン実験の差し戻し** 
    - ユーザーから質問があったが内容未確認
    - 必要なら `docs/test/frontend_design_preview.html` を確認
