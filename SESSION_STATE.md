@@ -17,7 +17,7 @@
 
 ---
 
-## 現在の状態（2026-04-21）
+## 現在の状態（2026-04-27）
 
 ### ✅ 完了した重要修正
 
@@ -57,6 +57,7 @@
 ### ✅ GitHub Actions 一時停止（2026-04-17）
 - 全スケジュールワークフローを一時停止済み
 - 再開時: `gh workflow enable <name>` で復旧
+- **注意**: daidataはCloudFront WAFがGitHub Actions（AWS IP）をブロックするため、ローカルcronで代替
 
 ### ✅ 2026-04-21 完了: 予測閾値・仕様設定
 
@@ -68,13 +69,40 @@
 - **CLAUDE.md**: 機種仕様セクションに真打吉宗・ToLOVEる追記、hokuto2を「撤去済み参考情報」に変更
 - **docs/**: 真打吉宗・ToLOVEるの全ページ（ranking/recommend/history/machine）を新規生成
 
+### ✅ 2026-04-27 完了: daidataエスパス全店舗の取得修復
+
+#### 根本原因: CloudFront WAFがGitHub Actions（AWS IP）をブロック
+- **症状**: 5週間以上、daidataエスパス全店舗でデータ取得失敗
+- **原因**: `daidata.goraggio.com` のAWS CloudFront WAFがGitHub Actions（AWS IP）からのアクセスをブロック
+- **解決策**: ローカルWSL（日本IP）からcronで実行する `scripts/local_daidata_cron.sh`
+- **crontab設定**: `30 1-14 * * * bash /home/riichi/works/slot/scripts/local_daidata_cron.sh >> /tmp/slot_local_cron.log 2>&1`
+
+#### daidataスクレイパー改善（`scripts/scrapers_v2/daidata/scraper.py`）
+- `_accept_terms`: unit_listページにいる場合は規約処理スキップ（8-10秒節約）
+- `fetch_list_with_availability`: `wait_for_selector('table tr td', timeout=30000)` + networkidle fallback
+- DIAG logging追加（空テーブル時にURL/TEXTをログ出力）
+
+#### 2026-04-27 取得成功確認（初回）
+- **yoshitsune**: shinjuku14/akiba10/seibu5/shibuya8台（計37台）498秒
+- **toloveru**: shinjuku3/akiba30/shibuya3台（計36台）528秒
+- **SBJ**: shinjuku4/akiba3台
+- data/history/に全yoshitsune/toloveru espassファイル初回生成完了
+
+#### cronスクリプトのタイムアウト設定
+- SBJ: 240s（実測~60s）
+- yoshitsune: 600s（実測498s）
+- toloveru: 600s（実測528s）
+- 次回以降はgames_cacheヒットで大幅短縮される見込み
+
 ### 🎯 次にやること
-1. **ワークフローを再開するか確認・対応**
+1. **crontabが正常動作しているか翌日確認**
+   - `/tmp/slot_local_cron.log` でログ確認
+   - data/availability.jsonのfetched_atが更新されているか確認
+2. **GitHub Actionsワークフローの再開（任意）**
    - SBJ + 真打吉宗 + ToLOVEるの3機種でワークフロー再開可能
-   - `gh workflow enable fetch-availability-v2.yml` で再開
-   - yoshitsune/toloveru対応済み（fetch_all.py, scrapers_v2/config.py）
-2. **デザイン実験の差し戻し** 
-   - ユーザーから質問があったが内容未確認
+   - daidataはローカルcronが担当するためActions側は不要（CloudFront WAFブロック）
+   - papimoはActions経由でも取得可能
+3. **デザイン実験の差し戻し** 
    - 必要なら `docs/test/frontend_design_preview.html` を確認
 
 ---
