@@ -170,7 +170,7 @@ jobs:
 
           # papimo取得（アイランド秋葉原）
           echo "=== papimo取得 ==="
-          timeout 200 python scripts/scrapers_v2/fetch_all.py --papimo-only || {
+          timeout 600 python scripts/scrapers_v2/fetch_all.py --papimo-only || {
             echo "⚠️ Papimo fetch failed (non-critical)"
           }
 

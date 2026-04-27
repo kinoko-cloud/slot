@@ -62,7 +62,7 @@ jobs:
           
           sleep 3
           echo "=== papimo取得 ==="
-          timeout 120 python scripts/scrapers_v2/fetch_all.py --papimo-only 2>&1 || echo "⚠️ papimo failed"
+          timeout 600 python scripts/scrapers_v2/fetch_all.py --papimo-only 2>&1 || echo "⚠️ papimo failed"
 
       - name: Sync availability to history (確定データ移行)
         run: |

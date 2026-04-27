@@ -87,7 +87,7 @@ jobs:
           }
 
           echo "=== アイランド秋葉原（papimo）==="
-          timeout 200 python scripts/scrapers_v2/fetch_all.py --papimo-only 2>&1 || {
+          timeout 600 python scripts/scrapers_v2/fetch_all.py --papimo-only 2>&1 || {
             echo "⚠️ Papimo fetch failed"
           }
 
