@@ -128,7 +128,7 @@ jobs:
           echo "🔧 Attempting auto-recovery by fetching fresh data..."
 
           # Playwrightのインストール
-          pip install 'playwright==1.49.1'
+          pip install 'playwright==1.49.1' pytz
           playwright install chromium
           playwright install-deps chromium
 

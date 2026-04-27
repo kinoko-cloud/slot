@@ -37,7 +37,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install 'playwright==1.49.1' flask jinja2 requests
+          pip install 'playwright==1.49.1' flask jinja2 requests pytz
           playwright install chromium
           playwright install-deps chromium
 
