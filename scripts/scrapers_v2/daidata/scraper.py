@@ -438,26 +438,40 @@ class DaidataScraper(BaseScraper):
             }
         """
         url = f"{self.BASE_URL}/{hall_id}/unit_list?model={model_encoded}&ballPrice=21.70&ps=S"
-        
+
         if not self._goto_with_terms(url, hall_id):
             return {'games': {}, 'playing': [], 'empty': []}
-        
+
         self.wait(2000)
-        
+
+        # 規約受諾後に別ページへリダイレクトされた場合、再度ターゲットURLへ
+        current_url = self.page.url
+        if 'unit_list' not in current_url:
+            self.logger.info(f"Redirected to {current_url}, re-navigating to unit_list")
+            self.navigate(url)
+            self.wait(2000)
+
+        # 規約ページが再表示された場合の対処
+        page_text_check = self.get_text()
+        if '利用規約' in page_text_check and '同意' in page_text_check:
+            self.logger.info(f"Terms page detected after navigation, re-accepting")
+            self._accept_terms(hall_id)
+            self.wait(2000)
+
         games = {}
         playing = []
         empty = []
-        
+
         try:
             html = self.page.content()
-            
+
             # HTMLから台番号と遊技状態を抽出
             # パターン: <tr>内で icon-user があれば遊技中
             for unit_id in (expected_units or []):
                 # 台番号を含む行を検索
                 pattern = rf'<tr[^>]*>.*?<td[^>]*>(.*?)</td>\s*<td[^>]*>\s*<a[^>]*>\s*{unit_id}\s*</a>'
                 match = re.search(pattern, html, re.DOTALL | re.IGNORECASE)
-                
+
                 if match:
                     first_td = match.group(1)
                     if 'icon-user' in first_td:
@@ -466,7 +480,7 @@ class DaidataScraper(BaseScraper):
                         empty.append(unit_id)
                 else:
                     empty.append(unit_id)  # 見つからない場合は空きとみなす
-            
+
             # G数・ART等・スタート回数を取得
             arts = {}
             starts = {}  # スタート回数（現在のハマり）

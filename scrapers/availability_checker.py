@@ -229,10 +229,19 @@ def get_realtime_data(store_key: str) -> Dict:
             store_data = data.get('stores', {}).get(data_store_key, {}) or data.get('stores', {}).get(store_key, {})
 
             if store_data and store_data.get('units'):
+                today_str = datetime.now(JST).strftime('%Y-%m-%d')
+                units = store_data.get('units', [])
+                # 今日でない日付が明示されているユニットは古いデータとして除外
+                fresh_units = [
+                    u for u in units
+                    if not u.get('date') or u.get('date') == today_str
+                ]
+                if not fresh_units:
+                    return {}
                 return {
                     'store_name': store_data.get('name', ''),
                     'fetched_at': data.get('fetched_at', ''),
-                    'units': store_data.get('units', []),
+                    'units': fresh_units,
                     'source': 'github',
                 }
         except Exception as e:
