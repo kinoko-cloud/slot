@@ -64,8 +64,8 @@
 
 ### 6. store_keyの命名規則
 - **機種キー・機種名は `config/rankings.py` の `MACHINES` 辞書を参照**
-- 現行機種: `sbj`, `yoshitsune`, `toloveru`（hokuto2は2026-04-21撤去）
-- 例: `shinjuku_espass_sbj`, `island_akihabara_yoshitsune`, `akiba_espass_toloveru`
+- 現行機種: `sbj`, `yoshimune`, `toloveru`（hokuto2は2026-04-21撤去）
+- 例: `shinjuku_espass_sbj`, `island_akihabara_yoshimune`, `akiba_espass_toloveru`
 - 詳細は `ARCHITECTURE.md` の「命名規則」セクション参照
 
 ### 7. テストコードでのhall_id/store_key取得

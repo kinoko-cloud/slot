@@ -42,9 +42,9 @@
 ### ✅ 2026-04-21 完了: 機種変更対応
 
 #### hokuto2を全面削除・真打吉宗・ToLOVEるを追加
-- **config/rankings.py**: MACHINES/STORESからhokuto2削除。yoshitsune・toloveru追加。アイランド秋葉原エントリ追加
-- **scripts/fetch_daidata_availability.py**: PAPIMO_STORESにisland_akihabara_yoshitsune・island_akihabara_toloveru追加
-- **scripts/scrapers_v2/papimo/scraper.py**: hokuto2→yoshitsune/toloveru更新
+- **config/rankings.py**: MACHINES/STORESからhokuto2削除。yoshimune・toloveru追加。アイランド秋葉原エントリ追加
+- **scripts/fetch_daidata_availability.py**: PAPIMO_STORESにisland_akihabara_yoshimune・island_akihabara_toloveru追加
+- **scripts/scrapers_v2/papimo/scraper.py**: hokuto2→yoshimune/toloveru更新
 - **scripts/scrapers_v2/config.py**: SCRAPE_TARGETS・MACHINE_CONFIG更新
 - **scripts/generate_static.py**: machine_links・_get_machine_key更新
 - **渋谷本館エスパスは閉店済み** → configから削除完了
@@ -61,11 +61,11 @@
 
 ### ✅ 2026-04-21 完了: 予測閾値・仕様設定
 
-- **config/rankings.py**: yoshitsune/toloveruの閾値・天井を実データ基準に最終設定
-  - yoshitsune: good=1/90, bad=1/150, very_bad=1/220, ceiling=1500G, reset=1000G
+- **config/rankings.py**: yoshimune/toloveruの閾値・天井を実データ基準に最終設定
+  - yoshimune: good=1/90, bad=1/150, very_bad=1/220, ceiling=1500G, reset=1000G
   - toloveru: good=1/290, bad=1/380, very_bad=1/460, ceiling=999G, reset=650G
 - **scrapers_v2/config.py**: MACHINE_CONFIGの閾値・天井を同期
-- **validate_output.py**: expected_keysをyoshitsune/toloveruに更新
+- **validate_output.py**: expected_keysをyoshimune/toloveruに更新
 - **CLAUDE.md**: 機種仕様セクションに真打吉宗・ToLOVEる追記、hokuto2を「撤去済み参考情報」に変更
 - **docs/**: 真打吉宗・ToLOVEるの全ページ（ranking/recommend/history/machine）を新規生成
 
@@ -83,14 +83,14 @@
 - DIAG logging追加（空テーブル時にURL/TEXTをログ出力）
 
 #### 2026-04-27 取得成功確認（初回）
-- **yoshitsune**: shinjuku14/akiba10/seibu5/shibuya8台（計37台）498秒
+- **yoshimune**: shinjuku14/akiba10/seibu5/shibuya8台（計37台）498秒
 - **toloveru**: shinjuku3/akiba30/shibuya3台（計36台）528秒
 - **SBJ**: shinjuku4/akiba3台
-- data/history/に全yoshitsune/toloveru espassファイル初回生成完了
+- data/history/に全yoshimune/toloveru espassファイル初回生成完了
 
 #### cronスクリプトのタイムアウト設定
 - SBJ: 240s（実測~60s）
-- yoshitsune: 600s（実測498s）
+- yoshimune: 600s（実測498s）
 - toloveru: 600s（実測528s）
 - 次回以降はgames_cacheヒットで大幅短縮される見込み
 
