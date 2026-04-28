@@ -61,9 +61,16 @@ def generate_verify(predict_date: str) -> dict:
     
     analysis.recommender.datetime = MockDT
     
+    # メイン店舗のみ（サブ店舗は除外）
+    MAIN_STORES = {
+        'island_akihabara_sbj',
+        'shinjuku_espass_sbj',
+        'akiba_espass_sbj',
+    }
+    
     try:
         results = []
-        target = [sk for sk in STORES if sk not in ('island_akihabara', 'shibuya_espass', 'shinjuku_espass')]
+        target = [sk for sk in STORES if sk in MAIN_STORES]
         for sk in target:
             store = STORES.get(sk)
             if not store:
