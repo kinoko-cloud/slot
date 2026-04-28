@@ -5,34 +5,52 @@
   "weekday": "火",
   "total_units": 30,
   "hits": 0,
-  "misses": 0,
-  "surprises": 23,
-  "miss_details": [],
+  "misses": 3,
+  "surprises": 20,
+  "miss_details": [
+    {
+      "unit_id": "3153",
+      "score": 43,
+      "actual_prob": 233,
+      "reasons": [
+        "設定1域(1/233)"
+      ]
+    },
+    {
+      "unit_id": "3164",
+      "score": 33,
+      "actual_prob": 200,
+      "reasons": [
+        "設定1域(1/200)"
+      ]
+    },
+    {
+      "unit_id": "3082",
+      "score": 29,
+      "actual_prob": 252,
+      "reasons": [
+        "設定1域(1/252)"
+      ]
+    }
+  ],
   "surprise_details": [
     {
       "unit_id": "3163",
-      "rank": "C",
+      "rank": "B",
       "score": 54,
       "actual_prob": 156,
       "reasons": []
     },
     {
       "unit_id": "3085",
-      "rank": "D",
+      "rank": "C",
       "score": 43,
       "actual_prob": 144,
       "reasons": []
     },
     {
-      "unit_id": "3153",
-      "rank": "D",
-      "score": 43,
-      "actual_prob": 233,
-      "reasons": []
-    },
-    {
       "unit_id": "3076",
-      "rank": "D",
+      "rank": "B",
       "score": 38,
       "actual_prob": 206,
       "reasons": [
@@ -41,7 +59,7 @@
     },
     {
       "unit_id": "3084",
-      "rank": "D",
+      "rank": "B",
       "score": 34,
       "actual_prob": 275,
       "reasons": [
@@ -49,26 +67,8 @@
       ]
     },
     {
-      "unit_id": "3164",
-      "rank": "D",
-      "score": 33,
-      "actual_prob": 200,
-      "reasons": [
-        "低スコア台(33点)が好調"
-      ]
-    },
-    {
-      "unit_id": "3082",
-      "rank": "D",
-      "score": 29,
-      "actual_prob": 252,
-      "reasons": [
-        "低スコア台(29点)が好調"
-      ]
-    },
-    {
       "unit_id": "3158",
-      "rank": "D",
+      "rank": "B",
       "score": 27,
       "actual_prob": 225,
       "reasons": [
@@ -77,7 +77,7 @@
     },
     {
       "unit_id": "3150",
-      "rank": "D",
+      "rank": "C",
       "score": 24,
       "actual_prob": 271,
       "reasons": [
@@ -86,7 +86,7 @@
     },
     {
       "unit_id": "3159",
-      "rank": "D",
+      "rank": "B",
       "score": 20,
       "actual_prob": 263,
       "reasons": [
@@ -95,7 +95,7 @@
     },
     {
       "unit_id": "3079",
-      "rank": "D",
+      "rank": "B",
       "score": 19,
       "actual_prob": 238,
       "reasons": [
@@ -104,7 +104,7 @@
     },
     {
       "unit_id": "3160",
-      "rank": "D",
+      "rank": "B",
       "score": 16,
       "actual_prob": 261,
       "reasons": [
@@ -113,7 +113,7 @@
     },
     {
       "unit_id": "3165",
-      "rank": "D",
+      "rank": "C",
       "score": 15,
       "actual_prob": 300,
       "reasons": [
