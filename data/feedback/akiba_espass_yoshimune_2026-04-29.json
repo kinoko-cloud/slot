@@ -4,23 +4,14 @@
   "date": "2026-04-29",
   "weekday": "水",
   "total_units": 10,
-  "hits": 1,
-  "misses": 1,
-  "surprises": 8,
-  "miss_details": [
-    {
-      "unit_id": "2010",
-      "score": 32,
-      "actual_prob": 224,
-      "reasons": [
-        "設定1域(1/224)"
-      ]
-    }
-  ],
+  "hits": 0,
+  "misses": 0,
+  "surprises": 10,
+  "miss_details": [],
   "surprise_details": [
     {
       "unit_id": "2009",
-      "rank": "B",
+      "rank": "C",
       "score": 86,
       "actual_prob": 61,
       "reasons": [
@@ -30,7 +21,7 @@
     {
       "unit_id": "2001",
       "rank": "B",
-      "score": 81,
+      "score": 83,
       "actual_prob": 81,
       "reasons": []
     },
@@ -43,17 +34,26 @@
     },
     {
       "unit_id": "2007",
-      "rank": "B",
+      "rank": "C",
       "score": 70,
       "actual_prob": 119,
       "reasons": []
     },
     {
       "unit_id": "2006",
-      "rank": "B",
+      "rank": "C",
       "score": 65,
       "actual_prob": 113,
       "reasons": []
+    },
+    {
+      "unit_id": "2003",
+      "rank": "B",
+      "score": 34,
+      "actual_prob": 131,
+      "reasons": [
+        "低スコア台(34点)が好調"
+      ]
     },
     {
       "unit_id": "2008",
@@ -65,8 +65,17 @@
       ]
     },
     {
-      "unit_id": "2002",
+      "unit_id": "2010",
       "rank": "B",
+      "score": 32,
+      "actual_prob": 224,
+      "reasons": [
+        "低スコア台(32点)が好調"
+      ]
+    },
+    {
+      "unit_id": "2002",
+      "rank": "C",
       "score": 24,
       "actual_prob": 144,
       "reasons": [
