@@ -114,7 +114,7 @@ STORES = {
         'short_name': 'エスパス歌舞伎町',
         'hall_id': '100949',
         'machine': 'sbj',
-        'units': [],  # 2026-04-29: 669-672に移動。2026-04-30: 予測精度低下のため全機種除外
+        'units': ['669', '670', '671', '672'],  # 2026-04-29: 682-685から移動
         'data_source': 'daidata',
     },
     'seibu_shinjuku_espass_sbj': {
@@ -130,7 +130,7 @@ STORES = {
         'short_name': 'エスパス秋葉原',
         'hall_id': '100928',
         'machine': 'sbj',
-        'units': [],  # 2026-04-29: 2070-2072に移動・減台。2026-04-30: 予測精度低下のため全機種除外
+        'units': ['2070', '2071', '2072'],  # 2026-04-29: 2157-2160から移動・減台
         'data_source': 'daidata',
     },
     # === 真打吉宗 ===
@@ -149,7 +149,7 @@ STORES = {
         'short_name': 'エスパス歌舞伎町',
         'hall_id': '100949',
         'machine': 'yoshimune',
-        'units': [],  # 2026-04-30: 予測精度低下のため除外
+        'units': ['682','683','684','685','686','687','688','689','690','691','692','693','694','695'],
         'data_source': 'daidata',
     },
     'akiba_espass_yoshimune': {
@@ -157,7 +157,7 @@ STORES = {
         'short_name': 'エスパス秋葉原',
         'hall_id': '100928',
         'machine': 'yoshimune',
-        'units': [],  # 2026-04-30: 予測精度低下のため除外
+        'units': ['2001','2002','2003','2004','2005','2006','2007','2008','2009','2010'],
         'data_source': 'daidata',
     },
     'seibu_shinjuku_espass_yoshimune': {
@@ -165,7 +165,7 @@ STORES = {
         'short_name': 'エスパス西武新宿',
         'hall_id': '100950',
         'machine': 'yoshimune',
-        'units': ['3111','3112','3113','3114','3115'],
+        'units': [],  # 2026-04-30: 除外
         'data_source': 'daidata',
     },
     'shibuya_espass_yoshimune': {
@@ -173,7 +173,7 @@ STORES = {
         'short_name': 'エスパス渋谷新館',
         'hall_id': '100860',
         'machine': 'yoshimune',
-        'units': ['3047','3048','3049','3050','3051','3052','3053','3090'],
+        'units': [],  # 2026-04-30: 除外
         'data_source': 'daidata',
     },
     # === ToLOVEるDARKNESS ===
@@ -196,7 +196,7 @@ STORES = {
         'short_name': 'エスパス歌舞伎町',
         'hall_id': '100949',
         'machine': 'toloveru',
-        'units': [],  # 2026-04-30: 予測精度低下のため除外
+        'units': ['1389','1390','1391'],
         'data_source': 'daidata',
     },
     'akiba_espass_toloveru': {
@@ -204,7 +204,7 @@ STORES = {
         'short_name': 'エスパス秋葉原',
         'hall_id': '100928',
         'machine': 'toloveru',
-        'units': [],  # 2026-04-30: 予測精度低下のため除外
+        'units': ['3075','3076','3077','3078','3079','3080','3081','3082','3083','3084','3085','3086','3087','3150','3151','3152','3153','3154','3155','3156','3157','3158','3159','3160','3161','3162','3163','3164','3165','3166'],
         'data_source': 'daidata',
     },
     'seibu_shinjuku_espass_toloveru': {
@@ -212,7 +212,7 @@ STORES = {
         'short_name': 'エスパス西武新宿',
         'hall_id': '100950',
         'machine': 'toloveru',
-        'units': ['3195','3196','3197'],
+        'units': [],  # 2026-04-30: 除外
         'data_source': 'daidata',
     },
     'shibuya_espass_toloveru': {
@@ -220,7 +220,7 @@ STORES = {
         'short_name': 'エスパス渋谷新館',
         'hall_id': '100860',
         'machine': 'toloveru',
-        'units': ['3010','3011','3012'],
+        'units': [],  # 2026-04-30: 除外
         'data_source': 'daidata',
     },
 }
