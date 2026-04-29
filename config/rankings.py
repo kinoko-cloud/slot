@@ -165,7 +165,7 @@ STORES = {
         'short_name': 'エスパス西武新宿',
         'hall_id': '100950',
         'machine': 'yoshimune',
-        'units': [],  # 2026-04-30: 除外
+        'units': ['3111','3112','3113','3114','3115'],
         'data_source': 'daidata',
     },
     'shibuya_espass_yoshimune': {
@@ -173,7 +173,7 @@ STORES = {
         'short_name': 'エスパス渋谷新館',
         'hall_id': '100860',
         'machine': 'yoshimune',
-        'units': [],  # 2026-04-30: 除外
+        'units': ['3047','3048','3049','3050','3051','3052','3053','3090'],
         'data_source': 'daidata',
     },
     # === ToLOVEるDARKNESS ===
@@ -212,7 +212,7 @@ STORES = {
         'short_name': 'エスパス西武新宿',
         'hall_id': '100950',
         'machine': 'toloveru',
-        'units': [],  # 2026-04-30: 除外
+        'units': ['3195','3196','3197'],
         'data_source': 'daidata',
     },
     'shibuya_espass_toloveru': {
@@ -220,7 +220,7 @@ STORES = {
         'short_name': 'エスパス渋谷新館',
         'hall_id': '100860',
         'machine': 'toloveru',
-        'units': [],  # 2026-04-30: 除外
+        'units': ['3010','3011','3012'],
         'data_source': 'daidata',
     },
 }
