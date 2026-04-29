@@ -4,47 +4,63 @@
   "date": "2026-04-29",
   "weekday": "水",
   "total_units": 8,
-  "hits": 2,
-  "misses": 0,
-  "surprises": 5,
-  "miss_details": [],
+  "hits": 1,
+  "misses": 1,
+  "surprises": 6,
+  "miss_details": [
+    {
+      "unit_id": "3051",
+      "score": 51,
+      "actual_prob": 583,
+      "reasons": [
+        "設定1域(1/583)"
+      ]
+    }
+  ],
   "surprise_details": [
+    {
+      "unit_id": "3049",
+      "rank": "B",
+      "score": 105,
+      "actual_prob": 35,
+      "reasons": [
+        "実は高設定域(1/35)"
+      ]
+    },
     {
       "unit_id": "3090",
       "rank": "B",
-      "score": 85,
+      "score": 86,
       "actual_prob": 83,
-      "reasons": []
-    },
-    {
-      "unit_id": "3052",
-      "rank": "B",
-      "score": 55,
-      "actual_prob": 153,
       "reasons": []
     },
     {
       "unit_id": "3047",
       "rank": "B",
-      "score": 54,
+      "score": 57,
+      "actual_prob": 153,
+      "reasons": []
+    },
+    {
+      "unit_id": "3052",
+      "rank": "B",
+      "score": 57,
       "actual_prob": 153,
       "reasons": []
     },
     {
       "unit_id": "3048",
       "rank": "B",
-      "score": 46,
+      "score": 48,
       "actual_prob": 175,
       "reasons": []
     },
     {
       "unit_id": "3053",
-      "rank": "C",
-      "score": 37,
+      "rank": "B",
+      "score": 40,
       "actual_prob": 228,
-      "reasons": [
-        "低スコア台(37点)が好調"
-      ]
+      "reasons": []
     }
   ]
 }
