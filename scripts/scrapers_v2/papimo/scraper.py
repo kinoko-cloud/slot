@@ -32,7 +32,7 @@ PAPIMO_STORES = {
                 'machine_id': '226030000',
                 'machine_name': 'L真打吉宗',
                 'units': ['637', '638', '650', '651', '652', '653', '655', '656', '657', '658'],
-                'expected_keywords': ['吉宗'],
+                'expected_keywords': ['真打吉宗'],
             },
             'toloveru': {
                 'machine_id': '224040005',

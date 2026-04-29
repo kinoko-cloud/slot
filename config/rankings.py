@@ -42,7 +42,7 @@ MACHINES = {
         'short_name': '真打吉宗',
         'display_name': '真打吉宗',
         'icon': '⚔️',
-        'verify_keywords': ['吉宗'],
+        'verify_keywords': ['真打吉宗'],
         # ART確率（papimoのart=AT内ゲーム当選回数）: 設定6≒1/56, 設定1≒1/191
         # 実データ中央値1/128、good判定は設定4-5相当の1/90以下
         'good_prob': 90,
