@@ -4,9 +4,36 @@
   "date": "2026-05-01",
   "weekday": "金",
   "total_units": 3,
-  "hits": 1,
-  "misses": 0,
-  "surprises": 0,
-  "miss_details": [],
-  "surprise_details": []
+  "hits": 0,
+  "misses": 2,
+  "surprises": 1,
+  "miss_details": [
+    {
+      "unit_id": "3011",
+      "score": 45,
+      "actual_prob": 226,
+      "reasons": [
+        "設定1域(1/226)"
+      ]
+    },
+    {
+      "unit_id": "3010",
+      "score": 41,
+      "actual_prob": 400,
+      "reasons": [
+        "設定1域(1/400)"
+      ]
+    }
+  ],
+  "surprise_details": [
+    {
+      "unit_id": "3012",
+      "rank": "B",
+      "score": 37,
+      "actual_prob": 276,
+      "reasons": [
+        "低スコア台(37点)が好調"
+      ]
+    }
+  ]
 }
