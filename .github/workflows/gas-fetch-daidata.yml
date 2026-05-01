@@ -1,0 +1,75 @@
+name: Fetch daidata via GAS
+
+# GAS（Google Apps Script）経由でdaidataのunit_listデータを取得
+# GASはGoogle ASNからアクセスするのでCloudFront WAFを通過できる
+
+on:
+  workflow_dispatch:
+    inputs:
+      with_history:
+        description: 'history同期も実行する'
+        type: boolean
+        default: false
+
+  schedule:
+    # 営業時間中 30分ごと: JST 10:00-22:30 = UTC 01:00-13:30
+    - cron: '0 1-13 * * *'    # JST 10:00-22:00（毎時0分）
+    - cron: '30 1-13 * * *'   # JST 10:30-22:30（毎時30分）
+    # 閉店後のhistory同期: JST 23:30 = UTC 14:30
+    - cron: '30 14 * * *'
+
+concurrency:
+  group: gas-fetch-daidata
+  cancel-in-progress: true
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Fetch daidata via GAS
+        run: |
+          python3 scripts/fetch_via_gas.py
+
+      - name: Run history sync (nightly or manual)
+        if: >
+          github.event.schedule == '30 14 * * *' ||
+          (github.event_name == 'workflow_dispatch' && github.event.inputs.with_history == 'true')
+        run: |
+          echo "閉店後history同期を実行"
+          python3 scripts/fetch_via_gas.py --history
+
+      - name: Commit and push
+        run: |
+          git config user.name "gas-fetch-bot"
+          git config user.email "gas-fetch-bot@github.com"
+          git add data/availability.json
+          git diff --staged --quiet && {
+            echo "変更なし - スキップ"
+            exit 0
+          }
+          TIMESTAMP=$(TZ='Asia/Tokyo' date +'%H:%M')
+          git commit -m "chore: GAS経由daidata更新 ${TIMESTAMP}"
+
+          # プッシュ（競合時はリトライ）
+          for i in 1 2 3; do
+            git push origin main && break
+            echo "プッシュ失敗 (試行${i}/3)、リベース再試行..."
+            git fetch origin
+            git rebase origin/main && git push origin main && break
+            git rebase --abort 2>/dev/null || true
+            git reset --hard origin/main
+            python3 scripts/fetch_via_gas.py
+            git add data/availability.json
+            git diff --staged --quiet || git commit -m "chore: GAS経由daidata更新 $(TZ='Asia/Tokyo' date +'%H:%M')"
+          done
