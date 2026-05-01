@@ -1159,40 +1159,9 @@
 
             console.log(`[リアルタイムチェック] データ年齢: ${minutesOld.toFixed(1)}分前`);
 
-            // 5分以上前なら、PythonAnywhere APIでリアルタイム取得
-            if (minutesOld > 5) {
-                console.log('[リアルタイムチェック] 5分超過 → APIコール開始');
-                await fetchRealtimeData();
-            } else {
-                console.log('[リアルタイムチェック] 5分以内 → キャッシュ使用');
-            }
         } catch (error) {
             console.error('[リアルタイムチェック] エラー:', error);
             document.getElementById('realtime-status').textContent = 'データ取得エラー';
-        }
-    }
-
-    async function fetchRealtimeData() {
-        try {
-            // PythonAnywhere APIを呼び出し
-            const apiUrl = 'https://sloproject.pythonanywhere.com/api/v2/index';
-            console.log('[API] リアルタイムデータ取得中...');
-
-            const response = await fetch(apiUrl);
-            if (!response.ok) {
-                console.error('[API] 失敗:', response.status);
-                return;
-            }
-
-            const data = await response.json();
-            console.log('[API] 取得成功:', data);
-            console.log('[API] キャッシュヒット:', data.cache_hit, 'キャッシュ年齢:', data.cache_age_seconds, '秒');
-
-            // TODO: データをページに反映（将来の実装）
-            // 現時点では、次回ページリロード時に最新データが表示される
-
-        } catch (error) {
-            console.error('[API] エラー:', error);
         }
     }
 
