@@ -115,11 +115,11 @@
             </div>
             <div class="realtime-bar">
                 <span id="realtime-status" class="realtime-status">読込中...</span>
-                <button onclick="refreshData()" class="refresh-btn">🔄 更新</button>
+                <span class="auto-update-notice">30分ごと自動更新</span>
             </div>
             {% if is_data_stale %}
             <div class="stale-warning-banner">
-                ⚠️ {{ data_stale_reason }} - 自動更新を待つか、🔄更新ボタンを押してください
+                ⚠️ {{ data_stale_reason }}
             </div>
             {% endif %}
         </header>
