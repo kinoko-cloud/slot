@@ -47,100 +47,11 @@ jobs:
         run: |
           pip install flask jinja2 requests
 
-      - name: Check data freshness and fetch if needed
-        id: check_data
-        env:
-          TZ: Asia/Tokyo
-        run: |
-          python3 << 'EOF'
-          import json
-          import sys
-          from datetime import datetime, timedelta, timezone
-          from pathlib import Path
-
-          JST = timezone(timedelta(hours=9))
-          now = datetime.now(JST)
-          
-          # 営業時間チェック（10:00-22:45 JST）
-          is_business_hours = 10 <= now.hour < 23
-          
-          # availability.jsonの更新時刻を確認
-          avail_path = Path('data/availability.json')
-          if not avail_path.exists():
-              print("NEEDS_FETCH=true")
-              sys.exit(0)
-          
-          with open(avail_path) as f:
-              data = json.load(f)
-          
-          fetched_at = data.get('fetched_at', '')
-          if not fetched_at:
-              print("NEEDS_FETCH=true")
-              sys.exit(0)
-          
-          fetched_time = datetime.fromisoformat(fetched_at)
-          age_minutes = (now - fetched_time).total_seconds() / 60
-          print(f"Data age: {age_minutes:.0f} minutes")
-          
-          # 営業時間中で45分以上古い場合は再取得
-          if is_business_hours and age_minutes > 45:
-              print("NEEDS_FETCH=true")
-          else:
-              print("NEEDS_FETCH=false")
-          EOF
-
-          # 結果を取得
-          if python3 -c "
-          import json
-          from datetime import datetime, timedelta, timezone
-          from pathlib import Path
-
-          JST = timezone(timedelta(hours=9))
-          now = datetime.now(JST)
-          is_business_hours = 10 <= now.hour < 23
-
-          avail_path = Path('data/availability.json')
-          if not avail_path.exists():
-              exit(0)
-
-          with open(avail_path) as f:
-              data = json.load(f)
-          
-          fetched_at = data.get('fetched_at', '')
-          if not fetched_at:
-              exit(0)
-          
-          fetched_time = datetime.fromisoformat(fetched_at)
-          age_minutes = (now - fetched_time).total_seconds() / 60
-          
-          if is_business_hours and age_minutes > 45:
-              exit(0)
-          else:
-              exit(1)
-          "; then
-            echo "needs_fetch=true" >> $GITHUB_OUTPUT
-          else
-            echo "needs_fetch=false" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Install Playwright (if fetch needed)
-        if: steps.check_data.outputs.needs_fetch == 'true'
-        run: |
-          pip install 'playwright==1.49.1'
-          playwright install chromium
-          playwright install-deps chromium
-
-      - name: Fetch fresh data
-        if: steps.check_data.outputs.needs_fetch == 'true'
-        run: |
-          echo "🔄 Data is stale, fetching fresh data..."
-          # v2スクレイパー（順次実行でメモリ節約）
-          echo "=== SBJ店舗取得 ==="
-          timeout 300 python scripts/scrapers_v2/fetch_all.py --sbj-only || echo "⚠️ SBJ fetch failed"
-          echo "=== 真打吉宗店舗取得 ==="
-          timeout 300 python scripts/scrapers_v2/fetch_all.py --yoshimune-only || echo "⚠️ Yoshitsune fetch failed"
-          echo "=== ToLOVEる店舗取得 ==="
-          timeout 300 python scripts/scrapers_v2/fetch_all.py --toloveru-only || echo "⚠️ ToLOVEru fetch failed"
+      # Note: daidata (goraggio.com) is blocked by CloudFront WAF for all datacenter IPs
+      # including GitHub Actions (Azure) and VPN Gate (academic). Fetching is handled
+      # exclusively by local-cron on a residential Japanese IP (scripts/local_daidata_cron.sh).
+      # papimo data is fetched by papimo-fetch.yml.
+      # This workflow only generates HTML from existing data.
 
       - name: Generate static site
         run: |
