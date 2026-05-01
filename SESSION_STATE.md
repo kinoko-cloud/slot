@@ -114,24 +114,56 @@
 - `git push --force` を廃止（他のコミットを上書きする問題があった）
 - JSONスマートマージ（rebase失敗時: data/とdocs/のJSONファイルを intelligentにマージ）
 
+### ✅ 2026-05-01 完了: GAS経由daidataを全自動化
+
+#### 背景
+CloudFront WAFが住宅系IP以外をすべてブロック。GitHub Actions（AWS IP）からは永久に取得不可。
+
+#### 解決策: GAS（Google Apps Script）経由
+- **新発見**: Google AS15169（GAS）はCloudFront WAFを通過できる（302返却確認）
+- **仕組み**: unit_listページはサーバーサイドレンダリング。規約同意のクッキーフロー（4ステップ）で取得可能
+
+#### 実装済みファイル
+| ファイル | 役割 |
+|---------|------|
+| `gas/availability.gs` | GAS Webアプリ本体（新関数追加）|
+| `scripts/fetch_via_gas.py` | GASエンドポイントを呼び出してavailability.json更新 |
+| `.github/workflows/gas-fetch-daidata.yml` | 30分おきに自動実行 |
+
+#### GAS Webアプリのエンドポイント
+- `?action=scrape_daidata` → 全9エスパス店舗のunit_listを一括取得
+- `?action=scrape_store&hall_id=...&model=...` → 特定店舗テスト用
+- Deployment ID: `AKfycbxHxySh9QZlooJ9wi5XG_XytFzBGPJl2W3--GBdKApfEdeEiw2B9BlCKMilKP2JuR0n`
+
+#### 取得データ（unit_listから）
+- unit_id, playing(遊技中/空き), total_start(累計G), bb, rb, art, max_medals, final_start(ハマり)
+- **取得できないもの**: diff_medals（差枚）、per-hit history（大当たり履歴）
+- → diff_medals/historyはローカルcronが詳細ページから取得する
+
+#### スケジュール
+- GitHub Actions `gas-fetch-daidata.yml`: 毎時0分・30分（JST 10:00-22:30）+ 23:30にhistory同期
+- ローカルcron: 毎時30分（JST 01:30-14:30）→ 補完的に実行（detail page + history）
+
 ### 🎯 次にやること
-1. **papimo-fetch.ymlを再開（任意）**
+1. **ローカルcronとGAS取得の競合確認**
+   - ローカルcronとGitHub Actionsが同時プッシュして競合しないか確認
+   - local_daidata_cron.shのスマートマージロジックが競合を解決するはず
+2. **papimo-fetch.ymlを再開（任意）**
    - アイランド秋葉原のデータ取得をGitHub Actions経由で再開可能
    - `gh workflow enable papimo-fetch.yml`
-2. **crontabが正常動作しているか確認**
-   - `/tmp/slot_local_cron.log` でログ確認
-   - data/availability.jsonのfetched_atが毎時30分頃に更新されているか確認
-3. **デザイン実験の差し戻し** 
-   - 必要なら `docs/test/frontend_design_preview.html` を確認
+3. **diff_medals取得の実現（将来）**
+   - GASからdetail pageも取得する実装（現状はunit_listのみ）
+   - 1台ずつ取得するため時間がかかる（GAS 6分制限に注意）
 
 ---
 
 ## 重要情報
 
 ### システム構成（2026-05-01更新）
-- **データ取得 (daidata/エスパス)**: ローカルcron専任 `scripts/local_daidata_cron.sh`（住宅系JP IP必須）
+- **データ取得 (daidata/エスパス) メイン**: GitHub Actions `gas-fetch-daidata.yml`（GAS経由、30分おき）★NEW
+- **データ取得 (daidata/エスパス) 補完**: ローカルcron `scripts/local_daidata_cron.sh`（詳細ページ+history）
 - **データ取得 (papimo/アイランド)**: GitHub Actions `papimo-fetch.yml`（一時停止中）
-- **HTML生成**: GitHub Actions `deploy-static.yml`（データ取得は一切しない、HTML生成のみ）
+- **HTML生成**: GitHub Actions `deploy-static.yml`（availability.json更新を検知して自動実行）
 - **サイト**: Cloudflare Pages（`docs/`ディレクトリから自動デプロイ）
 - **リポジトリ**: `kinoko-cloud/slot`
 
