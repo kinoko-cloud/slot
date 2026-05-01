@@ -9,16 +9,13 @@ jobs:
     timeout-minutes: 15
 
     steps:
-      - name: Confirm baseline (direct = 403)
-        run: |
-          CODE=$(curl -sf -o /dev/null -w "%{http_code}" --max-time 8 \
-            -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" \
-            "https://daidata.goraggio.com/100949/unit_list?model=225010000&ballPrice=21.70&ps=S" 2>/dev/null || echo "000")
-          echo "Baseline (GitHub Actions IP): $CODE"
-
-      - name: Collect JP proxies from multiple sources
+      - name: Install dependencies
         run: |
           pip install requests 2>/dev/null | tail -1
+          sudo apt-get install -y tor proxychains4 2>&1 | tail -3
+
+      - name: Collect JP proxies from diverse sources
+        run: |
           python3 << 'EOF'
           import requests, json, time
           from pathlib import Path
@@ -26,90 +23,105 @@ jobs:
           proxies = []
           seen = set()
 
-          def add_proxy(ip, port, proto):
-              key = f"{ip}:{port}"
-              if key not in seen:
-                  seen.add(key)
+          def add(ip, port, proto='http'):
+              k = f"{ip}:{port}"
+              if k not in seen:
+                  seen.add(k)
                   proxies.append({"ip": ip, "port": int(port), "proto": proto})
 
-          # Source 1: proxyscrape JP
+          # Source 1: proxyscrape HTTP JP
           try:
               r = requests.get(
                   "https://api.proxyscrape.com/v3/free-proxy-list/get"
                   "?request=displayproxies&country=jp&timeout=5000&proxy_format=ipport&format=text",
                   timeout=10)
               for line in r.text.strip().split('\n'):
-                  parts = line.strip().split(':')
-                  if len(parts) == 2:
-                      add_proxy(parts[0], parts[1], 'http')
-              print(f"proxyscrape: {len(proxies)} so far")
-          except Exception as e:
-              print(f"proxyscrape failed: {e}")
+                  p = line.strip().split(':')
+                  if len(p)==2: add(p[0], p[1], 'http')
+              print(f"proxyscrape HTTP: {len(proxies)}")
+          except Exception as e: print(f"  err: {e}")
 
-          # Source 2: geonode JP http
+          # Source 2: proxyscrape SOCKS5 JP
+          try:
+              r = requests.get(
+                  "https://api.proxyscrape.com/v3/free-proxy-list/get"
+                  "?request=displayproxies&country=jp&protocol=socks5&timeout=5000&proxy_format=ipport&format=text",
+                  timeout=10)
+              for line in r.text.strip().split('\n'):
+                  p = line.strip().split(':')
+                  if len(p)==2: add(p[0], p[1], 'socks5')
+              print(f"proxyscrape SOCKS5: {len(proxies)}")
+          except Exception as e: print(f"  err: {e}")
+
+          # Source 3: proxyscrape SOCKS4 JP
+          try:
+              r = requests.get(
+                  "https://api.proxyscrape.com/v3/free-proxy-list/get"
+                  "?request=displayproxies&country=jp&protocol=socks4&timeout=5000&proxy_format=ipport&format=text",
+                  timeout=10)
+              for line in r.text.strip().split('\n'):
+                  p = line.strip().split(':')
+                  if len(p)==2: add(p[0], p[1], 'socks4')
+              print(f"proxyscrape SOCKS4: {len(proxies)}")
+          except Exception as e: print(f"  err: {e}")
+
+          # Source 4: geonode JP (all protocols)
           try:
               r = requests.get(
                   "https://proxylist.geonode.com/api/proxy-list"
                   "?limit=100&page=1&sort_by=lastChecked&sort_type=desc&country=JP",
                   timeout=10, headers={"User-Agent": "Mozilla/5.0"})
-              data = r.json()
-              for p in data.get('data', []):
+              for p in r.json().get('data', []):
                   for proto in p.get('protocols', ['http']):
-                      add_proxy(p['ip'], p['port'], proto.lower())
-              print(f"geonode: {len(proxies)} so far")
-          except Exception as e:
-              print(f"geonode failed: {e}")
+                      add(p['ip'], p['port'], proto.lower())
+              print(f"geonode: {len(proxies)}")
+          except Exception as e: print(f"  err: {e}")
 
-          # Source 3: spys.me JP
-          try:
-              r = requests.get("https://spys.me/proxy.txt", timeout=10,
-                               headers={"User-Agent": "Mozilla/5.0"})
-              for line in r.text.split('\n'):
-                  if not line or line.startswith('#'):
-                      continue
-                  parts = line.strip().split()
-                  if len(parts) >= 2 and parts[1] == 'JP':
-                      ip_port = parts[0].split(':')
-                      if len(ip_port) == 2:
-                          add_proxy(ip_port[0], ip_port[1], 'http')
-              print(f"spys.me: {len(proxies)} so far")
-          except Exception as e:
-              print(f"spys.me failed: {e}")
+          # Source 5: github proxy lists (JP only)
+          import re
+          for url in [
+              "https://raw.githubusercontent.com/monosans/proxy-list/main/proxies/http.txt",
+              "https://raw.githubusercontent.com/monosans/proxy-list/main/proxies/socks5.txt",
+              "https://raw.githubusercontent.com/hookzof/socks5_list/master/proxy.txt",
+              "https://raw.githubusercontent.com/TheSpeedX/PROXY-List/master/socks5.txt",
+          ]:
+              try:
+                  r = requests.get(url, timeout=10)
+                  for line in r.text.strip().split('\n')[:2000]:
+                      p = re.sub(r'\s.*', '', line.strip()).split(':')
+                      if len(p)==2 and p[0] and p[1].isdigit():
+                          proto = 'socks5' if 'socks5' in url else ('socks4' if 'socks4' in url else 'http')
+                          add(p[0], p[1], proto)
+                  print(f"  {url.split('/')[-1]}: {len(proxies)}")
+              except Exception as e: print(f"  {url.split('/')[-1]} err: {e}")
 
-          # Source 4: free-proxy-list.net style (via raw)
-          try:
-              r = requests.get(
-                  "https://raw.githubusercontent.com/TheSpeedX/PROXY-List/master/http.txt",
-                  timeout=10)
-              # We'll filter by JP later via IP lookup
-              for line in r.text.strip().split('\n')[:500]:
-                  parts = line.strip().split(':')
-                  if len(parts) == 2:
-                      add_proxy(parts[0], parts[1], 'http')
-              print(f"TheSpeedX: {len(proxies)} so far (includes non-JP, will filter)")
-          except Exception as e:
-              print(f"TheSpeedX failed: {e}")
-
-          print(f"\nTotal collected: {len(proxies)}")
-          Path('/tmp/proxies.json').write_text(json.dumps(proxies))
+          print(f"\nTotal collected (not yet JP-filtered): {len(proxies)}")
+          Path('/tmp/proxies_all.json').write_text(json.dumps(proxies))
           EOF
 
-      - name: Test proxies and find working JP ones
+      - name: Filter to JP proxies by GeoIP and test
         run: |
           python3 << 'EOF'
-          import json, subprocess, concurrent.futures, time, urllib.request
+          import json, subprocess, concurrent.futures, urllib.request, time
           from pathlib import Path
 
-          proxies = json.loads(Path('/tmp/proxies.json').read_text())
+          proxies_all = json.loads(Path('/tmp/proxies_all.json').read_text())
           TARGET = "https://daidata.goraggio.com/100949/unit_list?model=225010000&ballPrice=21.70&ps=S"
           UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
 
-          def get_asn(ip):
+          # Quick check if proxy is in JP and get ASN
+          asn_cache = {}
+          def check_ip(ip):
+              if ip in asn_cache:
+                  return asn_cache[ip]
               try:
-                  r = urllib.request.urlopen(f"https://ipinfo.io/{ip}/org", timeout=3)
-                  return r.read().decode().strip()
+                  r = urllib.request.urlopen(f"https://ipinfo.io/{ip}/json", timeout=3)
+                  d = json.loads(r.read())
+                  result = {'country': d.get('country', ''), 'org': d.get('org', ''), 'ip': ip}
               except:
-                  return "unknown"
+                  result = {'country': '', 'org': '', 'ip': ip}
+              asn_cache[ip] = result
+              return result
 
           def test_proxy(p):
               ip, port, proto = p['ip'], p['port'], p['proto']
@@ -120,89 +132,114 @@ jobs:
                        '--max-time', '8', '--proxy', proxy_url,
                        '-H', f'User-Agent: {UA}', TARGET],
                       capture_output=True, text=True, timeout=12)
-                  code = result.stdout.strip()
-                  return ip, port, proto, code
-              except Exception as e:
+                  return ip, port, proto, result.stdout.strip()
+              except:
                   return ip, port, proto, '000'
 
+          # First, quickly check IPs to find JP ones (batch lookup)
+          print(f"Pre-filtering {len(proxies_all)} proxies for JP...")
+          jp_proxies = []
+
+          # Check unique IPs in parallel
+          unique_ips = list({p['ip'] for p in proxies_all})
+          print(f"  Checking {len(unique_ips)} unique IPs...")
+          with concurrent.futures.ThreadPoolExecutor(max_workers=50) as ex:
+              futures = {ex.submit(check_ip, ip): ip for ip in unique_ips[:500]}
+              for f in concurrent.futures.as_completed(futures):
+                  info = f.result()
+                  if info.get('country') == 'JP':
+                      asn_cache[info['ip']] = info
+
+          jp_ips = {ip for ip, info in asn_cache.items() if info.get('country') == 'JP'}
+          jp_proxies = [p for p in proxies_all if p['ip'] in jp_ips]
+
+          print(f"  JP proxies found: {len(jp_proxies)}")
+          print(f"  JP ASNs: {sorted(set(asn_cache.get(p['ip'],{}).get('org','?') for p in jp_proxies))[:15]}")
+
+          if not jp_proxies:
+              print("  No JP proxies found! Using all proxies...")
+              jp_proxies = proxies_all[:200]
+
+          print(f"\nTesting {len(jp_proxies)} JP proxies...")
           results = {'302': [], '200': [], '403': [], 'other': []}
-          total = len(proxies)
-          print(f"Testing {total} proxies (parallel, 30 workers)...")
 
           with concurrent.futures.ThreadPoolExecutor(max_workers=30) as ex:
-              futures = {ex.submit(test_proxy, p): p for p in proxies}
+              futures = {ex.submit(test_proxy, p): p for p in jp_proxies}
               done = 0
               for future in concurrent.futures.as_completed(futures):
                   ip, port, proto, code = future.result()
                   done += 1
+                  asn = asn_cache.get(ip, {}).get('org', '?')
                   if code in ('302', '200'):
-                      print(f"  ✅ {code} via {proto}://{ip}:{port} — checking ASN...")
-                      asn = get_asn(ip)
-                      results[code].append({'ip': ip, 'port': port, 'proto': proto, 'asn': asn})
+                      print(f"\n  ✅ HTTP {code} via {proto}://{ip}:{port}")
                       print(f"     ASN: {asn}")
+                      results[code].append({'ip': ip, 'port': port, 'proto': proto, 'asn': asn})
                   elif code == '403':
-                      results['403'].append(f"{ip}:{port}")
-                  if done % 50 == 0:
-                      print(f"  Progress: {done}/{total} tested, {len(results['302'])+len(results['200'])} working")
+                      results['403'].append({'ip': ip, 'asn': asn})
+                  if done % 20 == 0:
+                      print(f"  Progress: {done}/{len(jp_proxies)}, working: {len(results['302'])+len(results['200'])}")
 
           print("\n" + "="*60)
-          print("RESULTS SUMMARY")
+          print("RESULTS")
           print("="*60)
-          working = results['302'] + results['200']
-          if working:
-              print(f"\n✅ WORKING PROXIES ({len(working)} found):")
-              for p in working:
-                  print(f"  {p['proto']}://{p['ip']}:{p['port']} → HTTP {[k for k,v in results.items() if any(x['ip']==p['ip'] for x in v if isinstance(x,dict))][0]}")
-                  print(f"  ASN: {p['asn']}")
-          else:
-              print("\n❌ No working proxies found in this batch")
 
-          print(f"\nStats: {len(results['302'])} got 302, {len(results['200'])} got 200, {len(results['403'])} got 403, rest failed")
-          Path('/tmp/results.json').write_text(json.dumps(results))
+          working = results['302'] + results['200']
+          print(f"\nWorking: {len(working)}")
+          for p in working:
+              print(f"  ✅ {p['proto']}://{p['ip']}:{p['port']} | {p['asn']}")
+
+          print(f"\nBlocked (403): {len(results['403'])}")
+          print("Blocked ASNs:")
+          from collections import Counter
+          blocked_asns = Counter(p['asn'].split(' ')[0] if p.get('asn') else '?' for p in results['403'])
+          for asn, count in blocked_asns.most_common(10):
+              print(f"  {asn}: {count}")
+
+          Path('/tmp/results2.json').write_text(json.dumps(results))
           EOF
 
-      - name: Also test Cloudflare Worker proxy feasibility
+      - name: Try Tor with JP exit node specifically
         run: |
-          echo "=== Testing Cloudflare edge IPs ==="
-          # Check if any Cloudflare JP edge IP bypasses the WAF
-          # Cloudflare JP IPs are in 103.21.244.0/22, 103.22.200.0/22, etc.
-          for IP in 103.21.244.1 103.22.200.1 2400:cb00:2048:1::681b:8e14; do
-            echo -n "  Cloudflare edge $IP: "
-            curl -sf -o /dev/null -w "%{http_code}" --max-time 5 \
-              --resolve "daidata.goraggio.com:443:$IP" \
-              -H "User-Agent: Mozilla/5.0" \
-              "https://daidata.goraggio.com/100949/unit_list?model=225010000&ballPrice=21.70&ps=S" 2>/dev/null || echo "000"
+          # Configure Tor to prefer JP exit nodes
+          sudo bash -c 'cat >> /etc/tor/torrc << "TORRC"
+          ExitNodes {JP}
+          StrictNodes 1
+          TORRC'
+          sudo service tor restart 2>/dev/null || sudo killall tor 2>/dev/null; sudo tor --RunAsDaemon 1 --SocksPort 9050 --DataDirectory /tmp/tor2 --ExitNodes "{JP}" --StrictNodes 1 2>/dev/null &
+          echo "Waiting 20s for Tor with JP exit..."
+          sleep 20
+
+          for attempt in 1 2 3; do
+            CODE=$(curl -sf -o /dev/null -w "%{http_code}" --max-time 15 \
+              --socks5-hostname 127.0.0.1:9050 \
+              -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" \
+              "https://daidata.goraggio.com/100949/unit_list?model=225010000&ballPrice=21.70&ps=S" 2>/dev/null || echo "000")
+            TOR_IP=$(curl -sf --max-time 10 --socks5-hostname 127.0.0.1:9050 "https://ipinfo.io/json" 2>/dev/null \
+              | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('ip'), d.get('org'), d.get('country'))" 2>/dev/null || echo "?")
+            echo "Attempt $attempt: HTTP $CODE via $TOR_IP"
+            [ "$CODE" = "302" ] && echo "✅ TOR JP EXIT WORKS!" && break
+            [ "$CODE" = "403" ] && echo "❌ TOR JP EXIT BLOCKED"
+            sleep 5
           done
 
-      - name: Test with curl's --interface to test different source behaviors
+      - name: Test free cloud services with non-AWS IPs
         run: |
-          echo "=== GitHub Actions runner IP info ==="
-          curl -s --max-time 5 "https://ipinfo.io/json" | python3 -c "
-          import sys,json
-          d=json.load(sys.stdin)
-          print('IP:', d.get('ip'))
-          print('Org:', d.get('org'))
-          print('Country:', d.get('country'))
-          print('Region:', d.get('region'))
-          "
+          echo "=== Testing via various free relay services ==="
 
-      - name: Try Tor exit nodes (if available)
-        run: |
-          echo "=== Installing Tor ==="
-          sudo apt-get install -y tor 2>&1 | tail -3
-          sudo service tor start 2>/dev/null || sudo tor --RunAsDaemon 1 --SocksPort 9050 --DataDirectory /tmp/tor 2>/dev/null &
-          sleep 10
-
-          echo "=== Testing via Tor SOCKS5 (port 9050) ==="
-          CODE=$(curl -sf -o /dev/null -w "%{http_code}" --max-time 15 \
-            --socks5 127.0.0.1:9050 \
-            -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" \
-            "https://daidata.goraggio.com/100949/unit_list?model=225010000&ballPrice=21.70&ps=S" 2>/dev/null || echo "000")
-          echo "HTTP status via Tor: $CODE"
-
-          TOR_IP=$(curl -sf --max-time 10 --socks5 127.0.0.1:9050 "https://ipinfo.io/json" 2>/dev/null \
-            | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('ip'), d.get('org'), d.get('country'))" 2>/dev/null || echo "unknown")
-          echo "Tor exit node: $TOR_IP"
+          # Test if any free HTTP relay/proxy APIs work
+          # cors-anywhere style
+          for RELAY in \
+            "https://thingproxy.freeboard.io/fetch/" \
+            "https://cors.eu.org/" \
+            "https://api.allorigins.win/raw?url=" \
+          ; do
+            echo -n "Testing relay $RELAY: "
+            TARGET_ENC="https%3A%2F%2Fdaidata.goraggio.com%2F100949%2Funit_list%3Fmodel%3D225010000%26ballPrice%3D21.70%26ps%3DS"
+            CODE=$(curl -sf -o /dev/null -w "%{http_code}" --max-time 10 \
+              -H "User-Agent: Mozilla/5.0" \
+              "${RELAY}${TARGET_ENC}" 2>/dev/null || echo "000")
+            echo "$CODE"
+          done
 
       - name: Final summary
         run: |
@@ -211,16 +248,23 @@ jobs:
           from pathlib import Path
 
           try:
-              results = json.loads(Path('/tmp/results.json').read_text())
+              results = json.loads(Path('/tmp/results2.json').read_text())
               working = results.get('302', []) + results.get('200', [])
+              blocked = results.get('403', [])
+              print(f"Working: {len(working)}, Blocked (403): {len(blocked)}")
               if working:
-                  print("✅ FOUND WORKING PROXIES:")
+                  print("\n✅ WORKING PROXIES:")
                   for p in working:
                       print(f"  {p['proto']}://{p['ip']}:{p['port']} | ASN: {p.get('asn','?')}")
-                  print("\nNext step: Use one of these as HTTPS_PROXY in GitHub Actions")
+                  print("\n→ Implement: use one of these as HTTPS_PROXY in GitHub Actions fetch workflow")
               else:
-                  print("❌ No working proxies found in this batch")
-                  print("ASNs tested that got 403 (blocked):")
-          except:
-              pass
+                  print("\n❌ No working proxies found")
+                  if blocked:
+                      print("\nBlocked ASNs (these are NOT viable):")
+                      from collections import Counter
+                      asn_counter = Counter(p.get('asn','?') for p in blocked)
+                      for asn, n in asn_counter.most_common(10):
+                          print(f"  {asn}: {n}x")
+          except Exception as e:
+              print(f"Summary error: {e}")
           EOF
