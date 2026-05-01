@@ -1,0 +1,226 @@
+name: Hunt JP proxy that bypasses CloudFront WAF
+
+on:
+  workflow_dispatch:
+
+jobs:
+  hunt:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Confirm baseline (direct = 403)
+        run: |
+          CODE=$(curl -sf -o /dev/null -w "%{http_code}" --max-time 8 \
+            -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" \
+            "https://daidata.goraggio.com/100949/unit_list?model=225010000&ballPrice=21.70&ps=S" 2>/dev/null || echo "000")
+          echo "Baseline (GitHub Actions IP): $CODE"
+
+      - name: Collect JP proxies from multiple sources
+        run: |
+          pip install requests 2>/dev/null | tail -1
+          python3 << 'EOF'
+          import requests, json, time
+          from pathlib import Path
+
+          proxies = []
+          seen = set()
+
+          def add_proxy(ip, port, proto):
+              key = f"{ip}:{port}"
+              if key not in seen:
+                  seen.add(key)
+                  proxies.append({"ip": ip, "port": int(port), "proto": proto})
+
+          # Source 1: proxyscrape JP
+          try:
+              r = requests.get(
+                  "https://api.proxyscrape.com/v3/free-proxy-list/get"
+                  "?request=displayproxies&country=jp&timeout=5000&proxy_format=ipport&format=text",
+                  timeout=10)
+              for line in r.text.strip().split('\n'):
+                  parts = line.strip().split(':')
+                  if len(parts) == 2:
+                      add_proxy(parts[0], parts[1], 'http')
+              print(f"proxyscrape: {len(proxies)} so far")
+          except Exception as e:
+              print(f"proxyscrape failed: {e}")
+
+          # Source 2: geonode JP http
+          try:
+              r = requests.get(
+                  "https://proxylist.geonode.com/api/proxy-list"
+                  "?limit=100&page=1&sort_by=lastChecked&sort_type=desc&country=JP",
+                  timeout=10, headers={"User-Agent": "Mozilla/5.0"})
+              data = r.json()
+              for p in data.get('data', []):
+                  for proto in p.get('protocols', ['http']):
+                      add_proxy(p['ip'], p['port'], proto.lower())
+              print(f"geonode: {len(proxies)} so far")
+          except Exception as e:
+              print(f"geonode failed: {e}")
+
+          # Source 3: spys.me JP
+          try:
+              r = requests.get("https://spys.me/proxy.txt", timeout=10,
+                               headers={"User-Agent": "Mozilla/5.0"})
+              for line in r.text.split('\n'):
+                  if not line or line.startswith('#'):
+                      continue
+                  parts = line.strip().split()
+                  if len(parts) >= 2 and parts[1] == 'JP':
+                      ip_port = parts[0].split(':')
+                      if len(ip_port) == 2:
+                          add_proxy(ip_port[0], ip_port[1], 'http')
+              print(f"spys.me: {len(proxies)} so far")
+          except Exception as e:
+              print(f"spys.me failed: {e}")
+
+          # Source 4: free-proxy-list.net style (via raw)
+          try:
+              r = requests.get(
+                  "https://raw.githubusercontent.com/TheSpeedX/PROXY-List/master/http.txt",
+                  timeout=10)
+              # We'll filter by JP later via IP lookup
+              for line in r.text.strip().split('\n')[:500]:
+                  parts = line.strip().split(':')
+                  if len(parts) == 2:
+                      add_proxy(parts[0], parts[1], 'http')
+              print(f"TheSpeedX: {len(proxies)} so far (includes non-JP, will filter)")
+          except Exception as e:
+              print(f"TheSpeedX failed: {e}")
+
+          print(f"\nTotal collected: {len(proxies)}")
+          Path('/tmp/proxies.json').write_text(json.dumps(proxies))
+          EOF
+
+      - name: Test proxies and find working JP ones
+        run: |
+          python3 << 'EOF'
+          import json, subprocess, concurrent.futures, time, urllib.request
+          from pathlib import Path
+
+          proxies = json.loads(Path('/tmp/proxies.json').read_text())
+          TARGET = "https://daidata.goraggio.com/100949/unit_list?model=225010000&ballPrice=21.70&ps=S"
+          UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+
+          def get_asn(ip):
+              try:
+                  r = urllib.request.urlopen(f"https://ipinfo.io/{ip}/org", timeout=3)
+                  return r.read().decode().strip()
+              except:
+                  return "unknown"
+
+          def test_proxy(p):
+              ip, port, proto = p['ip'], p['port'], p['proto']
+              proxy_url = f"{proto}://{ip}:{port}"
+              try:
+                  result = subprocess.run(
+                      ['curl', '-sf', '-o', '/dev/null', '-w', '%{http_code}',
+                       '--max-time', '8', '--proxy', proxy_url,
+                       '-H', f'User-Agent: {UA}', TARGET],
+                      capture_output=True, text=True, timeout=12)
+                  code = result.stdout.strip()
+                  return ip, port, proto, code
+              except Exception as e:
+                  return ip, port, proto, '000'
+
+          results = {'302': [], '200': [], '403': [], 'other': []}
+          total = len(proxies)
+          print(f"Testing {total} proxies (parallel, 30 workers)...")
+
+          with concurrent.futures.ThreadPoolExecutor(max_workers=30) as ex:
+              futures = {ex.submit(test_proxy, p): p for p in proxies}
+              done = 0
+              for future in concurrent.futures.as_completed(futures):
+                  ip, port, proto, code = future.result()
+                  done += 1
+                  if code in ('302', '200'):
+                      print(f"  ✅ {code} via {proto}://{ip}:{port} — checking ASN...")
+                      asn = get_asn(ip)
+                      results[code].append({'ip': ip, 'port': port, 'proto': proto, 'asn': asn})
+                      print(f"     ASN: {asn}")
+                  elif code == '403':
+                      results['403'].append(f"{ip}:{port}")
+                  if done % 50 == 0:
+                      print(f"  Progress: {done}/{total} tested, {len(results['302'])+len(results['200'])} working")
+
+          print("\n" + "="*60)
+          print("RESULTS SUMMARY")
+          print("="*60)
+          working = results['302'] + results['200']
+          if working:
+              print(f"\n✅ WORKING PROXIES ({len(working)} found):")
+              for p in working:
+                  print(f"  {p['proto']}://{p['ip']}:{p['port']} → HTTP {[k for k,v in results.items() if any(x['ip']==p['ip'] for x in v if isinstance(x,dict))][0]}")
+                  print(f"  ASN: {p['asn']}")
+          else:
+              print("\n❌ No working proxies found in this batch")
+
+          print(f"\nStats: {len(results['302'])} got 302, {len(results['200'])} got 200, {len(results['403'])} got 403, rest failed")
+          Path('/tmp/results.json').write_text(json.dumps(results))
+          EOF
+
+      - name: Also test Cloudflare Worker proxy feasibility
+        run: |
+          echo "=== Testing Cloudflare edge IPs ==="
+          # Check if any Cloudflare JP edge IP bypasses the WAF
+          # Cloudflare JP IPs are in 103.21.244.0/22, 103.22.200.0/22, etc.
+          for IP in 103.21.244.1 103.22.200.1 2400:cb00:2048:1::681b:8e14; do
+            echo -n "  Cloudflare edge $IP: "
+            curl -sf -o /dev/null -w "%{http_code}" --max-time 5 \
+              --resolve "daidata.goraggio.com:443:$IP" \
+              -H "User-Agent: Mozilla/5.0" \
+              "https://daidata.goraggio.com/100949/unit_list?model=225010000&ballPrice=21.70&ps=S" 2>/dev/null || echo "000"
+          done
+
+      - name: Test with curl's --interface to test different source behaviors
+        run: |
+          echo "=== GitHub Actions runner IP info ==="
+          curl -s --max-time 5 "https://ipinfo.io/json" | python3 -c "
+          import sys,json
+          d=json.load(sys.stdin)
+          print('IP:', d.get('ip'))
+          print('Org:', d.get('org'))
+          print('Country:', d.get('country'))
+          print('Region:', d.get('region'))
+          "
+
+      - name: Try Tor exit nodes (if available)
+        run: |
+          echo "=== Installing Tor ==="
+          sudo apt-get install -y tor 2>&1 | tail -3
+          sudo service tor start 2>/dev/null || sudo tor --RunAsDaemon 1 --SocksPort 9050 --DataDirectory /tmp/tor 2>/dev/null &
+          sleep 10
+
+          echo "=== Testing via Tor SOCKS5 (port 9050) ==="
+          CODE=$(curl -sf -o /dev/null -w "%{http_code}" --max-time 15 \
+            --socks5 127.0.0.1:9050 \
+            -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" \
+            "https://daidata.goraggio.com/100949/unit_list?model=225010000&ballPrice=21.70&ps=S" 2>/dev/null || echo "000")
+          echo "HTTP status via Tor: $CODE"
+
+          TOR_IP=$(curl -sf --max-time 10 --socks5 127.0.0.1:9050 "https://ipinfo.io/json" 2>/dev/null \
+            | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('ip'), d.get('org'), d.get('country'))" 2>/dev/null || echo "unknown")
+          echo "Tor exit node: $TOR_IP"
+
+      - name: Final summary
+        run: |
+          python3 << 'EOF'
+          import json
+          from pathlib import Path
+
+          try:
+              results = json.loads(Path('/tmp/results.json').read_text())
+              working = results.get('302', []) + results.get('200', [])
+              if working:
+                  print("✅ FOUND WORKING PROXIES:")
+                  for p in working:
+                      print(f"  {p['proto']}://{p['ip']}:{p['port']} | ASN: {p.get('asn','?')}")
+                  print("\nNext step: Use one of these as HTTPS_PROXY in GitHub Actions")
+              else:
+                  print("❌ No working proxies found in this batch")
+                  print("ASNs tested that got 403 (blocked):")
+          except:
+              pass
+          EOF
