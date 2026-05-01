@@ -61,16 +61,77 @@ else
             echo "✅ Push成功"
             break
         fi
-        echo "⚠️ Push失敗 (試行$i/3)、リトライ..."
-        # リモートの新しいコミットを取り込む
+        echo "⚠️ Push失敗 (試行$i/3)、スマートマージで再試行..."
         git fetch origin 2>&1
-        # 自分のコミットをリベース
-        git rebase origin/main 2>&1 || {
-            git rebase --abort 2>&1 || true
-            # コンフリクト解決できない場合はforce push
-            echo "⚠️ rebase失敗 - force push"
-            git push --force origin main 2>&1 && break
-        }
+
+        # JSONスマートマージ：data/とdocs/はリモートより自分を優先してマージ
+        python3 << 'PYEOF'
+import subprocess, json
+from pathlib import Path
+
+result = subprocess.run(['git', 'diff', '--name-only', 'HEAD', 'origin/main'], capture_output=True, text=True)
+diff_files = [f for f in result.stdout.strip().split('\n') if f]
+
+# まずrebaseを試みる
+rb = subprocess.run(['git', 'rebase', 'origin/main'], capture_output=True, text=True)
+if rb.returncode == 0:
+    print("rebase成功")
+    exit(0)
+
+# rebase失敗 → 手動マージ
+subprocess.run(['git', 'rebase', '--abort'], capture_output=True)
+print("rebase失敗 → スマートマージ開始")
+
+# 自分の変更をパッチとして保存
+my_changes = subprocess.run(['git', 'diff', 'HEAD~1', '--', 'data/', 'docs/'], capture_output=True, text=True).stdout
+
+# リモートの最新に戻す
+subprocess.run(['git', 'reset', '--hard', 'origin/main'], capture_output=True)
+
+# パッチを適用
+if my_changes:
+    result = subprocess.run(['git', 'apply', '--3way', '--whitespace=nowarn', '-'], input=my_changes, capture_output=True, text=True)
+    if result.returncode != 0:
+        print(f"パッチ適用失敗: {result.stderr[:200]}")
+        # 競合ファイルをJSON的にマージ
+        conflict_files = subprocess.run(['git', 'diff', '--name-only', '--diff-filter=U'], capture_output=True, text=True).stdout.strip().split('\n')
+        for cf in conflict_files:
+            if not cf or not cf.endswith('.json'):
+                continue
+            try:
+                ours_out = subprocess.run(['git', 'show', f':2:{cf}'], capture_output=True, text=True)
+                theirs_out = subprocess.run(['git', 'show', f':3:{cf}'], capture_output=True, text=True)
+                if ours_out.returncode != 0 or theirs_out.returncode != 0:
+                    continue
+                ours = json.loads(ours_out.stdout)
+                theirs = json.loads(theirs_out.stdout)
+                if 'days' in ours and 'days' in theirs:
+                    their_days = {d['date']: d for d in theirs.get('days', [])}
+                    our_days = {d['date']: d for d in ours.get('days', [])}
+                    merged = dict(ours)
+                    merged['days'] = sorted({**their_days, **our_days}.values(), key=lambda x: x['date'], reverse=True)
+                    merged['last_updated'] = max(ours.get('last_updated', ''), theirs.get('last_updated', ''))
+                else:
+                    ours_t = ours.get('fetched_at', ours.get('last_updated', ''))
+                    theirs_t = theirs.get('fetched_at', theirs.get('last_updated', ''))
+                    merged = ours if ours_t >= theirs_t else theirs
+                Path(cf).write_text(json.dumps(merged, ensure_ascii=False, indent=2) + '\n')
+                subprocess.run(['git', 'add', cf])
+                print(f"マージ: {cf}")
+            except Exception as e:
+                print(f"マージ失敗 {cf}: {e}")
+
+# HTMLの競合: 自分のバージョンを採用
+for cf in subprocess.run(['git', 'diff', '--name-only', '--diff-filter=U'], capture_output=True, text=True).stdout.strip().split('\n'):
+    if cf and cf.endswith('.html'):
+        subprocess.run(['git', 'checkout', '--ours', cf])
+        subprocess.run(['git', 'add', cf])
+
+subprocess.run(['git', 'add', 'data/', 'docs/'])
+PYEOF
+
+        # コミットして再プッシュ
+        git diff --staged --quiet || git commit -m "auto: リアルタイムデータ更新 $(TZ='Asia/Tokyo' date +'%H:%M')"
     done
 fi
 
