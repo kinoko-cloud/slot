@@ -17,7 +17,7 @@
 
 ---
 
-## 現在の状態（2026-04-27）
+## 現在の状態（2026-05-01）
 
 ### ✅ 完了した重要修正
 
@@ -94,14 +94,33 @@
 - toloveru: 600s（実測528s）
 - 次回以降はgames_cacheヒットで大幅短縮される見込み
 
+### ✅ 2026-05-01 完了: CloudFront WAF検証・deploy-static.yml修正
+
+#### VPN Gate検証結果（GitHub Actions上で実施）
+- **結論**: CloudFront WAFは住宅系IP以外すべてをブロック
+  - ローカルPC（Sony Network Communications、住宅系）→ 302 ✅
+  - GitHub Actions（Azure IP）→ 403 ❌
+  - VPN Gate接続後（AS36599 SoftEther Research、学術IP）→ 403 ❌ （VPN接続は成功、でもブロック）
+  - 公開プロキシ（各種データセンターIP）→ 403 ❌
+- **対応**: 無料プロキシでの回避は不可能。住宅系IPのみが通過できる。
+
+#### deploy-static.yml修正
+- daidataフェッチ試みを全削除（どうせ403で失敗→古いHTMLを生成してしまっていた）
+- HTML生成のみに特化。データ取得は別途担当：
+  - **daidata (エスパス)**: ローカルcron専任（住宅系IP必須）
+  - **papimo (アイランド秋葉原)**: papimo-fetch.yml
+
+#### local_daidata_cron.sh改善
+- `git push --force` を廃止（他のコミットを上書きする問題があった）
+- JSONスマートマージ（rebase失敗時: data/とdocs/のJSONファイルを intelligentにマージ）
+
 ### 🎯 次にやること
-1. **crontabが正常動作しているか翌日確認**
+1. **papimo-fetch.ymlを再開（任意）**
+   - アイランド秋葉原のデータ取得をGitHub Actions経由で再開可能
+   - `gh workflow enable papimo-fetch.yml`
+2. **crontabが正常動作しているか確認**
    - `/tmp/slot_local_cron.log` でログ確認
-   - data/availability.jsonのfetched_atが更新されているか確認
-2. **GitHub Actionsワークフローの再開（任意）**
-   - SBJ + 真打吉宗 + ToLOVEるの3機種でワークフロー再開可能
-   - daidataはローカルcronが担当するためActions側は不要（CloudFront WAFブロック）
-   - papimoはActions経由でも取得可能
+   - data/availability.jsonのfetched_atが毎時30分頃に更新されているか確認
 3. **デザイン実験の差し戻し** 
    - 必要なら `docs/test/frontend_design_preview.html` を確認
 
@@ -109,8 +128,10 @@
 
 ## 重要情報
 
-### システム構成
-- **データ取得**: GitHub Actions（`fetch-availability-v2.yml`毎時、`nightly-update.yml`毎日23時）
+### システム構成（2026-05-01更新）
+- **データ取得 (daidata/エスパス)**: ローカルcron専任 `scripts/local_daidata_cron.sh`（住宅系JP IP必須）
+- **データ取得 (papimo/アイランド)**: GitHub Actions `papimo-fetch.yml`（一時停止中）
+- **HTML生成**: GitHub Actions `deploy-static.yml`（データ取得は一切しない、HTML生成のみ）
 - **サイト**: Cloudflare Pages（`docs/`ディレクトリから自動デプロイ）
 - **リポジトリ**: `kinoko-cloud/slot`
 
