@@ -5,18 +5,25 @@
   "weekday": "土",
   "total_units": 3,
   "hits": 0,
-  "misses": 0,
-  "surprises": 1,
-  "miss_details": [],
-  "surprise_details": [
+  "misses": 2,
+  "surprises": 0,
+  "miss_details": [
+    {
+      "unit_id": "1389",
+      "score": 46,
+      "actual_prob": 345,
+      "reasons": [
+        "設定1域(1/345)"
+      ]
+    },
     {
       "unit_id": "1390",
-      "rank": "C",
-      "score": 20,
+      "score": 35,
       "actual_prob": 234,
       "reasons": [
-        "低スコア台(20点)が好調"
+        "設定1域(1/234)"
       ]
     }
-  ]
+  ],
+  "surprise_details": []
 }
