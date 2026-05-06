@@ -5,34 +5,34 @@
   "weekday": "水",
   "total_units": 3,
   "hits": 0,
-  "misses": 0,
-  "surprises": 3,
-  "miss_details": [],
-  "surprise_details": [
+  "misses": 2,
+  "surprises": 1,
+  "miss_details": [
     {
       "unit_id": "3011",
-      "rank": "B",
-      "score": 45,
+      "score": 58,
       "actual_prob": 264,
-      "reasons": []
+      "reasons": [
+        "低稼働(792G)",
+        "設定1域(1/264)"
+      ]
     },
     {
       "unit_id": "3012",
-      "rank": "B",
-      "score": 28,
+      "score": 44,
       "actual_prob": 255,
       "reasons": [
-        "低スコア台(28点)が好調"
+        "設定1域(1/255)"
       ]
-    },
+    }
+  ],
+  "surprise_details": [
     {
       "unit_id": "3010",
       "rank": "B",
-      "score": 27,
+      "score": 40,
       "actual_prob": 260,
-      "reasons": [
-        "低スコア台(27点)が好調"
-      ]
+      "reasons": []
     }
   ]
 }
