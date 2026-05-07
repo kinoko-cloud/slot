@@ -5,17 +5,34 @@
   "weekday": "木",
   "total_units": 10,
   "hits": 0,
-  "misses": 1,
-  "surprises": 0,
+  "misses": 2,
+  "surprises": 1,
   "miss_details": [
     {
       "unit_id": "2005",
-      "score": 103,
+      "score": 90,
       "actual_prob": 0,
       "reasons": [
         "高スコア過信"
       ]
+    },
+    {
+      "unit_id": "2008",
+      "score": 77,
+      "actual_prob": 268,
+      "reasons": [
+        "低稼働(804G)",
+        "設定1域(1/268)"
+      ]
     }
   ],
-  "surprise_details": []
+  "surprise_details": [
+    {
+      "unit_id": "2009",
+      "rank": "B",
+      "score": 76,
+      "actual_prob": 219,
+      "reasons": []
+    }
+  ]
 }
