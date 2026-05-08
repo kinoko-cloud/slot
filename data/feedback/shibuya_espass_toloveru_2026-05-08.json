@@ -6,17 +6,26 @@
   "total_units": 3,
   "hits": 0,
   "misses": 1,
-  "surprises": 0,
+  "surprises": 1,
   "miss_details": [
     {
       "unit_id": "3011",
-      "score": 52,
-      "actual_prob": 825,
+      "score": 37,
+      "actual_prob": 1297,
       "reasons": [
-        "低稼働(825G)",
-        "設定1域(1/825)"
+        "設定1域(1/1297)"
       ]
     }
   ],
-  "surprise_details": []
+  "surprise_details": [
+    {
+      "unit_id": "3012",
+      "rank": "D",
+      "score": 23,
+      "actual_prob": 314,
+      "reasons": [
+        "低スコア台(23点)が好調"
+      ]
+    }
+  ]
 }
