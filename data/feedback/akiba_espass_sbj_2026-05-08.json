@@ -5,8 +5,19 @@
   "weekday": "金",
   "total_units": 3,
   "hits": 1,
-  "misses": 0,
+  "misses": 1,
   "surprises": 0,
-  "miss_details": [],
+  "miss_details": [
+    {
+      "unit_id": "2070",
+      "score": 83,
+      "actual_prob": 457,
+      "reasons": [
+        "高スコア過信",
+        "低稼働(914G)",
+        "設定1域(1/457)"
+      ]
+    }
+  ],
   "surprise_details": []
 }
