@@ -4,34 +4,38 @@
   "date": "2026-05-11",
   "weekday": "月",
   "total_units": 5,
-  "hits": 0,
-  "misses": 2,
-  "surprises": 1,
+  "hits": 1,
+  "misses": 1,
+  "surprises": 2,
   "miss_details": [
     {
       "unit_id": "3113",
-      "score": 90,
-      "actual_prob": 0,
+      "score": 77,
+      "actual_prob": 479,
       "reasons": [
-        "高スコア過信"
-      ]
-    },
-    {
-      "unit_id": "3114",
-      "score": 85,
-      "actual_prob": 0,
-      "reasons": [
-        "高スコア過信"
+        "低稼働(958G)",
+        "設定1域(1/479)"
       ]
     }
   ],
   "surprise_details": [
     {
-      "unit_id": "3115",
+      "unit_id": "3111",
       "rank": "B",
-      "score": 68,
-      "actual_prob": 274,
-      "reasons": []
+      "score": 110,
+      "actual_prob": 50,
+      "reasons": [
+        "実は高設定域(1/50)"
+      ]
+    },
+    {
+      "unit_id": "3112",
+      "rank": "B",
+      "score": 74,
+      "actual_prob": 46,
+      "reasons": [
+        "実は高設定域(1/46)"
+      ]
     }
   ]
 }
