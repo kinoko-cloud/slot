@@ -6,19 +6,19 @@
   "total_units": 10,
   "hits": 0,
   "misses": 2,
-  "surprises": 1,
+  "surprises": 5,
   "miss_details": [
     {
-      "unit_id": "2005",
-      "score": 111,
+      "unit_id": "2006",
+      "score": 103,
       "actual_prob": 0,
       "reasons": [
         "高スコア過信"
       ]
     },
     {
-      "unit_id": "2006",
-      "score": 104,
+      "unit_id": "2003",
+      "score": 101,
       "actual_prob": 0,
       "reasons": [
         "高スコア過信"
@@ -27,10 +27,42 @@
   ],
   "surprise_details": [
     {
+      "unit_id": "2004",
+      "rank": "B",
+      "score": 104,
+      "actual_prob": 74,
+      "reasons": [
+        "実は高設定域(1/74)"
+      ]
+    },
+    {
       "unit_id": "2001",
       "rank": "B",
-      "score": 67,
-      "actual_prob": 199,
+      "score": 96,
+      "actual_prob": 104,
+      "reasons": []
+    },
+    {
+      "unit_id": "2002",
+      "rank": "B",
+      "score": 87,
+      "actual_prob": 67,
+      "reasons": [
+        "実は高設定域(1/67)"
+      ]
+    },
+    {
+      "unit_id": "2007",
+      "rank": "B",
+      "score": 81,
+      "actual_prob": 95,
+      "reasons": []
+    },
+    {
+      "unit_id": "2010",
+      "rank": "B",
+      "score": 57,
+      "actual_prob": 281,
       "reasons": []
     }
   ]
