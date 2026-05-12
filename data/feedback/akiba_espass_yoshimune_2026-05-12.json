@@ -5,61 +5,80 @@
   "weekday": "火",
   "total_units": 10,
   "hits": 1,
-  "misses": 1,
-  "surprises": 6,
+  "misses": 2,
+  "surprises": 7,
   "miss_details": [
     {
       "unit_id": "2006",
-      "score": 104,
-      "actual_prob": 0,
+      "score": 92,
+      "actual_prob": 238,
       "reasons": [
-        "高スコア過信"
+        "高スコア過信",
+        "低稼働(954G)",
+        "設定1域(1/238)"
+      ]
+    },
+    {
+      "unit_id": "2003",
+      "score": 72,
+      "actual_prob": 284,
+      "reasons": [
+        "設定1域(1/284)"
       ]
     }
   ],
   "surprise_details": [
     {
+      "unit_id": "2004",
+      "rank": "B",
+      "score": 111,
+      "actual_prob": 98,
+      "reasons": []
+    },
+    {
+      "unit_id": "2010",
+      "rank": "B",
+      "score": 120,
+      "actual_prob": 78,
+      "reasons": [
+        "実は高設定域(1/78)"
+      ]
+    },
+    {
       "unit_id": "2001",
       "rank": "B",
-      "score": 110,
-      "actual_prob": 61,
+      "score": 117,
+      "actual_prob": 79,
       "reasons": [
-        "実は高設定域(1/61)"
+        "実は高設定域(1/79)"
       ]
     },
     {
       "unit_id": "2009",
       "rank": "B",
       "score": 109,
-      "actual_prob": 122,
-      "reasons": []
-    },
-    {
-      "unit_id": "2010",
-      "rank": "B",
-      "score": 106,
-      "actual_prob": 82,
-      "reasons": []
-    },
-    {
-      "unit_id": "2004",
-      "rank": "B",
-      "score": 105,
-      "actual_prob": 105,
-      "reasons": []
-    },
-    {
-      "unit_id": "2002",
-      "rank": "B",
-      "score": 51,
-      "actual_prob": 230,
+      "actual_prob": 123,
       "reasons": []
     },
     {
       "unit_id": "2007",
       "rank": "B",
-      "score": 48,
-      "actual_prob": 239,
+      "score": 91,
+      "actual_prob": 100,
+      "reasons": []
+    },
+    {
+      "unit_id": "2008",
+      "rank": "B",
+      "score": 72,
+      "actual_prob": 213,
+      "reasons": []
+    },
+    {
+      "unit_id": "2002",
+      "rank": "B",
+      "score": 56,
+      "actual_prob": 172,
       "reasons": []
     }
   ]
