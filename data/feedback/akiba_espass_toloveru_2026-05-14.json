@@ -5,48 +5,92 @@
   "weekday": "木",
   "total_units": 30,
   "hits": 0,
-  "misses": 2,
-  "surprises": 3,
+  "misses": 4,
+  "surprises": 7,
   "miss_details": [
     {
-      "unit_id": "3084",
-      "score": 69,
-      "actual_prob": 542,
+      "unit_id": "3076",
+      "score": 67,
+      "actual_prob": 260,
       "reasons": [
-        "低稼働(542G)",
-        "設定1域(1/542)"
+        "低稼働(520G)",
+        "設定1域(1/260)"
+      ]
+    },
+    {
+      "unit_id": "3079",
+      "score": 62,
+      "actual_prob": 676,
+      "reasons": [
+        "低稼働(676G)",
+        "設定1域(1/676)"
+      ]
+    },
+    {
+      "unit_id": "3084",
+      "score": 53,
+      "actual_prob": 350,
+      "reasons": [
+        "設定1域(1/350)"
       ]
     },
     {
       "unit_id": "3152",
-      "score": 62,
-      "actual_prob": 547,
+      "score": 46,
+      "actual_prob": 419,
       "reasons": [
-        "低稼働(547G)",
-        "設定1域(1/547)"
+        "設定1域(1/419)"
       ]
     }
   ],
   "surprise_details": [
     {
+      "unit_id": "3075",
+      "rank": "B",
+      "score": 62,
+      "actual_prob": 245,
+      "reasons": []
+    },
+    {
       "unit_id": "3154",
       "rank": "B",
-      "score": 65,
-      "actual_prob": 180,
+      "score": 62,
+      "actual_prob": 228,
       "reasons": []
     },
     {
-      "unit_id": "3078",
+      "unit_id": "3164",
       "rank": "B",
-      "score": 63,
-      "actual_prob": 219,
+      "score": 60,
+      "actual_prob": 311,
       "reasons": []
     },
     {
-      "unit_id": "3080",
+      "unit_id": "3158",
       "rank": "B",
-      "score": 55,
-      "actual_prob": 218,
+      "score": 57,
+      "actual_prob": 185,
+      "reasons": []
+    },
+    {
+      "unit_id": "3162",
+      "rank": "B",
+      "score": 56,
+      "actual_prob": 231,
+      "reasons": []
+    },
+    {
+      "unit_id": "3081",
+      "rank": "C",
+      "score": 49,
+      "actual_prob": 262,
+      "reasons": []
+    },
+    {
+      "unit_id": "3166",
+      "rank": "B",
+      "score": 41,
+      "actual_prob": 253,
       "reasons": []
     }
   ]
