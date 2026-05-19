@@ -5,32 +5,29 @@
   "weekday": "水",
   "total_units": 3,
   "hits": 0,
-  "misses": 2,
-  "surprises": 1,
-  "miss_details": [
+  "misses": 0,
+  "surprises": 3,
+  "miss_details": [],
+  "surprise_details": [
     {
       "unit_id": "3011",
-      "score": 69,
+      "rank": "B",
+      "score": 63,
       "actual_prob": 272,
-      "reasons": [
-        "設定1域(1/272)"
-      ]
+      "reasons": []
     },
-    {
-      "unit_id": "3012",
-      "score": 68,
-      "actual_prob": 259,
-      "reasons": [
-        "設定1域(1/259)"
-      ]
-    }
-  ],
-  "surprise_details": [
     {
       "unit_id": "3010",
       "rank": "B",
       "score": 62,
       "actual_prob": 239,
+      "reasons": []
+    },
+    {
+      "unit_id": "3012",
+      "rank": "B",
+      "score": 62,
+      "actual_prob": 259,
       "reasons": []
     }
   ]
