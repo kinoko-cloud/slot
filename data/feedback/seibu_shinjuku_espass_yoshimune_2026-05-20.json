@@ -4,44 +4,27 @@
   "date": "2026-05-20",
   "weekday": "水",
   "total_units": 5,
-  "hits": 1,
-  "misses": 1,
-  "surprises": 3,
+  "hits": 0,
+  "misses": 2,
+  "surprises": 0,
   "miss_details": [
     {
-      "unit_id": "3113",
-      "score": 90,
-      "actual_prob": 299,
+      "unit_id": "3114",
+      "score": 110,
+      "actual_prob": 0,
       "reasons": [
-        "高スコア過信",
-        "低稼働(599G)",
-        "設定1域(1/299)"
+        "高スコア過信"
+      ]
+    },
+    {
+      "unit_id": "3111",
+      "score": 79,
+      "actual_prob": 322,
+      "reasons": [
+        "低稼働(322G)",
+        "設定1域(1/322)"
       ]
     }
   ],
-  "surprise_details": [
-    {
-      "unit_id": "3115",
-      "rank": "B",
-      "score": 87,
-      "actual_prob": 67,
-      "reasons": [
-        "実は高設定域(1/67)"
-      ]
-    },
-    {
-      "unit_id": "3112",
-      "rank": "B",
-      "score": 85,
-      "actual_prob": 101,
-      "reasons": []
-    },
-    {
-      "unit_id": "3114",
-      "rank": "B",
-      "score": 80,
-      "actual_prob": 182,
-      "reasons": []
-    }
-  ]
+  "surprise_details": []
 }
