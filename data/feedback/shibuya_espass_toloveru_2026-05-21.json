@@ -5,22 +5,32 @@
   "weekday": "木",
   "total_units": 3,
   "hits": 0,
-  "misses": 0,
-  "surprises": 2,
-  "miss_details": [],
-  "surprise_details": [
+  "misses": 2,
+  "surprises": 1,
+  "miss_details": [
     {
       "unit_id": "3011",
-      "rank": "B",
-      "score": 57,
-      "actual_prob": 281,
-      "reasons": []
+      "score": 62,
+      "actual_prob": 239,
+      "reasons": [
+        "設定1域(1/239)"
+      ]
     },
     {
-      "unit_id": "3010",
-      "rank": "D",
+      "unit_id": "3012",
       "score": 44,
-      "actual_prob": 230,
+      "actual_prob": 334,
+      "reasons": [
+        "設定1域(1/334)"
+      ]
+    }
+  ],
+  "surprise_details": [
+    {
+      "unit_id": "3010",
+      "rank": "B",
+      "score": 44,
+      "actual_prob": 228,
       "reasons": []
     }
   ]
