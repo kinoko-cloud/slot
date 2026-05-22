@@ -4,9 +4,27 @@
   "date": "2026-05-22",
   "weekday": "金",
   "total_units": 11,
-  "hits": 7,
-  "misses": 0,
+  "hits": 4,
+  "misses": 2,
   "surprises": 0,
-  "miss_details": [],
+  "miss_details": [
+    {
+      "unit_id": "1028",
+      "score": 79,
+      "actual_prob": 307,
+      "reasons": [
+        "低稼働(921G)",
+        "設定1域(1/307)"
+      ]
+    },
+    {
+      "unit_id": "1030",
+      "score": 61,
+      "actual_prob": 319,
+      "reasons": [
+        "設定1域(1/319)"
+      ]
+    }
+  ],
   "surprise_details": []
 }
