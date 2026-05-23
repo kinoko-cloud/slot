@@ -5,8 +5,33 @@
   "weekday": "土",
   "total_units": 11,
   "hits": 5,
-  "misses": 0,
-  "surprises": 0,
-  "miss_details": [],
-  "surprise_details": []
+  "misses": 2,
+  "surprises": 1,
+  "miss_details": [
+    {
+      "unit_id": "1026",
+      "score": 56,
+      "actual_prob": 209,
+      "reasons": [
+        "設定1域(1/209)"
+      ]
+    },
+    {
+      "unit_id": "1028",
+      "score": 47,
+      "actual_prob": 228,
+      "reasons": [
+        "設定1域(1/228)"
+      ]
+    }
+  ],
+  "surprise_details": [
+    {
+      "unit_id": "1027",
+      "rank": "B",
+      "score": 77,
+      "actual_prob": 90,
+      "reasons": []
+    }
+  ]
 }
