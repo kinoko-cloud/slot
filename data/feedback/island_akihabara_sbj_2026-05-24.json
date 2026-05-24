@@ -4,9 +4,35 @@
   "date": "2026-05-24",
   "weekday": "日",
   "total_units": 11,
-  "hits": 7,
-  "misses": 0,
+  "hits": 6,
+  "misses": 3,
   "surprises": 0,
-  "miss_details": [],
+  "miss_details": [
+    {
+      "unit_id": "1023",
+      "score": 87,
+      "actual_prob": 308,
+      "reasons": [
+        "高スコア過信",
+        "設定1域(1/308)"
+      ]
+    },
+    {
+      "unit_id": "1028",
+      "score": 72,
+      "actual_prob": 227,
+      "reasons": [
+        "設定1域(1/227)"
+      ]
+    },
+    {
+      "unit_id": "1030",
+      "score": 62,
+      "actual_prob": 205,
+      "reasons": [
+        "設定1域(1/205)"
+      ]
+    }
+  ],
   "surprise_details": []
 }
