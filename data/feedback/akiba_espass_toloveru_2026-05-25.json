@@ -4,66 +4,87 @@
   "date": "2026-05-25",
   "weekday": "月",
   "total_units": 30,
-  "hits": 1,
-  "misses": 3,
+  "hits": 0,
+  "misses": 5,
   "surprises": 4,
   "miss_details": [
     {
-      "unit_id": "3158",
-      "score": 67,
-      "actual_prob": 375,
+      "unit_id": "3081",
+      "score": 68,
+      "actual_prob": 220,
       "reasons": [
-        "低稼働(375G)",
-        "設定1域(1/375)"
+        "低稼働(661G)",
+        "設定1域(1/220)"
+      ]
+    },
+    {
+      "unit_id": "3158",
+      "score": 66,
+      "actual_prob": 422,
+      "reasons": [
+        "低稼働(845G)",
+        "設定1域(1/422)"
       ]
     },
     {
       "unit_id": "3075",
-      "score": 65,
-      "actual_prob": 440,
+      "score": 64,
+      "actual_prob": 390,
       "reasons": [
-        "低稼働(440G)",
-        "設定1域(1/440)"
+        "設定1域(1/390)"
       ]
     },
     {
       "unit_id": "3080",
-      "score": 62,
-      "actual_prob": 448,
+      "score": 61,
+      "actual_prob": 294,
       "reasons": [
-        "低稼働(448G)",
-        "設定1域(1/448)"
+        "低稼働(589G)",
+        "設定1域(1/294)"
+      ]
+    },
+    {
+      "unit_id": "3082",
+      "score": 61,
+      "actual_prob": 373,
+      "reasons": [
+        "低稼働(747G)",
+        "設定1域(1/373)"
       ]
     }
   ],
   "surprise_details": [
     {
+      "unit_id": "3156",
+      "rank": "B",
+      "score": 50,
+      "actual_prob": 324,
+      "reasons": []
+    },
+    {
       "unit_id": "3161",
       "rank": "B",
-      "score": 66,
-      "actual_prob": 159,
+      "score": 45,
+      "actual_prob": 252,
       "reasons": []
     },
     {
-      "unit_id": "3162",
+      "unit_id": "3083",
       "rank": "B",
-      "score": 59,
-      "actual_prob": 163,
-      "reasons": []
+      "score": 35,
+      "actual_prob": 273,
+      "reasons": [
+        "低スコア台(35点)が好調"
+      ]
     },
     {
-      "unit_id": "3077",
+      "unit_id": "3155",
       "rank": "B",
-      "score": 57,
-      "actual_prob": 253,
-      "reasons": []
-    },
-    {
-      "unit_id": "3159",
-      "rank": "B",
-      "score": 56,
-      "actual_prob": 325,
-      "reasons": []
+      "score": 35,
+      "actual_prob": 309,
+      "reasons": [
+        "低スコア台(35点)が好調"
+      ]
     }
   ]
 }
