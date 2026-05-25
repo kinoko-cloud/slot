@@ -6,14 +6,26 @@
   "total_units": 3,
   "hits": 0,
   "misses": 1,
-  "surprises": 0,
+  "surprises": 1,
   "miss_details": [
     {
       "unit_id": "3011",
-      "score": 68,
-      "actual_prob": 0,
-      "reasons": []
+      "score": 43,
+      "actual_prob": 236,
+      "reasons": [
+        "設定1域(1/236)"
+      ]
     }
   ],
-  "surprise_details": []
+  "surprise_details": [
+    {
+      "unit_id": "3010",
+      "rank": "B",
+      "score": 30,
+      "actual_prob": 304,
+      "reasons": [
+        "低スコア台(30点)が好調"
+      ]
+    }
+  ]
 }
