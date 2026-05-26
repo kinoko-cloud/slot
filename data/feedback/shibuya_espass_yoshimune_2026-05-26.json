@@ -5,28 +5,21 @@
   "weekday": "火",
   "total_units": 8,
   "hits": 1,
-  "misses": 0,
-  "surprises": 6,
-  "miss_details": [],
+  "misses": 1,
+  "surprises": 4,
+  "miss_details": [
+    {
+      "unit_id": "3047",
+      "score": 90,
+      "actual_prob": 318,
+      "reasons": [
+        "高スコア過信",
+        "低稼働(636G)",
+        "設定1域(1/318)"
+      ]
+    }
+  ],
   "surprise_details": [
-    {
-      "unit_id": "3051",
-      "rank": "B",
-      "score": 127,
-      "actual_prob": 43,
-      "reasons": [
-        "実は高設定域(1/43)"
-      ]
-    },
-    {
-      "unit_id": "3053",
-      "rank": "B",
-      "score": 114,
-      "actual_prob": 15,
-      "reasons": [
-        "実は高設定域(1/15)"
-      ]
-    },
     {
       "unit_id": "3052",
       "rank": "B",
@@ -58,9 +51,9 @@
       "unit_id": "3090",
       "rank": "B",
       "score": 92,
-      "actual_prob": 1,
+      "actual_prob": 16,
       "reasons": [
-        "実は高設定域(1/1)"
+        "実は高設定域(1/16)"
       ]
     }
   ]
