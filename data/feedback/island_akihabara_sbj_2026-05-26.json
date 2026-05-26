@@ -4,9 +4,27 @@
   "date": "2026-05-26",
   "weekday": "火",
   "total_units": 11,
-  "hits": 8,
-  "misses": 0,
-  "surprises": 0,
-  "miss_details": [],
-  "surprise_details": []
+  "hits": 7,
+  "misses": 1,
+  "surprises": 1,
+  "miss_details": [
+    {
+      "unit_id": "1022",
+      "score": 84,
+      "actual_prob": 232,
+      "reasons": [
+        "高スコア過信",
+        "設定1域(1/232)"
+      ]
+    }
+  ],
+  "surprise_details": [
+    {
+      "unit_id": "1028",
+      "rank": "C",
+      "score": 84,
+      "actual_prob": 99,
+      "reasons": []
+    }
+  ]
 }
