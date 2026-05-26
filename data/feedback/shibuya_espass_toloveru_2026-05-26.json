@@ -5,22 +5,24 @@
   "weekday": "火",
   "total_units": 3,
   "hits": 0,
-  "misses": 0,
-  "surprises": 2,
-  "miss_details": [],
-  "surprise_details": [
+  "misses": 1,
+  "surprises": 1,
+  "miss_details": [
     {
       "unit_id": "3011",
-      "rank": "D",
       "score": 42,
-      "actual_prob": 227,
-      "reasons": []
-    },
+      "actual_prob": 222,
+      "reasons": [
+        "設定1域(1/222)"
+      ]
+    }
+  ],
+  "surprise_details": [
     {
       "unit_id": "3010",
-      "rank": "D",
+      "rank": "B",
       "score": 22,
-      "actual_prob": 316,
+      "actual_prob": 314,
       "reasons": [
         "低スコア台(22点)が好調"
       ]

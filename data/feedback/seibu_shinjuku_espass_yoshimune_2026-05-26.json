@@ -5,9 +5,18 @@
   "weekday": "火",
   "total_units": 5,
   "hits": 1,
-  "misses": 0,
-  "surprises": 4,
-  "miss_details": [],
+  "misses": 1,
+  "surprises": 3,
+  "miss_details": [
+    {
+      "unit_id": "3113",
+      "score": 53,
+      "actual_prob": 233,
+      "reasons": [
+        "設定1域(1/233)"
+      ]
+    }
+  ],
   "surprise_details": [
     {
       "unit_id": "3114",
@@ -18,21 +27,14 @@
     },
     {
       "unit_id": "3111",
-      "rank": "C",
+      "rank": "B",
       "score": 54,
       "actual_prob": 136,
       "reasons": []
     },
     {
-      "unit_id": "3113",
-      "rank": "C",
-      "score": 53,
-      "actual_prob": 233,
-      "reasons": []
-    },
-    {
       "unit_id": "3115",
-      "rank": "C",
+      "rank": "B",
       "score": 45,
       "actual_prob": 166,
       "reasons": []
