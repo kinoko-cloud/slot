@@ -4,89 +4,124 @@
   "date": "2026-05-27",
   "weekday": "水",
   "total_units": 30,
-  "hits": 1,
-  "misses": 1,
-  "surprises": 9,
+  "hits": 0,
+  "misses": 5,
+  "surprises": 10,
   "miss_details": [
+    {
+      "unit_id": "3150",
+      "score": 70,
+      "actual_prob": 941,
+      "reasons": [
+        "低稼働(941G)",
+        "設定1域(1/941)"
+      ]
+    },
+    {
+      "unit_id": "3084",
+      "score": 66,
+      "actual_prob": 687,
+      "reasons": [
+        "低稼働(687G)",
+        "設定1域(1/687)"
+      ]
+    },
+    {
+      "unit_id": "3157",
+      "score": 66,
+      "actual_prob": 359,
+      "reasons": [
+        "設定1域(1/359)"
+      ]
+    },
     {
       "unit_id": "3080",
       "score": 65,
-      "actual_prob": 351,
+      "actual_prob": 723,
       "reasons": [
-        "低稼働(351G)",
-        "設定1域(1/351)"
+        "低稼働(723G)",
+        "設定1域(1/723)"
+      ]
+    },
+    {
+      "unit_id": "3085",
+      "score": 43,
+      "actual_prob": 376,
+      "reasons": [
+        "設定1域(1/376)"
       ]
     }
   ],
   "surprise_details": [
     {
+      "unit_id": "3160",
+      "rank": "B",
+      "score": 65,
+      "actual_prob": 172,
+      "reasons": []
+    },
+    {
       "unit_id": "3087",
       "rank": "B",
       "score": 61,
-      "actual_prob": 181,
+      "actual_prob": 195,
+      "reasons": []
+    },
+    {
+      "unit_id": "3154",
+      "rank": "B",
+      "score": 61,
+      "actual_prob": 132,
       "reasons": []
     },
     {
       "unit_id": "3159",
       "rank": "B",
-      "score": 61,
-      "actual_prob": 230,
-      "reasons": []
-    },
-    {
-      "unit_id": "3160",
-      "rank": "B",
-      "score": 60,
+      "score": 58,
       "actual_prob": 316,
-      "reasons": []
-    },
-    {
-      "unit_id": "3165",
-      "rank": "B",
-      "score": 60,
-      "actual_prob": 327,
-      "reasons": []
-    },
-    {
-      "unit_id": "3158",
-      "rank": "B",
-      "score": 59,
-      "actual_prob": 248,
       "reasons": []
     },
     {
       "unit_id": "3152",
       "rank": "C",
-      "score": 58,
-      "actual_prob": 200,
+      "score": 55,
+      "actual_prob": 289,
       "reasons": []
     },
     {
-      "unit_id": "3086",
+      "unit_id": "3163",
       "rank": "B",
-      "score": 20,
-      "actual_prob": 297,
-      "reasons": [
-        "低スコア台(20点)が好調"
-      ]
+      "score": 49,
+      "actual_prob": 244,
+      "reasons": []
     },
     {
-      "unit_id": "3156",
+      "unit_id": "3076",
       "rank": "B",
-      "score": 20,
-      "actual_prob": 292,
-      "reasons": [
-        "低スコア台(20点)が好調"
-      ]
+      "score": 48,
+      "actual_prob": 269,
+      "reasons": []
     },
     {
-      "unit_id": "3162",
+      "unit_id": "3165",
       "rank": "B",
-      "score": 20,
-      "actual_prob": 268,
-      "reasons": [
-        "低スコア台(20点)が好調"
-      ]
+      "score": 45,
+      "actual_prob": 263,
+      "reasons": []
+    },
+    {
+      "unit_id": "3082",
+      "rank": "B",
+      "score": 41,
+      "actual_prob": 305,
+      "reasons": []
+    },
+    {
+      "unit_id": "3158",
+      "rank": "B",
+      "score": 41,
+      "actual_prob": 273,
+      "reasons": []
     }
   ]
 }
