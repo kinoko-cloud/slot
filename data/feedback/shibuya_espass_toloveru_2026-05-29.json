@@ -5,21 +5,31 @@
   "weekday": "金",
   "total_units": 3,
   "hits": 0,
-  "misses": 0,
-  "surprises": 2,
-  "miss_details": [],
-  "surprise_details": [
+  "misses": 2,
+  "surprises": 1,
+  "miss_details": [
     {
       "unit_id": "3011",
-      "rank": "B",
-      "score": 61,
+      "score": 70,
       "actual_prob": 303,
-      "reasons": []
+      "reasons": [
+        "設定1域(1/303)"
+      ]
     },
+    {
+      "unit_id": "3010",
+      "score": 67,
+      "actual_prob": 346,
+      "reasons": [
+        "設定1域(1/346)"
+      ]
+    }
+  ],
+  "surprise_details": [
     {
       "unit_id": "3012",
       "rank": "B",
-      "score": 57,
+      "score": 60,
       "actual_prob": 309,
       "reasons": []
     }
