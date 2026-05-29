@@ -4,18 +4,28 @@
   "date": "2026-05-29",
   "weekday": "金",
   "total_units": 11,
-  "hits": 7,
+  "hits": 6,
   "misses": 1,
-  "surprises": 0,
+  "surprises": 1,
   "miss_details": [
     {
       "unit_id": "1026",
-      "score": 61,
-      "actual_prob": 755,
+      "score": 59,
+      "actual_prob": 215,
       "reasons": [
-        "設定1域(1/755)"
+        "設定1域(1/215)"
       ]
     }
   ],
-  "surprise_details": []
+  "surprise_details": [
+    {
+      "unit_id": "1021",
+      "rank": "D",
+      "score": 91,
+      "actual_prob": 72,
+      "reasons": [
+        "実は高設定域(1/72)"
+      ]
+    }
+  ]
 }
