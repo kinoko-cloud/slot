@@ -5,47 +5,66 @@
   "weekday": "土",
   "total_units": 10,
   "hits": 2,
-  "misses": 0,
-  "surprises": 5,
-  "miss_details": [],
+  "misses": 1,
+  "surprises": 6,
+  "miss_details": [
+    {
+      "unit_id": "2006",
+      "score": 81,
+      "actual_prob": 541,
+      "reasons": [
+        "高スコア過信",
+        "設定1域(1/541)"
+      ]
+    }
+  ],
   "surprise_details": [
     {
-      "unit_id": "2009",
+      "unit_id": "2005",
       "rank": "B",
-      "score": 111,
-      "actual_prob": 51,
+      "score": 101,
+      "actual_prob": 46,
       "reasons": [
-        "実は高設定域(1/51)"
+        "実は高設定域(1/46)"
       ]
     },
     {
       "unit_id": "2004",
       "rank": "B",
-      "score": 99,
-      "actual_prob": 50,
+      "score": 100,
+      "actual_prob": 35,
       "reasons": [
-        "実は高設定域(1/50)"
+        "実は高設定域(1/35)"
+      ]
+    },
+    {
+      "unit_id": "2009",
+      "rank": "B",
+      "score": 100,
+      "actual_prob": 8,
+      "reasons": [
+        "実は高設定域(1/8)"
       ]
     },
     {
       "unit_id": "2003",
       "rank": "B",
       "score": 95,
-      "actual_prob": 161,
-      "reasons": []
-    },
-    {
-      "unit_id": "2005",
-      "rank": "B",
-      "score": 90,
-      "actual_prob": 116,
+      "actual_prob": 145,
       "reasons": []
     },
     {
       "unit_id": "2002",
       "rank": "B",
-      "score": 86,
-      "actual_prob": 104,
+      "score": 87,
+      "actual_prob": 107,
+      "reasons": []
+    },
+    {
+      "unit_id": "2008",
+      "rank": "B",
+      "score": 57,
+      "actual_prob": 270,
       "reasons": []
     }
   ]
