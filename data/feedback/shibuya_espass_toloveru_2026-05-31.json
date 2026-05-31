@@ -5,18 +5,25 @@
   "weekday": "日",
   "total_units": 3,
   "hits": 0,
-  "misses": 0,
-  "surprises": 1,
-  "miss_details": [],
-  "surprise_details": [
+  "misses": 2,
+  "surprises": 0,
+  "miss_details": [
     {
       "unit_id": "3011",
-      "rank": "D",
       "score": 34,
       "actual_prob": 255,
       "reasons": [
-        "低スコア台(34点)が好調"
+        "設定1域(1/255)"
+      ]
+    },
+    {
+      "unit_id": "3010",
+      "score": 31,
+      "actual_prob": 430,
+      "reasons": [
+        "設定1域(1/430)"
       ]
     }
-  ]
+  ],
+  "surprise_details": []
 }
