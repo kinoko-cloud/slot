@@ -4,11 +4,62 @@
   "date": "2026-06-02",
   "weekday": "火",
   "total_units": 14,
-  "hits": 5,
-  "misses": 0,
+  "hits": 4,
+  "misses": 1,
   "surprises": 9,
-  "miss_details": [],
+  "miss_details": [
+    {
+      "unit_id": "690",
+      "score": 84,
+      "actual_prob": 231,
+      "reasons": [
+        "高スコア過信",
+        "設定1域(1/231)"
+      ]
+    }
+  ],
   "surprise_details": [
+    {
+      "unit_id": "688",
+      "rank": "B",
+      "score": 127,
+      "actual_prob": 75,
+      "reasons": [
+        "実は高設定域(1/75)"
+      ]
+    },
+    {
+      "unit_id": "692",
+      "rank": "B",
+      "score": 122,
+      "actual_prob": 53,
+      "reasons": [
+        "実は高設定域(1/53)"
+      ]
+    },
+    {
+      "unit_id": "684",
+      "rank": "B",
+      "score": 120,
+      "actual_prob": 61,
+      "reasons": [
+        "実は高設定域(1/61)"
+      ]
+    },
+    {
+      "unit_id": "686",
+      "rank": "B",
+      "score": 112,
+      "actual_prob": 103,
+      "reasons": []
+    },
+    {
+      "unit_id": "689",
+      "rank": "B",
+      "score": 103,
+      "actual_prob": 105,
+      "reasons": []
+    },
     {
       "unit_id": "683",
       "rank": "B",
@@ -19,42 +70,6 @@
       ]
     },
     {
-      "unit_id": "686",
-      "rank": "B",
-      "score": 105,
-      "actual_prob": 28,
-      "reasons": [
-        "実は高設定域(1/28)"
-      ]
-    },
-    {
-      "unit_id": "695",
-      "rank": "B",
-      "score": 105,
-      "actual_prob": 66,
-      "reasons": [
-        "実は高設定域(1/66)"
-      ]
-    },
-    {
-      "unit_id": "687",
-      "rank": "B",
-      "score": 104,
-      "actual_prob": 80,
-      "reasons": [
-        "実は高設定域(1/80)"
-      ]
-    },
-    {
-      "unit_id": "692",
-      "rank": "B",
-      "score": 102,
-      "actual_prob": 76,
-      "reasons": [
-        "実は高設定域(1/76)"
-      ]
-    },
-    {
       "unit_id": "682",
       "rank": "B",
       "score": 81,
@@ -62,24 +77,17 @@
       "reasons": []
     },
     {
-      "unit_id": "688",
+      "unit_id": "687",
       "rank": "B",
-      "score": 100,
-      "actual_prob": 82,
+      "score": 73,
+      "actual_prob": 158,
       "reasons": []
     },
     {
-      "unit_id": "684",
+      "unit_id": "695",
       "rank": "B",
-      "score": 93,
-      "actual_prob": 112,
-      "reasons": []
-    },
-    {
-      "unit_id": "689",
-      "rank": "B",
-      "score": 90,
-      "actual_prob": 121,
+      "score": 68,
+      "actual_prob": 195,
       "reasons": []
     }
   ]
