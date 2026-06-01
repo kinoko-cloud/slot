@@ -4,16 +4,26 @@
   "date": "2026-06-01",
   "weekday": "月",
   "total_units": 14,
-  "hits": 4,
-  "misses": 1,
-  "surprises": 6,
+  "hits": 3,
+  "misses": 2,
+  "surprises": 7,
   "miss_details": [
     {
-      "unit_id": "691",
-      "score": 75,
-      "actual_prob": 234,
+      "unit_id": "690",
+      "score": 93,
+      "actual_prob": 239,
       "reasons": [
-        "設定1域(1/234)"
+        "高スコア過信",
+        "低稼働(956G)",
+        "設定1域(1/239)"
+      ]
+    },
+    {
+      "unit_id": "691",
+      "score": 79,
+      "actual_prob": 224,
+      "reasons": [
+        "設定1域(1/224)"
       ]
     }
   ],
@@ -21,7 +31,7 @@
     {
       "unit_id": "687",
       "rank": "B",
-      "score": 121,
+      "score": 120,
       "actual_prob": 20,
       "reasons": [
         "実は高設定域(1/20)"
@@ -30,40 +40,49 @@
     {
       "unit_id": "688",
       "rank": "B",
-      "score": 109,
-      "actual_prob": 58,
+      "score": 108,
+      "actual_prob": 69,
       "reasons": [
-        "実は高設定域(1/58)"
+        "実は高設定域(1/69)"
+      ]
+    },
+    {
+      "unit_id": "689",
+      "rank": "B",
+      "score": 106,
+      "actual_prob": 35,
+      "reasons": [
+        "実は高設定域(1/35)"
       ]
     },
     {
       "unit_id": "695",
       "rank": "B",
-      "score": 109,
-      "actual_prob": 130,
-      "reasons": []
-    },
-    {
-      "unit_id": "689",
-      "rank": "B",
-      "score": 91,
-      "actual_prob": 87,
+      "score": 81,
+      "actual_prob": 152,
       "reasons": []
     },
     {
       "unit_id": "685",
       "rank": "B",
-      "score": 80,
-      "actual_prob": 5,
+      "score": 79,
+      "actual_prob": 45,
       "reasons": [
-        "実は高設定域(1/5)"
+        "実は高設定域(1/45)"
       ]
+    },
+    {
+      "unit_id": "692",
+      "rank": "B",
+      "score": 73,
+      "actual_prob": 171,
+      "reasons": []
     },
     {
       "unit_id": "684",
       "rank": "B",
-      "score": 73,
-      "actual_prob": 239,
+      "score": 69,
+      "actual_prob": 145,
       "reasons": []
     }
   ]

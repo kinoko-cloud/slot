@@ -5,18 +5,35 @@
   "weekday": "月",
   "total_units": 3,
   "hits": 0,
-  "misses": 1,
-  "surprises": 0,
+  "misses": 2,
+  "surprises": 1,
   "miss_details": [
     {
-      "unit_id": "3011",
-      "score": 50,
-      "actual_prob": 402,
+      "unit_id": "3010",
+      "score": 40,
+      "actual_prob": 362,
       "reasons": [
-        "低稼働(804G)",
-        "設定1域(1/402)"
+        "設定1域(1/362)"
+      ]
+    },
+    {
+      "unit_id": "3011",
+      "score": 36,
+      "actual_prob": 400,
+      "reasons": [
+        "設定1域(1/400)"
       ]
     }
   ],
-  "surprise_details": []
+  "surprise_details": [
+    {
+      "unit_id": "3012",
+      "rank": "C",
+      "score": 38,
+      "actual_prob": 322,
+      "reasons": [
+        "低スコア台(38点)が好調"
+      ]
+    }
+  ]
 }
