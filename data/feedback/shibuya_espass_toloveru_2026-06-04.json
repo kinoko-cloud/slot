@@ -5,15 +5,24 @@
   "weekday": "木",
   "total_units": 3,
   "hits": 0,
-  "misses": 1,
+  "misses": 2,
   "surprises": 0,
   "miss_details": [
     {
       "unit_id": "3010",
-      "score": 50,
+      "score": 40,
       "actual_prob": 214,
       "reasons": [
         "設定1域(1/214)"
+      ]
+    },
+    {
+      "unit_id": "3012",
+      "score": 53,
+      "actual_prob": 229,
+      "reasons": [
+        "低稼働(459G)",
+        "設定1域(1/229)"
       ]
     }
   ],
