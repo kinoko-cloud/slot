@@ -5,15 +5,25 @@
   "weekday": "金",
   "total_units": 30,
   "hits": 0,
-  "misses": 3,
-  "surprises": 8,
+  "misses": 4,
+  "surprises": 4,
   "miss_details": [
     {
-      "unit_id": "3159",
-      "score": 63,
-      "actual_prob": 249,
+      "unit_id": "3160",
+      "score": 72,
+      "actual_prob": 207,
       "reasons": [
-        "設定1域(1/249)"
+        "低稼働(828G)",
+        "設定1域(1/207)"
+      ]
+    },
+    {
+      "unit_id": "3080",
+      "score": 69,
+      "actual_prob": 269,
+      "reasons": [
+        "低稼働(807G)",
+        "設定1域(1/269)"
       ]
     },
     {
@@ -35,6 +45,13 @@
   ],
   "surprise_details": [
     {
+      "unit_id": "3158",
+      "rank": "B",
+      "score": 88,
+      "actual_prob": 115,
+      "reasons": []
+    },
+    {
       "unit_id": "3164",
       "rank": "B",
       "score": 73,
@@ -42,59 +59,18 @@
       "reasons": []
     },
     {
-      "unit_id": "3158",
+      "unit_id": "3162",
       "rank": "B",
-      "score": 71,
-      "actual_prob": 139,
-      "reasons": []
-    },
-    {
-      "unit_id": "3082",
-      "rank": "B",
-      "score": 68,
+      "score": 58,
       "actual_prob": 279,
       "reasons": []
     },
     {
       "unit_id": "3157",
       "rank": "C",
-      "score": 43,
-      "actual_prob": 310,
+      "score": 48,
+      "actual_prob": 200,
       "reasons": []
-    },
-    {
-      "unit_id": "3081",
-      "rank": "C",
-      "score": 40,
-      "actual_prob": 314,
-      "reasons": []
-    },
-    {
-      "unit_id": "3077",
-      "rank": "B",
-      "score": 28,
-      "actual_prob": 269,
-      "reasons": [
-        "低スコア台(28点)が好調"
-      ]
-    },
-    {
-      "unit_id": "3155",
-      "rank": "B",
-      "score": 28,
-      "actual_prob": 274,
-      "reasons": [
-        "低スコア台(28点)が好調"
-      ]
-    },
-    {
-      "unit_id": "3084",
-      "rank": "B",
-      "score": 27,
-      "actual_prob": 329,
-      "reasons": [
-        "低スコア台(27点)が好調"
-      ]
     }
   ]
 }
