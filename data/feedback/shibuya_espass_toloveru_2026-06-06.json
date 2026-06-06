@@ -5,33 +5,34 @@
   "weekday": "土",
   "total_units": 3,
   "hits": 0,
-  "misses": 2,
-  "surprises": 1,
-  "miss_details": [
+  "misses": 0,
+  "surprises": 3,
+  "miss_details": [],
+  "surprise_details": [
+    {
+      "unit_id": "3012",
+      "rank": "C",
+      "score": 53,
+      "actual_prob": 250,
+      "reasons": []
+    },
     {
       "unit_id": "3011",
-      "score": 17,
+      "rank": "D",
+      "score": 27,
       "actual_prob": 304,
       "reasons": [
-        "設定1域(1/304)"
+        "低スコア台(27点)が好調"
       ]
     },
     {
       "unit_id": "3010",
-      "score": 11,
+      "rank": "D",
+      "score": 21,
       "actual_prob": 266,
       "reasons": [
-        "設定1域(1/266)"
+        "低スコア台(21点)が好調"
       ]
-    }
-  ],
-  "surprise_details": [
-    {
-      "unit_id": "3012",
-      "rank": "D",
-      "score": 43,
-      "actual_prob": 250,
-      "reasons": []
     }
   ]
 }
