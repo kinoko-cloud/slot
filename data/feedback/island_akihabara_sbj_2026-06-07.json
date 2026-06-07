@@ -4,16 +4,26 @@
   "date": "2026-06-07",
   "weekday": "日",
   "total_units": 11,
-  "hits": 9,
-  "misses": 0,
+  "hits": 7,
+  "misses": 1,
   "surprises": 1,
-  "miss_details": [],
+  "miss_details": [
+    {
+      "unit_id": "1025",
+      "score": 107,
+      "actual_prob": 230,
+      "reasons": [
+        "高スコア過信",
+        "設定1域(1/230)"
+      ]
+    }
+  ],
   "surprise_details": [
     {
       "unit_id": "1026",
       "rank": "B",
       "score": 96,
-      "actual_prob": 107,
+      "actual_prob": 103,
       "reasons": []
     }
   ]
