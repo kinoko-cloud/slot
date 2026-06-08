@@ -4,17 +4,16 @@
   "date": "2026-06-08",
   "weekday": "月",
   "total_units": 3,
-  "hits": 1,
+  "hits": 0,
   "misses": 1,
   "surprises": 1,
   "miss_details": [
     {
       "unit_id": "3011",
-      "score": 53,
-      "actual_prob": 236,
+      "score": 30,
+      "actual_prob": 322,
       "reasons": [
-        "低稼働(236G)",
-        "設定1域(1/236)"
+        "設定1域(1/322)"
       ]
     }
   ],
@@ -22,9 +21,11 @@
     {
       "unit_id": "3010",
       "rank": "B",
-      "score": 61,
-      "actual_prob": 204,
-      "reasons": []
+      "score": 32,
+      "actual_prob": 274,
+      "reasons": [
+        "低スコア台(32点)が好調"
+      ]
     }
   ]
 }
