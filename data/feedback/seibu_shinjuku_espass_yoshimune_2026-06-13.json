@@ -3,19 +3,28 @@
   "machine_key": "yoshimune",
   "date": "2026-06-13",
   "weekday": "土",
-  "total_units": 2,
+  "total_units": 4,
   "hits": 0,
   "misses": 1,
-  "surprises": 0,
+  "surprises": 1,
   "miss_details": [
     {
       "unit_id": "3113",
-      "score": 92,
-      "actual_prob": 0,
+      "score": 76,
+      "actual_prob": 406,
       "reasons": [
-        "高スコア過信"
+        "低稼働(406G)",
+        "設定1域(1/406)"
       ]
     }
   ],
-  "surprise_details": []
+  "surprise_details": [
+    {
+      "unit_id": "3111",
+      "rank": "B",
+      "score": 64,
+      "actual_prob": 105,
+      "reasons": []
+    }
+  ]
 }
