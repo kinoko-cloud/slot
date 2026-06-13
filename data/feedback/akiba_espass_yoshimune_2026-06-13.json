@@ -4,34 +4,69 @@
   "date": "2026-06-13",
   "weekday": "土",
   "total_units": 10,
-  "hits": 0,
-  "misses": 3,
-  "surprises": 0,
-  "miss_details": [
+  "hits": 3,
+  "misses": 0,
+  "surprises": 7,
+  "miss_details": [],
+  "surprise_details": [
     {
-      "unit_id": "2006",
-      "score": 110,
-      "actual_prob": 0,
+      "unit_id": "2010",
+      "rank": "B",
+      "score": 104,
+      "actual_prob": 104,
+      "reasons": []
+    },
+    {
+      "unit_id": "2007",
+      "rank": "B",
+      "score": 102,
+      "actual_prob": 60,
       "reasons": [
-        "高スコア過信"
+        "実は高設定域(1/60)"
       ]
     },
     {
-      "unit_id": "2001",
-      "score": 93,
-      "actual_prob": 0,
+      "unit_id": "2003",
+      "rank": "B",
+      "score": 97,
+      "actual_prob": 48,
       "reasons": [
-        "高スコア過信"
+        "実は高設定域(1/48)"
       ]
     },
     {
-      "unit_id": "2009",
-      "score": 85,
-      "actual_prob": 0,
+      "unit_id": "2005",
+      "rank": "B",
+      "score": 97,
+      "actual_prob": 72,
       "reasons": [
-        "高スコア過信"
+        "実は高設定域(1/72)"
+      ]
+    },
+    {
+      "unit_id": "2008",
+      "rank": "B",
+      "score": 52,
+      "actual_prob": 163,
+      "reasons": []
+    },
+    {
+      "unit_id": "2002",
+      "rank": "B",
+      "score": 26,
+      "actual_prob": 298,
+      "reasons": [
+        "低スコア台(26点)が好調"
+      ]
+    },
+    {
+      "unit_id": "2004",
+      "rank": "B",
+      "score": 26,
+      "actual_prob": 262,
+      "reasons": [
+        "低スコア台(26点)が好調"
       ]
     }
-  ],
-  "surprise_details": []
+  ]
 }
