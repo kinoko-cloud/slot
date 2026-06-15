@@ -6,23 +6,26 @@
   "total_units": 30,
   "hits": 0,
   "misses": 3,
-  "surprises": 4,
+  "surprises": 5,
   "miss_details": [
     {
-      "unit_id": "3077",
-      "score": 73,
+      "unit_id": "3087",
+      "score": 74,
       "actual_prob": 0,
       "reasons": []
     },
     {
-      "unit_id": "3087",
-      "score": 73,
-      "actual_prob": 0,
-      "reasons": []
+      "unit_id": "3085",
+      "score": 60,
+      "actual_prob": 279,
+      "reasons": [
+        "低稼働(837G)",
+        "設定1域(1/279)"
+      ]
     },
     {
       "unit_id": "3152",
-      "score": 58,
+      "score": 59,
       "actual_prob": 333,
       "reasons": [
         "低稼働(333G)",
@@ -34,30 +37,39 @@
     {
       "unit_id": "3150",
       "rank": "B",
-      "score": 66,
-      "actual_prob": 177,
+      "score": 62,
+      "actual_prob": 244,
       "reasons": []
     },
     {
       "unit_id": "3166",
       "rank": "B",
-      "score": 55,
+      "score": 56,
       "actual_prob": 214,
       "reasons": []
     },
     {
-      "unit_id": "3079",
+      "unit_id": "3160",
       "rank": "B",
-      "score": 50,
-      "actual_prob": 326,
+      "score": 55,
+      "actual_prob": 235,
       "reasons": []
     },
     {
       "unit_id": "3155",
       "rank": "B",
-      "score": 40,
-      "actual_prob": 277,
+      "score": 41,
+      "actual_prob": 321,
       "reasons": []
+    },
+    {
+      "unit_id": "3079",
+      "rank": "B",
+      "score": 36,
+      "actual_prob": 324,
+      "reasons": [
+        "低スコア台(36点)が好調"
+      ]
     }
   ]
 }
