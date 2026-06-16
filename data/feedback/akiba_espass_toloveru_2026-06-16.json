@@ -5,26 +5,74 @@
   "weekday": "火",
   "total_units": 30,
   "hits": 0,
-  "misses": 1,
-  "surprises": 1,
+  "misses": 3,
+  "surprises": 5,
   "miss_details": [
     {
-      "unit_id": "3077",
-      "score": 61,
-      "actual_prob": 248,
+      "unit_id": "3076",
+      "score": 68,
+      "actual_prob": 638,
       "reasons": [
-        "低稼働(248G)",
-        "設定1域(1/248)"
+        "低稼働(638G)",
+        "設定1域(1/638)"
+      ]
+    },
+    {
+      "unit_id": "3161",
+      "score": 64,
+      "actual_prob": 240,
+      "reasons": [
+        "低稼働(480G)",
+        "設定1域(1/240)"
+      ]
+    },
+    {
+      "unit_id": "3077",
+      "score": 59,
+      "actual_prob": 332,
+      "reasons": [
+        "低稼働(998G)",
+        "設定1域(1/332)"
       ]
     }
   ],
   "surprise_details": [
     {
+      "unit_id": "3151",
+      "rank": "B",
+      "score": 61,
+      "actual_prob": 226,
+      "reasons": []
+    },
+    {
       "unit_id": "3086",
       "rank": "B",
       "score": 58,
-      "actual_prob": 196,
+      "actual_prob": 227,
       "reasons": []
+    },
+    {
+      "unit_id": "3163",
+      "rank": "B",
+      "score": 58,
+      "actual_prob": 330,
+      "reasons": []
+    },
+    {
+      "unit_id": "3156",
+      "rank": "B",
+      "score": 56,
+      "actual_prob": 230,
+      "reasons": []
+    },
+    {
+      "unit_id": "3079",
+      "rank": "B",
+      "score": 37,
+      "actual_prob": 283,
+      "reasons": [
+        "低スコア台(37点)が好調"
+      ]
     }
   ]
 }
