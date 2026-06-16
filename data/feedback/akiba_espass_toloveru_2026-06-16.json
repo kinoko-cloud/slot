@@ -5,34 +5,41 @@
   "weekday": "火",
   "total_units": 30,
   "hits": 0,
-  "misses": 3,
-  "surprises": 5,
+  "misses": 4,
+  "surprises": 8,
   "miss_details": [
     {
-      "unit_id": "3076",
+      "unit_id": "3165",
       "score": 68,
-      "actual_prob": 638,
+      "actual_prob": 676,
       "reasons": [
-        "低稼働(638G)",
-        "設定1域(1/638)"
+        "低稼働(676G)",
+        "設定1域(1/676)"
       ]
     },
     {
-      "unit_id": "3161",
+      "unit_id": "3081",
       "score": 64,
-      "actual_prob": 240,
+      "actual_prob": 478,
       "reasons": [
-        "低稼働(480G)",
-        "設定1域(1/240)"
+        "低稼働(478G)",
+        "設定1域(1/478)"
       ]
     },
     {
       "unit_id": "3077",
-      "score": 59,
-      "actual_prob": 332,
+      "score": 54,
+      "actual_prob": 318,
       "reasons": [
-        "低稼働(998G)",
-        "設定1域(1/332)"
+        "設定1域(1/318)"
+      ]
+    },
+    {
+      "unit_id": "3158",
+      "score": 52,
+      "actual_prob": 1018,
+      "reasons": [
+        "設定1域(1/1018)"
       ]
     }
   ],
@@ -40,38 +47,63 @@
     {
       "unit_id": "3151",
       "rank": "B",
-      "score": 61,
+      "score": 62,
       "actual_prob": 226,
+      "reasons": []
+    },
+    {
+      "unit_id": "3161",
+      "rank": "B",
+      "score": 59,
+      "actual_prob": 195,
+      "reasons": []
+    },
+    {
+      "unit_id": "3075",
+      "rank": "B",
+      "score": 56,
+      "actual_prob": 242,
+      "reasons": []
+    },
+    {
+      "unit_id": "3084",
+      "rank": "B",
+      "score": 54,
+      "actual_prob": 272,
       "reasons": []
     },
     {
       "unit_id": "3086",
       "rank": "B",
-      "score": 58,
-      "actual_prob": 227,
-      "reasons": []
-    },
-    {
-      "unit_id": "3163",
-      "rank": "B",
-      "score": 58,
-      "actual_prob": 330,
+      "score": 45,
+      "actual_prob": 215,
       "reasons": []
     },
     {
       "unit_id": "3156",
       "rank": "B",
-      "score": 56,
-      "actual_prob": 230,
-      "reasons": []
+      "score": 38,
+      "actual_prob": 281,
+      "reasons": [
+        "低スコア台(38点)が好調"
+      ]
     },
     {
       "unit_id": "3079",
       "rank": "B",
       "score": 37,
-      "actual_prob": 283,
+      "actual_prob": 310,
       "reasons": [
         "低スコア台(37点)が好調"
+      ]
+    },
+    {
+      "unit_id": "3080",
+      "rank": "C",
+      "score": 31,
+      "actual_prob": 320,
+      "reasons": [
+        "低スコア台(31点)が好調"
       ]
     }
   ]
