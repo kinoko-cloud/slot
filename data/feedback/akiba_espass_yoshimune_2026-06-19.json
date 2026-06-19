@@ -4,10 +4,21 @@
   "date": "2026-06-19",
   "weekday": "金",
   "total_units": 10,
-  "hits": 3,
-  "misses": 0,
+  "hits": 2,
+  "misses": 1,
   "surprises": 4,
-  "miss_details": [],
+  "miss_details": [
+    {
+      "unit_id": "2003",
+      "score": 82,
+      "actual_prob": 230,
+      "reasons": [
+        "高スコア過信",
+        "低稼働(230G)",
+        "設定1域(1/230)"
+      ]
+    }
+  ],
   "surprise_details": [
     {
       "unit_id": "2009",
@@ -19,26 +30,24 @@
       ]
     },
     {
-      "unit_id": "2004",
-      "rank": "B",
-      "score": 103,
-      "actual_prob": 10,
-      "reasons": [
-        "実は高設定域(1/10)"
-      ]
-    },
-    {
       "unit_id": "2001",
       "rank": "B",
-      "score": 94,
-      "actual_prob": 108,
+      "score": 76,
+      "actual_prob": 228,
+      "reasons": []
+    },
+    {
+      "unit_id": "2008",
+      "rank": "B",
+      "score": 74,
+      "actual_prob": 224,
       "reasons": []
     },
     {
       "unit_id": "2005",
       "rank": "B",
       "score": 73,
-      "actual_prob": 144,
+      "actual_prob": 132,
       "reasons": []
     }
   ]
