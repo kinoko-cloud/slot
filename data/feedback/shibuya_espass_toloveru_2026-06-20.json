@@ -6,24 +6,34 @@
   "total_units": 3,
   "hits": 0,
   "misses": 2,
-  "surprises": 0,
+  "surprises": 1,
   "miss_details": [
     {
       "unit_id": "3010",
-      "score": 51,
-      "actual_prob": 569,
+      "score": 50,
+      "actual_prob": 345,
       "reasons": [
-        "設定1域(1/569)"
+        "設定1域(1/345)"
       ]
     },
     {
       "unit_id": "3012",
-      "score": 31,
-      "actual_prob": 496,
+      "score": 21,
+      "actual_prob": 433,
       "reasons": [
-        "設定1域(1/496)"
+        "設定1域(1/433)"
       ]
     }
   ],
-  "surprise_details": []
+  "surprise_details": [
+    {
+      "unit_id": "3011",
+      "rank": "B",
+      "score": 31,
+      "actual_prob": 323,
+      "reasons": [
+        "低スコア台(31点)が好調"
+      ]
+    }
+  ]
 }
