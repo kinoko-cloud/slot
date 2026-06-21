@@ -5,29 +5,38 @@
   "weekday": "日",
   "total_units": 5,
   "hits": 1,
-  "misses": 0,
+  "misses": 1,
   "surprises": 3,
-  "miss_details": [],
+  "miss_details": [
+    {
+      "unit_id": "3111",
+      "score": 52,
+      "actual_prob": 273,
+      "reasons": [
+        "設定1域(1/273)"
+      ]
+    }
+  ],
   "surprise_details": [
     {
       "unit_id": "3113",
       "rank": "B",
-      "score": 94,
-      "actual_prob": 112,
+      "score": 103,
+      "actual_prob": 115,
       "reasons": []
     },
     {
-      "unit_id": "3111",
+      "unit_id": "3114",
       "rank": "B",
-      "score": 92,
-      "actual_prob": 107,
+      "score": 98,
+      "actual_prob": 116,
       "reasons": []
     },
     {
       "unit_id": "3112",
       "rank": "B",
-      "score": 74,
-      "actual_prob": 172,
+      "score": 64,
+      "actual_prob": 174,
       "reasons": []
     }
   ]
