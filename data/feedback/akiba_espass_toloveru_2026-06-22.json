@@ -6,7 +6,7 @@
   "total_units": 30,
   "hits": 0,
   "misses": 4,
-  "surprises": 3,
+  "surprises": 7,
   "miss_details": [
     {
       "unit_id": "3084",
@@ -22,39 +22,70 @@
     },
     {
       "unit_id": "3081",
-      "score": 76,
-      "actual_prob": 0,
-      "reasons": []
+      "score": 61,
+      "actual_prob": 281,
+      "reasons": [
+        "低稼働(281G)",
+        "設定1域(1/281)"
+      ]
     },
     {
       "unit_id": "3150",
       "score": 37,
-      "actual_prob": 628,
+      "actual_prob": 338,
       "reasons": [
-        "設定1域(1/628)"
+        "設定1域(1/338)"
       ]
     }
   ],
   "surprise_details": [
     {
-      "unit_id": "3166",
+      "unit_id": "3085",
       "rank": "B",
-      "score": 60,
-      "actual_prob": 311,
+      "score": 74,
+      "actual_prob": 126,
       "reasons": []
     },
     {
       "unit_id": "3080",
-      "rank": "C",
-      "score": 57,
+      "rank": "B",
+      "score": 60,
       "actual_prob": 156,
+      "reasons": []
+    },
+    {
+      "unit_id": "3154",
+      "rank": "B",
+      "score": 59,
+      "actual_prob": 206,
+      "reasons": []
+    },
+    {
+      "unit_id": "3156",
+      "rank": "B",
+      "score": 57,
+      "actual_prob": 259,
       "reasons": []
     },
     {
       "unit_id": "3158",
       "rank": "B",
-      "score": 50,
+      "score": 53,
       "actual_prob": 299,
+      "reasons": []
+    },
+    {
+      "unit_id": "3160",
+      "rank": "B",
+      "score": 52,
+      "actual_prob": 320,
+      "reasons": []
+    },
+    {
+      "unit_id": "3166",
+      "rank": "B",
+      "score": 50,
+      "actual_prob": 229,
       "reasons": []
     }
   ]
