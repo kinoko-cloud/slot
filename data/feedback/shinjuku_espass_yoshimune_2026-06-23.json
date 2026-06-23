@@ -5,60 +5,72 @@
   "weekday": "火",
   "total_units": 14,
   "hits": 4,
-  "misses": 0,
-  "surprises": 7,
-  "miss_details": [],
-  "surprise_details": [
+  "misses": 1,
+  "surprises": 6,
+  "miss_details": [
     {
-      "unit_id": "691",
-      "rank": "B",
-      "score": 123,
-      "actual_prob": 60,
+      "unit_id": "687",
+      "score": 89,
+      "actual_prob": 470,
       "reasons": [
-        "実は高設定域(1/60)"
+        "高スコア過信",
+        "低稼働(940G)",
+        "設定1域(1/470)"
       ]
-    },
+    }
+  ],
+  "surprise_details": [
     {
       "unit_id": "684",
       "rank": "B",
-      "score": 120,
-      "actual_prob": 95,
-      "reasons": []
+      "score": 110,
+      "actual_prob": 80,
+      "reasons": [
+        "実は高設定域(1/80)"
+      ]
     },
     {
-      "unit_id": "694",
+      "unit_id": "691",
       "rank": "B",
-      "score": 113,
-      "actual_prob": 102,
-      "reasons": []
-    },
-    {
-      "unit_id": "695",
-      "rank": "B",
-      "score": 94,
-      "actual_prob": 96,
-      "reasons": []
-    },
-    {
-      "unit_id": "692",
-      "rank": "B",
-      "score": 64,
-      "actual_prob": 136,
+      "score": 109,
+      "actual_prob": 101,
       "reasons": []
     },
     {
       "unit_id": "685",
       "rank": "B",
-      "score": 57,
-      "actual_prob": 227,
-      "reasons": []
+      "score": 108,
+      "actual_prob": 23,
+      "reasons": [
+        "実は高設定域(1/23)"
+      ]
+    },
+    {
+      "unit_id": "690",
+      "rank": "B",
+      "score": 103,
+      "actual_prob": 59,
+      "reasons": [
+        "実は高設定域(1/59)"
+      ]
+    },
+    {
+      "unit_id": "695",
+      "rank": "B",
+      "score": 102,
+      "actual_prob": 55,
+      "reasons": [
+        "実は高設定域(1/55)"
+      ]
     },
     {
       "unit_id": "686",
       "rank": "B",
-      "score": 55,
-      "actual_prob": 248,
-      "reasons": []
+      "score": 95,
+      "actual_prob": 31,
+      "reasons": [
+        "実は高設定域(1/31)"
+      ]
     }
   ]
 }
