@@ -4,61 +4,88 @@
   "date": "2026-06-25",
   "weekday": "木",
   "total_units": 10,
-  "hits": 3,
-  "misses": 0,
+  "hits": 1,
+  "misses": 2,
   "surprises": 7,
-  "miss_details": [],
+  "miss_details": [
+    {
+      "unit_id": "2006",
+      "score": 94,
+      "actual_prob": 306,
+      "reasons": [
+        "高スコア過信",
+        "低稼働(920G)",
+        "設定1域(1/306)"
+      ]
+    },
+    {
+      "unit_id": "2009",
+      "score": 86,
+      "actual_prob": 296,
+      "reasons": [
+        "高スコア過信",
+        "低稼働(592G)",
+        "設定1域(1/296)"
+      ]
+    }
+  ],
   "surprise_details": [
     {
-      "unit_id": "2001",
+      "unit_id": "2002",
       "rank": "B",
-      "score": 104,
-      "actual_prob": 109,
+      "score": 98,
+      "actual_prob": 103,
       "reasons": []
     },
     {
       "unit_id": "2008",
       "rank": "B",
-      "score": 98,
-      "actual_prob": 128,
+      "score": 92,
+      "actual_prob": 59,
+      "reasons": [
+        "実は高設定域(1/59)"
+      ]
+    },
+    {
+      "unit_id": "2007",
+      "rank": "B",
+      "score": 91,
+      "actual_prob": 78,
+      "reasons": [
+        "実は高設定域(1/78)"
+      ]
+    },
+    {
+      "unit_id": "2005",
+      "rank": "B",
+      "score": 85,
+      "actual_prob": 59,
+      "reasons": [
+        "実は高設定域(1/59)"
+      ]
+    },
+    {
+      "unit_id": "2004",
+      "rank": "B",
+      "score": 83,
+      "actual_prob": 80,
+      "reasons": [
+        "実は高設定域(1/80)"
+      ]
+    },
+    {
+      "unit_id": "2001",
+      "rank": "B",
+      "score": 79,
+      "actual_prob": 141,
       "reasons": []
     },
     {
       "unit_id": "2010",
       "rank": "B",
-      "score": 69,
-      "actual_prob": 218,
+      "score": 64,
+      "actual_prob": 277,
       "reasons": []
-    },
-    {
-      "unit_id": "2007",
-      "rank": "B",
-      "score": 59,
-      "actual_prob": 169,
-      "reasons": []
-    },
-    {
-      "unit_id": "2002",
-      "rank": "B",
-      "score": 55,
-      "actual_prob": 170,
-      "reasons": []
-    },
-    {
-      "unit_id": "2004",
-      "rank": "C",
-      "score": 46,
-      "actual_prob": 151,
-      "reasons": []
-    },
-    {
-      "unit_id": "2005",
-      "rank": "D",
-      "score": 34,
-      "actual_prob": 315,
-      "reasons": [
-        "低スコア台(34点)が好調"
-      ]
     }
   ]
 }
