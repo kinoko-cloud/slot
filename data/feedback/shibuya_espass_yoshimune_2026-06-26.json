@@ -4,51 +4,54 @@
   "date": "2026-06-26",
   "weekday": "金",
   "total_units": 8,
-  "hits": 2,
-  "misses": 0,
-  "surprises": 5,
-  "miss_details": [],
+  "hits": 0,
+  "misses": 2,
+  "surprises": 3,
+  "miss_details": [
+    {
+      "unit_id": "3049",
+      "score": 93,
+      "actual_prob": 371,
+      "reasons": [
+        "高スコア過信",
+        "低稼働(371G)",
+        "設定1域(1/371)"
+      ]
+    },
+    {
+      "unit_id": "3048",
+      "score": 87,
+      "actual_prob": 232,
+      "reasons": [
+        "高スコア過信",
+        "低稼働(464G)",
+        "設定1域(1/232)"
+      ]
+    }
+  ],
   "surprise_details": [
     {
       "unit_id": "3047",
       "rank": "B",
-      "score": 126,
-      "actual_prob": 84,
-      "reasons": []
-    },
-    {
-      "unit_id": "3052",
-      "rank": "B",
-      "score": 125,
-      "actual_prob": 71,
+      "score": 124,
+      "actual_prob": 23,
       "reasons": [
-        "実は高設定域(1/71)"
+        "実は高設定域(1/23)"
       ]
     },
     {
       "unit_id": "3051",
       "rank": "B",
-      "score": 110,
-      "actual_prob": 117,
+      "score": 75,
+      "actual_prob": 248,
       "reasons": []
     },
     {
       "unit_id": "3050",
       "rank": "B",
-      "score": 39,
-      "actual_prob": 199,
-      "reasons": [
-        "低スコア台(39点)が好調"
-      ]
-    },
-    {
-      "unit_id": "3053",
-      "rank": "B",
-      "score": 37,
-      "actual_prob": 211,
-      "reasons": [
-        "低スコア台(37点)が好調"
-      ]
+      "score": 56,
+      "actual_prob": 311,
+      "reasons": []
     }
   ]
 }
