@@ -3,20 +3,43 @@
   "machine_key": "yoshimune",
   "date": "2026-07-02",
   "weekday": "木",
-  "total_units": 4,
-  "hits": 2,
-  "misses": 0,
-  "surprises": 1,
-  "miss_details": [],
+  "total_units": 5,
+  "hits": 1,
+  "misses": 1,
+  "surprises": 3,
+  "miss_details": [
+    {
+      "unit_id": "3111",
+      "score": 77,
+      "actual_prob": 761,
+      "reasons": [
+        "設定1域(1/761)"
+      ]
+    }
+  ],
   "surprise_details": [
     {
       "unit_id": "3112",
       "rank": "B",
-      "score": 103,
-      "actual_prob": 14,
+      "score": 102,
+      "actual_prob": 69,
       "reasons": [
-        "実は高設定域(1/14)"
+        "実は高設定域(1/69)"
       ]
+    },
+    {
+      "unit_id": "3114",
+      "rank": "C",
+      "score": 91,
+      "actual_prob": 95,
+      "reasons": []
+    },
+    {
+      "unit_id": "3113",
+      "rank": "B",
+      "score": 62,
+      "actual_prob": 246,
+      "reasons": []
     }
   ]
 }
