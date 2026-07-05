@@ -6,15 +6,14 @@
   "total_units": 8,
   "hits": 1,
   "misses": 1,
-  "surprises": 2,
+  "surprises": 3,
   "miss_details": [
     {
       "unit_id": "3048",
-      "score": 79,
-      "actual_prob": 222,
+      "score": 66,
+      "actual_prob": 221,
       "reasons": [
-        "低稼働(445G)",
-        "設定1域(1/222)"
+        "設定1域(1/221)"
       ]
     }
   ],
@@ -22,16 +21,25 @@
     {
       "unit_id": "3050",
       "rank": "B",
-      "score": 93,
-      "actual_prob": 99,
+      "score": 107,
+      "actual_prob": 93,
       "reasons": []
     },
     {
-      "unit_id": "3052",
-      "rank": "C",
-      "score": 67,
-      "actual_prob": 89,
+      "unit_id": "3053",
+      "rank": "B",
+      "score": 98,
+      "actual_prob": 93,
       "reasons": []
+    },
+    {
+      "unit_id": "3047",
+      "rank": "B",
+      "score": 35,
+      "actual_prob": 266,
+      "reasons": [
+        "低スコア台(35点)が好調"
+      ]
     }
   ]
 }
