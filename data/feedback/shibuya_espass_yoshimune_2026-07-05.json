@@ -4,41 +4,48 @@
   "date": "2026-07-05",
   "weekday": "日",
   "total_units": 8,
-  "hits": 1,
-  "misses": 1,
-  "surprises": 3,
-  "miss_details": [
-    {
-      "unit_id": "3048",
-      "score": 66,
-      "actual_prob": 221,
-      "reasons": [
-        "設定1域(1/221)"
-      ]
-    }
-  ],
+  "hits": 2,
+  "misses": 0,
+  "surprises": 5,
+  "miss_details": [],
   "surprise_details": [
-    {
-      "unit_id": "3050",
-      "rank": "B",
-      "score": 107,
-      "actual_prob": 93,
-      "reasons": []
-    },
     {
       "unit_id": "3053",
       "rank": "B",
+      "score": 109,
+      "actual_prob": 51,
+      "reasons": [
+        "実は高設定域(1/51)"
+      ]
+    },
+    {
+      "unit_id": "3050",
+      "rank": "B",
+      "score": 104,
+      "actual_prob": 116,
+      "reasons": []
+    },
+    {
+      "unit_id": "3049",
+      "rank": "B",
       "score": 98,
-      "actual_prob": 93,
+      "actual_prob": 90,
       "reasons": []
     },
     {
       "unit_id": "3047",
       "rank": "B",
-      "score": 35,
-      "actual_prob": 266,
+      "score": 80,
+      "actual_prob": 106,
+      "reasons": []
+    },
+    {
+      "unit_id": "3052",
+      "rank": "C",
+      "score": 31,
+      "actual_prob": 210,
       "reasons": [
-        "低スコア台(35点)が好調"
+        "低スコア台(31点)が好調"
       ]
     }
   ]
