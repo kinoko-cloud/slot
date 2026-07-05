@@ -6,71 +6,25 @@
 
 # 機種設定
 MACHINES = {
-    'sbj': {
-        'name': 'Lスーパーブラックジャック',
-        'short_name': 'スーパーブラックジャック',
-        'display_name': 'スーパーブラックジャック',
-        'icon': '🃏',
-        # 機種名バリデーション用キーワード（スクレイピング時にページ上の機種名と照合）
-        # 新機種追加時は必ず設定すること（同シリーズの他機種と区別できるキーワード）
-        'verify_keywords': ['ブラックジャック'],
-        # 分析閾値（新機種追加時はここを設定するだけで全ロジックに反映）
-        'good_prob': 130,      # ART確率がこれ以下なら好調
-        'bad_prob': 150,       # ART確率がこれ以上なら不調判定
-        'very_bad_prob': 200,  # 明確に低設定
-        'typical_daily_games': 6500,  # 1日あたりの一般的な消化G数
-        # 天井パラメータ（設定変更/リセット時の天井短縮恩恵）
-        # ART間999G+αで天井。RBはG数リセットしない（回数のみカウント）
-        # ※液晶G数は通常時に順押し（左→中→右）した場合のみカウント。
-        #   変則押しすると液晶カウントされないがデータ上は1G消費。
-        #   そのためデータ上は999+α（変則押し分）になることがある。
-        'normal_ceiling': 999,        # 通常天井（液晶G数ベース。データ上は+αの誤差あり）
-        'reset_ceiling': 600,         # リセット時天井（朝イチ天井）
-        'reset_first_hit_bonus': True, # 朝イチ初当たりに恩恵あり
-        'renchain_threshold': 65,     # 連チャン判定: AT間70G以内なら連チャン継続（デフォルト統一）
-        # === 推奨条件（2026-02-20 データ分析結果） ===
-        'ceiling_target_games': 500,  # 天井狙い閾値: RB込み500G以上
-        'explosion_condition': {      # 爆発期待条件
-            'prob_threshold': 130,    # 確率1/130以下
-            'diff_threshold': -2000,  # 差枚-2000以下
-        },
-        'big_renchain': 30,           # 大連チャン定義: 30連
-        'warning_renchain_count': 2,  # 警戒ライン: 同日30連×2回
-    },
-    'yoshimune': {
-        'name': 'L真打吉宗',
-        'short_name': '真打吉宗',
-        'display_name': '真打吉宗',
-        'icon': '⚔️',
-        'verify_keywords': ['真打吉宗'],
-        # ART確率（papimoのart=AT内ゲーム当選回数）: 設定6≒1/56, 設定1≒1/191
-        # 実データ中央値1/128、good判定は設定4-5相当の1/90以下
-        'good_prob': 90,
-        'bad_prob': 150,
-        'very_bad_prob': 220,
+    'tokyoghoul': {
+        'name': 'Lスマスロ東京喰種',
+        'short_name': '東京喰種',
+        'display_name': '東京喰種',
+        'icon': '🫀',
+        'verify_keywords': ['東京喰種'],
+        # AT初当たり確率: 設定1=1/394, 設定6=1/261
+        # 機械割: 設定1=97.5%, 設定6=114.9%
+        # 実データ中央値は蓄積後に調整
+        'good_prob': 310,      # 設定4相当（1/310以下で好調）
+        'bad_prob': 380,       # 設定1以上（1/380以上で不調）
+        'very_bad_prob': 450,
         'typical_daily_games': 5000,
-        # AT間1500G天井、リセット時1000G天井
-        'normal_ceiling': 1500,
-        'reset_ceiling': 1000,
-        'reset_first_hit_bonus': False,
-        'renchain_threshold': 65,
-    },
-    'toloveru': {
-        'name': 'L ToLOVEるダークネスver.8.7',
-        'short_name': 'ToLOVEるDARKNESS',
-        'display_name': 'ToLOVEるDARKNESS',
-        'icon': '💕',
-        'verify_keywords': ['ToLOVE', 'トラブル'],
-        # ART確率（papimoのart=AT初当たり相当）: 設定5-6≒1/290前後
-        # 実データ中央値1/330、good判定は設定5相当の1/290以下
-        'good_prob': 290,
-        'bad_prob': 380,
-        'very_bad_prob': 460,
-        'typical_daily_games': 5000,
-        # ST間999G天井、リセット時650G天井
-        'normal_ceiling': 999,
-        'reset_ceiling': 650,
-        'reset_first_hit_bonus': False,
+        # CZ間天井: 600G+α（CZ/AT当選）
+        # AT間天井: 1200G+α（AT当選）
+        # リセット後: CZ間天井が200G+αに短縮（大きな恩恵）
+        'normal_ceiling': 1200,
+        'reset_ceiling': 200,
+        'reset_first_hit_bonus': True,
         'renchain_threshold': 65,
     },
 }
@@ -93,141 +47,59 @@ def get_machine_threshold(machine_key: str, key: str):
     m = MACHINES.get(machine_key, {})
     return m.get(key, MACHINE_DEFAULTS.get(key, 0))
 
-# 店舗設定（機種ごと）
+# 店舗設定（東京喰種のみ）
 STORES = {
-    # === SBJ ===
-    'island_akihabara_sbj': {
-        'name': 'アイランド秋葉原',
-        'short_name': 'アイランド秋葉原',
-        'hall_id': None,
-        'machine': 'sbj',
-        'units': [
-            '1018', '1020', '1021', '1022', '1023',
-            '1025', '1026', '1027', '1028', '1030', '1031'
-        ],  # 2026-04-29: 1015-1017 撤去 (14台→11台)
-        'data_source': 'papimo',
-    },
-    # shibuya_espass_sbj: 2026-03-12確認 SBJ撤退済み（3011も台変動）→ ランキング対象から除外
-
-    'shinjuku_espass_sbj': {
+    'shinjuku_espass_tokyoghoul': {
         'name': 'エスパス日拓新宿歌舞伎町店',
         'short_name': 'エスパス歌舞伎町',
         'hall_id': '100949',
-        'machine': 'sbj',
-        'units': ['669', '670', '671', '672'],  # 2026-04-29: 682-685から移動
-        'data_source': 'daidata',
-    },
-    'seibu_shinjuku_espass_sbj': {
-        'name': 'エスパス日拓西武新宿駅前店',
-        'short_name': 'エスパス西武新宿',
-        'hall_id': '100950',
-        'machine': 'sbj',
-        'units': [],  # 3185,3186,3187全て除外: L化物語に台変動(2026-03-02確認)
-        'data_source': 'daidata',
-    },
-    'akiba_espass_sbj': {
-        'name': 'エスパス日拓秋葉原駅前店',
-        'short_name': 'エスパス秋葉原',
-        'hall_id': '100928',
-        'machine': 'sbj',
-        'units': ['2070', '2071', '2072'],  # 2026-04-29: 2157-2160から移動・減台
-        'data_source': 'daidata',
-    },
-    # === 真打吉宗 ===
-    'island_akihabara_yoshimune': {
-        'name': 'アイランド秋葉原',
-        'short_name': 'アイランド秋葉原',
-        'hall_id': None,
-        'machine': 'yoshimune',
+        'machine': 'tokyoghoul',
         'units': [
-            '637', '638', '650', '651', '652', '653', '655', '656', '657', '658',
+            '801', '802', '803', '804', '805', '806', '807', '808', '809', '810',
+            '811', '812', '813', '814', '815', '830', '831', '832', '833', '834',
+            '838', '839', '840', '841', '842', '843', '844', '845', '846', '847',
+            '848', '849', '850', '851', '852', '853', '854', '855', '856', '857',
+            '858', '859', '860',
         ],
-        'data_source': 'papimo',
-    },
-    'shinjuku_espass_yoshimune': {
-        'name': 'エスパス日拓新宿歌舞伎町店',
-        'short_name': 'エスパス歌舞伎町',
-        'hall_id': '100949',
-        'machine': 'yoshimune',
-        'units': ['682','683','684','685','686','687','688','689','690','691','692','693','694','695'],
         'data_source': 'daidata',
     },
-    'akiba_espass_yoshimune': {
+    'akiba_espass_tokyoghoul': {
         'name': 'エスパス日拓秋葉原駅前店',
         'short_name': 'エスパス秋葉原',
         'hall_id': '100928',
-        'machine': 'yoshimune',
-        'units': ['2001','2002','2003','2004','2005','2006','2007','2008','2009','2010'],
+        'machine': 'tokyoghoul',
+        'units': [
+            '4076', '4077', '4078', '4079', '4080', '4081', '4082', '4083', '4084', '4085', '4086',
+            '4156', '4157', '4158', '4159', '4160', '4161', '4162', '4163', '4164',
+            '4165', '4166', '4167', '4168', '4169', '4170', '4171', '4172',
+        ],
         'data_source': 'daidata',
     },
-    'seibu_shinjuku_espass_yoshimune': {
+    'seibu_shinjuku_espass_tokyoghoul': {
         'name': 'エスパス日拓西武新宿駅前店',
         'short_name': 'エスパス西武新宿',
         'hall_id': '100950',
-        'machine': 'yoshimune',
-        'units': ['3111','3112','3113','3114','3115'],
+        'machine': 'tokyoghoul',
+        'units': [
+            '3159', '3160', '3161', '3162', '3163', '3164', '3165', '3166', '3167', '3168',
+            '3169', '3170', '3171', '3172', '3173', '3174', '3218',
+        ],
         'data_source': 'daidata',
     },
-    'shibuya_espass_yoshimune': {
+    'shibuya_espass_tokyoghoul': {
         'name': 'エスパス日拓渋谷新館',
         'short_name': 'エスパス渋谷新館',
         'hall_id': '100860',
-        'machine': 'yoshimune',
-        'units': ['3047','3048','3049','3050','3051','3052','3053','3090'],
-        'data_source': 'daidata',
-    },
-    # === ToLOVEるDARKNESS ===
-    'island_akihabara_toloveru': {
-        'name': 'アイランド秋葉原',
-        'short_name': 'アイランド秋葉原',
-        'hall_id': None,
-        'machine': 'toloveru',
+        'machine': 'tokyoghoul',
         'units': [
-            '1227', '1228', '1230', '1231', '1232', '1233', '1235', '1236', '1237', '1238',
-            '1250', '1251', '1252', '1253', '1255', '1256', '1257', '1258',
-            '1260', '1261', '1262', '1263', '1265', '1266', '1267', '1268',
-            '1270', '1271', '1272', '1273', '1275', '1276', '1277', '1278',
-            '1280', '1281', '1282', '1283', '1285', '1286', '1287', '1288',
+            '2075', '2076', '2077', '2078', '2079', '2080', '2081', '2082', '2083', '2084',
+            '2085', '2086', '2087', '2088', '2089', '2090', '2091', '2092', '2093', '2094',
+            '2095', '2096', '2097', '2098', '2099', '2100', '2101', '2102', '2103', '2104',
+            '2105', '2106', '2107',
         ],
-        'data_source': 'papimo',
-    },
-    'shinjuku_espass_toloveru': {
-        'name': 'エスパス日拓新宿歌舞伎町店',
-        'short_name': 'エスパス歌舞伎町',
-        'hall_id': '100949',
-        'machine': 'toloveru',
-        'units': ['1389','1390','1391'],
-        'data_source': 'daidata',
-    },
-    'akiba_espass_toloveru': {
-        'name': 'エスパス日拓秋葉原駅前店',
-        'short_name': 'エスパス秋葉原',
-        'hall_id': '100928',
-        'machine': 'toloveru',
-        'units': ['3075','3076','3077','3078','3079','3080','3081','3082','3083','3084','3085','3086','3087','3150','3151','3152','3153','3154','3155','3156','3157','3158','3159','3160','3161','3162','3163','3164','3165','3166'],
-        'data_source': 'daidata',
-    },
-    'seibu_shinjuku_espass_toloveru': {
-        'name': 'エスパス日拓西武新宿駅前店',
-        'short_name': 'エスパス西武新宿',
-        'hall_id': '100950',
-        'machine': 'toloveru',
-        'units': ['3195','3196','3197'],
-        'data_source': 'daidata',
-    },
-    'shibuya_espass_toloveru': {
-        'name': 'エスパス日拓渋谷新館',
-        'short_name': 'エスパス渋谷新館',
-        'hall_id': '100860',
-        'machine': 'toloveru',
-        'units': ['3010','3011','3012'],
         'data_source': 'daidata',
     },
 }
-
-# 旧形式との互換性
-STORES['island_akihabara'] = STORES['island_akihabara_sbj']
-# STORES['shibuya_espass'] = STORES['shibuya_espass_sbj']  # 2026-03-12: SBJ撤退のためコメントアウト
 
 
 
@@ -235,7 +107,7 @@ def get_stores_by_machine(machine_key: str) -> dict:
     """指定機種がある店舗を取得"""
     result = {}
     # 旧形式のキーは除外
-    old_keys = {'island_akihabara', 'shibuya_espass', 'shinjuku_espass'}
+    old_keys = set()
     for store_key, store in STORES.items():
         if store_key in old_keys:
             continue
@@ -309,7 +181,7 @@ def get_unit_ranking(store_key: str, unit_id: str) -> dict:
     store_rankings = RANKINGS.get(store_key, {})
     if not store_rankings:
         # 機種サフィックスなしのキーでも検索
-        for suffix in ['_sbj', '_yoshimune', '_toloveru']:
+        for suffix in ['_tokyoghoul']:
             if store_key.endswith(suffix):
                 alt_key = store_key[:-len(suffix)]
                 store_rankings = RANKINGS.get(alt_key, {})

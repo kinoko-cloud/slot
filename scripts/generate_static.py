@@ -265,19 +265,6 @@ def generate_index(env):
 
     # 店舗曜日傾向（物理店舗ベース）
     store_day_ratings = {
-        'island_akihabara': {
-            'name': 'アイランド秋葉原',
-            'short_name': 'アイランド秋葉原',
-            'day_ratings': {'月': 4, '火': 3, '水': 5, '木': 3, '金': 3, '土': 1, '日': 4},
-            'best_note': '水曜が最強、日月も狙い目',
-            'worst_note': '土曜は避けるべき',
-            'overall_rating': 4,
-            'machine_links': [
-                {'store_key': 'island_akihabara_sbj', 'icon': '🃏', 'short_name': 'SBJ'},
-                {'store_key': 'island_akihabara_yoshimune', 'icon': '⚔️', 'short_name': '真打吉宗'},
-                {'store_key': 'island_akihabara_toloveru', 'icon': '💕', 'short_name': 'ToLOVEる'},
-            ],
-        },
         'shibuya_espass': {
             'name': 'エスパス日拓渋谷新館',
             'short_name': 'エスパス渋谷新館',
@@ -286,23 +273,9 @@ def generate_index(env):
             'worst_note': '日曜は避けるべき',
             'overall_rating': 3,
             'machine_links': [
-                {'store_key': 'shibuya_espass_yoshimune', 'icon': '⚔️', 'short_name': '真打吉宗'},
-                {'store_key': 'shibuya_espass_toloveru', 'icon': '💕', 'short_name': 'ToLOVEる'},
+                {'store_key': 'shibuya_espass_tokyoghoul', 'icon': '🫀', 'short_name': '東京喰種'},
             ],
         },
-        # 2026-03-31 閉店
-        # 'shibuya_honkan_espass': {
-        #     'name': 'エスパス日拓渋谷本館',
-        #     'short_name': 'エスパス渋谷本館',
-        #     'day_ratings': {'月': 3, '火': 3, '水': 3, '木': 3, '金': 3, '土': 3, '日': 3},
-        #     'best_note': '新規追加。データ収集中',
-        #     'worst_note': '',
-        #     'overall_rating': 3,
-        #     'machine_links': [
-        #         {'store_key': 'shibuya_honkan_espass_sbj', 'icon': '🃏', 'short_name': 'SBJ'},
-        #         {'store_key': 'shibuya_honkan_espass_hokuto2', 'icon': '👊', 'short_name': '北斗転生2'},
-        #     ],
-        # },
         'shinjuku_espass': {
             'name': 'エスパス日拓新宿歌舞伎町店',
             'short_name': 'エスパス歌舞伎町',
@@ -311,9 +284,7 @@ def generate_index(env):
             'worst_note': '月曜は控えめ',
             'overall_rating': 3,
             'machine_links': [
-                {'store_key': 'shinjuku_espass_sbj', 'icon': '🃏', 'short_name': 'SBJ'},
-                {'store_key': 'shinjuku_espass_yoshimune', 'icon': '⚔️', 'short_name': '真打吉宗'},
-                {'store_key': 'shinjuku_espass_toloveru', 'icon': '💕', 'short_name': 'ToLOVEる'},
+                {'store_key': 'shinjuku_espass_tokyoghoul', 'icon': '🫀', 'short_name': '東京喰種'},
             ],
         },
         'akiba_espass': {
@@ -324,9 +295,7 @@ def generate_index(env):
             'worst_note': '月曜は控えめ',
             'overall_rating': 3,
             'machine_links': [
-                {'store_key': 'akiba_espass_sbj', 'icon': '🃏', 'short_name': 'SBJ'},
-                {'store_key': 'akiba_espass_yoshimune', 'icon': '⚔️', 'short_name': '真打吉宗'},
-                {'store_key': 'akiba_espass_toloveru', 'icon': '💕', 'short_name': 'ToLOVEる'},
+                {'store_key': 'akiba_espass_tokyoghoul', 'icon': '🫀', 'short_name': '東京喰種'},
             ],
         },
         'seibu_shinjuku_espass': {
@@ -337,9 +306,7 @@ def generate_index(env):
             'worst_note': '月火は控えめ',
             'overall_rating': 2,
             'machine_links': [
-                {'store_key': 'seibu_shinjuku_espass_sbj', 'icon': '🃏', 'short_name': 'SBJ'},
-                {'store_key': 'seibu_shinjuku_espass_yoshimune', 'icon': '⚔️', 'short_name': '真打吉宗'},
-                {'store_key': 'seibu_shinjuku_espass_toloveru', 'icon': '💕', 'short_name': 'ToLOVEる'},
+                {'store_key': 'seibu_shinjuku_espass_tokyoghoul', 'icon': '🫀', 'short_name': '東京喰種'},
             ],
         },
     }
@@ -787,7 +754,7 @@ def generate_index(env):
                         if yd_diff is None and yd_hist and yd_games > 0:
                             from analysis.diff_medals_estimator import estimate_diff_medals as _est_yd
                             total_medals = sum(h.get('medals', 0) for h in yd_hist)
-                            _mk_yd = rec.get('machine_key') or _get_machine_key(rec.get('store_key')) or 'sbj'
+                            _mk_yd = rec.get('machine_key') or _get_machine_key(rec.get('store_key')) or 'tokyoghoul'
                             yd_diff = _est_yd(total_medals, yd_games, _mk_yd)
                         rec['yesterday_diff_medals'] = yd_diff if yd_art > 0 else 0
                         rec['yesterday_max_rensa'] = yd.get('max_rensa', 0)
@@ -824,7 +791,7 @@ def generate_index(env):
                         if dbd_diff is None and dbd_hist and dbd_games > 0:
                             from analysis.diff_medals_estimator import estimate_diff_medals as _est_dbd
                             total_medals = sum(h.get('medals', 0) for h in dbd_hist)
-                            _mk_dbd = rec.get('machine_key') or _get_machine_key(rec.get('store_key')) or 'sbj'
+                            _mk_dbd = rec.get('machine_key') or _get_machine_key(rec.get('store_key')) or 'tokyoghoul'
                             dbd_diff = _est_dbd(total_medals, dbd_games, _mk_dbd)
                         rec['day_before_diff_medals'] = dbd_diff if dbd_art > 0 else 0
                         rec['day_before_max_rensa'] = dbd.get('max_rensa', 0)
@@ -860,7 +827,7 @@ def generate_index(env):
                         if tdd_diff is None and tdd_hist and tdd_games > 0:
                             from analysis.diff_medals_estimator import estimate_diff_medals as _est_tdd
                             total_medals = sum(h.get('medals', 0) for h in tdd_hist)
-                            _mk_tdd = rec.get('machine_key') or _get_machine_key(rec.get('store_key')) or 'sbj'
+                            _mk_tdd = rec.get('machine_key') or _get_machine_key(rec.get('store_key')) or 'tokyoghoul'
                             tdd_diff = _est_tdd(total_medals, tdd_games, _mk_tdd)
                         rec['three_days_ago_diff_medals'] = tdd_diff if tdd_art > 0 else 0
                         rec['three_days_ago_max_rensa'] = tdd.get('max_rensa', 0)
@@ -3222,7 +3189,7 @@ def main():
                'shibuya_espass_yoshimune', 'shibuya_espass_toloveru']:
         try:
             recs = recommend_units(sk)[:10]
-            machine_key = _get_machine_key(sk) or 'sbj'
+            machine_key = _get_machine_key(sk) or 'tokyoghoul'
             for r in recs:
                 r['store_key'] = sk
                 r['machine_key'] = machine_key

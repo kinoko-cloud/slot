@@ -28,112 +28,55 @@ REMOVE_ADS_SCRIPT = """
 }
 """
 
-# 店舗設定 (modelは半角カナでURLエンコード済み)
+# 店舗設定（東京喰種のみ）
+# model_encoded: L東京喰種 = L%E6%9D%B1%E4%BA%AC%E5%96%B0%E7%A8%AE
 DAIDATA_STORES = {
-    # shibuya_espass_sbj: 2026-03-12確認 SBJ撤退済み（3011も台変動）→ 取得対象から除外
-
-    'shinjuku_espass_sbj': {
+    'shinjuku_espass_tokyoghoul': {
         'hall_id': '100949',
-        'name': '新宿エスパス歌舞伎町',
-        'model_encoded': 'L%EF%BD%BD%EF%BD%B0%EF%BE%8A%EF%BE%9F%EF%BD%B0%EF%BE%8C%EF%BE%9E%EF%BE%97%EF%BD%AF%EF%BD%B8%EF%BD%BC%EF%BE%9E%EF%BD%AC%EF%BD%AF%EF%BD%B8',
-        'units': ['669', '670', '671', '672'],  # 2026-04-27確認: 682-685はyoshimuneに台変動
+        'name': 'エスパス新宿(東京喰種)',
+        'model_encoded': 'L%E6%9D%B1%E4%BA%AC%E5%96%B0%E7%A8%AE',
+        'units': [
+            '801', '802', '803', '804', '805', '806', '807', '808', '809', '810',
+            '811', '812', '813', '814', '815', '830', '831', '832', '833', '834',
+            '838', '839', '840', '841', '842', '843', '844', '845', '846', '847',
+            '848', '849', '850', '851', '852', '853', '854', '855', '856', '857',
+            '858', '859', '860',
+        ],
     },
-    'akiba_espass_sbj': {
+    'akiba_espass_tokyoghoul': {
         'hall_id': '100928',
-        'name': '秋葉原エスパス駅前',
-        'model_encoded': 'L%EF%BD%BD%EF%BD%B0%EF%BE%8A%EF%BE%9F%EF%BD%B0%EF%BE%8C%EF%BE%9E%EF%BE%97%EF%BD%AF%EF%BD%B8%EF%BD%BC%EF%BE%9E%EF%BD%AC%EF%BD%AF%EF%BD%B8',
-        'units': ['2070', '2071', '2072'],  # 2026-04-27確認: 2157-2160は台変動
+        'name': 'エスパス秋葉原(東京喰種)',
+        'model_encoded': 'L%E6%9D%B1%E4%BA%AC%E5%96%B0%E7%A8%AE',
+        'units': [
+            '4076', '4077', '4078', '4079', '4080', '4081', '4082', '4083', '4084', '4085', '4086',
+            '4156', '4157', '4158', '4159', '4160', '4161', '4162', '4163', '4164',
+            '4165', '4166', '4167', '4168', '4169', '4170', '4171', '4172',
+        ],
     },
-    'seibu_shinjuku_espass_sbj': {
+    'seibu_shinjuku_espass_tokyoghoul': {
         'hall_id': '100950',
-        'name': '西武新宿駅前エスパス',
-        'model_encoded': 'L%EF%BD%BD%EF%BD%B0%EF%BE%8A%EF%BE%9F%EF%BD%B0%EF%BE%8C%EF%BE%9E%EF%BE%97%EF%BD%AF%EF%BD%B8%EF%BD%BC%EF%BE%9E%EF%BD%AC%EF%BD%AF%EF%BD%B8',
-        'units': [],  # 3185,3186,3187全て除外: L化物語に台変動(2026-03-02確認)
+        'name': 'エスパス西武新宿(東京喰種)',
+        'model_encoded': 'L%E6%9D%B1%E4%BA%AC%E5%96%B0%E7%A8%AE',
+        'units': [
+            '3159', '3160', '3161', '3162', '3163', '3164', '3165', '3166', '3167', '3168',
+            '3169', '3170', '3171', '3172', '3173', '3174', '3218',
+        ],
     },
-    # === 真打吉宗 ===
-    'shinjuku_espass_yoshimune': {
-        'hall_id': '100949',
-        'name': 'エスパス新宿(真打吉宗)',
-        'model_encoded': 'L%E7%9C%9F%E6%89%93%E5%90%89%E5%AE%97',
-        'units': ['682','683','684','685','686','687','688','689','690','691','692','693','694','695'],
-    },
-    'akiba_espass_yoshimune': {
-        'hall_id': '100928',
-        'name': 'エスパス秋葉原(真打吉宗)',
-        'model_encoded': 'L%E7%9C%9F%E6%89%93%E5%90%89%E5%AE%97',
-        'units': ['2001','2002','2003','2004','2005','2006','2007','2008','2009','2010'],
-    },
-    'seibu_shinjuku_espass_yoshimune': {
-        'hall_id': '100950',
-        'name': 'エスパス西武新宿(真打吉宗)',
-        'model_encoded': 'L%E7%9C%9F%E6%89%93%E5%90%89%E5%AE%97',
-        'units': ['3111','3112','3113','3114','3115'],
-    },
-    'shibuya_espass_yoshimune': {
+    'shibuya_espass_tokyoghoul': {
         'hall_id': '100860',
-        'name': 'エスパス渋谷新館(真打吉宗)',
-        'model_encoded': 'L%E7%9C%9F%E6%89%93%E5%90%89%E5%AE%97',
-        'units': ['3047','3048','3049','3050','3051','3052','3053','3090'],
-    },
-    # === ToLOVEるDARKNESS ===
-    'shinjuku_espass_toloveru': {
-        'hall_id': '100949',
-        'name': 'エスパス新宿(ToLOVEる)',
-        'model_encoded': 'L%20ToLOVE%E3%82%8B%EF%BE%80%EF%BE%9E%EF%BD%B0%EF%BD%B8%EF%BE%88%EF%BD%BDver.8.7',
-        'units': ['1389','1390','1391'],
-    },
-    'akiba_espass_toloveru': {
-        'hall_id': '100928',
-        'name': 'エスパス秋葉原(ToLOVEる)',
-        'model_encoded': 'L%20ToLOVE%E3%82%8B%EF%BE%80%EF%BE%9E%EF%BD%B0%EF%BD%B8%EF%BE%88%EF%BD%BDver.8.7',
-        'units': ['3075','3076','3077','3078','3079','3080','3081','3082','3083','3084','3085','3086','3087','3150','3151','3152','3153','3154','3155','3156','3157','3158','3159','3160','3161','3162','3163','3164','3165','3166'],
-    },
-    'seibu_shinjuku_espass_toloveru': {
-        'hall_id': '100950',
-        'name': 'エスパス西武新宿(ToLOVEる)',
-        'model_encoded': 'L%20ToLOVE%E3%82%8B%EF%BE%80%EF%BE%9E%EF%BD%B0%EF%BD%B8%EF%BE%88%EF%BD%BDver.8.7',
-        'units': [],  # 2026-04-27確認: 0台（未設置または撤去）
-    },
-    'shibuya_espass_toloveru': {
-        'hall_id': '100860',
-        'name': 'エスパス渋谷新館(ToLOVEる)',
-        'model_encoded': 'L%20ToLOVE%E3%82%8B%EF%BE%80%EF%BE%9E%EF%BD%B0%EF%BD%B8%EF%BE%88%EF%BD%BDver.8.7',
-        'units': ['3010','3011','3012'],
+        'name': 'エスパス渋谷新館(東京喰種)',
+        'model_encoded': 'L%E6%9D%B1%E4%BA%AC%E5%96%B0%E7%A8%AE',
+        'units': [
+            '2075', '2076', '2077', '2078', '2079', '2080', '2081', '2082', '2083', '2084',
+            '2085', '2086', '2087', '2088', '2089', '2090', '2091', '2092', '2093', '2094',
+            '2095', '2096', '2097', '2098', '2099', '2100', '2101', '2102', '2103', '2104',
+            '2105', '2106', '2107',
+        ],
     },
 }
 
-# papimo.jp店舗設定
-PAPIMO_STORES = {
-    'island_akihabara_sbj': {
-        'hall_id': '00031715',
-        'name': 'アイランド秋葉原',
-        'machine_id': '225010000',
-        'units': [
-            '1015', '1016', '1017', '1018', '1020', '1021', '1022', '1023',
-            '1025', '1026', '1027', '1028', '1030', '1031',
-        ],
-    },
-    'island_akihabara_yoshimune': {
-        'hall_id': '00031715',
-        'name': 'アイランド秋葉原(真打吉宗)',
-        'machine_id': '226030000',
-        'units': [
-            '637', '638', '650', '651', '652', '653', '655', '656', '657', '658',
-        ],
-    },
-    'island_akihabara_toloveru': {
-        'hall_id': '00031715',
-        'name': 'アイランド秋葉原(ToLOVEる)',
-        'machine_id': '224040005',
-        'units': [
-            '1227', '1228', '1230', '1231', '1232', '1233', '1235', '1236', '1237', '1238',
-            '1250', '1251', '1252', '1253', '1255', '1256', '1257', '1258',
-            '1260', '1261', '1262', '1263', '1265', '1266', '1267', '1268',
-            '1270', '1271', '1272', '1273', '1275', '1276', '1277', '1278',
-            '1280', '1281', '1282', '1283', '1285', '1286', '1287', '1288',
-        ],
-    },
-}
+# papimo.jp店舗設定（アイランド秋葉原に東京喰種なし）
+PAPIMO_STORES = {}
 
 
 def fetch_store_availability(page, hall_id: str, model_encoded: str, expected_units: list) -> dict:

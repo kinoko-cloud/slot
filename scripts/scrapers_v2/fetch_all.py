@@ -839,10 +839,11 @@ def main():
     
     parser = argparse.ArgumentParser(description='v2統合スクレイパー')
     parser.add_argument('--discover', action='store_true', help='台番号自動検出のみ')
-    parser.add_argument('--sbj-only', action='store_true', help='SBJのみ')
-    parser.add_argument('--yoshimune-only', action='store_true', help='真打吉宗のみ')
-    parser.add_argument('--toloveru-only', action='store_true', help='ToLOVEるのみ')
-    parser.add_argument('--hokuto-only', action='store_true', help='北斗のみ（後方互換、yoshimune-only相当）')
+    parser.add_argument('--tokyoghoul-only', action='store_true', help='東京喰種のみ')
+    parser.add_argument('--sbj-only', action='store_true', help='SBJのみ（後方互換）')
+    parser.add_argument('--yoshimune-only', action='store_true', help='真打吉宗のみ（後方互換）')
+    parser.add_argument('--toloveru-only', action='store_true', help='ToLOVEるのみ（後方互換）')
+    parser.add_argument('--hokuto-only', action='store_true', help='北斗のみ（後方互換）')
     parser.add_argument('--daidata-only', action='store_true', help='daidataのみ（papimoスキップ）')
     parser.add_argument('--papimo-only', action='store_true', help='papimoのみ')
     parser.add_argument('--priority-only', action='store_true', help='主要店舗のみ（渋谷/新宿/秋葉原）')
@@ -864,14 +865,15 @@ def main():
     # daidata取得
     if not args.papimo_only:
         stores = DAIDATA_STORES.copy()
-        if args.sbj_only:
+        if args.tokyoghoul_only:
+            stores = {k: v for k, v in stores.items() if 'tokyoghoul' in k}
+        elif args.sbj_only:
             stores = {k: v for k, v in stores.items() if 'sbj' in k}
         elif args.yoshimune_only:
             stores = {k: v for k, v in stores.items() if 'yoshimune' in k}
         elif args.toloveru_only:
             stores = {k: v for k, v in stores.items() if 'toloveru' in k}
         elif args.hokuto_only:
-            # 後方互換: hokuto-only は yoshimune + toloveru を取得
             stores = {k: v for k, v in stores.items() if 'yoshimune' in k or 'toloveru' in k}
         if args.priority_only:
             stores = {k: v for k, v in stores.items() if is_priority_store(k)}

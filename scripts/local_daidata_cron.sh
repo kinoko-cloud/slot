@@ -26,15 +26,9 @@ git reset --hard origin/main 2>&1 || {
     echo "⚠️ git reset失敗 - 続行"
 }
 
-# --- daidata取得（主要店舗） ---
-echo "--- SBJ取得 ---"
-timeout 240 $PYTHON "$REPO/scripts/scrapers_v2/fetch_all.py" --priority-only --sbj-only --daidata-only 2>&1 || echo "⚠️ SBJ取得失敗"
-
-echo "--- 真打吉宗取得 ---"
-timeout 600 $PYTHON "$REPO/scripts/scrapers_v2/fetch_all.py" --priority-only --yoshimune-only --daidata-only 2>&1 || echo "⚠️ yoshimune取得失敗"
-
-echo "--- ToLOVEる取得 ---"
-timeout 600 $PYTHON "$REPO/scripts/scrapers_v2/fetch_all.py" --priority-only --toloveru-only --daidata-only 2>&1 || echo "⚠️ toloveru取得失敗"
+# --- daidata取得（東京喰種） ---
+echo "--- 東京喰種取得 ---"
+timeout 600 $PYTHON "$REPO/scripts/scrapers_v2/fetch_all.py" --tokyoghoul-only --daidata-only 2>&1 || echo "⚠️ tokyoghoul取得失敗"
 
 # --- 静的HTML生成（営業時間中のみ） ---
 if [ "$HOUR" -ge 10 ] && [ "$HOUR" -le 23 ]; then
