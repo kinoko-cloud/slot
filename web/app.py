@@ -478,7 +478,7 @@ def recommend(store_key: str):
         return "店舗が見つかりません", 404
 
     # 機種情報を取得
-    machine_key = store.get('machine', 'sbj')
+    machine_key = store.get('machine', 'tokyoghoul')
     machine = get_machine_info(machine_key)
 
     # キャッシュがあれば使用
@@ -720,7 +720,7 @@ def unit_history(store_key: str, unit_id: str):
     if not store:
         return "店舗が見つかりません", 404
 
-    machine_key = store.get('machine', 'sbj')
+    machine_key = store.get('machine', 'tokyoghoul')
     machine = get_machine_info(machine_key)
 
     # 日別データを読み込み
@@ -1225,7 +1225,7 @@ def api_v2_recommend(store_key: str):
     display_mode = get_display_mode()
     is_open = is_business_hours()
 
-    machine_key = store.get('machine', 'sbj')
+    machine_key = store.get('machine', 'tokyoghoul')
     machine = get_machine_info(machine_key)
 
     # 空き状況とリアルタイムデータを取得

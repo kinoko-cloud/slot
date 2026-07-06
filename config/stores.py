@@ -30,13 +30,20 @@ def resolve_history_store_key(store_key: str) -> str:
 
 def get_machine_key_from_store(store_key: str) -> str:
     """store_keyから機種キーを取得する
-    
+
     Args:
         store_key: 店舗キー
-    
+
     Returns:
-        機種キー ('sbj' or 'hokuto2')
+        機種キー（現行機種は config/rankings.py の STORES を参照。
+        旧sbj/hokuto2店舗キーなど STORES に存在しないものは従来の推定ロジックにフォールバック）
     """
+    try:
+        from config.rankings import STORES
+        if store_key in STORES:
+            return STORES[store_key]['machine']
+    except ImportError:
+        pass
     if 'hokuto' in store_key:
         return 'hokuto2'
     return 'sbj'

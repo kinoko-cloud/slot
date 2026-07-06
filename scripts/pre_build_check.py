@@ -11,7 +11,6 @@ CLAUDE.mdの仕様 / config/rankings.py / SPEC_prediction.md と
 - 差枚計算（蓄積DB優先）
 - 連チャン定義（RENCHAIN_THRESHOLD準拠）
 - max_medals計算（連チャン合計、1hit最大ではない）
-- 北斗あべしシステム（G数≠あべし、G数ベース天井判定は参考値）
 - おすすめ理由の一貫性
 """
 import re
@@ -86,24 +85,24 @@ def check_claude_md_specs():
 
     content = claude_md.read_text()
 
-    # === SBJ仕様 ===
-    sbj_specs = {
-        '999G+α': 'SBJ天井（999G+α）',
-        'RBではゲーム数天井がリセットされない': 'SBJ RBリセットなし',
-        '600G': 'SBJリセット時天井短縮',
+    # === 東京喰種仕様 ===
+    tokyoghoul_specs = {
+        '1200G': '東京喰種AT間天井（1200G+α）',
+        '200G': '東京喰種リセット時天井短縮',
+        '1/310': '東京喰種好調閾値',
     }
-    for text, desc in sbj_specs.items():
+    for text, desc in tokyoghoul_specs.items():
         if text not in content:
             issues.append(f'ERROR: CLAUDE.mdに{desc}の記載がない')
 
     # === config/rankings.pyとの整合 ===
     from config.rankings import MACHINES
 
-    sbj = MACHINES.get('sbj', {})
-    if sbj.get('normal_ceiling') != 999:
-        issues.append(f'ERROR: SBJ天井が{sbj.get("normal_ceiling")}だがCLAUDE.mdでは999')
-    if sbj.get('good_prob') != 130:
-        issues.append(f'WARN: SBJ好調閾値が1/{sbj.get("good_prob")}（CLAUDE.md確認必要）')
+    tokyoghoul = MACHINES.get('tokyoghoul', {})
+    if tokyoghoul.get('normal_ceiling') != 1200:
+        issues.append(f'ERROR: 東京喰種天井が{tokyoghoul.get("normal_ceiling")}だがCLAUDE.mdでは1200')
+    if tokyoghoul.get('good_prob') != 310:
+        issues.append(f'WARN: 東京喰種好調閾値が1/{tokyoghoul.get("good_prob")}（CLAUDE.md確認必要）')
 
     return issues
 
@@ -152,40 +151,6 @@ def check_diff_medals_priority():
     return issues
 
 
-def check_hokuto_abeshi_awareness():
-    """北斗のコードがあべしシステムを正しく認識しているか
-    
-    北斗の天井はあべしptベース（実機画面表示）。
-    G数とあべしは比例しない（レア役で大量加算される）。
-    100G消化で1500あべしになることもある。
-    データサイトからはG数しか取れないため、G数ベースの天井判定は参考値。
-    """
-    issues = []
-
-    # 北斗関連のコードでG数ベースの天井判定をしている箇所
-    check_files = list(BASE.glob('scripts/*.py')) + \
-                  list(BASE.glob('analysis/*.py'))
-
-    for f in check_files:
-        if f.name in ('pre_build_check.py', 'rankings.py') or '__pycache__' in str(f):
-            continue
-        try:
-            content = f.read_text()
-        except:
-            continue
-
-        # 北斗でis_tenjouをG数だけで判定していたら警告
-        if 'hokuto' in content.lower() or '北斗' in content:
-            for i, line in enumerate(content.split('\n'), 1):
-                stripped = line.strip()
-                if stripped.startswith('#'):
-                    continue
-                # 北斗のコンテキストでG数ベース天井を確定判定していたらWARN
-                # （参考値として使うのはOK）
-
-    return issues
-
-
 def check_data_freshness():
     """データの鮮度チェック（営業時間中にデータが古ければ警告）"""
     issues = []
@@ -219,7 +184,7 @@ def check_renchain_sanity():
     import json
     from analysis.analyzer import calculate_max_rensa
     
-    MAX_SANE_RENSA = {'sbj': 150, 'yoshimune': 150, 'toloveru': 150}
+    MAX_SANE_RENSA = {'tokyoghoul': 150}
     DEFAULT_MAX = 150
 
     history_dir = BASE / 'data' / 'history'
@@ -230,12 +195,10 @@ def check_renchain_sanity():
         if not hdir.is_dir():
             continue
         name = hdir.name
-        if '_yoshimune' in name:
-            mk = 'yoshimune'
-        elif '_toloveru' in name:
-            mk = 'toloveru'
+        if '_tokyoghoul' in name:
+            mk = 'tokyoghoul'
         else:
-            mk = 'sbj'
+            continue
         max_sane = MAX_SANE_RENSA.get(mk, DEFAULT_MAX)
         
         for hf in hdir.glob('*.json'):
@@ -264,7 +227,6 @@ def run_all():
     all_issues.extend(check_claude_md_specs())
     all_issues.extend(check_spec_prediction())
     all_issues.extend(check_diff_medals_priority())
-    all_issues.extend(check_hokuto_abeshi_awareness())
     all_issues.extend(check_data_freshness())
     all_issues.extend(check_renchain_sanity())
 

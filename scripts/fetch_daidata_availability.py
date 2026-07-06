@@ -461,44 +461,10 @@ def fetch_papimo_unit_detail(page, hall_id: str, unit_id: str, last_hit_time: st
 def main():
     import sys
     
-    # オプション解析
-    sbj_only = '--sbj-only' in sys.argv
-    yoshimune_only = '--yoshimune-only' in sys.argv
-    toloveru_only = '--toloveru-only' in sys.argv
-    include_hidden = '--include-hidden' in sys.argv  # 隠し店舗も含める（日次収集用）
-
-    # 隠し店舗（リアルタイム更新対象外）を読み込み
-    hidden_stores = set()
-    hidden_config_path = Path(__file__).parent.parent / 'config' / 'hidden_stores.json'
-    if hidden_config_path.exists():
-        try:
-            with open(hidden_config_path) as f:
-                hidden_config = json.load(f)
-                hidden_stores = set(hidden_config.get('hidden_store_keys', []))
-        except:
-            pass
-
     # 対象店舗をフィルタリング
     daidata_stores = DAIDATA_STORES
     papimo_stores = PAPIMO_STORES
 
-    if sbj_only:
-        daidata_stores = {k: v for k, v in DAIDATA_STORES.items() if 'sbj' in k}
-        papimo_stores = {k: v for k, v in PAPIMO_STORES.items() if 'sbj' in k}
-        # リアルタイム更新では隠し店舗を除外（--include-hiddenがない場合）
-        if not include_hidden:
-            daidata_stores = {k: v for k, v in daidata_stores.items() if k not in hidden_stores}
-            papimo_stores = {k: v for k, v in papimo_stores.items() if k not in hidden_stores}
-        print(f"SBJのみモード: {len(daidata_stores) + len(papimo_stores)}店舗")
-    elif yoshimune_only:
-        daidata_stores = {k: v for k, v in DAIDATA_STORES.items() if 'yoshimune' in k}
-        papimo_stores = {k: v for k, v in PAPIMO_STORES.items() if 'yoshimune' in k}
-        print(f"真打吉宗のみモード: {len(daidata_stores) + len(papimo_stores)}店舗")
-    elif toloveru_only:
-        daidata_stores = {k: v for k, v in DAIDATA_STORES.items() if 'toloveru' in k}
-        papimo_stores = {k: v for k, v in PAPIMO_STORES.items() if 'toloveru' in k}
-        print(f"ToLOVEるのみモード: {len(daidata_stores) + len(papimo_stores)}店舗")
-    
     # 前回データを読み込み（差分取得用）
     prev_data = {'stores': {}}
     availability_path = Path(__file__).parent.parent / 'data' / 'availability.json'
@@ -769,8 +735,7 @@ def main():
         print("Saving partial data...")
 
     # JSONに保存（クラッシュ時も部分データを書き出す）
-    # --sbj-only や --hokuto-only の場合は部分更新（既存データ保持）
-    _save_result(result, partial_update=(sbj_only or yoshimune_only or toloveru_only))
+    _save_result(result)
 
 
 def _save_result(result, partial_update=False):

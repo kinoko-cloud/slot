@@ -1050,7 +1050,7 @@ def generate_index(env):
     for store_key, info in store_day_ratings.items():
         for ml in info.get('machine_links', []):
             link_store_key = ml.get('store_key', store_key)
-            _mk = STORES.get(link_store_key, {}).get('machine', 'sbj')
+            _mk = STORES.get(link_store_key, {}).get('machine', 'tokyoghoul')
             _machine_display = MACHINES.get(_mk, {}).get('display_name', ml.get('short_name', ''))
             recommend_links.append({
                 'store_key': link_store_key,
@@ -1077,7 +1077,7 @@ def generate_index(env):
             store_nav_links.append({
                 'name': sname,
                 'store_key': mls[0].get('store_key', ''),
-                'machine_links': [{'store_key': ml.get('store_key', ''), 'icon': ml.get('icon', ''), 'machine_name': MACHINES.get(STORES.get(ml.get('store_key', ''), {}).get('machine', 'sbj'), {}).get('short_name', '')} for ml in mls],
+                'machine_links': [{'store_key': ml.get('store_key', ''), 'icon': ml.get('icon', ''), 'machine_name': MACHINES.get(STORES.get(ml.get('store_key', ''), {}).get('machine', 'tokyoghoul'), {}).get('short_name', '')} for ml in mls],
             })
 
     night_mode = is_night_mode()
@@ -1475,7 +1475,7 @@ def generate_recommend_pages(env):
             continue
         print(f"  Processing {store_key}...")
 
-        machine_key = store.get('machine', 'sbj')
+        machine_key = store.get('machine', 'tokyoghoul')
         machine = get_machine_info(machine_key)
 
         # 空き状況とリアルタイムデータを取得
@@ -1711,6 +1711,8 @@ def _get_machine_key(store_key):
     """store_keyから機種キーを取得"""
     if not store_key:
         return None
+    if store_key.endswith('_tokyoghoul') or '_tokyoghoul_' in store_key:
+        return 'tokyoghoul'
     if store_key.endswith('_sbj') or '_sbj_' in store_key:
         return 'sbj'
     if store_key.endswith('_yoshimune') or '_yoshimune_' in store_key:
@@ -2057,10 +2059,11 @@ def _get_verify_by_category():
     try:
         by_store = {}
         for sk, units in data.get('units', {}).items():
-            mk = data['stores'][sk].get('machine_key', 'sbj')
+            mk = data['stores'][sk].get('machine_key', 'tokyoghoul')
             sn = data['stores'][sk].get('name', sk)
-            mk_short = 'SBJ' if mk == 'sbj' else '北斗転生2'
-            mk_icon = '🎰' if mk == 'sbj' else '⚔️'
+            _minfo = MACHINES.get(mk, {})
+            mk_short = _minfo.get('short_name', mk)
+            mk_icon = _minfo.get('icon', '🎰')
             key = f"{sn}|{mk_short}"
             if key not in by_store:
                 by_store[key] = {'sa': 0, 'hit': 0, 'icon': mk_icon, 'store': sn, 'mk': mk_short}
@@ -2165,7 +2168,7 @@ def _generate_verify_from_backtest(env, results):
     
     STORE_TO_MACHINE = {}
     for sk, sv in STORES.items():
-        STORE_TO_MACHINE[sk] = sv.get('machine', sv.get('machine_key', 'sbj'))
+        STORE_TO_MACHINE[sk] = sv.get('machine', sv.get('machine_key', 'tokyoghoul'))
     
     # availability.jsonからdiff_medals/max_medals/games/artを取得
     # availability.jsonは当日最終データ（historyからdiff推定可能）
@@ -2179,7 +2182,7 @@ def _generate_verify_from_backtest(env, results):
         if fetched_at:
             avail_date = fetched_at[:10]  # YYYY-MM-DD部分
         for sk, sdata in avail_data.get('stores', {}).items():
-            mk = STORE_TO_MACHINE.get(sk, 'sbj')
+            mk = STORE_TO_MACHINE.get(sk, 'tokyoghoul')
             for u in sdata.get('units', []):
                 uid = str(u.get('unit_id', ''))
                 hist = u.get('today_history', [])
@@ -2200,7 +2203,7 @@ def _generate_verify_from_backtest(env, results):
     
     machine_groups = {}
     for store_key, store_data in results.get('stores', {}).items():
-        mk = STORE_TO_MACHINE.get(store_key, 'sbj')
+        mk = STORE_TO_MACHINE.get(store_key, 'tokyoghoul')
         if mk not in machine_groups:
             machine_groups[mk] = {'stores': []}
         
@@ -2887,7 +2890,7 @@ def generate_history_pages(env):
         if store_key in old_keys:
             continue
 
-        machine_key = store.get('machine', 'sbj')
+        machine_key = store.get('machine', 'tokyoghoul')
         machine = get_machine_info(machine_key)
         units = store.get('units', [])
 
@@ -3185,8 +3188,7 @@ def main():
     
     data_check_errors = 0
     print("\n📊 TOP10 3日分データ検証:")
-    for sk in ['shinjuku_espass_sbj', 'shinjuku_espass_yoshimune', 'shinjuku_espass_toloveru',
-               'shibuya_espass_yoshimune', 'shibuya_espass_toloveru']:
+    for sk in STORES.keys():
         try:
             recs = recommend_units(sk)[:10]
             machine_key = _get_machine_key(sk) or 'tokyoghoul'
