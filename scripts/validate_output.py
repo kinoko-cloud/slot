@@ -402,12 +402,9 @@ def _validate_realtime():
                 elif age_hours > 1:
                     issues.append(f'INFO: availability.json が{age_hours:.1f}時間前のデータ')
 
-            # 現行機種キーの存在チェック（2026-04-21: hokuto2撤去、yoshimune/toloveru追加）
-            expected_keys = [
-                'shinjuku_espass_sbj', 'akiba_espass_sbj', 'island_akihabara_sbj',
-                'shinjuku_espass_yoshimune', 'akiba_espass_yoshimune', 'island_akihabara_yoshimune',
-                'shinjuku_espass_toloveru', 'akiba_espass_toloveru', 'island_akihabara_toloveru',
-            ]
+            # 現行機種キーの存在チェック（config/rankings.pyのSTORESを正とする）
+            from config.rankings import STORES as _current_stores
+            expected_keys = list(_current_stores.keys())
             stores = avail_data.get('stores', {})
             missing_keys = [k for k in expected_keys if k not in stores]
             if missing_keys:

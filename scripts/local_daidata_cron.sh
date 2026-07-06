@@ -5,8 +5,9 @@
 #   daidata.goraggio.com は AWS CloudFront WAF で GitHub Actions(AWS IP)をブロック。
 #   ローカルの日本IPからのみアクセス可能。
 #
-# crontab設定例（毎時30分に実行）:
-#   30 1-14 * * * bash /home/riichi/works/slot/scripts/local_daidata_cron.sh >> /tmp/slot_local_cron.log 2>&1
+# crontab設定例（毎時30分に実行・営業時間全体をカバー）:
+#   30 1-23 * * * bash /home/riichi/works/slot/scripts/local_daidata_cron.sh >> /tmp/slot_local_cron.log 2>&1
+# 2026-07-06: 旧設定(1-14)だと14:30で止まり夕方以降カバー漏れだったため1-23に拡張
 
 REPO=/home/riichi/works/slot
 PYTHON=python3

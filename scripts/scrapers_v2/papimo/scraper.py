@@ -16,35 +16,19 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from common.base import BaseScraper, DataStore, setup_logger, now_jst, today_str
 
 # 店舗設定
+# 2026-07-06: sbj/yoshimune/toloveruは取得停止（東京喰種専業に移行）。
+# 東京喰種16台はpapimo.jp実地確認で確認済み（machine_id 125030007）
 PAPIMO_STORES = {
     'island_akihabara': {
         'hall_id': '00031715',
         'hall_name': 'アイランド秋葉原店',
         'machines': {
-            'sbj': {
-                'machine_id': '225010000',
-                'machine_name': 'Lスーパーブラックジャック',
-                'units': ['1018', '1020', '1021', '1022', '1023',
-                          '1025', '1026', '1027', '1028', '1030', '1031'],
-                'expected_keywords': ['ブラックジャック', 'SBJ'],
-            },
-            'yoshimune': {
-                'machine_id': '226030000',
-                'machine_name': 'L真打吉宗',
-                'units': ['637', '638', '650', '651', '652', '653', '655', '656', '657', '658'],
-                'expected_keywords': ['真打吉宗'],
-            },
-            'toloveru': {
-                'machine_id': '224040005',
-                'machine_name': 'L ToLOVEるダークネスver.8.7',
-                'units': [
-                    '1227', '1228', '1230', '1231', '1232', '1233', '1235', '1236', '1237', '1238',
-                    '1250', '1251', '1252', '1253', '1255', '1256', '1257', '1258',
-                    '1260', '1261', '1262', '1263', '1265', '1266', '1267', '1268',
-                    '1270', '1271', '1272', '1273', '1275', '1276', '1277', '1278',
-                    '1280', '1281', '1282', '1283', '1285', '1286', '1287', '1288',
-                ],
-                'expected_keywords': ['ToLOVE', 'トラブル'],
+            'tokyoghoul': {
+                'machine_id': '125030007',
+                'machine_name': 'Lスマスロ東京喰種',
+                'units': ['162', '163', '165', '166', '167', '168', '170', '171',
+                          '172', '173', '175', '176', '177', '178', '180', '181'],
+                'expected_keywords': ['東京喰種'],
             },
         }
     }
@@ -242,14 +226,14 @@ class PapimoScraper(BaseScraper):
         return units
     
     def fetch(self, store_key: str = 'island_akihabara',
-              machine_key: str = 'sbj',
+              machine_key: str = 'tokyoghoul',
               days_back: int = 7) -> Dict[str, Any]:
         """
         一括取得
-        
+
         Args:
             store_key: 店舗キー
-            machine_key: 機種キー (sbj/hokuto/hokuto2)
+            machine_key: 機種キー
             days_back: 取得日数
         """
         store = PAPIMO_STORES.get(store_key)
@@ -295,7 +279,7 @@ if __name__ == '__main__':
     scraper = PapimoScraper(headless=True)
     
     # 引数パース
-    machine = sys.argv[1] if len(sys.argv) > 1 else 'sbj'
+    machine = sys.argv[1] if len(sys.argv) > 1 else 'tokyoghoul'
     days = int(sys.argv[2]) if len(sys.argv) > 2 else 7
     
     if machine == 'discover':

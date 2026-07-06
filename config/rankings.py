@@ -99,6 +99,18 @@ STORES = {
         ],
         'data_source': 'daidata',
     },
+    'island_akihabara_tokyoghoul': {
+        'name': 'アイランド秋葉原',
+        'short_name': 'アイランド秋葉原',
+        'hall_id': None,
+        'machine': 'tokyoghoul',
+        # 2026-07-06: papimo.jp実地確認で16台確認（machine_id 125030007）
+        'units': [
+            '162', '163', '165', '166', '167', '168', '170', '171',
+            '172', '173', '175', '176', '177', '178', '180', '181',
+        ],
+        'data_source': 'papimo',
+    },
 }
 
 

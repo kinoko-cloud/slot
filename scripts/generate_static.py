@@ -265,6 +265,17 @@ def generate_index(env):
 
     # 店舗曜日傾向（物理店舗ベース）
     store_day_ratings = {
+        'island_akihabara': {
+            'name': 'アイランド秋葉原',
+            'short_name': 'アイランド秋葉原',
+            'day_ratings': {'月': 4, '火': 3, '水': 5, '木': 3, '金': 3, '土': 1, '日': 4},
+            'best_note': '水曜が最強、日月も狙い目',
+            'worst_note': '土曜は避けるべき',
+            'overall_rating': 4,
+            'machine_links': [
+                {'store_key': 'island_akihabara_tokyoghoul', 'icon': '🫀', 'short_name': '東京喰種'},
+            ],
+        },
         'shibuya_espass': {
             'name': 'エスパス日拓渋谷新館',
             'short_name': 'エスパス渋谷新館',

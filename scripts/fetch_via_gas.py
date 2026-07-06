@@ -59,15 +59,10 @@ def get_store_name(store_key, existing_stores):
         return existing_stores[store_key].get('name', store_key)
     # fallback map
     names = {
-        'shinjuku_espass_sbj': 'エスパス日拓新宿歌舞伎町店',
-        'shinjuku_espass_yoshimune': 'エスパス日拓新宿歌舞伎町店',
-        'shinjuku_espass_toloveru': 'エスパス日拓新宿歌舞伎町店',
-        'akiba_espass_sbj': 'エスパス日拓秋葉原駅前店',
-        'akiba_espass_yoshimune': 'エスパス日拓秋葉原駅前店',
-        'akiba_espass_toloveru': 'エスパス日拓秋葉原駅前店',
-        'seibu_shinjuku_espass_yoshimune': 'エスパス日拓西武新宿駅前店',
-        'shibuya_espass_yoshimune': 'エスパス日拓渋谷新館',
-        'shibuya_espass_toloveru': 'エスパス日拓渋谷新館',
+        'shinjuku_espass_tokyoghoul': 'エスパス日拓新宿歌舞伎町店',
+        'akiba_espass_tokyoghoul': 'エスパス日拓秋葉原駅前店',
+        'seibu_shinjuku_espass_tokyoghoul': 'エスパス日拓西武新宿駅前店',
+        'shibuya_espass_tokyoghoul': 'エスパス日拓渋谷新館',
     }
     return names.get(store_key, store_key)
 

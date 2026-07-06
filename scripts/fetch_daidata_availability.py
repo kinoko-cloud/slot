@@ -75,8 +75,19 @@ DAIDATA_STORES = {
     },
 }
 
-# papimo.jp店舗設定（アイランド秋葉原に東京喰種なし）
-PAPIMO_STORES = {}
+# papimo.jp店舗設定
+# 2026-07-06: papimo.jp実地確認でアイランド秋葉原に東京喰種16台を確認（machine_id 125030007）
+PAPIMO_STORES = {
+    'island_akihabara_tokyoghoul': {
+        'hall_id': '00031715',
+        'machine_id': '125030007',
+        'name': 'アイランド秋葉原',
+        'units': [
+            '162', '163', '165', '166', '167', '168', '170', '171',
+            '172', '173', '175', '176', '177', '178', '180', '181',
+        ],
+    },
+}
 
 
 def fetch_store_availability(page, hall_id: str, model_encoded: str, expected_units: list) -> dict:

@@ -197,8 +197,7 @@ def index():
             'worst_note': '土曜は避けるべき',
             'overall_rating': 4,
             'machine_links': [
-                {'store_key': 'island_akihabara_sbj', 'icon': '🃏', 'short_name': 'SBJ'},
-                {'store_key': 'island_akihabara_hokuto', 'icon': '👊', 'short_name': '北斗転生2'},
+                {'store_key': 'island_akihabara_tokyoghoul', 'icon': '🫀', 'short_name': '東京喰種'},
             ],
         },
         'shibuya_espass': {
@@ -209,8 +208,7 @@ def index():
             'worst_note': '日曜は避けるべき',
             'overall_rating': 3,
             'machine_links': [
-                {'store_key': 'shibuya_espass_sbj', 'icon': '🃏', 'short_name': 'SBJ'},
-                {'store_key': 'shibuya_espass_hokuto', 'icon': '👊', 'short_name': '北斗転生2'},
+                {'store_key': 'shibuya_espass_tokyoghoul', 'icon': '🫀', 'short_name': '東京喰種'},
             ],
         },
         'shinjuku_espass': {
@@ -221,8 +219,7 @@ def index():
             'worst_note': '月曜は控えめ',
             'overall_rating': 3,
             'machine_links': [
-                {'store_key': 'shinjuku_espass_sbj', 'icon': '🃏', 'short_name': 'SBJ'},
-                {'store_key': 'shinjuku_espass_hokuto', 'icon': '👊', 'short_name': '北斗転生2'},
+                {'store_key': 'shinjuku_espass_tokyoghoul', 'icon': '🫀', 'short_name': '東京喰種'},
             ],
         },
         'akiba_espass': {
@@ -233,8 +230,7 @@ def index():
             'worst_note': '月曜は控えめ',
             'overall_rating': 3,
             'machine_links': [
-                {'store_key': 'akiba_espass_sbj', 'icon': '🃏', 'short_name': 'SBJ'},
-                {'store_key': 'akiba_espass_hokuto', 'icon': '👊', 'short_name': '北斗転生2'},
+                {'store_key': 'akiba_espass_tokyoghoul', 'icon': '🫀', 'short_name': '東京喰種'},
             ],
         },
         'seibu_shinjuku_espass': {
@@ -245,7 +241,7 @@ def index():
             'worst_note': '月火は控えめ',
             'overall_rating': 2,
             'machine_links': [
-                {'store_key': 'seibu_shinjuku_espass_sbj', 'icon': '🃏', 'short_name': 'SBJ'},
+                {'store_key': 'seibu_shinjuku_espass_tokyoghoul', 'icon': '🫀', 'short_name': '東京喰種'},
             ],
         },
     }
@@ -1123,23 +1119,23 @@ def api_v2_index():
 
     # 店舗曜日傾向
     store_day_ratings = {
-        'island_akihabara_sbj': {
+        'island_akihabara_tokyoghoul': {
             'name': 'アイランド秋葉原',
             'day_ratings': {'月': 4, '火': 3, '水': 5, '木': 3, '金': 3, '土': 1, '日': 4},
         },
-        'shibuya_espass_sbj': {
+        'shibuya_espass_tokyoghoul': {
             'name': 'エスパス渋谷新館',
             'day_ratings': {'月': 3, '火': 4, '水': 4, '木': 5, '金': 3, '土': 3, '日': 1},
         },
-        'shinjuku_espass_sbj': {
+        'shinjuku_espass_tokyoghoul': {
             'name': 'エスパス歌舞伎町',
             'day_ratings': {'月': 2, '火': 3, '水': 3, '木': 3, '金': 4, '土': 5, '日': 3},
         },
-        'akiba_espass_sbj': {
+        'akiba_espass_tokyoghoul': {
             'name': 'エスパス秋葉原',
             'day_ratings': {'月': 2, '火': 3, '水': 3, '木': 3, '金': 4, '土': 5, '日': 4},
         },
-        'seibu_shinjuku_espass_sbj': {
+        'seibu_shinjuku_espass_tokyoghoul': {
             'name': 'エスパス西武新宿',
             'day_ratings': {'月': 2, '火': 2, '水': 3, '木': 3, '金': 4, '土': 4, '日': 3},
         },

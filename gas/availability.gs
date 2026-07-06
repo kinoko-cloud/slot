@@ -13,52 +13,27 @@ const PAPIMO_STORES = {
   }
 };
 
-// daidata 店舗設定（エスパス全店舗）
+// daidata 店舗設定（エスパス全店舗・東京喰種のみ）
 const DAIDATA_STORES = {
-  'shinjuku_espass_sbj': {
+  'shinjuku_espass_tokyoghoul': {
     hall_id: '100949',
-    model_encoded: 'L%EF%BD%BD%EF%BD%B0%EF%BE%8A%EF%BE%9F%EF%BD%B0%EF%BE%8C%EF%BE%9E%EF%BE%97%EF%BD%AF%EF%BD%B8%EF%BD%BC%EF%BE%9E%EF%BD%AC%EF%BD%AF%EF%BD%B8',
-    name: 'エスパス新宿 SBJ'
+    model_encoded: 'L%E6%9D%B1%E4%BA%AC%E5%96%B0%E7%A8%AE',
+    name: 'エスパス新宿 東京喰種'
   },
-  'shinjuku_espass_yoshimune': {
-    hall_id: '100949',
-    model_encoded: 'L%E7%9C%9F%E6%89%93%E5%90%89%E5%AE%97',
-    name: 'エスパス新宿 吉宗'
-  },
-  'shinjuku_espass_toloveru': {
-    hall_id: '100949',
-    model_encoded: 'L%20ToLOVE%E3%82%8B%EF%BE%80%EF%BE%9E%EF%BD%B0%EF%BD%B8%EF%BE%88%EF%BD%BDver.8.7',
-    name: 'エスパス新宿 ToLOVEる'
-  },
-  'akiba_espass_sbj': {
+  'akiba_espass_tokyoghoul': {
     hall_id: '100928',
-    model_encoded: 'L%EF%BD%BD%EF%BD%B0%EF%BE%8A%EF%BE%9F%EF%BD%B0%EF%BE%8C%EF%BE%9E%EF%BE%97%EF%BD%AF%EF%BD%B8%EF%BD%BC%EF%BE%9E%EF%BD%AC%EF%BD%AF%EF%BD%B8',
-    name: '秋葉原エスパス SBJ'
+    model_encoded: 'L%E6%9D%B1%E4%BA%AC%E5%96%B0%E7%A8%AE',
+    name: '秋葉原エスパス 東京喰種'
   },
-  'akiba_espass_yoshimune': {
-    hall_id: '100928',
-    model_encoded: 'L%E7%9C%9F%E6%89%93%E5%90%89%E5%AE%97',
-    name: '秋葉原エスパス 吉宗'
-  },
-  'akiba_espass_toloveru': {
-    hall_id: '100928',
-    model_encoded: 'L%20ToLOVE%E3%82%8B%EF%BE%80%EF%BE%9E%EF%BD%B0%EF%BD%B8%EF%BE%88%EF%BD%BDver.8.7',
-    name: '秋葉原エスパス ToLOVEる'
-  },
-  'seibu_shinjuku_espass_yoshimune': {
+  'seibu_shinjuku_espass_tokyoghoul': {
     hall_id: '100950',
-    model_encoded: 'L%E7%9C%9F%E6%89%93%E5%90%89%E5%AE%97',
-    name: '西武新宿エスパス 吉宗'
+    model_encoded: 'L%E6%9D%B1%E4%BA%AC%E5%96%B0%E7%A8%AE',
+    name: '西武新宿エスパス 東京喰種'
   },
-  'shibuya_espass_yoshimune': {
+  'shibuya_espass_tokyoghoul': {
     hall_id: '100860',
-    model_encoded: 'L%E7%9C%9F%E6%89%93%E5%90%89%E5%AE%97',
-    name: '渋谷エスパス 吉宗'
-  },
-  'shibuya_espass_toloveru': {
-    hall_id: '100860',
-    model_encoded: 'L%20ToLOVE%E3%82%8B%EF%BE%80%EF%BE%9E%EF%BD%B0%EF%BD%B8%EF%BE%88%EF%BD%BDver.8.7',
-    name: '渋谷エスパス ToLOVEる'
+    model_encoded: 'L%E6%9D%B1%E4%BA%AC%E5%96%B0%E7%A8%AE',
+    name: '渋谷エスパス 東京喰種'
   }
 };
 
@@ -338,7 +313,7 @@ function doGet(e) {
   } else if (action === 'scrape_store') {
     // 特定店舗のdaidataを返す（テスト用）
     const hallId = e?.parameter?.hall_id || '100949';
-    const modelEncoded = e?.parameter?.model || DAIDATA_STORES['shinjuku_espass_sbj'].model_encoded;
+    const modelEncoded = e?.parameter?.model || DAIDATA_STORES['shinjuku_espass_tokyoghoul'].model_encoded;
     const accept = acceptTermsForHall(hallId);
     const fetched = fetchUnitListHtml(hallId, modelEncoded, accept.cookies);
     if (fetched.error) {
@@ -355,7 +330,7 @@ function doGet(e) {
 
   } else if (action === 'debug_html') {
     const hallId = e?.parameter?.hall_id || '100949';
-    const modelEncoded = e?.parameter?.model || DAIDATA_STORES['shinjuku_espass_sbj'].model_encoded;
+    const modelEncoded = e?.parameter?.model || DAIDATA_STORES['shinjuku_espass_tokyoghoul'].model_encoded;
     const accept = acceptTermsForHall(hallId);
     const fetched = fetchUnitListHtml(hallId, modelEncoded, accept.cookies);
     const html = fetched.html || '';
@@ -390,7 +365,7 @@ function doGet(e) {
 // ----- テスト用関数 -----
 
 function testDaidataAccess() {
-  const TARGET = `${DAIDATA_BASE}/100949/unit_list?model=${DAIDATA_STORES['shinjuku_espass_sbj'].model_encoded}&ballPrice=21.70&ps=S`;
+  const TARGET = `${DAIDATA_BASE}/100949/unit_list?model=${DAIDATA_STORES['shinjuku_espass_tokyoghoul'].model_encoded}&ballPrice=21.70&ps=S`;
   let myIp = '?';
   try {
     const ipRes = UrlFetchApp.fetch('https://ipinfo.io/json', { headers: { 'User-Agent': DAIDATA_UA }, muteHttpExceptions: true });
@@ -420,7 +395,7 @@ function testScrapeDaidata() {
 }
 
 function testScrapeOneStore() {
-  const config = DAIDATA_STORES['shinjuku_espass_sbj'];
+  const config = DAIDATA_STORES['shinjuku_espass_tokyoghoul'];
   const accept = acceptTermsForHall(config.hall_id);
   Logger.log('accept cookies: ' + JSON.stringify(Object.keys(accept.cookies)));
   const fetched = fetchUnitListHtml(config.hall_id, config.model_encoded, accept.cookies);
