@@ -169,13 +169,22 @@ def setup_jinja():
         # 各当たりのメダル獲得数で相対推移を計算
         # medals: ボーナス/AT獲得枚数、start: 当たり間の消化G数
         cumulative = [0]
+        cum_games = [0]  # 横軸を実際の消化G数に比例させるための累積G数
         total = 0
+        games_total = 0
         for h in sorted_hist:
             medals = h.get('medals', 0)
             start = h.get('start', 0)
             total -= start * 3  # 当たり間の投入
             total += medals      # 獲得
             cumulative.append(total)
+            games_total += start
+            cum_games.append(games_total)
+        # 横軸位置（0〜width）を当たり回数の等間隔ではなく実消化G数に比例させる
+        def x_at(idx):
+            if games_total <= 0:
+                return idx / (len(cumulative) - 1) * width
+            return cum_games[idx] / games_total * width
 
         # 既知の差枚があれば正規化（推移の形は保ち、最終値を合わせる）
         if diff_medals is not None and total != 0:
@@ -192,7 +201,7 @@ def setup_jinja():
         # SVGポイント生成
         points = []
         for i, v in enumerate(cumulative):
-            x = i / (len(cumulative) - 1) * width
+            x = x_at(i)
             y = height - ((v - min_v) / v_range * (height - 4)) - 2
             points.append((x, y))
         # ゼロライン
@@ -212,7 +221,7 @@ def setup_jinja():
             g_since += h.get('start', 0)
             medals_since += max(h.get('medals', 0), 0)
             if g_since >= 1500 or medals_since >= 2400:
-                yuuri_x.append(((idx + 1) / (len(cumulative) - 1) * width, False))
+                yuuri_x.append((x_at(idx + 1), False))
                 reset_cum_indices.append(idx + 1)
                 last_marked_idx = idx
                 g_since, medals_since = 0, 0
@@ -253,7 +262,7 @@ def setup_jinja():
             ceiling = reset_ceiling if idx == 0 else normal_ceiling
             if start < ceiling:
                 continue
-            x = (idx + 1) / (len(cumulative) - 1) * width
+            x = x_at(idx + 1)
             y = height - ((cumulative[idx + 1] - min_v) / v_range * (height - 4)) - 2
             label = f'天井到達の可能性（{start}G消化、天井目安{ceiling}G{"・朝イチリセット後" if idx == 0 else ""}）'
             ceiling_marks.append((x, y, label))
