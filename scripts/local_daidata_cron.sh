@@ -28,8 +28,11 @@ git reset --hard origin/main 2>&1 || {
 }
 
 # --- daidata取得（東京喰種） ---
+# 2026-07-07: 「ART/履歴矛盾→強制詳細取得」が毎回全台で発生し120台の逐次取得が
+# 600sを超過→常にタイムアウトでkillされ、save_availability()に到達せず
+# 履歴が一度も保存されない状態が発生していた。店舗単位の並列化+タイムアウト延長で対応。
 echo "--- 東京喰種取得 ---"
-timeout 600 $PYTHON "$REPO/scripts/scrapers_v2/fetch_all.py" --tokyoghoul-only --daidata-only 2>&1 || echo "⚠️ tokyoghoul取得失敗"
+timeout 1500 $PYTHON "$REPO/scripts/scrapers_v2/fetch_all.py" --tokyoghoul-only --daidata-only --parallel 4 2>&1 || echo "⚠️ tokyoghoul取得失敗"
 
 # --- 静的HTML生成（営業時間中のみ） ---
 if [ "$HOUR" -ge 10 ] && [ "$HOUR" -le 23 ]; then
