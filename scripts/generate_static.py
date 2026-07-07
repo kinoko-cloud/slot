@@ -194,8 +194,7 @@ def setup_jinja():
         for i, v in enumerate(cumulative):
             x = i / (len(cumulative) - 1) * width
             y = height - ((v - min_v) / v_range * (height - 4)) - 2
-            points.append(f'{x:.1f},{y:.1f}')
-        polyline = ' '.join(points)
+            points.append((x, y))
         # ゼロライン
         zero_y = height - ((0 - min_v) / v_range * (height - 4)) - 2
         # 色: 最終値がプラスなら緑、マイナスなら赤（正規化後の値で判定）
@@ -226,15 +225,19 @@ def setup_jinja():
             for x, closing in yuuri_x
         )
 
-        # 通常区間/有利区間の背景色分け（近似）:
+        # 通常区間/有利区間の線色分け（近似）:
         # 当たり履歴は当たりの瞬間しか分からないため、各サイクル（リセット〜次のリセット）の
-        # 最初の1撃＝有利区間突入のきっかけまでを「通常区間」、それ以降キャップ到達までを
-        # 「有利区間」とみなす。グラフ全体をまず有利区間色で塗り、通常区間分だけ帯を重ねる
-        zone_bg_bands = ''.join(
-            f'<rect x="{(cs / (len(cumulative) - 1) * width):.1f}" y="0" width="{(((cs + 1) / (len(cumulative) - 1) * width) - (cs / (len(cumulative) - 1) * width)):.1f}" height="{height}" fill="#747d8c" opacity="0.25"><title>通常区間（推定・次の当たりまでの待ち時間）</title></rect>'
-            for cs in reset_cum_indices if cs + 1 <= len(cumulative) - 1
-        )
-        zone_bg = f'<rect x="0" y="0" width="{width}" height="{height}" fill="#ffa502" opacity="0.12"><title>有利区間（推定）</title></rect>{zone_bg_bands}'
+        # 最初の1撃＝有利区間突入のきっかけまでの区間を「通常区間」（グレー）、
+        # それ以降キャップ到達までを「有利区間」（差枚の増減に応じた緑/赤）として
+        # 折れ線を区間ごとに塗り分ける（背景の帯より線そのものの色分けの方が分かりやすいため）
+        normal_zone_starts = {cs for cs in reset_cum_indices if cs + 1 <= len(cumulative) - 1}
+        segments = []
+        for i in range(len(points) - 1):
+            x0, y0 = points[i]
+            x1, y1 = points[i + 1]
+            seg_color = '#95a5a6' if i in normal_zone_starts else color
+            segments.append(f'<line x1="{x0:.1f}" y1="{y0:.1f}" x2="{x1:.1f}" y2="{y1:.1f}" stroke="{seg_color}" stroke-width="1.5"/>')
+        polyline_segments = ''.join(segments)
 
         # 天井到達の推定: ハマりG数(start)がconfig/rankings.pyの天井値相当なら
         # 「天井当たり」とみなしてマーク。朝イチ1台目（idx==0）はリセット恩恵で
@@ -258,7 +261,7 @@ def setup_jinja():
             f'<circle cx="{x:.1f}" cy="{y:.1f}" r="2.2" fill="#4b7bec" stroke="#fff" stroke-width="0.5"><title>{label}</title></circle>'
             for x, y, label in ceiling_marks
         )
-        return f'<svg class="sparkline" viewBox="0 0 {width} {height}" preserveAspectRatio="xMidYMid meet">{zone_bg}<line x1="0" y1="{zero_y:.1f}" x2="{width}" y2="{zero_y:.1f}" stroke="#555" stroke-width="0.5" stroke-dasharray="2,2"/>{yuuri_lines}<polyline points="{polyline}" fill="none" stroke="{color}" stroke-width="1.5"/>{ceiling_dots}</svg>'
+        return f'<svg class="sparkline" viewBox="0 0 {width} {height}" preserveAspectRatio="xMidYMid meet"><line x1="0" y1="{zero_y:.1f}" x2="{width}" y2="{zero_y:.1f}" stroke="#555" stroke-width="0.5" stroke-dasharray="2,2"/>{yuuri_lines}{polyline_segments}{ceiling_dots}</svg>'
     env.globals['sparkline'] = generate_sparkline
 
     def format_short_date(date_str):
