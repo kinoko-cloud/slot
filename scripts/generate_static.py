@@ -261,7 +261,7 @@ def setup_jinja():
             f'<circle cx="{x:.1f}" cy="{y:.1f}" r="2.2" fill="#4b7bec" stroke="#fff" stroke-width="0.5"><title>{label}</title></circle>'
             for x, y, label in ceiling_marks
         )
-        return f'<svg class="sparkline" viewBox="0 0 {width} {height}" preserveAspectRatio="xMidYMid meet"><line x1="0" y1="{zero_y:.1f}" x2="{width}" y2="{zero_y:.1f}" stroke="#555" stroke-width="0.5" stroke-dasharray="2,2"/>{yuuri_lines}{polyline_segments}{ceiling_dots}</svg>'
+        return f'<svg class="sparkline" viewBox="0 0 {width} {height}" preserveAspectRatio="xMidYMid meet"><line x1="0" y1="{zero_y:.1f}" x2="{width}" y2="{zero_y:.1f}" stroke="#888" stroke-width="0.5" stroke-dasharray="2,2"/>{yuuri_lines}{polyline_segments}{ceiling_dots}</svg>'
     env.globals['sparkline'] = generate_sparkline
 
     def format_short_date(date_str):
