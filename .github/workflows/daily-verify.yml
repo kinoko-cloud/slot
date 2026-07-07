@@ -58,7 +58,7 @@ jobs:
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
 
-          git add data/analysis/
+          git add data/analysis/ docs/verify.html
 
           if git diff --staged --quiet; then
             echo "No changes to commit"

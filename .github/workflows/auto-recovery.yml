@@ -252,7 +252,7 @@ jobs:
           git config user.name "GitHub Actions (Auto-Recovery)"
           git config user.email "actions@github.com"
 
-          git add data/availability.json data/.games_cache/
+          git add data/availability.json data/.games_cache/ docs/
 
           if git diff --staged --quiet; then
             echo "No changes to commit"

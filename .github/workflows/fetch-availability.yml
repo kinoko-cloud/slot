@@ -87,7 +87,7 @@ jobs:
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
 
-          git add data/availability.json
+          git add data/availability.json docs/
 
           if git diff --staged --quiet; then
             echo "No changes to commit"
