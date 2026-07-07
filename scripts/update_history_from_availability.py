@@ -140,6 +140,11 @@ def check_and_warn_duplicate(store_key: str, unit_id: str, hist_data: Dict, targ
                 new_hist_len = len(new_data.get('history', []))
                 
                 # 新データの方が充実している場合は更新OK
+                # 2026-07-07: art単独比較だとart=0の詳細取得データ(history実データあり)が
+                # GAS由来のart高値スタブ(history=[])に負けて破棄されるバグがあったため、
+                # historyが増えている場合は無条件で更新を優先する
+                if new_hist_len > existing_hist_len:
+                    return True
                 if new_art >= existing_art and new_hist_len >= existing_hist_len:
                     return True
                 
