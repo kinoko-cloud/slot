@@ -206,6 +206,7 @@ def setup_jinja():
         # 6号機の有利区間は「1500G」または「差枚+2400枚」到達で強制終了する規則を利用し、
         # 当たり履歴の累積からその到達点を推定してオレンジ点線でマーク（正確な境界の保証はしない）
         yuuri_x = []
+        reset_cum_indices = [0]  # 各サイクル開始のcumulative index（0=データ先頭）
         g_since, medals_since = 0, 0
         last_marked_idx = -1
         for idx, h in enumerate(sorted_hist):
@@ -213,6 +214,7 @@ def setup_jinja():
             medals_since += max(h.get('medals', 0), 0)
             if g_since >= 1500 or medals_since >= 2400:
                 yuuri_x.append(((idx + 1) / (len(cumulative) - 1) * width, False))
+                reset_cum_indices.append(idx + 1)
                 last_marked_idx = idx
                 g_since, medals_since = 0, 0
         # 確定済み日は、1500G/差枚2400枚のキャップに未到達でも閉店（翌朝リセット）で
@@ -223,6 +225,16 @@ def setup_jinja():
             f'<line x1="{x:.1f}" y1="0" x2="{x:.1f}" y2="{height}" stroke="#ffa502" stroke-width="1" stroke-dasharray="{"1,2" if closing else "3,2"}" opacity="0.7"><title>{"閉店による有利区間の打ち切り（確定）" if closing else "有利区間終了の推定（1500G/差枚2400枚到達目安）"}</title></line>'
             for x, closing in yuuri_x
         )
+
+        # 通常区間/有利区間の背景色分け（近似）:
+        # 当たり履歴は当たりの瞬間しか分からないため、各サイクル（リセット〜次のリセット）の
+        # 最初の1撃＝有利区間突入のきっかけまでを「通常区間」、それ以降キャップ到達までを
+        # 「有利区間」とみなす。グラフ全体をまず有利区間色で塗り、通常区間分だけ帯を重ねる
+        zone_bg_bands = ''.join(
+            f'<rect x="{(cs / (len(cumulative) - 1) * width):.1f}" y="0" width="{(((cs + 1) / (len(cumulative) - 1) * width) - (cs / (len(cumulative) - 1) * width)):.1f}" height="{height}" fill="#747d8c" opacity="0.25"><title>通常区間（推定・次の当たりまでの待ち時間）</title></rect>'
+            for cs in reset_cum_indices if cs + 1 <= len(cumulative) - 1
+        )
+        zone_bg = f'<rect x="0" y="0" width="{width}" height="{height}" fill="#ffa502" opacity="0.12"><title>有利区間（推定）</title></rect>{zone_bg_bands}'
 
         # 天井到達の推定: ハマりG数(start)がconfig/rankings.pyの天井値相当なら
         # 「天井当たり」とみなしてマーク。朝イチ1台目（idx==0）はリセット恩恵で
@@ -246,7 +258,7 @@ def setup_jinja():
             f'<circle cx="{x:.1f}" cy="{y:.1f}" r="2.2" fill="#4b7bec" stroke="#fff" stroke-width="0.5"><title>{label}</title></circle>'
             for x, y, label in ceiling_marks
         )
-        return f'<svg class="sparkline" viewBox="0 0 {width} {height}" preserveAspectRatio="xMidYMid meet"><line x1="0" y1="{zero_y:.1f}" x2="{width}" y2="{zero_y:.1f}" stroke="#555" stroke-width="0.5" stroke-dasharray="2,2"/>{yuuri_lines}<polyline points="{polyline}" fill="none" stroke="{color}" stroke-width="1.5"/>{ceiling_dots}</svg>'
+        return f'<svg class="sparkline" viewBox="0 0 {width} {height}" preserveAspectRatio="xMidYMid meet">{zone_bg}<line x1="0" y1="{zero_y:.1f}" x2="{width}" y2="{zero_y:.1f}" stroke="#555" stroke-width="0.5" stroke-dasharray="2,2"/>{yuuri_lines}<polyline points="{polyline}" fill="none" stroke="{color}" stroke-width="1.5"/>{ceiling_dots}</svg>'
     env.globals['sparkline'] = generate_sparkline
 
     def format_short_date(date_str):
