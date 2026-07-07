@@ -23,27 +23,16 @@ GITHUB_JSON_URL = "https://raw.githubusercontent.com/kinoko-cloud/slot/main/data
 LOCAL_JSON_PATH = Path(__file__).parent.parent / 'data' / 'availability.json'
 
 # GASでサポートしている店舗 (papimo.jp) - GAS fallback用
-GAS_STORES = ['island_akihabara_sbj']
+GAS_STORES = ['island_akihabara_tokyoghoul']
 
 # GitHubでサポートしている店舗 (availability.json経由 = daidata + papimo)
+# 2026-07-07: 東京喰種専業化に伴い更新。旧機種(sbj/吉宗/ToLOVEる/北斗転生2)はここに
+# 含まれていなかったため、tokyoghoul移行後もこのリストが更新されずget_realtime_data/
+# get_availabilityが東京喰種の当日データを一切返せていなかった（本日発覚した実バグ）
 GITHUB_STORES = [
-    # SBJ
-    'shibuya_espass_sbj', 'shinjuku_espass_sbj', 'akiba_espass_sbj',
-    'seibu_shinjuku_espass_sbj', 'island_akihabara_sbj',
-    # 真打吉宗
-    'shinjuku_espass_yoshimune', 'akiba_espass_yoshimune',
-    'seibu_shinjuku_espass_yoshimune', 'shibuya_espass_yoshimune',
-    'island_akihabara_yoshimune',
-    # ToLOVEるDARKNESS
-    'shinjuku_espass_toloveru', 'akiba_espass_toloveru',
-    'seibu_shinjuku_espass_toloveru', 'shibuya_espass_toloveru',
-    'island_akihabara_toloveru',
-    # 北斗転生2（レガシー）
-    'shibuya_espass_hokuto', 'shinjuku_espass_hokuto', 'akiba_espass_hokuto',
-    'island_akihabara_hokuto',
-    'shibuya_espass_hokuto2', 'shinjuku_espass_hokuto2', 'akiba_espass_hokuto2',
-    'island_akihabara_hokuto2', 'seibu_shinjuku_espass_hokuto2',
-    'shibuya_honkan_espass_hokuto2',
+    'shinjuku_espass_tokyoghoul', 'akiba_espass_tokyoghoul',
+    'seibu_shinjuku_espass_tokyoghoul', 'shibuya_espass_tokyoghoul',
+    'island_akihabara_tokyoghoul',
 ]
 
 
