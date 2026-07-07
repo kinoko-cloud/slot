@@ -26,6 +26,18 @@
 
     {# 直近3日間データ #}
     <div class="v2-days">
+        {% if rec.total_games and rec.total_games > 0 %}
+        <div class="v2-day v2-day-today">
+            <span class="v2-day-label">本日</span>
+            <span class="v2-day-art">ART {{ rec.art_count or 0 }}</span>
+            {% if rec.rb_count %}<span class="v2-day-rb">RB {{ rec.rb_count }}</span>{% endif %}
+            {% if rec.art_prob and rec.art_prob > 0 %}<span class="v2-day-prob {% if rec.art_prob <= 100 %}excellent{% elif rec.art_prob <= 130 %}good{% elif rec.art_prob >= 200 %}bad{% endif %}">1/{{ rec.art_prob|int }}</span>{% endif %}
+            <span class="v2-day-games">{{ '{:,}'.format(rec.total_games) }}G</span>
+            {% if rec.diff_medals is defined and rec.diff_medals and rec.diff_medals != 0 %}<span class="diff-medals-sm {% if rec.diff_medals > 0 %}plus{% else %}minus{% endif %}">{{ '{:+,}'.format(rec.diff_medals) }}枚</span>{% endif %}
+            {% if rec.max_medals and rec.max_medals > 0 %}<span class="max-medals-sm">最大{{ '{:,}'.format(rec.max_medals) }}枚</span>{% endif %}
+            {% if rec.today_max_rensa and rec.today_max_rensa > 0 %}<span class="rensa-sm">{{ rec.today_max_rensa }}連</span>{% endif %}
+        </div>
+        {% endif %}
         {% if rec.yesterday_art %}
         <div class="v2-day">
             <span class="v2-day-label">{{ short_date(rec.yesterday_date) or '前日' }}</span>
