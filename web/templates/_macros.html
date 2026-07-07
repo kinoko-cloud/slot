@@ -192,7 +192,7 @@
     {% if graph_hist %}
     <div class="sparkline-section">
         <div class="sparkline-label">{% if graph_date %}{{ graph_date }}{% endif %} 差枚推移</div>
-        {{ sparkline(graph_hist, width=220, height=45, diff_medals=rec.yesterday_diff_medals|default(rec.diff_medals|default(none)))|safe }}
+        {{ sparkline(graph_hist, width=220, height=45, diff_medals=rec.yesterday_diff_medals|default(rec.diff_medals|default(none)), is_complete=(_yh is not none))|safe }}
     </div>
     {% endif %}
     {% endif %}

@@ -221,7 +221,7 @@
                     {% if graph_hist %}
                     <div class="sparkline-section">
                         <div class="sparkline-label">{% if graph_date %}{{ graph_date }}{% endif %} 差枚推移</div>
-                        {{ sparkline(graph_hist, width=220, height=45, diff_medals=rec.yesterday_diff_medals|default(rec.diff_medals|default(none)))|safe }}
+                        {{ sparkline(graph_hist, width=220, height=45, diff_medals=rec.yesterday_diff_medals|default(rec.diff_medals|default(none)), is_complete=(_yh is not none))|safe }}
                     </div>
                     {% endif %}
                 </a>
@@ -334,11 +334,12 @@
                         {{ recent_day_expandable(y_art, y_prob, rec.yesterday_date, '前日', rec.yesterday_diff_medals|default(0, true), rec.yesterday_max_rensa|default(0, true), rec.yesterday_max_medals|default(0, true), rec.yesterday_history_processed|default(rec.yesterday_history|default([])), y_games, true) }}
                         {% endif %}
                     </div>
-                    {% set _gh = rec.yesterday_history if rec.yesterday_history and rec.yesterday_history|length >= 2 else (rec.today_history if rec.today_history and rec.today_history|length >= 2 else none) %}
+                    {% set _gh_is_yesterday = rec.yesterday_history and rec.yesterday_history|length >= 2 %}
+                    {% set _gh = rec.yesterday_history if _gh_is_yesterday else (rec.today_history if rec.today_history and rec.today_history|length >= 2 else none) %}
                     {% if _gh %}
                     <div class="sparkline-section">
                         <div class="sparkline-label">{% if rec.yesterday_date %}{{ rec.yesterday_date }}{% elif rec.history_date %}{{ rec.history_date }}{% endif %} 差枚推移</div>
-                        {{ sparkline(_gh, width=220, height=45, diff_medals=rec.yesterday_diff_medals|default(rec.diff_medals|default(none)))|safe }}
+                        {{ sparkline(_gh, width=220, height=45, diff_medals=rec.yesterday_diff_medals|default(rec.diff_medals|default(none)), is_complete=_gh_is_yesterday)|safe }}
                     </div>
                     {% endif %}
                     {% endif %}
@@ -429,11 +430,11 @@
                     </div>{# /yesterday-card-left #}
                     {% if rec.yesterday_history and rec.yesterday_history|length >= 3 %}
                     <div class="yesterday-card-right">
-                        {{ sparkline(rec.yesterday_history, diff_medals=rec.diff_medals|default(none))|safe }}
+                        {{ sparkline(rec.yesterday_history, diff_medals=rec.diff_medals|default(none), is_complete=true)|safe }}
                     </div>
                     {% elif rec.today_history and rec.today_history|length >= 3 %}
                     <div class="yesterday-card-right">
-                        {% set _gh2 = rec.yesterday_history if rec.yesterday_history and rec.yesterday_history|length >= 2 else (rec.today_history if rec.today_history and rec.today_history|length >= 2 else []) %}{{ sparkline(_gh2, diff_medals=rec.yesterday_diff_medals|default(rec.diff_medals|default(none)))|safe }}
+                        {% set _gh2_is_yesterday = rec.yesterday_history and rec.yesterday_history|length >= 2 %}{% set _gh2 = rec.yesterday_history if _gh2_is_yesterday else (rec.today_history if rec.today_history and rec.today_history|length >= 2 else []) %}{{ sparkline(_gh2, diff_medals=rec.yesterday_diff_medals|default(rec.diff_medals|default(none)), is_complete=_gh2_is_yesterday)|safe }}
                     </div>
                     {% endif %}
                     </div>{# /yesterday-card-inner #}
@@ -587,7 +588,7 @@
                     {% elif _yh %}
                     <div class="sparkline-section">
                         <div class="sparkline-label">{{ rec.yesterday_date }} 差枚推移</div>
-                        {{ sparkline(_yh, width=220, height=45, diff_medals=rec.yesterday_diff_medals|default(rec.diff_medals|default(none)))|safe }}
+                        {{ sparkline(_yh, width=220, height=45, diff_medals=rec.yesterday_diff_medals|default(rec.diff_medals|default(none)), is_complete=true)|safe }}
                     </div>
                     {% else %}
                     <div class="sparkline-section">
@@ -705,7 +706,7 @@
                     {% elif _yh2 %}
                     <div class="sparkline-section">
                         <div class="sparkline-label">{{ rec.yesterday_date }} 差枚推移</div>
-                        {{ sparkline(_yh2, width=220, height=45, diff_medals=rec.yesterday_diff_medals|default(rec.diff_medals|default(none)))|safe }}
+                        {{ sparkline(_yh2, width=220, height=45, diff_medals=rec.yesterday_diff_medals|default(rec.diff_medals|default(none)), is_complete=true)|safe }}
                     </div>
                     {% else %}
                     <div class="sparkline-section">
@@ -748,11 +749,12 @@
                         {% set _td_prob = ((rec.three_days_ago_games|default(0)) / _td_art)|int if _td_art > 0 else 0 %}
                         {{ recent_day_expandable(_td_art, _td_prob, rec.three_days_ago_date|default(''), '3日前', rec.three_days_ago_diff_medals|default(0, true), rec.three_days_ago_max_rensa|default(0, true), rec.three_days_ago_max_medals|default(0, true), rec.three_days_ago_history_processed|default(rec.three_days_ago_history|default([])), rec.three_days_ago_games|default(0), true) }}
                     </div>
-                    {% set _gh = rec.yesterday_history if rec.yesterday_history and rec.yesterday_history|length >= 2 else (rec.today_history if rec.today_history and rec.today_history|length >= 2 else none) %}
+                    {% set _gh_is_yesterday = rec.yesterday_history and rec.yesterday_history|length >= 2 %}
+                    {% set _gh = rec.yesterday_history if _gh_is_yesterday else (rec.today_history if rec.today_history and rec.today_history|length >= 2 else none) %}
                     {% if _gh %}
                     <div class="sparkline-section">
                         <div class="sparkline-label">{% if rec.yesterday_date %}{{ rec.yesterday_date }}{% elif rec.history_date %}{{ rec.history_date }}{% endif %} 差枚推移</div>
-                        {{ sparkline(_gh, width=220, height=45, diff_medals=rec.diff_medals|default(none))|safe }}
+                        {{ sparkline(_gh, width=220, height=45, diff_medals=rec.diff_medals|default(none), is_complete=_gh_is_yesterday)|safe }}
                     </div>
                     {% endif %}
                     {% endif %}
@@ -966,11 +968,11 @@
                     </div>{# /yesterday-card-left #}
                     {% if rec.yesterday_history and rec.yesterday_history|length >= 3 %}
                     <div class="yesterday-card-right">
-                        {{ sparkline(rec.yesterday_history, diff_medals=rec.diff_medals|default(none))|safe }}
+                        {{ sparkline(rec.yesterday_history, diff_medals=rec.diff_medals|default(none), is_complete=true)|safe }}
                     </div>
                     {% elif rec.today_history and rec.today_history|length >= 3 %}
                     <div class="yesterday-card-right">
-                        {% set _gh2 = rec.yesterday_history if rec.yesterday_history and rec.yesterday_history|length >= 2 else (rec.today_history if rec.today_history and rec.today_history|length >= 2 else []) %}{{ sparkline(_gh2, diff_medals=rec.yesterday_diff_medals|default(rec.diff_medals|default(none)))|safe }}
+                        {% set _gh2_is_yesterday = rec.yesterday_history and rec.yesterday_history|length >= 2 %}{% set _gh2 = rec.yesterday_history if _gh2_is_yesterday else (rec.today_history if rec.today_history and rec.today_history|length >= 2 else []) %}{{ sparkline(_gh2, diff_medals=rec.yesterday_diff_medals|default(rec.diff_medals|default(none)), is_complete=_gh2_is_yesterday)|safe }}
                     </div>
                     {% endif %}
                     </div>{# /yesterday-card-inner #}

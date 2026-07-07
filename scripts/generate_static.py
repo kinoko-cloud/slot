@@ -145,12 +145,16 @@ def setup_jinja():
     env.globals['build_time'] = datetime.now(JST).strftime('%Y-%m-%d %H:%M:%S')
     env.globals['cache_bust'] = datetime.now(JST).strftime('%Y%m%d%H%M%S')
 
-    def generate_sparkline(history, width=120, height=40, diff_medals=None):
+    def generate_sparkline(history, width=120, height=40, diff_medals=None, is_complete=False):
         """当たり履歴から差枚推移のSVGスパークラインを生成
 
         Args:
             history: 当たり履歴リスト
             diff_medals: 既知の最終差枚（正規化に使用）
+            is_complete: 確定済み（前日以前）の1日分データかどうか。
+                Trueの場合、当日中に1500G/差枚2400枚のキャップに未到達でも
+                閉店（翌日の朝イチリセット）で有利区間が強制終了している前提で
+                末尾に打ち切りマーカーを補う（本日進行中データでは使わない）
         """
         if not history or len(history) < 2:
             return ''
@@ -203,17 +207,46 @@ def setup_jinja():
         # 当たり履歴の累積からその到達点を推定してオレンジ点線でマーク（正確な境界の保証はしない）
         yuuri_x = []
         g_since, medals_since = 0, 0
+        last_marked_idx = -1
         for idx, h in enumerate(sorted_hist):
             g_since += h.get('start', 0)
             medals_since += max(h.get('medals', 0), 0)
             if g_since >= 1500 or medals_since >= 2400:
-                yuuri_x.append((idx + 1) / (len(cumulative) - 1) * width)
+                yuuri_x.append(((idx + 1) / (len(cumulative) - 1) * width, False))
+                last_marked_idx = idx
                 g_since, medals_since = 0, 0
+        # 確定済み日は、1500G/差枚2400枚のキャップに未到達でも閉店（翌朝リセット）で
+        # 有利区間が打ち切られている前提で末尾に「確定リセット」マーカーを補う
+        if is_complete and last_marked_idx != len(sorted_hist) - 1:
+            yuuri_x.append((width, True))
         yuuri_lines = ''.join(
-            f'<line x1="{x:.1f}" y1="0" x2="{x:.1f}" y2="{height}" stroke="#ffa502" stroke-width="1" stroke-dasharray="3,2" opacity="0.7"><title>有利区間終了の推定（1500G/差枚2400枚到達目安）</title></line>'
-            for x in yuuri_x
+            f'<line x1="{x:.1f}" y1="0" x2="{x:.1f}" y2="{height}" stroke="#ffa502" stroke-width="1" stroke-dasharray="{"1,2" if closing else "3,2"}" opacity="0.7"><title>{"閉店による有利区間の打ち切り（確定）" if closing else "有利区間終了の推定（1500G/差枚2400枚到達目安）"}</title></line>'
+            for x, closing in yuuri_x
         )
-        return f'<svg class="sparkline" viewBox="0 0 {width} {height}" preserveAspectRatio="xMidYMid meet"><line x1="0" y1="{zero_y:.1f}" x2="{width}" y2="{zero_y:.1f}" stroke="#555" stroke-width="0.5" stroke-dasharray="2,2"/>{yuuri_lines}<polyline points="{polyline}" fill="none" stroke="{color}" stroke-width="1.5"/></svg>'
+
+        # 天井到達の推定: ハマりG数(start)がconfig/rankings.pyの天井値相当なら
+        # 「天井当たり」とみなしてマーク。朝イチ1台目（idx==0）はリセット恩恵で
+        # reset_ceiling、それ以外はnormal_ceilingを適用（generate_static.py内の
+        # 他の天井判定=TENJOU_THRESHOLDと同じくMACHINESを参照し、値のハードコードを避ける）
+        from config.rankings import MACHINES, MACHINE_DEFAULTS
+        _ceiling_machine = MACHINES.get('tokyoghoul', MACHINE_DEFAULTS)
+        normal_ceiling = _ceiling_machine.get('normal_ceiling', 999)
+        reset_ceiling = _ceiling_machine.get('reset_ceiling', normal_ceiling)
+        ceiling_marks = []
+        for idx, h in enumerate(sorted_hist):
+            start = h.get('start', 0)
+            ceiling = reset_ceiling if idx == 0 else normal_ceiling
+            if start < ceiling:
+                continue
+            x = (idx + 1) / (len(cumulative) - 1) * width
+            y = height - ((cumulative[idx + 1] - min_v) / v_range * (height - 4)) - 2
+            label = f'天井到達の可能性（{start}G消化、天井目安{ceiling}G{"・朝イチリセット後" if idx == 0 else ""}）'
+            ceiling_marks.append((x, y, label))
+        ceiling_dots = ''.join(
+            f'<circle cx="{x:.1f}" cy="{y:.1f}" r="2.2" fill="#4b7bec" stroke="#fff" stroke-width="0.5"><title>{label}</title></circle>'
+            for x, y, label in ceiling_marks
+        )
+        return f'<svg class="sparkline" viewBox="0 0 {width} {height}" preserveAspectRatio="xMidYMid meet"><line x1="0" y1="{zero_y:.1f}" x2="{width}" y2="{zero_y:.1f}" stroke="#555" stroke-width="0.5" stroke-dasharray="2,2"/>{yuuri_lines}<polyline points="{polyline}" fill="none" stroke="{color}" stroke-width="1.5"/>{ceiling_dots}</svg>'
     env.globals['sparkline'] = generate_sparkline
 
     def format_short_date(date_str):
