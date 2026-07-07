@@ -35,7 +35,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 1  # 2026-07-07: リポジトリ肥大化(8GB超)でfetch-depth:0のcheckoutが停滞するため軽量化
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up Python
