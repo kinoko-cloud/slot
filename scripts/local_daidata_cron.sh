@@ -43,7 +43,7 @@ fi
 git config user.name "local-cron"
 git config user.email "local@localhost"
 
-git add data/availability.json data/.browser_state/daidata_state.json data/history/ data/patterns/ docs/ 2>/dev/null || true
+git add data/availability.json data/.browser_state/daidata_state.json data/history/ data/patterns/ 2>/dev/null || true
 
 if git diff --staged --quiet; then
     echo "--- 変更なし ---"

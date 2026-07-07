@@ -64,7 +64,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add data/availability.json data/.games_cache/ data/history/ docs/ || true
+          git add data/availability.json data/.games_cache/ data/history/ || true
 
           if git diff --staged --quiet; then
             echo "No changes to commit"
