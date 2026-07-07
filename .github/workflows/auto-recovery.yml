@@ -127,48 +127,24 @@ jobs:
         run: |
           echo "🔧 Attempting auto-recovery by fetching fresh data..."
 
-          # Playwrightのインストール
+          pip install requests
+
+          # 東京喰種取得（GAS経由。daidata.goraggio.comはCloudFront WAFでActions IPをブロックするため）
+          echo "=== 東京喰種取得（GAS経由） ==="
+          for attempt in 1 2 3; do
+            if timeout 120 python scripts/fetch_via_gas.py; then
+              echo "✅ GAS fetch succeeded"
+              break
+            else
+              echo "❌ GAS fetch failed (attempt $attempt)"
+              sleep 10
+            fi
+          done
+
+          # papimo取得（アイランド秋葉原・東京喰種）
           pip install 'playwright==1.49.1' pytz
           playwright install chromium
           playwright install-deps chromium
-
-          # SBJ取得（--daidata-only: papimoは別途取得）
-          echo "=== SBJ取得 ==="
-          for attempt in 1 2; do
-            if timeout 240 python scripts/scrapers_v2/fetch_all.py --priority-only --sbj-only --daidata-only; then
-              echo "✅ SBJ fetch succeeded"
-              break
-            else
-              echo "❌ SBJ fetch failed (attempt $attempt)"
-              sleep 10
-            fi
-          done
-
-          # 真打吉宗取得（--daidata-only: papimoは別途取得）
-          echo "=== 真打吉宗取得 ==="
-          for attempt in 1 2; do
-            if timeout 480 python scripts/scrapers_v2/fetch_all.py --priority-only --yoshimune-only --daidata-only; then
-              echo "✅ 真打吉宗 fetch succeeded"
-              break
-            else
-              echo "❌ 真打吉宗 fetch failed (attempt $attempt)"
-              sleep 10
-            fi
-          done
-
-          # ToLOVEる取得（--daidata-only: papimoは別途取得）
-          echo "=== ToLOVEる取得 ==="
-          for attempt in 1 2; do
-            if timeout 480 python scripts/scrapers_v2/fetch_all.py --priority-only --toloveru-only --daidata-only; then
-              echo "✅ ToLOVEる fetch succeeded"
-              break
-            else
-              echo "❌ ToLOVEる fetch failed (attempt $attempt)"
-              sleep 10
-            fi
-          done
-
-          # papimo取得（アイランド秋葉原）
           echo "=== papimo取得 ==="
           timeout 600 python scripts/scrapers_v2/fetch_all.py --papimo-only || {
             echo "⚠️ Papimo fetch failed (non-critical)"

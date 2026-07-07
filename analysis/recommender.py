@@ -52,6 +52,18 @@ MACHINE_SPECS = {
         'low_prob': 366,
         'very_low_prob': 450,
     },
+    'tokyoghoul': {
+        # config/rankings.py MACHINES['tokyoghoul']のコメント値（設定1=1/394 97.5%、設定6=1/261 114.9%）に準拠
+        'setting6_at_prob': 261,
+        'setting1_at_prob': 394,
+        'setting6_payout': 114.9,
+        'setting1_payout': 97.5,
+        'excellent_prob': 230,
+        'high_prob': 261,
+        'mid_prob': 310,
+        'low_prob': 380,
+        'very_low_prob': 450,
+    },
 }
 
 # 後方互換性のため
@@ -68,6 +80,13 @@ MACHINE_THRESHOLDS = {
         'high_at_prob': 300,
         'mid_at_prob': 340,
         'low_at_prob': 366,
+        'very_low_at_prob': 450,
+    },
+    'tokyoghoul': {
+        'setting6_at_prob': 261,
+        'high_at_prob': 290,
+        'mid_at_prob': 310,
+        'low_at_prob': 380,
         'very_low_at_prob': 450,
     },
 }
