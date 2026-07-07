@@ -197,7 +197,23 @@ def setup_jinja():
         # 色: 最終値がプラスなら緑、マイナスなら赤（正規化後の値で判定）
         final_val = cumulative[-1] if cumulative else total
         color = '#2ed573' if final_val >= 0 else '#ff6b6b'
-        return f'<svg class="sparkline" viewBox="0 0 {width} {height}" preserveAspectRatio="xMidYMid meet"><line x1="0" y1="{zero_y:.1f}" x2="{width}" y2="{zero_y:.1f}" stroke="#555" stroke-width="0.5" stroke-dasharray="2,2"/><polyline points="{polyline}" fill="none" stroke="{color}" stroke-width="1.5"/></svg>'
+
+        # 有利区間終了の推定（実データには含まれないため近似）:
+        # 6号機の有利区間は「1500G」または「差枚+2400枚」到達で強制終了する規則を利用し、
+        # 当たり履歴の累積からその到達点を推定してオレンジ点線でマーク（正確な境界の保証はしない）
+        yuuri_x = []
+        g_since, medals_since = 0, 0
+        for idx, h in enumerate(sorted_hist):
+            g_since += h.get('start', 0)
+            medals_since += max(h.get('medals', 0), 0)
+            if g_since >= 1500 or medals_since >= 2400:
+                yuuri_x.append((idx + 1) / (len(cumulative) - 1) * width)
+                g_since, medals_since = 0, 0
+        yuuri_lines = ''.join(
+            f'<line x1="{x:.1f}" y1="0" x2="{x:.1f}" y2="{height}" stroke="#ffa502" stroke-width="1" stroke-dasharray="3,2" opacity="0.7"><title>有利区間終了の推定（1500G/差枚2400枚到達目安）</title></line>'
+            for x in yuuri_x
+        )
+        return f'<svg class="sparkline" viewBox="0 0 {width} {height}" preserveAspectRatio="xMidYMid meet"><line x1="0" y1="{zero_y:.1f}" x2="{width}" y2="{zero_y:.1f}" stroke="#555" stroke-width="0.5" stroke-dasharray="2,2"/>{yuuri_lines}<polyline points="{polyline}" fill="none" stroke="{color}" stroke-width="1.5"/></svg>'
     env.globals['sparkline'] = generate_sparkline
 
     def format_short_date(date_str):
