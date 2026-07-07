@@ -62,7 +62,7 @@
                 <span class="cache-badge {{ cache_info.source }}">{{ cache_info.source|upper }}</span>
                 {% if cache_info.age_seconds and cache_info.age_seconds > 1800 %}
                 <div class="stale-warning">データが{{ (cache_info.age_seconds // 3600) }}時間{{ ((cache_info.age_seconds % 3600) // 60) }}分前のものです</div>
-                {% elif cache_info.age_seconds and cache_info.age_seconds > 600 %}
+                {% elif cache_info.age_seconds and cache_info.age_seconds > 900 %}
                 <div class="stale-notice">{{ (cache_info.age_seconds // 60) }}分前のデータです</div>
                 {% endif %}
                 {% else %}
@@ -82,7 +82,7 @@
             {% endif %}
 
             <div class="action-buttons">
-                <span class="auto-update-notice">30分ごと自動更新</span>
+                <span class="auto-update-notice">15分ごと自動更新</span>
             </div>
         </header>
 
