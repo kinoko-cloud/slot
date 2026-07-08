@@ -211,9 +211,8 @@ def setup_jinja():
             points.append((x, y))
         # ゼロライン
         zero_y = height - ((0 - min_v) / v_range * (height - 4)) - 2
-        # 色: 最終値がプラスなら緑、マイナスなら赤（正規化後の値で判定）
-        final_val = cumulative[-1] if cumulative else total
-        color = '#2ed573' if final_val >= 0 else '#ff6b6b'
+        # 色: 有利区間=緑、通常区間=青で固定（差枚のプラス/マイナスによる色分けはしない）
+        color = '#2ed573'
 
         # 有利区間終了の推定（実データには含まれないため近似）:
         # 6号機の有利区間は「1500G」または「差枚+2400枚」到達で強制終了する規則を利用し、
@@ -249,7 +248,7 @@ def setup_jinja():
         for i in range(len(points) - 1):
             x0, y0 = points[i]
             x1, y1 = points[i + 1]
-            seg_color = '#95a5a6' if i in normal_zone_starts else color
+            seg_color = '#4b7bec' if i in normal_zone_starts else color
             segments.append(f'<line x1="{x0:.1f}" y1="{y0:.1f}" x2="{x1:.1f}" y2="{y1:.1f}" stroke="{seg_color}" stroke-width="1.5"/>')
         polyline_segments = ''.join(segments)
 
