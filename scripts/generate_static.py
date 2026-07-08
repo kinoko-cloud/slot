@@ -194,19 +194,31 @@ def setup_jinja():
             cost_per_game = 3
 
         cumulative = [0]
+        cum_games = [0]  # 横軸を実際の消化G数に比例させるための累積G数
         total = 0
+        g_accum = 0
         for i, h in enumerate(sorted_hist):
             medals = h.get('medals', 0)
             start = h.get('start', 0)
             total -= start * cost_per_game  # 当たり間の投入
             total += medals                 # 獲得
+            # 最初の当たりがG=0地点の場合、原点(0,0)と同座標の点が重複して
+            # 垂直落下に見えるため、原点自体を最初の当たりの値で上書きする
+            if i == 0 and start == 0:
+                cumulative[0] = total
+                g_accum += start
+                cum_games[0] = g_accum
+                continue
             cumulative.append(total)
-        # 横軸位置（0〜width）: 当たり回数の等間隔。
-        # G数/時間に比例させると、当たりが密集した区間が数px未満に圧縮され
-        # 見た目上の垂直落下（実際は緩やかな増減）になってしまうため、
-        # 店舗のデータカウンター表示と同様に当たり回数ベースの等間隔に統一する。
+            g_accum += start
+            cum_games.append(g_accum)
+        # 横軸位置（0〜width）: 実機データカウンターと同じく消化G数に比例させる。
+        # 直前でstart=0/同時刻の当たりを1点に統合済みのため、同一G位置への
+        # 重複プロットによる垂直落下は解消されている。
         def x_at(idx):
-            return idx / (len(cumulative) - 1) * width
+            if games_total <= 0:
+                return idx / (len(cumulative) - 1) * width
+            return cum_games[idx] / games_total * width
 
         if len(cumulative) < 2:
             return ''
