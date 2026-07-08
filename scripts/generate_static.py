@@ -166,6 +166,19 @@ def setup_jinja():
             sorted_hist = list(history)
         else:
             sorted_hist = sorted(history, key=lambda x: (-x.get('hit_num', 0), x.get('time', '00:00')))
+
+        # 同一Gポジション（start=0で連続する当たり）は1点に統合する。
+        # 1回のAT中の複数回の獲得枚数が別々のログ行として記録されているため、
+        # 統合しないとグラフ上で同じx座標に複数点が重なり、見た目上の
+        # 垂直落下（実際には一瞬で何千枚も減ったように見える）になってしまう。
+        merged_hist = []
+        for h in sorted_hist:
+            if h.get('start', 0) == 0 and merged_hist:
+                merged_hist[-1] = {**merged_hist[-1], 'medals': merged_hist[-1].get('medals', 0) + h.get('medals', 0)}
+            else:
+                merged_hist.append(dict(h))
+        sorted_hist = merged_hist
+
         # 各当たりのメダル獲得数で相対推移を計算
         # medals: ボーナス/AT獲得枚数、start: 当たり間の消化G数
         medals_sum = sum(h.get('medals', 0) for h in sorted_hist)
@@ -184,11 +197,18 @@ def setup_jinja():
         cum_games = [0]  # 横軸を実際の消化G数に比例させるための累積G数
         total = 0
         g_accum = 0
-        for h in sorted_hist:
+        for i, h in enumerate(sorted_hist):
             medals = h.get('medals', 0)
             start = h.get('start', 0)
             total -= start * cost_per_game  # 当たり間の投入
             total += medals                 # 獲得
+            # 最初の当たりがG=0地点の場合、原点(0,0)と同座標の点が重複して
+            # 垂直落下に見えるため、原点そのものを最初の当たりの値で上書きする
+            if i == 0 and start == 0:
+                cumulative[0] = total
+                g_accum += start
+                cum_games[0] = g_accum
+                continue
             cumulative.append(total)
             g_accum += start
             cum_games.append(g_accum)
