@@ -213,12 +213,26 @@ def setup_jinja():
             g_accum += start
             cum_games.append(g_accum)
         # 横軸位置（0〜width）: 実機データカウンターと同じく消化G数に比例させる。
-        # 直前でstart=0/同時刻の当たりを1点に統合済みのため、同一G位置への
-        # 重複プロットによる垂直落下は解消されている。
+        # ただし本当に1〜2G差で大きく差枚が動く箇所は、G数に純比例させると
+        # 220px中の1px未満に潰れてしまい「垂直に落ちた」ように見えてしまう
+        # （実際は右肩上がり/下がりの斜め線のはず、との指摘の通り）。
+        # 最低限の横幅を各区間に保証してから全体をwidthに収まるよう再スケールする
+        # ことで、G数比例の性質を保ったまま傾きを視認できるようにする。
+        if games_total > 0:
+            raw_x = [g / games_total * width for g in cum_games]
+        else:
+            raw_x = [i / (len(cumulative) - 1) * width for i in range(len(cumulative))]
+        min_gap = width * 0.02  # 各区間の最低横幅（220pxなら約4.4px）
+        spaced_x = [raw_x[0]]
+        for v in raw_x[1:]:
+            spaced_x.append(max(v, spaced_x[-1] + min_gap))
+        # 最後の点がwidthを超えた分は全体を縮小して収める
+        if spaced_x[-1] > width:
+            scale = width / spaced_x[-1]
+            spaced_x = [v * scale for v in spaced_x]
+
         def x_at(idx):
-            if games_total <= 0:
-                return idx / (len(cumulative) - 1) * width
-            return cum_games[idx] / games_total * width
+            return spaced_x[idx]
 
         if len(cumulative) < 2:
             return ''
@@ -233,7 +247,7 @@ def setup_jinja():
             points.append((x, y))
         # ゼロライン
         zero_y = height - ((0 - min_v) / v_range * (height - 4)) - 2
-        # 色: 有利区間=緑、通常区間=青で固定（差枚のプラス/マイナスによる色分けはしない）
+        # 色: 有利区間=緑、通常区間=赤で固定（差枚のプラス/マイナスによる色分けはしない）
         color = '#2ed573'
 
         # 有利区間終了の推定（実データには含まれないため近似）:
@@ -270,7 +284,7 @@ def setup_jinja():
         for i in range(len(points) - 1):
             x0, y0 = points[i]
             x1, y1 = points[i + 1]
-            seg_color = '#4b7bec' if i in normal_zone_starts else color
+            seg_color = '#ff4757' if i in normal_zone_starts else color
             segments.append(f'<line x1="{x0:.1f}" y1="{y0:.1f}" x2="{x1:.1f}" y2="{y1:.1f}" stroke="{seg_color}" stroke-width="1.5"/>')
         polyline_segments = ''.join(segments)
 
