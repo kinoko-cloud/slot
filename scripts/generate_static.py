@@ -288,17 +288,17 @@ def setup_jinja():
             for x, closing in yuuri_x
         )
 
-        # 通常区間/有利区間の線色分け（近似）:
-        # 当たり履歴は当たりの瞬間しか分からないため、各サイクル（リセット〜次のリセット）の
-        # 最初の1撃＝有利区間突入のきっかけまでの区間を「通常区間」（グレー）、
-        # それ以降キャップ到達までを「有利区間」（差枚の増減に応じた緑/赤）として
-        # 折れ線を区間ごとに塗り分ける（背景の帯より線そのものの色分けの方が分かりやすいため）
-        normal_zone_starts = {cs for cs in reset_cum_indices if cs + 1 <= len(cumulative) - 1}
+        # 線色分け: 「有利区間/通常区間」という制度上の区分（＝オレンジ点線で表現済み）とは
+        # 別に、線の色は区間ごとの差枚の増減方向だけで決める。制度上は有利区間中でも
+        # 当たりが来ないと差枚は減るし、通常区間に戻った直後の当たりが大きければ差枚は
+        # 増える。この2つを同じ色で表現しようとすると「有利区間なのに下がる緑」
+        # 「通常区間なのに上がる赤」という矛盾した見た目になるため、線の色は増減方向のみに
+        # 使い、制度上の区間はオレンジ点線マーカーに役割を分離する
         segments = []
         for i in range(len(points) - 1):
             x0, y0 = points[i]
             x1, y1 = points[i + 1]
-            seg_color = '#ff4757' if i in normal_zone_starts else color
+            seg_color = color if cumulative[i + 1] >= cumulative[i] else '#ff4757'
             segments.append(f'<line x1="{x0:.1f}" y1="{y0:.1f}" x2="{x1:.1f}" y2="{y1:.1f}" stroke="{seg_color}" stroke-width="1.5"/>')
         polyline_segments = ''.join(segments)
 
