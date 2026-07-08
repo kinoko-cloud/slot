@@ -195,6 +195,9 @@ def setup_jinja():
 
         cumulative = [0]
         cum_games = [0]  # 横軸を実際の消化G数に比例させるための累積G数
+        # sorted_hist[i]処理後の値がcumulative/cum_gamesの何番目に入るかのマップ
+        # （最初の当たりがG=0地点の場合のみ原点を上書きしてインデックスがずれるため）
+        hist_to_cum = []
         total = 0
         g_accum = 0
         for i, h in enumerate(sorted_hist):
@@ -208,10 +211,12 @@ def setup_jinja():
                 cumulative[0] = total
                 g_accum += start
                 cum_games[0] = g_accum
+                hist_to_cum.append(0)
                 continue
             cumulative.append(total)
             g_accum += start
             cum_games.append(g_accum)
+            hist_to_cum.append(len(cumulative) - 1)
         # 横軸位置（0〜width）: 実機データカウンターと同じく消化G数に比例させる。
         # ただし本当に1〜2G差で大きく差枚が動く箇所は、G数に純比例させると
         # 220px中の1px未満に潰れてしまい「垂直に落ちた」ように見えてしまう
@@ -253,18 +258,27 @@ def setup_jinja():
         # 有利区間終了の推定（実データには含まれないため近似）:
         # 6号機の有利区間は「1500G」または「差枚+2400枚」到達で強制終了する規則を利用し、
         # 当たり履歴の累積からその到達点を推定してオレンジ点線でマーク（正確な境界の保証はしない）
+        # 差枚2400枚の判定は「獲得枚数の総取得量（コスト差引前）」ではなく
+        # 「コスト差引後の純増（差枚）」で行う必要がある（実機の規定通り）。
+        # また、start=0の継続当たりはすでに1チェーンとして統合済みのため、
+        # このループはチェーン単位で評価される＝連チャン中に閾値を跨いでも
+        # チェーンが終わった時点で初めて判定されるので、指摘の「連チャンが
+        # 終わった後に有利区間切れが起きる」動作と一致する。
         yuuri_x = []
         reset_cum_indices = [0]  # 各サイクル開始のcumulative index（0=データ先頭）
-        g_since, medals_since = 0, 0
+        g_since = 0
+        cycle_start_total = 0  # このサイクル開始時点の純増(差枚)基準値
         last_marked_idx = -1
         for idx, h in enumerate(sorted_hist):
             g_since += h.get('start', 0)
-            medals_since += max(h.get('medals', 0), 0)
-            if g_since >= 1500 or medals_since >= 2400:
-                yuuri_x.append((x_at(idx + 1), False))
-                reset_cum_indices.append(idx + 1)
+            cum_idx = hist_to_cum[idx]
+            net_since = cumulative[cum_idx] - cycle_start_total
+            if g_since >= 1500 or net_since >= 2400:
+                yuuri_x.append((x_at(cum_idx), False))
+                reset_cum_indices.append(cum_idx)
                 last_marked_idx = idx
-                g_since, medals_since = 0, 0
+                g_since = 0
+                cycle_start_total = cumulative[cum_idx]
         # 確定済み日は、1500G/差枚2400枚のキャップに未到達でも閉店（翌朝リセット）で
         # 有利区間が打ち切られている前提で末尾に「確定リセット」マーカーを補う
         if is_complete and last_marked_idx != len(sorted_hist) - 1:
@@ -302,8 +316,9 @@ def setup_jinja():
             ceiling = reset_ceiling if idx == 0 else normal_ceiling
             if start < ceiling:
                 continue
-            x = x_at(idx + 1)
-            y = height - ((cumulative[idx + 1] - min_v) / v_range * (height - 4)) - 2
+            cum_idx = hist_to_cum[idx]
+            x = x_at(cum_idx)
+            y = height - ((cumulative[cum_idx] - min_v) / v_range * (height - 4)) - 2
             label = f'天井到達の可能性（{start}G消化、天井目安{ceiling}G{"・朝イチリセット後" if idx == 0 else ""}）'
             ceiling_marks.append((x, y, label))
         ceiling_dots = ''.join(
