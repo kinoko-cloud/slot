@@ -168,31 +168,36 @@ def setup_jinja():
             sorted_hist = sorted(history, key=lambda x: (-x.get('hit_num', 0), x.get('time', '00:00')))
         # 各当たりのメダル獲得数で相対推移を計算
         # medals: ボーナス/AT獲得枚数、start: 当たり間の消化G数
+        medals_sum = sum(h.get('medals', 0) for h in sorted_hist)
+        games_total = sum(h.get('start', 0) for h in sorted_hist)
+
+        # 投入枚数/Gの較正: スマスロは機種により実効ベット枚数が旧来の「3枚/G」と異なる
+        # （東京喰種の実データでは約1.3枚/Gだった。3枚/G仮定だと符号が逆転するケースもあった）。
+        # 固定値を仮定せず、既知の最終差枚(diff_medals)から逆算して求める。
+        # diff_medalsが無ければ3枚/Gにフォールバック
+        if diff_medals is not None and games_total > 0:
+            cost_per_game = (medals_sum - diff_medals) / games_total
+        else:
+            cost_per_game = 3
+
         cumulative = [0]
         cum_games = [0]  # 横軸を実際の消化G数に比例させるための累積G数
         total = 0
-        games_total = 0
+        g_accum = 0
         for h in sorted_hist:
             medals = h.get('medals', 0)
             start = h.get('start', 0)
-            total -= start * 3  # 当たり間の投入
-            total += medals      # 獲得
+            total -= start * cost_per_game  # 当たり間の投入
+            total += medals                 # 獲得
             cumulative.append(total)
-            games_total += start
-            cum_games.append(games_total)
+            g_accum += start
+            cum_games.append(g_accum)
         # 横軸位置（0〜width）を当たり回数の等間隔ではなく実消化G数に比例させる
         def x_at(idx):
             if games_total <= 0:
                 return idx / (len(cumulative) - 1) * width
             return cum_games[idx] / games_total * width
 
-        # 既知の差枚があれば正規化（推移の形は保ち、最終値を合わせる）
-        if diff_medals is not None and total != 0:
-            scale = diff_medals / total
-            cumulative = [v * scale for v in cumulative]
-        elif diff_medals is not None and total == 0:
-            # 累積0だが差枚がある場合、推移が描けないのでスキップ
-            pass
         if len(cumulative) < 2:
             return ''
         min_v = min(cumulative)
