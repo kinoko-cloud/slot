@@ -167,17 +167,23 @@ def setup_jinja():
         else:
             sorted_hist = sorted(history, key=lambda x: (-x.get('hit_num', 0), x.get('time', '00:00')))
 
-        # 同一Gポジション（start=0で連続する当たり）は1点に統合する。
-        # 1回のAT中の複数回の獲得枚数が別々のログ行として記録されているため、
-        # 統合しないとグラフ上で同じx座標に複数点が重なり、見た目上の
-        # 垂直落下（実際には一瞬で何千枚も減ったように見える）になってしまう。
-        merged_hist = []
-        for h in sorted_hist:
-            if h.get('start', 0) == 0 and merged_hist:
-                merged_hist[-1] = {**merged_hist[-1], 'medals': merged_hist[-1].get('medals', 0) + h.get('medals', 0)}
-            else:
-                merged_hist.append(dict(h))
-        sorted_hist = merged_hist
+        # 各当たりを個別の点として残す（統合しない）。以前はstart=0で連続する
+        # 当たり（1回のAT中の複数回の獲得枚数が別々のログ行になっているもの）を
+        # 1点に統合していたが、これはG数が少なく点数に余裕がある時でも細かい
+        # 差枚の起伏を潰してしまっていた。同一G位置での垂直落下は後段の
+        # 最低区間幅の保証（min_gap）で対応し、点自体は統合しないことで
+        # 「G数が少ないうちは細かく、G数が増えて220pxに収まらなくなったら
+        # 自動的に間隔が詰まる（＝結果的に省略される）」という自然な挙動にする。
+        #
+        # ただし「有利区間切れ（1500G/差枚2400枚）」の判定は当たり単位ではなく
+        # 連チャン（チェーン）単位で行う必要がある（連チャン中に閾値を跨いでも
+        # チェーンが終わった時点で初めて判定される、との仕様）。そのため
+        # 「このインデックスがチェーンの最後か」を別途記録しておく。
+        is_chain_end = []
+        for i, h in enumerate(sorted_hist):
+            is_last = (i == len(sorted_hist) - 1)
+            next_is_continuation = (not is_last) and sorted_hist[i + 1].get('start', 0) == 0
+            is_chain_end.append(is_last or not next_is_continuation)
 
         # 各当たりのメダル獲得数で相対推移を計算
         # medals: ボーナス/AT獲得枚数、start: 当たり間の消化G数
@@ -260,10 +266,9 @@ def setup_jinja():
         # 当たり履歴の累積からその到達点を推定してオレンジ点線でマーク（正確な境界の保証はしない）
         # 差枚2400枚の判定は「獲得枚数の総取得量（コスト差引前）」ではなく
         # 「コスト差引後の純増（差枚）」で行う必要がある（実機の規定通り）。
-        # また、start=0の継続当たりはすでに1チェーンとして統合済みのため、
-        # このループはチェーン単位で評価される＝連チャン中に閾値を跨いでも
-        # チェーンが終わった時点で初めて判定されるので、指摘の「連チャンが
-        # 終わった後に有利区間切れが起きる」動作と一致する。
+        # 点は当たり単位で個別に残しているが、判定自体はis_chain_endで
+        # チェーンの最後だけに限定する＝連チャン中に閾値を跨いでもチェーンが
+        # 終わった時点で初めて判定される（連チャン終了後に有利区間切れ、との仕様）。
         yuuri_x = []
         reset_cum_indices = [0]  # 各サイクル開始のcumulative index（0=データ先頭）
         g_since = 0
@@ -272,6 +277,8 @@ def setup_jinja():
         for idx, h in enumerate(sorted_hist):
             g_since += h.get('start', 0)
             cum_idx = hist_to_cum[idx]
+            if not is_chain_end[idx]:
+                continue  # 連チャン継続中は判定しない
             net_since = cumulative[cum_idx] - cycle_start_total
             if g_since >= 1500 or net_since >= 2400:
                 yuuri_x.append((x_at(cum_idx), False))
@@ -288,17 +295,17 @@ def setup_jinja():
             for x, closing in yuuri_x
         )
 
-        # 線色分け: 「有利区間/通常区間」という制度上の区分（＝オレンジ点線で表現済み）とは
-        # 別に、線の色は区間ごとの差枚の増減方向だけで決める。制度上は有利区間中でも
-        # 当たりが来ないと差枚は減るし、通常区間に戻った直後の当たりが大きければ差枚は
-        # 増える。この2つを同じ色で表現しようとすると「有利区間なのに下がる緑」
-        # 「通常区間なのに上がる赤」という矛盾した見た目になるため、線の色は増減方向のみに
-        # 使い、制度上の区間はオレンジ点線マーカーに役割を分離する
+        # 線色分け: 差枚の増減方向ではなく「今どの状態か」（有利区間=緑、通常区間=赤）
+        # で色分けする。増減自体は裏側の数値（カード上のART/差枚等の表示）で分かれば
+        # よく、線の色は状態の見分けを優先する。各サイクル（リセット〜次のリセット）の
+        # 最初の1区間（＝突入のきっかけ当たりが来るまでの待ち）だけ赤、それ以降
+        # 次のリセットまでは緑とする。
+        normal_zone_starts = {cs for cs in reset_cum_indices if cs + 1 <= len(cumulative) - 1}
         segments = []
         for i in range(len(points) - 1):
             x0, y0 = points[i]
             x1, y1 = points[i + 1]
-            seg_color = color if cumulative[i + 1] >= cumulative[i] else '#ff4757'
+            seg_color = '#ff4757' if i in normal_zone_starts else color
             segments.append(f'<line x1="{x0:.1f}" y1="{y0:.1f}" x2="{x1:.1f}" y2="{y1:.1f}" stroke="{seg_color}" stroke-width="1.5"/>')
         polyline_segments = ''.join(segments)
 
