@@ -159,11 +159,14 @@ def setup_jinja():
         if not history or len(history) < 2:
             return ''
         # hit_num降順（大きい=古い）でソート
-        # ただし、hit_numが全て0または未設定の場合はリスト順序をそのまま使用
+        # ただし、hit_numが全て0または未設定の場合は時刻の昇順でソートする。
+        # 2026-07-09: 「渡されたリスト順をそのまま古い→新しいとみなす」実装だったが、
+        # today_historyは呼び出し元の別処理（_process_history_for_verify等）を経て
+        # 新しい順（降順）で渡ってくるケースがあり、グラフの時系列が逆転して
+        # 描画される実害があった。順序を信用せず必ず時刻で明示的に昇順ソートする。
         hit_nums = [h.get('hit_num', 0) for h in history]
         if len(set(hit_nums)) <= 1:
-            # 全て同じ値（0を含む）なので元の順序を使用
-            sorted_hist = list(history)
+            sorted_hist = sorted(history, key=lambda x: x.get('time', '00:00'))
         else:
             sorted_hist = sorted(history, key=lambda x: (-x.get('hit_num', 0), x.get('time', '00:00')))
 
