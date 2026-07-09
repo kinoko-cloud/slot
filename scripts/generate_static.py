@@ -202,48 +202,55 @@ def setup_jinja():
         else:
             cost_per_game = 3
 
+        # 横軸: daidata本家のスランプグラフ（実物のスクリーンショットで確認済み、
+        # 2026-07-09）に合わせ、G数比例ではなく「実際の時刻」を基準にする。
+        # daidataの表示は10時〜19時等、営業時間の目盛りが均等に並ぶ時刻軸であり、
+        # G数やヒット数に比例した軸ではなかった。営業時間は10:00開店〜23:00閉店
+        # （get_display_mode()と同じ境界）で固定し、この範囲に各当たりの実時刻を
+        # マッピングする。
+        OPEN_MIN = 10 * 60
+        CLOSE_MIN = 23 * 60
+
+        def time_to_min(t):
+            try:
+                hh, mm = str(t).split(':')
+                return int(hh) * 60 + int(mm)
+            except (ValueError, AttributeError):
+                return OPEN_MIN
+
         cumulative = [0]
-        cum_games = [0]  # 横軸を実際の消化G数に比例させるための累積G数
-        # sorted_hist[i]処理後の値がcumulative/cum_gamesの何番目に入るかのマップ
+        cum_time = [OPEN_MIN]  # 開店時刻(差枚0)を原点とする
+        # sorted_hist[i]処理後の値がcumulative/cum_timeの何番目に入るかのマップ
         # （最初の当たりがG=0地点の場合のみ原点を上書きしてインデックスがずれるため）
         hist_to_cum = []
         total = 0
-        g_accum = 0
         for i, h in enumerate(sorted_hist):
             medals = h.get('medals', 0)
             start = h.get('start', 0)
             total -= start * cost_per_game  # 当たり間の投入
             total += medals                 # 獲得
-            # 最初の当たりがG=0地点の場合、原点(0,0)と同座標の点が重複して
-            # 垂直落下に見えるため、原点自体を最初の当たりの値で上書きする
+            t_min = time_to_min(h.get('time'))
+            # 最初の当たりがG=0地点の場合、開店直後の原点と同座標の点が重複して
+            # 垂直落下に見えるため、原点自体を最初の当たりの値・時刻で上書きする
             if i == 0 and start == 0:
                 cumulative[0] = total
-                g_accum += start
-                cum_games[0] = g_accum
+                cum_time[0] = t_min
                 hist_to_cum.append(0)
                 continue
             cumulative.append(total)
-            g_accum += start
-            cum_games.append(g_accum)
+            cum_time.append(t_min)
             hist_to_cum.append(len(cumulative) - 1)
-        # 横軸位置（0〜width）: 実機データカウンターと同じく消化G数に比例させる。
-        # ただし本当に1〜2G差で大きく差枚が動く箇所は、G数に純比例させると
-        # 220px中の1px未満に潰れてしまい「垂直に落ちた」ように見えてしまう
-        # （実際は右肩上がり/下がりの斜め線のはず、との指摘の通り）。
-        # 最低限の横幅を各区間に保証してから全体をwidthに収まるよう再スケールする
-        # ことで、G数比例の性質を保ったまま傾きを視認できるようにする。
-        if games_total > 0:
-            raw_x = [g / games_total * width for g in cum_games]
-        else:
-            raw_x = [i / (len(cumulative) - 1) * width for i in range(len(cumulative))]
-        min_gap = width * 0.02  # 各区間の最低横幅（220pxなら約4.4px）
-        spaced_x = [raw_x[0]]
-        for v in raw_x[1:]:
-            spaced_x.append(max(v, spaced_x[-1] + min_gap))
-        # 最後の点がwidthを超えた分は全体を縮小して収める
-        if spaced_x[-1] > width:
-            scale = width / spaced_x[-1]
-            spaced_x = [v * scale for v in spaced_x]
+
+        def x_at_time(t_min):
+            span = CLOSE_MIN - OPEN_MIN
+            frac = (t_min - OPEN_MIN) / span
+            return max(0, min(width, frac * width))
+
+        # x_at_timeは開店〜閉店の固定区間に対する線形写像なので、G数軸で必要だった
+        # 「最低区間幅の確保→全体再スケール」は不要（かつ有害）。時刻軸では
+        # 密な連チャン（実時間で近接）がそのまま数px幅に収まるのが正しい挙動で、
+        # 無理に間隔を広げると全体が過剰に圧縮されてしまう（デバッグで確認済み）。
+        spaced_x = [x_at_time(t) for t in cum_time]
 
         def x_at(idx):
             return spaced_x[idx]
@@ -335,7 +342,12 @@ def setup_jinja():
             f'<circle cx="{x:.1f}" cy="{y:.1f}" r="2.2" fill="#4b7bec" stroke="#fff" stroke-width="0.5"><title>{label}</title></circle>'
             for x, y, label in ceiling_marks
         )
-        return f'<svg class="sparkline" viewBox="0 0 {width} {height}" preserveAspectRatio="xMidYMid meet"><line x1="0" y1="{zero_y:.1f}" x2="{width}" y2="{zero_y:.1f}" stroke="#888" stroke-width="0.5" stroke-dasharray="2,2"/>{yuuri_lines}{polyline_segments}{ceiling_dots}</svg>'
+        # 時刻軸の目盛り（daidata本家同様、3時間おきの薄い縦ガイド線）
+        hour_ticks = ''.join(
+            f'<line x1="{x_at_time(hh * 60):.1f}" y1="0" x2="{x_at_time(hh * 60):.1f}" y2="{height}" stroke="#888" stroke-width="0.3" opacity="0.25"/>'
+            for hh in range(OPEN_MIN // 60 + 3, CLOSE_MIN // 60, 3)
+        )
+        return f'<svg class="sparkline" viewBox="0 0 {width} {height}" preserveAspectRatio="xMidYMid meet">{hour_ticks}<line x1="0" y1="{zero_y:.1f}" x2="{width}" y2="{zero_y:.1f}" stroke="#888" stroke-width="0.5" stroke-dasharray="2,2"/>{yuuri_lines}{polyline_segments}{ceiling_dots}</svg>'
     env.globals['sparkline'] = generate_sparkline
 
     def format_short_date(date_str):
