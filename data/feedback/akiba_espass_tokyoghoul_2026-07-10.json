@@ -4,10 +4,19 @@
   "date": "2026-07-10",
   "weekday": "金",
   "total_units": 28,
-  "hits": 10,
-  "misses": 1,
+  "hits": 9,
+  "misses": 2,
   "surprises": 9,
   "miss_details": [
+    {
+      "unit_id": "4169",
+      "score": 111,
+      "actual_prob": 226,
+      "reasons": [
+        "高スコア過信",
+        "設定1域(1/226)"
+      ]
+    },
     {
       "unit_id": "4078",
       "score": 56,
@@ -74,11 +83,13 @@
       "reasons": []
     },
     {
-      "unit_id": "4169",
+      "unit_id": "4086",
       "rank": "B",
-      "score": 106,
-      "actual_prob": 226,
-      "reasons": []
+      "score": 95,
+      "actual_prob": 31,
+      "reasons": [
+        "実は高設定域(1/31)"
+      ]
     },
     {
       "unit_id": "4160",
