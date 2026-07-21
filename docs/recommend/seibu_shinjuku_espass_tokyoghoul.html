@@ -9,7 +9,7 @@
     <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
     <meta name="googlebot" content="noindex, nofollow">
     <title>エスパス日拓西武新宿駅前店</title>
-    <link rel="stylesheet" href="/static/style.css?v=20260721090300">
+    <link rel="stylesheet" href="/static/style.css?v=20260721132242">
 </head>
 <body data-page-type="recommend" data-store-key="seibu_shinjuku_espass_tokyoghoul">
     <div class="container">
@@ -27,7 +27,7 @@
         
     </div>
     <div class="top-bar-right">
-        <span class="version-info" id="build-ver" title="ビルド時刻">v0721_09:03</span>
+        <span class="version-info" id="build-ver" title="ビルド時刻">v0721_13:22</span>
         
     </div>
 </div>
@@ -35,7 +35,7 @@
             <h1>エスパス日拓西武新宿駅前店</h1>
             <div class="machine-label">🫀 東京喰種</div>
             
-            <div class="data-date-label">📅 データ: 7/5(日)まで</div>
+            <div class="data-date-label">📅 データ: 7/21(火)まで</div>
             
             <div class="realtime-bar">
                 <span id="realtime-status" class="realtime-status">読込中...</span>
@@ -43,7 +43,7 @@
             <div class="update-info">
                 
                 <span class="data-source">
-                    データ取得: <span id="update-time">09:02</span>
+                    データ取得: <span id="update-time">13:10</span>
                 </span>
                 <span class="cache-badge github">GITHUB</span>
                 
@@ -52,7 +52,11 @@
 
             <!-- 空き状況サマリ -->
             
-            <div class="closed-notice">現在営業時間外です</div>
+            <div class="availability-summary">
+                <span class="avail-empty" onclick="filterUnits('empty')">空き 9台</span>
+                <span class="avail-playing" onclick="filterUnits('playing')">遊技中 8台</span>
+                <span class="avail-all" onclick="filterUnits('all')">全て</span>
+            </div>
             
 
             <div class="action-buttons">
@@ -61,16 +65,6 @@
         </header>
 
         <!-- 台番号アラート -->
-        
-        <div class="unit-alerts">
-            
-            <div class="alert-item alert-warning">
-                
-                <span class="alert-icon">⚠</span> 台撤去の可能性: 3159番
-                
-            </div>
-            
-        </div>
         
 
         <!-- 店舗分析 -->
@@ -113,126 +107,6 @@
     <div class="v2-header">
         <div class="v2-header-row1">
             <span class="v2-rank-num">#1</span>
-            <a href="/history/seibu_shinjuku_espass_tokyoghoul_3167.html" class="v2-unit-id" onclick="event.stopPropagation()">3167番台</a>
-            
-            <span class="v2-rank" style="background-color: #ffa502">A</span>
-            <span class="expand-icon small">▼</span>
-        </div>
-        <div class="v2-header-row2">
-            <span class="v2-machine">東京喰種</span>
-        </div>
-    </div>
-
-    
-    
-    <div class="v2-reason">🔮 低稼働でも好調率13/23日→穴場</div>
-    
-
-    
-    <div class="v2-days">
-        
-        <div class="v2-day v2-day-today">
-            <span class="v2-day-label">本日</span>
-            <span class="v2-day-art">ART 48</span>
-            <span class="v2-day-rb">RB 8</span>
-            <span class="v2-day-prob excellent">1/41</span>
-            <span class="v2-day-games">1,993G</span>
-            
-            <span class="max-medals-sm">最大11,465枚</span>
-            
-        </div>
-        
-        
-        <div class="v2-day">
-            <span class="v2-day-label">7/20(月)</span>
-            <span class="v2-day-art">ART 46</span>
-            <span class="v2-day-rb">RB 8</span>
-            <span class="v2-day-prob excellent">1/42</span>
-            
-            <span class="max-medals-sm">最大11,041枚</span>
-            
-            <span class="low-activity">※低稼働</span>
-        </div>
-        
-
-        
-        <div class="v2-day">
-            <span class="v2-day-label">7/19(日)</span>
-            <span class="v2-day-art">ART 27</span>
-            <span class="v2-day-rb">RB 16</span>
-            <span class="prev-prob ">1/167</span>
-            
-            <span class="max-medals-sm">最大2,175枚</span>
-            
-            
-        </div>
-        
-
-        
-        <div class="v2-day">
-            <span class="v2-day-label">7/18(土)</span>
-            <span class="v2-day-art">ART 18</span>
-            <span class="v2-day-rb">RB 18</span>
-            <span class="prev-prob ">1/187</span>
-            <span class="diff-medals-sm plus">+222枚</span>
-            <span class="max-medals-sm">最大1,880枚</span>
-            <span class="rensa-sm">8連</span>
-            
-        </div>
-        
-    </div>
-
-    
-    
-    <div class="v2-setting">
-        <span class="setting-badge-sm setting-6">高機械割</span>
-    </div>
-    
-
-    
-    <div class="unit-details hidden">
-        <div class="v2-detail-reasons">
-            
-            <div class="reason-item">🔮 低稼働でも好調率13/23日→穴場</div>
-            
-            <div class="reason-item">🔮 2日連続好調</div>
-            
-            <div class="reason-item">🔄 7日連続好調だがエスパス西武新宿の火曜は弱い日 → 転落警戒</div>
-            
-            <div class="reason-item">🔥 直近の推移: 小→小→小→小→小（好調22日中、大0/中0/小22日）</div>
-            
-            <div class="reason-item">🔥 7/21(火)ART確率1/41 (1,993G消化) → 高機械割域の挙動</div>
-            
-            <div class="reason-item">🔥 7/21(火)天井到達1回 → 低機械割の可能性に注意</div>
-            
-            <div class="reason-item">📅 この台の火曜好調率: 2/2回(100%) → 期待大</div>
-            
-        </div>
-        
-        <div class="v2-detail-today">
-            本日: ART 48 / RB 8 / 1,993G
-             / 1/41
-             / 最大11,465枚
-        </div>
-        
-        
-        
-        <div class="v2-detail-trend">
-            
-            7日連続好調 → 据え置き or 転落警戒
-            
-        </div>
-    </div>
-</div>
-
-                
-                
-
-<div class="unit-card-v2 rank-a" onclick="toggleDetails(this)">
-    
-    <div class="v2-header">
-        <div class="v2-header-row1">
-            <span class="v2-rank-num">#2</span>
             <a href="/history/seibu_shinjuku_espass_tokyoghoul_3162.html" class="v2-unit-id" onclick="event.stopPropagation()">3162番台</a>
             
             <span class="v2-rank" style="background-color: #ffa502">A</span>
@@ -253,12 +127,12 @@
         
         <div class="v2-day v2-day-today">
             <span class="v2-day-label">本日</span>
-            <span class="v2-day-art">ART 9</span>
-            <span class="v2-day-rb">RB 4</span>
-            <span class="v2-day-prob ">1/148</span>
-            <span class="v2-day-games">1,333G</span>
+            <span class="v2-day-art">ART 2</span>
+            <span class="v2-day-rb">RB 2</span>
+            <span class="v2-day-prob ">1/156</span>
+            <span class="v2-day-games">313G</span>
             
-            <span class="max-medals-sm">最大587枚</span>
+            <span class="max-medals-sm">最大167枚</span>
             
         </div>
         
@@ -304,10 +178,6 @@
 
     
     
-    <div class="v2-setting">
-        <span class="setting-badge-sm setting-6">高機械割</span>
-    </div>
-    
 
     
     <div class="unit-details hidden">
@@ -321,7 +191,7 @@
             
             <div class="reason-item">🔥 直近の推移: 小→小→中→中→小（好調18日中、大0/中4/小14日）</div>
             
-            <div class="reason-item">🔥 7/21(火)15連の爆発あり</div>
+            <div class="reason-item">🔥 本日15連の爆発あり</div>
             
             <div class="reason-item">📅 この台の火曜好調率: 2/2回(100%) → 期待大</div>
             
@@ -330,9 +200,9 @@
         </div>
         
         <div class="v2-detail-today">
-            本日: ART 9 / RB 4 / 1,333G
-             / 1/148
-             / 最大587枚
+            本日: ART 2 / RB 2 / 313G
+             / 1/156
+             / 最大167枚
         </div>
         
         
@@ -352,7 +222,7 @@
     
     <div class="v2-header">
         <div class="v2-header-row1">
-            <span class="v2-rank-num">#3</span>
+            <span class="v2-rank-num">#2</span>
             <a href="/history/seibu_shinjuku_espass_tokyoghoul_3169.html" class="v2-unit-id" onclick="event.stopPropagation()">3169番台</a>
             
             <span class="v2-rank" style="background-color: #ffa502">A</span>
@@ -373,12 +243,12 @@
         
         <div class="v2-day v2-day-today">
             <span class="v2-day-label">本日</span>
-            <span class="v2-day-art">ART 75</span>
-            <span class="v2-day-rb">RB 18</span>
-            <span class="v2-day-prob excellent">1/52</span>
-            <span class="v2-day-games">3,973G</span>
+            <span class="v2-day-art">ART 7</span>
+            <span class="v2-day-rb">RB 2</span>
+            <span class="v2-day-prob excellent">1/43</span>
+            <span class="v2-day-games">304G</span>
             
-            <span class="max-medals-sm">最大12,244枚</span>
+            <span class="max-medals-sm">最大1,271枚</span>
             
         </div>
         
@@ -424,10 +294,6 @@
 
     
     
-    <div class="v2-setting">
-        <span class="setting-badge-sm setting-6">高機械割</span>
-    </div>
-    
 
     
     <div class="unit-details hidden">
@@ -439,7 +305,7 @@
             
             <div class="reason-item">🔥 直近の推移: 小→小→小→中→中（好調20日中、大0/中2/小18日）</div>
             
-            <div class="reason-item">🔥 7/21(火)ART確率1/52 (3,973G消化) → 高機械割域の挙動</div>
+            <div class="reason-item">🔥 本日ART確率1/43 (304G消化) → 高機械割域の挙動</div>
             
             <div class="reason-item">📅 この台の火曜実績: 4/4回好調（100%）</div>
             
@@ -448,9 +314,9 @@
         </div>
         
         <div class="v2-detail-today">
-            本日: ART 75 / RB 18 / 3,973G
-             / 1/52
-             / 最大12,244枚
+            本日: ART 7 / RB 2 / 304G
+             / 1/43
+             / 最大1,271枚
         </div>
         
         
@@ -470,488 +336,10 @@
     
     <div class="v2-header">
         <div class="v2-header-row1">
-            <span class="v2-rank-num">#4</span>
-            <a href="/history/seibu_shinjuku_espass_tokyoghoul_3166.html" class="v2-unit-id" onclick="event.stopPropagation()">3166番台</a>
-            
-            <span class="v2-rank" style="background-color: #ffa502">A</span>
-            <span class="expand-icon small">▼</span>
-        </div>
-        <div class="v2-header-row2">
-            <span class="v2-machine">東京喰種</span>
-        </div>
-    </div>
-
-    
-    
-    <div class="v2-reason">🔮 2日連続好調</div>
-    
-
-    
-    <div class="v2-days">
-        
-        <div class="v2-day v2-day-today">
-            <span class="v2-day-label">本日</span>
-            <span class="v2-day-art">ART 48</span>
-            <span class="v2-day-rb">RB 15</span>
-            <span class="v2-day-prob excellent">1/78</span>
-            <span class="v2-day-games">3,764G</span>
-            
-            <span class="max-medals-sm">最大6,642枚</span>
-            
-        </div>
-        
-        
-        <div class="v2-day">
-            <span class="v2-day-label">7/20(月)</span>
-            <span class="v2-day-art">ART 46</span>
-            <span class="v2-day-rb">RB 14</span>
-            <span class="v2-day-prob excellent">1/79</span>
-            
-            <span class="max-medals-sm">最大6,148枚</span>
-            
-            
-        </div>
-        
-
-        
-        <div class="v2-day">
-            <span class="v2-day-label">7/19(日)</span>
-            <span class="v2-day-art">ART 19</span>
-            <span class="v2-day-rb">RB 24</span>
-            <span class="prev-prob bad">1/327</span>
-            
-            <span class="max-medals-sm">最大737枚</span>
-            
-            
-        </div>
-        
-
-        
-        <div class="v2-day">
-            <span class="v2-day-label">7/18(土)</span>
-            <span class="v2-day-art">ART 15</span>
-            <span class="v2-day-rb">RB 13</span>
-            <span class="prev-prob bad">1/227</span>
-            <span class="diff-medals-sm minus">-1,292枚</span>
-            <span class="max-medals-sm">最大1,129枚</span>
-            <span class="rensa-sm">6連</span>
-            
-        </div>
-        
-    </div>
-
-    
-    
-    <div class="v2-setting">
-        <span class="setting-badge-sm setting-6">高機械割</span>
-    </div>
-    
-
-    
-    <div class="unit-details hidden">
-        <div class="v2-detail-reasons">
-            
-            <div class="reason-item">🔮 2日連続好調</div>
-            
-            <div class="reason-item">🔄 5日連続好調だがエスパス西武新宿の火曜は弱い日 → 転落警戒</div>
-            
-            <div class="reason-item">🔥 直近の推移: 小→小→小→小→小（好調18日中、大0/中1/小17日）</div>
-            
-            <div class="reason-item">🔥 7/21(火)ART確率1/78 (3,764G消化) → 高機械割域の挙動</div>
-            
-            <div class="reason-item">📅 この台の火曜好調率: 2/2回(100%) → 期待大</div>
-            
-            <div class="reason-item">📅 この台の火曜実績: 4/4回好調（100%）</div>
-            
-        </div>
-        
-        <div class="v2-detail-today">
-            本日: ART 48 / RB 15 / 3,764G
-             / 1/78
-             / 最大6,642枚
-        </div>
-        
-        
-        
-        <div class="v2-detail-trend">
-            
-            5日連続好調 → 据え置き or 転落警戒
-            
-        </div>
-    </div>
-</div>
-
-                
-                
-
-<div class="unit-card-v2 rank-a" onclick="toggleDetails(this)">
-    
-    <div class="v2-header">
-        <div class="v2-header-row1">
-            <span class="v2-rank-num">#5</span>
-            <a href="/history/seibu_shinjuku_espass_tokyoghoul_3171.html" class="v2-unit-id" onclick="event.stopPropagation()">3171番台</a>
-            
-            <span class="v2-rank" style="background-color: #ffa502">A</span>
-            <span class="expand-icon small">▼</span>
-        </div>
-        <div class="v2-header-row2">
-            <span class="v2-machine">東京喰種</span>
-        </div>
-    </div>
-
-    
-    
-    <div class="v2-reason">🔮 低稼働でも好調率14/23日→穴場</div>
-    
-
-    
-    <div class="v2-days">
-        
-        <div class="v2-day v2-day-today">
-            <span class="v2-day-label">本日</span>
-            <span class="v2-day-art">ART 31</span>
-            <span class="v2-day-rb">RB 16</span>
-            <span class="v2-day-prob ">1/144</span>
-            <span class="v2-day-games">4,493G</span>
-            
-            <span class="max-medals-sm">最大3,225枚</span>
-            
-        </div>
-        
-        
-        <div class="v2-day">
-            <span class="v2-day-label">7/20(月)</span>
-            <span class="v2-day-art">ART 52</span>
-            <span class="v2-day-rb">RB 20</span>
-            <span class="v2-day-prob excellent">1/91</span>
-            
-            <span class="max-medals-sm">最大3,950枚</span>
-            
-            
-        </div>
-        
-
-        
-        <div class="v2-day">
-            <span class="v2-day-label">7/19(日)</span>
-            <span class="v2-day-art">ART 52</span>
-            <span class="v2-day-rb">RB 20</span>
-            <span class="prev-prob excellent">1/91</span>
-            
-            <span class="max-medals-sm">最大3,950枚</span>
-            
-            
-        </div>
-        
-
-        
-        <div class="v2-day">
-            <span class="v2-day-label">7/18(土)</span>
-            <span class="v2-day-art">ART 29</span>
-            <span class="v2-day-rb">RB 11</span>
-            <span class="prev-prob excellent">1/95</span>
-            <span class="diff-medals-sm plus">+2,862枚</span>
-            <span class="max-medals-sm">最大2,992枚</span>
-            <span class="rensa-sm">10連</span>
-            
-        </div>
-        
-    </div>
-
-    
-    
-    <div class="v2-setting">
-        <span class="setting-badge-sm setting-6">高機械割</span>
-    </div>
-    
-
-    
-    <div class="unit-details hidden">
-        <div class="v2-detail-reasons">
-            
-            <div class="reason-item">🔮 低稼働でも好調率14/23日→穴場</div>
-            
-            <div class="reason-item">🔄 7日連続好調だがエスパス西武新宿の火曜は弱い日 → 転落警戒</div>
-            
-            <div class="reason-item">🔥 直近の推移: 小→小→中→中→小（好調20日中、大0/中5/小15日）</div>
-            
-            <div class="reason-item">📅 この台の火曜好調率: 3/3回(100%) → 期待大</div>
-            
-            <div class="reason-item">📅 この台の火曜実績: 4/4回好調（100%）</div>
-            
-            <div class="reason-item">⚠️ エスパス西武新宿の火曜は出玉が少ない傾向（注意）</div>
-            
-        </div>
-        
-        <div class="v2-detail-today">
-            本日: ART 31 / RB 16 / 4,493G
-             / 1/144
-             / 最大3,225枚
-        </div>
-        
-        
-        
-        <div class="v2-detail-trend">
-            
-            7日連続好調 → 据え置き or 転落警戒
-            
-        </div>
-    </div>
-</div>
-
-                
-                
-
-<div class="unit-card-v2 rank-a" onclick="toggleDetails(this)">
-    
-    <div class="v2-header">
-        <div class="v2-header-row1">
-            <span class="v2-rank-num">#6</span>
-            <a href="/history/seibu_shinjuku_espass_tokyoghoul_3172.html" class="v2-unit-id" onclick="event.stopPropagation()">3172番台</a>
-            
-            <span class="v2-rank" style="background-color: #ffa502">A</span>
-            <span class="expand-icon small">▼</span>
-        </div>
-        <div class="v2-header-row2">
-            <span class="v2-machine">東京喰種</span>
-        </div>
-    </div>
-
-    
-    
-    <div class="v2-reason">🔮 低稼働でも好調率12/24日→穴場</div>
-    
-
-    
-    <div class="v2-days">
-        
-        <div class="v2-day v2-day-today">
-            <span class="v2-day-label">本日</span>
-            <span class="v2-day-art">ART 10</span>
-            <span class="v2-day-rb">RB 8</span>
-            <span class="v2-day-prob bad">1/256</span>
-            <span class="v2-day-games">2,569G</span>
-            
-            <span class="max-medals-sm">最大959枚</span>
-            
-        </div>
-        
-        
-        <div class="v2-day">
-            <span class="v2-day-label">7/20(月)</span>
-            <span class="v2-day-art">ART 37</span>
-            <span class="v2-day-rb">RB 17</span>
-            <span class="v2-day-prob excellent">1/80</span>
-            
-            <span class="max-medals-sm">最大6,071枚</span>
-            
-            
-        </div>
-        
-
-        
-        <div class="v2-day">
-            <span class="v2-day-label">7/19(日)</span>
-            <span class="v2-day-art">ART 37</span>
-            <span class="v2-day-rb">RB 17</span>
-            <span class="prev-prob excellent">1/80</span>
-            
-            <span class="max-medals-sm">最大6,071枚</span>
-            
-            
-        </div>
-        
-
-        
-        <div class="v2-day">
-            <span class="v2-day-label">7/18(土)</span>
-            <span class="v2-day-art">ART 31</span>
-            <span class="v2-day-rb">RB 14</span>
-            <span class="prev-prob good">1/106</span>
-            <span class="diff-medals-sm plus">+1,728枚</span>
-            <span class="max-medals-sm">最大4,514枚</span>
-            <span class="rensa-sm">22連</span>
-            
-        </div>
-        
-    </div>
-
-    
-    
-    <div class="v2-setting">
-        <span class="setting-badge-sm setting-6">高機械割</span>
-    </div>
-    
-
-    
-    <div class="unit-details hidden">
-        <div class="v2-detail-reasons">
-            
-            <div class="reason-item">🔮 低稼働でも好調率12/24日→穴場</div>
-            
-            <div class="reason-item">🔁 ほぼ毎日好調になる台</div>
-            
-            <div class="reason-item">🔥 直近の推移: 小→小→小→小→小（好調21日中、大0/中2/小19日）</div>
-            
-            <div class="reason-item">🔥 7/21(火)21連の爆発あり</div>
-            
-            <div class="reason-item">📅 この台の火曜好調率: 3/3回(100%) → 期待大</div>
-            
-            <div class="reason-item">📅 この台の火曜実績: 4/4回好調（100%）</div>
-            
-        </div>
-        
-        <div class="v2-detail-today">
-            本日: ART 10 / RB 8 / 2,569G
-             / 1/256
-             / 最大959枚
-        </div>
-        
-        
-        
-        <div class="v2-detail-trend">
-            
-            蓄積傾向: Cランク
-            
-        </div>
-    </div>
-</div>
-
-                
-                
-
-<div class="unit-card-v2 rank-a" onclick="toggleDetails(this)">
-    
-    <div class="v2-header">
-        <div class="v2-header-row1">
-            <span class="v2-rank-num">#7</span>
-            <a href="/history/seibu_shinjuku_espass_tokyoghoul_3165.html" class="v2-unit-id" onclick="event.stopPropagation()">3165番台</a>
-            
-            <span class="v2-rank" style="background-color: #ffa502">A</span>
-            <span class="expand-icon small">▼</span>
-        </div>
-        <div class="v2-header-row2">
-            <span class="v2-machine">東京喰種</span>
-        </div>
-    </div>
-
-    
-    
-    <div class="v2-reason">🔄 3日連続好調だがエスパス西武新宿の火曜は弱い日 → 転落警戒</div>
-    
-
-    
-    <div class="v2-days">
-        
-        <div class="v2-day v2-day-today">
-            <span class="v2-day-label">本日</span>
-            <span class="v2-day-art">ART 27</span>
-            <span class="v2-day-rb">RB 19</span>
-            <span class="v2-day-prob ">1/175</span>
-            <span class="v2-day-games">4,731G</span>
-            
-            <span class="max-medals-sm">最大1,467枚</span>
-            
-        </div>
-        
-        
-        <div class="v2-day">
-            <span class="v2-day-label">7/20(月)</span>
-            <span class="v2-day-art">ART 27</span>
-            <span class="v2-day-rb">RB 19</span>
-            <span class="v2-day-prob ">1/175</span>
-            
-            <span class="max-medals-sm">最大1,467枚</span>
-            
-            
-        </div>
-        
-
-        
-        <div class="v2-day">
-            <span class="v2-day-label">7/19(日)</span>
-            <span class="v2-day-art">ART 11</span>
-            <span class="v2-day-rb">RB 20</span>
-            <span class="prev-prob bad">1/445</span>
-            
-            <span class="max-medals-sm">最大516枚</span>
-            
-            
-        </div>
-        
-
-        
-        <div class="v2-day">
-            <span class="v2-day-label">7/18(土)</span>
-            <span class="v2-day-art">ART 18</span>
-            <span class="v2-day-rb">RB 17</span>
-            <span class="prev-prob bad">1/271</span>
-            <span class="diff-medals-sm minus">-2,591枚</span>
-            <span class="max-medals-sm">最大1,061枚</span>
-            <span class="rensa-sm">4連</span>
-            
-        </div>
-        
-    </div>
-
-    
-    
-    <div class="v2-setting">
-        <span class="setting-badge-sm setting-6">高機械割</span>
-    </div>
-    
-
-    
-    <div class="unit-details hidden">
-        <div class="v2-detail-reasons">
-            
-            <div class="reason-item">🔄 3日連続好調だがエスパス西武新宿の火曜は弱い日 → 転落警戒</div>
-            
-            <div class="reason-item">🔥 7/21(火)天井到達1回 → 低機械割の可能性に注意</div>
-            
-            <div class="reason-item">🔄 直近2日とも不調（1/445→1/175）→ 7/21(火)入替期待大（この店の過去実績: 21/28回=75%で翌日回復）</div>
-            
-            <div class="reason-item">⚠️ エスパス西武新宿の火曜は出玉が少ない傾向（注意）</div>
-            
-            <div class="reason-item">🚨 前日はART確率1/175でやや不調（全台中央値1/112）</div>
-            
-        </div>
-        
-        <div class="v2-detail-today">
-            本日: ART 27 / RB 19 / 4,731G
-             / 1/175
-             / 最大1,467枚
-        </div>
-        
-        
-        
-        <div class="v2-detail-trend">
-            
-            3日連続好調 → 据え置き or 転落警戒
-            
-        </div>
-    </div>
-</div>
-
-                
-            </section>
-            
-
-            <section class="recommendations other">
-                <h2>その他の台</h2>
-                
-                
-
-<div class="unit-card-v2 rank-b" onclick="toggleDetails(this)">
-    
-    <div class="v2-header">
-        <div class="v2-header-row1">
-            <span class="v2-rank-num">#8</span>
+            <span class="v2-rank-num">#3</span>
             <a href="/history/seibu_shinjuku_espass_tokyoghoul_3173.html" class="v2-unit-id" onclick="event.stopPropagation()">3173番台</a>
             
-            <a href="/recommend/seibu_shinjuku_espass_tokyoghoul.html" class="v2-store" onclick="event.stopPropagation()">エスパス西武新宿</a>
-            
-            <span class="v2-rank" style="background-color: #2ed573">B</span>
+            <span class="v2-rank" style="background-color: #ffa502">A</span>
             <span class="expand-icon small">▼</span>
         </div>
         <div class="v2-header-row2">
@@ -969,12 +357,12 @@
         
         <div class="v2-day v2-day-today">
             <span class="v2-day-label">本日</span>
-            <span class="v2-day-art">ART 50</span>
-            <span class="v2-day-rb">RB 8</span>
-            <span class="v2-day-prob excellent">1/48</span>
-            <span class="v2-day-games">2,427G</span>
+            <span class="v2-day-art">ART 4</span>
+            <span class="v2-day-rb">RB 1</span>
+            <span class="v2-day-prob excellent">1/21</span>
+            <span class="v2-day-games">84G</span>
             
-            <span class="max-medals-sm">最大10,397枚</span>
+            <span class="max-medals-sm">最大1,430枚</span>
             
         </div>
         
@@ -1020,10 +408,6 @@
 
     
     
-    <div class="v2-setting">
-        <span class="setting-badge-sm setting-6">高機械割</span>
-    </div>
-    
 
     
     <div class="unit-details hidden">
@@ -1035,18 +419,18 @@
             
             <div class="reason-item">🔥 直近の推移: 小→小→小→小→中（好調19日中、大0/中1/小18日）</div>
             
-            <div class="reason-item">🔥 7/21(火)ART確率1/48 (2,427G消化) → 高機械割域の挙動</div>
+            <div class="reason-item">🔥 本日ART確率1/21 (84G消化) → 高機械割域の挙動</div>
             
-            <div class="reason-item">🔥 7/21(火)天井到達1回 → 低機械割の可能性に注意</div>
+            <div class="reason-item">🔥 本日天井到達1回 → 低機械割の可能性に注意</div>
             
             <div class="reason-item">⚠️ エスパス西武新宿の火曜は出玉が少ない傾向（注意）</div>
             
         </div>
         
         <div class="v2-detail-today">
-            本日: ART 50 / RB 8 / 2,427G
-             / 1/48
-             / 最大10,397枚
+            本日: ART 4 / RB 1 / 84G
+             / 1/21
+             / 最大1,430枚
         </div>
         
         
@@ -1060,14 +444,20 @@
 </div>
 
                 
+            </section>
+            
+
+            <section class="recommendations other">
+                <h2>その他の台</h2>
+                
                 
 
 <div class="unit-card-v2 rank-b" onclick="toggleDetails(this)">
     
     <div class="v2-header">
         <div class="v2-header-row1">
-            <span class="v2-rank-num">#9</span>
-            <a href="/history/seibu_shinjuku_espass_tokyoghoul_3218.html" class="v2-unit-id" onclick="event.stopPropagation()">3218番台</a>
+            <span class="v2-rank-num">#4</span>
+            <a href="/history/seibu_shinjuku_espass_tokyoghoul_3166.html" class="v2-unit-id" onclick="event.stopPropagation()">3166番台</a>
             
             <a href="/recommend/seibu_shinjuku_espass_tokyoghoul.html" class="v2-store" onclick="event.stopPropagation()">エスパス西武新宿</a>
             
@@ -1081,7 +471,7 @@
 
     
     
-    <div class="v2-reason">🔮 3日連続好調</div>
+    <div class="v2-reason">🔮 2日連続好調</div>
     
 
     
@@ -1089,23 +479,23 @@
         
         <div class="v2-day v2-day-today">
             <span class="v2-day-label">本日</span>
-            <span class="v2-day-art">ART 21</span>
-            <span class="v2-day-rb">RB 9</span>
-            <span class="v2-day-prob good">1/120</span>
-            <span class="v2-day-games">2,521G</span>
+            <span class="v2-day-art">ART 2</span>
+            <span class="v2-day-rb">RB 1</span>
+            <span class="v2-day-prob excellent">1/70</span>
+            <span class="v2-day-games">141G</span>
             
-            <span class="max-medals-sm">最大5,659枚</span>
+            <span class="max-medals-sm">最大291枚</span>
             
         </div>
         
         
         <div class="v2-day">
             <span class="v2-day-label">7/20(月)</span>
-            <span class="v2-day-art">ART 33</span>
-            <span class="v2-day-rb">RB 18</span>
-            <span class="v2-day-prob good">1/125</span>
+            <span class="v2-day-art">ART 46</span>
+            <span class="v2-day-rb">RB 14</span>
+            <span class="v2-day-prob excellent">1/79</span>
             
-            <span class="max-medals-sm">最大2,552枚</span>
+            <span class="max-medals-sm">最大6,148枚</span>
             
             
         </div>
@@ -1114,11 +504,11 @@
         
         <div class="v2-day">
             <span class="v2-day-label">7/19(日)</span>
-            <span class="v2-day-art">ART 33</span>
-            <span class="v2-day-rb">RB 18</span>
-            <span class="prev-prob good">1/125</span>
+            <span class="v2-day-art">ART 19</span>
+            <span class="v2-day-rb">RB 24</span>
+            <span class="prev-prob bad">1/327</span>
             
-            <span class="max-medals-sm">最大2,552枚</span>
+            <span class="max-medals-sm">最大737枚</span>
             
             
         </div>
@@ -1127,53 +517,49 @@
         
         <div class="v2-day">
             <span class="v2-day-label">7/18(土)</span>
-            <span class="v2-day-art">ART 26</span>
-            <span class="v2-day-rb">RB 15</span>
-            <span class="prev-prob ">1/166</span>
-            <span class="diff-medals-sm minus">-207枚</span>
-            <span class="max-medals-sm">最大2,546枚</span>
-            <span class="rensa-sm">12連</span>
+            <span class="v2-day-art">ART 15</span>
+            <span class="v2-day-rb">RB 13</span>
+            <span class="prev-prob bad">1/227</span>
+            <span class="diff-medals-sm minus">-1,292枚</span>
+            <span class="max-medals-sm">最大1,129枚</span>
+            <span class="rensa-sm">6連</span>
             
         </div>
         
     </div>
 
     
-    
-    <div class="v2-setting">
-        <span class="setting-badge-sm setting-6">高機械割</span>
-    </div>
     
 
     
     <div class="unit-details hidden">
         <div class="v2-detail-reasons">
             
-            <div class="reason-item">🔮 3日連続好調</div>
+            <div class="reason-item">🔮 2日連続好調</div>
             
-            <div class="reason-item">🔁 ほぼ毎日好調になる台</div>
+            <div class="reason-item">🔄 5日連続好調だがエスパス西武新宿の火曜は弱い日 → 転落警戒</div>
             
-            <div class="reason-item">🔥 直近の推移: 小→小→小→小→小（好調17日中、大0/中1/小16日）</div>
+            <div class="reason-item">🔥 直近の推移: 小→小→小→小→小（好調18日中、大0/中1/小17日）</div>
             
-            <div class="reason-item">🔥 7/21(火)10連の爆発あり</div>
+            <div class="reason-item">🔥 本日ART確率1/70 (141G消化) → 高機械割域の挙動</div>
             
-            <div class="reason-item">⚠️ エスパス西武新宿の火曜は出玉が少ない傾向（注意）</div>
+            <div class="reason-item">📅 この台の火曜好調率: 2/2回(100%) → 期待大</div>
             
-            <div class="reason-item">📊 23日間中17日好調（好調率74%）→ 高機械割が入りやすい台</div>
+            <div class="reason-item">📅 この台の火曜実績: 4/4回好調（100%）</div>
             
         </div>
         
         <div class="v2-detail-today">
-            本日: ART 21 / RB 9 / 2,521G
-             / 1/120
-             / 最大5,659枚
+            本日: ART 2 / RB 1 / 141G
+             / 1/70
+             / 最大291枚
         </div>
         
         
         
         <div class="v2-detail-trend">
             
-            蓄積傾向: Cランク
+            5日連続好調 → 据え置き or 転落警戒
             
         </div>
     </div>
@@ -1186,7 +572,241 @@
     
     <div class="v2-header">
         <div class="v2-header-row1">
-            <span class="v2-rank-num">#10</span>
+            <span class="v2-rank-num">#5</span>
+            <a href="/history/seibu_shinjuku_espass_tokyoghoul_3165.html" class="v2-unit-id" onclick="event.stopPropagation()">3165番台</a>
+            
+            <a href="/recommend/seibu_shinjuku_espass_tokyoghoul.html" class="v2-store" onclick="event.stopPropagation()">エスパス西武新宿</a>
+            
+            <span class="v2-rank" style="background-color: #2ed573">B</span>
+            <span class="expand-icon small">▼</span>
+        </div>
+        <div class="v2-header-row2">
+            <span class="v2-machine">東京喰種</span>
+        </div>
+    </div>
+
+    
+    
+    <div class="v2-reason">🔄 3日連続好調だがエスパス西武新宿の火曜は弱い日 → 転落警戒</div>
+    
+
+    
+    <div class="v2-days">
+        
+        <div class="v2-day v2-day-today">
+            <span class="v2-day-label">本日</span>
+            <span class="v2-day-art">ART 5</span>
+            <span class="v2-day-rb">RB 2</span>
+            <span class="v2-day-prob excellent">1/57</span>
+            <span class="v2-day-games">285G</span>
+            
+            <span class="max-medals-sm">最大1,185枚</span>
+            
+        </div>
+        
+        
+        <div class="v2-day">
+            <span class="v2-day-label">7/20(月)</span>
+            <span class="v2-day-art">ART 27</span>
+            <span class="v2-day-rb">RB 19</span>
+            <span class="v2-day-prob ">1/175</span>
+            
+            <span class="max-medals-sm">最大1,467枚</span>
+            
+            
+        </div>
+        
+
+        
+        <div class="v2-day">
+            <span class="v2-day-label">7/19(日)</span>
+            <span class="v2-day-art">ART 11</span>
+            <span class="v2-day-rb">RB 20</span>
+            <span class="prev-prob bad">1/445</span>
+            
+            <span class="max-medals-sm">最大516枚</span>
+            
+            
+        </div>
+        
+
+        
+        <div class="v2-day">
+            <span class="v2-day-label">7/18(土)</span>
+            <span class="v2-day-art">ART 18</span>
+            <span class="v2-day-rb">RB 17</span>
+            <span class="prev-prob bad">1/271</span>
+            <span class="diff-medals-sm minus">-2,591枚</span>
+            <span class="max-medals-sm">最大1,061枚</span>
+            <span class="rensa-sm">4連</span>
+            
+        </div>
+        
+    </div>
+
+    
+    
+
+    
+    <div class="unit-details hidden">
+        <div class="v2-detail-reasons">
+            
+            <div class="reason-item">🔄 3日連続好調だがエスパス西武新宿の火曜は弱い日 → 転落警戒</div>
+            
+            <div class="reason-item">🔥 本日ART確率1/57 (285G消化) → 高機械割域の挙動</div>
+            
+            <div class="reason-item">🔥 本日天井到達1回 → 低機械割の可能性に注意</div>
+            
+            <div class="reason-item">🔄 直近2日とも不調（1/445→1/175）→ 翌日入替期待大（この店の過去実績: 22/29回=76%で翌日回復）</div>
+            
+            <div class="reason-item">⚠️ エスパス西武新宿の火曜は出玉が少ない傾向（注意）</div>
+            
+            <div class="reason-item">🚨 前日はART確率1/175でやや不調（全台中央値1/112）</div>
+            
+        </div>
+        
+        <div class="v2-detail-today">
+            本日: ART 5 / RB 2 / 285G
+             / 1/57
+             / 最大1,185枚
+        </div>
+        
+        
+        
+        <div class="v2-detail-trend">
+            
+            3日連続好調 → 据え置き or 転落警戒
+            
+        </div>
+    </div>
+</div>
+
+                
+                
+
+<div class="unit-card-v2 rank-a" onclick="toggleDetails(this)">
+    
+    <div class="v2-header">
+        <div class="v2-header-row1">
+            <span class="v2-rank-num">#6</span>
+            <a href="/history/seibu_shinjuku_espass_tokyoghoul_3167.html" class="v2-unit-id" onclick="event.stopPropagation()">3167番台</a>
+            
+            <a href="/recommend/seibu_shinjuku_espass_tokyoghoul.html" class="v2-store" onclick="event.stopPropagation()">エスパス西武新宿</a>
+            
+            <span class="v2-rank" style="background-color: #ffa502">A</span>
+            <span class="expand-icon small">▼</span>
+        </div>
+        <div class="v2-header-row2">
+            <span class="v2-machine">東京喰種</span>
+        </div>
+    </div>
+
+    
+    
+    <div class="v2-reason">🔮 低稼働でも好調率13/23日→穴場</div>
+    
+
+    
+    <div class="v2-days">
+        
+        <div class="v2-day v2-day-today">
+            <span class="v2-day-label">本日</span>
+            <span class="v2-day-art">ART 1</span>
+            <span class="v2-day-rb">RB 2</span>
+            <span class="v2-day-prob bad">1/237</span>
+            <span class="v2-day-games">237G</span>
+            
+            <span class="max-medals-sm">最大213枚</span>
+            
+        </div>
+        
+        
+        <div class="v2-day">
+            <span class="v2-day-label">7/20(月)</span>
+            <span class="v2-day-art">ART 46</span>
+            <span class="v2-day-rb">RB 8</span>
+            <span class="v2-day-prob excellent">1/42</span>
+            
+            <span class="max-medals-sm">最大11,041枚</span>
+            
+            <span class="low-activity">※低稼働</span>
+        </div>
+        
+
+        
+        <div class="v2-day">
+            <span class="v2-day-label">7/19(日)</span>
+            <span class="v2-day-art">ART 27</span>
+            <span class="v2-day-rb">RB 16</span>
+            <span class="prev-prob ">1/167</span>
+            
+            <span class="max-medals-sm">最大2,175枚</span>
+            
+            
+        </div>
+        
+
+        
+        <div class="v2-day">
+            <span class="v2-day-label">7/18(土)</span>
+            <span class="v2-day-art">ART 18</span>
+            <span class="v2-day-rb">RB 18</span>
+            <span class="prev-prob ">1/187</span>
+            <span class="diff-medals-sm plus">+222枚</span>
+            <span class="max-medals-sm">最大1,880枚</span>
+            <span class="rensa-sm">8連</span>
+            
+        </div>
+        
+    </div>
+
+    
+    
+
+    
+    <div class="unit-details hidden">
+        <div class="v2-detail-reasons">
+            
+            <div class="reason-item">🔮 低稼働でも好調率13/23日→穴場</div>
+            
+            <div class="reason-item">🔮 2日連続好調</div>
+            
+            <div class="reason-item">🔄 7日連続好調だがエスパス西武新宿の火曜は弱い日 → 転落警戒</div>
+            
+            <div class="reason-item">🔥 直近の推移: 小→小→小→小→小（好調22日中、大0/中0/小22日）</div>
+            
+            <div class="reason-item">🔥 本日天井到達1回 → 低機械割の可能性に注意</div>
+            
+            <div class="reason-item">📅 この台の火曜好調率: 2/2回(100%) → 期待大</div>
+            
+            <div class="reason-item">📅 この台の火曜実績: 4/4回好調（100%）</div>
+            
+        </div>
+        
+        <div class="v2-detail-today">
+            本日: ART 1 / RB 2 / 237G
+             / 1/237
+             / 最大213枚
+        </div>
+        
+        
+        
+        <div class="v2-detail-trend">
+            
+            7日連続好調 → 据え置き or 転落警戒
+            
+        </div>
+    </div>
+</div>
+
+                
+                
+
+<div class="unit-card-v2 rank-b" onclick="toggleDetails(this)">
+    
+    <div class="v2-header">
+        <div class="v2-header-row1">
+            <span class="v2-rank-num">#7</span>
             <a href="/history/seibu_shinjuku_espass_tokyoghoul_3168.html" class="v2-unit-id" onclick="event.stopPropagation()">3168番台</a>
             
             <a href="/recommend/seibu_shinjuku_espass_tokyoghoul.html" class="v2-store" onclick="event.stopPropagation()">エスパス西武新宿</a>
@@ -1209,12 +829,12 @@
         
         <div class="v2-day v2-day-today">
             <span class="v2-day-label">本日</span>
-            <span class="v2-day-art">ART 30</span>
-            <span class="v2-day-rb">RB 21</span>
-            <span class="v2-day-prob good">1/122</span>
-            <span class="v2-day-games">3,669G</span>
+            <span class="v2-day-art">ART 1</span>
+            <span class="v2-day-rb">RB 1</span>
+            <span class="v2-day-prob bad">1/252</span>
+            <span class="v2-day-games">252G</span>
             
-            <span class="max-medals-sm">最大4,424枚</span>
+            <span class="max-medals-sm">最大193枚</span>
             
         </div>
         
@@ -1260,10 +880,6 @@
 
     
     
-    <div class="v2-setting">
-        <span class="setting-badge-sm setting-6">高機械割</span>
-    </div>
-    
 
     
     <div class="unit-details hidden">
@@ -1271,18 +887,18 @@
             
             <div class="reason-item">🔮 2日連続好調</div>
             
-            <div class="reason-item">🔥 7/21(火)1/122で安定稼働中 (3,669G消化)</div>
+            <div class="reason-item">🔥 本日天井到達2回 → 低機械割の可能性に注意</div>
             
-            <div class="reason-item">🔥 7/21(火)天井到達2回 → 低機械割の可能性に注意</div>
+            <div class="reason-item">🚨 本日ART確率1/252 (252G消化) → 低機械割域の挙動</div>
             
             <div class="reason-item">⚠️ エスパス西武新宿の火曜は出玉が少ない傾向（注意）</div>
             
         </div>
         
         <div class="v2-detail-today">
-            本日: ART 30 / RB 21 / 3,669G
-             / 1/122
-             / 最大4,424枚
+            本日: ART 1 / RB 1 / 252G
+             / 1/252
+             / 最大193枚
         </div>
         
         
@@ -1302,8 +918,8 @@
     
     <div class="v2-header">
         <div class="v2-header-row1">
-            <span class="v2-rank-num">#11</span>
-            <a href="/history/seibu_shinjuku_espass_tokyoghoul_3163.html" class="v2-unit-id" onclick="event.stopPropagation()">3163番台</a>
+            <span class="v2-rank-num">#8</span>
+            <a href="/history/seibu_shinjuku_espass_tokyoghoul_3171.html" class="v2-unit-id" onclick="event.stopPropagation()">3171番台</a>
             
             <a href="/recommend/seibu_shinjuku_espass_tokyoghoul.html" class="v2-store" onclick="event.stopPropagation()">エスパス西武新宿</a>
             
@@ -1317,7 +933,7 @@
 
     
     
-    <div class="v2-reason">🔄 2日連続好調だがエスパス西武新宿の火曜は弱い日 → 下げの可能性</div>
+    <div class="v2-reason">🔮 低稼働でも好調率14/23日→穴場</div>
     
 
     
@@ -1325,23 +941,23 @@
         
         <div class="v2-day v2-day-today">
             <span class="v2-day-label">本日</span>
-            <span class="v2-day-art">ART 25</span>
-            <span class="v2-day-rb">RB 13</span>
-            <span class="v2-day-prob ">1/131</span>
-            <span class="v2-day-games">3,282G</span>
+            <span class="v2-day-art">ART 3</span>
+            <span class="v2-day-rb">RB 4</span>
+            <span class="v2-day-prob bad">1/291</span>
+            <span class="v2-day-games">874G</span>
             
-            <span class="max-medals-sm">最大3,382枚</span>
+            <span class="max-medals-sm">最大336枚</span>
             
         </div>
         
         
         <div class="v2-day">
             <span class="v2-day-label">7/20(月)</span>
-            <span class="v2-day-art">ART 25</span>
-            <span class="v2-day-rb">RB 13</span>
-            <span class="v2-day-prob good">1/129</span>
+            <span class="v2-day-art">ART 52</span>
+            <span class="v2-day-rb">RB 20</span>
+            <span class="v2-day-prob excellent">1/91</span>
             
-            <span class="max-medals-sm">最大3,382枚</span>
+            <span class="max-medals-sm">最大3,950枚</span>
             
             
         </div>
@@ -1350,66 +966,62 @@
         
         <div class="v2-day">
             <span class="v2-day-label">7/19(日)</span>
-            <span class="v2-day-art">ART 64</span>
-            <span class="v2-day-rb">RB 8</span>
-            <span class="prev-prob excellent">1/36</span>
+            <span class="v2-day-art">ART 52</span>
+            <span class="v2-day-rb">RB 20</span>
+            <span class="prev-prob excellent">1/91</span>
             
-            <span class="max-medals-sm">最大13,077枚</span>
+            <span class="max-medals-sm">最大3,950枚</span>
             
-            <span class="low-activity">※低稼働</span>
+            
         </div>
         
 
         
         <div class="v2-day">
             <span class="v2-day-label">7/18(土)</span>
-            <span class="v2-day-art">ART 30</span>
-            <span class="v2-day-rb">RB 19</span>
-            <span class="prev-prob ">1/185</span>
-            <span class="diff-medals-sm minus">-1,675枚</span>
-            <span class="max-medals-sm">最大899枚</span>
-            <span class="rensa-sm">7連</span>
+            <span class="v2-day-art">ART 29</span>
+            <span class="v2-day-rb">RB 11</span>
+            <span class="prev-prob excellent">1/95</span>
+            <span class="diff-medals-sm plus">+2,862枚</span>
+            <span class="max-medals-sm">最大2,992枚</span>
+            <span class="rensa-sm">10連</span>
             
         </div>
         
     </div>
 
     
-    
-    <div class="v2-setting">
-        <span class="setting-badge-sm setting-6">高機械割</span>
-    </div>
     
 
     
     <div class="unit-details hidden">
         <div class="v2-detail-reasons">
             
-            <div class="reason-item">🔄 2日連続好調だがエスパス西武新宿の火曜は弱い日 → 下げの可能性</div>
+            <div class="reason-item">🔮 低稼働でも好調率14/23日→穴場</div>
             
-            <div class="reason-item">🔥 直近の推移: 小→小→中→小→小（好調19日中、大0/中4/小15日）</div>
+            <div class="reason-item">🔄 7日連続好調だがエスパス西武新宿の火曜は弱い日 → 転落警戒</div>
             
-            <div class="reason-item">🔥 7/21(火)天井到達1回 → 低機械割の可能性に注意</div>
+            <div class="reason-item">🔥 直近の推移: 小→小→中→中→小（好調20日中、大0/中5/小15日）</div>
             
             <div class="reason-item">📅 この台の火曜好調率: 3/3回(100%) → 期待大</div>
             
             <div class="reason-item">📅 この台の火曜実績: 4/4回好調（100%）</div>
             
-            <div class="reason-item">🚨 前日はART確率1/129と悪くないが、最大0連と爆発なし → 過去に同パターン→翌日好調: 1291/1434回=90%（好調率83%のため本日も期待）</div>
+            <div class="reason-item">🚨 本日ART確率1/291 (874G消化) → 低機械割域の挙動</div>
             
         </div>
         
         <div class="v2-detail-today">
-            本日: ART 25 / RB 13 / 3,282G
-             / 1/131
-             / 最大3,382枚
+            本日: ART 3 / RB 4 / 874G
+             / 1/291
+             / 最大336枚
         </div>
         
         
         
         <div class="v2-detail-trend">
             
-            2日連続好調 → 据え置き期待
+            7日連続好調 → 据え置き or 転落警戒
             
         </div>
     </div>
@@ -1422,7 +1034,117 @@
     
     <div class="v2-header">
         <div class="v2-header-row1">
-            <span class="v2-rank-num">#12</span>
+            <span class="v2-rank-num">#9</span>
+            <a href="/history/seibu_shinjuku_espass_tokyoghoul_3160.html" class="v2-unit-id" onclick="event.stopPropagation()">3160番台</a>
+            
+            <a href="/recommend/seibu_shinjuku_espass_tokyoghoul.html" class="v2-store" onclick="event.stopPropagation()">エスパス西武新宿</a>
+            
+            <span class="v2-rank" style="background-color: #2ed573">B</span>
+            <span class="expand-icon small">▼</span>
+        </div>
+        <div class="v2-header-row2">
+            <span class="v2-machine">東京喰種</span>
+        </div>
+    </div>
+
+    
+    
+    <div class="v2-reason">🔥 本日25連の爆発あり</div>
+    
+
+    
+    <div class="v2-days">
+        
+        <div class="v2-day v2-day-today">
+            <span class="v2-day-label">本日</span>
+            <span class="v2-day-art">ART 1</span>
+            <span class="v2-day-rb">RB 1</span>
+            <span class="v2-day-prob ">1/142</span>
+            <span class="v2-day-games">142G</span>
+            
+            <span class="max-medals-sm">最大206枚</span>
+            
+        </div>
+        
+        
+        <div class="v2-day">
+            <span class="v2-day-label">7/20(月)</span>
+            <span class="v2-day-art">ART 57</span>
+            <span class="v2-day-rb">RB 16</span>
+            <span class="v2-day-prob excellent">1/64</span>
+            
+            <span class="max-medals-sm">最大9,043枚</span>
+            
+            
+        </div>
+        
+
+        
+        <div class="v2-day">
+            <span class="v2-day-label">7/19(日)</span>
+            <span class="v2-day-art">ART 59</span>
+            
+            <span class="prev-prob excellent">1/86</span>
+            
+            
+            
+            
+        </div>
+        
+
+        
+        <div class="v2-day">
+            <span class="v2-day-label">7/18(土)</span>
+            <span class="v2-day-art">ART 59</span>
+            <span class="v2-day-rb">RB 17</span>
+            <span class="prev-prob excellent">1/86</span>
+            <span class="diff-medals-sm plus">+6,230枚</span>
+            <span class="max-medals-sm">最大6,611枚</span>
+            <span class="rensa-sm">25連</span>
+            
+        </div>
+        
+    </div>
+
+    
+    
+
+    
+    <div class="unit-details hidden">
+        <div class="v2-detail-reasons">
+            
+            <div class="reason-item">🔥 本日25連の爆発あり</div>
+            
+            <div class="reason-item">⚠️ エスパス西武新宿の火曜は出玉が少ない傾向（注意）</div>
+            
+            <div class="reason-item">📊 現在142G消化・1/142で推移中</div>
+            
+        </div>
+        
+        <div class="v2-detail-today">
+            本日: ART 1 / RB 1 / 142G
+             / 1/142
+             / 最大206枚
+        </div>
+        
+        
+        
+        <div class="v2-detail-trend">
+            
+            蓄積傾向: Cランク
+            
+        </div>
+    </div>
+</div>
+
+                
+                
+
+<div class="unit-card-v2 rank-b" onclick="toggleDetails(this)">
+    
+    <div class="v2-header">
+        <div class="v2-header-row1">
+            <span class="v2-rank-num">#10</span>
             <a href="/history/seibu_shinjuku_espass_tokyoghoul_3174.html" class="v2-unit-id" onclick="event.stopPropagation()">3174番台</a>
             
             <a href="/recommend/seibu_shinjuku_espass_tokyoghoul.html" class="v2-store" onclick="event.stopPropagation()">エスパス西武新宿</a>
@@ -1445,12 +1167,12 @@
         
         <div class="v2-day v2-day-today">
             <span class="v2-day-label">本日</span>
-            <span class="v2-day-art">ART 27</span>
-            <span class="v2-day-rb">RB 16</span>
-            <span class="v2-day-prob ">1/161</span>
-            <span class="v2-day-games">4,365G</span>
+            <span class="v2-day-art">ART 1</span>
+            <span class="v2-day-rb">RB 2</span>
+            <span class="v2-day-prob bad">1/238</span>
+            <span class="v2-day-games">238G</span>
             
-            <span class="max-medals-sm">最大2,988枚</span>
+            <span class="max-medals-sm">最大173枚</span>
             
         </div>
         
@@ -1496,10 +1218,6 @@
 
     
     
-    <div class="v2-setting">
-        <span class="setting-badge-sm setting-6">高機械割</span>
-    </div>
-    
 
     
     <div class="unit-details hidden">
@@ -1508,6 +1226,8 @@
             <div class="reason-item">🔁 ほぼ毎日好調になる台</div>
             
             <div class="reason-item">🔥 直近の推移: 小→小→小→小→小（好調20日中、大0/中2/小18日）</div>
+            
+            <div class="reason-item">🚨 本日ART確率1/238 (238G消化) → 低機械割域の挙動</div>
             
             <div class="reason-item">⚠️ エスパス西武新宿の火曜は出玉が少ない傾向（注意）</div>
             
@@ -1518,9 +1238,9 @@
         </div>
         
         <div class="v2-detail-today">
-            本日: ART 27 / RB 16 / 4,365G
-             / 1/161
-             / 最大2,988枚
+            本日: ART 1 / RB 2 / 238G
+             / 1/238
+             / 最大173枚
         </div>
         
         
@@ -1536,7 +1256,239 @@
                 
                 
 
-<div class="unit-card-v2 rank-b" onclick="toggleDetails(this)">
+<div class="unit-card-v2 rank-a" onclick="toggleDetails(this)">
+    
+    <div class="v2-header">
+        <div class="v2-header-row1">
+            <span class="v2-rank-num">#11</span>
+            <a href="/history/seibu_shinjuku_espass_tokyoghoul_3172.html" class="v2-unit-id" onclick="event.stopPropagation()">3172番台</a>
+            
+            <a href="/recommend/seibu_shinjuku_espass_tokyoghoul.html" class="v2-store" onclick="event.stopPropagation()">エスパス西武新宿</a>
+            
+            <span class="v2-rank" style="background-color: #ffa502">A</span>
+            <span class="expand-icon small">▼</span>
+        </div>
+        <div class="v2-header-row2">
+            <span class="v2-machine">東京喰種</span>
+        </div>
+    </div>
+
+    
+    
+    <div class="v2-reason">🔮 低稼働でも好調率12/24日→穴場</div>
+    
+
+    
+    <div class="v2-days">
+        
+        <div class="v2-day v2-day-today">
+            <span class="v2-day-label">本日</span>
+            <span class="v2-day-art">ART 3</span>
+            <span class="v2-day-rb">RB 4</span>
+            <span class="v2-day-prob bad">1/208</span>
+            <span class="v2-day-games">624G</span>
+            
+            <span class="max-medals-sm">最大414枚</span>
+            
+        </div>
+        
+        
+        <div class="v2-day">
+            <span class="v2-day-label">7/20(月)</span>
+            <span class="v2-day-art">ART 37</span>
+            <span class="v2-day-rb">RB 17</span>
+            <span class="v2-day-prob excellent">1/80</span>
+            
+            <span class="max-medals-sm">最大6,071枚</span>
+            
+            
+        </div>
+        
+
+        
+        <div class="v2-day">
+            <span class="v2-day-label">7/19(日)</span>
+            <span class="v2-day-art">ART 37</span>
+            <span class="v2-day-rb">RB 17</span>
+            <span class="prev-prob excellent">1/80</span>
+            
+            <span class="max-medals-sm">最大6,071枚</span>
+            
+            
+        </div>
+        
+
+        
+        <div class="v2-day">
+            <span class="v2-day-label">7/18(土)</span>
+            <span class="v2-day-art">ART 31</span>
+            <span class="v2-day-rb">RB 14</span>
+            <span class="prev-prob good">1/106</span>
+            <span class="diff-medals-sm plus">+1,728枚</span>
+            <span class="max-medals-sm">最大4,514枚</span>
+            <span class="rensa-sm">22連</span>
+            
+        </div>
+        
+    </div>
+
+    
+    
+
+    
+    <div class="unit-details hidden">
+        <div class="v2-detail-reasons">
+            
+            <div class="reason-item">🔮 低稼働でも好調率12/24日→穴場</div>
+            
+            <div class="reason-item">🔁 ほぼ毎日好調になる台</div>
+            
+            <div class="reason-item">🔥 直近の推移: 小→小→小→小→小（好調21日中、大0/中2/小19日）</div>
+            
+            <div class="reason-item">🔥 本日21連の爆発あり</div>
+            
+            <div class="reason-item">📅 この台の火曜好調率: 3/3回(100%) → 期待大</div>
+            
+            <div class="reason-item">📅 この台の火曜実績: 4/4回好調（100%）</div>
+            
+        </div>
+        
+        <div class="v2-detail-today">
+            本日: ART 3 / RB 4 / 624G
+             / 1/208
+             / 最大414枚
+        </div>
+        
+        
+        
+        <div class="v2-detail-trend">
+            
+            蓄積傾向: Cランク
+            
+        </div>
+    </div>
+</div>
+
+                
+                
+
+<div class="unit-card-v2 rank-a" onclick="toggleDetails(this)">
+    
+    <div class="v2-header">
+        <div class="v2-header-row1">
+            <span class="v2-rank-num">#12</span>
+            <a href="/history/seibu_shinjuku_espass_tokyoghoul_3218.html" class="v2-unit-id" onclick="event.stopPropagation()">3218番台</a>
+            
+            <a href="/recommend/seibu_shinjuku_espass_tokyoghoul.html" class="v2-store" onclick="event.stopPropagation()">エスパス西武新宿</a>
+            
+            <span class="v2-rank" style="background-color: #ffa502">A</span>
+            <span class="expand-icon small">▼</span>
+        </div>
+        <div class="v2-header-row2">
+            <span class="v2-machine">東京喰種</span>
+        </div>
+    </div>
+
+    
+    
+    <div class="v2-reason">🔮 3日連続好調</div>
+    
+
+    
+    <div class="v2-days">
+        
+        <div class="v2-day v2-day-today">
+            <span class="v2-day-label">本日</span>
+            <span class="v2-day-art">ART 1</span>
+            <span class="v2-day-rb">RB 2</span>
+            <span class="v2-day-prob ">1/184</span>
+            <span class="v2-day-games">184G</span>
+            
+            <span class="max-medals-sm">最大61枚</span>
+            
+        </div>
+        
+        
+        <div class="v2-day">
+            <span class="v2-day-label">7/20(月)</span>
+            <span class="v2-day-art">ART 33</span>
+            <span class="v2-day-rb">RB 18</span>
+            <span class="v2-day-prob good">1/125</span>
+            
+            <span class="max-medals-sm">最大2,552枚</span>
+            
+            
+        </div>
+        
+
+        
+        <div class="v2-day">
+            <span class="v2-day-label">7/19(日)</span>
+            <span class="v2-day-art">ART 33</span>
+            <span class="v2-day-rb">RB 18</span>
+            <span class="prev-prob good">1/125</span>
+            
+            <span class="max-medals-sm">最大2,552枚</span>
+            
+            
+        </div>
+        
+
+        
+        <div class="v2-day">
+            <span class="v2-day-label">7/18(土)</span>
+            <span class="v2-day-art">ART 26</span>
+            <span class="v2-day-rb">RB 15</span>
+            <span class="prev-prob ">1/166</span>
+            <span class="diff-medals-sm minus">-207枚</span>
+            <span class="max-medals-sm">最大2,546枚</span>
+            <span class="rensa-sm">12連</span>
+            
+        </div>
+        
+    </div>
+
+    
+    
+
+    
+    <div class="unit-details hidden">
+        <div class="v2-detail-reasons">
+            
+            <div class="reason-item">🔮 3日連続好調</div>
+            
+            <div class="reason-item">🔁 ほぼ毎日好調になる台</div>
+            
+            <div class="reason-item">🔥 直近の推移: 小→小→小→小→小（好調17日中、大0/中1/小16日）</div>
+            
+            <div class="reason-item">🔥 本日10連の爆発あり</div>
+            
+            <div class="reason-item">⚠️ エスパス西武新宿の火曜は出玉が少ない傾向（注意）</div>
+            
+            <div class="reason-item">📊 23日間中17日好調（好調率74%）→ 高機械割が入りやすい台</div>
+            
+        </div>
+        
+        <div class="v2-detail-today">
+            本日: ART 1 / RB 2 / 184G
+             / 1/184
+             / 最大61枚
+        </div>
+        
+        
+        
+        <div class="v2-detail-trend">
+            
+            蓄積傾向: Cランク
+            
+        </div>
+    </div>
+</div>
+
+                
+                
+
+<div class="unit-card-v2 rank-a" onclick="toggleDetails(this)">
     
     <div class="v2-header">
         <div class="v2-header-row1">
@@ -1545,7 +1497,7 @@
             
             <a href="/recommend/seibu_shinjuku_espass_tokyoghoul.html" class="v2-store" onclick="event.stopPropagation()">エスパス西武新宿</a>
             
-            <span class="v2-rank" style="background-color: #2ed573">B</span>
+            <span class="v2-rank" style="background-color: #ffa502">A</span>
             <span class="expand-icon small">▼</span>
         </div>
         <div class="v2-header-row2">
@@ -1563,12 +1515,12 @@
         
         <div class="v2-day v2-day-today">
             <span class="v2-day-label">本日</span>
-            <span class="v2-day-art">ART 27</span>
-            <span class="v2-day-rb">RB 12</span>
-            <span class="v2-day-prob ">1/143</span>
-            <span class="v2-day-games">3,883G</span>
+            <span class="v2-day-art">ART 5</span>
+            <span class="v2-day-rb">RB 6</span>
+            <span class="v2-day-prob bad">1/236</span>
+            <span class="v2-day-games">1,183G</span>
             
-            <span class="max-medals-sm">最大3,344枚</span>
+            <span class="max-medals-sm">最大438枚</span>
             
         </div>
         
@@ -1625,20 +1577,20 @@
             
             <div class="reason-item">🔮 3日連続不調</div>
             
-            <div class="reason-item">🔥 7/21(火)13連の爆発あり</div>
+            <div class="reason-item">🔥 本日13連の爆発あり</div>
+            
+            <div class="reason-item">🚨 本日ART確率1/236 (1,183G消化) → 低機械割域の挙動</div>
             
             <div class="reason-item">⚠️ エスパス西武新宿の火曜は出玉が少ない傾向（注意）</div>
-            
-            <div class="reason-item">📊 現在3,883G消化・1/143で推移中</div>
             
             <div class="reason-item">🚨 前日はART確率1/144と悪くないが、最大0連と爆発なし → 過去に同パターン→翌日好調: 1291/1434回=90%</div>
             
         </div>
         
         <div class="v2-detail-today">
-            本日: ART 27 / RB 12 / 3,883G
-             / 1/143
-             / 最大3,344枚
+            本日: ART 5 / RB 6 / 1,183G
+             / 1/236
+             / 最大438枚
         </div>
         
         
@@ -1659,120 +1611,6 @@
     <div class="v2-header">
         <div class="v2-header-row1">
             <span class="v2-rank-num">#14</span>
-            <a href="/history/seibu_shinjuku_espass_tokyoghoul_3160.html" class="v2-unit-id" onclick="event.stopPropagation()">3160番台</a>
-            
-            <a href="/recommend/seibu_shinjuku_espass_tokyoghoul.html" class="v2-store" onclick="event.stopPropagation()">エスパス西武新宿</a>
-            
-            <span class="v2-rank" style="background-color: #2ed573">B</span>
-            <span class="expand-icon small">▼</span>
-        </div>
-        <div class="v2-header-row2">
-            <span class="v2-machine">東京喰種</span>
-        </div>
-    </div>
-
-    
-    
-    <div class="v2-reason">🔥 7/21(火)25連の爆発あり</div>
-    
-
-    
-    <div class="v2-days">
-        
-        <div class="v2-day v2-day-today">
-            <span class="v2-day-label">本日</span>
-            <span class="v2-day-art">ART 12</span>
-            <span class="v2-day-rb">RB 7</span>
-            <span class="v2-day-prob ">1/149</span>
-            <span class="v2-day-games">1,790G</span>
-            
-            <span class="max-medals-sm">最大680枚</span>
-            
-        </div>
-        
-        
-        <div class="v2-day">
-            <span class="v2-day-label">7/20(月)</span>
-            <span class="v2-day-art">ART 57</span>
-            <span class="v2-day-rb">RB 16</span>
-            <span class="v2-day-prob excellent">1/64</span>
-            
-            <span class="max-medals-sm">最大9,043枚</span>
-            
-            
-        </div>
-        
-
-        
-        <div class="v2-day">
-            <span class="v2-day-label">7/19(日)</span>
-            <span class="v2-day-art">ART 59</span>
-            
-            <span class="prev-prob excellent">1/86</span>
-            
-            
-            
-            
-        </div>
-        
-
-        
-        <div class="v2-day">
-            <span class="v2-day-label">7/18(土)</span>
-            <span class="v2-day-art">ART 59</span>
-            <span class="v2-day-rb">RB 17</span>
-            <span class="prev-prob excellent">1/86</span>
-            <span class="diff-medals-sm plus">+6,230枚</span>
-            <span class="max-medals-sm">最大6,611枚</span>
-            <span class="rensa-sm">25連</span>
-            
-        </div>
-        
-    </div>
-
-    
-    
-    <div class="v2-setting">
-        <span class="setting-badge-sm setting-6">高機械割</span>
-    </div>
-    
-
-    
-    <div class="unit-details hidden">
-        <div class="v2-detail-reasons">
-            
-            <div class="reason-item">🔥 7/21(火)25連の爆発あり</div>
-            
-            <div class="reason-item">⚠️ エスパス西武新宿の火曜は出玉が少ない傾向（注意）</div>
-            
-            <div class="reason-item">📊 現在1,790G消化・1/149で推移中</div>
-            
-        </div>
-        
-        <div class="v2-detail-today">
-            本日: ART 12 / RB 7 / 1,790G
-             / 1/149
-             / 最大680枚
-        </div>
-        
-        
-        
-        <div class="v2-detail-trend">
-            
-            蓄積傾向: Cランク
-            
-        </div>
-    </div>
-</div>
-
-                
-                
-
-<div class="unit-card-v2 rank-b" onclick="toggleDetails(this)">
-    
-    <div class="v2-header">
-        <div class="v2-header-row1">
-            <span class="v2-rank-num">#15</span>
             <a href="/history/seibu_shinjuku_espass_tokyoghoul_3164.html" class="v2-unit-id" onclick="event.stopPropagation()">3164番台</a>
             
             <a href="/recommend/seibu_shinjuku_espass_tokyoghoul.html" class="v2-store" onclick="event.stopPropagation()">エスパス西武新宿</a>
@@ -1795,12 +1633,12 @@
         
         <div class="v2-day v2-day-today">
             <span class="v2-day-label">本日</span>
-            <span class="v2-day-art">ART 9</span>
-            <span class="v2-day-rb">RB 10</span>
-            <span class="v2-day-prob bad">1/243</span>
-            <span class="v2-day-games">2,192G</span>
+            <span class="v2-day-art">ART 8</span>
+            <span class="v2-day-rb">RB 1</span>
+            <span class="v2-day-prob excellent">1/38</span>
+            <span class="v2-day-games">306G</span>
             
-            <span class="max-medals-sm">最大416枚</span>
+            <span class="max-medals-sm">最大2,726枚</span>
             
         </div>
         
@@ -1846,10 +1684,6 @@
 
     
     
-    <div class="v2-setting">
-        <span class="setting-badge-sm setting-6">高機械割</span>
-    </div>
-    
 
     
     <div class="unit-details hidden">
@@ -1859,18 +1693,18 @@
             
             <div class="reason-item">🔥 直近の推移: 小→中→小→小→小（好調21日中、大0/中2/小19日）</div>
             
-            <div class="reason-item">🔥 7/21(火)11連の爆発あり</div>
+            <div class="reason-item">🔥 本日ART確率1/38 (306G消化) → 高機械割域の挙動</div>
+            
+            <div class="reason-item">🔥 本日11連の爆発あり</div>
             
             <div class="reason-item">📅 この台の火曜実績: 4/4回好調（100%）</div>
-            
-            <div class="reason-item">🚨 7/21(火)ART確率1/243 (2,192G消化) → 低機械割域の挙動</div>
             
         </div>
         
         <div class="v2-detail-today">
-            本日: ART 9 / RB 10 / 2,192G
-             / 1/243
-             / 最大416枚
+            本日: ART 8 / RB 1 / 306G
+             / 1/38
+             / 最大2,726枚
         </div>
         
         
@@ -1890,7 +1724,7 @@
     
     <div class="v2-header">
         <div class="v2-header-row1">
-            <span class="v2-rank-num">#16</span>
+            <span class="v2-rank-num">#15</span>
             <a href="/history/seibu_shinjuku_espass_tokyoghoul_3170.html" class="v2-unit-id" onclick="event.stopPropagation()">3170番台</a>
             
             <a href="/recommend/seibu_shinjuku_espass_tokyoghoul.html" class="v2-store" onclick="event.stopPropagation()">エスパス西武新宿</a>
@@ -1905,7 +1739,7 @@
 
     
     
-    <div class="v2-reason">🔥 7/21(火)天井到達1回 → 低機械割の可能性に注意</div>
+    <div class="v2-reason">🔥 本日天井到達1回 → 低機械割の可能性に注意</div>
     
 
     
@@ -1913,12 +1747,12 @@
         
         <div class="v2-day v2-day-today">
             <span class="v2-day-label">本日</span>
-            <span class="v2-day-art">ART 26</span>
-            <span class="v2-day-rb">RB 17</span>
-            <span class="v2-day-prob ">1/160</span>
-            <span class="v2-day-games">4,163G</span>
+            <span class="v2-day-art">ART 1</span>
+            <span class="v2-day-rb">RB 2</span>
+            <span class="v2-day-prob bad">1/268</span>
+            <span class="v2-day-games">268G</span>
             
-            <span class="max-medals-sm">最大1,439枚</span>
+            <span class="max-medals-sm">最大173枚</span>
             
         </div>
         
@@ -1964,27 +1798,25 @@
 
     
     
-    <div class="v2-setting">
-        <span class="setting-badge-sm setting-6">高機械割</span>
-    </div>
-    
 
     
     <div class="unit-details hidden">
         <div class="v2-detail-reasons">
             
-            <div class="reason-item">🔥 7/21(火)天井到達1回 → 低機械割の可能性に注意</div>
+            <div class="reason-item">🔥 本日天井到達1回 → 低機械割の可能性に注意</div>
             
-            <div class="reason-item">🔥 7/21(火)19連の爆発あり</div>
+            <div class="reason-item">🔥 本日19連の爆発あり</div>
+            
+            <div class="reason-item">🚨 本日ART確率1/268 (268G消化) → 低機械割域の挙動</div>
             
             <div class="reason-item">⚠️ エスパス西武新宿の火曜は出玉が少ない傾向（注意）</div>
             
         </div>
         
         <div class="v2-detail-today">
-            本日: ART 26 / RB 17 / 4,163G
-             / 1/160
-             / 最大1,439枚
+            本日: ART 1 / RB 2 / 268G
+             / 1/268
+             / 最大173枚
         </div>
         
         
@@ -1992,6 +1824,122 @@
         <div class="v2-detail-trend">
             
             蓄積傾向: Cランク
+            
+        </div>
+    </div>
+</div>
+
+                
+                
+
+<div class="unit-card-v2 rank-b" onclick="toggleDetails(this)">
+    
+    <div class="v2-header">
+        <div class="v2-header-row1">
+            <span class="v2-rank-num">#16</span>
+            <a href="/history/seibu_shinjuku_espass_tokyoghoul_3163.html" class="v2-unit-id" onclick="event.stopPropagation()">3163番台</a>
+            
+            <a href="/recommend/seibu_shinjuku_espass_tokyoghoul.html" class="v2-store" onclick="event.stopPropagation()">エスパス西武新宿</a>
+            
+            <span class="v2-rank" style="background-color: #2ed573">B</span>
+            <span class="expand-icon small">▼</span>
+        </div>
+        <div class="v2-header-row2">
+            <span class="v2-machine">東京喰種</span>
+        </div>
+    </div>
+
+    
+    
+    <div class="v2-reason">🔄 2日連続好調だがエスパス西武新宿の火曜は弱い日 → 下げの可能性</div>
+    
+
+    
+    <div class="v2-days">
+        
+        <div class="v2-day v2-day-today">
+            <span class="v2-day-label">本日</span>
+            <span class="v2-day-art">ART 0</span>
+            <span class="v2-day-rb">RB 2</span>
+            
+            <span class="v2-day-games">262G</span>
+            
+            <span class="max-medals-sm">最大35枚</span>
+            
+        </div>
+        
+        
+        <div class="v2-day">
+            <span class="v2-day-label">7/20(月)</span>
+            <span class="v2-day-art">ART 25</span>
+            <span class="v2-day-rb">RB 13</span>
+            <span class="v2-day-prob good">1/129</span>
+            
+            <span class="max-medals-sm">最大3,382枚</span>
+            
+            
+        </div>
+        
+
+        
+        <div class="v2-day">
+            <span class="v2-day-label">7/19(日)</span>
+            <span class="v2-day-art">ART 64</span>
+            <span class="v2-day-rb">RB 8</span>
+            <span class="prev-prob excellent">1/36</span>
+            
+            <span class="max-medals-sm">最大13,077枚</span>
+            
+            <span class="low-activity">※低稼働</span>
+        </div>
+        
+
+        
+        <div class="v2-day">
+            <span class="v2-day-label">7/18(土)</span>
+            <span class="v2-day-art">ART 30</span>
+            <span class="v2-day-rb">RB 19</span>
+            <span class="prev-prob ">1/185</span>
+            <span class="diff-medals-sm minus">-1,675枚</span>
+            <span class="max-medals-sm">最大899枚</span>
+            <span class="rensa-sm">7連</span>
+            
+        </div>
+        
+    </div>
+
+    
+    
+
+    
+    <div class="unit-details hidden">
+        <div class="v2-detail-reasons">
+            
+            <div class="reason-item">🔄 2日連続好調だがエスパス西武新宿の火曜は弱い日 → 下げの可能性</div>
+            
+            <div class="reason-item">🔥 直近の推移: 小→小→中→小→小（好調19日中、大0/中4/小15日）</div>
+            
+            <div class="reason-item">🔥 本日天井到達1回 → 低機械割の可能性に注意</div>
+            
+            <div class="reason-item">📅 この台の火曜好調率: 3/3回(100%) → 期待大</div>
+            
+            <div class="reason-item">📅 この台の火曜実績: 4/4回好調（100%）</div>
+            
+            <div class="reason-item">🚨 前日はART確率1/129と悪くないが、最大0連と爆発なし → 過去に同パターン→翌日好調: 1291/1434回=90%（好調率83%のため本日も期待）</div>
+            
+        </div>
+        
+        <div class="v2-detail-today">
+            本日: ART 0 / RB 2 / 262G
+            
+             / 最大35枚
+        </div>
+        
+        
+        
+        <div class="v2-detail-trend">
+            
+            2日連続好調 → 据え置き期待
             
         </div>
     </div>
@@ -2025,6 +1973,17 @@
     
     <div class="v2-days">
         
+        <div class="v2-day v2-day-today">
+            <span class="v2-day-label">本日</span>
+            <span class="v2-day-art">ART 11</span>
+            <span class="v2-day-rb">RB 2</span>
+            <span class="v2-day-prob excellent">1/46</span>
+            <span class="v2-day-games">509G</span>
+            
+            <span class="max-medals-sm">最大1,889枚</span>
+            
+        </div>
+        
         
         <div class="v2-day no-data"><span class="v2-day-label">前日</span> データなし</div>
         
@@ -2047,14 +2006,22 @@
             
             <div class="reason-item">🔄 6日連続好調だがエスパス西武新宿の火曜は弱い日 → 転落警戒</div>
             
-            <div class="reason-item">🔥 直近の推移: 小→小→小→小→小（好調7日中、大0/中0/小7日）</div>
+            <div class="reason-item">🔥 直近の推移: 小→小→小→小→小（好調8日中、大0/中0/小8日）</div>
             
-            <div class="reason-item">🔄 直近2日とも不調（1/215→1/374）→ 7/21(火)入替期待大（この店の過去実績: 21/28回=75%で翌日回復）</div>
+            <div class="reason-item">🔥 本日ART確率1/46 (509G消化) → 高機械割域の挙動</div>
             
-            <div class="reason-item">⚠️ エスパス西武新宿の火曜は出玉が少ない傾向（注意）</div>
+            <div class="reason-item">🔥 本日天井到達1回 → 低機械割の可能性に注意</div>
             
-            <div class="reason-item">🚨 前日はART確率1/374で低機械割域（全台中央値1/112）（好調率88%のため本日も期待）</div>
+            <div class="reason-item">🔄 直近2日とも不調（1/215→1/374）→ 翌日入替期待大（この店の過去実績: 22/29回=76%で翌日回復）</div>
             
+            <div class="reason-item">🚨 前日はART確率1/374で低機械割域（全台中央値1/112）（好調率89%のため本日も期待）</div>
+            
+        </div>
+        
+        <div class="v2-detail-today">
+            本日: ART 11 / RB 2 / 509G
+             / 1/46
+             / 最大1,889枚
         </div>
         
         
