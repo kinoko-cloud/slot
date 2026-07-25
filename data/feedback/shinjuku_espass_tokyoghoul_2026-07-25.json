@@ -6,7 +6,7 @@
   "total_units": 43,
   "hits": 12,
   "misses": 7,
-  "surprises": 21,
+  "surprises": 22,
   "miss_details": [
     {
       "unit_id": "841",
@@ -54,15 +54,6 @@
       ]
     },
     {
-      "unit_id": "812",
-      "score": 127,
-      "actual_prob": 200,
-      "reasons": [
-        "高スコア過信",
-        "設定1域(1/200)"
-      ]
-    },
-    {
       "unit_id": "809",
       "score": 120,
       "actual_prob": 265,
@@ -70,9 +61,24 @@
         "高スコア過信",
         "設定1域(1/265)"
       ]
+    },
+    {
+      "unit_id": "804",
+      "score": 62,
+      "actual_prob": 334,
+      "reasons": [
+        "設定1域(1/334)"
+      ]
     }
   ],
   "surprise_details": [
+    {
+      "unit_id": "812",
+      "rank": "B",
+      "score": 124,
+      "actual_prob": 200,
+      "reasons": []
+    },
     {
       "unit_id": "833",
       "rank": "B",
