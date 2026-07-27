@@ -4,23 +4,40 @@
   "date": "2026-07-27",
   "weekday": "月",
   "total_units": 28,
-  "hits": 12,
-  "misses": 0,
+  "hits": 11,
+  "misses": 1,
   "surprises": 15,
-  "miss_details": [],
+  "miss_details": [
+    {
+      "unit_id": "4082",
+      "score": 120,
+      "actual_prob": 263,
+      "reasons": [
+        "高スコア過信",
+        "設定1域(1/263)"
+      ]
+    }
+  ],
   "surprise_details": [
+    {
+      "unit_id": "4167",
+      "rank": "B",
+      "score": 128,
+      "actual_prob": 192,
+      "reasons": []
+    },
+    {
+      "unit_id": "4160",
+      "rank": "B",
+      "score": 127,
+      "actual_prob": 124,
+      "reasons": []
+    },
     {
       "unit_id": "4079",
       "rank": "B",
       "score": 126,
       "actual_prob": 177,
-      "reasons": []
-    },
-    {
-      "unit_id": "4169",
-      "rank": "B",
-      "score": 126,
-      "actual_prob": 93,
       "reasons": []
     },
     {
@@ -80,13 +97,6 @@
       "reasons": []
     },
     {
-      "unit_id": "4082",
-      "rank": "B",
-      "score": 120,
-      "actual_prob": 263,
-      "reasons": []
-    },
-    {
       "unit_id": "4084",
       "rank": "B",
       "score": 120,
@@ -109,7 +119,7 @@
     },
     {
       "unit_id": "4158",
-      "rank": "C",
+      "rank": "B",
       "score": 55,
       "actual_prob": 328,
       "reasons": []
