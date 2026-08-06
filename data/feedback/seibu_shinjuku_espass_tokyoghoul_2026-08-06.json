@@ -4,10 +4,19 @@
   "date": "2026-08-06",
   "weekday": "木",
   "total_units": 17,
-  "hits": 6,
-  "misses": 0,
+  "hits": 5,
+  "misses": 1,
   "surprises": 7,
-  "miss_details": [],
+  "miss_details": [
+    {
+      "unit_id": "3159",
+      "score": 69,
+      "actual_prob": 327,
+      "reasons": [
+        "設定1域(1/327)"
+      ]
+    }
+  ],
   "surprise_details": [
     {
       "unit_id": "3174",
@@ -21,6 +30,13 @@
       "rank": "B",
       "score": 86,
       "actual_prob": 154,
+      "reasons": []
+    },
+    {
+      "unit_id": "3165",
+      "rank": "B",
+      "score": 99,
+      "actual_prob": 141,
       "reasons": []
     },
     {
@@ -49,13 +65,6 @@
       "rank": "B",
       "score": 79,
       "actual_prob": 298,
-      "reasons": []
-    },
-    {
-      "unit_id": "3159",
-      "rank": "B",
-      "score": 69,
-      "actual_prob": 327,
       "reasons": []
     }
   ]
