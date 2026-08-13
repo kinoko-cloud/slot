@@ -4,23 +4,26 @@
   "date": "2026-08-14",
   "weekday": "金",
   "total_units": 28,
-  "hits": 12,
-  "misses": 0,
+  "hits": 11,
+  "misses": 1,
   "surprises": 14,
-  "miss_details": [],
-  "surprise_details": [
+  "miss_details": [
     {
       "unit_id": "4078",
-      "rank": "B",
-      "score": 124,
-      "actual_prob": 230,
-      "reasons": []
-    },
+      "score": 127,
+      "actual_prob": 229,
+      "reasons": [
+        "高スコア過信",
+        "設定1域(1/229)"
+      ]
+    }
+  ],
+  "surprise_details": [
     {
-      "unit_id": "4158",
+      "unit_id": "4170",
       "rank": "B",
-      "score": 124,
-      "actual_prob": 133,
+      "score": 127,
+      "actual_prob": 85,
       "reasons": []
     },
     {
@@ -63,6 +66,13 @@
       "rank": "B",
       "score": 119,
       "actual_prob": 181,
+      "reasons": []
+    },
+    {
+      "unit_id": "4158",
+      "rank": "B",
+      "score": 119,
+      "actual_prob": 133,
       "reasons": []
     },
     {
