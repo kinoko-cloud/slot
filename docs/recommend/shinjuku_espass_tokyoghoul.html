@@ -9,7 +9,7 @@
     <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
     <meta name="googlebot" content="noindex, nofollow">
     <title>エスパス日拓新宿歌舞伎町店</title>
-    <link rel="stylesheet" href="/static/style.css?v=20260814093648">
+    <link rel="stylesheet" href="/static/style.css?v=20260814103611">
 </head>
 <body data-page-type="recommend" data-store-key="shinjuku_espass_tokyoghoul">
     <div class="container">
@@ -27,7 +27,7 @@
         
     </div>
     <div class="top-bar-right">
-        <span class="version-info" id="build-ver" title="ビルド時刻">v0814_09:37</span>
+        <span class="version-info" id="build-ver" title="ビルド時刻">v0814_10:36</span>
         
     </div>
 </div>
@@ -43,7 +43,7 @@
             <div class="update-info">
                 
                 <span class="data-source">
-                    データ取得: <span id="update-time">09:36</span>
+                    データ取得: <span id="update-time">10:36</span>
                 </span>
                 <span class="cache-badge github">GITHUB</span>
                 
@@ -52,7 +52,11 @@
 
             <!-- 空き状況サマリ -->
             
-            <div class="closed-notice">現在営業時間外です</div>
+            <div class="availability-summary">
+                <span class="avail-empty" onclick="filterUnits('empty')">空き 16台</span>
+                <span class="avail-playing" onclick="filterUnits('playing')">遊技中 27台</span>
+                <span class="avail-all" onclick="filterUnits('all')">全て</span>
+            </div>
             
 
             <div class="action-buttons">
@@ -189,9 +193,9 @@
             
             <div class="reason-item">🔥 直近の推移: 小→小→小→小→小（ART80回以上の大爆発がなく5日経過。過去の傾向では中/小の後に大が来やすい）</div>
             
-            <div class="reason-item">🔥 8/14(金)ART確率1/85 (3,095G消化) → 高機械割域</div>
+            <div class="reason-item">🔥 本日ART確率1/85 (3,095G消化) → 高機械割域</div>
             
-            <div class="reason-item">🔥 8/14(金)16連の爆発あり</div>
+            <div class="reason-item">🔥 本日16連の爆発あり</div>
             
             <div class="reason-item">📅 この台の金曜好調率: 2/2回(100%) → 期待大</div>
             
@@ -475,7 +479,7 @@
             
             <div class="reason-item">🔥 直近の推移: 小→小→小→小→小（好調38日中、大0/中4/小34日）</div>
             
-            <div class="reason-item">🔥 8/14(金)12連の爆発あり</div>
+            <div class="reason-item">🔥 本日12連の爆発あり</div>
             
             <div class="reason-item">📅 この台の金曜好調率: 4/4回(100%) → 期待大</div>
             
@@ -763,11 +767,11 @@
             
             <div class="reason-item">🔥 直近の推移: 小→小→小→小→小（好調41日中、大0/中4/小37日）</div>
             
-            <div class="reason-item">🔥 8/14(金)ART確率1/81 (3,982G消化) → 高機械割域</div>
+            <div class="reason-item">🔥 本日ART確率1/81 (3,982G消化) → 高機械割域</div>
             
-            <div class="reason-item">🔥 8/14(金)天井到達2回 → 低機械割の可能性に注意</div>
+            <div class="reason-item">🔥 本日天井到達2回 → 低機械割の可能性に注意</div>
             
-            <div class="reason-item">🔥 8/14(金)17連の爆発あり</div>
+            <div class="reason-item">🔥 本日17連の爆発あり</div>
             
         </div>
         
@@ -1051,11 +1055,11 @@
             
             <div class="reason-item">🔥 直近の推移: 中→中→小→小→小（好調41日中、大0/中10/小31日）</div>
             
-            <div class="reason-item">🔥 8/14(金)ART確率1/90 (3,349G消化) → 高機械割域</div>
+            <div class="reason-item">🔥 本日ART確率1/90 (3,349G消化) → 高機械割域</div>
             
-            <div class="reason-item">🔥 8/14(金)天井到達1回 → 低機械割の可能性に注意</div>
+            <div class="reason-item">🔥 本日天井到達1回 → 低機械割の可能性に注意</div>
             
-            <div class="reason-item">🔥 8/14(金)12連の爆発あり</div>
+            <div class="reason-item">🔥 本日12連の爆発あり</div>
             
         </div>
         
@@ -1341,9 +1345,9 @@
             
             <div class="reason-item">🔥 直近の推移: 中→小→小→小→小（好調39日中、大0/中5/小34日）</div>
             
-            <div class="reason-item">🔥 8/14(金)ART確率1/66 (2,532G消化) → 高機械割域の挙動</div>
+            <div class="reason-item">🔥 本日ART確率1/66 (2,532G消化) → 高機械割域の挙動</div>
             
-            <div class="reason-item">🔥 8/14(金)27連の爆発あり</div>
+            <div class="reason-item">🔥 本日27連の爆発あり</div>
             
             <div class="reason-item">📅 この台の金曜実績: 6/7回好調（86%）</div>
             
@@ -1639,7 +1643,7 @@
             
             <div class="reason-item">💰 好調日の平均ART 32回（1/171）→ 打てば出やすい台</div>
             
-            <div class="reason-item">🔄 直近2日とも不調（1/247→1/274）→ 8/14(金)入替期待大（この店の過去実績: 115/168回=68%で翌日回復）</div>
+            <div class="reason-item">🔄 直近2日とも不調（1/247→1/274）→ 翌日入替期待大（この店の過去実績: 115/168回=68%で翌日回復）</div>
             
             <div class="reason-item">🚨 前日はART確率1/274で低機械割域（全台中央値1/141）（好調率89%のため本日も期待）</div>
             
@@ -1927,9 +1931,9 @@
             
             <div class="reason-item">🔥 直近の推移: 小→小→小→小→小（ART80回以上の大爆発がなく5日経過。過去の傾向では中/小の後に大が来やすい）</div>
             
-            <div class="reason-item">🔥 8/14(金)天井到達1回 → 低機械割の可能性に注意</div>
+            <div class="reason-item">🔥 本日天井到達1回 → 低機械割の可能性に注意</div>
             
-            <div class="reason-item">🔥 8/14(金)15連の爆発あり</div>
+            <div class="reason-item">🔥 本日15連の爆発あり</div>
             
             <div class="reason-item">📅 この台の金曜好調率: 4/4回(100%) → 期待大</div>
             
@@ -2221,9 +2225,9 @@
             
             <div class="reason-item">🔥 直近の推移: 小→小→小→小→小（好調43日中、大0/中9/小34日）</div>
             
-            <div class="reason-item">🔥 8/14(金)ART確率1/47 (2,209G消化) → 高機械割域の挙動</div>
+            <div class="reason-item">🔥 本日ART確率1/47 (2,209G消化) → 高機械割域の挙動</div>
             
-            <div class="reason-item">🔥 8/14(金)39連の爆発あり</div>
+            <div class="reason-item">🔥 本日39連の爆発あり</div>
             
             <div class="reason-item">📅 この台の金曜好調率: 3/3回(100%) → 期待大</div>
             
@@ -2509,7 +2513,7 @@
             
             <div class="reason-item">🔥 直近の推移: 小→小→小→小→小（好調40日中、大0/中6/小34日）</div>
             
-            <div class="reason-item">🔥 8/14(金)12連の爆発あり</div>
+            <div class="reason-item">🔥 本日12連の爆発あり</div>
             
             <div class="reason-item">💰 好調日の平均ART 33回（1/147）→ 打てば出やすい台</div>
             
@@ -3091,7 +3095,7 @@
             
             <div class="reason-item">💰 好調日の平均ART 32回（1/153）→ 打てば出やすい台</div>
             
-            <div class="reason-item">🔄 直近2日とも不調（1/153→1/229）→ 8/14(金)入替期待大（この店の過去実績: 115/168回=68%で翌日回復）</div>
+            <div class="reason-item">🔄 直近2日とも不調（1/153→1/229）→ 翌日入替期待大（この店の過去実績: 115/168回=68%で翌日回復）</div>
             
             <div class="reason-item">🚨 前日はART確率1/229で低機械割域（全台中央値1/141）（好調率87%のため本日も期待）</div>
             
@@ -3377,7 +3381,7 @@
             
             <div class="reason-item">🔥 直近の推移: 小→中→小→小→小（好調39日中、大0/中9/小30日）</div>
             
-            <div class="reason-item">🔥 8/14(金)11連の爆発あり</div>
+            <div class="reason-item">🔥 本日11連の爆発あり</div>
             
             <div class="reason-item">📅 この台の金曜好調率: 4/4回(100%) → 期待大</div>
             
@@ -3495,7 +3499,7 @@
             
             <div class="reason-item">🔥 直近の推移: 小→小→小→小→小（好調39日中、大0/中4/小35日）</div>
             
-            <div class="reason-item">🔥 8/14(金)天井到達1回 → 低機械割の可能性に注意</div>
+            <div class="reason-item">🔥 本日天井到達1回 → 低機械割の可能性に注意</div>
             
             <div class="reason-item">📅 この台の金曜好調率: 4/4回(100%) → 期待大</div>
             
@@ -3617,9 +3621,9 @@
             
             <div class="reason-item">🔥 直近の推移: 小→中→中→小→小（好調38日中、大0/中6/小32日）</div>
             
-            <div class="reason-item">🔥 8/14(金)ART確率1/77 (3,479G消化) → 高機械割域の挙動</div>
+            <div class="reason-item">🔥 本日ART確率1/77 (3,479G消化) → 高機械割域の挙動</div>
             
-            <div class="reason-item">🔥 8/14(金)15連の爆発あり</div>
+            <div class="reason-item">🔥 本日15連の爆発あり</div>
             
             <div class="reason-item">💰 好調日の平均ART 32回（1/140）→ 打てば出やすい台</div>
             
@@ -3737,11 +3741,11 @@
             
             <div class="reason-item">🔥 直近の推移: 中→小→小→中→中（好調40日中、大0/中12/小28日）</div>
             
-            <div class="reason-item">🔥 8/14(金)ART確率1/67 (3,858G消化) → 高機械割域の挙動</div>
+            <div class="reason-item">🔥 本日ART確率1/67 (3,858G消化) → 高機械割域の挙動</div>
             
-            <div class="reason-item">🔥 8/14(金)天井到達1回 → 低機械割の可能性に注意</div>
+            <div class="reason-item">🔥 本日天井到達1回 → 低機械割の可能性に注意</div>
             
-            <div class="reason-item">🔥 8/14(金)19連の爆発あり</div>
+            <div class="reason-item">🔥 本日19連の爆発あり</div>
             
         </div>
         
@@ -3855,11 +3859,11 @@
             
             <div class="reason-item">🔁 1日不調が続いた後→好調に切り替わる率100%（2/2回） / ほぼ毎日好調になる台</div>
             
-            <div class="reason-item">🔥 直近の推移: 中→小→中→小→小（大小交互 → 8/14(金)は大爆発の可能性）</div>
+            <div class="reason-item">🔥 直近の推移: 中→小→中→小→小（大小交互 → 本日は大爆発の可能性）</div>
             
-            <div class="reason-item">🔥 8/14(金)ART確率1/76 (3,586G消化) → 高機械割域の挙動</div>
+            <div class="reason-item">🔥 本日ART確率1/76 (3,586G消化) → 高機械割域の挙動</div>
             
-            <div class="reason-item">🔥 8/14(金)30連の爆発あり</div>
+            <div class="reason-item">🔥 本日30連の爆発あり</div>
             
             <div class="reason-item">📅 この台の金曜実績: 6/7回好調（86%）</div>
             
@@ -3977,7 +3981,7 @@
             
             <div class="reason-item">🔥 直近の推移: 小→小→小→小→小（好調42日中、大0/中3/小39日）</div>
             
-            <div class="reason-item">🔥 8/14(金)天井到達1回 → 低機械割の可能性に注意</div>
+            <div class="reason-item">🔥 本日天井到達1回 → 低機械割の可能性に注意</div>
             
             <div class="reason-item">📅 この台の金曜好調率: 3/3回(100%) → 期待大</div>
             
@@ -4265,13 +4269,13 @@
             
             <div class="reason-item">🔁 ほぼ毎日好調になる台</div>
             
-            <div class="reason-item">🔥 直近の推移: 中→小→中→小→小（大小交互 → 8/14(金)は大爆発の可能性）</div>
+            <div class="reason-item">🔥 直近の推移: 中→小→中→小→小（大小交互 → 本日は大爆発の可能性）</div>
             
-            <div class="reason-item">🔥 8/14(金)1/107で安定稼働中 (4,174G消化)</div>
+            <div class="reason-item">🔥 本日1/107で安定稼働中 (4,174G消化)</div>
             
-            <div class="reason-item">🔥 8/14(金)天井到達1回 → 低機械割の可能性に注意</div>
+            <div class="reason-item">🔥 本日天井到達1回 → 低機械割の可能性に注意</div>
             
-            <div class="reason-item">🔥 8/14(金)10連の爆発あり</div>
+            <div class="reason-item">🔥 本日10連の爆発あり</div>
             
         </div>
         
@@ -4675,7 +4679,7 @@
             
             <div class="reason-item">🔥 直近の推移: 小→小→小→小→小（好調42日中、大0/中11/小31日）</div>
             
-            <div class="reason-item">🔥 8/14(金)天井到達1回 → 低機械割の可能性に注意</div>
+            <div class="reason-item">🔥 本日天井到達1回 → 低機械割の可能性に注意</div>
             
             <div class="reason-item">📅 この台の金曜好調率: 3/3回(100%) → 期待大</div>
             
@@ -4795,11 +4799,11 @@
             
             <div class="reason-item">🔄 5日連続好調 + エスパス歌舞伎町は金曜が狙い目 → 据え置き濃厚</div>
             
-            <div class="reason-item">🔥 直近の推移: 小→中→小→中→中（大小交互 → 8/14(金)は大爆発の可能性）</div>
+            <div class="reason-item">🔥 直近の推移: 小→中→小→中→中（大小交互 → 本日は大爆発の可能性）</div>
             
-            <div class="reason-item">🔥 8/14(金)ART確率1/87 (4,922G消化) → 高機械割域</div>
+            <div class="reason-item">🔥 本日ART確率1/87 (4,922G消化) → 高機械割域</div>
             
-            <div class="reason-item">🔥 8/14(金)13連の爆発あり</div>
+            <div class="reason-item">🔥 本日13連の爆発あり</div>
             
             <div class="reason-item">📅 この台の金曜好調率: 3/4回(75%) → 期待大</div>
             
@@ -4917,9 +4921,9 @@
             
             <div class="reason-item">🔥 直近の推移: 中→小→小→小→小（好調36日中、大0/中6/小30日）</div>
             
-            <div class="reason-item">🔥 8/14(金)ART確率1/80 (3,762G消化) → 高機械割域の挙動</div>
+            <div class="reason-item">🔥 本日ART確率1/80 (3,762G消化) → 高機械割域の挙動</div>
             
-            <div class="reason-item">🔥 8/14(金)23連の爆発あり</div>
+            <div class="reason-item">🔥 本日23連の爆発あり</div>
             
             <div class="reason-item">📅 この台の金曜好調率: 3/3回(100%) → 期待大</div>
             
@@ -5037,9 +5041,9 @@
             
             <div class="reason-item">🔥 直近の推移: 中→小→小→中→中（好調43日中、大0/中12/小31日）</div>
             
-            <div class="reason-item">🔥 8/14(金)ART確率1/73 (4,984G消化) → 高機械割域の挙動</div>
+            <div class="reason-item">🔥 本日ART確率1/73 (4,984G消化) → 高機械割域の挙動</div>
             
-            <div class="reason-item">🔥 8/14(金)22連の爆発あり</div>
+            <div class="reason-item">🔥 本日22連の爆発あり</div>
             
             <div class="reason-item">📅 この台の金曜好調率: 4/4回(100%) → 期待大</div>
             
@@ -5157,11 +5161,11 @@
             
             <div class="reason-item">🔥 直近の推移: 小→中→小→小→小（ART80回以上の大爆発がなく5日経過。過去の傾向では中/小の後に大が来やすい）</div>
             
-            <div class="reason-item">🔥 8/14(金)1/107で安定稼働中 (3,969G消化)</div>
+            <div class="reason-item">🔥 本日1/107で安定稼働中 (3,969G消化)</div>
             
-            <div class="reason-item">🔥 8/14(金)天井到達1回 → 低機械割の可能性に注意</div>
+            <div class="reason-item">🔥 本日天井到達1回 → 低機械割の可能性に注意</div>
             
-            <div class="reason-item">🔥 8/14(金)17連の爆発あり</div>
+            <div class="reason-item">🔥 本日17連の爆発あり</div>
             
         </div>
         
@@ -5277,11 +5281,11 @@
             
             <div class="reason-item">🔥 直近の推移: 小→小→小→小→小（好調40日中、大0/中8/小32日）</div>
             
-            <div class="reason-item">🔥 8/14(金)ART確率1/92 (3,037G消化) → 高機械割域</div>
+            <div class="reason-item">🔥 本日ART確率1/92 (3,037G消化) → 高機械割域</div>
             
-            <div class="reason-item">🔥 8/14(金)天井到達1回 → 低機械割の可能性に注意</div>
+            <div class="reason-item">🔥 本日天井到達1回 → 低機械割の可能性に注意</div>
             
-            <div class="reason-item">🔥 8/14(金)24連の爆発あり</div>
+            <div class="reason-item">🔥 本日24連の爆発あり</div>
             
         </div>
         
@@ -5397,11 +5401,11 @@
             
             <div class="reason-item">🔥 直近の推移: 小→小→小→小→小（好調41日中、大0/中5/小36日）</div>
             
-            <div class="reason-item">🔥 8/14(金)1/117で安定稼働中 (3,754G消化)</div>
+            <div class="reason-item">🔥 本日1/117で安定稼働中 (3,754G消化)</div>
             
-            <div class="reason-item">🔥 8/14(金)天井到達1回 → 低機械割の可能性に注意</div>
+            <div class="reason-item">🔥 本日天井到達1回 → 低機械割の可能性に注意</div>
             
-            <div class="reason-item">🔥 8/14(金)19連の爆発あり</div>
+            <div class="reason-item">🔥 本日19連の爆発あり</div>
             
         </div>
         
@@ -5633,7 +5637,7 @@
             
             <div class="reason-item">🔥 直近の推移: 小→小→小→小→小（好調37日中、大0/中6/小31日）</div>
             
-            <div class="reason-item">🔥 8/14(金)天井到達1回 → 低機械割の可能性に注意</div>
+            <div class="reason-item">🔥 本日天井到達1回 → 低機械割の可能性に注意</div>
             
             <div class="reason-item">📅 この台の金曜好調率: 3/4回(75%) → 期待大</div>
             
@@ -5753,7 +5757,7 @@
             
             <div class="reason-item">🔥 直近の推移: 中→小→小→小→小（ART80回以上の大爆発がなく5日経過。過去の傾向では中/小の後に大が来やすい）</div>
             
-            <div class="reason-item">🔥 8/14(金)1/106で安定稼働中 (3,836G消化)</div>
+            <div class="reason-item">🔥 本日1/106で安定稼働中 (3,836G消化)</div>
             
             <div class="reason-item">🔥 連チャン中 → 高機械割継続の期待</div>
             
@@ -5989,7 +5993,7 @@
             
             <div class="reason-item">🔥 直近の推移: 小→小→小→小→小（好調38日中、大0/中11/小27日）</div>
             
-            <div class="reason-item">🔥 8/14(金)天井到達2回 → 低機械割の可能性に注意</div>
+            <div class="reason-item">🔥 本日天井到達2回 → 低機械割の可能性に注意</div>
             
             <div class="reason-item">📅 この台の金曜好調率: 4/4回(100%) → 期待大</div>
             
@@ -6107,7 +6111,7 @@
             
             <div class="reason-item">🔥 直近の推移: 小→小→小→小→小（好調35日中、大0/中5/小30日）</div>
             
-            <div class="reason-item">🔥 8/14(金)天井到達1回 → 低機械割の可能性に注意</div>
+            <div class="reason-item">🔥 本日天井到達1回 → 低機械割の可能性に注意</div>
             
             <div class="reason-item">📅 この台の金曜好調率: 4/4回(100%) → 期待大</div>
             
@@ -6347,7 +6351,7 @@
             
             <div class="reason-item">🔥 直近の推移: 小→小→小→小→小（ART80回以上の大爆発がなく5日経過。過去の傾向では中/小の後に大が来やすい）</div>
             
-            <div class="reason-item">🔥 8/14(金)11連の爆発あり</div>
+            <div class="reason-item">🔥 本日11連の爆発あり</div>
             
             <div class="reason-item">📅 この台の金曜好調率: 3/3回(100%) → 期待大</div>
             
@@ -6637,7 +6641,7 @@
             
             <div class="reason-item">🔥 直近の推移: 小→中→小→小→小（好調41日中、大0/中7/小34日）</div>
             
-            <div class="reason-item">🔥 8/14(金)天井到達1回 → 低機械割の可能性に注意</div>
+            <div class="reason-item">🔥 本日天井到達1回 → 低機械割の可能性に注意</div>
             
             <div class="reason-item">📅 この台の金曜好調率: 3/4回(75%) → 期待大</div>
             
@@ -6757,7 +6761,7 @@
             
             <div class="reason-item">🔥 直近の推移: 小→小→小→小→小（好調38日中、大0/中5/小33日）</div>
             
-            <div class="reason-item">🔥 8/14(金)天井到達2回 → 低機械割の可能性に注意</div>
+            <div class="reason-item">🔥 本日天井到達2回 → 低機械割の可能性に注意</div>
             
             <div class="reason-item">📅 この台の金曜好調率: 4/4回(100%) → 期待大</div>
             
@@ -6875,9 +6879,9 @@
             
             <div class="reason-item">🔁 ほぼ毎日好調になる台</div>
             
-            <div class="reason-item">🔥 直近の推移: 小→中→小→小→中（大小交互 → 8/14(金)は大爆発の可能性）</div>
+            <div class="reason-item">🔥 直近の推移: 小→中→小→小→中（大小交互 → 本日は大爆発の可能性）</div>
             
-            <div class="reason-item">🔥 8/14(金)天井到達1回 → 低機械割の可能性に注意</div>
+            <div class="reason-item">🔥 本日天井到達1回 → 低機械割の可能性に注意</div>
             
             <div class="reason-item">📅 この台の金曜好調率: 3/4回(75%) → 期待大</div>
             
@@ -7167,9 +7171,9 @@
             
             <div class="reason-item">🔥 直近の推移: 小→中→中→小→小（好調39日中、大0/中8/小31日）</div>
             
-            <div class="reason-item">🔥 8/14(金)天井到達1回 → 低機械割の可能性に注意</div>
+            <div class="reason-item">🔥 本日天井到達1回 → 低機械割の可能性に注意</div>
             
-            <div class="reason-item">🔥 8/14(金)19連の爆発あり</div>
+            <div class="reason-item">🔥 本日19連の爆発あり</div>
             
             <div class="reason-item">📅 この台の金曜実績: 6/7回好調（86%）</div>
             
@@ -7403,7 +7407,7 @@
             
             <div class="reason-item">🔥 直近の推移: 小→小→小→小→小（好調40日中、大0/中6/小34日）</div>
             
-            <div class="reason-item">🔥 8/14(金)天井到達1回 → 低機械割の可能性に注意</div>
+            <div class="reason-item">🔥 本日天井到達1回 → 低機械割の可能性に注意</div>
             
             <div class="reason-item">📅 この台の金曜好調率: 3/3回(100%) → 期待大</div>
             
@@ -7525,11 +7529,11 @@
             
             <div class="reason-item">🔥 直近の推移: 中→小→小→小→小（好調36日中、大0/中5/小31日）</div>
             
-            <div class="reason-item">🔥 8/14(金)天井到達1回 → 低機械割の可能性に注意</div>
+            <div class="reason-item">🔥 本日天井到達1回 → 低機械割の可能性に注意</div>
             
             <div class="reason-item">💰 好調日の平均ART 34回（1/143）→ 打てば出やすい台</div>
             
-            <div class="reason-item">🔄 直近2日とも不調（1/166→1/589）→ 8/14(金)入替期待大（この店の過去実績: 115/168回=68%で翌日回復）</div>
+            <div class="reason-item">🔄 直近2日とも不調（1/166→1/589）→ 翌日入替期待大（この店の過去実績: 115/168回=68%で翌日回復）</div>
             
             <div class="reason-item">🚨 前日はART確率1/589で低機械割域（全台中央値1/141）（好調率77%のため本日も期待）</div>
             
@@ -7813,7 +7817,7 @@
             
             <div class="reason-item">🔥 直近の推移: 小→小→小→小→小（ART80回以上の大爆発がなく5日経過。過去の傾向では中/小の後に大が来やすい）</div>
             
-            <div class="reason-item">🔥 8/14(金)天井到達1回 → 低機械割の可能性に注意</div>
+            <div class="reason-item">🔥 本日天井到達1回 → 低機械割の可能性に注意</div>
             
             <div class="reason-item">📅 この台の金曜好調率: 3/4回(75%) → 期待大</div>
             
@@ -7933,11 +7937,11 @@
             
             <div class="reason-item">🔥 直近の推移: 小→小→小→中→小（ART80回以上の大爆発がなく5日経過。過去の傾向では中/小の後に大が来やすい）</div>
             
-            <div class="reason-item">🔥 8/14(金)天井到達1回 → 低機械割の可能性に注意</div>
+            <div class="reason-item">🔥 本日天井到達1回 → 低機械割の可能性に注意</div>
             
             <div class="reason-item">💰 好調日の平均ART 32回（1/154）→ 打てば出やすい台</div>
             
-            <div class="reason-item">🚨 8/14(金)ART確率1/346 (2,428G消化) → 低機械割域の挙動</div>
+            <div class="reason-item">🚨 本日ART確率1/346 (2,428G消化) → 低機械割域の挙動</div>
             
             <div class="reason-item">🚨 前日はART確率1/576で低機械割域（全台中央値1/141）（好調率81%のため本日も期待）</div>
             
