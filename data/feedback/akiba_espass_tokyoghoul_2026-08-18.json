@@ -6,7 +6,7 @@
   "total_units": 28,
   "hits": 5,
   "misses": 7,
-  "surprises": 12,
+  "surprises": 13,
   "miss_details": [
     {
       "unit_id": "4164",
@@ -28,22 +28,21 @@
       ]
     },
     {
-      "unit_id": "4079",
-      "score": 100,
-      "actual_prob": 209,
-      "reasons": [
-        "高スコア過信",
-        "低稼働(209G)",
-        "設定1域(1/209)"
-      ]
-    },
-    {
       "unit_id": "4157",
       "score": 99,
       "actual_prob": 310,
       "reasons": [
         "高スコア過信",
         "設定1域(1/310)"
+      ]
+    },
+    {
+      "unit_id": "4161",
+      "score": 75,
+      "actual_prob": 413,
+      "reasons": [
+        "低稼働(413G)",
+        "設定1域(1/413)"
       ]
     },
     {
@@ -92,6 +91,13 @@
       "rank": "B",
       "score": 116,
       "actual_prob": 171,
+      "reasons": []
+    },
+    {
+      "unit_id": "4079",
+      "rank": "B",
+      "score": 94,
+      "actual_prob": 209,
       "reasons": []
     },
     {
