@@ -4,9 +4,51 @@
   "date": "2026-08-18",
   "weekday": "火",
   "total_units": 17,
-  "hits": 1,
-  "misses": 0,
-  "surprises": 0,
-  "miss_details": [],
-  "surprise_details": []
+  "hits": 3,
+  "misses": 1,
+  "surprises": 4,
+  "miss_details": [
+    {
+      "unit_id": "3169",
+      "score": 95,
+      "actual_prob": 234,
+      "reasons": [
+        "高スコア過信",
+        "低稼働(234G)",
+        "設定1域(1/234)"
+      ]
+    }
+  ],
+  "surprise_details": [
+    {
+      "unit_id": "3171",
+      "rank": "B",
+      "score": 89,
+      "actual_prob": 101,
+      "reasons": []
+    },
+    {
+      "unit_id": "3167",
+      "rank": "B",
+      "score": 85,
+      "actual_prob": 240,
+      "reasons": []
+    },
+    {
+      "unit_id": "3164",
+      "rank": "B",
+      "score": 83,
+      "actual_prob": 143,
+      "reasons": []
+    },
+    {
+      "unit_id": "3166",
+      "rank": "B",
+      "score": 80,
+      "actual_prob": 52,
+      "reasons": [
+        "実は高設定域(1/52)"
+      ]
+    }
+  ]
 }
