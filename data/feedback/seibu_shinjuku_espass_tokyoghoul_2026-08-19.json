@@ -4,9 +4,9 @@
   "date": "2026-08-19",
   "weekday": "水",
   "total_units": 17,
-  "hits": 4,
-  "misses": 3,
-  "surprises": 6,
+  "hits": 2,
+  "misses": 5,
+  "surprises": 8,
   "miss_details": [
     {
       "unit_id": "3165",
@@ -18,30 +18,63 @@
       ]
     },
     {
-      "unit_id": "3168",
-      "score": 101,
-      "actual_prob": 280,
+      "unit_id": "3171",
+      "score": 95,
+      "actual_prob": 309,
       "reasons": [
         "高スコア過信",
-        "設定1域(1/280)"
+        "低稼働(618G)",
+        "設定1域(1/309)"
       ]
     },
     {
-      "unit_id": "3174",
-      "score": 112,
-      "actual_prob": 213,
+      "unit_id": "3163",
+      "score": 81,
+      "actual_prob": 325,
       "reasons": [
         "高スコア過信",
-        "設定1域(1/213)"
+        "低稼働(977G)",
+        "設定1域(1/325)"
+      ]
+    },
+    {
+      "unit_id": "3160",
+      "score": 78,
+      "actual_prob": 412,
+      "reasons": [
+        "低稼働(412G)",
+        "設定1域(1/412)"
+      ]
+    },
+    {
+      "unit_id": "3170",
+      "score": 65,
+      "actual_prob": 470,
+      "reasons": [
+        "設定1域(1/470)"
       ]
     }
   ],
   "surprise_details": [
     {
-      "unit_id": "3171",
+      "unit_id": "3166",
       "rank": "B",
-      "score": 95,
-      "actual_prob": 309,
+      "score": 111,
+      "actual_prob": 185,
+      "reasons": []
+    },
+    {
+      "unit_id": "3168",
+      "rank": "B",
+      "score": 101,
+      "actual_prob": 280,
+      "reasons": []
+    },
+    {
+      "unit_id": "3172",
+      "rank": "B",
+      "score": 98,
+      "actual_prob": 148,
       "reasons": []
     },
     {
@@ -49,6 +82,13 @@
       "rank": "B",
       "score": 94,
       "actual_prob": 132,
+      "reasons": []
+    },
+    {
+      "unit_id": "3174",
+      "rank": "B",
+      "score": 112,
+      "actual_prob": 213,
       "reasons": []
     },
     {
@@ -70,13 +110,6 @@
       "rank": "B",
       "score": 89,
       "actual_prob": 147,
-      "reasons": []
-    },
-    {
-      "unit_id": "3163",
-      "rank": "B",
-      "score": 81,
-      "actual_prob": 325,
       "reasons": []
     }
   ]
