@@ -4,26 +4,17 @@
   "date": "2026-08-20",
   "weekday": "木",
   "total_units": 17,
-  "hits": 2,
-  "misses": 5,
-  "surprises": 8,
+  "hits": 4,
+  "misses": 3,
+  "surprises": 7,
   "miss_details": [
     {
-      "unit_id": "3170",
-      "score": 130,
-      "actual_prob": 256,
+      "unit_id": "3171",
+      "score": 124,
+      "actual_prob": 229,
       "reasons": [
         "高スコア過信",
-        "設定1域(1/256)"
-      ]
-    },
-    {
-      "unit_id": "3166",
-      "score": 116,
-      "actual_prob": 211,
-      "reasons": [
-        "高スコア過信",
-        "設定1域(1/211)"
+        "設定1域(1/229)"
       ]
     },
     {
@@ -34,15 +25,6 @@
         "高スコア過信",
         "低稼働(304G)",
         "設定1域(1/304)"
-      ]
-    },
-    {
-      "unit_id": "3171",
-      "score": 106,
-      "actual_prob": 266,
-      "reasons": [
-        "高スコア過信",
-        "設定1域(1/266)"
       ]
     },
     {
@@ -57,10 +39,33 @@
   ],
   "surprise_details": [
     {
+      "unit_id": "3160",
+      "rank": "B",
+      "score": 84,
+      "actual_prob": 119,
+      "reasons": []
+    },
+    {
+      "unit_id": "3218",
+      "rank": "B",
+      "score": 103,
+      "actual_prob": 79,
+      "reasons": [
+        "実は高設定域(1/79)"
+      ]
+    },
+    {
       "unit_id": "3161",
       "rank": "B",
-      "score": 96,
+      "score": 97,
       "actual_prob": 164,
+      "reasons": []
+    },
+    {
+      "unit_id": "3172",
+      "rank": "B",
+      "score": 97,
+      "actual_prob": 120,
       "reasons": []
     },
     {
@@ -85,36 +90,6 @@
       "reasons": [
         "実は高設定域(1/75)"
       ]
-    },
-    {
-      "unit_id": "3218",
-      "rank": "B",
-      "score": 108,
-      "actual_prob": 52,
-      "reasons": [
-        "実は高設定域(1/52)"
-      ]
-    },
-    {
-      "unit_id": "3173",
-      "rank": "B",
-      "score": 85,
-      "actual_prob": 296,
-      "reasons": []
-    },
-    {
-      "unit_id": "3160",
-      "rank": "B",
-      "score": 84,
-      "actual_prob": 119,
-      "reasons": []
-    },
-    {
-      "unit_id": "3172",
-      "rank": "B",
-      "score": 97,
-      "actual_prob": 120,
-      "reasons": []
     }
   ]
 }
