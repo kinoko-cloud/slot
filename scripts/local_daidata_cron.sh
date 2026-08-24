@@ -23,9 +23,13 @@ rm -f /tmp/slot_fetch.lock
 # 最新コードを取得（GitHub Actionsがpapimoデータをプッシュしているかもしれない）
 echo "--- git pull ---"
 git fetch origin 2>&1
-git reset --hard origin/main 2>&1 || {
-    echo "⚠️ git reset失敗 - 続行"
-}
+if [ -n "$(git status --porcelain)" ]; then
+    echo "⚠️ 未コミットの変更を検出（作業中の可能性）- 今回のコード同期(git reset)は見送り"
+else
+    git reset --hard origin/main 2>&1 || {
+        echo "⚠️ git reset失敗 - 続行"
+    }
+fi
 
 # --- daidata取得（東京喰種） ---
 # 2026-07-07: 「ART/履歴矛盾→強制詳細取得」が毎回全台で発生し120台の逐次取得が
