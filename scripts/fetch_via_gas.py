@@ -13,6 +13,7 @@ GAS経由でdaidataのunit_listデータを取得してavailability.jsonを更�
 """
 import json
 import sys
+import time
 import urllib.request
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
@@ -29,16 +30,30 @@ GAS_URL = (
 )
 
 
-def fetch_from_gas(timeout=120):
-    """GASエンドポイントからデータを取得してパース"""
-    print(f"GASエンドポイントに接続中...")
-    req = urllib.request.Request(
-        GAS_URL,
-        headers={'User-Agent': 'Mozilla/5.0 (compatible; slot-bot/1.0)'}
-    )
-    with urllib.request.urlopen(req, timeout=timeout) as resp:
-        data = json.loads(resp.read().decode('utf-8'))
-    return data
+def fetch_from_gas(timeout=120, retries=3, retry_delay=10):
+    """GASエンドポイントからデータを取得してパース
+
+    GAS Webアプリはコールドスタート等で一時的に404/タイムアウトを
+    返すことがあるため、リトライして吸収する。
+    """
+    last_error = None
+    for attempt in range(1, retries + 1):
+        try:
+            print(f"GASエンドポイントに接続中... (試行{attempt}/{retries})")
+            req = urllib.request.Request(
+                GAS_URL,
+                headers={'User-Agent': 'Mozilla/5.0 (compatible; slot-bot/1.0)'}
+            )
+            with urllib.request.urlopen(req, timeout=timeout) as resp:
+                data = json.loads(resp.read().decode('utf-8'))
+            return data
+        except Exception as e:
+            last_error = e
+            print(f"取得失敗: {e}")
+            if attempt < retries:
+                print(f"{retry_delay}秒後にリトライします...")
+                time.sleep(retry_delay)
+    raise last_error
 
 
 def load_existing_availability():
