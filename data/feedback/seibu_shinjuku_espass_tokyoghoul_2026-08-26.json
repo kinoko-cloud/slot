@@ -6,8 +6,18 @@
   "total_units": 17,
   "hits": 5,
   "misses": 2,
-  "surprises": 9,
+  "surprises": 8,
   "miss_details": [
+    {
+      "unit_id": "3174",
+      "score": 91,
+      "actual_prob": 307,
+      "reasons": [
+        "高スコア過信",
+        "低稼働(923G)",
+        "設定1域(1/307)"
+      ]
+    },
     {
       "unit_id": "3162",
       "score": 85,
@@ -16,21 +26,13 @@
         "高スコア過信",
         "設定1域(1/668)"
       ]
-    },
-    {
-      "unit_id": "3171",
-      "score": 51,
-      "actual_prob": 463,
-      "reasons": [
-        "設定1域(1/463)"
-      ]
     }
   ],
   "surprise_details": [
     {
       "unit_id": "3165",
       "rank": "B",
-      "score": 113,
+      "score": 112,
       "actual_prob": 228,
       "reasons": []
     },
@@ -72,7 +74,7 @@
     {
       "unit_id": "3164",
       "rank": "B",
-      "score": 92,
+      "score": 91,
       "actual_prob": 286,
       "reasons": []
     },
@@ -81,13 +83,6 @@
       "rank": "B",
       "score": 85,
       "actual_prob": 296,
-      "reasons": []
-    },
-    {
-      "unit_id": "3174",
-      "rank": "B",
-      "score": 85,
-      "actual_prob": 307,
       "reasons": []
     }
   ]
