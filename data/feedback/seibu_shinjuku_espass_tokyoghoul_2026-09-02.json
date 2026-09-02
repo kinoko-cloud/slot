@@ -4,10 +4,18 @@
   "date": "2026-09-02",
   "weekday": "水",
   "total_units": 17,
-  "hits": 5,
-  "misses": 2,
-  "surprises": 7,
+  "hits": 1,
+  "misses": 3,
+  "surprises": 2,
   "miss_details": [
+    {
+      "unit_id": "3166",
+      "score": 100,
+      "actual_prob": 0,
+      "reasons": [
+        "高スコア過信"
+      ]
+    },
     {
       "unit_id": "3162",
       "score": 94,
@@ -19,45 +27,15 @@
       ]
     },
     {
-      "unit_id": "3159",
-      "score": 92,
-      "actual_prob": 258,
+      "unit_id": "3163",
+      "score": 90,
+      "actual_prob": 0,
       "reasons": [
-        "高スコア過信",
-        "低稼働(517G)",
-        "設定1域(1/258)"
+        "高スコア過信"
       ]
     }
   ],
   "surprise_details": [
-    {
-      "unit_id": "3218",
-      "rank": "B",
-      "score": 107,
-      "actual_prob": 163,
-      "reasons": []
-    },
-    {
-      "unit_id": "3161",
-      "rank": "B",
-      "score": 85,
-      "actual_prob": 289,
-      "reasons": []
-    },
-    {
-      "unit_id": "3167",
-      "rank": "B",
-      "score": 105,
-      "actual_prob": 98,
-      "reasons": []
-    },
-    {
-      "unit_id": "3170",
-      "rank": "B",
-      "score": 93,
-      "actual_prob": 87,
-      "reasons": []
-    },
     {
       "unit_id": "3169",
       "rank": "B",
@@ -66,17 +44,10 @@
       "reasons": []
     },
     {
-      "unit_id": "3165",
+      "unit_id": "3161",
       "rank": "B",
-      "score": 91,
-      "actual_prob": 163,
-      "reasons": []
-    },
-    {
-      "unit_id": "3172",
-      "rank": "B",
-      "score": 88,
-      "actual_prob": 91,
+      "score": 85,
+      "actual_prob": 289,
       "reasons": []
     }
   ]
