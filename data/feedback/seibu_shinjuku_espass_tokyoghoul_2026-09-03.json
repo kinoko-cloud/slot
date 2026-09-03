@@ -4,27 +4,37 @@
   "date": "2026-09-03",
   "weekday": "木",
   "total_units": 17,
-  "hits": 1,
-  "misses": 1,
-  "surprises": 3,
+  "hits": 3,
+  "misses": 2,
+  "surprises": 6,
   "miss_details": [
     {
       "unit_id": "3163",
-      "score": 68,
-      "actual_prob": 347,
+      "score": 106,
+      "actual_prob": 272,
       "reasons": [
-        "設定1域(1/347)"
+        "高スコア過信",
+        "設定1域(1/272)"
+      ]
+    },
+    {
+      "unit_id": "3162",
+      "score": 71,
+      "actual_prob": 476,
+      "reasons": [
+        "低稼働(476G)",
+        "設定1域(1/476)"
       ]
     }
   ],
   "surprise_details": [
     {
-      "unit_id": "3159",
+      "unit_id": "3160",
       "rank": "B",
-      "score": 91,
-      "actual_prob": 20,
+      "score": 97,
+      "actual_prob": 75,
       "reasons": [
-        "実は高設定域(1/20)"
+        "実は高設定域(1/75)"
       ]
     },
     {
@@ -41,6 +51,33 @@
       "actual_prob": 76,
       "reasons": [
         "実は高設定域(1/76)"
+      ]
+    },
+    {
+      "unit_id": "3161",
+      "rank": "B",
+      "score": 89,
+      "actual_prob": 52,
+      "reasons": [
+        "実は高設定域(1/52)"
+      ]
+    },
+    {
+      "unit_id": "3172",
+      "rank": "B",
+      "score": 88,
+      "actual_prob": 26,
+      "reasons": [
+        "実は高設定域(1/26)"
+      ]
+    },
+    {
+      "unit_id": "3168",
+      "rank": "B",
+      "score": 84,
+      "actual_prob": 10,
+      "reasons": [
+        "実は高設定域(1/10)"
       ]
     }
   ]
