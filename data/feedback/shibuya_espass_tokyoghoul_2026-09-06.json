@@ -4,11 +4,27 @@
   "date": "2026-09-06",
   "weekday": "日",
   "total_units": 33,
-  "hits": 14,
-  "misses": 0,
+  "hits": 13,
+  "misses": 1,
   "surprises": 19,
-  "miss_details": [],
+  "miss_details": [
+    {
+      "unit_id": "2089",
+      "score": 60,
+      "actual_prob": 325,
+      "reasons": [
+        "設定1域(1/325)"
+      ]
+    }
+  ],
   "surprise_details": [
+    {
+      "unit_id": "2075",
+      "rank": "B",
+      "score": 121,
+      "actual_prob": 97,
+      "reasons": []
+    },
     {
       "unit_id": "2091",
       "rank": "B",
@@ -133,13 +149,6 @@
       "rank": "B",
       "score": 93,
       "actual_prob": 279,
-      "reasons": []
-    },
-    {
-      "unit_id": "2089",
-      "rank": "C",
-      "score": 60,
-      "actual_prob": 325,
       "reasons": []
     }
   ]
