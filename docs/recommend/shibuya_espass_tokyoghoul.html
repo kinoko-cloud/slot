@@ -9,7 +9,7 @@
     <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
     <meta name="googlebot" content="noindex, nofollow">
     <title>エスパス日拓渋谷新館</title>
-    <link rel="stylesheet" href="/static/style.css?v=20260916093109">
+    <link rel="stylesheet" href="/static/style.css?v=20260916102654">
 </head>
 <body data-page-type="recommend" data-store-key="shibuya_espass_tokyoghoul">
     <div class="container">
@@ -27,7 +27,7 @@
         
     </div>
     <div class="top-bar-right">
-        <span class="version-info" id="build-ver" title="ビルド時刻">v0916_09:32</span>
+        <span class="version-info" id="build-ver" title="ビルド時刻">v0916_10:27</span>
         
     </div>
 </div>
@@ -43,7 +43,7 @@
             <div class="update-info">
                 
                 <span class="data-source">
-                    データ取得: <span id="update-time">09:30</span>
+                    データ取得: <span id="update-time">10:26</span>
                 </span>
                 <span class="cache-badge github">GITHUB</span>
                 
@@ -52,7 +52,11 @@
 
             <!-- 空き状況サマリ -->
             
-            <div class="closed-notice">現在営業時間外です</div>
+            <div class="availability-summary">
+                <span class="avail-empty" onclick="filterUnits('empty')">空き 0台</span>
+                <span class="avail-playing" onclick="filterUnits('playing')">遊技中 33台</span>
+                <span class="avail-all" onclick="filterUnits('all')">全て</span>
+            </div>
             
 
             <div class="action-buttons">
@@ -199,11 +203,11 @@
             
             <div class="reason-item">🔥 直近の推移: 小→小→中→小→小（好調62日中、大0/中9/小53日）</div>
             
-            <div class="reason-item">🔥 9/16(水)ART確率1/84 (3,121G消化) → 高機械割域</div>
+            <div class="reason-item">🔥 本日ART確率1/84 (3,121G消化) → 高機械割域</div>
             
-            <div class="reason-item">🔥 9/16(水)天井到達1回 → 低機械割の可能性に注意</div>
+            <div class="reason-item">🔥 本日天井到達1回 → 低機械割の可能性に注意</div>
             
-            <div class="reason-item">🔥 9/16(水)26連の爆発あり</div>
+            <div class="reason-item">🔥 本日26連の爆発あり</div>
             
         </div>
         
@@ -489,9 +493,9 @@
             
             <div class="reason-item">🔥 直近の推移: 小→小→小→小→小（好調66日中、大0/中7/小59日）</div>
             
-            <div class="reason-item">🔥 9/16(水)ART確率1/88 (3,533G消化) → 高機械割域</div>
+            <div class="reason-item">🔥 本日ART確率1/88 (3,533G消化) → 高機械割域</div>
             
-            <div class="reason-item">🔥 9/16(水)10連の爆発あり</div>
+            <div class="reason-item">🔥 本日10連の爆発あり</div>
             
             <div class="reason-item">📅 この台の水曜好調率: 7/7回(100%) → 期待大</div>
             
@@ -781,9 +785,9 @@
             
             <div class="reason-item">🔥 直近の推移: 小→小→小→小→小（好調65日中、大0/中13/小52日）</div>
             
-            <div class="reason-item">🔥 9/16(水)ART確率1/75 (3,250G消化) → 高機械割域の挙動</div>
+            <div class="reason-item">🔥 本日ART確率1/75 (3,250G消化) → 高機械割域の挙動</div>
             
-            <div class="reason-item">🔥 9/16(水)23連の爆発あり</div>
+            <div class="reason-item">🔥 本日23連の爆発あり</div>
             
             <div class="reason-item">📅 この台の水曜好調率: 8/8回(100%) → 期待大</div>
             
@@ -1071,9 +1075,9 @@
             
             <div class="reason-item">🔥 直近の推移: 小→小→小→小→小（好調67日中、大0/中14/小53日）</div>
             
-            <div class="reason-item">🔥 9/16(水)1/122で安定稼働中 (4,298G消化)</div>
+            <div class="reason-item">🔥 本日1/122で安定稼働中 (4,298G消化)</div>
             
-            <div class="reason-item">🔥 9/16(水)13連の爆発あり</div>
+            <div class="reason-item">🔥 本日13連の爆発あり</div>
             
             <div class="reason-item">📅 この台の水曜好調率: 6/8回(75%) → 期待大</div>
             
@@ -1361,9 +1365,9 @@
             
             <div class="reason-item">🔥 直近の推移: 小→小→小→小→小（好調65日中、大0/中13/小52日）</div>
             
-            <div class="reason-item">🔥 9/16(水)1/122で安定稼働中 (4,768G消化)</div>
+            <div class="reason-item">🔥 本日1/122で安定稼働中 (4,768G消化)</div>
             
-            <div class="reason-item">🔥 9/16(水)12連の爆発あり</div>
+            <div class="reason-item">🔥 本日12連の爆発あり</div>
             
             <div class="reason-item">📅 この台の水曜好調率: 6/6回(100%) → 期待大</div>
             
@@ -1649,7 +1653,7 @@
             
             <div class="reason-item">🔥 直近の推移: 小→小→小→小→小（ART80回以上の大爆発がなく5日経過。過去の傾向では中/小の後に大が来やすい）</div>
             
-            <div class="reason-item">🔥 9/16(水)天井到達1回 → 低機械割の可能性に注意</div>
+            <div class="reason-item">🔥 本日天井到達1回 → 低機械割の可能性に注意</div>
             
             <div class="reason-item">📅 この台の水曜好調率: 5/5回(100%) → 期待大</div>
             
@@ -1943,7 +1947,7 @@
             
             <div class="reason-item">🔥 直近の推移: 小→小→小→中→中（好調68日中、大0/中16/小52日）</div>
             
-            <div class="reason-item">🔥 9/16(水)ART確率1/54 (2,763G消化) → 高機械割域の挙動</div>
+            <div class="reason-item">🔥 本日ART確率1/54 (2,763G消化) → 高機械割域の挙動</div>
             
             <div class="reason-item">📅 この台の水曜好調率: 6/6回(100%) → 期待大</div>
             
@@ -2233,9 +2237,9 @@
             
             <div class="reason-item">🔥 直近の推移: 小→小→小→小→小（好調69日中、大0/中10/小59日）</div>
             
-            <div class="reason-item">🔥 9/16(水)ART確率1/77 (3,727G消化) → 高機械割域の挙動</div>
+            <div class="reason-item">🔥 本日ART確率1/77 (3,727G消化) → 高機械割域の挙動</div>
             
-            <div class="reason-item">🔥 9/16(水)22連の爆発あり</div>
+            <div class="reason-item">🔥 本日22連の爆発あり</div>
             
             <div class="reason-item">📅 この台の水曜好調率: 6/6回(100%) → 期待大</div>
             
@@ -2523,7 +2527,7 @@
             
             <div class="reason-item">🔥 直近の推移: 中→小→小→小→小（ART80回以上の大爆発がなく5日経過。過去の傾向では中/小の後に大が来やすい）</div>
             
-            <div class="reason-item">🔥 9/16(水)ART確率1/85 (4,023G消化) → 高機械割域</div>
+            <div class="reason-item">🔥 本日ART確率1/85 (4,023G消化) → 高機械割域</div>
             
             <div class="reason-item">📅 この台の水曜好調率: 6/6回(100%) → 期待大</div>
             
@@ -3881,11 +3885,301 @@
     <div class="v2-header">
         <div class="v2-header-row1">
             <span class="v2-rank-num">#14</span>
-            <a href="/history/shibuya_espass_tokyoghoul_2087.html" class="v2-unit-id" onclick="event.stopPropagation()">2087番台</a>
+            <a href="/history/shibuya_espass_tokyoghoul_2086.html" class="v2-unit-id" onclick="event.stopPropagation()">2086番台</a>
             
             <a href="/recommend/shibuya_espass_tokyoghoul.html" class="v2-store" onclick="event.stopPropagation()">エスパス渋谷新館</a>
             
             <span class="v2-rank" style="background-color: #ffa502">A</span>
+            <span class="expand-icon small">▼</span>
+        </div>
+        <div class="v2-header-row2">
+            <span class="v2-machine">東京喰種</span>
+        </div>
+    </div>
+
+    
+    
+    <div class="v2-reason">🔮 5日連続好調</div>
+    
+
+    
+    <div class="v2-days">
+        
+        <div class="v2-day v2-day-today">
+            <span class="v2-day-label">本日</span>
+            <span class="v2-day-art">ART 24</span>
+            <span class="v2-day-rb">RB 11</span>
+            <span class="v2-day-prob good">1/106</span>
+            <span class="v2-day-games">2,567G</span>
+            <span class="diff-medals-sm minus">-2,954枚</span>
+            <span class="max-medals-sm">最大2,398枚</span>
+            <span class="rensa-sm">14連</span>
+        </div>
+        
+        
+        <div class="v2-day">
+            <span class="v2-day-label">9/15(火)</span>
+            <span class="v2-day-art">ART 24</span>
+            <span class="v2-day-rb">RB 11</span>
+            <span class="v2-day-prob good">1/106</span>
+            <span class="diff-medals-sm plus">+1,083枚</span>
+            <span class="max-medals-sm">最大2,398枚</span>
+            <span class="rensa-sm">15連</span>
+            
+        </div>
+        
+
+        
+        <div class="v2-day">
+            <span class="v2-day-label">9/14(月)</span>
+            <span class="v2-day-art">ART 48</span>
+            <span class="v2-day-rb">RB 21</span>
+            <span class="prev-prob good">1/121</span>
+            <span class="diff-medals-sm plus">+3,253枚</span>
+            <span class="max-medals-sm">最大4,579枚</span>
+            <span class="rensa-sm">16連</span>
+            
+        </div>
+        
+
+        
+        <div class="v2-day">
+            <span class="v2-day-label">9/13(日)</span>
+            <span class="v2-day-art">ART 54</span>
+            <span class="v2-day-rb">RB 18</span>
+            <span class="prev-prob excellent">1/76</span>
+            <span class="diff-medals-sm plus">+8,696枚</span>
+            <span class="max-medals-sm">最大10,653枚</span>
+            <span class="rensa-sm">23連</span>
+            
+        </div>
+        
+    </div>
+
+    
+    
+    <div class="v2-setting">
+        <span class="setting-badge-sm setting-6">高機械割</span>
+    </div>
+    
+
+    
+    <div class="unit-details hidden">
+        <div class="v2-detail-reasons">
+            
+            <div class="reason-item">🔮 5日連続好調</div>
+            
+            <div class="reason-item">🔁 ほぼ毎日好調になる台</div>
+            
+            <div class="reason-item">🔥 直近の推移: 中→中→小→小→小（好調30日中、大0/中8/小22日）</div>
+            
+            <div class="reason-item">🔥 本日天井到達1回 → 低機械割の可能性に注意</div>
+            
+            <div class="reason-item">🔥 本日14連の爆発あり</div>
+            
+            <div class="reason-item">📅 この台の水曜好調率: 2/2回(100%) → 期待大</div>
+            
+        </div>
+        
+        <div class="v2-detail-today">
+            本日: ART 24 / RB 11 / 2,567G
+             / 1/106
+             / 最大2,398枚
+        </div>
+        
+        
+        
+        <div class="v2-today-history">
+            <div class="history-header">📊 本日の当たり履歴</div>
+            <div class="history-list">
+                
+                <div class="history-item ">
+                    <span class="hit-num">#0</span>
+                    <span class="hit-time">10:16</span>
+                    <span class="hit-start">88G</span>
+                    <span class="hit-medals ">11枚</span>
+                    
+                </div>
+                
+                <div class="history-item ">
+                    <span class="hit-num">#0</span>
+                    <span class="hit-time">10:17</span>
+                    <span class="hit-start">1G</span>
+                    <span class="hit-medals ">196枚</span>
+                    
+                </div>
+                
+                <div class="history-item ">
+                    <span class="hit-num">#0</span>
+                    <span class="hit-time">10:28</span>
+                    <span class="hit-start">99G</span>
+                    <span class="hit-medals ">19枚</span>
+                    
+                </div>
+                
+                <div class="history-item ">
+                    <span class="hit-num">#0</span>
+                    <span class="hit-time">11:12</span>
+                    <span class="hit-start">83G</span>
+                    <span class="hit-medals ">39枚</span>
+                    
+                </div>
+                
+                <div class="history-item ">
+                    <span class="hit-num">#0</span>
+                    <span class="hit-time">11:49</span>
+                    <span class="hit-start">180G</span>
+                    <span class="hit-medals ">47枚</span>
+                    
+                </div>
+                
+                <div class="history-item ">
+                    <span class="hit-num">#0</span>
+                    <span class="hit-time">12:19</span>
+                    <span class="hit-start">414G</span>
+                    <span class="hit-medals ">49枚</span>
+                    
+                </div>
+                
+                <div class="history-item ">
+                    <span class="hit-num">#0</span>
+                    <span class="hit-time">12:34</span>
+                    <span class="hit-start">212G</span>
+                    <span class="hit-medals ">39枚</span>
+                    
+                </div>
+                
+                <div class="history-item ">
+                    <span class="hit-num">#0</span>
+                    <span class="hit-time">12:45</span>
+                    <span class="hit-start">155G</span>
+                    <span class="hit-medals ">15枚</span>
+                    
+                </div>
+                
+                <div class="history-item ">
+                    <span class="hit-num">#0</span>
+                    <span class="hit-time">12:46</span>
+                    <span class="hit-start">1G</span>
+                    <span class="hit-medals ">14枚</span>
+                    
+                </div>
+                
+                <div class="history-item ">
+                    <span class="hit-num">#0</span>
+                    <span class="hit-time">12:47</span>
+                    <span class="hit-start">2G</span>
+                    <span class="hit-medals ">160枚</span>
+                    
+                </div>
+                
+                <div class="history-item ">
+                    <span class="hit-num">#0</span>
+                    <span class="hit-time">12:53</span>
+                    <span class="hit-start">0G</span>
+                    <span class="hit-medals ">56枚</span>
+                    
+                </div>
+                
+                <div class="history-item ">
+                    <span class="hit-num">#0</span>
+                    <span class="hit-time">12:55</span>
+                    <span class="hit-start">0G</span>
+                    <span class="hit-medals ">58枚</span>
+                    
+                </div>
+                
+                <div class="history-item ">
+                    <span class="hit-num">#0</span>
+                    <span class="hit-time">12:57</span>
+                    <span class="hit-start">0G</span>
+                    <span class="hit-medals ">108枚</span>
+                    
+                </div>
+                
+                <div class="history-item ">
+                    <span class="hit-num">#0</span>
+                    <span class="hit-time">13:01</span>
+                    <span class="hit-start">0G</span>
+                    <span class="hit-medals ">196枚</span>
+                    
+                </div>
+                
+                <div class="history-item ">
+                    <span class="hit-num">#0</span>
+                    <span class="hit-time">13:07</span>
+                    <span class="hit-start">0G</span>
+                    <span class="hit-medals ">12枚</span>
+                    
+                </div>
+                
+                <div class="history-item medium-hit">
+                    <span class="hit-num">#0</span>
+                    <span class="hit-time">13:09</span>
+                    <span class="hit-start">0G</span>
+                    <span class="hit-medals medium">543枚</span>
+                    
+                </div>
+                
+                <div class="history-item ">
+                    <span class="hit-num">#0</span>
+                    <span class="hit-time">13:21</span>
+                    <span class="hit-start">0G</span>
+                    <span class="hit-medals ">122枚</span>
+                    
+                </div>
+                
+                <div class="history-item ">
+                    <span class="hit-num">#0</span>
+                    <span class="hit-time">13:24</span>
+                    <span class="hit-start">0G</span>
+                    <span class="hit-medals ">32枚</span>
+                    
+                </div>
+                
+                <div class="history-item ">
+                    <span class="hit-num">#0</span>
+                    <span class="hit-time">13:27</span>
+                    <span class="hit-start">0G</span>
+                    <span class="hit-medals ">68枚</span>
+                    
+                </div>
+                
+                <div class="history-item medium-hit">
+                    <span class="hit-num">#0</span>
+                    <span class="hit-time">13:29</span>
+                    <span class="hit-start">0G</span>
+                    <span class="hit-medals medium">774枚</span>
+                    
+                </div>
+                
+                
+                <div class="history-more">...他14件</div>
+                
+            </div>
+        </div>
+        
+        <div class="v2-detail-trend">
+            
+            3日連続不調 → 設定上げの可能性あり
+            
+        </div>
+    </div>
+</div>
+
+                
+                
+
+<div class="unit-card-v2 rank-b" onclick="toggleDetails(this)">
+    
+    <div class="v2-header">
+        <div class="v2-header-row1">
+            <span class="v2-rank-num">#15</span>
+            <a href="/history/shibuya_espass_tokyoghoul_2087.html" class="v2-unit-id" onclick="event.stopPropagation()">2087番台</a>
+            
+            <a href="/recommend/shibuya_espass_tokyoghoul.html" class="v2-store" onclick="event.stopPropagation()">エスパス渋谷新館</a>
+            
+            <span class="v2-rank" style="background-color: #2ed573">B</span>
             <span class="expand-icon small">▼</span>
         </div>
         <div class="v2-header-row2">
@@ -4168,7 +4462,7 @@
     
     <div class="v2-header">
         <div class="v2-header-row1">
-            <span class="v2-rank-num">#15</span>
+            <span class="v2-rank-num">#16</span>
             <a href="/history/shibuya_espass_tokyoghoul_2090.html" class="v2-unit-id" onclick="event.stopPropagation()">2090番台</a>
             
             <a href="/recommend/shibuya_espass_tokyoghoul.html" class="v2-store" onclick="event.stopPropagation()">エスパス渋谷新館</a>
@@ -4257,9 +4551,9 @@
             
             <div class="reason-item">🔥 直近の推移: 小→中→小→小→小（好調64日中、大0/中12/小52日）</div>
             
-            <div class="reason-item">🔥 9/16(水)天井到達1回 → 低機械割の可能性に注意</div>
+            <div class="reason-item">🔥 本日天井到達1回 → 低機械割の可能性に注意</div>
             
-            <div class="reason-item">🔥 9/16(水)14連の爆発あり</div>
+            <div class="reason-item">🔥 本日14連の爆発あり</div>
             
             <div class="reason-item">📅 この台の水曜好調率: 6/6回(100%) → 期待大</div>
             
@@ -4458,7 +4752,7 @@
     
     <div class="v2-header">
         <div class="v2-header-row1">
-            <span class="v2-rank-num">#16</span>
+            <span class="v2-rank-num">#17</span>
             <a href="/history/shibuya_espass_tokyoghoul_2099.html" class="v2-unit-id" onclick="event.stopPropagation()">2099番台</a>
             
             <a href="/recommend/shibuya_espass_tokyoghoul.html" class="v2-store" onclick="event.stopPropagation()">エスパス渋谷新館</a>
@@ -4549,9 +4843,9 @@
             
             <div class="reason-item">🔥 直近の推移: 中→小→小→中→中（好調71日中、大0/中19/小52日）</div>
             
-            <div class="reason-item">🔥 9/16(水)ART確率1/36 (1,841G消化) → 高機械割域の挙動</div>
+            <div class="reason-item">🔥 本日ART確率1/36 (1,841G消化) → 高機械割域の挙動</div>
             
-            <div class="reason-item">🔥 9/16(水)27連の爆発あり</div>
+            <div class="reason-item">🔥 本日27連の爆発あり</div>
             
             <div class="reason-item">📅 この台の水曜好調率: 4/4回(100%) → 期待大</div>
             
@@ -4750,7 +5044,7 @@
     
     <div class="v2-header">
         <div class="v2-header-row1">
-            <span class="v2-rank-num">#17</span>
+            <span class="v2-rank-num">#18</span>
             <a href="/history/shibuya_espass_tokyoghoul_2085.html" class="v2-unit-id" onclick="event.stopPropagation()">2085番台</a>
             
             <a href="/recommend/shibuya_espass_tokyoghoul.html" class="v2-store" onclick="event.stopPropagation()">エスパス渋谷新館</a>
@@ -5038,7 +5332,7 @@
     
     <div class="v2-header">
         <div class="v2-header-row1">
-            <span class="v2-rank-num">#18</span>
+            <span class="v2-rank-num">#19</span>
             <a href="/history/shibuya_espass_tokyoghoul_2078.html" class="v2-unit-id" onclick="event.stopPropagation()">2078番台</a>
             
             <a href="/recommend/shibuya_espass_tokyoghoul.html" class="v2-store" onclick="event.stopPropagation()">エスパス渋谷新館</a>
@@ -5328,7 +5622,7 @@
     
     <div class="v2-header">
         <div class="v2-header-row1">
-            <span class="v2-rank-num">#19</span>
+            <span class="v2-rank-num">#20</span>
             <a href="/history/shibuya_espass_tokyoghoul_2081.html" class="v2-unit-id" onclick="event.stopPropagation()">2081番台</a>
             
             <a href="/recommend/shibuya_espass_tokyoghoul.html" class="v2-store" onclick="event.stopPropagation()">エスパス渋谷新館</a>
@@ -5417,7 +5711,7 @@
             
             <div class="reason-item">🔥 直近の推移: 小→中→小→小→小（好調66日中、大0/中13/小53日）</div>
             
-            <div class="reason-item">🔥 9/16(水)天井到達1回 → 低機械割の可能性に注意</div>
+            <div class="reason-item">🔥 本日天井到達1回 → 低機械割の可能性に注意</div>
             
             <div class="reason-item">📅 この台の水曜実績: 10/12回好調（83%）</div>
             
@@ -5618,296 +5912,6 @@
     
     <div class="v2-header">
         <div class="v2-header-row1">
-            <span class="v2-rank-num">#20</span>
-            <a href="/history/shibuya_espass_tokyoghoul_2086.html" class="v2-unit-id" onclick="event.stopPropagation()">2086番台</a>
-            
-            <a href="/recommend/shibuya_espass_tokyoghoul.html" class="v2-store" onclick="event.stopPropagation()">エスパス渋谷新館</a>
-            
-            <span class="v2-rank" style="background-color: #2ed573">B</span>
-            <span class="expand-icon small">▼</span>
-        </div>
-        <div class="v2-header-row2">
-            <span class="v2-machine">東京喰種</span>
-        </div>
-    </div>
-
-    
-    
-    <div class="v2-reason">🔮 5日連続好調</div>
-    
-
-    
-    <div class="v2-days">
-        
-        <div class="v2-day v2-day-today">
-            <span class="v2-day-label">本日</span>
-            <span class="v2-day-art">ART 24</span>
-            <span class="v2-day-rb">RB 11</span>
-            <span class="v2-day-prob good">1/106</span>
-            <span class="v2-day-games">2,567G</span>
-            <span class="diff-medals-sm minus">-2,954枚</span>
-            <span class="max-medals-sm">最大2,398枚</span>
-            <span class="rensa-sm">14連</span>
-        </div>
-        
-        
-        <div class="v2-day">
-            <span class="v2-day-label">9/15(火)</span>
-            <span class="v2-day-art">ART 24</span>
-            <span class="v2-day-rb">RB 11</span>
-            <span class="v2-day-prob good">1/106</span>
-            <span class="diff-medals-sm plus">+1,083枚</span>
-            <span class="max-medals-sm">最大2,398枚</span>
-            <span class="rensa-sm">15連</span>
-            
-        </div>
-        
-
-        
-        <div class="v2-day">
-            <span class="v2-day-label">9/14(月)</span>
-            <span class="v2-day-art">ART 48</span>
-            <span class="v2-day-rb">RB 21</span>
-            <span class="prev-prob good">1/121</span>
-            <span class="diff-medals-sm plus">+3,253枚</span>
-            <span class="max-medals-sm">最大4,579枚</span>
-            <span class="rensa-sm">16連</span>
-            
-        </div>
-        
-
-        
-        <div class="v2-day">
-            <span class="v2-day-label">9/13(日)</span>
-            <span class="v2-day-art">ART 54</span>
-            <span class="v2-day-rb">RB 18</span>
-            <span class="prev-prob excellent">1/76</span>
-            <span class="diff-medals-sm plus">+8,696枚</span>
-            <span class="max-medals-sm">最大10,653枚</span>
-            <span class="rensa-sm">23連</span>
-            
-        </div>
-        
-    </div>
-
-    
-    
-    <div class="v2-setting">
-        <span class="setting-badge-sm setting-6">高機械割</span>
-    </div>
-    
-
-    
-    <div class="unit-details hidden">
-        <div class="v2-detail-reasons">
-            
-            <div class="reason-item">🔮 5日連続好調</div>
-            
-            <div class="reason-item">🔁 ほぼ毎日好調になる台</div>
-            
-            <div class="reason-item">🔥 直近の推移: 中→中→小→小→小（好調30日中、大0/中8/小22日）</div>
-            
-            <div class="reason-item">🔥 9/16(水)天井到達1回 → 低機械割の可能性に注意</div>
-            
-            <div class="reason-item">🔥 9/16(水)14連の爆発あり</div>
-            
-            <div class="reason-item">📅 この台の水曜好調率: 2/2回(100%) → 期待大</div>
-            
-        </div>
-        
-        <div class="v2-detail-today">
-            本日: ART 24 / RB 11 / 2,567G
-             / 1/106
-             / 最大2,398枚
-        </div>
-        
-        
-        
-        <div class="v2-today-history">
-            <div class="history-header">📊 本日の当たり履歴</div>
-            <div class="history-list">
-                
-                <div class="history-item ">
-                    <span class="hit-num">#0</span>
-                    <span class="hit-time">10:16</span>
-                    <span class="hit-start">88G</span>
-                    <span class="hit-medals ">11枚</span>
-                    
-                </div>
-                
-                <div class="history-item ">
-                    <span class="hit-num">#0</span>
-                    <span class="hit-time">10:17</span>
-                    <span class="hit-start">1G</span>
-                    <span class="hit-medals ">196枚</span>
-                    
-                </div>
-                
-                <div class="history-item ">
-                    <span class="hit-num">#0</span>
-                    <span class="hit-time">10:28</span>
-                    <span class="hit-start">99G</span>
-                    <span class="hit-medals ">19枚</span>
-                    
-                </div>
-                
-                <div class="history-item ">
-                    <span class="hit-num">#0</span>
-                    <span class="hit-time">11:12</span>
-                    <span class="hit-start">83G</span>
-                    <span class="hit-medals ">39枚</span>
-                    
-                </div>
-                
-                <div class="history-item ">
-                    <span class="hit-num">#0</span>
-                    <span class="hit-time">11:49</span>
-                    <span class="hit-start">180G</span>
-                    <span class="hit-medals ">47枚</span>
-                    
-                </div>
-                
-                <div class="history-item ">
-                    <span class="hit-num">#0</span>
-                    <span class="hit-time">12:19</span>
-                    <span class="hit-start">414G</span>
-                    <span class="hit-medals ">49枚</span>
-                    
-                </div>
-                
-                <div class="history-item ">
-                    <span class="hit-num">#0</span>
-                    <span class="hit-time">12:34</span>
-                    <span class="hit-start">212G</span>
-                    <span class="hit-medals ">39枚</span>
-                    
-                </div>
-                
-                <div class="history-item ">
-                    <span class="hit-num">#0</span>
-                    <span class="hit-time">12:45</span>
-                    <span class="hit-start">155G</span>
-                    <span class="hit-medals ">15枚</span>
-                    
-                </div>
-                
-                <div class="history-item ">
-                    <span class="hit-num">#0</span>
-                    <span class="hit-time">12:46</span>
-                    <span class="hit-start">1G</span>
-                    <span class="hit-medals ">14枚</span>
-                    
-                </div>
-                
-                <div class="history-item ">
-                    <span class="hit-num">#0</span>
-                    <span class="hit-time">12:47</span>
-                    <span class="hit-start">2G</span>
-                    <span class="hit-medals ">160枚</span>
-                    
-                </div>
-                
-                <div class="history-item ">
-                    <span class="hit-num">#0</span>
-                    <span class="hit-time">12:53</span>
-                    <span class="hit-start">0G</span>
-                    <span class="hit-medals ">56枚</span>
-                    
-                </div>
-                
-                <div class="history-item ">
-                    <span class="hit-num">#0</span>
-                    <span class="hit-time">12:55</span>
-                    <span class="hit-start">0G</span>
-                    <span class="hit-medals ">58枚</span>
-                    
-                </div>
-                
-                <div class="history-item ">
-                    <span class="hit-num">#0</span>
-                    <span class="hit-time">12:57</span>
-                    <span class="hit-start">0G</span>
-                    <span class="hit-medals ">108枚</span>
-                    
-                </div>
-                
-                <div class="history-item ">
-                    <span class="hit-num">#0</span>
-                    <span class="hit-time">13:01</span>
-                    <span class="hit-start">0G</span>
-                    <span class="hit-medals ">196枚</span>
-                    
-                </div>
-                
-                <div class="history-item ">
-                    <span class="hit-num">#0</span>
-                    <span class="hit-time">13:07</span>
-                    <span class="hit-start">0G</span>
-                    <span class="hit-medals ">12枚</span>
-                    
-                </div>
-                
-                <div class="history-item medium-hit">
-                    <span class="hit-num">#0</span>
-                    <span class="hit-time">13:09</span>
-                    <span class="hit-start">0G</span>
-                    <span class="hit-medals medium">543枚</span>
-                    
-                </div>
-                
-                <div class="history-item ">
-                    <span class="hit-num">#0</span>
-                    <span class="hit-time">13:21</span>
-                    <span class="hit-start">0G</span>
-                    <span class="hit-medals ">122枚</span>
-                    
-                </div>
-                
-                <div class="history-item ">
-                    <span class="hit-num">#0</span>
-                    <span class="hit-time">13:24</span>
-                    <span class="hit-start">0G</span>
-                    <span class="hit-medals ">32枚</span>
-                    
-                </div>
-                
-                <div class="history-item ">
-                    <span class="hit-num">#0</span>
-                    <span class="hit-time">13:27</span>
-                    <span class="hit-start">0G</span>
-                    <span class="hit-medals ">68枚</span>
-                    
-                </div>
-                
-                <div class="history-item medium-hit">
-                    <span class="hit-num">#0</span>
-                    <span class="hit-time">13:29</span>
-                    <span class="hit-start">0G</span>
-                    <span class="hit-medals medium">774枚</span>
-                    
-                </div>
-                
-                
-                <div class="history-more">...他14件</div>
-                
-            </div>
-        </div>
-        
-        <div class="v2-detail-trend">
-            
-            3日連続不調 → 設定上げの可能性あり
-            
-        </div>
-    </div>
-</div>
-
-                
-                
-
-<div class="unit-card-v2 rank-b" onclick="toggleDetails(this)">
-    
-    <div class="v2-header">
-        <div class="v2-header-row1">
             <span class="v2-rank-num">#21</span>
             <a href="/history/shibuya_espass_tokyoghoul_2088.html" class="v2-unit-id" onclick="event.stopPropagation()">2088番台</a>
             
@@ -5995,7 +5999,7 @@
             
             <div class="reason-item">🔥 直近の推移: 小→小→小→小→小（好調64日中、大0/中12/小52日）</div>
             
-            <div class="reason-item">🔥 9/16(水)天井到達1回 → 低機械割の可能性に注意</div>
+            <div class="reason-item">🔥 本日天井到達1回 → 低機械割の可能性に注意</div>
             
             <div class="reason-item">📅 この台の水曜好調率: 5/5回(100%) → 期待大</div>
             
@@ -7157,7 +7161,7 @@
             
             <div class="reason-item">🔥 直近の推移: 小→中→小→小→小（ART80回以上の大爆発がなく5日経過。過去の傾向では中/小の後に大が来やすい）</div>
             
-            <div class="reason-item">🔥 9/16(水)天井到達1回 → 低機械割の可能性に注意</div>
+            <div class="reason-item">🔥 本日天井到達1回 → 低機械割の可能性に注意</div>
             
             <div class="reason-item">📅 この台の水曜好調率: 6/6回(100%) → 期待大</div>
             
@@ -7375,7 +7379,7 @@
             
             <div class="reason-item">🔥 直近の推移: 小→小→小→小→小（好調66日中、大0/中9/小57日）</div>
             
-            <div class="reason-item">🔥 9/16(水)天井到達2回 → 低機械割の可能性に注意</div>
+            <div class="reason-item">🔥 本日天井到達2回 → 低機械割の可能性に注意</div>
             
             <div class="reason-item">📅 この台の水曜好調率: 6/6回(100%) → 期待大</div>
             
@@ -7665,7 +7669,7 @@
             
             <div class="reason-item">🔥 直近の推移: 小→小→小→小→小（好調71日中、大0/中12/小59日）</div>
             
-            <div class="reason-item">🔥 9/16(水)天井到達1回 → 低機械割の可能性に注意</div>
+            <div class="reason-item">🔥 本日天井到達1回 → 低機械割の可能性に注意</div>
             
             <div class="reason-item">📅 この台の水曜好調率: 7/7回(100%) → 期待大</div>
             
@@ -7955,7 +7959,7 @@
             
             <div class="reason-item">🔥 直近の推移: 小→小→小→小→小（好調60日中、大0/中9/小51日）</div>
             
-            <div class="reason-item">🔥 9/16(水)天井到達1回 → 低機械割の可能性に注意</div>
+            <div class="reason-item">🔥 本日天井到達1回 → 低機械割の可能性に注意</div>
             
             <div class="reason-item">📅 この台の水曜好調率: 5/6回(83%) → 期待大</div>
             
@@ -8245,7 +8249,7 @@
             
             <div class="reason-item">🔥 直近の推移: 小→中→中→小→小（ART80回以上の大爆発がなく5日経過。過去の傾向では中/小の後に大が来やすい）</div>
             
-            <div class="reason-item">🔥 9/16(水)天井到達1回 → 低機械割の可能性に注意</div>
+            <div class="reason-item">🔥 本日天井到達1回 → 低機械割の可能性に注意</div>
             
             <div class="reason-item">📅 この台の水曜好調率: 5/6回(83%) → 期待大</div>
             
@@ -8539,7 +8543,7 @@
             
             <div class="reason-item">💰 好調日の平均ART 35回（1/150）→ 打てば出やすい台</div>
             
-            <div class="reason-item">🚨 9/16(水)ART確率1/384 (3,842G消化) → 低機械割域の挙動</div>
+            <div class="reason-item">🚨 本日ART確率1/384 (3,842G消化) → 低機械割域の挙動</div>
             
             <div class="reason-item">🚨 前日はART確率1/384で低機械割域（全台中央値1/188）（好調率79%のため本日も期待）</div>
             
@@ -9113,9 +9117,9 @@
             
             <div class="reason-item">🔄 6日連続好調 + エスパス渋谷新館は水曜が狙い目 → 据え置き濃厚</div>
             
-            <div class="reason-item">🔥 直近の推移: 中→小→中→小→小（大小交互 → 9/16(水)は大爆発の可能性）</div>
+            <div class="reason-item">🔥 直近の推移: 中→小→中→小→小（大小交互 → 本日は大爆発の可能性）</div>
             
-            <div class="reason-item">🔥 9/16(水)天井到達1回 → 低機械割の可能性に注意</div>
+            <div class="reason-item">🔥 本日天井到達1回 → 低機械割の可能性に注意</div>
             
             <div class="reason-item">📅 この台の水曜好調率: 6/6回(100%) → 期待大</div>
             
@@ -9407,7 +9411,7 @@
             
             <div class="reason-item">🔥 直近の推移: 中→小→小→小→大（好調71日中、大2/中11/小58日）</div>
             
-            <div class="reason-item">🔥 9/16(水)天井到達3回 → 低機械割の可能性に注意</div>
+            <div class="reason-item">🔥 本日天井到達3回 → 低機械割の可能性に注意</div>
             
             <div class="reason-item">📅 この台の水曜好調率: 7/7回(100%) → 期待大</div>
             
