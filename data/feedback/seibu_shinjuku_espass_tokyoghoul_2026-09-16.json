@@ -4,18 +4,28 @@
   "date": "2026-09-16",
   "weekday": "水",
   "total_units": 17,
-  "hits": 1,
-  "misses": 2,
-  "surprises": 8,
+  "hits": 3,
+  "misses": 3,
+  "surprises": 7,
   "miss_details": [
     {
       "unit_id": "3166",
-      "score": 92,
-      "actual_prob": 317,
+      "score": 103,
+      "actual_prob": 238,
       "reasons": [
         "高スコア過信",
-        "低稼働(951G)",
-        "設定1域(1/317)"
+        "低稼働(952G)",
+        "設定1域(1/238)"
+      ]
+    },
+    {
+      "unit_id": "3161",
+      "score": 80,
+      "actual_prob": 540,
+      "reasons": [
+        "高スコア過信",
+        "低稼働(540G)",
+        "設定1域(1/540)"
       ]
     },
     {
@@ -31,27 +41,13 @@
   ],
   "surprise_details": [
     {
-      "unit_id": "3160",
+      "unit_id": "3174",
       "rank": "B",
-      "score": 101,
-      "actual_prob": 185,
-      "reasons": []
-    },
-    {
-      "unit_id": "3159",
-      "rank": "B",
-      "score": 91,
-      "actual_prob": 66,
+      "score": 102,
+      "actual_prob": 15,
       "reasons": [
-        "実は高設定域(1/66)"
+        "実は高設定域(1/15)"
       ]
-    },
-    {
-      "unit_id": "3165",
-      "rank": "B",
-      "score": 105,
-      "actual_prob": 179,
-      "reasons": []
     },
     {
       "unit_id": "3168",
@@ -61,20 +57,22 @@
       "reasons": []
     },
     {
-      "unit_id": "3174",
+      "unit_id": "3162",
       "rank": "B",
-      "score": 97,
-      "actual_prob": 38,
+      "score": 95,
+      "actual_prob": 46,
       "reasons": [
-        "実は高設定域(1/38)"
+        "実は高設定域(1/46)"
       ]
     },
     {
       "unit_id": "3172",
       "rank": "B",
       "score": 93,
-      "actual_prob": 105,
-      "reasons": []
+      "actual_prob": 72,
+      "reasons": [
+        "実は高設定域(1/72)"
+      ]
     },
     {
       "unit_id": "3218",
@@ -84,13 +82,18 @@
       "reasons": []
     },
     {
+      "unit_id": "3160",
+      "rank": "B",
+      "score": 88,
+      "actual_prob": 215,
+      "reasons": []
+    },
+    {
       "unit_id": "3167",
       "rank": "B",
       "score": 88,
-      "actual_prob": 69,
-      "reasons": [
-        "実は高設定域(1/69)"
-      ]
+      "actual_prob": 138,
+      "reasons": []
     }
   ]
 }
