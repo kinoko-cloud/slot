@@ -9,7 +9,7 @@
     <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
     <meta name="googlebot" content="noindex, nofollow">
     <title>エスパス日拓渋谷新館</title>
-    <link rel="stylesheet" href="/static/style.css?v=20260925042121">
+    <link rel="stylesheet" href="/static/style.css?v=20260925103050">
 </head>
 <body data-page-type="recommend" data-store-key="shibuya_espass_tokyoghoul">
     <div class="container">
@@ -27,7 +27,7 @@
         
     </div>
     <div class="top-bar-right">
-        <span class="version-info" id="build-ver" title="ビルド時刻">v0925_04:22</span>
+        <span class="version-info" id="build-ver" title="ビルド時刻">v0925_10:31</span>
         
     </div>
 </div>
@@ -43,18 +43,20 @@
             <div class="update-info">
                 
                 <span class="data-source">
-                    データ取得: <span id="update-time">03:31</span>
+                    データ取得: <span id="update-time">10:30</span>
                 </span>
                 <span class="cache-badge github">GITHUB</span>
-                
-                <div class="stale-warning">データが0時間50分前のものです</div>
                 
                 
             </div>
 
             <!-- 空き状況サマリ -->
             
-            <div class="closed-notice">現在営業時間外です</div>
+            <div class="availability-summary">
+                <span class="avail-empty" onclick="filterUnits('empty')">空き 33台</span>
+                <span class="avail-playing" onclick="filterUnits('playing')">遊技中 0台</span>
+                <span class="avail-all" onclick="filterUnits('all')">全て</span>
+            </div>
             
 
             <div class="action-buttons">
@@ -130,7 +132,7 @@
             <span class="v2-day-prob good">1/118</span>
             <span class="v2-day-games">4,030G</span>
             
-            
+            <span class="max-medals-sm">最大3,905枚</span>
             
         </div>
         
@@ -139,20 +141,7 @@
             <span class="v2-day-label">9/24(木)</span>
             <span class="v2-day-art">ART 34</span>
             <span class="v2-day-rb">RB 15</span>
-            <span class="v2-day-prob good">1/119</span>
-            <span class="diff-medals-sm plus">+4,863枚</span>
-            <span class="max-medals-sm">最大3,139枚</span>
-            <span class="rensa-sm">13連</span>
-            
-        </div>
-        
-
-        
-        <div class="v2-day">
-            <span class="v2-day-label">9/24(木)</span>
-            <span class="v2-day-art">ART 34</span>
-            <span class="v2-day-rb">RB 15</span>
-            <span class="prev-prob good">1/118</span>
+            <span class="v2-day-prob good">1/118</span>
             <span class="diff-medals-sm plus">+4,863枚</span>
             <span class="max-medals-sm">最大3,139枚</span>
             <span class="rensa-sm">13連</span>
@@ -168,6 +157,19 @@
             <span class="prev-prob ">1/147</span>
             
             <span class="max-medals-sm">最大7,410枚</span>
+            
+            
+        </div>
+        
+
+        
+        <div class="v2-day">
+            <span class="v2-day-label">9/22(火)</span>
+            <span class="v2-day-art">ART 18</span>
+            <span class="v2-day-rb">RB 15</span>
+            <span class="prev-prob bad">1/306</span>
+            
+            <span class="max-medals-sm">最大1,606枚</span>
             
             
         </div>
@@ -191,18 +193,18 @@
             
             <div class="reason-item">🔥 直近の推移: 小→小→小→小→小（ART80回以上の大爆発がなく5日経過。過去の傾向では中/小の後に大が来やすい）</div>
             
-            <div class="reason-item">🔥 9/24(木)1/118で安定稼働中 (4,030G消化)</div>
+            <div class="reason-item">🔥 本日1/118で安定稼働中 (4,030G消化)</div>
             
-            <div class="reason-item">🔥 9/24(木)天井到達1回 → 低機械割の可能性に注意</div>
+            <div class="reason-item">🔥 本日天井到達1回 → 低機械割の可能性に注意</div>
             
-            <div class="reason-item">🔥 9/24(木)12連の爆発あり</div>
+            <div class="reason-item">🔥 本日12連の爆発あり</div>
             
         </div>
         
         <div class="v2-detail-today">
             本日: ART 34 / RB 15 / 4,030G
              / 1/118
-            
+             / 最大3,905枚
         </div>
         
         
@@ -248,29 +250,16 @@
             <span class="v2-day-prob ">1/198</span>
             <span class="v2-day-games">4,963G</span>
             
-            
-            
-        </div>
-        
-        
-        <div class="v2-day">
-            <span class="v2-day-label">9/24(木)</span>
-            <span class="v2-day-art">ART 25</span>
-            <span class="v2-day-rb">RB 13</span>
-            <span class="v2-day-prob ">1/199</span>
-            <span class="diff-medals-sm minus">-1,977枚</span>
-            <span class="max-medals-sm">最大913枚</span>
-            <span class="rensa-sm">5連</span>
+            <span class="max-medals-sm">最大1,073枚</span>
             
         </div>
         
-
         
         <div class="v2-day">
             <span class="v2-day-label">9/24(木)</span>
             <span class="v2-day-art">ART 22</span>
             <span class="v2-day-rb">RB 13</span>
-            <span class="prev-prob bad">1/223</span>
+            <span class="v2-day-prob bad">1/223</span>
             <span class="diff-medals-sm minus">-1,977枚</span>
             <span class="max-medals-sm">最大913枚</span>
             <span class="rensa-sm">5連</span>
@@ -284,6 +273,19 @@
             <span class="v2-day-art">ART 29</span>
             <span class="v2-day-rb">RB 24</span>
             <span class="prev-prob bad">1/212</span>
+            
+            <span class="max-medals-sm">最大1,171枚</span>
+            
+            
+        </div>
+        
+
+        
+        <div class="v2-day">
+            <span class="v2-day-label">9/22(火)</span>
+            <span class="v2-day-art">ART 28</span>
+            <span class="v2-day-rb">RB 22</span>
+            <span class="prev-prob bad">1/215</span>
             
             <span class="max-medals-sm">最大1,171枚</span>
             
@@ -307,18 +309,20 @@
             
             <div class="reason-item">🔥 直近の推移: 小→小→小→小→小（好調78日中、大0/中18/小60日）</div>
             
-            <div class="reason-item">🔥 9/24(木)天井到達1回 → 低機械割の可能性に注意</div>
+            <div class="reason-item">🔥 本日天井到達1回 → 低機械割の可能性に注意</div>
             
             <div class="reason-item">📅 この台の金曜好調率: 5/5回(100%) → 期待大</div>
             
             <div class="reason-item">📅 この台の金曜実績: 13/13回好調（100%）</div>
+            
+            <div class="reason-item">🚨 前日はART確率1/223で低機械割域（全台中央値1/164）（好調率88%のため本日も期待）</div>
             
         </div>
         
         <div class="v2-detail-today">
             本日: ART 25 / RB 13 / 4,963G
              / 1/198
-            
+             / 最大1,073枚
         </div>
         
         
@@ -364,7 +368,7 @@
             <span class="v2-day-prob excellent">1/92</span>
             <span class="v2-day-games">1,568G</span>
             
-            
+            <span class="max-medals-sm">最大2,116枚</span>
             
         </div>
         
@@ -383,25 +387,25 @@
 
         
         <div class="v2-day">
-            <span class="v2-day-label">9/24(木)</span>
-            <span class="v2-day-art">ART 17</span>
-            <span class="v2-day-rb">RB 8</span>
-            <span class="prev-prob excellent">1/92</span>
-            <span class="diff-medals-sm plus">+1,363枚</span>
-            <span class="max-medals-sm">最大2,116枚</span>
-            <span class="rensa-sm">10連</span>
-            <span class="low-activity">※低稼働</span>
-        </div>
-        
-
-        
-        <div class="v2-day">
             <span class="v2-day-label">9/23(水)</span>
             <span class="v2-day-art">ART 41</span>
             <span class="v2-day-rb">RB 20</span>
             <span class="prev-prob good">1/119</span>
             
             <span class="max-medals-sm">最大9,134枚</span>
+            
+            
+        </div>
+        
+
+        
+        <div class="v2-day">
+            <span class="v2-day-label">9/22(火)</span>
+            <span class="v2-day-art">ART 39</span>
+            <span class="v2-day-rb">RB 20</span>
+            <span class="prev-prob good">1/122</span>
+            
+            <span class="max-medals-sm">最大4,338枚</span>
             
             
         </div>
@@ -425,7 +429,7 @@
             
             <div class="reason-item">🔥 直近の推移: 小→小→小→小→小（ART80回以上の大爆発がなく5日経過。過去の傾向では中/小の後に大が来やすい）</div>
             
-            <div class="reason-item">🔥 9/24(木)ART確率1/92 (1,568G消化) → 高機械割域</div>
+            <div class="reason-item">🔥 本日ART確率1/92 (1,568G消化) → 高機械割域</div>
             
             <div class="reason-item">📅 この台の金曜好調率: 5/5回(100%) → 期待大</div>
             
@@ -436,7 +440,7 @@
         <div class="v2-detail-today">
             本日: ART 17 / RB 8 / 1,568G
              / 1/92
-            
+             / 最大2,116枚
         </div>
         
         
@@ -482,7 +486,7 @@
             <span class="v2-day-prob good">1/128</span>
             <span class="v2-day-games">3,714G</span>
             
-            
+            <span class="max-medals-sm">最大3,779枚</span>
             
         </div>
         
@@ -501,25 +505,25 @@
 
         
         <div class="v2-day">
-            <span class="v2-day-label">9/24(木)</span>
-            <span class="v2-day-art">ART 29</span>
-            <span class="v2-day-rb">RB 18</span>
-            <span class="prev-prob good">1/128</span>
-            <span class="diff-medals-sm plus">+1,704枚</span>
-            <span class="max-medals-sm">最大3,386枚</span>
-            <span class="rensa-sm">13連</span>
-            
-        </div>
-        
-
-        
-        <div class="v2-day">
             <span class="v2-day-label">9/23(水)</span>
             <span class="v2-day-art">ART 31</span>
             <span class="v2-day-rb">RB 16</span>
             <span class="prev-prob ">1/160</span>
             
             <span class="max-medals-sm">最大2,926枚</span>
+            
+            
+        </div>
+        
+
+        
+        <div class="v2-day">
+            <span class="v2-day-label">9/22(火)</span>
+            <span class="v2-day-art">ART 19</span>
+            <span class="v2-day-rb">RB 15</span>
+            <span class="prev-prob bad">1/275</span>
+            
+            <span class="max-medals-sm">最大671枚</span>
             
             
         </div>
@@ -543,18 +547,18 @@
             
             <div class="reason-item">🔥 直近の推移: 小→小→小→小→小（好調77日中、大0/中15/小62日）</div>
             
-            <div class="reason-item">🔥 9/24(木)1/128で安定稼働中 (3,714G消化)</div>
+            <div class="reason-item">🔥 本日1/128で安定稼働中 (3,714G消化)</div>
             
-            <div class="reason-item">🔥 9/24(木)天井到達1回 → 低機械割の可能性に注意</div>
+            <div class="reason-item">🔥 本日天井到達1回 → 低機械割の可能性に注意</div>
             
-            <div class="reason-item">🔥 9/24(木)11連の爆発あり</div>
+            <div class="reason-item">🔥 本日11連の爆発あり</div>
             
         </div>
         
         <div class="v2-detail-today">
             本日: ART 29 / RB 18 / 3,714G
              / 1/128
-            
+             / 最大3,779枚
         </div>
         
         
@@ -600,7 +604,7 @@
             <span class="v2-day-prob ">1/199</span>
             <span class="v2-day-games">3,394G</span>
             
-            
+            <span class="max-medals-sm">最大2,069枚</span>
             
         </div>
         
@@ -609,20 +613,7 @@
             <span class="v2-day-label">9/24(木)</span>
             <span class="v2-day-art">ART 17</span>
             <span class="v2-day-rb">RB 13</span>
-            <span class="v2-day-prob bad">1/200</span>
-            <span class="diff-medals-sm minus">-779枚</span>
-            <span class="max-medals-sm">最大2,100枚</span>
-            <span class="rensa-sm">11連</span>
-            
-        </div>
-        
-
-        
-        <div class="v2-day">
-            <span class="v2-day-label">9/24(木)</span>
-            <span class="v2-day-art">ART 17</span>
-            <span class="v2-day-rb">RB 13</span>
-            <span class="prev-prob ">1/199</span>
+            <span class="v2-day-prob ">1/199</span>
             <span class="diff-medals-sm minus">-779枚</span>
             <span class="max-medals-sm">最大2,100枚</span>
             <span class="rensa-sm">11連</span>
@@ -636,6 +627,19 @@
             <span class="v2-day-art">ART 27</span>
             <span class="v2-day-rb">RB 22</span>
             <span class="prev-prob bad">1/205</span>
+            
+            <span class="max-medals-sm">最大2,846枚</span>
+            
+            
+        </div>
+        
+
+        
+        <div class="v2-day">
+            <span class="v2-day-label">9/22(火)</span>
+            <span class="v2-day-art">ART 32</span>
+            <span class="v2-day-rb">RB 19</span>
+            <span class="prev-prob ">1/140</span>
             
             <span class="max-medals-sm">最大2,846枚</span>
             
@@ -659,7 +663,7 @@
             
             <div class="reason-item">🔥 直近の推移: 小→小→小→小→小（ART80回以上の大爆発がなく5日経過。過去の傾向では中/小の後に大が来やすい）</div>
             
-            <div class="reason-item">🔥 9/24(木)天井到達1回 → 低機械割の可能性に注意</div>
+            <div class="reason-item">🔥 本日天井到達1回 → 低機械割の可能性に注意</div>
             
             <div class="reason-item">📅 この台の金曜好調率: 6/6回(100%) → 期待大</div>
             
@@ -670,7 +674,7 @@
         <div class="v2-detail-today">
             本日: ART 17 / RB 13 / 3,394G
              / 1/199
-            
+             / 最大2,069枚
         </div>
         
         
@@ -716,29 +720,16 @@
             <span class="v2-day-prob ">1/173</span>
             <span class="v2-day-games">3,293G</span>
             
-            
-            
-        </div>
-        
-        
-        <div class="v2-day">
-            <span class="v2-day-label">9/24(木)</span>
-            <span class="v2-day-art">ART 19</span>
-            <span class="v2-day-rb">RB 13</span>
-            <span class="v2-day-prob ">1/173</span>
-            <span class="diff-medals-sm plus">+490枚</span>
             <span class="max-medals-sm">最大2,998枚</span>
-            <span class="rensa-sm">10連</span>
             
         </div>
         
-
         
         <div class="v2-day">
             <span class="v2-day-label">9/24(木)</span>
             <span class="v2-day-art">ART 19</span>
             <span class="v2-day-rb">RB 13</span>
-            <span class="prev-prob ">1/172</span>
+            <span class="v2-day-prob ">1/172</span>
             <span class="diff-medals-sm plus">+490枚</span>
             <span class="max-medals-sm">最大2,998枚</span>
             <span class="rensa-sm">10連</span>
@@ -754,6 +745,19 @@
             <span class="prev-prob bad">1/232</span>
             
             <span class="max-medals-sm">最大1,274枚</span>
+            
+            
+        </div>
+        
+
+        
+        <div class="v2-day">
+            <span class="v2-day-label">9/22(火)</span>
+            <span class="v2-day-art">ART 15</span>
+            <span class="v2-day-rb">RB 23</span>
+            <span class="prev-prob bad">1/444</span>
+            
+            <span class="max-medals-sm">最大576枚</span>
             
             
         </div>
@@ -775,7 +779,7 @@
             
             <div class="reason-item">🔥 直近の推移: 小→小→小→小→小（好調66日中、大0/中13/小53日）</div>
             
-            <div class="reason-item">🔥 9/24(木)天井到達1回 → 低機械割の可能性に注意</div>
+            <div class="reason-item">🔥 本日天井到達1回 → 低機械割の可能性に注意</div>
             
             <div class="reason-item">📅 この台の金曜好調率: 4/4回(100%) → 期待大</div>
             
@@ -786,7 +790,7 @@
         <div class="v2-detail-today">
             本日: ART 19 / RB 13 / 3,293G
              / 1/173
-            
+             / 最大2,998枚
         </div>
         
         
@@ -832,7 +836,7 @@
             <span class="v2-day-prob good">1/104</span>
             <span class="v2-day-games">2,080G</span>
             
-            
+            <span class="max-medals-sm">最大1,550枚</span>
             
         </div>
         
@@ -851,25 +855,25 @@
 
         
         <div class="v2-day">
-            <span class="v2-day-label">9/24(木)</span>
-            <span class="v2-day-art">ART 20</span>
-            <span class="v2-day-rb">RB 9</span>
-            <span class="prev-prob good">1/104</span>
-            <span class="diff-medals-sm plus">+1,257枚</span>
-            <span class="max-medals-sm">最大1,519枚</span>
-            <span class="rensa-sm">10連</span>
-            
-        </div>
-        
-
-        
-        <div class="v2-day">
             <span class="v2-day-label">9/23(水)</span>
             <span class="v2-day-art">ART 29</span>
             <span class="v2-day-rb">RB 13</span>
             <span class="prev-prob excellent">1/96</span>
             
             <span class="max-medals-sm">最大6,173枚</span>
+            
+            
+        </div>
+        
+
+        
+        <div class="v2-day">
+            <span class="v2-day-label">9/22(火)</span>
+            <span class="v2-day-art">ART 31</span>
+            <span class="v2-day-rb">RB 24</span>
+            <span class="prev-prob ">1/173</span>
+            
+            <span class="max-medals-sm">最大3,696枚</span>
             
             
         </div>
@@ -904,7 +908,7 @@
         <div class="v2-detail-today">
             本日: ART 20 / RB 9 / 2,080G
              / 1/104
-            
+             / 最大1,550枚
         </div>
         
         
@@ -950,7 +954,7 @@
             <span class="v2-day-prob excellent">1/52</span>
             <span class="v2-day-games">1,942G</span>
             
-            
+            <span class="max-medals-sm">最大8,449枚</span>
             
         </div>
         
@@ -969,23 +973,23 @@
 
         
         <div class="v2-day">
-            <span class="v2-day-label">9/24(木)</span>
-            <span class="v2-day-art">ART 37</span>
-            <span class="v2-day-rb">RB 8</span>
-            <span class="prev-prob excellent">1/52</span>
-            <span class="diff-medals-sm plus">+7,937枚</span>
-            <span class="max-medals-sm">最大8,364枚</span>
-            <span class="rensa-sm">28連</span>
+            <span class="v2-day-label">9/23(水)</span>
+            <span class="v2-day-art">ART 33</span>
+            <span class="v2-day-rb">RB 20</span>
+            <span class="prev-prob ">1/157</span>
+            
+            <span class="max-medals-sm">最大5,109枚</span>
+            
             
         </div>
         
 
         
         <div class="v2-day">
-            <span class="v2-day-label">9/23(水)</span>
-            <span class="v2-day-art">ART 33</span>
+            <span class="v2-day-label">9/22(火)</span>
+            <span class="v2-day-art">ART 31</span>
             <span class="v2-day-rb">RB 20</span>
-            <span class="prev-prob ">1/157</span>
+            <span class="prev-prob ">1/150</span>
             
             <span class="max-medals-sm">最大5,109枚</span>
             
@@ -1011,9 +1015,9 @@
             
             <div class="reason-item">🔥 直近の推移: 小→小→小→小→小（好調38日中、大0/中8/小30日）</div>
             
-            <div class="reason-item">🔥 9/24(木)ART確率1/52 (1,942G消化) → 高機械割域の挙動</div>
+            <div class="reason-item">🔥 本日ART確率1/52 (1,942G消化) → 高機械割域の挙動</div>
             
-            <div class="reason-item">🔥 9/24(木)27連の爆発あり</div>
+            <div class="reason-item">🔥 本日27連の爆発あり</div>
             
             <div class="reason-item">📅 この台の金曜好調率: 2/2回(100%) → 期待大</div>
             
@@ -1022,7 +1026,7 @@
         <div class="v2-detail-today">
             本日: ART 37 / RB 8 / 1,942G
              / 1/52
-            
+             / 最大8,449枚
         </div>
         
         
@@ -1068,7 +1072,7 @@
             <span class="v2-day-prob excellent">1/72</span>
             <span class="v2-day-games">2,596G</span>
             
-            
+            <span class="max-medals-sm">最大9,098枚</span>
             
         </div>
         
@@ -1087,25 +1091,25 @@
 
         
         <div class="v2-day">
-            <span class="v2-day-label">9/24(木)</span>
-            <span class="v2-day-art">ART 36</span>
-            <span class="v2-day-rb">RB 11</span>
-            <span class="prev-prob excellent">1/72</span>
-            <span class="diff-medals-sm plus">+7,893枚</span>
-            <span class="max-medals-sm">最大9,276枚</span>
-            <span class="rensa-sm">25連</span>
-            
-        </div>
-        
-
-        
-        <div class="v2-day">
             <span class="v2-day-label">9/23(水)</span>
             <span class="v2-day-art">ART 17</span>
             <span class="v2-day-rb">RB 12</span>
             <span class="prev-prob bad">1/236</span>
             
             <span class="max-medals-sm">最大3,330枚</span>
+            
+            
+        </div>
+        
+
+        
+        <div class="v2-day">
+            <span class="v2-day-label">9/22(火)</span>
+            <span class="v2-day-art">ART 16</span>
+            <span class="v2-day-rb">RB 14</span>
+            <span class="prev-prob bad">1/331</span>
+            
+            <span class="max-medals-sm">最大2,070枚</span>
             
             
         </div>
@@ -1129,18 +1133,18 @@
             
             <div class="reason-item">🔥 直近の推移: 小→小→小→小→小（好調78日中、大0/中16/小62日）</div>
             
-            <div class="reason-item">🔥 9/24(木)ART確率1/72 (2,596G消化) → 高機械割域の挙動</div>
+            <div class="reason-item">🔥 本日ART確率1/72 (2,596G消化) → 高機械割域の挙動</div>
             
-            <div class="reason-item">🔥 9/24(木)天井到達1回 → 低機械割の可能性に注意</div>
+            <div class="reason-item">🔥 本日天井到達1回 → 低機械割の可能性に注意</div>
             
-            <div class="reason-item">🔥 9/24(木)25連の爆発あり</div>
+            <div class="reason-item">🔥 本日25連の爆発あり</div>
             
         </div>
         
         <div class="v2-detail-today">
             本日: ART 36 / RB 11 / 2,596G
              / 1/72
-            
+             / 最大9,098枚
         </div>
         
         
@@ -1186,7 +1190,7 @@
             <span class="v2-day-prob excellent">1/85</span>
             <span class="v2-day-games">2,057G</span>
             
-            
+            <span class="max-medals-sm">最大5,302枚</span>
             
         </div>
         
@@ -1195,20 +1199,7 @@
             <span class="v2-day-label">9/24(木)</span>
             <span class="v2-day-art">ART 24</span>
             <span class="v2-day-rb">RB 9</span>
-            <span class="v2-day-prob excellent">1/86</span>
-            <span class="diff-medals-sm plus">+4,139枚</span>
-            <span class="max-medals-sm">最大5,319枚</span>
-            <span class="rensa-sm">15連</span>
-            
-        </div>
-        
-
-        
-        <div class="v2-day">
-            <span class="v2-day-label">9/24(木)</span>
-            <span class="v2-day-art">ART 24</span>
-            <span class="v2-day-rb">RB 9</span>
-            <span class="prev-prob excellent">1/85</span>
+            <span class="v2-day-prob excellent">1/85</span>
             <span class="diff-medals-sm plus">+4,139枚</span>
             <span class="max-medals-sm">最大5,319枚</span>
             <span class="rensa-sm">15連</span>
@@ -1224,6 +1215,19 @@
             <span class="prev-prob ">1/135</span>
             
             <span class="max-medals-sm">最大11,490枚</span>
+            
+            
+        </div>
+        
+
+        
+        <div class="v2-day">
+            <span class="v2-day-label">9/22(火)</span>
+            <span class="v2-day-art">ART 60</span>
+            <span class="v2-day-rb">RB 12</span>
+            <span class="prev-prob excellent">1/54</span>
+            
+            <span class="max-medals-sm">最大8,591枚</span>
             
             
         </div>
@@ -1247,9 +1251,9 @@
             
             <div class="reason-item">🔥 直近の推移: 小→中→小→小→小（好調78日中、大0/中15/小63日）</div>
             
-            <div class="reason-item">🔥 9/24(木)ART確率1/85 (2,057G消化) → 高機械割域</div>
+            <div class="reason-item">🔥 本日ART確率1/85 (2,057G消化) → 高機械割域</div>
             
-            <div class="reason-item">🔥 9/24(木)15連の爆発あり</div>
+            <div class="reason-item">🔥 本日15連の爆発あり</div>
             
             <div class="reason-item">📅 この台の金曜好調率: 5/5回(100%) → 期待大</div>
             
@@ -1258,7 +1262,7 @@
         <div class="v2-detail-today">
             本日: ART 24 / RB 9 / 2,057G
              / 1/85
-            
+             / 最大5,302枚
         </div>
         
         
@@ -1304,7 +1308,7 @@
             <span class="v2-day-prob excellent">1/89</span>
             <span class="v2-day-games">2,783G</span>
             
-            
+            <span class="max-medals-sm">最大6,115枚</span>
             
         </div>
         
@@ -1313,20 +1317,7 @@
             <span class="v2-day-label">9/24(木)</span>
             <span class="v2-day-art">ART 31</span>
             <span class="v2-day-rb">RB 14</span>
-            <span class="v2-day-prob excellent">1/90</span>
-            <span class="diff-medals-sm plus">+3,884枚</span>
-            <span class="max-medals-sm">最大6,544枚</span>
-            <span class="rensa-sm">29連</span>
-            
-        </div>
-        
-
-        
-        <div class="v2-day">
-            <span class="v2-day-label">9/24(木)</span>
-            <span class="v2-day-art">ART 31</span>
-            <span class="v2-day-rb">RB 14</span>
-            <span class="prev-prob excellent">1/89</span>
+            <span class="v2-day-prob excellent">1/89</span>
             <span class="diff-medals-sm plus">+3,884枚</span>
             <span class="max-medals-sm">最大6,544枚</span>
             <span class="rensa-sm">29連</span>
@@ -1340,6 +1331,19 @@
             <span class="v2-day-art">ART 33</span>
             <span class="v2-day-rb">RB 21</span>
             <span class="prev-prob ">1/182</span>
+            
+            <span class="max-medals-sm">最大3,951枚</span>
+            
+            
+        </div>
+        
+
+        
+        <div class="v2-day">
+            <span class="v2-day-label">9/22(火)</span>
+            <span class="v2-day-art">ART 27</span>
+            <span class="v2-day-rb">RB 19</span>
+            <span class="prev-prob ">1/199</span>
             
             <span class="max-medals-sm">最大3,951枚</span>
             
@@ -1365,18 +1369,18 @@
             
             <div class="reason-item">🔥 直近の推移: 小→小→小→小→小（好調78日中、大0/中10/小68日）</div>
             
-            <div class="reason-item">🔥 9/24(木)ART確率1/89 (2,783G消化) → 高機械割域</div>
+            <div class="reason-item">🔥 本日ART確率1/89 (2,783G消化) → 高機械割域</div>
             
-            <div class="reason-item">🔥 9/24(木)天井到達1回 → 低機械割の可能性に注意</div>
+            <div class="reason-item">🔥 本日天井到達1回 → 低機械割の可能性に注意</div>
             
-            <div class="reason-item">🔥 9/24(木)25連の爆発あり</div>
+            <div class="reason-item">🔥 本日25連の爆発あり</div>
             
         </div>
         
         <div class="v2-detail-today">
             本日: ART 31 / RB 14 / 2,783G
              / 1/89
-            
+             / 最大6,115枚
         </div>
         
         
@@ -1422,7 +1426,7 @@
             <span class="v2-day-prob bad">1/206</span>
             <span class="v2-day-games">2,688G</span>
             
-            
+            <span class="max-medals-sm">最大779枚</span>
             
         </div>
         
@@ -1431,20 +1435,7 @@
             <span class="v2-day-label">9/24(木)</span>
             <span class="v2-day-art">ART 13</span>
             <span class="v2-day-rb">RB 9</span>
-            <span class="v2-day-prob bad">1/207</span>
-            <span class="diff-medals-sm minus">-1,173枚</span>
-            <span class="max-medals-sm">最大695枚</span>
-            <span class="rensa-sm">4連</span>
-            
-        </div>
-        
-
-        
-        <div class="v2-day">
-            <span class="v2-day-label">9/24(木)</span>
-            <span class="v2-day-art">ART 13</span>
-            <span class="v2-day-rb">RB 9</span>
-            <span class="prev-prob bad">1/206</span>
+            <span class="v2-day-prob bad">1/206</span>
             <span class="diff-medals-sm minus">-1,173枚</span>
             <span class="max-medals-sm">最大695枚</span>
             <span class="rensa-sm">4連</span>
@@ -1457,6 +1448,19 @@
             <span class="v2-day-label">9/23(水)</span>
             <span class="v2-day-art">ART 21</span>
             <span class="v2-day-rb">RB 17</span>
+            <span class="prev-prob bad">1/265</span>
+            
+            <span class="max-medals-sm">最大797枚</span>
+            
+            
+        </div>
+        
+
+        
+        <div class="v2-day">
+            <span class="v2-day-label">9/22(火)</span>
+            <span class="v2-day-art">ART 20</span>
+            <span class="v2-day-rb">RB 15</span>
             <span class="prev-prob bad">1/265</span>
             
             <span class="max-medals-sm">最大797枚</span>
@@ -1487,14 +1491,14 @@
             
             <div class="reason-item">💰 好調日の平均ART 35回（1/156）→ 打てば出やすい台</div>
             
-            <div class="reason-item">🚨 前日はART確率1/207で低機械割域（全台中央値1/166）（好調率89%のため本日も期待）</div>
+            <div class="reason-item">🚨 前日はART確率1/207で低機械割域（全台中央値1/164）（好調率89%のため本日も期待）</div>
             
         </div>
         
         <div class="v2-detail-today">
             本日: ART 13 / RB 9 / 2,688G
              / 1/206
-            
+             / 最大779枚
         </div>
         
         
@@ -1540,7 +1544,7 @@
             <span class="v2-day-prob ">1/161</span>
             <span class="v2-day-games">2,904G</span>
             
-            
+            <span class="max-medals-sm">最大2,541枚</span>
             
         </div>
         
@@ -1559,23 +1563,23 @@
 
         
         <div class="v2-day">
-            <span class="v2-day-label">9/24(木)</span>
-            <span class="v2-day-art">ART 18</span>
-            <span class="v2-day-rb">RB 11</span>
-            <span class="prev-prob ">1/161</span>
-            <span class="diff-medals-sm minus">-1,083枚</span>
-            <span class="max-medals-sm">最大1,141枚</span>
-            <span class="rensa-sm">9連</span>
+            <span class="v2-day-label">9/23(水)</span>
+            <span class="v2-day-art">ART 33</span>
+            <span class="v2-day-rb">RB 24</span>
+            <span class="prev-prob ">1/199</span>
+            
+            <span class="max-medals-sm">最大2,033枚</span>
+            
             
         </div>
         
 
         
         <div class="v2-day">
-            <span class="v2-day-label">9/23(水)</span>
-            <span class="v2-day-art">ART 33</span>
-            <span class="v2-day-rb">RB 24</span>
-            <span class="prev-prob ">1/199</span>
+            <span class="v2-day-label">9/22(火)</span>
+            <span class="v2-day-art">ART 26</span>
+            <span class="v2-day-rb">RB 19</span>
+            <span class="prev-prob bad">1/221</span>
             
             <span class="max-medals-sm">最大2,033枚</span>
             
@@ -1610,7 +1614,7 @@
         <div class="v2-detail-today">
             本日: ART 18 / RB 11 / 2,904G
              / 1/161
-            
+             / 最大2,541枚
         </div>
         
         
@@ -1656,29 +1660,16 @@
             <span class="v2-day-prob ">1/166</span>
             <span class="v2-day-games">5,480G</span>
             
-            
-            
-        </div>
-        
-        
-        <div class="v2-day">
-            <span class="v2-day-label">9/24(木)</span>
-            <span class="v2-day-art">ART 33</span>
-            <span class="v2-day-rb">RB 21</span>
-            <span class="v2-day-prob ">1/166</span>
-            <span class="diff-medals-sm plus">+70枚</span>
             <span class="max-medals-sm">最大3,589枚</span>
-            <span class="rensa-sm">14連</span>
             
         </div>
         
-
         
         <div class="v2-day">
             <span class="v2-day-label">9/24(木)</span>
             <span class="v2-day-art">ART 33</span>
             <span class="v2-day-rb">RB 20</span>
-            <span class="prev-prob ">1/163</span>
+            <span class="v2-day-prob ">1/163</span>
             <span class="diff-medals-sm plus">+70枚</span>
             <span class="max-medals-sm">最大3,589枚</span>
             <span class="rensa-sm">14連</span>
@@ -1694,6 +1685,19 @@
             <span class="prev-prob excellent">1/96</span>
             
             <span class="max-medals-sm">最大2,668枚</span>
+            
+            
+        </div>
+        
+
+        
+        <div class="v2-day">
+            <span class="v2-day-label">9/22(火)</span>
+            <span class="v2-day-art">ART 43</span>
+            <span class="v2-day-rb">RB 20</span>
+            <span class="prev-prob good">1/105</span>
+            
+            <span class="max-medals-sm">最大2,215枚</span>
             
             
         </div>
@@ -1715,9 +1719,9 @@
             
             <div class="reason-item">🔥 直近の推移: 小→小→中→小→小（好調73日中、大0/中13/小60日）</div>
             
-            <div class="reason-item">🔥 9/24(木)天井到達1回 → 低機械割の可能性に注意</div>
+            <div class="reason-item">🔥 本日天井到達1回 → 低機械割の可能性に注意</div>
             
-            <div class="reason-item">🔥 9/24(木)13連の爆発あり</div>
+            <div class="reason-item">🔥 本日13連の爆発あり</div>
             
             <div class="reason-item">📅 この台の金曜好調率: 5/6回(83%) → 期待大</div>
             
@@ -1726,7 +1730,7 @@
         <div class="v2-detail-today">
             本日: ART 33 / RB 21 / 5,480G
              / 1/166
-            
+             / 最大3,589枚
         </div>
         
         
@@ -1780,29 +1784,16 @@
             <span class="v2-day-prob excellent">1/88</span>
             <span class="v2-day-games">1,955G</span>
             
-            
-            
-        </div>
-        
-        
-        <div class="v2-day">
-            <span class="v2-day-label">9/24(木)</span>
-            <span class="v2-day-art">ART 22</span>
-            <span class="v2-day-rb">RB 9</span>
-            <span class="v2-day-prob excellent">1/89</span>
-            <span class="diff-medals-sm plus">+2,046枚</span>
-            <span class="max-medals-sm">最大3,452枚</span>
-            <span class="rensa-sm">11連</span>
+            <span class="max-medals-sm">最大3,991枚</span>
             
         </div>
         
-
         
         <div class="v2-day">
             <span class="v2-day-label">9/24(木)</span>
             <span class="v2-day-art">ART 18</span>
             <span class="v2-day-rb">RB 8</span>
-            <span class="prev-prob good">1/106</span>
+            <span class="v2-day-prob good">1/106</span>
             <span class="diff-medals-sm plus">+2,046枚</span>
             <span class="max-medals-sm">最大3,452枚</span>
             <span class="rensa-sm">11連</span>
@@ -1818,6 +1809,19 @@
             <span class="prev-prob bad">1/209</span>
             
             <span class="max-medals-sm">最大1,654枚</span>
+            
+            
+        </div>
+        
+
+        
+        <div class="v2-day">
+            <span class="v2-day-label">9/22(火)</span>
+            <span class="v2-day-art">ART 21</span>
+            <span class="v2-day-rb">RB 23</span>
+            <span class="prev-prob bad">1/252</span>
+            
+            <span class="max-medals-sm">最大732枚</span>
             
             
         </div>
@@ -1841,7 +1845,7 @@
             
             <div class="reason-item">🔥 直近の推移: 小→小→小→小→小（ART80回以上の大爆発がなく5日経過。過去の傾向では中/小の後に大が来やすい）</div>
             
-            <div class="reason-item">🔥 9/24(木)ART確率1/88 (1,955G消化) → 高機械割域</div>
+            <div class="reason-item">🔥 本日ART確率1/88 (1,955G消化) → 高機械割域</div>
             
             <div class="reason-item">📅 この台の金曜好調率: 6/6回(100%) → 期待大</div>
             
@@ -1852,7 +1856,7 @@
         <div class="v2-detail-today">
             本日: ART 22 / RB 9 / 1,955G
              / 1/88
-            
+             / 最大3,991枚
         </div>
         
         
@@ -1900,7 +1904,7 @@
             <span class="v2-day-prob ">1/149</span>
             <span class="v2-day-games">2,249G</span>
             
-            
+            <span class="max-medals-sm">最大1,132枚</span>
             
         </div>
         
@@ -1909,20 +1913,7 @@
             <span class="v2-day-label">9/24(木)</span>
             <span class="v2-day-art">ART 15</span>
             <span class="v2-day-rb">RB 9</span>
-            <span class="v2-day-prob ">1/150</span>
-            <span class="diff-medals-sm plus">+138枚</span>
-            <span class="max-medals-sm">最大964枚</span>
-            <span class="rensa-sm">7連</span>
-            
-        </div>
-        
-
-        
-        <div class="v2-day">
-            <span class="v2-day-label">9/24(木)</span>
-            <span class="v2-day-art">ART 15</span>
-            <span class="v2-day-rb">RB 9</span>
-            <span class="prev-prob ">1/149</span>
+            <span class="v2-day-prob ">1/149</span>
             <span class="diff-medals-sm plus">+138枚</span>
             <span class="max-medals-sm">最大964枚</span>
             <span class="rensa-sm">7連</span>
@@ -1938,6 +1929,19 @@
             <span class="prev-prob ">1/173</span>
             
             <span class="max-medals-sm">最大1,613枚</span>
+            
+            
+        </div>
+        
+
+        
+        <div class="v2-day">
+            <span class="v2-day-label">9/22(火)</span>
+            <span class="v2-day-art">ART 36</span>
+            <span class="v2-day-rb">RB 20</span>
+            <span class="prev-prob ">1/166</span>
+            
+            <span class="max-medals-sm">最大10,417枚</span>
             
             
         </div>
@@ -1959,7 +1963,7 @@
             
             <div class="reason-item">🔥 直近の推移: 中→小→小→小→小（好調76日中、大0/中17/小59日）</div>
             
-            <div class="reason-item">🔥 9/24(木)天井到達1回 → 低機械割の可能性に注意</div>
+            <div class="reason-item">🔥 本日天井到達1回 → 低機械割の可能性に注意</div>
             
             <div class="reason-item">📅 この台の金曜好調率: 4/4回(100%) → 期待大</div>
             
@@ -1970,7 +1974,7 @@
         <div class="v2-detail-today">
             本日: ART 15 / RB 9 / 2,249G
              / 1/149
-            
+             / 最大1,132枚
         </div>
         
         
@@ -2018,7 +2022,7 @@
             <span class="v2-day-prob ">1/164</span>
             <span class="v2-day-games">1,969G</span>
             
-            
+            <span class="max-medals-sm">最大2,859枚</span>
             
         </div>
         
@@ -2037,23 +2041,23 @@
 
         
         <div class="v2-day">
-            <span class="v2-day-label">9/24(木)</span>
-            <span class="v2-day-art">ART 12</span>
-            <span class="v2-day-rb">RB 10</span>
-            <span class="prev-prob ">1/164</span>
-            <span class="diff-medals-sm plus">+1,598枚</span>
-            <span class="max-medals-sm">最大2,937枚</span>
-            <span class="rensa-sm">11連</span>
+            <span class="v2-day-label">9/23(水)</span>
+            <span class="v2-day-art">ART 23</span>
+            <span class="v2-day-rb">RB 15</span>
+            <span class="prev-prob bad">1/225</span>
+            
+            <span class="max-medals-sm">最大6,691枚</span>
+            
             
         </div>
         
 
         
         <div class="v2-day">
-            <span class="v2-day-label">9/23(水)</span>
-            <span class="v2-day-art">ART 23</span>
+            <span class="v2-day-label">9/22(火)</span>
+            <span class="v2-day-art">ART 48</span>
             <span class="v2-day-rb">RB 15</span>
-            <span class="prev-prob bad">1/225</span>
+            <span class="prev-prob excellent">1/90</span>
             
             <span class="max-medals-sm">最大6,691枚</span>
             
@@ -2083,14 +2087,14 @@
             
             <div class="reason-item">📅 この台の金曜実績: 12/13回好調（92%）</div>
             
-            <div class="reason-item">🚨 前日はART確率1/164でやや不調（全台中央値1/166）（好調率83%のため本日も期待）</div>
+            <div class="reason-item">🚨 前日はART確率1/164でやや不調（全台中央値1/164）（好調率83%のため本日も期待）</div>
             
         </div>
         
         <div class="v2-detail-today">
             本日: ART 12 / RB 10 / 1,969G
              / 1/164
-            
+             / 最大2,859枚
         </div>
         
         
@@ -2138,29 +2142,16 @@
             <span class="v2-day-prob bad">1/259</span>
             <span class="v2-day-games">3,890G</span>
             
-            
-            
-        </div>
-        
-        
-        <div class="v2-day">
-            <span class="v2-day-label">9/24(木)</span>
-            <span class="v2-day-art">ART 15</span>
-            <span class="v2-day-rb">RB 15</span>
-            <span class="v2-day-prob bad">1/259</span>
-            <span class="diff-medals-sm minus">-1,884枚</span>
             <span class="max-medals-sm">最大1,049枚</span>
-            <span class="rensa-sm">6連</span>
             
         </div>
         
-
         
         <div class="v2-day">
             <span class="v2-day-label">9/24(木)</span>
             <span class="v2-day-art">ART 15</span>
             <span class="v2-day-rb">RB 15</span>
-            <span class="prev-prob bad">1/255</span>
+            <span class="v2-day-prob bad">1/255</span>
             <span class="diff-medals-sm minus">-1,884枚</span>
             <span class="max-medals-sm">最大1,049枚</span>
             <span class="rensa-sm">6連</span>
@@ -2174,6 +2165,19 @@
             <span class="v2-day-art">ART 48</span>
             <span class="v2-day-rb">RB 19</span>
             <span class="prev-prob good">1/116</span>
+            
+            <span class="max-medals-sm">最大3,873枚</span>
+            
+            
+        </div>
+        
+
+        
+        <div class="v2-day">
+            <span class="v2-day-label">9/22(火)</span>
+            <span class="v2-day-art">ART 47</span>
+            <span class="v2-day-rb">RB 18</span>
+            <span class="prev-prob good">1/110</span>
             
             <span class="max-medals-sm">最大3,873枚</span>
             
@@ -2203,14 +2207,14 @@
             
             <div class="reason-item">💰 好調日の平均ART 36回（1/152）→ 打てば出やすい台</div>
             
-            <div class="reason-item">🚨 前日はART確率1/259で低機械割域（全台中央値1/166）（好調率83%のため本日も期待）</div>
+            <div class="reason-item">🚨 前日はART確率1/255で低機械割域（全台中央値1/164）（好調率83%のため本日も期待）</div>
             
         </div>
         
         <div class="v2-detail-today">
             本日: ART 15 / RB 15 / 3,890G
              / 1/259
-            
+             / 最大1,049枚
         </div>
         
         
@@ -2258,7 +2262,7 @@
             <span class="v2-day-prob bad">1/219</span>
             <span class="v2-day-games">4,388G</span>
             
-            
+            <span class="max-medals-sm">最大2,444枚</span>
             
         </div>
         
@@ -2277,23 +2281,23 @@
 
         
         <div class="v2-day">
-            <span class="v2-day-label">9/24(木)</span>
-            <span class="v2-day-art">ART 20</span>
-            <span class="v2-day-rb">RB 17</span>
-            <span class="prev-prob bad">1/219</span>
-            <span class="diff-medals-sm minus">-1,373枚</span>
-            <span class="max-medals-sm">最大2,603枚</span>
-            <span class="rensa-sm">14連</span>
+            <span class="v2-day-label">9/23(水)</span>
+            <span class="v2-day-art">ART 56</span>
+            <span class="v2-day-rb">RB 22</span>
+            <span class="prev-prob excellent">1/99</span>
+            
+            <span class="max-medals-sm">最大6,654枚</span>
+            
             
         </div>
         
 
         
         <div class="v2-day">
-            <span class="v2-day-label">9/23(水)</span>
-            <span class="v2-day-art">ART 56</span>
-            <span class="v2-day-rb">RB 22</span>
-            <span class="prev-prob excellent">1/99</span>
+            <span class="v2-day-label">9/22(火)</span>
+            <span class="v2-day-art">ART 51</span>
+            <span class="v2-day-rb">RB 16</span>
+            <span class="prev-prob excellent">1/79</span>
             
             <span class="max-medals-sm">最大6,654枚</span>
             
@@ -2317,9 +2321,9 @@
             
             <div class="reason-item">🔥 直近の推移: 小→中→中→小→小（好調72日中、大0/中12/小60日）</div>
             
-            <div class="reason-item">🔥 9/24(木)天井到達1回 → 低機械割の可能性に注意</div>
+            <div class="reason-item">🔥 本日天井到達1回 → 低機械割の可能性に注意</div>
             
-            <div class="reason-item">🔥 9/24(木)11連の爆発あり</div>
+            <div class="reason-item">🔥 本日11連の爆発あり</div>
             
             <div class="reason-item">📅 この台の金曜好調率: 6/6回(100%) → 期待大</div>
             
@@ -2328,7 +2332,7 @@
         <div class="v2-detail-today">
             本日: ART 20 / RB 17 / 4,388G
              / 1/219
-            
+             / 最大2,444枚
         </div>
         
         
@@ -2376,7 +2380,7 @@
             <span class="v2-day-prob ">1/137</span>
             <span class="v2-day-games">4,403G</span>
             
-            
+            <span class="max-medals-sm">最大2,320枚</span>
             
         </div>
         
@@ -2385,20 +2389,7 @@
             <span class="v2-day-label">9/24(木)</span>
             <span class="v2-day-art">ART 32</span>
             <span class="v2-day-rb">RB 17</span>
-            <span class="v2-day-prob ">1/138</span>
-            <span class="diff-medals-sm plus">+743枚</span>
-            <span class="max-medals-sm">最大2,144枚</span>
-            <span class="rensa-sm">11連</span>
-            
-        </div>
-        
-
-        
-        <div class="v2-day">
-            <span class="v2-day-label">9/24(木)</span>
-            <span class="v2-day-art">ART 32</span>
-            <span class="v2-day-rb">RB 17</span>
-            <span class="prev-prob ">1/137</span>
+            <span class="v2-day-prob ">1/137</span>
             <span class="diff-medals-sm plus">+743枚</span>
             <span class="max-medals-sm">最大2,144枚</span>
             <span class="rensa-sm">11連</span>
@@ -2414,6 +2405,19 @@
             <span class="prev-prob good">1/126</span>
             
             <span class="max-medals-sm">最大5,365枚</span>
+            
+            
+        </div>
+        
+
+        
+        <div class="v2-day">
+            <span class="v2-day-label">9/22(火)</span>
+            <span class="v2-day-art">ART 31</span>
+            <span class="v2-day-rb">RB 19</span>
+            <span class="prev-prob ">1/143</span>
+            
+            <span class="max-medals-sm">最大4,188枚</span>
             
             
         </div>
@@ -2435,7 +2439,7 @@
             
             <div class="reason-item">🔥 直近の推移: 小→小→小→小→小（好調85日中、大0/中14/小71日）</div>
             
-            <div class="reason-item">🔥 9/24(木)10連の爆発あり</div>
+            <div class="reason-item">🔥 本日10連の爆発あり</div>
             
             <div class="reason-item">📅 この台の金曜好調率: 5/5回(100%) → 期待大</div>
             
@@ -2446,7 +2450,7 @@
         <div class="v2-detail-today">
             本日: ART 32 / RB 17 / 4,403G
              / 1/137
-            
+             / 最大2,320枚
         </div>
         
         
@@ -2494,29 +2498,16 @@
             <span class="v2-day-prob ">1/146</span>
             <span class="v2-day-games">3,079G</span>
             
-            
-            
-        </div>
-        
-        
-        <div class="v2-day">
-            <span class="v2-day-label">9/24(木)</span>
-            <span class="v2-day-art">ART 21</span>
-            <span class="v2-day-rb">RB 12</span>
-            <span class="v2-day-prob ">1/147</span>
-            <span class="diff-medals-sm plus">+625枚</span>
             <span class="max-medals-sm">最大2,826枚</span>
-            <span class="rensa-sm">11連</span>
             
         </div>
         
-
         
         <div class="v2-day">
             <span class="v2-day-label">9/24(木)</span>
             <span class="v2-day-art">ART 21</span>
             <span class="v2-day-rb">RB 12</span>
-            <span class="prev-prob ">1/146</span>
+            <span class="v2-day-prob ">1/146</span>
             <span class="diff-medals-sm plus">+625枚</span>
             <span class="max-medals-sm">最大2,826枚</span>
             <span class="rensa-sm">11連</span>
@@ -2532,6 +2523,19 @@
             <span class="prev-prob excellent">1/73</span>
             
             <span class="max-medals-sm">最大7,399枚</span>
+            
+            
+        </div>
+        
+
+        
+        <div class="v2-day">
+            <span class="v2-day-label">9/22(火)</span>
+            <span class="v2-day-art">ART 54</span>
+            <span class="v2-day-rb">RB 17</span>
+            <span class="prev-prob excellent">1/76</span>
+            
+            <span class="max-medals-sm">最大6,615枚</span>
             
             
         </div>
@@ -2553,9 +2557,9 @@
             
             <div class="reason-item">🔥 直近の推移: 小→中→中→小→小（好調74日中、大0/中15/小59日）</div>
             
-            <div class="reason-item">🔥 9/24(木)天井到達1回 → 低機械割の可能性に注意</div>
+            <div class="reason-item">🔥 本日天井到達1回 → 低機械割の可能性に注意</div>
             
-            <div class="reason-item">🔥 9/24(木)11連の爆発あり</div>
+            <div class="reason-item">🔥 本日11連の爆発あり</div>
             
             <div class="reason-item">📅 この台の金曜好調率: 5/6回(83%) → 期待大</div>
             
@@ -2564,7 +2568,7 @@
         <div class="v2-detail-today">
             本日: ART 21 / RB 12 / 3,079G
              / 1/146
-            
+             / 最大2,826枚
         </div>
         
         
@@ -2612,7 +2616,7 @@
             <span class="v2-day-prob ">1/194</span>
             <span class="v2-day-games">2,919G</span>
             
-            
+            <span class="max-medals-sm">最大2,147枚</span>
             
         </div>
         
@@ -2621,20 +2625,7 @@
             <span class="v2-day-label">9/24(木)</span>
             <span class="v2-day-art">ART 15</span>
             <span class="v2-day-rb">RB 14</span>
-            <span class="v2-day-prob ">1/195</span>
-            <span class="diff-medals-sm minus">-120枚</span>
-            <span class="max-medals-sm">最大2,013枚</span>
-            <span class="rensa-sm">8連</span>
-            
-        </div>
-        
-
-        
-        <div class="v2-day">
-            <span class="v2-day-label">9/24(木)</span>
-            <span class="v2-day-art">ART 15</span>
-            <span class="v2-day-rb">RB 14</span>
-            <span class="prev-prob ">1/194</span>
+            <span class="v2-day-prob ">1/194</span>
             <span class="diff-medals-sm minus">-120枚</span>
             <span class="max-medals-sm">最大2,013枚</span>
             <span class="rensa-sm">8連</span>
@@ -2648,6 +2639,19 @@
             <span class="v2-day-art">ART 38</span>
             <span class="v2-day-rb">RB 17</span>
             <span class="prev-prob ">1/145</span>
+            
+            <span class="max-medals-sm">最大2,751枚</span>
+            
+            
+        </div>
+        
+
+        
+        <div class="v2-day">
+            <span class="v2-day-label">9/22(火)</span>
+            <span class="v2-day-art">ART 40</span>
+            <span class="v2-day-rb">RB 16</span>
+            <span class="prev-prob good">1/107</span>
             
             <span class="max-medals-sm">最大2,751枚</span>
             
@@ -2682,7 +2686,7 @@
         <div class="v2-detail-today">
             本日: ART 15 / RB 14 / 2,919G
              / 1/194
-            
+             / 最大2,147枚
         </div>
         
         
@@ -2730,7 +2734,7 @@
             <span class="v2-day-prob ">1/151</span>
             <span class="v2-day-games">2,725G</span>
             
-            
+            <span class="max-medals-sm">最大3,611枚</span>
             
         </div>
         
@@ -2749,23 +2753,23 @@
 
         
         <div class="v2-day">
-            <span class="v2-day-label">9/24(木)</span>
-            <span class="v2-day-art">ART 18</span>
-            <span class="v2-day-rb">RB 13</span>
-            <span class="prev-prob ">1/151</span>
-            <span class="diff-medals-sm plus">+1,302枚</span>
-            <span class="max-medals-sm">最大3,657枚</span>
-            <span class="rensa-sm">12連</span>
+            <span class="v2-day-label">9/23(水)</span>
+            <span class="v2-day-art">ART 45</span>
+            <span class="v2-day-rb">RB 30</span>
+            <span class="prev-prob ">1/139</span>
+            
+            <span class="max-medals-sm">最大2,340枚</span>
+            
             
         </div>
         
 
         
         <div class="v2-day">
-            <span class="v2-day-label">9/23(水)</span>
-            <span class="v2-day-art">ART 45</span>
-            <span class="v2-day-rb">RB 30</span>
-            <span class="prev-prob ">1/139</span>
+            <span class="v2-day-label">9/22(火)</span>
+            <span class="v2-day-art">ART 41</span>
+            <span class="v2-day-rb">RB 24</span>
+            <span class="prev-prob good">1/125</span>
             
             <span class="max-medals-sm">最大2,340枚</span>
             
@@ -2789,7 +2793,7 @@
             
             <div class="reason-item">🔥 直近の推移: 小→小→小→小→小（好調71日中、大0/中9/小62日）</div>
             
-            <div class="reason-item">🔥 9/24(木)10連の爆発あり</div>
+            <div class="reason-item">🔥 本日10連の爆発あり</div>
             
             <div class="reason-item">📅 この台の金曜好調率: 5/5回(100%) → 期待大</div>
             
@@ -2800,7 +2804,7 @@
         <div class="v2-detail-today">
             本日: ART 18 / RB 13 / 2,725G
              / 1/151
-            
+             / 最大3,611枚
         </div>
         
         
@@ -2848,7 +2852,7 @@
             <span class="v2-day-prob bad">1/297</span>
             <span class="v2-day-games">5,646G</span>
             
-            
+            <span class="max-medals-sm">最大955枚</span>
             
         </div>
         
@@ -2867,25 +2871,25 @@
 
         
         <div class="v2-day">
-            <span class="v2-day-label">9/24(木)</span>
-            <span class="v2-day-art">ART 19</span>
-            <span class="v2-day-rb">RB 19</span>
-            <span class="prev-prob bad">1/297</span>
-            <span class="diff-medals-sm minus">-3,472枚</span>
-            <span class="max-medals-sm">最大955枚</span>
-            <span class="rensa-sm">6連</span>
-            
-        </div>
-        
-
-        
-        <div class="v2-day">
             <span class="v2-day-label">9/23(水)</span>
             <span class="v2-day-art">ART 29</span>
             <span class="v2-day-rb">RB 19</span>
             <span class="prev-prob ">1/180</span>
             
             <span class="max-medals-sm">最大1,777枚</span>
+            
+            
+        </div>
+        
+
+        
+        <div class="v2-day">
+            <span class="v2-day-label">9/22(火)</span>
+            <span class="v2-day-art">ART 19</span>
+            <span class="v2-day-rb">RB 12</span>
+            <span class="prev-prob bad">1/209</span>
+            
+            <span class="max-medals-sm">最大924枚</span>
             
             
         </div>
@@ -2907,20 +2911,20 @@
             
             <div class="reason-item">🔥 直近の推移: 小→中→小→小→小（ART80回以上の大爆発がなく5日経過。過去の傾向では中/小の後に大が来やすい）</div>
             
-            <div class="reason-item">🔥 9/24(木)天井到達2回 → 低機械割の可能性に注意</div>
+            <div class="reason-item">🔥 本日天井到達2回 → 低機械割の可能性に注意</div>
             
             <div class="reason-item">📅 この台の金曜好調率: 5/5回(100%) → 期待大</div>
             
             <div class="reason-item">📅 この台の金曜実績: 13/13回好調（100%）</div>
             
-            <div class="reason-item">🚨 前日はART確率1/297で低機械割域（全台中央値1/166）（好調率88%のため本日も期待）</div>
+            <div class="reason-item">🚨 前日はART確率1/297で低機械割域（全台中央値1/164）（好調率88%のため本日も期待）</div>
             
         </div>
         
         <div class="v2-detail-today">
             本日: ART 19 / RB 19 / 5,646G
              / 1/297
-            
+             / 最大955枚
         </div>
         
         
@@ -2968,7 +2972,7 @@
             <span class="v2-day-prob excellent">1/56</span>
             <span class="v2-day-games">957G</span>
             
-            
+            <span class="max-medals-sm">最大7,532枚</span>
             
         </div>
         
@@ -2987,23 +2991,23 @@
 
         
         <div class="v2-day">
-            <span class="v2-day-label">9/24(木)</span>
-            <span class="v2-day-art">ART 17</span>
-            <span class="v2-day-rb">RB 4</span>
-            <span class="prev-prob excellent">1/56</span>
-            <span class="diff-medals-sm plus">+6,805枚</span>
-            <span class="max-medals-sm">最大7,700枚</span>
-            <span class="rensa-sm">16連</span>
-            <span class="low-activity">※低稼働</span>
+            <span class="v2-day-label">9/23(水)</span>
+            <span class="v2-day-art">ART 16</span>
+            <span class="v2-day-rb">RB 14</span>
+            <span class="prev-prob bad">1/266</span>
+            
+            <span class="max-medals-sm">最大5,874枚</span>
+            
+            
         </div>
         
 
         
         <div class="v2-day">
-            <span class="v2-day-label">9/23(水)</span>
-            <span class="v2-day-art">ART 16</span>
+            <span class="v2-day-label">9/22(火)</span>
+            <span class="v2-day-art">ART 38</span>
             <span class="v2-day-rb">RB 14</span>
-            <span class="prev-prob bad">1/266</span>
+            <span class="prev-prob good">1/105</span>
             
             <span class="max-medals-sm">最大5,874枚</span>
             
@@ -3025,9 +3029,9 @@
             
             <div class="reason-item">🔥 直近の推移: 小→小→小→小→小（好調70日中、大0/中9/小61日）</div>
             
-            <div class="reason-item">🔥 9/24(木)ART確率1/56 (957G消化) → 高機械割域の挙動</div>
+            <div class="reason-item">🔥 本日ART確率1/56 (957G消化) → 高機械割域の挙動</div>
             
-            <div class="reason-item">🔥 9/24(木)14連の爆発あり</div>
+            <div class="reason-item">🔥 本日14連の爆発あり</div>
             
             <div class="reason-item">📅 この台の金曜実績: 11/13回好調（85%）</div>
             
@@ -3036,7 +3040,7 @@
         <div class="v2-detail-today">
             本日: ART 17 / RB 4 / 957G
              / 1/56
-            
+             / 最大7,532枚
         </div>
         
         
@@ -3084,7 +3088,7 @@
             <span class="v2-day-prob bad">1/272</span>
             <span class="v2-day-games">3,541G</span>
             
-            
+            <span class="max-medals-sm">最大795枚</span>
             
         </div>
         
@@ -3103,23 +3107,23 @@
 
         
         <div class="v2-day">
-            <span class="v2-day-label">9/24(木)</span>
-            <span class="v2-day-art">ART 13</span>
-            <span class="v2-day-rb">RB 12</span>
-            <span class="prev-prob bad">1/272</span>
-            <span class="diff-medals-sm minus">-2,014枚</span>
-            <span class="max-medals-sm">最大931枚</span>
-            <span class="rensa-sm">8連</span>
+            <span class="v2-day-label">9/23(水)</span>
+            <span class="v2-day-art">ART 48</span>
+            <span class="v2-day-rb">RB 24</span>
+            <span class="prev-prob ">1/131</span>
+            
+            <span class="max-medals-sm">最大4,685枚</span>
+            
             
         </div>
         
 
         
         <div class="v2-day">
-            <span class="v2-day-label">9/23(水)</span>
-            <span class="v2-day-art">ART 48</span>
-            <span class="v2-day-rb">RB 24</span>
-            <span class="prev-prob ">1/131</span>
+            <span class="v2-day-label">9/22(火)</span>
+            <span class="v2-day-art">ART 45</span>
+            <span class="v2-day-rb">RB 19</span>
+            <span class="prev-prob good">1/103</span>
             
             <span class="max-medals-sm">最大4,685枚</span>
             
@@ -3143,20 +3147,20 @@
             
             <div class="reason-item">🔥 直近の推移: 中→小→小→小→小（ART80回以上の大爆発がなく5日経過。過去の傾向では中/小の後に大が来やすい）</div>
             
-            <div class="reason-item">🔥 9/24(木)天井到達2回 → 低機械割の可能性に注意</div>
+            <div class="reason-item">🔥 本日天井到達2回 → 低機械割の可能性に注意</div>
             
             <div class="reason-item">📅 この台の金曜好調率: 7/7回(100%) → 期待大</div>
             
             <div class="reason-item">📅 この台の金曜実績: 12/13回好調（92%）</div>
             
-            <div class="reason-item">🚨 前日はART確率1/272で低機械割域（全台中央値1/166）（好調率91%のため本日も期待）</div>
+            <div class="reason-item">🚨 前日はART確率1/272で低機械割域（全台中央値1/164）（好調率91%のため本日も期待）</div>
             
         </div>
         
         <div class="v2-detail-today">
             本日: ART 13 / RB 12 / 3,541G
              / 1/272
-            
+             / 最大795枚
         </div>
         
         
@@ -3204,29 +3208,16 @@
             <span class="v2-day-prob ">1/182</span>
             <span class="v2-day-games">2,188G</span>
             
-            
-            
-        </div>
-        
-        
-        <div class="v2-day">
-            <span class="v2-day-label">9/24(木)</span>
-            <span class="v2-day-art">ART 12</span>
-            <span class="v2-day-rb">RB 9</span>
-            <span class="v2-day-prob ">1/182</span>
-            <span class="diff-medals-sm minus">-1,212枚</span>
-            <span class="max-medals-sm">最大1,113枚</span>
-            <span class="rensa-sm">6連</span>
+            <span class="max-medals-sm">最大1,279枚</span>
             
         </div>
         
-
         
         <div class="v2-day">
             <span class="v2-day-label">9/24(木)</span>
             <span class="v2-day-art">ART 10</span>
             <span class="v2-day-rb">RB 9</span>
-            <span class="prev-prob bad">1/218</span>
+            <span class="v2-day-prob bad">1/218</span>
             <span class="diff-medals-sm minus">-1,212枚</span>
             <span class="max-medals-sm">最大1,113枚</span>
             <span class="rensa-sm">6連</span>
@@ -3240,6 +3231,19 @@
             <span class="v2-day-art">ART 39</span>
             <span class="v2-day-rb">RB 26</span>
             <span class="prev-prob good">1/124</span>
+            
+            <span class="max-medals-sm">最大6,657枚</span>
+            
+            
+        </div>
+        
+
+        
+        <div class="v2-day">
+            <span class="v2-day-label">9/22(火)</span>
+            <span class="v2-day-art">ART 35</span>
+            <span class="v2-day-rb">RB 25</span>
+            <span class="prev-prob good">1/127</span>
             
             <span class="max-medals-sm">最大6,657枚</span>
             
@@ -3269,14 +3273,14 @@
             
             <div class="reason-item">💰 好調日の平均ART 35回（1/149）→ 打てば出やすい台</div>
             
-            <div class="reason-item">🚨 前日はART確率1/182で低機械割域（全台中央値1/166）（好調率81%のため本日も期待）</div>
+            <div class="reason-item">🚨 前日はART確率1/219で低機械割域（全台中央値1/164）（好調率81%のため本日も期待）</div>
             
         </div>
         
         <div class="v2-detail-today">
             本日: ART 12 / RB 9 / 2,188G
              / 1/182
-            
+             / 最大1,279枚
         </div>
         
         
@@ -3324,29 +3328,16 @@
             <span class="v2-day-prob bad">1/214</span>
             <span class="v2-day-games">2,569G</span>
             
-            
-            
-        </div>
-        
-        
-        <div class="v2-day">
-            <span class="v2-day-label">9/24(木)</span>
-            <span class="v2-day-art">ART 12</span>
-            <span class="v2-day-rb">RB 9</span>
-            <span class="v2-day-prob bad">1/214</span>
-            <span class="diff-medals-sm minus">-1,350枚</span>
-            <span class="max-medals-sm">最大958枚</span>
-            <span class="rensa-sm">6連</span>
+            <span class="max-medals-sm">最大955枚</span>
             
         </div>
         
-
         
         <div class="v2-day">
             <span class="v2-day-label">9/24(木)</span>
             <span class="v2-day-art">ART 11</span>
             <span class="v2-day-rb">RB 9</span>
-            <span class="prev-prob bad">1/232</span>
+            <span class="v2-day-prob bad">1/232</span>
             <span class="diff-medals-sm minus">-1,350枚</span>
             <span class="max-medals-sm">最大958枚</span>
             <span class="rensa-sm">6連</span>
@@ -3360,6 +3351,19 @@
             <span class="v2-day-art">ART 73</span>
             <span class="v2-day-rb">RB 24</span>
             <span class="prev-prob excellent">1/63</span>
+            
+            <span class="max-medals-sm">最大10,562枚</span>
+            
+            
+        </div>
+        
+
+        
+        <div class="v2-day">
+            <span class="v2-day-label">9/22(火)</span>
+            <span class="v2-day-art">ART 61</span>
+            <span class="v2-day-rb">RB 16</span>
+            <span class="prev-prob excellent">1/58</span>
             
             <span class="max-medals-sm">最大10,562枚</span>
             
@@ -3383,20 +3387,20 @@
             
             <div class="reason-item">🔥 直近の推移: 小→中→中→小→小（好調81日中、大0/中16/小65日）</div>
             
-            <div class="reason-item">🔥 9/24(木)天井到達1回 → 低機械割の可能性に注意</div>
+            <div class="reason-item">🔥 本日天井到達1回 → 低機械割の可能性に注意</div>
             
             <div class="reason-item">📅 この台の金曜好調率: 6/6回(100%) → 期待大</div>
             
             <div class="reason-item">📅 この台の金曜実績: 13/13回好調（100%）</div>
             
-            <div class="reason-item">🚨 前日はART確率1/214で低機械割域（全台中央値1/166）（好調率91%のため本日も期待）</div>
+            <div class="reason-item">🚨 前日はART確率1/233で低機械割域（全台中央値1/164）（好調率91%のため本日も期待）</div>
             
         </div>
         
         <div class="v2-detail-today">
             本日: ART 12 / RB 9 / 2,569G
              / 1/214
-            
+             / 最大955枚
         </div>
         
         
@@ -3444,7 +3448,7 @@
             <span class="v2-day-prob bad">1/263</span>
             <span class="v2-day-games">3,694G</span>
             
-            
+            <span class="max-medals-sm">最大791枚</span>
             
         </div>
         
@@ -3453,20 +3457,7 @@
             <span class="v2-day-label">9/24(木)</span>
             <span class="v2-day-art">ART 14</span>
             <span class="v2-day-rb">RB 13</span>
-            <span class="v2-day-prob bad">1/264</span>
-            <span class="diff-medals-sm minus">-2,279枚</span>
-            <span class="max-medals-sm">最大793枚</span>
-            <span class="rensa-sm">5連</span>
-            
-        </div>
-        
-
-        
-        <div class="v2-day">
-            <span class="v2-day-label">9/24(木)</span>
-            <span class="v2-day-art">ART 14</span>
-            <span class="v2-day-rb">RB 13</span>
-            <span class="prev-prob bad">1/263</span>
+            <span class="v2-day-prob bad">1/263</span>
             <span class="diff-medals-sm minus">-2,279枚</span>
             <span class="max-medals-sm">最大793枚</span>
             <span class="rensa-sm">5連</span>
@@ -3480,6 +3471,19 @@
             <span class="v2-day-art">ART 51</span>
             <span class="v2-day-rb">RB 22</span>
             <span class="prev-prob good">1/112</span>
+            
+            <span class="max-medals-sm">最大6,499枚</span>
+            
+            
+        </div>
+        
+
+        
+        <div class="v2-day">
+            <span class="v2-day-label">9/22(火)</span>
+            <span class="v2-day-art">ART 46</span>
+            <span class="v2-day-rb">RB 16</span>
+            <span class="prev-prob excellent">1/95</span>
             
             <span class="max-medals-sm">最大6,499枚</span>
             
@@ -3509,14 +3513,14 @@
             
             <div class="reason-item">💰 好調日の平均ART 36回（1/146）→ 打てば出やすい台</div>
             
-            <div class="reason-item">🚨 前日はART確率1/264で低機械割域（全台中央値1/166）（好調率81%のため本日も期待）</div>
+            <div class="reason-item">🚨 前日はART確率1/264で低機械割域（全台中央値1/164）（好調率81%のため本日も期待）</div>
             
         </div>
         
         <div class="v2-detail-today">
             本日: ART 14 / RB 13 / 3,694G
              / 1/263
-            
+             / 最大791枚
         </div>
         
         
@@ -3564,29 +3568,16 @@
             <span class="v2-day-prob bad">1/262</span>
             <span class="v2-day-games">2,891G</span>
             
-            
-            
-        </div>
-        
-        
-        <div class="v2-day">
-            <span class="v2-day-label">9/24(木)</span>
-            <span class="v2-day-art">ART 11</span>
-            <span class="v2-day-rb">RB 8</span>
-            <span class="v2-day-prob bad">1/263</span>
-            <span class="diff-medals-sm minus">-1,930枚</span>
             <span class="max-medals-sm">最大584枚</span>
-            <span class="rensa-sm">6連</span>
             
         </div>
         
-
         
         <div class="v2-day">
             <span class="v2-day-label">9/24(木)</span>
             <span class="v2-day-art">ART 11</span>
             <span class="v2-day-rb">RB 8</span>
-            <span class="prev-prob bad">1/262</span>
+            <span class="v2-day-prob bad">1/262</span>
             <span class="diff-medals-sm minus">-1,930枚</span>
             <span class="max-medals-sm">最大584枚</span>
             <span class="rensa-sm">6連</span>
@@ -3602,6 +3593,19 @@
             <span class="prev-prob ">1/159</span>
             
             <span class="max-medals-sm">最大9,172枚</span>
+            
+            
+        </div>
+        
+
+        
+        <div class="v2-day">
+            <span class="v2-day-label">9/22(火)</span>
+            <span class="v2-day-art">ART 39</span>
+            <span class="v2-day-rb">RB 19</span>
+            <span class="prev-prob good">1/114</span>
+            
+            <span class="max-medals-sm">最大2,232枚</span>
             
             
         </div>
@@ -3623,20 +3627,20 @@
             
             <div class="reason-item">🔥 直近の推移: 小→小→小→小→小（好調72日中、大0/中12/小60日）</div>
             
-            <div class="reason-item">🔥 9/24(木)天井到達1回 → 低機械割の可能性に注意</div>
+            <div class="reason-item">🔥 本日天井到達1回 → 低機械割の可能性に注意</div>
             
             <div class="reason-item">📅 この台の金曜好調率: 5/6回(83%) → 期待大</div>
             
             <div class="reason-item">📅 この台の金曜実績: 12/13回好調（92%）</div>
             
-            <div class="reason-item">🚨 前日はART確率1/263で低機械割域（全台中央値1/166）（好調率81%のため本日も期待）</div>
+            <div class="reason-item">🚨 前日はART確率1/263で低機械割域（全台中央値1/164）（好調率81%のため本日も期待）</div>
             
         </div>
         
         <div class="v2-detail-today">
             本日: ART 11 / RB 8 / 2,891G
              / 1/262
-            
+             / 最大584枚
         </div>
         
         
@@ -3684,29 +3688,16 @@
             <span class="v2-day-prob bad">1/279</span>
             <span class="v2-day-games">2,794G</span>
             
-            
-            
-        </div>
-        
-        
-        <div class="v2-day">
-            <span class="v2-day-label">9/24(木)</span>
-            <span class="v2-day-art">ART 10</span>
-            <span class="v2-day-rb">RB 9</span>
-            <span class="v2-day-prob bad">1/279</span>
-            <span class="diff-medals-sm minus">-1,485枚</span>
-            <span class="max-medals-sm">最大583枚</span>
-            <span class="rensa-sm">5連</span>
+            <span class="max-medals-sm">最大507枚</span>
             
         </div>
         
-
         
         <div class="v2-day">
             <span class="v2-day-label">9/24(木)</span>
             <span class="v2-day-art">ART 10</span>
             <span class="v2-day-rb">RB 8</span>
-            <span class="prev-prob bad">1/252</span>
+            <span class="v2-day-prob bad">1/252</span>
             <span class="diff-medals-sm minus">-1,485枚</span>
             <span class="max-medals-sm">最大583枚</span>
             <span class="rensa-sm">5連</span>
@@ -3720,6 +3711,19 @@
             <span class="v2-day-art">ART 28</span>
             <span class="v2-day-rb">RB 12</span>
             <span class="prev-prob ">1/145</span>
+            
+            <span class="max-medals-sm">最大10,567枚</span>
+            
+            
+        </div>
+        
+
+        
+        <div class="v2-day">
+            <span class="v2-day-label">9/22(火)</span>
+            <span class="v2-day-art">ART 49</span>
+            <span class="v2-day-rb">RB 12</span>
+            <span class="prev-prob excellent">1/70</span>
             
             <span class="max-medals-sm">最大10,567枚</span>
             
@@ -3749,14 +3753,14 @@
             
             <div class="reason-item">💰 好調日の平均ART 37回（1/140）→ 打てば出やすい台</div>
             
-            <div class="reason-item">🚨 前日はART確率1/279で低機械割域（全台中央値1/166）（好調率88%のため本日も期待）</div>
+            <div class="reason-item">🚨 前日はART確率1/252で低機械割域（全台中央値1/164）（好調率88%のため本日も期待）</div>
             
         </div>
         
         <div class="v2-detail-today">
             本日: ART 10 / RB 9 / 2,794G
              / 1/279
-            
+             / 最大507枚
         </div>
         
         
@@ -3804,7 +3808,7 @@
             <span class="v2-day-prob bad">1/295</span>
             <span class="v2-day-games">2,363G</span>
             
-            
+            <span class="max-medals-sm">最大768枚</span>
             
         </div>
         
@@ -3823,25 +3827,25 @@
 
         
         <div class="v2-day">
-            <span class="v2-day-label">9/24(木)</span>
-            <span class="v2-day-art">ART 8</span>
-            <span class="v2-day-rb">RB 9</span>
-            <span class="prev-prob bad">1/295</span>
-            <span class="diff-medals-sm minus">-1,598枚</span>
-            <span class="max-medals-sm">最大775枚</span>
-            <span class="rensa-sm">6連</span>
-            
-        </div>
-        
-
-        
-        <div class="v2-day">
             <span class="v2-day-label">9/23(水)</span>
             <span class="v2-day-art">ART 31</span>
             <span class="v2-day-rb">RB 29</span>
             <span class="prev-prob bad">1/201</span>
             
             <span class="max-medals-sm">最大1,634枚</span>
+            
+            
+        </div>
+        
+
+        
+        <div class="v2-day">
+            <span class="v2-day-label">9/22(火)</span>
+            <span class="v2-day-art">ART 35</span>
+            <span class="v2-day-rb">RB 16</span>
+            <span class="prev-prob ">1/161</span>
+            
+            <span class="max-medals-sm">最大5,064枚</span>
             
             
         </div>
@@ -3863,20 +3867,20 @@
             
             <div class="reason-item">🔥 直近の推移: 中→小→小→小→小（好調77日中、大0/中16/小61日）</div>
             
-            <div class="reason-item">🔥 9/24(木)天井到達1回 → 低機械割の可能性に注意</div>
+            <div class="reason-item">🔥 本日天井到達1回 → 低機械割の可能性に注意</div>
             
             <div class="reason-item">📅 この台の金曜好調率: 6/6回(100%) → 期待大</div>
             
             <div class="reason-item">📅 この台の金曜実績: 12/13回好調（92%）</div>
             
-            <div class="reason-item">🚨 前日はART確率1/295で低機械割域（全台中央値1/166）（好調率87%のため本日も期待）</div>
+            <div class="reason-item">🚨 前日はART確率1/295で低機械割域（全台中央値1/164）（好調率87%のため本日も期待）</div>
             
         </div>
         
         <div class="v2-detail-today">
             本日: ART 8 / RB 9 / 2,363G
              / 1/295
-            
+             / 最大768枚
         </div>
         
         
@@ -3924,29 +3928,16 @@
             <span class="v2-day-prob bad">1/352</span>
             <span class="v2-day-games">2,821G</span>
             
-            
-            
-        </div>
-        
-        
-        <div class="v2-day">
-            <span class="v2-day-label">9/24(木)</span>
-            <span class="v2-day-art">ART 8</span>
-            <span class="v2-day-rb">RB 7</span>
-            <span class="v2-day-prob bad">1/353</span>
-            <span class="diff-medals-sm minus">-2,226枚</span>
-            <span class="max-medals-sm">最大516枚</span>
-            <span class="rensa-sm">5連</span>
+            <span class="max-medals-sm">最大445枚</span>
             
         </div>
         
-
         
         <div class="v2-day">
             <span class="v2-day-label">9/24(木)</span>
             <span class="v2-day-art">ART 5</span>
             <span class="v2-day-rb">RB 6</span>
-            <span class="prev-prob bad">1/463</span>
+            <span class="v2-day-prob bad">1/463</span>
             <span class="diff-medals-sm minus">-2,226枚</span>
             <span class="max-medals-sm">最大516枚</span>
             <span class="rensa-sm">5連</span>
@@ -3960,6 +3951,19 @@
             <span class="v2-day-art">ART 47</span>
             <span class="v2-day-rb">RB 19</span>
             <span class="prev-prob excellent">1/88</span>
+            
+            <span class="max-medals-sm">最大6,056枚</span>
+            
+            
+        </div>
+        
+
+        
+        <div class="v2-day">
+            <span class="v2-day-label">9/22(火)</span>
+            <span class="v2-day-art">ART 46</span>
+            <span class="v2-day-rb">RB 18</span>
+            <span class="prev-prob excellent">1/83</span>
             
             <span class="max-medals-sm">最大6,056枚</span>
             
@@ -3983,20 +3987,20 @@
             
             <div class="reason-item">🔥 直近の推移: 中→中→小→小→小（好調76日中、大0/中12/小64日）</div>
             
-            <div class="reason-item">🔥 9/24(木)天井到達1回 → 低機械割の可能性に注意</div>
+            <div class="reason-item">🔥 本日天井到達1回 → 低機械割の可能性に注意</div>
             
             <div class="reason-item">📅 この台の金曜好調率: 5/6回(83%) → 期待大</div>
             
             <div class="reason-item">📅 この台の金曜実績: 11/13回好調（85%）</div>
             
-            <div class="reason-item">🚨 前日はART確率1/353で低機械割域（全台中央値1/166）（好調率85%のため本日も期待）</div>
+            <div class="reason-item">🚨 前日はART確率1/463で低機械割域（全台中央値1/164）（好調率85%のため本日も期待）</div>
             
         </div>
         
         <div class="v2-detail-today">
             本日: ART 8 / RB 7 / 2,821G
              / 1/352
-            
+             / 最大445枚
         </div>
         
         
