@@ -1,6 +1,6 @@
 {
   "_comment": "台状態管理: active=正常, pending=保留中, stopped=停止",
-  "_updated": "2026-09-27T02:30:13.749351+09:00",
+  "_updated": "2026-09-27T23:31:08.809547+09:00",
   "units": {
     "shibuya_espass_hokuto2/2046": {
       "status": "active",
@@ -557,6 +557,18 @@
       "fail_count": 0,
       "reason": "machine_mismatch",
       "recovered_at": "2026-09-27T02:30:13.749284+09:00"
+    },
+    "shinjuku_espass_tokyoghoul/806": {
+      "status": "pending",
+      "first_missing": "2026-09-27T23:31:06.144261+09:00",
+      "fail_count": 1,
+      "reason": "machine_mismatch"
+    },
+    "seibu_shinjuku_espass_tokyoghoul/3166": {
+      "status": "pending",
+      "first_missing": "2026-09-27T23:31:08.809527+09:00",
+      "fail_count": 1,
+      "reason": "machine_mismatch"
     }
   }
 }
