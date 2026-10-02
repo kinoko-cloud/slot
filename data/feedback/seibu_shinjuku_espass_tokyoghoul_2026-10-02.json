@@ -5,26 +5,51 @@
   "weekday": "金",
   "total_units": 17,
   "hits": 3,
-  "misses": 0,
-  "surprises": 7,
-  "miss_details": [],
-  "surprise_details": [
+  "misses": 4,
+  "surprises": 8,
+  "miss_details": [
     {
-      "unit_id": "3218",
-      "rank": "B",
-      "score": 120,
-      "actual_prob": 181,
-      "reasons": []
-    },
-    {
-      "unit_id": "3159",
-      "rank": "B",
-      "score": 96,
-      "actual_prob": 77,
+      "unit_id": "3170",
+      "score": 109,
+      "actual_prob": 266,
       "reasons": [
-        "実は高設定域(1/77)"
+        "高スコア過信",
+        "低稼働(266G)",
+        "設定1域(1/266)"
       ]
     },
+    {
+      "unit_id": "3169",
+      "score": 102,
+      "actual_prob": 202,
+      "reasons": [
+        "高スコア過信",
+        "低稼働(202G)",
+        "設定1域(1/202)"
+      ]
+    },
+    {
+      "unit_id": "3171",
+      "score": 99,
+      "actual_prob": 291,
+      "reasons": [
+        "高スコア過信",
+        "低稼働(291G)",
+        "設定1域(1/291)"
+      ]
+    },
+    {
+      "unit_id": "3160",
+      "score": 88,
+      "actual_prob": 376,
+      "reasons": [
+        "高スコア過信",
+        "低稼働(376G)",
+        "設定1域(1/376)"
+      ]
+    }
+  ],
+  "surprise_details": [
     {
       "unit_id": "3163",
       "rank": "B",
@@ -49,17 +74,38 @@
       "reasons": []
     },
     {
-      "unit_id": "3174",
+      "unit_id": "3159",
       "rank": "B",
-      "score": 90,
-      "actual_prob": 196,
+      "score": 96,
+      "actual_prob": 188,
+      "reasons": []
+    },
+    {
+      "unit_id": "3218",
+      "rank": "B",
+      "score": 95,
+      "actual_prob": 232,
       "reasons": []
     },
     {
       "unit_id": "3161",
       "rank": "B",
-      "score": 81,
-      "actual_prob": 145,
+      "score": 94,
+      "actual_prob": 194,
+      "reasons": []
+    },
+    {
+      "unit_id": "3164",
+      "rank": "B",
+      "score": 94,
+      "actual_prob": 292,
+      "reasons": []
+    },
+    {
+      "unit_id": "3168",
+      "rank": "B",
+      "score": 84,
+      "actual_prob": 268,
       "reasons": []
     }
   ]
