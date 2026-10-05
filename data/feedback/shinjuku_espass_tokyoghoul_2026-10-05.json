@@ -4,19 +4,10 @@
   "date": "2026-10-05",
   "weekday": "月",
   "total_units": 43,
-  "hits": 15,
-  "misses": 4,
-  "surprises": 21,
+  "hits": 14,
+  "misses": 5,
+  "surprises": 22,
   "miss_details": [
-    {
-      "unit_id": "845",
-      "score": 132,
-      "actual_prob": 214,
-      "reasons": [
-        "高スコア過信",
-        "設定1域(1/214)"
-      ]
-    },
     {
       "unit_id": "811",
       "score": 125,
@@ -36,27 +27,44 @@
       ]
     },
     {
+      "unit_id": "852",
+      "score": 122,
+      "actual_prob": 248,
+      "reasons": [
+        "高スコア過信",
+        "設定1域(1/248)"
+      ]
+    },
+    {
       "unit_id": "806",
       "score": 75,
       "actual_prob": 329,
       "reasons": [
         "設定1域(1/329)"
       ]
+    },
+    {
+      "unit_id": "849",
+      "score": 59,
+      "actual_prob": 357,
+      "reasons": [
+        "設定1域(1/357)"
+      ]
     }
   ],
   "surprise_details": [
     {
-      "unit_id": "852",
+      "unit_id": "808",
       "rank": "B",
-      "score": 122,
-      "actual_prob": 248,
+      "score": 113,
+      "actual_prob": 146,
       "reasons": []
     },
     {
-      "unit_id": "857",
+      "unit_id": "833",
       "rank": "B",
-      "score": 115,
-      "actual_prob": 195,
+      "score": 113,
+      "actual_prob": 179,
       "reasons": []
     },
     {
@@ -74,8 +82,15 @@
       "reasons": []
     },
     {
+      "unit_id": "834",
+      "rank": "B",
+      "score": 107,
+      "actual_prob": 159,
+      "reasons": []
+    },
+    {
       "unit_id": "807",
-      "rank": "C",
+      "rank": "B",
       "score": 104,
       "actual_prob": 233,
       "reasons": []
@@ -95,6 +110,15 @@
       "reasons": []
     },
     {
+      "unit_id": "860",
+      "rank": "B",
+      "score": 123,
+      "actual_prob": 76,
+      "reasons": [
+        "実は高設定域(1/76)"
+      ]
+    },
+    {
       "unit_id": "831",
       "rank": "B",
       "score": 102,
@@ -102,82 +126,10 @@
       "reasons": []
     },
     {
-      "unit_id": "854",
+      "unit_id": "805",
       "rank": "B",
-      "score": 122,
-      "actual_prob": 117,
-      "reasons": []
-    },
-    {
-      "unit_id": "858",
-      "rank": "B",
-      "score": 122,
-      "actual_prob": 250,
-      "reasons": []
-    },
-    {
-      "unit_id": "840",
-      "rank": "B",
-      "score": 116,
-      "actual_prob": 162,
-      "reasons": []
-    },
-    {
-      "unit_id": "815",
-      "rank": "C",
-      "score": 94,
-      "actual_prob": 104,
-      "reasons": []
-    },
-    {
-      "unit_id": "833",
-      "rank": "B",
-      "score": 113,
-      "actual_prob": 179,
-      "reasons": []
-    },
-    {
-      "unit_id": "812",
-      "rank": "B",
-      "score": 112,
-      "actual_prob": 76,
-      "reasons": [
-        "実は高設定域(1/76)"
-      ]
-    },
-    {
-      "unit_id": "856",
-      "rank": "B",
-      "score": 111,
-      "actual_prob": 133,
-      "reasons": []
-    },
-    {
-      "unit_id": "842",
-      "rank": "C",
-      "score": 109,
-      "actual_prob": 148,
-      "reasons": []
-    },
-    {
-      "unit_id": "848",
-      "rank": "B",
-      "score": 107,
-      "actual_prob": 163,
-      "reasons": []
-    },
-    {
-      "unit_id": "860",
-      "rank": "B",
-      "score": 106,
-      "actual_prob": 90,
-      "reasons": []
-    },
-    {
-      "unit_id": "803",
-      "rank": "B",
-      "score": 102,
-      "actual_prob": 139,
+      "score": 119,
+      "actual_prob": 170,
       "reasons": []
     },
     {
@@ -185,6 +137,69 @@
       "rank": "B",
       "score": 99,
       "actual_prob": 297,
+      "reasons": []
+    },
+    {
+      "unit_id": "856",
+      "rank": "B",
+      "score": 116,
+      "actual_prob": 141,
+      "reasons": []
+    },
+    {
+      "unit_id": "804",
+      "rank": "B",
+      "score": 115,
+      "actual_prob": 82,
+      "reasons": []
+    },
+    {
+      "unit_id": "815",
+      "rank": "B",
+      "score": 94,
+      "actual_prob": 104,
+      "reasons": []
+    },
+    {
+      "unit_id": "858",
+      "rank": "B",
+      "score": 112,
+      "actual_prob": 252,
+      "reasons": []
+    },
+    {
+      "unit_id": "840",
+      "rank": "B",
+      "score": 111,
+      "actual_prob": 115,
+      "reasons": []
+    },
+    {
+      "unit_id": "839",
+      "rank": "B",
+      "score": 109,
+      "actual_prob": 193,
+      "reasons": []
+    },
+    {
+      "unit_id": "842",
+      "rank": "B",
+      "score": 109,
+      "actual_prob": 166,
+      "reasons": []
+    },
+    {
+      "unit_id": "803",
+      "rank": "B",
+      "score": 102,
+      "actual_prob": 144,
+      "reasons": []
+    },
+    {
+      "unit_id": "812",
+      "rank": "B",
+      "score": 102,
+      "actual_prob": 89,
       "reasons": []
     },
     {
