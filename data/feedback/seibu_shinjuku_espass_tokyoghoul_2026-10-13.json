@@ -4,43 +4,40 @@
   "date": "2026-10-13",
   "weekday": "火",
   "total_units": 17,
-  "hits": 5,
-  "misses": 2,
+  "hits": 4,
+  "misses": 3,
   "surprises": 9,
   "miss_details": [
     {
-      "unit_id": "3159",
-      "score": 73,
-      "actual_prob": 386,
+      "unit_id": "3162",
+      "score": 107,
+      "actual_prob": 259,
       "reasons": [
-        "低稼働(772G)",
-        "設定1域(1/386)"
+        "高スコア過信",
+        "設定1域(1/259)"
+      ]
+    },
+    {
+      "unit_id": "3170",
+      "score": 100,
+      "actual_prob": 329,
+      "reasons": [
+        "高スコア過信",
+        "低稼働(329G)",
+        "設定1域(1/329)"
       ]
     },
     {
       "unit_id": "3164",
-      "score": 71,
-      "actual_prob": 439,
+      "score": 98,
+      "actual_prob": 294,
       "reasons": [
-        "設定1域(1/439)"
+        "高スコア過信",
+        "設定1域(1/294)"
       ]
     }
   ],
   "surprise_details": [
-    {
-      "unit_id": "3168",
-      "rank": "B",
-      "score": 110,
-      "actual_prob": 179,
-      "reasons": []
-    },
-    {
-      "unit_id": "3162",
-      "rank": "B",
-      "score": 107,
-      "actual_prob": 259,
-      "reasons": []
-    },
     {
       "unit_id": "3163",
       "rank": "B",
@@ -58,11 +55,34 @@
       ]
     },
     {
+      "unit_id": "3168",
+      "rank": "B",
+      "score": 110,
+      "actual_prob": 179,
+      "reasons": []
+    },
+    {
+      "unit_id": "3160",
+      "rank": "B",
+      "score": 88,
+      "actual_prob": 189,
+      "reasons": []
+    },
+    {
       "unit_id": "3165",
       "rank": "B",
       "score": 91,
       "actual_prob": 264,
       "reasons": []
+    },
+    {
+      "unit_id": "3166",
+      "rank": "B",
+      "score": 91,
+      "actual_prob": 46,
+      "reasons": [
+        "実は高設定域(1/46)"
+      ]
     },
     {
       "unit_id": "3169",
@@ -79,13 +99,6 @@
       "reasons": [
         "実は高設定域(1/28)"
       ]
-    },
-    {
-      "unit_id": "3160",
-      "rank": "B",
-      "score": 88,
-      "actual_prob": 189,
-      "reasons": []
     },
     {
       "unit_id": "3218",
