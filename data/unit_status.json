@@ -1,6 +1,6 @@
 {
   "_comment": "台状態管理: active=正常, pending=保留中, stopped=停止",
-  "_updated": "2026-10-21T01:30:14.996020+09:00",
+  "_updated": "2026-10-21T02:31:17.939124+09:00",
   "units": {
     "shibuya_espass_hokuto2/2046": {
       "status": "active",
@@ -831,10 +831,11 @@
       "reason": "not_found"
     },
     "akiba_espass_tokyoghoul/4080": {
-      "status": "pending",
+      "status": "active",
       "first_missing": "2026-10-20T23:31:09.006358+09:00",
-      "fail_count": 1,
-      "reason": "machine_mismatch"
+      "fail_count": 0,
+      "reason": "machine_mismatch",
+      "recovered_at": "2026-10-21T02:31:17.939107+09:00"
     }
   }
 }
