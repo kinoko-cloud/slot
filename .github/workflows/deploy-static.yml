@@ -1,0 +1,109 @@
+name: Deploy Static Site
+
+on:
+  # 手動実行
+  workflow_dispatch:
+
+  # availability.jsonが更新されたら実行
+  push:
+    branches:
+      - main
+    paths:
+      - 'data/availability.json'
+      - 'data/daily/**'
+
+  # 定期実行: 毎時5分と35分（バックアップ）
+  # データが古い場合は先にfetchを実行
+  schedule:
+    - cron: '5 1-13 * * *'   # 毎時5分（JST 10:05-22:05）
+    - cron: '35 1-13 * * *'  # 毎時35分（JST 10:35-22:35）
+    # 日付変更後に再生成（的中率の日付更新のため）
+    - cron: '5 15 * * *'     # JST 0:05（日付変更直後）
+    - cron: '30 15 * * *'    # JST 0:30（バックアップ）
+
+concurrency:
+  group: slot-deploy-static
+  cancel-in-progress: false
+
+jobs:
+  generate-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1  # 2026-07-07: リポジトリ肥大化(8GB超)でfetch-depth:0のcheckoutが停滞するため軽量化
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install flask jinja2 requests
+
+      # Note: daidata (goraggio.com) is blocked by CloudFront WAF for all datacenter IPs
+      # including GitHub Actions (Azure) and VPN Gate (academic). Fetching is handled
+      # exclusively by local-cron on a residential Japanese IP (scripts/local_daidata_cron.sh).
+      # papimo data is fetched by papimo-fetch.yml.
+      # This workflow only generates HTML from existing data.
+
+      - name: Generate static site
+        run: |
+          python scripts/generate_static.py
+
+      - name: Upload artifact for Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+
+      - name: Commit generated files
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add docs/ data/
+          git diff --staged --quiet || git commit -m "chore: update static site $(TZ='Asia/Tokyo' date +'%Y-%m-%d %H:%M')"
+          
+          for i in 1 2 3 4 5; do
+            # Fetch latest and try rebase
+            git fetch origin main
+            if git rebase origin/main; then
+              if git push origin main; then
+                echo "✅ Push succeeded (attempt $i)"
+                exit 0
+              fi
+            else
+              echo "⚠️ Rebase conflict detected, aborting and resetting to remote..."
+              git rebase --abort || true
+              git reset --hard origin/main
+              echo "Reset to origin/main. Local changes discarded (will regenerate on next run)."
+              exit 0  # Exit gracefully, next scheduled run will regenerate
+            fi
+            echo "Push failed (attempt $i/5), retrying..."
+            sleep 5
+          done
+          echo "Push failed after 5 attempts"
+          exit 1
+
+  # GitHub Pages へのデプロイ
+  deploy-github-pages:
+    needs: generate-and-deploy
+    runs-on: ubuntu-latest
+
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

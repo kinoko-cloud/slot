@@ -1,0 +1,299 @@
+name: Auto Recovery (Health Check + Repair)
+
+on:
+  schedule:
+    # 営業時間中、15分ごとにヘルスチェック（UTC 1-13 = JST 10-22時）
+    # データ取得失敗を早期検出し自動復旧
+    - cron: '15 1-13 * * *'  # 毎時15分
+    - cron: '45 1-13 * * *'  # 毎時45分
+    # 朝9:55にプリフェッチ（営業開始10:00に間に合うように）
+    - cron: '55 0 * * *'     # JST 9:55
+    # 朝10:05に強制チェック（営業開始直後、前日データ残り防止）
+    - cron: '5 1 * * *'      # JST 10:05
+  workflow_dispatch:
+    inputs:
+      force_fetch:
+        description: 'Force data fetch even if no issues detected'
+        required: false
+        type: boolean
+        default: false
+
+concurrency:
+  group: slot-auto-recovery
+  cancel-in-progress: false  # ヘルスチェックは完了させる
+
+jobs:
+  health_check_and_repair:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    timeout-minutes: 28
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Cache Python dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-health
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install dependencies
+        run: |
+          pip install requests jinja2
+
+      - name: Check data freshness
+        id: health_check
+        env:
+          TZ: Asia/Tokyo
+        run: |
+          python3 << 'PYEOF' > check_result.txt
+          import json
+          import sys
+          from datetime import datetime, timedelta, timezone
+          from pathlib import Path
+
+          JST = timezone(timedelta(hours=9))
+          now = datetime.now(JST)
+
+          # 営業時間チェック（10:00-22:59 JST）
+          is_business_hours = 10 <= now.hour < 23
+
+          if not is_business_hours:
+              print("✅ Outside business hours, skip check")
+              print("RESULT:false")
+              sys.exit(0)
+
+          # availability.jsonの更新時刻を確認
+          avail_path = Path('data/availability.json')
+          if not avail_path.exists():
+              print("⚠️ No availability.json found")
+              print("RESULT:true")
+              sys.exit(0)
+
+          with open(avail_path) as f:
+              data = json.load(f)
+
+          fetched_at = data.get('fetched_at', '')
+          if not fetched_at:
+              print("⚠️ No fetched_at in data")
+              print("RESULT:true")
+              sys.exit(0)
+
+          fetched_time = datetime.fromisoformat(fetched_at)
+          age_minutes = (now - fetched_time).total_seconds() / 60
+
+          print(f"現在時刻: {now.strftime('%H:%M')}")
+          print(f"データ取得: {fetched_time.strftime('%H:%M')}")
+          print(f"経過時間: {age_minutes:.0f}分")
+
+          # 日付チェック：fetched_atが今日でなければ即エラー
+          today = now.strftime('%Y-%m-%d')
+          fetched_date = fetched_time.strftime('%Y-%m-%d')
+          
+          if fetched_date != today:
+              print(f"⚠️ Data is from {fetched_date}, not today ({today})!")
+              print("RESULT:true")
+          # 30分以上古い場合は復旧が必要
+          elif age_minutes > 30:
+              print(f"⚠️ Data is {age_minutes:.0f} minutes old (> 30 min)")
+              print("RESULT:true")
+          else:
+              print("✅ Data is fresh")
+              print("RESULT:false")
+          PYEOF
+
+          cat check_result.txt
+
+          # 結果をGITHUB_OUTPUTに出力
+          if grep -q "RESULT:true" check_result.txt; then
+            echo "issues_found=true" >> $GITHUB_OUTPUT
+            echo "⚠️ Auto-recovery needed"
+          else
+            echo "issues_found=false" >> $GITHUB_OUTPUT
+            echo "✅ No recovery needed"
+          fi
+
+      - name: Auto recovery - Fetch data
+        if: steps.health_check.outputs.issues_found == 'true' || github.event.inputs.force_fetch == 'true'
+        run: |
+          echo "🔧 Attempting auto-recovery by fetching fresh data..."
+
+          pip install requests
+
+          # 東京喰種取得（GAS経由。daidata.goraggio.comはCloudFront WAFでActions IPをブロックするため）
+          echo "=== 東京喰種取得（GAS経由） ==="
+          for attempt in 1 2 3; do
+            if timeout 120 python scripts/fetch_via_gas.py; then
+              echo "✅ GAS fetch succeeded"
+              break
+            else
+              echo "❌ GAS fetch failed (attempt $attempt)"
+              sleep 10
+            fi
+          done
+
+          # papimo取得（アイランド秋葉原・東京喰種）
+          pip install 'playwright==1.49.1' pytz
+          playwright install chromium
+          playwright install-deps chromium
+          echo "=== papimo取得 ==="
+          timeout 600 python scripts/scrapers_v2/fetch_all.py --papimo-only || {
+            echo "⚠️ Papimo fetch failed (non-critical)"
+          }
+
+          # 成功確認
+          if [ -f data/availability.json ]; then
+            echo "✅ Recovery successful - data file exists"
+          else
+            echo "❌ Recovery failed - data file not created"
+            exit 1
+          fi
+
+      - name: Check history completeness
+        id: history_check
+        run: |
+          python3 << 'EOF'
+          import json
+          from pathlib import Path
+          from datetime import datetime, timedelta, timezone
+          
+          JST = timezone(timedelta(hours=9))
+          now = datetime.now(JST)
+          hour = now.hour
+          today = now.strftime('%Y-%m-%d')
+          yesterday = (now - timedelta(days=1)).strftime('%Y-%m-%d')
+          
+          # 対象日と期待する最終時刻
+          if hour >= 23:
+              target_date, min_time = today, '20:00'
+          elif hour >= 12:
+              target_date, min_time = today, f'{hour-2:02d}:00'
+          else:
+              target_date, min_time = yesterday, '20:00'
+          
+          issues = 0
+          checked = 0
+          
+          for store_dir in Path('data/history').iterdir():
+              if not store_dir.is_dir():
+                  continue
+              for unit_file in list(store_dir.glob('*.json'))[:3]:
+                  try:
+                      data = json.load(open(unit_file))
+                      for day in data.get('days', []):
+                          if day.get('date') == target_date:
+                              hist = day.get('history', [])
+                              if hist:
+                                  checked += 1
+                                  last = hist[-1].get('time', '')
+                                  if last and last < min_time:
+                                      issues += 1
+                              break
+                  except:
+                      pass
+          
+          rate = issues / max(checked, 1) * 100
+          print(f"History check: {issues}/{checked} incomplete ({rate:.0f}%)")
+          
+          # 10%以上で問題あり
+          with open('history_issues.txt', 'w') as f:
+              f.write('true' if rate >= 10 else 'false')
+          EOF
+          
+          if grep -q "true" history_issues.txt; then
+            echo "history_issues=true" >> $GITHUB_OUTPUT
+            echo "⚠️ History data incomplete - need batch update"
+          else
+            echo "history_issues=false" >> $GITHUB_OUTPUT
+            echo "✅ History data OK"
+          fi
+
+      - name: Auto recovery - Fetch history (batch_update)
+        if: steps.history_check.outputs.history_issues == 'true'
+        continue-on-error: true
+        timeout-minutes: 12
+        run: |
+          echo "🔧 Fetching incomplete history data..."
+          TARGET_DATE=$(TZ='Asia/Tokyo' date +'%Y-%m-%d')
+          
+          for attempt in 1 2 3; do
+            echo "=== History fetch attempt $attempt / 3 ==="
+            if timeout 300 python scripts/batch_update_history.py --target-date $TARGET_DATE; then
+              echo "✅ Batch update succeeded"
+              break
+            else
+              echo "❌ Batch update failed"
+              sleep 15
+            fi
+          done
+
+      - name: Regenerate static site
+        if: steps.health_check.outputs.issues_found == 'true' || steps.history_check.outputs.history_issues == 'true' || github.event.inputs.force_fetch == 'true'
+        run: |
+          HOUR=$(TZ='Asia/Tokyo' date +'%H')
+          if [ "$HOUR" -ge 10 ] && [ "$HOUR" -le 22 ]; then
+            python scripts/generate_static.py || echo "⚠️ Static site generation failed (continue)"
+          else
+            echo "Skip: Outside business hours"
+          fi
+
+      - name: Commit and push recovered data
+        if: steps.health_check.outputs.issues_found == 'true' || github.event.inputs.force_fetch == 'true'
+        run: |
+          git config user.name "GitHub Actions (Auto-Recovery)"
+          git config user.email "actions@github.com"
+
+          git add data/availability.json data/.games_cache/ docs/
+
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+
+          TIMESTAMP=$(TZ='Asia/Tokyo' date +'%H:%M')
+          git commit -m "auto: 自動復旧 ${TIMESTAMP}"
+
+          for i in 1 2 3; do
+            git pull origin main --no-rebase -X ours 2>/dev/null || true
+            if git push origin main; then
+              echo "✅ Push succeeded"
+              exit 0
+            fi
+            sleep 3
+          done
+
+      - name: Verify recovery
+        if: steps.health_check.outputs.issues_found == 'true' || github.event.inputs.force_fetch == 'true'
+        run: |
+          echo "🔍 Running health check again to verify recovery..."
+          python scripts/health_check.py > health_check_after.txt 2>&1 || true
+          cat health_check_after.txt
+
+          if grep -q "ERROR" health_check_after.txt || grep -q "WARNING.*データ未取得" health_check_after.txt; then
+            echo "❌ Recovery verification failed - issues still present"
+            echo "recovery_status=failed" >> $GITHUB_ENV
+            exit 1
+          else
+            echo "✅ Recovery verified successfully"
+            echo "recovery_status=success" >> $GITHUB_ENV
+          fi
+
+      - name: Send recovery notification
+        if: always() && (steps.health_check.outputs.issues_found == 'true' || github.event.inputs.force_fetch == 'true')
+        run: |
+          if [ "$recovery_status" = "success" ]; then
+            echo "✅ Auto-recovery completed successfully"
+            # 通知が必要ならここに追加（WhatsAppなど）
+          else
+            echo "❌ Auto-recovery failed, manual intervention required"
+            # エラー通知が必要ならここに追加
+          fi

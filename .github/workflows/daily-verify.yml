@@ -1,0 +1,86 @@
+name: Daily Verify (Answer Check)
+
+on:
+  schedule:
+    # 毎日 JST 23:30 = UTC 14:30 に実行（nightly-updateの後）
+    - cron: '30 14 * * *'
+  workflow_dispatch:
+    inputs:
+      date:
+        description: '検証対象日（YYYY-MM-DD）省略時は当日'
+        required: false
+
+concurrency:
+  group: slot-daily-verify
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Cache Python dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-verify
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install dependencies
+        run: |
+          pip install jinja2 requests
+
+      - name: Generate verify results (答え合わせ)
+        run: |
+          TARGET_DATE="${{ github.event.inputs.date }}"
+          if [ -z "$TARGET_DATE" ]; then
+            TARGET_DATE=$(TZ='Asia/Tokyo' date +'%Y-%m-%d')
+          fi
+          echo "Verifying: $TARGET_DATE"
+          python scripts/generate_verify.py --date "$TARGET_DATE"
+
+      - name: Update static site (verify page only)
+        run: |
+          python scripts/generate_static.py
+
+      - name: Commit and push
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+
+          git add data/analysis/ docs/verify.html
+
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+
+          TIMESTAMP=$(TZ='Asia/Tokyo' date +'%Y-%m-%d %H:%M')
+          git commit -m "auto: 答え合わせ ${TIMESTAMP}"
+
+          for i in 1 2 3; do
+            if git push origin main; then
+              echo "✅ Push succeeded"
+              exit 0
+            fi
+            echo "Push failed (attempt $i/3), resetting to remote..."
+            git fetch origin main
+            if ! git pull --rebase origin main; then
+              echo "⚠️ Rebase conflict, aborting and using force push"
+              git rebase --abort || true
+              git push --force
+              echo "✅ Force push successful"
+              exit 0
+            fi
+          done
+          exit 0

@@ -1,0 +1,221 @@
+
+
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+    <meta name="googlebot" content="noindex, nofollow">
+    <title>アイランド秋葉原</title>
+    <link rel="stylesheet" href="/static/style.css?v=20261105154010">
+</head>
+<body data-page-type="recommend" data-store-key="island_akihabara_tokyoghoul">
+    <div class="container">
+        
+        
+        
+        
+<div class="top-bar">
+    <div class="top-bar-left">
+        
+        <a href="/index.html" class="back-link">&lt; トップ</a>
+        
+        
+        <img src="/static/logo.svg" alt="スロプロMAX" class="site-logo">
+        
+    </div>
+    <div class="top-bar-right">
+        <span class="version-info" id="build-ver" title="ビルド時刻">v1105_15:41</span>
+        
+    </div>
+</div>
+        <header>
+            <h1>アイランド秋葉原</h1>
+            <div class="machine-label">🫀 東京喰種</div>
+            
+            <div class="data-date-label">📅 データ: 11/5(木)まで</div>
+            
+            <div class="realtime-bar">
+                <span id="realtime-status" class="realtime-status">読込中...</span>
+            </div>
+            <div class="update-info">
+                
+                <span class="data-source">
+                    データ取得: <span id="update-time">15:36</span>
+                </span>
+                <span class="cache-badge github">GITHUB</span>
+                
+                
+            </div>
+
+            <!-- 空き状況サマリ -->
+            
+            <div class="availability-summary">
+                <span class="avail-empty" onclick="filterUnits('empty')">空き 16台</span>
+                <span class="avail-playing" onclick="filterUnits('playing')">遊技中 0台</span>
+                <span class="avail-all" onclick="filterUnits('all')">全て</span>
+            </div>
+            
+
+            <div class="action-buttons">
+                <span class="auto-update-notice">15分ごと自動更新</span>
+            </div>
+        </header>
+
+        <!-- 台番号アラート -->
+        
+
+        <!-- 店舗分析 -->
+        
+        <div class="store-analysis">
+            <div class="analysis-title"><span class="analysis-machine">東京喰種</span>（<span class="analysis-store">アイランド秋葉原</span>）分析</div>
+            <div class="analysis-rank-dist">
+                全16台: C:16台
+            </div>
+            <div class="analysis-overall">好調台が少ない（全16台中0台がA以上）</div>
+            
+            
+            <div class="analysis-weekday">
+                木曜の店舗傾向:
+                普通
+                （水曜が最強、日月も狙い目）
+            </div>
+            
+        </div>
+        
+
+        <!-- ランク説明 -->
+        <div class="rank-legend">
+            <span class="legend-item"><span class="rank-dot" style="background:#ff6b6b"></span>S 高設定濃厚</span>
+            <span class="legend-item"><span class="rank-dot" style="background:#ffa502"></span>A 高設定域</span>
+            <span class="legend-item"><span class="rank-dot" style="background:#2ed573"></span>B 中間以上</span>
+            <span class="legend-item"><span class="rank-dot" style="background:#70a1ff"></span>C 普通</span>
+            <span class="legend-item"><span class="rank-dot" style="background:#747d8c"></span>D 低設定疑い</span>
+        </div>
+
+        <main>
+            
+            <section class="no-recommendation">
+                <p>推奨台なし</p>
+                <p class="sub">全台稼働中または評価データなし</p>
+            </section>
+            
+
+            <section class="recommendations other">
+                <h2>その他の台</h2>
+                
+            </section>
+        </main>
+
+        <footer>
+            <p>
+                <a href="/ranking/tokyoghoul.html" class="footer-link">総合ランキング</a>
+                |
+                <a href="https://autogmail.pythonanywhere.com/api/status/island_akihabara_tokyoghoul" class="api-link">JSON</a>
+            </p>
+        </footer>
+    </div>
+
+    <script src="/static/realtime.js"></script>
+    <script>
+        const storeKey = 'island_akihabara_tokyoghoul';
+        let currentFilter = 'all';
+
+        function toggleHitDetail(el, e) {
+            // イベント伝播を止める（親カードのtoggleDetailsが発火しないように）
+            (e || event).stopPropagation();
+            const panel = el.nextElementSibling;
+            if (panel && panel.classList.contains('hit-detail-panel')) {
+                const isHidden = panel.style.display === 'none' || !panel.style.display;
+                panel.style.display = isHidden ? 'block' : 'none';
+                const icon = el.querySelector('.expand-icon');
+                if (icon) icon.textContent = isHidden ? '▲' : '▼';
+            }
+        }
+
+        function toggleDetails(card) {
+            const details = card.querySelector('.unit-details');
+            const icon = card.querySelector('.expand-icon');
+            if (details) {
+                details.classList.toggle('hidden');
+                if (icon) {
+                    icon.textContent = details.classList.contains('hidden') ? '▼' : '▲';
+                }
+            }
+        }
+
+        function filterUnits(filter) {
+            currentFilter = filter;
+            const cards = document.querySelectorAll('[data-availability]');
+            cards.forEach(card => {
+                const avail = card.dataset.availability;
+                if (filter === 'all') {
+                    card.style.display = '';
+                } else if (filter === 'empty') {
+                    card.style.display = avail === '空き' ? '' : 'none';
+                } else if (filter === 'playing') {
+                    card.style.display = avail === '遊技中' ? '' : 'none';
+                }
+            });
+
+            // ハイライト
+            document.querySelectorAll('.availability-summary span').forEach(el => {
+                el.classList.remove('active');
+            });
+            document.querySelector('.avail-' + filter)?.classList.add('active');
+        }
+
+        // 自動更新（5分ごと）
+        setTimeout(function() {
+            location.reload();
+        }, 5 * 60 * 1000);
+
+    
+/* === 共通: 動的モード切替 + 現在時刻 === */
+(function() {
+    function getJST() {
+        var now = new Date();
+        return new Date(now.getTime() + (now.getTimezoneOffset() + 540) * 60000);
+    }
+    function getDisplayMode() {
+        var jst = getJST();
+        var h = jst.getHours(), m = jst.getMinutes();
+        if (h < 10) return 'before_open';
+        if (h >= 23 || (h === 22 && m >= 50)) return 'after_close';
+        return 'realtime';
+    }
+    function updateModeBadge() {
+        var mode = getDisplayMode();
+        var badge = document.querySelector('.mode-badge');
+        if (!badge) return;
+        badge.className = 'mode-badge';
+        if (mode === 'before_open') {
+            badge.classList.add('before-open');
+            badge.textContent = '🌙 営業前';
+        } else if (mode === 'after_close') {
+            badge.classList.add('after-close');
+            badge.textContent = '🔒 閉店後';
+        } else {
+            badge.classList.add('realtime');
+            badge.textContent = '🟢 営業中';
+        }
+    }
+    function updateCurrentTime() {
+        var jst = getJST();
+        var hh = String(jst.getHours()).padStart(2, '0');
+        var mi = String(jst.getMinutes()).padStart(2, '0');
+        var el = document.getElementById('current-time');
+        if (el) el.textContent = hh + ':' + mi;
+    }
+    updateModeBadge();
+    updateCurrentTime();
+    setInterval(function() {
+        updateModeBadge();
+        updateCurrentTime();
+    }, 60000);
+})();
+    </script>
+</body>
+</html>

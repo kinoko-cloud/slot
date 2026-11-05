@@ -1,0 +1,61 @@
+name: Daily SBJ Data Collection
+
+on:
+  schedule:
+    # 毎日23:00 JST (14:00 UTC) に実行
+    # 閉店22:40の少し後
+    - cron: '0 14 * * *'
+  workflow_dispatch:  # 手動実行も可能
+
+concurrency:
+  group: slot-daily-collect
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install 'playwright==1.49.1' flask jinja2 requests
+          playwright install chromium
+          playwright install-deps chromium
+
+      - name: Run daily collection
+        run: |
+          python scripts/daily_collect.py
+
+      - name: Commit and push data
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add data/
+          git diff --staged --quiet && echo "No changes" && exit 0
+          git commit -m "Daily data collection $(date +'%Y-%m-%d')"
+          # リトライ付きpush（並行pushでconflictする場合に対応）
+          for i in 1 2 3 4 5; do
+            git pull --rebase origin main || { git rebase --abort 2>/dev/null; git pull --rebase origin main; }
+            if git push; then
+              echo "Push成功 (attempt $i)"
+              exit 0
+            fi
+            echo "Push失敗 (attempt $i/5)、5秒待機..."
+            sleep 5
+          done
+          echo "ERROR: Push失敗（5回試行）"
+          exit 1

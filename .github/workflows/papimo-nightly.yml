@@ -1,0 +1,75 @@
+name: Papimo Nightly Update
+
+on:
+  schedule:
+    # 毎日 JST 23:00 = UTC 14:00 (閉店後の確定)
+    - cron: '0 14 * * *'
+    # 毎日 JST 8:00 = UTC 23:00 (前日データ確定版)
+    - cron: '0 23 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: slot-papimo-nightly
+  cancel-in-progress: false
+
+jobs:
+  nightly:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install 'playwright==1.49.1' flask jinja2 requests pytz
+          playwright install chromium
+          playwright install-deps chromium
+
+      - name: Fetch Island Akihabara (papimo - final scrape)
+        run: |
+          rm -f /tmp/slot_fetch.lock
+          echo "=== アイランド秋葉原（papimo）最終取得 ==="
+          timeout 600 python scripts/scrapers_v2/fetch_all.py --papimo-only 2>&1 || echo "⚠️ papimo failed"
+
+      - name: Sync availability to history
+        run: |
+          python scripts/sync_realtime_to_history.py
+
+      - name: Generate static site
+        run: |
+          python scripts/generate_static.py
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add data/availability.json data/history/ docs/ || true
+
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+
+          TIMESTAMP=$(TZ='Asia/Tokyo' date +'%Y-%m-%d %H:%M')
+          git commit -m "auto: papimo夜間更新 ${TIMESTAMP}"
+
+          for i in 1 2 3; do
+            git pull origin main --no-rebase -X ours 2>/dev/null || true
+            if git push origin main; then
+              echo "✅ Push succeeded"
+              exit 0
+            fi
+            sleep 5
+          done
+          exit 0

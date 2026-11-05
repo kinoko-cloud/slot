@@ -1,0 +1,37 @@
+{
+  "description": "recommender.py の recommend_units() が返す予測結果のフォーマット",
+  "sample": {
+    "unit_id": "0811",
+    "unit_display": "811番台",
+    "machine_key": "hokuto_tensei2",
+    "store_key": "shinjuku_espass_hokuto",
+    "rank": "S",
+    "final_score": 85.5,
+    "art_count": 12,
+    "current_games": 450,
+    "avg_prob": 118,
+    "recent_prob": 105,
+    "consecutive_good": 3,
+    "consecutive_bad": 0,
+    "diff_medals": 2500,
+    "chain_count": 2,
+    "recommendation": "好調継続中。天井近くで期待値高い。",
+    "reasons": [
+      "確率が良い（1/105）",
+      "3連続好調",
+      "差枚+2500"
+    ],
+    "alerts": []
+  },
+  "required_fields": [
+    "unit_id",
+    "rank",
+    "final_score",
+    "recommendation"
+  ],
+  "rank_values": ["S", "A", "B", "C", "-"],
+  "score_range": {
+    "min": 0,
+    "max": 100
+  }
+}

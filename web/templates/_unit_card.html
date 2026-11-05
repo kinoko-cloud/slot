@@ -1,0 +1,141 @@
+{# === 台カード共通マクロ === #}
+
+{% macro unit_compact(rec, loop_index, show_store=true, store_key='') %}
+{# コンパクトな台カード（3日間データ + 根拠） #}
+<div class="unit-card-v2 rank-{{ rec.final_rank|lower }}" onclick="toggleDetails(this)">
+    {# ヘッダー: 2行構成 #}
+    <div class="v2-header">
+        <div class="v2-header-row1">
+            <span class="v2-rank-num">#{{ loop_index }}</span>
+            <a href="{{ url_for('unit_history', store_key=(rec.store_key or store_key), unit_id=rec.unit_id) }}" class="v2-unit-id" onclick="event.stopPropagation()">{{ rec.unit_id|pad_id }}番台</a>
+            {% if show_store %}
+            <a href="{{ url_for('recommend', store_key=(rec.store_key or store_key)) }}" class="v2-store" onclick="event.stopPropagation()">{{ rec.store_name }}</a>
+            {% endif %}
+            <span class="v2-rank" style="background-color: {{ rank_color(rec.final_rank) }}">{{ rec.final_rank }}</span>
+            <span class="expand-icon small">▼</span>
+        </div>
+        <div class="v2-header-row2">
+            {% if rec.machine_name %}<span class="v2-machine">{{ rec.machine_name }}</span>{% endif %}
+        </div>
+    </div>
+
+    {# 根拠（一番目立つ位置） #}
+    {% if rec.reasons %}
+    <div class="v2-reason">{{ rec.reasons[0]|safe }}</div>
+    {% endif %}
+
+    {# 直近3日間データ #}
+    <div class="v2-days">
+        {% if rec.total_games and rec.total_games > 0 %}
+        <div class="v2-day v2-day-today">
+            <span class="v2-day-label">本日</span>
+            <span class="v2-day-art">ART {{ rec.art_count or 0 }}</span>
+            {% if rec.rb_count %}<span class="v2-day-rb">RB {{ rec.rb_count }}</span>{% endif %}
+            {% if rec.art_prob and rec.art_prob > 0 %}<span class="v2-day-prob {% if rec.art_prob <= 100 %}excellent{% elif rec.art_prob <= 130 %}good{% elif rec.art_prob >= 200 %}bad{% endif %}">1/{{ rec.art_prob|int }}</span>{% endif %}
+            <span class="v2-day-games">{{ '{:,}'.format(rec.total_games) }}G</span>
+            {% if rec.diff_medals is defined and rec.diff_medals and rec.diff_medals != 0 %}<span class="diff-medals-sm {% if rec.diff_medals > 0 %}plus{% else %}minus{% endif %}">{{ '{:+,}'.format(rec.diff_medals) }}枚</span>{% endif %}
+            {% if rec.max_medals and rec.max_medals > 0 %}<span class="max-medals-sm">最大{{ '{:,}'.format(rec.max_medals) }}枚</span>{% endif %}
+            {% if rec.today_max_rensa and rec.today_max_rensa > 0 %}<span class="rensa-sm">{{ rec.today_max_rensa }}連</span>{% endif %}
+        </div>
+        {% endif %}
+        {% if rec.yesterday_art %}
+        <div class="v2-day">
+            <span class="v2-day-label">{{ short_date(rec.yesterday_date) or '前日' }}</span>
+            <span class="v2-day-art">ART {{ rec.yesterday_art }}</span>
+            {% if rec.yesterday_rb %}<span class="v2-day-rb">RB {{ rec.yesterday_rb }}</span>{% endif %}
+            {% if rec.yesterday_prob %}<span class="v2-day-prob {% if rec.yesterday_prob <= 100 %}excellent{% elif rec.yesterday_prob <= 130 %}good{% elif rec.yesterday_prob >= 200 %}bad{% endif %}">1/{{ rec.yesterday_prob|int }}</span>{% endif %}
+            {% if rec.yesterday_diff_medals is defined and rec.yesterday_diff_medals and rec.yesterday_diff_medals != 0 %}<span class="diff-medals-sm {% if rec.yesterday_diff_medals > 0 %}plus{% else %}minus{% endif %}">{{ '{:+,}'.format(rec.yesterday_diff_medals) }}枚</span>{% endif %}
+            {% if rec.yesterday_max_medals and rec.yesterday_max_medals > 0 %}<span class="max-medals-sm">最大{{ '{:,}'.format(rec.yesterday_max_medals) }}枚</span>{% endif %}
+            {% if rec.yesterday_max_rensa and rec.yesterday_max_rensa > 0 %}<span class="rensa-sm">{{ rec.yesterday_max_rensa }}連</span>{% endif %}
+            {% if rec.yesterday_low_activity %}<span class="low-activity">※低稼働</span>{% endif %}
+        </div>
+        {% else %}
+        <div class="v2-day no-data"><span class="v2-day-label">前日</span> データなし</div>
+        {% endif %}
+
+        {% if rec.day_before_art %}
+        <div class="v2-day">
+            <span class="v2-day-label">{{ short_date(rec.day_before_date) or '前々日' }}</span>
+            <span class="v2-day-art">ART {{ rec.day_before_art }}</span>
+            {% if rec.day_before_rb %}<span class="v2-day-rb">RB {{ rec.day_before_rb }}</span>{% endif %}
+            {% if rec.day_before_prob %}<span class="prev-prob {% if rec.day_before_prob <= 100 %}excellent{% elif rec.day_before_prob <= 130 %}good{% elif rec.day_before_prob >= 200 %}bad{% endif %}">1/{{ rec.day_before_prob|int }}</span>{% endif %}
+            {% if rec.day_before_diff_medals is defined and rec.day_before_diff_medals and rec.day_before_diff_medals != 0 %}<span class="diff-medals-sm {% if rec.day_before_diff_medals > 0 %}plus{% else %}minus{% endif %}">{{ '{:+,}'.format(rec.day_before_diff_medals) }}枚</span>{% endif %}
+            {% if rec.day_before_max_medals and rec.day_before_max_medals > 0 %}<span class="max-medals-sm">最大{{ '{:,}'.format(rec.day_before_max_medals) }}枚</span>{% endif %}
+            {% if rec.day_before_max_rensa and rec.day_before_max_rensa > 0 %}<span class="rensa-sm">{{ rec.day_before_max_rensa }}連</span>{% endif %}
+            {% if rec.day_before_low_activity %}<span class="low-activity">※低稼働</span>{% endif %}
+        </div>
+        {% else %}
+        <div class="v2-day no-data"><span class="v2-day-label">前々日</span> データなし</div>
+        {% endif %}
+
+        {% if rec.three_days_ago_art %}
+        <div class="v2-day">
+            <span class="v2-day-label">{{ short_date(rec.three_days_ago_date) or '3日前' }}</span>
+            <span class="v2-day-art">ART {{ rec.three_days_ago_art }}</span>
+            {% if rec.three_days_ago_rb %}<span class="v2-day-rb">RB {{ rec.three_days_ago_rb }}</span>{% endif %}
+            {% if rec.three_days_ago_prob %}<span class="prev-prob {% if rec.three_days_ago_prob <= 100 %}excellent{% elif rec.three_days_ago_prob <= 130 %}good{% elif rec.three_days_ago_prob >= 200 %}bad{% endif %}">1/{{ rec.three_days_ago_prob|int }}</span>{% endif %}
+            {% if rec.three_days_ago_diff_medals is defined and rec.three_days_ago_diff_medals and rec.three_days_ago_diff_medals != 0 %}<span class="diff-medals-sm {% if rec.three_days_ago_diff_medals > 0 %}plus{% else %}minus{% endif %}">{{ '{:+,}'.format(rec.three_days_ago_diff_medals) }}枚</span>{% endif %}
+            {% if rec.three_days_ago_max_medals and rec.three_days_ago_max_medals > 0 %}<span class="max-medals-sm">最大{{ '{:,}'.format(rec.three_days_ago_max_medals) }}枚</span>{% endif %}
+            {% if rec.three_days_ago_max_rensa and rec.three_days_ago_max_rensa > 0 %}<span class="rensa-sm">{{ rec.three_days_ago_max_rensa }}連</span>{% endif %}
+            {% if rec.three_days_ago_low_activity %}<span class="low-activity">※低稼働</span>{% endif %}
+        </div>
+        {% else %}
+        <div class="v2-day no-data"><span class="v2-day-label">3日前</span> データなし</div>
+        {% endif %}
+    </div>
+
+    {# 設定推定（あれば） #}
+    {% if rec.total_games >= 1000 and rec.estimated_setting %}
+    <div class="v2-setting">
+        <span class="setting-badge-sm setting-{{ rec.setting_num|default(0) }}">{{ rec.estimated_setting }}</span>
+    </div>
+    {% endif %}
+
+    {# 展開時の詳細 #}
+    <div class="unit-details hidden">
+        <div class="v2-detail-reasons">
+            {% for reason in rec.reasons %}
+            <div class="reason-item">{{ reason }}</div>
+            {% endfor %}
+        </div>
+        {% if rec.total_games > 0 %}
+        <div class="v2-detail-today">
+            本日: ART {{ rec.art_count }} / RB {{ rec.rb_count }} / {{ '{:,}'.format(rec.total_games) }}G
+            {% if rec.art_prob > 0 %} / 1/{{ rec.art_prob|int }}{% endif %}
+            {% if rec.max_medals and rec.max_medals > 0 %} / 最大{{ '{:,}'.format(rec.max_medals) }}枚{% endif %}
+        </div>
+        {% endif %}
+        {# 本日の当たり履歴（営業中） #}
+        {% if rec.today_history and rec.today_history|length > 0 %}
+        <div class="v2-today-history">
+            <div class="history-header">📊 本日の当たり履歴</div>
+            <div class="history-list">
+                {% for h in rec.today_history[:20] %}
+                <div class="history-item {% if h.medals >= 1000 %}big-hit{% elif h.medals >= 500 %}medium-hit{% endif %}">
+                    <span class="hit-num">#{{ h.hit_num }}</span>
+                    <span class="hit-time">{{ h.time }}</span>
+                    <span class="hit-start">{{ h.start }}G</span>
+                    <span class="hit-medals {% if h.medals >= 1000 %}big{% elif h.medals >= 500 %}medium{% endif %}">{{ h.medals }}枚</span>
+                    {% if h.rensa %}<span class="hit-rensa">{{ h.rensa }}連</span>{% endif %}
+                </div>
+                {% endfor %}
+                {% if rec.today_history|length > 20 %}
+                <div class="history-more">...他{{ rec.today_history|length - 20 }}件</div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+        <div class="v2-detail-trend">
+            {% if rec.consecutive_minus >= 2 %}
+            {{ rec.consecutive_minus }}日連続不調 → 設定上げの可能性あり
+            {% elif rec.consecutive_plus >= 3 %}
+            {{ rec.consecutive_plus }}日連続好調 → 据え置き or 転落警戒
+            {% elif rec.consecutive_plus >= 2 %}
+            2日連続好調 → 据え置き期待
+            {% else %}
+            蓄積傾向: {{ rec.base_rank }}ランク
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endmacro %}

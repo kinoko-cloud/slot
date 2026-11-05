@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+    <meta name="googlebot" content="noindex, nofollow">
+    <title>的中結果</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v={{ cache_bust }}">
+</head>
+<body>
+    <div class="container">
+        {# === トップバー（共通） === #}
+        {% set back_url = url_for('index') %}
+        {% set show_hamburger = false %}
+        {% include '_topbar.html' %}
+        <header>
+            <h1>的中結果</h1>
+            <div class="update-info">
+                {% if result_date_str %}
+                {{ result_date_str }}の的中結果<br>
+                {% endif %}
+                {% if predict_base %}
+                <small>{{ predict_base }}</small>
+                {% endif %}
+            </div>
+        </header>
+
+        <main>
+            {% if not verify_data %}
+            <section class="no-recommendation">
+                <p>本日のデータがまだありません</p>
+                <p class="sub">営業中にデータが蓄積されると的中結果が表示されます</p>
+            </section>
+            {% else %}
+
+            <!-- 店×機種別 的中率ヘッダー -->
+            {% if store_accuracy_header %}
+            <section class="verify-top-header">
+                {% for sa in store_accuracy_header %}
+                <div class="verify-top-item">
+                    <span class="verify-top-rate {% if sa.rate >= 100 %}rainbow{% elif sa.rate >= 80 %}hot{% elif sa.rate >= 60 %}good{% elif sa.rate >= 40 %}ok{% else %}cold{% endif %}">{{ sa.rate }}%</span>
+                    <span class="verify-top-machine">{{ sa.machine_name }}</span>
+                    <span class="verify-top-store">{{ sa.store_name }}</span>
+                </div>
+                {% endfor %}
+            </section>
+            {% endif %}
+
+            {# 総合的中率サマリは削除 — 上部の店×機種別で十分 #}
+
+            <!-- 🏆 的中ハイライト -->
+            {% if perfect_stores %}
+            <section class="perfect-highlight">
+                <h2>🏆 的中ハイライト</h2>
+                <div class="perfect-list">
+                    {% for ps in perfect_stores %}
+                    <a class="perfect-card" href="#{{ ps.store_id }}">
+                        <span class="perfect-icon">{{ ps.machine_icon }}</span>
+                        <div class="perfect-info">
+                            <span class="perfect-store">{{ ps.store_name }}</span>
+                            <span class="perfect-machine">{{ ps.machine_name }}</span>
+                        </div>
+                        <span class="perfect-badge">
+                            {% if ps.rate >= 100 %}全{{ ps.total_units }}台的中！
+                            {% else %}{{ ps.total_units }}台中{{ ps.hit_count }}台的中（{{ ps.rate|int }}%）
+                            {% endif %}
+                        </span>
+                        <span class="perfect-arrow">›</span>
+                    </a>
+                    {% endfor %}
+                </div>
+            </section>
+            {% endif %}
+
+            <!-- トピック -->
+            {% if topics %}
+            <section class="topics-section">
+                <h2>📋 トピック</h2>
+                {% for t in topics %}
+                <div class="topic-card topic-{{ t.type }}">
+                    <span class="topic-icon">{{ t.icon }}</span>
+                    <div class="topic-body">
+                        <div class="topic-title">{{ t.title }}</div>
+                        <div class="topic-detail"><span class="td-machine">{{ t.machine }}</span> — {{ t.detail|safe }}</div>
+                    </div>
+                </div>
+                {% endfor %}
+            </section>
+            {% endif %}
+
+            <!-- 予測 vs 実績テーブル -->
+            {% for machine_name, machine_data in verify_data.items() %}
+            <section class="verify-section">
+                <h2>{{ machine_data.icon }} {{ machine_data.name }}</h2>
+
+                {% for store in machine_data.stores %}
+                {% set has_valid = store.units|selectattr('verdict_class', 'ne', 'nodata')|list|length > 0 %}
+                {% if has_valid %}
+                <div class="verify-store" id="store-{{ machine_name }}-{{ loop.index0 }}">
+                    <div class="verify-store-header">
+                        <h3 class="verify-store-name">{{ store.name }}</h3>
+                        {% if store.sa_total > 0 %}
+                        <span class="store-acc {% if store.sa_rate >= 80 %}good{% elif store.sa_rate >= 50 %}ok{% else %}bad{% endif %}">
+                            的中{{ store.sa_rate|int }}% ({{ store.sa_hit }}/{{ store.sa_total }})
+                        </span>
+                        {% endif %}
+                    </div>
+                    <div class="verify-table-wrap">
+                    <table class="verify-table">
+                        <thead>
+                            <tr>
+                                <th class="vt-unit">台番</th>
+                                <th class="vt-pred">予</th>
+                                <th class="vt-result">結</th>
+                                <th class="vt-label">判定</th>
+                                <th class="vt-art">ART</th>
+                                <th class="vt-prob">確率</th>
+                                <th class="vt-diff">差枚</th>
+                                <th class="vt-max">最大</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for unit in store.units %}
+                        {% if unit.verdict_class|default('nodata') != 'nodata' %}
+                        {% set pred_rank = unit.pre_open_rank|default(unit.predicted_rank|default('C')) %}
+                        {% set pred_good = pred_rank in ('S', 'A') %}
+                        {% set pred_excellent = pred_rank == 'S' and (unit.pre_open_score|default(unit.predicted_score|default(50))) >= 75 %}
+                        <tr class="verify-row verdict-{{ unit.verdict_class|default('nodata') }}{% if unit.history %} has-detail{% endif %}" onclick="toggleDetail(this)">
+                            <td class="vt-unit">{{ unit.unit_id|pad_id }}</td>
+                            <td class="vt-pred">
+                                {% if pred_excellent %}<span class="vr-mark excellent">◎</span>
+                                {% elif pred_good %}<span class="vr-mark good">◯</span>
+                                {% elif pred_rank == 'B' %}<span class="vr-mark neutral">△</span>
+                                {% else %}<span class="vr-mark bad">✕</span>{% endif %}
+                            </td>
+                            <td class="vt-result">
+                                <span class="vr-mark {{ unit.result_mark_class|default('nodata') }}">{{ unit.result_mark|default('-') }}</span>
+                            </td>
+                            <td class="vt-label verdict-label-{{ unit.verdict_class|default('nodata') }}">
+                                {{ unit.verdict_text|default('—') }}
+                            </td>
+                            <td class="vt-art">{{ unit.actual_art if unit.actual_prob > 0 else '-' }}</td>
+                            <td class="vt-prob {{ unit.result_mark_class|default('') }}">{% if unit.actual_prob > 0 %}1/{{ unit.actual_prob|int }}{% else %}-{% endif %}</td>
+                            <td class="vt-diff {% if unit.diff_medals and unit.diff_medals > 0 %}plus{% elif unit.diff_medals and unit.diff_medals < 0 %}minus{% endif %}">{% if unit.diff_medals %}{{ '{:+,}'.format(unit.diff_medals|int) }}{% else %}-{% endif %}</td>
+                            <td class="vt-max">{% if unit.max_medals %}{{ '{:,}'.format(unit.max_medals|int) }}{% else %}-{% endif %}</td>
+                        </tr>
+                            {# 展開可能な当たり履歴セクション #}
+                            {% if unit.history %}
+                            <tr class="verify-detail-row hidden"><td colspan="8">
+                            <div class="verify-detail-inner">
+                                {# サマリ統計 #}
+                                {% if unit.history_summary %}
+                                <div class="vd-summary">
+                                    <div class="vd-stat-grid">
+                                        <div class="vd-stat">
+                                            <span class="vd-stat-value">{{ '{:,}'.format(unit.history_summary.total_games) }}</span>
+                                            <span class="vd-stat-label">総G数</span>
+                                        </div>
+                                        <div class="vd-stat">
+                                            <span class="vd-stat-value">{{ unit.history_summary.total_hits }}</span>
+                                            <span class="vd-stat-label">当たり数</span>
+                                        </div>
+                                        <div class="vd-stat{% if unit.history_summary.max_chain >= 5 %} hot{% endif %}">
+                                            <span class="vd-stat-value">{{ unit.history_summary.max_chain }}連</span>
+                                            <span class="vd-stat-label">最大連</span>
+                                        </div>
+                                        <div class="vd-stat">
+                                            <span class="vd-stat-value">{{ unit.history_summary.avg_valley }}G</span>
+                                            <span class="vd-stat-label">平均谷</span>
+                                        </div>
+                                        {% if unit.history_summary.tenjou_count > 0 %}
+                                        <div class="vd-stat warn">
+                                            <span class="vd-stat-value">{{ unit.history_summary.tenjou_count }}回</span>
+                                            <span class="vd-stat-label">天井</span>
+                                        </div>
+                                        {% endif %}
+                                        <div class="vd-stat{% if unit.history_summary.max_valley >= 500 %} deep{% endif %}">
+                                            <span class="vd-stat-value">{{ unit.history_summary.max_valley }}G</span>
+                                            <span class="vd-stat-label">最深</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+
+                                {# 当たり履歴テーブル #}
+                                <div class="vd-history-table">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>時刻</th>
+                                                <th>G数</th>
+                                                <th>種類</th>
+                                                <th>連</th>
+                                                <th>枚数</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for hit in unit.history %}
+                                            <tr class="{% if hit.is_tenjou %}tenjou{% elif hit.is_hot_chain %}hot-chain{% elif hit.is_deep %}deep{% endif %}">
+                                                <td class="vd-num">{{ hit.index }}</td>
+                                                <td class="vd-time">{{ hit.time or '-' }}</td>
+                                                <td class="vd-games {% if hit.is_tenjou is defined and hit.is_tenjou %}tenjou{% elif hit.is_deep %}deep{% endif %}{% if hit.is_shallow %} shallow{% endif %}">{{ hit.start }}G{% if hit.is_tenjou is defined and hit.is_tenjou and hit.accumulated_games is defined and hit.accumulated_games != hit.start %}<br><small class="acc-games">累計{{ hit.accumulated_games }}G</small>{% endif %}</td>
+                                                <td class="vd-type {{ hit.type|lower }}">{{ hit.type }}</td>
+                                                <td class="vd-chain {% if hit.chain_pos is defined and hit.chain_pos >= 8 %}chain-8{% elif hit.chain_pos is defined and hit.chain_pos >= 5 %}chain-5{% elif hit.chain_pos is defined and hit.chain_pos >= 3 %}chain-3{% elif hit.chain_pos is defined and hit.chain_pos >= 2 %}chain-2{% endif %}">{% if hit.chain_pos is defined and hit.chain_len is defined and hit.chain_len > 1 %}{% if hit.chain_pos == hit.chain_len %}{{ hit.chain_len }}連{% else %}↑{% endif %}{% else %}-{% endif %}</td>
+                                                <td class="vd-medals">{% if hit.medals > 0 %}{{ '{:,}'.format(hit.medals) }}{% else %}-{% endif %}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            </td></tr>
+                            {% endif %}
+                        {% endif %}{# nodata filter #}
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    </div>
+                </div>
+                {% endif %}{# has_valid #}
+                {% endfor %}
+            </section>
+            {% endfor %}
+
+            <!-- 見方 -->
+            <section class="verify-legend">
+                <h3>見方</h3>
+                <div class="legend-items">
+                    <div class="legend-group">
+                        <div class="legend-title">予想</div>
+                        <div class="legend-row"><span class="vr-mark excellent">◎</span> 鉄板（S高スコア）</div>
+                        <div class="legend-row"><span class="vr-mark good">◯</span> 好調予想（S/A）</div>
+                        <div class="legend-row"><span class="vr-mark neutral">△</span> 微妙（B）</div>
+                        <div class="legend-row"><span class="vr-mark bad">✕</span> ダメ予想（C/D）</div>
+                    </div>
+                    <div class="legend-group">
+                        <div class="legend-title">結果</div>
+                        <div class="legend-row"><span class="vr-mark excellent">◎</span> 絶好調</div>
+                        <div class="legend-row"><span class="vr-mark good">◯</span> 好調</div>
+                        <div class="legend-row"><span class="vr-mark neutral">△</span> 普通</div>
+                        <div class="legend-row"><span class="vr-mark bad">✕</span> 不調</div>
+                    </div>
+                </div>
+            </section>
+
+            {% endif %}
+        </main>
+
+        <footer>
+            <p><a href="{{ url_for('index') }}" class="api-link">トップへ</a></p>
+        </footer>
+    </div>
+
+    <script>
+    function toggleDetail(rowEl) {
+        var detailRow = rowEl.nextElementSibling;
+        if (!detailRow || !detailRow.classList.contains('verify-detail-row')) return;
+
+        var isHidden = detailRow.classList.contains('hidden');
+        var table = rowEl.closest('.verify-table');
+        if (table) {
+            table.querySelectorAll('.verify-detail-row').forEach(function(d) { d.classList.add('hidden'); });
+            table.querySelectorAll('.verify-row').forEach(function(r) { r.classList.remove('expanded'); });
+        }
+
+        if (isHidden) {
+            detailRow.classList.remove('hidden');
+            rowEl.classList.add('expanded');
+        }
+    }
+    {% include '_common_js.html' %}
+    </script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+name: Papimo Fetch (Island Akihabara)
+
+on:
+  schedule:
+    # JST 11:00-23:00 (毎時0分)
+    - cron: '0 2-14 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: slot-papimo-fetch
+  cancel-in-progress: false
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-1.49.1
+
+      - name: Install dependencies
+        run: |
+          pip install 'playwright==1.49.1' requests pytz jinja2
+          playwright install chromium
+          playwright install-deps chromium
+
+      - name: Fetch Island Akihabara (papimo)
+        run: |
+          rm -f /tmp/slot_fetch.lock
+          echo "=== アイランド秋葉原（papimo）==="
+          timeout 600 python scripts/scrapers_v2/fetch_all.py --papimo-only 2>&1 || {
+            echo "⚠️ Papimo fetch failed"
+          }
+
+      - name: Generate static HTML (営業時間中のみ)
+        run: |
+          HOUR=$(TZ='Asia/Tokyo' date +'%H')
+          if [ "$HOUR" -ge 10 ] && [ "$HOUR" -le 23 ]; then
+            echo "営業時間中 ($HOUR時) - HTML生成"
+            timeout 300 python scripts/generate_static.py 2>&1 || {
+              echo "⚠️ HTML生成失敗"
+            }
+          else
+            echo "営業時間外 ($HOUR時) - HTML生成スキップ"
+          fi
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add data/availability.json data/.games_cache/ data/history/ docs/ || true
+
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            TIMESTAMP=$(TZ='Asia/Tokyo' date +'%H:%M')
+            git commit -m "auto: papimo更新 ${TIMESTAMP}"
+
+            for i in 1 2 3; do
+              if git push; then
+                echo "✅ Push successful"
+                break
+              fi
+              echo "⚠️ Push failed (attempt $i/3), retrying..."
+              git pull --rebase origin main 2>/dev/null || {
+                git rebase --abort 2>/dev/null || true
+                git push --force
+                break
+              }
+            done
+          fi

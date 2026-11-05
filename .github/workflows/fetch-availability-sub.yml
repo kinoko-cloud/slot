@@ -1,0 +1,90 @@
+name: Fetch Availability (Sub Stores - 22:50/00:10)
+
+on:
+  schedule:
+    # JST 22:50 (営業終了後)
+    - cron: '50 13 * * *'
+    # JST 00:10 (日付変更後)
+    - cron: '10 15 * * *'
+  workflow_dispatch:  # 手動実行も可能
+
+concurrency:
+  group: slot-fetch-sub
+  cancel-in-progress: true
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    timeout-minutes: 15
+    
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-1.49.1
+
+      - name: Install dependencies
+        run: |
+          pip install 'playwright==1.49.1' requests
+          playwright install chromium
+          playwright install-deps chromium
+
+      - name: Fetch sub stores (赤坂/上野/高田馬場/新大久保/新小岩)
+        run: |
+          rm -f /tmp/slot_fetch.lock
+          
+          echo "=== サブ店舗取得（SBJ）==="
+          timeout 300 python scripts/scrapers_v2/fetch_all.py --sub-only --sbj-only 2>&1 || {
+            echo "⚠️ SBJ fetch failed"
+          }
+
+      - name: Generate static HTML
+        run: |
+          pip install jinja2
+          timeout 300 python scripts/generate_static.py 2>&1 || {
+            echo "⚠️ HTML生成失敗（データ更新は続行）"
+          }
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add data/availability.json data/.games_cache/ docs/ || true
+
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            TIMESTAMP=$(TZ='Asia/Tokyo' date +'%H:%M')
+            git commit -m "auto: サブ店舗更新 ${TIMESTAMP}"
+            
+            for i in 1 2 3; do
+              if git push; then
+                echo "✅ Push successful"
+                break
+              fi
+              echo "⚠️ Push failed (attempt $i/3), resetting to remote and retrying..."
+              git fetch origin main
+              git reset --hard origin/main
+              # 再度fetchして再生成
+              timeout 300 python scripts/scrapers_v2/fetch_all.py --sub-only 2>&1 || true
+              timeout 300 python scripts/generate_static.py 2>&1 || true
+              git add data/availability.json data/.games_cache/ docs/ || true
+              if ! git diff --staged --quiet; then
+                TIMESTAMP=$(TZ='Asia/Tokyo' date +'%H:%M')
+                git commit -m "auto: サブ店舗更新 ${TIMESTAMP} (retry)"
+              fi
+            done
+          fi

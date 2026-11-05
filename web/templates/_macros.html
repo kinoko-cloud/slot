@@ -1,0 +1,318 @@
+{# ==================== 共通マクロ集 ==================== #}
+
+{# === データ状況バッジ（統一形式） === #}
+{# status: 'unit_renumbered' | 'new_unit' | 'data_missing' | 'data_stopped' #}
+{% macro data_status_badge(status, detail='') %}
+{% if status == 'unit_renumbered' %}
+<span class="data-status-badge renumbered">⚠️ 台番号変更のため予測精度低{% if detail %}（{{ detail }}）{% endif %}</span>
+{% elif status == 'new_unit' %}
+<span class="data-status-badge new-unit">🆕 新規台{% if detail %}（{{ detail }}）{% endif %}</span>
+{% elif status == 'data_missing' %}
+<span class="data-status-badge missing">⚠️ 本日データ未取得</span>
+{% elif status == 'data_stopped' %}
+<span class="data-status-badge stopped">⚠️ データ取得停止中{% if detail %}（最終: {{ detail }}）{% endif %}</span>
+{% endif %}
+{% endmacro %}
+
+{# === 台番号+店名ラベル（統一形式） === #}
+{# 順序: 台番号 → 店名（台番号が4桁固定で揃うため） #}
+{% macro unit_store_label(unit_id, store_name, size='normal') %}
+{% if size == 'large' %}
+<span class="unit-id-sub"><span class="unit-id-num-lg">{{ unit_id|pad_id }}</span><span class="unit-id-ban">番台</span></span>
+<span class="store-link-right">{{ store_name }}</span>
+{% elif size == 'small' %}
+<span class="unit-id-sm">{{ unit_id|pad_id }}番台</span>
+<span class="store-name-sm">{{ store_name }}</span>
+{% else %}
+<span class="unit-id-sub"><span class="unit-id-num">{{ unit_id|pad_id }}</span><span class="unit-id-ban">番台</span></span>
+<span class="store-link">{{ store_name }}</span>
+{% endif %}
+{% endmacro %}
+
+{# === 当たり履歴テーブル（インライン/展開可能） === #}
+{% macro hit_table(processed_hist, summary=none, inline=false) %}
+{% if processed_hist %}
+<div class="hit-detail-panel{% if not inline %}" style="display:none;{% endif %}">
+    {% if summary %}
+    <div class="hit-summary-row">
+        <span>{{ summary.total_hits or 0 }}当たり</span>
+        <span>最大{{ summary.max_chain or 0 }}連</span>
+        <span>平均{{ summary.avg_valley or 0 }}G</span>
+        {% if summary.tenjou_count %}<span class="deep">天井{{ summary.tenjou_count }}回</span>{% endif %}
+    </div>
+    {% endif %}
+    <table class="hit-detail-table">
+        <thead><tr><th>#</th><th>時刻</th><th>G数</th><th>種類</th><th>連</th><th>枚数</th></tr></thead>
+        <tbody>
+        {% for hit in processed_hist %}
+        <tr class="{% if hit.is_tenjou %}tenjou{% elif hit.is_hot_chain %}hot-chain{% elif hit.is_deep %}deep{% endif %}">
+            <td>{{ hit.index }}</td>
+            <td>{{ hit.time or '-' }}</td>
+            <td class="{% if hit.is_tenjou is defined and hit.is_tenjou %}tenjou{% elif hit.is_deep %}deep{% endif %}{% if hit.is_shallow %} shallow{% endif %}">{{ hit.start }}G{% if hit.accumulated_games is defined and hit.accumulated_games != hit.start and hit.accumulated_games > 0 %}<br><small class="acc-games">（累計{{ hit.accumulated_games }}G）</small>{% endif %}</td>
+            <td class="{{ hit.type|lower }}">{{ hit.type }}</td>
+            <td class="{% if hit.is_hot_chain %}hot{% endif %}">{% if hit.chain_pos is defined and hit.chain_len is defined and hit.chain_len > 1 %}{% if hit.chain_pos == hit.chain_len %}{{ hit.chain_len }}連{% else %}↑{% endif %}{% else %}-{% endif %}</td>
+            <td>{% if hit.medals > 0 %}{{ '{:,}'.format(hit.medals) }}{% else %}-{% endif %}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+{% endmacro %}
+
+{# === 直近日データ行（展開可能） === #}
+{% macro day_row(art, prob, date_str, label, diff_medals, max_rensa, max_medals, history) %}
+{% if art > 0 %}
+<div class="recent-day" {% if history and history|length > 0 %}onclick="this.classList.toggle('expanded')"{% endif %}>
+    <span class="recent-day-date">{{ date_str if date_str else label }}</span>
+    <span class="recent-day-art">ART <span class="num">{{ art }}</span></span>
+    {% if prob > 0 %}
+    <span class="recent-day-prob {% if prob <= 100 %}excellent{% elif prob <= 130 %}good{% elif prob >= 200 %}bad{% endif %}">1/{{ prob|int }}</span>
+    {% endif %}
+    {% if diff_medals and diff_medals != 0 %}
+    <span class="diff-medals-sm {% if diff_medals > 0 %}plus{% else %}minus{% endif %}">{{ '{:+,}'.format(diff_medals) }}枚</span>
+    {% endif %}
+    {% if max_rensa and max_rensa >= 3 %}
+    <span class="rensa-sm">{{ max_rensa }}連</span>
+    {% endif %}
+    {% if max_medals and max_medals >= 500 %}
+    <span class="max-medals-sm">{{ '{:,}'.format(max_medals) }}枚</span>
+    {% endif %}
+    {% if history and history|length > 0 %}
+    <span class="expand-icon">▼</span>
+    {% endif %}
+</div>
+{% if history and history|length > 0 %}
+<div class="recent-day-detail">
+    {{ hit_table(history, none, true) }}
+</div>
+{% endif %}
+{% else %}
+<div class="recent-day no-data">
+    <span class="recent-day-date">{{ date_str if date_str else label }}</span>
+    <span class="no-data-text">データなし</span>
+</div>
+{% endif %}
+{% endmacro %}
+
+{# === 推奨理由リスト（絵文字でスタイル分け） === #}
+{% macro reasons_list(reasons, max_display=none) %}
+{% if reasons %}
+{% set display_reasons = reasons[:max_display] if max_display else reasons %}
+{% for reason in display_reasons %}
+{% if '📊' in reason %}
+<div class="reason-line-top reason-rank">{{ reason }}</div>
+{% elif '📈' in reason %}
+<div class="reason-line-top reason-stats">{{ reason }}</div>
+{% elif '🔁' in reason %}
+<div class="reason-line-top reason-cycle">{{ reason }}</div>
+{% elif '🔄' in reason %}
+<div class="reason-line-top reason-pattern">{{ reason }}</div>
+{% elif '💡' in reason %}
+<div class="reason-line-top reason-today">{{ reason }}</div>
+{% elif '📅' in reason %}
+<div class="reason-line-top reason-weekday">{{ reason }}</div>
+{% elif '⚠' in reason %}
+<div class="reason-line-top reason-warn">{{ reason }}</div>
+{% else %}
+<div class="reason-line-top">{{ reason }}</div>
+{% endif %}
+{% endfor %}
+{% else %}
+<div class="reason-line-top">💡 過去データに基づくおすすめ台</div>
+{% endif %}
+{% endmacro %}
+
+{# === トップページ用 台カード（フル表示） === #}
+{% macro unit_card_top(rec, loop_index, show_sparkline=true, show_history_detail=false, is_realtime=false) %}
+<a href="{{ url_for('recommend', store_key=rec.store_key) }}" class="unit-card rank-{{ rec.final_rank|lower }}" style="text-decoration: none; color: inherit;">
+    {# ヘッダー #}
+    <div class="unit-header">
+        <span class="ranking-num">#{{ loop_index }}</span>
+        <span class="machine-icon">{{ rec.machine_icon }}</span>
+        <span class="machine-name-top">{{ rec.machine_name }}</span>
+        <span class="rank-badge" style="background-color: {{ rank_color(rec.final_rank) }}">{{ rec.final_rank }}</span>
+    </div>
+    {# 店舗・台番号 #}
+    <div class="unit-store">
+        <span class="unit-id-sub"><span class="unit-id-num-lg">{{ rec.unit_id|pad_id }}</span><span class="unit-id-ban">番</span></span>
+        <span class="store-link-right">{{ rec.store_name }}</span>
+    </div>
+    {# 推奨理由 #}
+    <div class="reasons-full">
+        {{ reasons_list(rec.reasons) }}
+    </div>
+    {# 予測結果バッジ（あれば） #}
+    {% set pred_good = rec.predicted_rank in ['S', 'A'] %}
+    {% set result_good = rec.yesterday_prob is defined and rec.yesterday_prob > 0 and rec.yesterday_prob <= 130 %}
+    {% if rec.predicted_rank %}
+    <div class="prediction-result">
+        {% if pred_good and result_good %}
+        <span class="prediction-badge hit">前日予測的中</span>
+        {% elif pred_good and not result_good %}
+        <span class="prediction-badge miss">前日予測ハズレ</span>
+        {% elif not pred_good and result_good %}
+        <span class="prediction-badge miss">前日予測ハズレ</span>
+        {% else %}
+        <span class="prediction-badge hit">前日予測的中</span>
+        {% endif %}
+    </div>
+    {% endif %}
+    {# 差枚・機械割 #}
+    {% set _dm = rec.yesterday_diff_medals|default(rec.diff_medals|default(0)) %}
+    {% if _dm != 0 %}
+    <div class="yesterday-diff-line">
+        <span class="diff-medals-lg {% if _dm > 0 %}plus{% else %}minus{% endif %}">{{ '{:+,}'.format(_dm) }}枚</span>
+        {% if rec.payout_estimate and rec.payout_estimate > 100 %}
+        <span class="setting-badge-sm setting-{{ rec.setting_num|default(0) }}"><small class="payout-label">機械割</small><span class="payout-num">{{ rec.payout_estimate }}%</span></span>
+        {% endif %}
+    </div>
+    {% endif %}
+    {# 直近3日間データ #}
+    <div class="recent-days">
+        <div class="recent-header">直近データ</div>
+        {% set y_art = rec.yesterday_art or 0 %}
+        {% set y_games = rec.yesterday_games or 0 %}
+        {% set y_prob = (y_games / y_art)|int if y_art > 0 and y_games > 0 else 0 %}
+        {% set db_art = rec.day_before_art or 0 %}
+        {% set db_games = rec.day_before_games or 0 %}
+        {% set db_prob = (db_games / db_art)|int if db_art > 0 and db_games > 0 else 0 %}
+        {% set td_art = rec.three_days_ago_art|default(0) %}
+        {% set td_prob = ((rec.three_days_ago_games|default(0)) / td_art)|int if td_art > 0 else 0 %}
+        {{ day_row(y_art, y_prob, rec.yesterday_date, '前日', rec.yesterday_diff_medals|default(0), rec.yesterday_max_rensa|default(0), rec.yesterday_max_medals|default(0), rec.yesterday_history_processed|default(rec.yesterday_history|default([]))) }}
+        {{ day_row(db_art, db_prob, rec.day_before_date, '前々日', rec.day_before_diff_medals|default(0), rec.day_before_max_rensa|default(0), rec.day_before_max_medals|default(0), rec.day_before_history_processed|default(rec.day_before_history|default([]))) }}
+        {{ day_row(td_art, td_prob, rec.three_days_ago_date|default(''), '3日前', rec.three_days_ago_diff_medals|default(0), rec.three_days_ago_max_rensa|default(0), rec.three_days_ago_max_medals|default(0), rec.three_days_ago_history_processed|default(rec.three_days_ago_history|default([]))) }}
+    </div>
+    {# 差枚推移グラフ #}
+    {% if show_sparkline %}
+    {% set _yh = rec.yesterday_history if rec.yesterday_history and rec.yesterday_history|length >= 2 else none %}
+    {% set _th = rec.today_history if rec.today_history and rec.today_history|length >= 2 else none %}
+    {% set graph_hist = _yh if _yh else _th %}
+    {% set graph_date = rec.yesterday_date|default('') if _yh else rec.history_date|default('') %}
+    {% if graph_hist %}
+    <div class="sparkline-section">
+        <div class="sparkline-label">{% if graph_date %}{{ graph_date }}{% endif %} 差枚推移</div>
+        {{ sparkline(graph_hist, width=220, height=45, diff_medals=rec.yesterday_diff_medals|default(rec.diff_medals|default(none)), is_complete=(_yh is not none))|safe }}
+    </div>
+    {% endif %}
+    {% endif %}
+</a>
+{% endmacro %}
+
+{# === 爆発台カード（閉店後/営業中共通） === #}
+{% macro unit_card_explosion(rec, loop_index, show_today=false) %}
+<a href="{{ url_for('recommend', store_key=rec.store_key) }}" class="today-hot-card rank-{{ rec.final_rank|lower }}" style="text-decoration: none; color: inherit;">
+    <div class="today-hot-header">
+        <span class="today-hot-rank">#{{ loop_index }}</span>
+        <span class="machine-icon">{{ rec.machine_icon }}</span>
+        <span class="machine-name-sm">{{ rec.machine_name }}</span>
+    </div>
+    <div class="today-hot-store">
+        <span class="unit-id"><span class="unit-id-num">{{ rec.unit_id|pad_id }}</span><span class="unit-id-ban">番</span></span>
+        <span class="store-name-sm">{{ rec.store_name }}</span>
+    </div>
+    {# 差枚・機械割 #}
+    {% set _dm = rec.yesterday_diff_medals|default(rec.diff_medals|default(0)) %}
+    {% if _dm != 0 %}
+    <div class="yesterday-diff-line">
+        <span class="diff-medals-lg {% if _dm > 0 %}plus{% else %}minus{% endif %}">{{ '{:+,}'.format(_dm) }}枚</span>
+        {% if rec.payout_estimate and rec.payout_estimate > 100 %}
+        <span class="setting-badge-sm setting-{{ rec.setting_num|default(0) }}"><small class="payout-label">機械割</small><span class="payout-num">{{ rec.payout_estimate }}%</span></span>
+        {% endif %}
+    </div>
+    {% endif %}
+    {# メインデータ #}
+    <div class="yesterday-stats">
+        {% set art = rec.art_count if show_today else rec.yesterday_art %}
+        {% set rensa = rec.today_max_rensa if show_today else rec.yesterday_max_rensa %}
+        {% set games = rec.total_games if show_today else rec.yesterday_games %}
+        {% if art and art > 0 %}
+        <span class="art-badge">ART <span class="art-num">{{ art }}</span></span>
+        {% endif %}
+        {% if rec.first_hit_count is defined and rec.first_hit_count > 0 %}
+        <span class="first-hit-count">初当たり<span class="num">{{ rec.first_hit_count }}</span>回</span>
+        {% endif %}
+        {% if rec.yesterday_rb and rec.yesterday_rb > 0 and not show_today %}
+        <span class="rb-badge">RB <span class="rb-num">{{ rec.yesterday_rb }}</span></span>
+        {% endif %}
+        {% if rensa and rensa >= 2 %}
+        <span class="rensa-badge {% if rensa >= 8 %}rensa-8{% elif rensa >= 5 %}rensa-5{% elif rensa >= 3 %}rensa-3{% else %}rensa-2{% endif %}">最大<span class="num">{{ rensa }}</span>連</span>
+        {% endif %}
+        {% if games and games > 0 %}
+        <span class="total-games-label">{{ '{:,}'.format(games) }}G</span>
+        {% endif %}
+        {% if rec.payout_estimate and rec.payout_estimate > 100 %}
+        <span class="setting-badge-sm setting-{{ rec.setting_num|default(0) }}"><small class="payout-label">機械割</small><span class="payout-num">{{ rec.payout_estimate }}%</span></span>
+        {% endif %}
+    </div>
+    {# 確率 #}
+    {% set prob = rec.art_prob if show_today else rec.yesterday_prob %}
+    {% if prob and prob > 0 %}
+    <div class="yesterday-prob-badge">
+        <span class="prob-label">確率</span>
+        <span class="prob-value {% if prob <= 100 %}excellent{% elif prob <= 130 %}good{% elif prob >= 200 %}bad{% endif %}">1/{{ prob|int }}</span>
+    </div>
+    {% endif %}
+    {# 理由（1つだけ） #}
+    {% if rec.reasons %}
+    <div class="explosion-reason">{{ rec.reasons[0] }}</div>
+    {% endif %}
+</a>
+{% endmacro %}
+
+{# === 営業中 SA候補リスト用 コンパクトカード === #}
+{% macro unit_card_list(rec, loop_index, store_key='') %}
+<div class="unit-card-v2 rank-{{ rec.final_rank|lower }}" onclick="toggleDetails(this)">
+    <div class="v2-header">
+        <div class="v2-header-row1">
+            <span class="v2-rank-num">#{{ loop_index }}</span>
+            <a href="{{ url_for('unit_history', store_key=(rec.store_key or store_key), unit_id=rec.unit_id) }}" class="v2-unit-id" onclick="event.stopPropagation()">{{ rec.unit_id|pad_id }}番台</a>
+            <a href="{{ url_for('recommend', store_key=(rec.store_key or store_key)) }}" class="v2-store" onclick="event.stopPropagation()">{{ rec.store_name }}</a>
+            <span class="v2-rank" style="background-color: {{ rank_color(rec.final_rank) }}">{{ rec.final_rank }}</span>
+            <span class="expand-icon small">▼</span>
+        </div>
+        {% if rec.machine_name %}
+        <div class="v2-header-row2">
+            <span class="v2-machine">{{ rec.machine_name }}</span>
+        </div>
+        {% endif %}
+    </div>
+    {# 差枚 #}
+    {% set _dm = rec.yesterday_diff_medals|default(rec.diff_medals|default(0)) %}
+    <div class="yesterday-stats">
+        {% if _dm != 0 %}
+        <span class="diff-medals {% if _dm > 0 %}plus{% else %}minus{% endif %}">{{ '{:+,}'.format(_dm) }}枚</span>
+        {% endif %}
+        {% if rec.art_count > 0 %}
+        <span class="art-badge">ART <span class="art-num">{{ rec.art_count }}</span></span>
+        {% endif %}
+        {% if rec.today_max_rensa and rec.today_max_rensa >= 2 %}
+        <span class="rensa-badge {% if rec.today_max_rensa >= 8 %}rensa-8{% elif rec.today_max_rensa >= 5 %}rensa-5{% elif rec.today_max_rensa >= 3 %}rensa-3{% else %}rensa-2{% endif %}">最大<span class="num">{{ rec.today_max_rensa }}</span>連</span>
+        {% endif %}
+        {% if rec.total_games and rec.total_games > 0 %}
+        <span class="total-games-label">{{ '{:,}'.format(rec.total_games) }}G</span>
+        {% endif %}
+        {% if rec.payout_estimate and rec.payout_estimate > 100 %}
+        <span class="setting-badge-sm setting-{{ rec.setting_num|default(0) }}"><small class="payout-label">機械割</small><span class="payout-num">{{ rec.payout_estimate }}%</span></span>
+        {% endif %}
+    </div>
+    {# 理由 #}
+    {% if rec.reasons %}
+    <div class="v2-reason">{{ rec.reasons[0]|safe }}</div>
+    {% endif %}
+    {# 展開詳細 #}
+    <div class="unit-details hidden">
+        <div class="v2-detail-reasons">
+            {% for reason in rec.reasons %}
+            <div class="reason-item">{{ reason }}</div>
+            {% endfor %}
+        </div>
+        {% if rec.total_games > 0 %}
+        <div class="v2-detail-today">
+            本日: ART {{ rec.art_count }} / RB {{ rec.rb_count }} / {{ '{:,}'.format(rec.total_games) }}G
+            {% if rec.art_prob > 0 %} / 1/{{ rec.art_prob|int }}{% endif %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endmacro %}

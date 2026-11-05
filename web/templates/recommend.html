@@ -1,0 +1,229 @@
+{% from '_unit_card.html' import unit_compact %}
+{# 当たり履歴展開マクロ #}
+{% macro hit_detail_table(processed_hist, summary) %}
+{% if processed_hist %}
+<div class="hit-detail-panel" style="display:none;">
+    {% if summary %}
+    <div class="hit-summary-row">
+        <span>{{ summary.total_hits or 0 }}当たり</span>
+        <span>最大{{ summary.max_chain or 0 }}連</span>
+        <span>平均{{ summary.avg_valley or 0 }}G</span>
+        {% if summary.tenjou_count %}<span class="deep">天井{{ summary.tenjou_count }}回</span>{% endif %}
+    </div>
+    {% endif %}
+    <table class="hit-detail-table">
+        <thead><tr><th>#</th><th>時刻</th><th>G数</th><th>種類</th><th>連</th><th>枚数</th></tr></thead>
+        <tbody>
+        {% for hit in processed_hist %}
+        <tr class="{% if hit.is_tenjou %}tenjou{% elif hit.is_hot_chain %}hot-chain{% elif hit.is_deep %}deep{% endif %}">
+            <td>{{ hit.index }}</td>
+            <td>{{ hit.time or '-' }}</td>
+            <td class="{% if hit.is_tenjou is defined and hit.is_tenjou %}tenjou{% elif hit.is_deep %}deep{% endif %}{% if hit.is_shallow %} shallow{% endif %}">{{ hit.start }}G{% if hit.is_tenjou is defined and hit.is_tenjou and hit.accumulated_games is defined and hit.accumulated_games != hit.start %}<br><small class="acc-games">累計{{ hit.accumulated_games }}G</small>{% endif %}</td>
+            <td class="{{ hit.type|lower }}">{{ hit.type }}</td>
+            <td class="{% if hit.is_hot_chain %}hot{% endif %}">{% if hit.chain_pos is defined and hit.chain_len is defined and hit.chain_len > 1 %}{% if hit.chain_pos == hit.chain_len %}{{ hit.chain_len }}連{% else %}↑{% endif %}{% else %}-{% endif %}</td>
+            <td>{% if hit.medals > 0 %}{{ '{:,}'.format(hit.medals) }}{% else %}-{% endif %}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+{% endmacro %}
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+    <meta name="googlebot" content="noindex, nofollow">
+    <title>{{ store.name }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v={{ cache_bust }}">
+</head>
+<body data-page-type="recommend" data-store-key="{{ store_key }}">
+    <div class="container">
+        {# === トップバー（共通） === #}
+        {% set back_url = url_for('index') %}
+        {% set show_hamburger = false %}
+        {% include '_topbar.html' %}
+        <header>
+            <h1>{{ store.name }}</h1>
+            <div class="machine-label">{{ machine.icon }} {{ machine.short_name }}</div>
+            {% if data_date_str %}
+            <div class="data-date-label">📅 データ: {{ data_date_str }}まで</div>
+            {% endif %}
+            <div class="realtime-bar">
+                <span id="realtime-status" class="realtime-status">読込中...</span>
+            </div>
+            <div class="update-info">
+                {% if cache_info %}
+                <span class="data-source">
+                    データ取得: <span id="update-time">{{ cache_info.fetched_at }}</span>
+                </span>
+                <span class="cache-badge {{ cache_info.source }}">{{ cache_info.source|upper }}</span>
+                {% if cache_info.age_seconds and cache_info.age_seconds > 1800 %}
+                <div class="stale-warning">データが{{ (cache_info.age_seconds // 3600) }}時間{{ ((cache_info.age_seconds % 3600) // 60) }}分前のものです</div>
+                {% elif cache_info.age_seconds and cache_info.age_seconds > 900 %}
+                <div class="stale-notice">{{ (cache_info.age_seconds // 60) }}分前のデータです</div>
+                {% endif %}
+                {% else %}
+                <span class="data-source no-realtime">リアルタイムデータなし（過去の傾向で評価）</span>
+                {% endif %}
+            </div>
+
+            <!-- 空き状況サマリ -->
+            {% if is_open and availability_info %}
+            <div class="availability-summary">
+                <span class="avail-empty" onclick="filterUnits('empty')">空き {{ availability_info.empty_count }}台</span>
+                <span class="avail-playing" onclick="filterUnits('playing')">遊技中 {{ availability_info.playing_count }}台</span>
+                <span class="avail-all" onclick="filterUnits('all')">全て</span>
+            </div>
+            {% elif not is_open %}
+            <div class="closed-notice">現在営業時間外です</div>
+            {% endif %}
+
+            <div class="action-buttons">
+                <span class="auto-update-notice">15分ごと自動更新</span>
+            </div>
+        </header>
+
+        <!-- 台番号アラート -->
+        {% if unit_alerts %}
+        <div class="unit-alerts">
+            {% for alert in unit_alerts %}
+            <div class="alert-item alert-{{ alert.severity }}">
+                {% if alert.type == 'unit_move_suspected' %}
+                <span class="alert-icon">⚠</span> 台移動検知: {{ alert.missing|join(', ') }} → {{ alert.new|join(', ') }}
+                {% elif alert.type == 'unit_missing' %}
+                <span class="alert-icon">⚠</span> 台撤去の可能性: {{ alert.units|join(', ') }}番
+                {% elif alert.type == 'unit_new' %}
+                <span class="alert-icon">🆕</span> 新台検出: {{ alert.units|join(', ') }}番
+                {% elif alert.type == 'unit_count_change' %}
+                <span class="alert-icon">📊</span> 台数変動: {{ alert.config_count }}台 → {{ alert.actual_count }}台
+                {% else %}
+                <span class="alert-icon">ℹ</span> {{ alert.message }}
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- 店舗分析 -->
+        {% if store_analysis %}
+        <div class="store-analysis">
+            <div class="analysis-title"><span class="analysis-machine">{{ store_analysis.machine_name }}</span>（<span class="analysis-store">{{ store_analysis.store_name }}</span>）分析</div>
+            <div class="analysis-rank-dist">
+                全{{ store_analysis.total_units }}台: {{ store_analysis.rank_dist }}
+            </div>
+            <div class="analysis-overall">{{ store_analysis.overall }}</div>
+            {% if store_analysis.daily_summary %}
+            <div class="analysis-daily">{{ store_analysis.daily_summary }}</div>
+            {% endif %}
+            {% if store_analysis.weekday_info %}
+            <div class="analysis-weekday">
+                {{ store_analysis.weekday_info.today_weekday }}曜の店舗傾向:
+                {% if store_analysis.weekday_info.today_rating >= 5 %}高設定投入日{% elif store_analysis.weekday_info.today_rating >= 4 %}狙い目{% elif store_analysis.weekday_info.today_rating <= 2 %}弱い日（回収傾向）{% else %}普通{% endif %}
+                （{{ store_analysis.weekday_info.best_days }}）
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- ランク説明 -->
+        <div class="rank-legend">
+            <span class="legend-item"><span class="rank-dot" style="background:#ff6b6b"></span>S 高設定濃厚</span>
+            <span class="legend-item"><span class="rank-dot" style="background:#ffa502"></span>A 高設定域</span>
+            <span class="legend-item"><span class="rank-dot" style="background:#2ed573"></span>B 中間以上</span>
+            <span class="legend-item"><span class="rank-dot" style="background:#70a1ff"></span>C 普通</span>
+            <span class="legend-item"><span class="rank-dot" style="background:#747d8c"></span>D 低設定疑い</span>
+        </div>
+
+        <main>
+            {% if top_recs %}
+            <section class="recommendations top">
+                <h2>推奨台</h2>
+                {% for rec in top_recs %}
+                {{ unit_compact(rec, loop.index, store_key=store_key, show_store=false) }}
+                {% endfor %}
+            </section>
+            {% else %}
+            <section class="no-recommendation">
+                <p>推奨台なし</p>
+                <p class="sub">全台稼働中または評価データなし</p>
+            </section>
+            {% endif %}
+
+            <section class="recommendations other">
+                <h2>その他の台</h2>
+                {% for rec in other_recs %}
+                {{ unit_compact(rec, loop.index + top_recs|length, store_key=store_key) }}
+                {% endfor %}
+            </section>
+        </main>
+
+        <footer>
+            <p>
+                <a href="{{ url_for('ranking', machine_key=machine_key) }}" class="footer-link">総合ランキング</a>
+                |
+                <a href="{{ url_for('api_status', store_key=store_key) }}" class="api-link">JSON</a>
+            </p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='realtime.js') }}"></script>
+    <script>
+        const storeKey = '{{ store_key }}';
+        let currentFilter = 'all';
+
+        function toggleHitDetail(el, e) {
+            // イベント伝播を止める（親カードのtoggleDetailsが発火しないように）
+            (e || event).stopPropagation();
+            const panel = el.nextElementSibling;
+            if (panel && panel.classList.contains('hit-detail-panel')) {
+                const isHidden = panel.style.display === 'none' || !panel.style.display;
+                panel.style.display = isHidden ? 'block' : 'none';
+                const icon = el.querySelector('.expand-icon');
+                if (icon) icon.textContent = isHidden ? '▲' : '▼';
+            }
+        }
+
+        function toggleDetails(card) {
+            const details = card.querySelector('.unit-details');
+            const icon = card.querySelector('.expand-icon');
+            if (details) {
+                details.classList.toggle('hidden');
+                if (icon) {
+                    icon.textContent = details.classList.contains('hidden') ? '▼' : '▲';
+                }
+            }
+        }
+
+        function filterUnits(filter) {
+            currentFilter = filter;
+            const cards = document.querySelectorAll('[data-availability]');
+            cards.forEach(card => {
+                const avail = card.dataset.availability;
+                if (filter === 'all') {
+                    card.style.display = '';
+                } else if (filter === 'empty') {
+                    card.style.display = avail === '空き' ? '' : 'none';
+                } else if (filter === 'playing') {
+                    card.style.display = avail === '遊技中' ? '' : 'none';
+                }
+            });
+
+            // ハイライト
+            document.querySelectorAll('.availability-summary span').forEach(el => {
+                el.classList.remove('active');
+            });
+            document.querySelector('.avail-' + filter)?.classList.add('active');
+        }
+
+        // 自動更新（5分ごと）
+        setTimeout(function() {
+            location.reload();
+        }, 5 * 60 * 1000);
+
+    {% include '_common_js.html' %}
+    </script>
+</body>
+</html>

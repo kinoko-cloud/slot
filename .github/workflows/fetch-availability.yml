@@ -1,0 +1,108 @@
+name: Fetch Availability (Real-time)
+
+on:
+  # スケジュール実行は無効化（メインの並列ワークフローに統一）
+  # 手動実行のみ有効
+  workflow_dispatch:
+
+concurrency:
+  group: slot-fetch-availability
+  cancel-in-progress: true  # 前回実行が残っていたらキャンセル
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1  # 最新のみ取得（軽量化）
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Cache Python dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-minimal
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-1.49.1
+          restore-keys: |
+            ${{ runner.os }}-playwright-
+
+      - name: Install dependencies
+        run: |
+          pip install 'playwright==1.49.1' flask jinja2 requests
+          playwright install chromium
+          playwright install-deps chromium
+
+      - name: Fetch daidata availability (with retry)
+        run: |
+          MAX_ATTEMPTS=3
+          for attempt in $(seq 1 $MAX_ATTEMPTS); do
+            echo "=== Attempt $attempt / $MAX_ATTEMPTS ==="
+            if timeout 300 python scripts/fetch_daidata_availability.py; then
+              echo "✅ Success on attempt $attempt"
+              break
+            else
+              echo "❌ Failed on attempt $attempt"
+              if [ $attempt -lt $MAX_ATTEMPTS ]; then
+                echo "Waiting 20 seconds before retry..."
+                sleep 20
+              fi
+            fi
+          done
+
+          # availability.jsonが存在すれば成功扱い
+          if [ -f data/availability.json ]; then
+            echo "✅ Data file exists"
+          else
+            echo "❌ Data file not created after $MAX_ATTEMPTS attempts"
+            exit 1
+          fi
+
+      - name: Generate static site (営業中のみ)
+        run: |
+          # 営業時間中なら静的サイト再生成
+          HOUR=$(TZ='Asia/Tokyo' date +'%H')
+          if [ "$HOUR" -ge 10 ] && [ "$HOUR" -le 22 ]; then
+            python scripts/generate_static.py || echo "⚠️ Static site generation failed (continue)"
+          else
+            echo "Skip: Outside business hours"
+          fi
+
+      - name: Commit and push
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+
+          git add data/availability.json docs/
+
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+
+          TIMESTAMP=$(TZ='Asia/Tokyo' date +'%H:%M')
+          git commit -m "auto: リアルタイム更新 ${TIMESTAMP}"
+
+          for i in 1 2 3; do
+            git pull origin main --no-rebase -X ours 2>/dev/null || true
+            if git push origin main; then
+              echo "✅ Push succeeded"
+              exit 0
+            fi
+            sleep 3
+          done
+          exit 0  # データ取得成功なら全体は成功扱い

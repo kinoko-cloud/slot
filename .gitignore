@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+ENV/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Claude local settings
+.claude/settings.local.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Data (大きいファイルは除外)
+data/raw/*.png
+data/raw/*.json
+slot_deploy.tar.gz
+
+# Keep daily data
+!data/daily/
+.pythonanywhere_token
+
+# ローカル一時ファイル（自動更新でコンフリクトの原因になる）
+logs/
+data/alerts/
+
+data/daily/

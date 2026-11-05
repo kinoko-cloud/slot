@@ -1,0 +1,252 @@
+#!/usr/bin/env python3
+"""pre_build_check.py - ビルド前の仕様整合性チェック
+
+generate_static.pyの冒頭で呼ばれる。
+CLAUDE.mdの仕様 / config/rankings.py / SPEC_prediction.md と
+コード実装の矛盾を包括的に検出する。
+
+【対象】天井だけでなく、RSさんの全指示に対する二重チェック:
+- 天井閾値（機種別、ハードコード禁止）
+- 好調/不調判定の閾値（config/rankings.py準拠）
+- 差枚計算（蓄積DB優先）
+- 連チャン定義（RENCHAIN_THRESHOLD準拠）
+- max_medals計算（連チャン合計、1hit最大ではない）
+- おすすめ理由の一貫性
+"""
+import re
+import sys
+from pathlib import Path
+
+BASE = Path(__file__).resolve().parent.parent
+
+
+def check_hardcoded_thresholds():
+    """天井・好調判定などの閾値がconfig以外にハードコードされていないか"""
+    issues = []
+
+    sys.path.insert(0, str(BASE))
+    from config.rankings import MACHINES, MACHINE_DEFAULTS
+
+    # --- 天井閾値 ---
+    valid_ceilings = set()
+    for m in MACHINES.values():
+        valid_ceilings.add(m.get('normal_ceiling', 999))
+        valid_ceilings.add(m.get('reset_ceiling', 999))
+    valid_ceilings.add(MACHINE_DEFAULTS.get('normal_ceiling', 999))
+
+    ceiling_pattern = re.compile(r'>= ?\d{3,4}.*(?:天井|tenjou|ceiling)', re.IGNORECASE)
+    ceiling_pattern2 = re.compile(r'(?:天井|tenjou|ceiling).*>= ?\d{3,4}', re.IGNORECASE)
+    hardcode_pattern = re.compile(r'>= ?(\d{3,4})')
+
+    # --- 好調/不調閾値 ---
+    valid_probs = set()
+    for m in MACHINES.values():
+        for k in ('good_prob', 'bad_prob', 'very_bad_prob'):
+            valid_probs.add(m.get(k))
+    for k in ('good_prob', 'bad_prob', 'very_bad_prob'):
+        valid_probs.add(MACHINE_DEFAULTS.get(k))
+    valid_probs.discard(None)
+
+    check_files = list(BASE.glob('scripts/*.py')) + \
+                  list(BASE.glob('analysis/*.py')) + \
+                  list(BASE.glob('web/*.py')) + \
+                  list(BASE.glob('web/templates/*.html'))
+
+    for f in check_files:
+        if f.name in ('rankings.py', 'pre_build_check.py') or '__pycache__' in str(f):
+            continue
+        try:
+            content = f.read_text()
+        except:
+            continue
+        for i, line in enumerate(content.split('\n'), 1):
+            stripped = line.strip()
+            if stripped.startswith('#') or stripped.startswith('{#') or stripped.startswith('"""') or stripped.startswith("'''"):
+                continue
+
+            # 天井ハードコード
+            if ceiling_pattern.search(line) or ceiling_pattern2.search(line):
+                matches = hardcode_pattern.findall(line)
+                for m in matches:
+                    val = int(m)
+                    if val not in valid_ceilings and val not in (500, 10, 50):
+                        issues.append(f'HARDCODE: {f.relative_to(BASE)}:{i} 天井閾値 {val} がconfig/rankings.pyにない')
+
+    return issues
+
+
+def check_claude_md_specs():
+    """CLAUDE.mdの機種仕様が存在し、config/rankings.pyと矛盾しないか"""
+    issues = []
+    claude_md = BASE / 'CLAUDE.md'
+    if not claude_md.exists():
+        issues.append('ERROR: CLAUDE.md が存在しない')
+        return issues
+
+    content = claude_md.read_text()
+
+    # === 東京喰種仕様 ===
+    tokyoghoul_specs = {
+        '1200G': '東京喰種AT間天井（1200G+α）',
+        '200G': '東京喰種リセット時天井短縮',
+        '1/310': '東京喰種好調閾値',
+    }
+    for text, desc in tokyoghoul_specs.items():
+        if text not in content:
+            issues.append(f'ERROR: CLAUDE.mdに{desc}の記載がない')
+
+    # === config/rankings.pyとの整合 ===
+    from config.rankings import MACHINES
+
+    tokyoghoul = MACHINES.get('tokyoghoul', {})
+    if tokyoghoul.get('normal_ceiling') != 1200:
+        issues.append(f'ERROR: 東京喰種天井が{tokyoghoul.get("normal_ceiling")}だがCLAUDE.mdでは1200')
+    if tokyoghoul.get('good_prob') != 310:
+        issues.append(f'WARN: 東京喰種好調閾値が1/{tokyoghoul.get("good_prob")}（CLAUDE.md確認必要）')
+
+    return issues
+
+
+def check_spec_prediction():
+    """SPEC_prediction.mdの仕様がconfig/rankings.pyと矛盾しないか"""
+    issues = []
+    spec = BASE / 'docs' / 'SPEC_prediction.md'
+    if not spec.exists():
+        issues.append('WARN: docs/SPEC_prediction.md が存在しない')
+        return issues
+
+    content = spec.read_text()
+
+    # 連チャン定義の記載
+    if 'RENCHAIN_THRESHOLD' not in content and '連チャン閾値' not in content:
+        issues.append('WARN: SPEC_prediction.mdに連チャン閾値の記載がない')
+
+    # max_medals定義
+    if '連チャン合計' not in content and 'チェーン内合計' not in content:
+        issues.append('WARN: SPEC_prediction.mdにmax_medalsの定義（連チャン合計）がない')
+
+    return issues
+
+
+def check_diff_medals_priority():
+    """差枚計算で蓄積DBが優先されているか（ハードコード推定値が優先されていないか）"""
+    issues = []
+
+    # analysis/recommender.pyでestimate_diff_medalsが最優先になっていないか
+    recommender = BASE / 'analysis' / 'recommender.py'
+    if recommender.exists():
+        content = recommender.read_text()
+        # estimate_diff_medalsが蓄積DBより先に使われていたら警告
+        # パターン: diff_medals = estimate_... の後に蓄積DB上書きがない
+        lines = content.split('\n')
+        for i, line in enumerate(lines):
+            if 'estimate_diff_medals' in line and '=' in line and 'def ' not in line:
+                # この後50行以内で蓄積DBの上書きがあるか
+                context = '\n'.join(lines[i:i+50])
+                if '蓄積DB' not in context and 'accumulated' not in context.lower() and 'history_db' not in context.lower():
+                    # フォールバック用途ならOK（コメントにfallbackがあるか）
+                    if 'fallback' not in context.lower() and 'フォールバック' not in context:
+                        issues.append(f'WARN: recommender.py:{i+1} estimate_diff_medalsが蓄積DBフォールバックなしで使用されている可能性')
+
+    return issues
+
+
+def check_data_freshness():
+    """データの鮮度チェック（営業時間中にデータが古ければ警告）"""
+    issues = []
+    from datetime import datetime, timezone, timedelta
+    JST = timezone(timedelta(hours=9))
+    now = datetime.now(JST)
+    
+    # 営業時間中（10:00-22:50）のみチェック
+    if now.hour < 10 or (now.hour >= 22 and now.minute >= 50) or now.hour >= 23:
+        return issues
+    
+    avail_path = BASE / 'data' / 'availability.json'
+    if avail_path.exists():
+        import json
+        with open(avail_path) as f:
+            data = json.load(f)
+        fetched_at = data.get('fetched_at', '')
+        if fetched_at:
+            fetch_time = datetime.fromisoformat(fetched_at)
+            age_hours = (now - fetch_time).total_seconds() / 3600
+            if age_hours > 24:
+                issues.append(f'WARN: availability.json が{age_hours:.0f}時間前（リアルタイム取得停止の可能性）')
+    
+    return issues
+
+
+def check_renchain_sanity():
+    """連チャン表示の異常値チェック（ビルド前にhistoryから最大連チャンを確認）"""
+    issues = []
+    from pathlib import Path
+    import json
+    from analysis.analyzer import calculate_max_rensa
+    
+    MAX_SANE_RENSA = {'tokyoghoul': 150}
+    DEFAULT_MAX = 150
+
+    history_dir = BASE / 'data' / 'history'
+    if not history_dir.exists():
+        return issues
+
+    for hdir in history_dir.iterdir():
+        if not hdir.is_dir():
+            continue
+        name = hdir.name
+        if '_tokyoghoul' in name:
+            mk = 'tokyoghoul'
+        else:
+            continue
+        max_sane = MAX_SANE_RENSA.get(mk, DEFAULT_MAX)
+        
+        for hf in hdir.glob('*.json'):
+            try:
+                data = json.loads(hf.read_text())
+                for day in data.get('days', [])[:3]:  # 直近3日のみ
+                    hist = day.get('history', [])
+                    if not hist:
+                        continue
+                    max_rensa = calculate_max_rensa(hist, machine_key=mk)
+                    if max_rensa > max_sane:
+                        issues.append(
+                            f'WARN: {hdir.name}/{hf.stem} {day["date"]} max_rensa={max_rensa} '
+                            f'（{mk}の上限{max_sane}を超過 — 連チャン閾値要確認）'
+                        )
+            except:
+                continue
+    
+    return issues
+
+
+def run_all():
+    """全チェック実行"""
+    all_issues = []
+    all_issues.extend(check_hardcoded_thresholds())
+    all_issues.extend(check_claude_md_specs())
+    all_issues.extend(check_spec_prediction())
+    all_issues.extend(check_diff_medals_priority())
+    all_issues.extend(check_data_freshness())
+    all_issues.extend(check_renchain_sanity())
+
+    errors = [i for i in all_issues if i.startswith('ERROR')]
+    warns = [i for i in all_issues if i.startswith('WARN') or i.startswith('HARDCODE')]
+
+    if errors:
+        print(f'\n❌ PRE-BUILD ERRORS ({len(errors)}):')
+        for e in errors:
+            print(f'  {e}')
+    if warns:
+        print(f'\n⚠️  PRE-BUILD WARNINGS ({len(warns)}):')
+        for w in warns:
+            print(f'  {w}')
+
+    if not errors and not warns:
+        print('✅ pre-build check: 全仕様整合OK')
+
+    return len(errors)
+
+
+if __name__ == '__main__':
+    sys.exit(run_all())

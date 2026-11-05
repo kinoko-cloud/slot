@@ -1,0 +1,156 @@
+version: 2.1
+
+# Playwright スクレイピング用 Circle CI 設定
+# GitHub Actionsの無料枠分散のため、重い処理をこちらで実行
+
+orbs:
+  python: circleci/python@2.1.1
+
+jobs:
+  fetch-availability:
+    docker:
+      - image: mcr.microsoft.com/playwright/python:v1.40.0-jammy
+    resource_class: medium
+    steps:
+      - checkout
+
+      - run:
+          name: Install Python dependencies
+          command: |
+            pip install playwright flask jinja2 requests
+            playwright install chromium
+
+      - run:
+          name: Fetch daidata availability
+          command: |
+            echo "Attempt 1"
+            if python scripts/fetch_daidata_availability.py; then
+              echo "Success!"
+            else
+              echo "Failed, retrying in 10 seconds..."
+              sleep 10
+              echo "Attempt 2"
+              python scripts/fetch_daidata_availability.py || true
+            fi
+          no_output_timeout: 15m
+
+      - run:
+          name: Check data file
+          command: |
+            if [ -f data/availability.json ]; then
+              echo "Data file exists"
+              cat data/availability.json | head -50
+            else
+              echo "Warning: Data file not created"
+              exit 1
+            fi
+
+      - run:
+          name: Regenerate static site
+          command: |
+            python scripts/generate_static.py
+
+      - run:
+          name: Commit and push
+          command: |
+            git config user.name "CircleCI"
+            git config user.email "circleci@users.noreply.github.com"
+            git add data/availability.json docs/
+
+            if git diff --staged --quiet; then
+              echo "No changes to commit"
+              exit 0
+            fi
+
+            TIMESTAMP=$(TZ='Asia/Tokyo' date +'%H:%M')
+            git commit -m "auto: リアルタイム更新 ${TIMESTAMP} (CircleCI)"
+
+            # リトライ付きpush
+            for i in 1 2 3 4 5; do
+              git pull --rebase origin main || true
+              if git push origin main; then
+                echo "Push succeeded (attempt $i)"
+                exit 0
+              fi
+              echo "Push failed (attempt $i/5), retrying..."
+              sleep 5
+            done
+            echo "Push failed after 5 attempts"
+            exit 1
+
+  daily-collect:
+    docker:
+      - image: mcr.microsoft.com/playwright/python:v1.40.0-jammy
+    resource_class: medium
+    steps:
+      - checkout
+
+      - run:
+          name: Install dependencies
+          command: |
+            pip install -r requirements.txt
+            playwright install chromium
+
+      - run:
+          name: Run daily collection
+          command: |
+            python scripts/daily_collect.py
+          no_output_timeout: 20m
+
+      - run:
+          name: Commit and push
+          command: |
+            git config user.name "CircleCI"
+            git config user.email "circleci@users.noreply.github.com"
+            git add data/
+
+            if git diff --staged --quiet; then
+              echo "No changes"
+              exit 0
+            fi
+
+            git commit -m "Daily data collection $(TZ='Asia/Tokyo' date +'%Y-%m-%d') (CircleCI)"
+
+            for i in 1 2 3 4 5; do
+              git pull --rebase origin main || true
+              if git push origin main; then
+                echo "Push succeeded"
+                exit 0
+              fi
+              sleep 5
+            done
+            exit 1
+
+workflows:
+  # リアルタイム更新（1時間ごと、10:00-23:00 JST）
+  hourly-fetch:
+    triggers:
+      - schedule:
+          cron: "0 1-14 * * *"  # UTC = JST 10:00-23:00
+          filters:
+            branches:
+              only:
+                - main
+    jobs:
+      - fetch-availability
+
+  # デイリー収集（毎日23:00 JST）
+  daily-collection:
+    triggers:
+      - schedule:
+          cron: "0 14 * * *"  # UTC 14:00 = JST 23:00
+          filters:
+            branches:
+              only:
+                - main
+    jobs:
+      - daily-collect
+
+  # 手動実行用
+  manual:
+    jobs:
+      - fetch-availability:
+          filters:
+            branches:
+              only:
+                - main

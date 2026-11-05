@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>マルチサービスアーキテクチャ図</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            max-width: 2000px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+        .notes {
+            background: #f8f9fa;
+            border-left: 4px solid #0066cc;
+            padding: 25px;
+            margin-top: 30px;
+            border-radius: 4px;
+        }
+        .notes h3 {
+            margin-top: 0;
+            color: #0066cc;
+            font-size: 1.4em;
+        }
+        .notes h4 {
+            color: #0066cc;
+            font-size: 1.2em;
+            margin-top: 20px;
+        }
+        .notes h5 {
+            color: #555;
+            font-size: 1.1em;
+            margin-top: 15px;
+        }
+        .notes ul, .notes ol {
+            margin: 10px 0;
+            line-height: 1.8;
+        }
+        .notes li {
+            margin-bottom: 8px;
+        }
+        .future-plans {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+        }
+        .future-plans h3 {
+            color: #ff9800;
+        }
+        .services-list {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+        }
+        .services-list h3 {
+            color: #2e7d32;
+        }
+        .mermaid {
+            text-align: center;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+        .mermaid svg {
+            max-width: none !important;
+            min-width: 1800px !important;
+            height: auto !important;
+        }
+        @media print {
+            body { background: white; }
+            .container { box-shadow: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏗️ マルチサービスアーキテクチャ図</h1>
+
+        <div class="notes services-list">
+            <h3>📋 使用サービス一覧（完全版）</h3>
+
+            <h4>🔧 開発・バージョン管理</h4>
+            <ul>
+                <li><strong>Windows Subsystem for Linux (WSL)</strong> - ローカル開発環境</li>
+                <li><strong>GitHub Account A (Primary)</strong> - メインリポジトリ、静的サイトデプロイ</li>
+                <li><strong>GitHub Account B (Secondary)</strong> - フォークリポジトリ、CI/CD無料枠分散</li>
+            </ul>
+
+            <h4>⚙️ CI/CD・自動化</h4>
+            <ul>
+                <li><strong>GitHub Actions (Account A)</strong>:
+                    <ul>
+                        <li>deploy-static.yml - 静的サイトビルド（1日4回）</li>
+                        <li>deploy.yml - PythonAnywhereへ自動デプロイ</li>
+                        <li>daily-verify.yml - 日次予測検証（23:30 JST）</li>
+                    </ul>
+                </li>
+                <li><strong>GitHub Actions (Account B)</strong>:
+                    <ul>
+                        <li>fetch-availability.yml - 毎時データ取得（10-23時 JST）</li>
+                        <li>daily_collect.yml - 日次フルデータ収集（14:00 UTC）</li>
+                    </ul>
+                </li>
+                <li><strong>Circle CI (Account B)</strong> - 重い処理専用（Playwright自動化）</li>
+                <li><strong>Local Cron (WSL)</strong> - 15分間隔の自動更新スクリプト（auto_update.sh）</li>
+            </ul>
+
+            <h4>🌐 ホスティング・API</h4>
+            <ul>
+                <li><strong>Cloudflare Pages</strong> - 静的サイトホスティング（グローバルCDN）</li>
+                <li><strong>PythonAnywhere</strong> - Flask APIサーバー（24/7稼働、v14）+ リアルタイム予測エンジン</li>
+                <li><strong>Google Apps Script (GAS)</strong> - 軽量スクレイピングAPIエンドポイント</li>
+            </ul>
+
+            <h4>🧠 予測・分析エンジン（コアロジック）</h4>
+            <ul>
+                <li><strong>analysis/recommender.py</strong> - メイン予測ロジック（スコアリング/ランク付け）</li>
+                <li><strong>analysis/history_accumulator.py</strong> - 蓄積DB管理（連チャン・差枚計算）</li>
+                <li><strong>analysis/pattern_detector.py</strong> - パターン検出</li>
+                <li><strong>config/rankings.py</strong> - 機種別閾値定義（予測ルール）</li>
+            </ul>
+
+            <h4>📂 データストレージ</h4>
+            <ul>
+                <li><strong>data/history/{store}/{unit}.json</strong> - 蓄積DB（台ごとの全日履歴、最重要）</li>
+                <li><strong>data/daily/{store}/YYYY-MM-DD.json</strong> - 日別スナップショット</li>
+                <li><strong>data/availability/{store}.json</strong> - リアルタイム空き状況</li>
+            </ul>
+
+            <h4>🧪 テスト・検証・監視</h4>
+            <ul>
+                <li><strong>scripts/validate_output.py</strong> - ビルド後HTML検証 + リアルタイム健全性チェック</li>
+                <li><strong>scripts/data_integrity_check.py</strong> - データ品質チェック</li>
+                <li><strong>scripts/nightly_verify.py</strong> - 夜間的中検証（予測精度測定）</li>
+                <li><strong>scripts/verify_units.py</strong> - 台変動チェック（減台・増台・台番号変更検出）</li>
+                <li><strong>INTEGRATION_CHECK.md</strong> - リアルタイム機能の手動チェックリスト</li>
+            </ul>
+
+            <h4>☁️ 外部サービス連携</h4>
+            <ul>
+                <li><strong>WhatsApp</strong> - 通知・モバイル制御（clawdbot経由）</li>
+                <li><strong>Anthropic API (Claude)</strong> - LLM統合（Bot用）</li>
+            </ul>
+
+            <h4>📊 データソース</h4>
+            <ul>
+                <li><strong>Data Provider A</strong> - Webスクレイピング対象（匿名化）</li>
+                <li><strong>Data Provider B</strong> - Webスクレイピング対象（匿名化）</li>
+                <li><strong>Data Provider C</strong> - 将来のAPI統合予定</li>
+            </ul>
+
+            <h4>🔑 認証</h4>
+            <ul>
+                <li><strong>SSH Key (Primary)</strong> - ~/.ssh/key_primary → Account A用認証</li>
+                <li><strong>SSH Key (Secondary)</strong> - ~/.ssh/key_secondary → Account B用認証</li>
+                <li><strong>~/.ssh/config</strong> - ホスト管理設定</li>
+            </ul>
+        </div>
+
+        <div class="mermaid">
+graph TB
+    %% Style definitions
+    classDef localStyle fill:#E8F5E9,stroke:#4CAF50,stroke-width:4px,font-size:16px
+    classDef githubStyle fill:#E3F2FD,stroke:#2196F3,stroke-width:4px,font-size:16px
+    classDef ciStyle fill:#FFF3E0,stroke:#FF9800,stroke-width:4px,font-size:16px
+    classDef externalStyle fill:#F3E5F5,stroke:#9C27B0,stroke-width:4px,font-size:16px
+    classDef hostingStyle fill:#E1F5FE,stroke:#01579B,stroke-width:4px,font-size:16px
+    classDef dataStyle fill:#FCE4EC,stroke:#E91E63,stroke-width:4px,font-size:16px
+    classDef userStyle fill:#FFFDE7,stroke:#FDD835,stroke-width:4px,font-size:16px
+    classDef sshStyle fill:#E0F2F1,stroke:#009688,stroke-width:4px,font-size:16px
+    classDef futureStyle fill:#FFE0B2,stroke:#FF6F00,stroke-width:4px,stroke-dasharray: 5 5,font-size:16px
+    classDef predictionStyle fill:#FFF9C4,stroke:#F57F17,stroke-width:5px,font-size:16px
+    classDef storageStyle fill:#E8EAF6,stroke:#3F51B5,stroke-width:4px,font-size:16px
+    classDef testingStyle fill:#F3E5F5,stroke:#7B1FA2,stroke-width:4px,font-size:16px
+
+    %% ========== Local Environment ==========
+    subgraph LOCAL["🖥️ ローカル開発環境 (WSL)"]
+        PROJECT["📁 ~/project-c<br/>(メインコードベース)"]
+        BOT["🤖 Bot Gateway<br/>(メッセージング統合)"]
+        WORKSPACE["📂 ~/workspace/"]
+        CRON["⏰ ローカルCron<br/>(15分間隔自動更新)"]
+    end
+
+    %% ========== GitHub Accounts ==========
+    subgraph GITHUB["🐙 バージョン管理 (GitHub)"]
+        GH_MAIN["Account A (Primary)<br/>📄 メインリポジトリ"]
+        GH_SEC["Account B (Secondary)<br/>⚡ フォークリポジトリ"]
+    end
+
+    %% ========== CI/CD Services ==========
+    subgraph CICD["⚙️ CI/CDパイプライン"]
+        subgraph GHA_MAIN_FLOWS["GitHub Actions (Account A)"]
+            GHA_DEPLOY["deploy-static.yml<br/>🚀 静的サイトビルド<br/>(1日4回)"]
+            GHA_DEPLOY2["deploy.yml<br/>📤 PaaSデプロイ<br/>(push時)"]
+            GHA_VERIFY["daily-verify.yml<br/>✅ 日次検証<br/>(23:30 JST)"]
+        end
+
+        subgraph GHA_SEC_FLOWS["GitHub Actions (Account B)"]
+            GHA_FETCH["fetch-availability.yml<br/>🔍 毎時データ取得<br/>(10-23時 JST)"]
+            GHA_COLLECT["daily_collect.yml<br/>📊 日次データ収集<br/>(14:00 UTC)"]
+        end
+
+        CIRCLE["Circle CI (Account B)<br/>🎭 重い処理専用<br/>(Playwright)"]
+        CIRCLE_FUTURE["Circle CI (将来計画)<br/>📊 高度な分析<br/>🔄 マルチリージョン"]
+    end
+
+    %% ========== SSH Configuration ==========
+    subgraph SSH["🔑 認証レイヤー"]
+        SSH1["~/.ssh/key_primary<br/>→ Account A"]
+        SSH2["~/.ssh/key_secondary<br/>→ Account B"]
+        SSHCONF["~/.ssh/config<br/>ホスト管理"]
+    end
+
+    %% ========== Prediction Engine ==========
+    subgraph PREDICTION["🧠 予測・分析エンジン（コア）"]
+        RECOMMENDER["analysis/recommender.py<br/>📊 メイン予測ロジック<br/>(スコアリング/ランク)"]
+        ACCUMULATOR["analysis/history_accumulator.py<br/>📈 蓄積DB管理<br/>(連チャン/差枚)"]
+        DETECTOR["analysis/pattern_detector.py<br/>🔍 パターン検出"]
+    end
+
+    %% ========== Data Storage ==========
+    subgraph STORAGE["📂 データストレージ"]
+        HISTORY_DB["data/history/<br/>🗄️ 蓄積DB<br/>(全日履歴)"]
+        DAILY_DB["data/daily/<br/>📅 日別スナップショット"]
+        AVAIL_DB["data/availability/<br/>⚡ リアルタイム空き状況"]
+    end
+
+    %% ========== Testing & Validation ==========
+    subgraph TESTING["🧪 テスト・検証・監視"]
+        VALIDATE["validate_output.py<br/>✅ HTML検証"]
+        INTEGRITY["data_integrity_check.py<br/>🔍 品質チェック"]
+        VERIFY["nightly_verify.py<br/>📊 的中検証"]
+        VERIFY_UNITS["verify_units.py<br/>🔧 台変動チェック<br/>(減台/増台/移動検出)"]
+    end
+
+    %% ========== Hosting ==========
+    subgraph HOSTING["🌐 ホスティング & CDN"]
+        CLOUDFLARE["Cloudflare Pages<br/>⚡ 静的サイトホスティング<br/>(グローバルCDN)"]
+    end
+
+    %% ========== External Services ==========
+    subgraph EXTERNAL["☁️ 外部サービス"]
+        PAAS["PaaS Platform<br/>🌐 Flask API (24/7)<br/>(v14)<br/>+ リアルタイム予測"]
+        GAS["Google Apps Script<br/>⚡ 軽量API<br/>(スクレイピング)"]
+        MESSAGING["Messaging Service<br/>💬 通知・制御<br/>(WhatsApp)"]
+        AI_API["AI Service API<br/>🧠 LLM統合<br/>(Anthropic Claude)"]
+    end
+
+    %% ========== Data Sources ==========
+    subgraph DATA["📊 外部データソース"]
+        DS_A["Data Provider A<br/>(Webスクレイピング)"]
+        DS_B["Data Provider B<br/>(Webスクレイピング)"]
+        DS_C["Data Provider C<br/>(APIアクセス - 将来)"]
+    end
+
+    %% ========== Users ==========
+    subgraph USERS["👥 ユーザーアクセス"]
+        BROWSER["🌐 Webブラウザ"]
+        MOBILE["📱 モバイルクライアント"]
+    end
+
+    %% ========== Data Flow ==========
+
+    %% Local -> GitHub
+    PROJECT -->|"git push (SSH)"| GH_MAIN
+    PROJECT -->|"git push (SSH)"| GH_SEC
+
+    %% SSH Keys
+    SSH1 -.->|認証| GH_MAIN
+    SSH2 -.->|認証| GH_SEC
+    PROJECT -.->|設定| SSHCONF
+
+    %% Local Cron
+    CRON -->|"15分自動更新"| PROJECT
+
+    %% GitHub -> CI/CD
+    GH_MAIN -->|webhook| GHA_DEPLOY
+    GH_MAIN -->|webhook| GHA_DEPLOY2
+    GH_MAIN -->|webhook| GHA_VERIFY
+    GH_SEC -->|webhook| GHA_FETCH
+    GH_SEC -->|webhook| GHA_COLLECT
+    GH_SEC -->|webhook| CIRCLE
+
+    %% CI/CD -> Data Sources
+    GHA_FETCH -->|"毎時スクレイプ"| DS_A
+    GHA_FETCH -->|"毎時スクレイプ"| DS_B
+    GHA_COLLECT -->|"日次スクレイプ"| DS_A
+    GHA_COLLECT -->|"日次スクレイプ"| DS_B
+    CIRCLE -->|"Playwright"| DS_A
+    CIRCLE -->|"Playwright"| DS_B
+
+    %% CI/CD -> Storage
+    GHA_FETCH -->|保存| AVAIL_DB
+    GHA_COLLECT -->|蓄積| HISTORY_DB
+    GHA_COLLECT -->|保存| DAILY_DB
+
+    %% Storage -> GitHub
+    AVAIL_DB -->|commit| GH_MAIN
+    HISTORY_DB -->|commit| GH_MAIN
+    DAILY_DB -->|commit| GH_MAIN
+
+    %% Testing
+    GHA_DEPLOY -->|検証| VALIDATE
+    GHA_COLLECT -->|品質| INTEGRITY
+    GHA_VERIFY -->|実行| VERIFY
+    GHA_FETCH -->|台変動| VERIFY_UNITS
+
+    %% CI/CD -> Prediction -> Hosting
+    GHA_DEPLOY -->|"静的ビルド"| RECOMMENDER
+    RECOMMENDER -->|参照| HISTORY_DB
+    RECOMMENDER -->|"HTML生成"| CLOUDFLARE
+
+    %% CI/CD -> PaaS
+    GHA_DEPLOY2 -->|"git pull + reload"| PAAS
+
+    %% PaaS -> Storage
+    PAAS -->|読込| AVAIL_DB
+    PAAS -->|読込| HISTORY_DB
+
+    %% PaaS -> Data Sources
+    PAAS -->|"オンデマンド"| DS_A
+    PAAS -->|"オンデマンド"| DS_B
+
+    %% PaaS -> Prediction
+    PAAS -->|"リアルタイム予測"| RECOMMENDER
+    RECOMMENDER -->|"予測JSON"| PAAS
+
+    %% GAS -> Data Sources
+    GAS -->|"スクレイプ"| DS_A
+    GAS -->|"スクレイプ"| DS_B
+
+    %% Local <-> External Services
+    BOT <-->|WebSocket| MESSAGING
+    BOT -->|API| AI_API
+
+    %% Users -> Services
+    BROWSER -->|HTTPS| CLOUDFLARE
+    BROWSER -->|API| PAAS
+    BROWSER -->|API| GAS
+    MOBILE -->|送受信| MESSAGING
+
+    %% Workspace
+    BOT -.->|アクセス| WORKSPACE
+    PROJECT -.->|symlink| WORKSPACE
+
+    %% Future
+    CIRCLE_FUTURE -.->|計画中| DS_C
+    CIRCLE_FUTURE -.->|計画中| PAAS
+    CIRCLE_FUTURE -.->|計画中| CLOUDFLARE
+
+    %% Style application
+    class PROJECT,BOT,WORKSPACE,CRON localStyle
+    class GH_MAIN,GH_SEC githubStyle
+    class GHA_DEPLOY,GHA_DEPLOY2,GHA_VERIFY,GHA_FETCH,GHA_COLLECT,CIRCLE ciStyle
+    class PAAS,GAS,MESSAGING,AI_API externalStyle
+    class CLOUDFLARE hostingStyle
+    class DS_A,DS_B,DS_C dataStyle
+    class BROWSER,MOBILE userStyle
+    class SSH1,SSH2,SSHCONF sshStyle
+    class CIRCLE_FUTURE futureStyle
+    class RECOMMENDER,ACCUMULATOR,DETECTOR predictionStyle
+    class HISTORY_DB,DAILY_DB,AVAIL_DB storageStyle
+    class VALIDATE,INTEGRITY,VERIFY,VERIFY_UNITS testingStyle
+        </div>
+
+        <div class="notes">
+            <h3>🧠 予測ロジックの仕組み（完全版）</h3>
+
+            <h4>2つの予測モード</h4>
+
+            <h5>📄 静的ビルド時の予測（閉店後 23:00〜翌9:59）</h5>
+            <ol>
+                <li>CI/CD（deploy-static.yml）がトリガー</li>
+                <li><strong>scripts/generate_static.py</strong> が起動</li>
+                <li><strong>analysis/recommender.py</strong> を呼び出し</li>
+                <li>蓄積DB（data/history/）から全日データを読み込み</li>
+                <li>機種別閾値（config/rankings.py）に基づいてスコアリング</li>
+                <li>ランク付け（S/A/B/C）とおすすめ文を生成</li>
+                <li>静的HTML生成 → Cloudflare Pages へデプロイ</li>
+                <li>validate_output.pyで検証</li>
+            </ol>
+
+            <h5>⚡ リアルタイム予測（営業中 10:00〜22:49）</h5>
+            <ol>
+                <li>ユーザーがページを開く（Cloudflare Pages）</li>
+                <li><strong>web/static/realtime.js</strong> がPythonAnywhere APIを呼び出し</li>
+                <li><strong>PythonAnywhere (web/app.py)</strong> が起動</li>
+                <li>最新のdata/availability/を読み込み</li>
+                <li>蓄積DB（data/history/）から履歴データを読み込み</li>
+                <li><strong>analysis/recommender.py</strong> を呼び出し（リアルタイム予測）</li>
+                <li>最新データ（当たり履歴・回転数）でスコアリング</li>
+                <li>予測結果をJSONで返却</li>
+                <li>ブラウザがUIを更新（ローディング画面 10-30秒 → 予測結果表示）</li>
+            </ol>
+
+            <h4>⏰ 時間帯別の表示モード切り替え</h4>
+            <ul>
+                <li><strong>営業中モード（10:00〜22:49）</strong>:
+                    <ul>
+                        <li>リアルタイム予測が有効</li>
+                        <li>ページを開くたびに最新データで予測</li>
+                        <li>ローディング画面表示（10-30秒）</li>
+                        <li>3-5分間隔で自動更新</li>
+                    </ul>
+                </li>
+                <li><strong>集計中モード（22:50〜22:59）</strong>:
+                    <ul>
+                        <li>「集計中」メッセージ表示</li>
+                        <li>最終データ収集と翌日予測の準備</li>
+                    </ul>
+                </li>
+                <li><strong>結果モード（23:00〜翌9:59）</strong>:
+                    <ul>
+                        <li>静的HTML表示（Cloudflare Pages）</li>
+                        <li>確定データから翌日の予測を表示</li>
+                        <li>前日の的中結果も表示</li>
+                    </ul>
+                </li>
+            </ul>
+            <p><em>※ モード切り替えはPythonAnywhere (web/app.py) のget_display_mode()で自動判定</em></p>
+
+            <h4>🔧 台変動チェック（verify_units.py）</h4>
+            <p>台の生存確認・変動検出システム:</p>
+            <ul>
+                <li><strong>検出内容</strong>:
+                    <ul>
+                        <li>台番号変更（移設・配置変更）</li>
+                        <li>減台（撤去）</li>
+                        <li>増台（新規導入）</li>
+                        <li>機種撤去（全台消失）</li>
+                    </ul>
+                </li>
+                <li><strong>実行タイミング</strong>:
+                    <ul>
+                        <li>毎時データ取得時（fetch-availability.yml）</li>
+                        <li>手動実行（python scripts/verify_units.py）</li>
+                    </ul>
+                </li>
+                <li><strong>検出ロジック</strong>:
+                    <ul>
+                        <li>config設定にある台番号でデータが取れない → 減台・撤去の可能性</li>
+                        <li>config設定にない台番号でデータが取れた → 増台の可能性</li>
+                        <li>全台のデータが取れない → 機種撤去 or サイト障害</li>
+                    </ul>
+                </li>
+                <li><strong>対応</strong>:
+                    <ul>
+                        <li>アラート生成（data/alerts/）</li>
+                        <li>WhatsApp通知（clawdbot経由）</li>
+                        <li>古いデータは履歴として保持（削除しない）</li>
+                        <li>新しい台番号は新規として追跡開始</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <div class="notes">
+            <h3>🔄 データフローパイプライン</h3>
+            <ol>
+                <li><strong>開発</strong>: ローカル（WSL）→ 両方のリポジトリへgit push</li>
+                <li><strong>自動化</strong>: webhookとスケジュールでCI/CDパイプラインがトリガー</li>
+                <li><strong>データ収集</strong>:
+                    <ul>
+                        <li>毎時: fetch-availability.yml (10-23時 JST)</li>
+                        <li>日次: daily_collect.yml (14:00 UTC)</li>
+                        <li>重い処理: Circle CI (Playwright)</li>
+                        <li>ローカル: 15分cron (auto_update.sh)</li>
+                    </ul>
+                </li>
+                <li><strong>保存</strong>: 収集データを各DBへ保存 → GitHub へコミット</li>
+                <li><strong>品質チェック</strong>: data_integrity_check.py + verify_units.py</li>
+                <li><strong>ビルド</strong>: deploy-static.yml → recommender.py → 静的HTML → Cloudflare Pages</li>
+                <li><strong>検証</strong>: validate_output.py（HTML構造・リンク・リアルタイム機能）</li>
+                <li><strong>APIデプロイ</strong>: deploy.yml → PythonAnywhere git pull + reload</li>
+                <li><strong>実行時</strong>:
+                    <ul>
+                        <li>静的: Cloudflare CDNから配信</li>
+                        <li>動的: PythonAnywhere → recommender.py → リアルタイム予測</li>
+                    </ul>
+                </li>
+                <li><strong>監視</strong>: clawdbot（WhatsApp）が通知</li>
+                <li><strong>的中検証</strong>: nightly_verify.py（23:30 JST）で予測精度測定</li>
+            </ol>
+        </div>
+
+        <div class="notes">
+            <h3>💡 主要な設計原則</h3>
+            <ul>
+                <li><strong>ハイブリッド予測</strong>: 静的ビルド（閉店後）+ リアルタイム（営業中）の2モード切り替え</li>
+                <li><strong>冗長性</strong>: 複数のCI/CDプロバイダー（GitHub Actions × 2 + Circle CI）で単一障害点を防止</li>
+                <li><strong>コスト効率</strong>: 全サービス無料枠を最大限活用（GitHub Actions 2アカウント、Circle CI、Cloudflare、PythonAnywhere、GAS）</li>
+                <li><strong>データ鮮度</strong>: マルチソース取得（スケジュール + オンデマンド + ローカル）で常に最新</li>
+                <li><strong>品質保証</strong>: 4層のテスト（品質チェック、台変動検出、HTML検証、的中検証）</li>
+                <li><strong>スケーラビリティ</strong>: サービス間で水平スケーリングを容易にする設計</li>
+                <li><strong>セキュリティ</strong>: サービスごとに独立した認証情報とSSH鍵分離</li>
+                <li><strong>可観測性</strong>: WhatsApp Bot統合によるリアルタイムシステム可視化</li>
+                <li><strong>台変動対応</strong>: 自動検出 + アラート + 履歴保持で柔軟に対応</li>
+            </ul>
+        </div>
+
+        <div class="notes future-plans">
+            <h3>🚀 Circle CI: 現状と今後の実装</h3>
+
+            <h4>現在の使用状況</h4>
+            <ul>
+                <li><strong>ブラウザ自動化</strong>: JavaScript多用サイト向けPlaywright基盤スクレイピング</li>
+                <li><strong>重い処理</strong>: GitHub Actionsの制限（タイムアウト/リソース）を超えるタスク</li>
+                <li><strong>スケジュールジョブ</strong>: 毎時データ収集（10:00-23:00 JST）</li>
+                <li><strong>日次集計</strong>: 23:00 JSTに1日の終わりのデータ統合</li>
+                <li><strong>ホワイトリスト回避</strong>: PythonAnywhereの制限でブロックされるサイトへアクセス</li>
+            </ul>
+
+            <h4>計画中の機能拡張</h4>
+            <ul>
+                <li><strong>高度な分析</strong>: 機械学習モデルのトレーニングと推論</li>
+                <li><strong>マルチリージョンデプロイ</strong>: 異なる地理的リージョンでの並列ジョブ</li>
+                <li><strong>API統合</strong>: Data Provider Cへの直接APIアクセス（利用可能時）</li>
+                <li><strong>パフォーマンス最適化</strong>: キャッシュレイヤーと差分更新</li>
+                <li><strong>拡張監視</strong>: ヘルスチェックと自動復旧手順</li>
+                <li><strong>データ検証</strong>: 品質チェックと異常検知パイプライン</li>
+                <li><strong>直接CDNデプロイ</strong>: Circle CI → Cloudflare Pages デプロイパイプライン</li>
+            </ul>
+        </div>
+
+        <p style="text-align: center; color: #999; margin-top: 40px; font-size: 1em;">
+            システムアーキテクチャ図（完全版）| 2026
+        </p>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            flowchart: {
+                useMaxWidth: false,
+                htmlLabels: true,
+                curve: 'basis',
+                padding: 30,
+                nodeSpacing: 100,
+                rankSpacing: 100
+            },
+            themeVariables: {
+                fontSize: '18px',
+                fontFamily: 'Hiragino Sans, Yu Gothic, sans-serif'
+            }
+        });
+    </script>
+</body>
+</html>

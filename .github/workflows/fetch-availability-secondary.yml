@@ -1,0 +1,111 @@
+name: Fetch Availability (Secondary - 30分)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/fetch-availability-secondary.yml'
+  schedule:
+    # JST 10:30-22:30 (毎時30分、メインと交互)
+    - cron: '30 1-13 * * *'
+  workflow_dispatch:  # 手動実行も可能
+
+concurrency:
+  group: slot-fetch-secondary
+  cancel-in-progress: false
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    timeout-minutes: 15
+    
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-1.49.1
+
+      - name: Install dependencies
+        run: |
+          pip install 'playwright==1.49.1' requests
+          playwright install chromium
+          playwright install-deps chromium
+
+      - name: Fetch with v2 scraper (priority stores only)
+        run: |
+          # ロックファイルをクリア
+          rm -f /tmp/slot_fetch.lock
+          
+          # 主要店舗のみ取得（渋谷/新宿/秋葉原）
+          echo "=== 主要店舗取得（SBJ）==="
+          timeout 300 python scripts/scrapers_v2/fetch_all.py --priority-only --sbj-only 2>&1 || {
+            echo "⚠️ SBJ fetch failed"
+          }
+          
+          echo "=== 主要店舗取得（真打吉宗）==="
+          timeout 300 python scripts/scrapers_v2/fetch_all.py --priority-only --yoshimune-only 2>&1 || {
+            echo "⚠️ Yoshitsune fetch failed"
+          }
+
+          echo "=== 主要店舗取得（ToLOVEる）==="
+          timeout 300 python scripts/scrapers_v2/fetch_all.py --priority-only --toloveru-only 2>&1 || {
+            echo "⚠️ ToLOVEru fetch failed"
+          }
+
+      - name: Generate static HTML (営業時間中のみ)
+        run: |
+          HOUR=$(TZ='Asia/Tokyo' date +'%H')
+          if [ "$HOUR" -ge 10 ] && [ "$HOUR" -le 23 ]; then
+            echo "営業時間中 ($HOUR時) - HTML生成"
+            pip install jinja2
+            timeout 300 python scripts/generate_static.py 2>&1 || {
+              echo "⚠️ HTML生成失敗（データ更新は続行）"
+            }
+          else
+            echo "営業時間外 ($HOUR時) - HTML生成スキップ"
+          fi
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add data/availability.json data/.games_cache/ docs/ || true
+
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            TIMESTAMP=$(TZ='Asia/Tokyo' date +'%H:%M')
+            git commit -m "auto: リアルタイムデータ更新 ${TIMESTAMP} (secondary)"
+            
+            # Push with retry
+            for i in 1 2 3; do
+              if git push; then
+                echo "✅ Push successful"
+                break
+              fi
+              echo "⚠️ Push failed (attempt $i/3), pulling and retrying..."
+              git stash --include-untracked || true
+              if ! git pull --rebase origin main; then
+                echo "⚠️ Rebase conflict detected, aborting and using force push"
+                git rebase --abort || true
+                git stash pop || true
+                git push --force
+                echo "✅ Force push successful"
+                break
+              fi
+              git stash pop || true
+            done
+          fi
