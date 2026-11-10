@@ -1,6 +1,6 @@
 {
   "_comment": "台状態管理: active=正常, pending=保留中, stopped=停止",
-  "_updated": "2026-11-05T03:53:26.405040+09:00",
+  "_updated": "2026-11-10T23:35:07.142433+09:00",
   "units": {
     "shibuya_espass_hokuto2/2046": {
       "status": "active",
@@ -947,6 +947,12 @@
     "seibu_shinjuku_espass_tokyoghoul/860": {
       "status": "pending",
       "first_missing": "2026-11-05T03:53:26.405024+09:00",
+      "fail_count": 1,
+      "reason": "not_found"
+    },
+    "shibuya_espass_tokyoghoul/3218": {
+      "status": "pending",
+      "first_missing": "2026-11-10T23:35:07.142410+09:00",
       "fail_count": 1,
       "reason": "not_found"
     }
