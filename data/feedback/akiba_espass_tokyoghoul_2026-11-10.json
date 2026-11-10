@@ -5,8 +5,8 @@
   "weekday": "火",
   "total_units": 28,
   "hits": 6,
-  "misses": 4,
-  "surprises": 10,
+  "misses": 5,
+  "surprises": 13,
   "miss_details": [
     {
       "unit_id": "4171",
@@ -29,16 +29,6 @@
       ]
     },
     {
-      "unit_id": "4167",
-      "score": 108,
-      "actual_prob": 224,
-      "reasons": [
-        "高スコア過信",
-        "低稼働(897G)",
-        "設定1域(1/224)"
-      ]
-    },
-    {
       "unit_id": "4081",
       "score": 86,
       "actual_prob": 316,
@@ -47,16 +37,42 @@
         "低稼働(316G)",
         "設定1域(1/316)"
       ]
+    },
+    {
+      "unit_id": "4167",
+      "score": 104,
+      "actual_prob": 274,
+      "reasons": [
+        "高スコア過信",
+        "設定1域(1/274)"
+      ]
+    },
+    {
+      "unit_id": "4166",
+      "score": 86,
+      "actual_prob": 551,
+      "reasons": [
+        "高スコア過信",
+        "低稼働(551G)",
+        "設定1域(1/551)"
+      ]
     }
   ],
   "surprise_details": [
     {
-      "unit_id": "4077",
+      "unit_id": "4082",
       "rank": "B",
-      "score": 99,
-      "actual_prob": 22,
+      "score": 92,
+      "actual_prob": 182,
+      "reasons": []
+    },
+    {
+      "unit_id": "4156",
+      "rank": "B",
+      "score": 105,
+      "actual_prob": 26,
       "reasons": [
-        "実は高設定域(1/22)"
+        "実は高設定域(1/26)"
       ]
     },
     {
@@ -67,10 +83,26 @@
       "reasons": []
     },
     {
-      "unit_id": "4083",
+      "unit_id": "4163",
       "rank": "B",
       "score": 102,
-      "actual_prob": 280,
+      "actual_prob": 4,
+      "reasons": [
+        "実は高設定域(1/4)"
+      ]
+    },
+    {
+      "unit_id": "4168",
+      "rank": "B",
+      "score": 102,
+      "actual_prob": 281,
+      "reasons": []
+    },
+    {
+      "unit_id": "4077",
+      "rank": "B",
+      "score": 99,
+      "actual_prob": 165,
       "reasons": []
     },
     {
@@ -93,7 +125,7 @@
       "unit_id": "4164",
       "rank": "B",
       "score": 99,
-      "actual_prob": 112,
+      "actual_prob": 120,
       "reasons": []
     },
     {
@@ -118,10 +150,10 @@
       "reasons": []
     },
     {
-      "unit_id": "4082",
+      "unit_id": "4162",
       "rank": "B",
-      "score": 93,
-      "actual_prob": 182,
+      "score": 96,
+      "actual_prob": 299,
       "reasons": []
     }
   ]
