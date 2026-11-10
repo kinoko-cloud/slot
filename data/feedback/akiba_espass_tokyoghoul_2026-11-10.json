@@ -4,35 +4,66 @@
   "date": "2026-11-10",
   "weekday": "火",
   "total_units": 28,
-  "hits": 11,
-  "misses": 1,
-  "surprises": 10,
+  "hits": 9,
+  "misses": 3,
+  "surprises": 11,
   "miss_details": [
     {
-      "unit_id": "4156",
-      "score": 119,
-      "actual_prob": 228,
+      "unit_id": "4159",
+      "score": 111,
+      "actual_prob": 214,
       "reasons": [
         "高スコア過信",
-        "設定1域(1/228)"
+        "低稼働(644G)",
+        "設定1域(1/214)"
+      ]
+    },
+    {
+      "unit_id": "4166",
+      "score": 92,
+      "actual_prob": 313,
+      "reasons": [
+        "高スコア過信",
+        "低稼働(627G)",
+        "設定1域(1/313)"
+      ]
+    },
+    {
+      "unit_id": "4079",
+      "score": 68,
+      "actual_prob": 455,
+      "reasons": [
+        "設定1域(1/455)"
       ]
     }
   ],
   "surprise_details": [
     {
-      "unit_id": "4161",
+      "unit_id": "4170",
       "rank": "B",
-      "score": 115,
-      "actual_prob": 63,
-      "reasons": [
-        "実は高設定域(1/63)"
-      ]
+      "score": 120,
+      "actual_prob": 151,
+      "reasons": []
     },
     {
-      "unit_id": "4159",
+      "unit_id": "4156",
       "rank": "B",
-      "score": 111,
-      "actual_prob": 214,
+      "score": 119,
+      "actual_prob": 228,
+      "reasons": []
+    },
+    {
+      "unit_id": "4165",
+      "rank": "B",
+      "score": 118,
+      "actual_prob": 156,
+      "reasons": []
+    },
+    {
+      "unit_id": "4157",
+      "rank": "B",
+      "score": 117,
+      "actual_prob": 142,
       "reasons": []
     },
     {
@@ -84,13 +115,6 @@
       "rank": "B",
       "score": 95,
       "actual_prob": 295,
-      "reasons": []
-    },
-    {
-      "unit_id": "4166",
-      "rank": "B",
-      "score": 92,
-      "actual_prob": 313,
       "reasons": []
     }
   ]
