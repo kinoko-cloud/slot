@@ -4,13 +4,22 @@
   "date": "2026-11-16",
   "weekday": "月",
   "total_units": 17,
-  "hits": 4,
-  "misses": 3,
+  "hits": 3,
+  "misses": 4,
   "surprises": 8,
   "miss_details": [
     {
+      "unit_id": "3168",
+      "score": 124,
+      "actual_prob": 205,
+      "reasons": [
+        "高スコア過信",
+        "設定1域(1/205)"
+      ]
+    },
+    {
       "unit_id": "3171",
-      "score": 101,
+      "score": 102,
       "actual_prob": 237,
       "reasons": [
         "高スコア過信",
@@ -19,13 +28,15 @@
     },
     {
       "unit_id": "3218",
-      "score": 79,
+      "score": 80,
       "actual_prob": 0,
-      "reasons": []
+      "reasons": [
+        "高スコア過信"
+      ]
     },
     {
       "unit_id": "3165",
-      "score": 47,
+      "score": 48,
       "actual_prob": 689,
       "reasons": [
         "設定1域(1/689)"
@@ -36,49 +47,49 @@
     {
       "unit_id": "3159",
       "rank": "B",
-      "score": 86,
+      "score": 87,
       "actual_prob": 84,
+      "reasons": []
+    },
+    {
+      "unit_id": "3166",
+      "rank": "B",
+      "score": 107,
+      "actual_prob": 191,
       "reasons": []
     },
     {
       "unit_id": "3162",
       "rank": "B",
-      "score": 84,
+      "score": 85,
       "actual_prob": 157,
       "reasons": []
     },
     {
       "unit_id": "3161",
       "rank": "B",
-      "score": 83,
+      "score": 84,
       "actual_prob": 252,
-      "reasons": []
-    },
-    {
-      "unit_id": "3166",
-      "rank": "B",
-      "score": 99,
-      "actual_prob": 223,
       "reasons": []
     },
     {
       "unit_id": "3167",
       "rank": "B",
-      "score": 96,
+      "score": 97,
       "actual_prob": 102,
       "reasons": []
     },
     {
       "unit_id": "3164",
       "rank": "B",
-      "score": 84,
-      "actual_prob": 292,
+      "score": 85,
+      "actual_prob": 296,
       "reasons": []
     },
     {
       "unit_id": "3172",
       "rank": "B",
-      "score": 84,
+      "score": 85,
       "actual_prob": 77,
       "reasons": [
         "実は高設定域(1/77)"
@@ -87,7 +98,7 @@
     {
       "unit_id": "3169",
       "rank": "B",
-      "score": 83,
+      "score": 84,
       "actual_prob": 170,
       "reasons": []
     }
