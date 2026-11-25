@@ -4,63 +4,65 @@
   "date": "2026-11-25",
   "weekday": "水",
   "total_units": 17,
-  "hits": 3,
-  "misses": 1,
-  "surprises": 6,
+  "hits": 2,
+  "misses": 2,
+  "surprises": 5,
   "miss_details": [
     {
-      "unit_id": "3159",
-      "score": 76,
-      "actual_prob": 341,
+      "unit_id": "3167",
+      "score": 82,
+      "actual_prob": 290,
       "reasons": [
-        "低稼働(682G)",
-        "設定1域(1/341)"
+        "高スコア過信",
+        "低稼働(290G)",
+        "設定1域(1/290)"
+      ]
+    },
+    {
+      "unit_id": "3159",
+      "score": 57,
+      "actual_prob": 355,
+      "reasons": [
+        "設定1域(1/355)"
       ]
     }
   ],
   "surprise_details": [
     {
+      "unit_id": "3162",
+      "rank": "B",
+      "score": 84,
+      "actual_prob": 83,
+      "reasons": []
+    },
+    {
       "unit_id": "3166",
       "rank": "B",
-      "score": 83,
+      "score": 84,
       "actual_prob": 90,
       "reasons": []
     },
     {
       "unit_id": "3168",
       "rank": "B",
-      "score": 83,
+      "score": 84,
       "actual_prob": 242,
       "reasons": []
     },
     {
       "unit_id": "3172",
       "rank": "B",
-      "score": 83,
+      "score": 84,
       "actual_prob": 23,
       "reasons": [
         "実は高設定域(1/23)"
       ]
     },
     {
-      "unit_id": "3167",
-      "rank": "B",
-      "score": 81,
-      "actual_prob": 290,
-      "reasons": []
-    },
-    {
       "unit_id": "3169",
       "rank": "C",
-      "score": 61,
-      "actual_prob": 282,
-      "reasons": []
-    },
-    {
-      "unit_id": "3171",
-      "rank": "B",
-      "score": 61,
-      "actual_prob": 323,
+      "score": 68,
+      "actual_prob": 148,
       "reasons": []
     }
   ]
